@@ -24,6 +24,7 @@ export class AppComponent implements OnInit, OnDestroy
 {
     fuseConfig: any;
     navigation: any;
+    isUserLoggedIn: boolean = false;
 
     // Private
     private _unsubscribeAll: Subject<any>;

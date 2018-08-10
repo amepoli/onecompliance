@@ -1,0 +1,40 @@
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatInputModule } from '@angular/material';
+
+import { FuseSharedModule } from '@fuse/shared.module';
+
+import { LoginPageComponent } from 'app/login-page/login-page.component';
+
+const routes = [
+    {
+        path     : 'login',
+        component: LoginPageComponent
+    },
+    {
+        path      : '**',
+        redirectTo: 'login'
+    }
+];
+
+@NgModule({
+    declarations: [
+        LoginPageComponent
+    ],
+    imports     : [
+        RouterModule.forChild(routes),
+
+        MatButtonModule,
+        MatCheckboxModule,
+        MatFormFieldModule,
+        MatInputModule,
+
+        FuseSharedModule
+    ],
+    exports     : [
+        LoginPageComponent
+    ]
+})
+export class LoginPageModule
+{
+}
