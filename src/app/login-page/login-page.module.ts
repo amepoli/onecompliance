@@ -10,10 +10,6 @@ const routes = [
     {
         path     : 'login',
         component: LoginPageComponent
-    },
-    {
-        path      : '**',
-        redirectTo: 'login'
     }
 ];
 
