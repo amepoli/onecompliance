@@ -2,6 +2,66 @@ import { FuseNavigation } from '@fuse/types';
 
 export const navigation: FuseNavigation[] = [
     {
+        id       : 'gorico',
+        title    : 'Menu',
+        type     : 'group',
+        children : [
+            {
+                id       : 'organization',
+                title    : 'Organization',
+                translate: 'NAV.ORGANIZATION',
+                type     : 'collapsable',
+                icon     : 'account_box',
+                children : [
+                    {
+                        id   : 'employees',
+                        title: 'Employees',
+                        translate: 'NAV.EMPLOYEES',
+                        type : 'item',
+                        url  : '/login'
+                    },
+                    {
+                        id   : 'management_units',
+                        title: 'Management Units',
+                        translate: 'NAV.MGTUNITS',
+                        type : 'item',
+                        url  : '/login'
+                    }
+                ]
+            },
+            {
+                id       : 'processes',
+                title    : 'Processes',
+                translate: 'NAV.PROCESSES',
+                icon: 'build',
+                type : 'item',
+                url  : '/login'
+            },
+            {
+                id       : 'workflow',
+                title    : 'Workflow',
+                icon: 'settings_input_component',
+                type : 'item',
+                url  : '/login'
+            },
+            {
+                id       : 'presidi',
+                title    : 'Presidi',
+                icon: 'person_pin_circle',
+                type : 'item',
+                url  : '/login'
+            },
+            {
+                id       : 'risks',
+                title    : 'Risks',
+                translate: 'NAV.RISKS',
+                icon: 'report_problem',
+                type : 'item',
+                url  : '/login'
+            }
+        ]
+    },
+    {
         id       : 'applications',
         title    : 'Applications',
         translate: 'NAV.APPLICATIONS',
