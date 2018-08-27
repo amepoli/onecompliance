@@ -58,9 +58,89 @@ export const navigation: FuseNavigation[] = [
                 icon: 'report_problem',
                 type : 'item',
                 url  : '/login'
+            },
+            {
+                id       : 'reports',
+                title    : 'Reports',
+                translate: 'NAV.REPORTS',
+                icon: 'new_releases',
+                type : 'item',
+                url  : '/login'
+            },
+            {
+                id       : 'testforms',
+                title    : 'Test Forms',
+                translate: 'NAV.TEST',
+                type     : 'collapsable',
+                icon     : 'playlist_add_check',
+                children : [
+                    {
+                        id   : 'generic',
+                        title: 'Generic',
+                        translate: 'NAV.GENERIC',
+                        type : 'item',
+                        url  : '/login'
+                    },
+                    {
+                        id   : 'questionnaires',
+                        title: 'Questionnaires',
+                        translate: 'NAV.QUEST',
+                        type : 'item',
+                        url  : '/login'
+                    },
+                    {
+                        id   : 'checklist',
+                        title: 'Checklist',
+                        type : 'item',
+                        url  : '/login'
+                    },
+                    {
+                        id   : 'forms',
+                        title: 'Forms',
+                        translate: 'NAV.FORMS',
+                        type : 'item',
+                        url  : '/login'
+                    }
+                ]
+            },
+            {
+                id       : 'surveys',
+                title    : 'Surveys',
+                translate: 'NAV.SURVEYS',
+                type     : 'collapsable',
+                icon     : 'playlist_play',
+                children : [
+                    {
+                        id   : 'generic',
+                        title: 'Generic',
+                        translate: 'NAV.GENERIC',
+                        type : 'item',
+                        url  : '/login'
+                    },
+                    {
+                        id   : 'questionnaires',
+                        title: 'Questionnaires',
+                        translate: 'NAV.QUEST',
+                        type : 'item',
+                        url  : '/login'
+                    },
+                    {
+                        id   : 'checklist',
+                        title: 'Checklist',
+                        type : 'item',
+                        url  : '/login'
+                    },
+                    {
+                        id   : 'forms',
+                        title: 'Forms',
+                        translate: 'NAV.FORMS',
+                        type : 'item',
+                        url  : '/login'
+                    }
+                ]
             }
         ]
-    },
+    }/**,
     {
         id       : 'applications',
         title    : 'Applications',
@@ -1133,5 +1213,5 @@ export const navigation: FuseNavigation[] = [
             }
         ]
     }
-
+**/
 ];
