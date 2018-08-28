@@ -9,6 +9,9 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 
 import { navigation } from 'app/navigation/navigation';
 
+import {DomSanitizer} from '@angular/platform-browser';
+import {MatIconRegistry} from '@angular/material';
+
 @Component({
     selector   : 'toolbar',
     templateUrl: './toolbar.component.html',
@@ -38,7 +41,9 @@ export class ToolbarComponent implements OnInit, OnDestroy
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _fuseSidebarService: FuseSidebarService,
-        private _translateService: TranslateService
+        private _translateService: TranslateService,
+        private _iconRegistry: MatIconRegistry,
+        private _sanitizer: DomSanitizer
     )
     {
         // Set the defaults
@@ -84,6 +89,10 @@ export class ToolbarComponent implements OnInit, OnDestroy
         ];
 
         this.navigation = navigation;
+
+        this._iconRegistry.addSvgIcon(
+            'excel',
+            this._sanitizer.bypassSecurityTrustResourceUrl('assets/images/examples/excel.svg'));
 
         // Set the private defaults
         this._unsubscribeAll = new Subject();
