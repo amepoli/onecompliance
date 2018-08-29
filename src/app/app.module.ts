@@ -20,6 +20,7 @@ import { AppComponent } from 'app/app.component';
 import { AppStoreModule } from 'app/store/store.module';
 import { LayoutModule } from 'app/layout/layout.module';
 import { LoginPageModule } from 'app/login-page/login-page.module';
+import { SplitViewModule } from './split-view/split-view.module';
 
 const appRoutes: Routes = [
     {
@@ -44,7 +45,7 @@ const appRoutes: Routes = [
     },
     {
         path      : '**',
-        redirectTo: 'apps/dashboards/analytics'
+        redirectTo: 'main'
     }
 ];
 
@@ -82,8 +83,9 @@ const appRoutes: Routes = [
         LayoutModule,
         AppStoreModule,
 
-        //nikapov modules
-        LoginPageModule
+        // nikapov modules
+        LoginPageModule,
+        SplitViewModule
     ],
     bootstrap   : [
         AppComponent
