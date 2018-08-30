@@ -20,7 +20,7 @@ import { AppComponent } from 'app/app.component';
 import { AppStoreModule } from 'app/store/store.module';
 import { LayoutModule } from 'app/layout/layout.module';
 import { LoginPageModule } from 'app/login-page/login-page.module';
-import { SplitViewModule } from './split-view/split-view.module';
+import { EmployeesModule } from 'app/gorico/employees/employees.module';
 
 const appRoutes: Routes = [
     {
@@ -45,7 +45,7 @@ const appRoutes: Routes = [
     },
     {
         path      : '**',
-        redirectTo: 'main'
+        redirectTo: 'gorico/employees'
     }
 ];
 
@@ -85,7 +85,7 @@ const appRoutes: Routes = [
 
         // nikapov modules
         LoginPageModule,
-        SplitViewModule
+        EmployeesModule
     ],
     bootstrap   : [
         AppComponent
