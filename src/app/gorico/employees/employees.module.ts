@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EmployeesComponent } from './employees.component';
 import { RouterModule } from '@angular/router';
-import { SplitViewModule } from 'app/layout/split-view/split-view.module';
+import { FullListModule } from 'app/gorico/full-list/full-list.module';
 
 const routes = [
     {
@@ -14,7 +14,7 @@ const routes = [
 @NgModule({
   imports: [
     RouterModule.forChild(routes),
-    SplitViewModule,
+    FullListModule,
     CommonModule
   ],
   declarations: [EmployeesComponent]
