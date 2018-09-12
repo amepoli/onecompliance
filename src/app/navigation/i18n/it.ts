@@ -7,6 +7,7 @@ export const locale = {
             'EMPLOYEES'   : 'Dipendenti',
             'MGTUNITS'    : 'Centri Gestionali',
             'PROCESSES'   : 'Processi',
+            'CONTROLS'    : 'Presidi',
             'RISKS'       : 'Rischi',
             'REPORTS'     : 'Segnalazioni',
             'TEST'        : 'Modelli di Test',

@@ -47,6 +47,7 @@ export const navigation: FuseNavigation[] = [
             {
                 id       : 'presidi',
                 title    : 'Presidi',
+                translate: 'NAV.CONTROLS',
                 icon: 'person_pin_circle',
                 type : 'item',
                 url  : '/login'

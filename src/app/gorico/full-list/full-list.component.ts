@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MatPaginator, MatSort, MatTableDataSource, MatRow} from '@angular/material';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'full-list',
@@ -9,11 +10,12 @@ import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 export class FullListComponent implements OnInit {
     displayedColumns = ['id', 'name', 'progress', 'color'];
     dataSource: MatTableDataSource<UserData>;
+    selectedRow: MatRow = null;
   
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
   
-    constructor() {
+    constructor (private router: Router) {
       // Create 100 users
       const users: UserData[] = [];
       for (let i = 1; i <= 100; i++) { users.push(createNewUser(i)); }
@@ -35,6 +37,12 @@ export class FullListComponent implements OnInit {
         this.dataSource.paginator.firstPage();
       }
     }
+
+    getRecord(row: MatRow) {
+        console.log(row);
+        this.selectedRow = row;
+        setTimeout(() => { this.router.navigate(['/gorico/details']); }, 50);
+    }
 }
 
 /** Builds and returns a new User. */
@@ -50,6 +58,7 @@ function createNewUser(id: number): UserData {
       color: COLORS[Math.round(Math.random() * (COLORS.length - 1))]
     };
   }
+
   
   /** Constants used to fill up our data base. */
   const COLORS = ['maroon', 'red', 'orange', 'yellow', 'olive', 'green', 'purple',
