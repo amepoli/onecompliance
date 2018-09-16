@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { SelectedElementComponent } from './selected-element.component';
 import { SplitViewModule } from 'app/layout/split-view/split-view.module';
 import { RouterModule } from '@angular/router';
+import { MatButtonModule, MatIconModule, MatMenuModule, MatToolbarModule, 
+         MatFormFieldModule, MatInputModule, MatOptionModule, MatSelectModule} from '@angular/material';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 const routes = [
     {
@@ -15,7 +18,17 @@ const routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    SplitViewModule
+    FormsModule,
+    ReactiveFormsModule,
+    SplitViewModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatOptionModule,
+    MatSelectModule
   ],
   declarations: [SelectedElementComponent]
 })

@@ -7,6 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SelectedElementComponent implements OnInit {
 
+  n = 1;
+  tot = 50;
+
   constructor() { }
 
   ngOnInit() {
