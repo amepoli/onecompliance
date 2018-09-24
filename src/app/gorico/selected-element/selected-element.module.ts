@@ -4,7 +4,7 @@ import { SelectedElementComponent } from './selected-element.component';
 import { SplitViewModule } from 'app/layout/split-view/split-view.module';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule, MatIconModule, MatMenuModule, MatToolbarModule, 
-         MatFormFieldModule, MatInputModule, MatOptionModule, MatSelectModule} from '@angular/material';
+         MatFormFieldModule, MatInputModule, MatOptionModule, MatSelectModule, MatTabsModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 const routes = [
@@ -28,7 +28,8 @@ const routes = [
     MatFormFieldModule,
     MatInputModule,
     MatOptionModule,
-    MatSelectModule
+    MatSelectModule, 
+    MatTabsModule
   ],
   declarations: [SelectedElementComponent]
 })
