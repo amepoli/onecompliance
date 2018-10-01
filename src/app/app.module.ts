@@ -21,6 +21,7 @@ import { AppStoreModule } from 'app/store/store.module';
 import { LayoutModule } from 'app/layout/layout.module';
 import { LoginPageModule } from 'app/login-page/login-page.module';
 import { EmployeesModule } from 'app/gorico/employees/employees.module';
+import { MngtUnitsModule } from 'app/gorico/mngt-units/mngt-units.module';
 import { SelectedElementModule } from 'app/gorico/selected-element/selected-element.module';
 
 const appRoutes: Routes = [
@@ -87,7 +88,8 @@ const appRoutes: Routes = [
         // nikapov modules
         LoginPageModule,
         EmployeesModule,
-        SelectedElementModule
+        SelectedElementModule,
+        MngtUnitsModule
     ],
     bootstrap   : [
         AppComponent
