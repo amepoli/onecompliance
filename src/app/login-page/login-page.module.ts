@@ -6,6 +6,8 @@ import { FuseSharedModule } from '@fuse/shared.module';
 
 import { LoginPageComponent } from 'app/login-page/login-page.component';
 
+import { AmplifyAngularModule} from 'aws-amplify-angular';
+
 const routes = [
     {
         path     : 'login',
@@ -24,7 +26,7 @@ const routes = [
         MatCheckboxModule,
         MatFormFieldModule,
         MatInputModule,
-
+        AmplifyAngularModule,
         FuseSharedModule
     ],
     exports     : [

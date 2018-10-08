@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
+import { AmplifyService } from 'aws-amplify-angular';
+import { LoginPageService } from './login-page.service';
 
 @Component({
     selector   : 'login-page',
@@ -21,6 +23,8 @@ export class LoginPageComponent implements OnInit
      * @param {FormBuilder} _formBuilder
      */
     constructor(
+        public amplifyService: AmplifyService,
+        public loginService: LoginPageService,
         private _fuseConfigService: FuseConfigService,
         private _formBuilder: FormBuilder
     )
@@ -42,6 +46,11 @@ export class LoginPageComponent implements OnInit
                 }
             }
         };
+
+        this.amplifyService = amplifyService;
+
+        this.amplifyService.auth(); 
+
     }
 
     // -----------------------------------------------------------------------------------------------------
