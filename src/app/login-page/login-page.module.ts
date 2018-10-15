@@ -8,6 +8,8 @@ import { LoginPageComponent } from 'app/login-page/login-page.component';
 
 import { AmplifyAngularModule} from 'aws-amplify-angular';
 
+import { ReactiveFormsModule } from '@angular/forms';
+
 const routes = [
     {
         path     : 'login',
@@ -27,7 +29,8 @@ const routes = [
         MatFormFieldModule,
         MatInputModule,
         AmplifyAngularModule,
-        FuseSharedModule
+        FuseSharedModule,
+        ReactiveFormsModule
     ],
     exports     : [
         LoginPageComponent

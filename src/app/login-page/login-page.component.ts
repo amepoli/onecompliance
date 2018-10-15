@@ -3,8 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
-import { AmplifyService } from 'aws-amplify-angular';
-import { LoginPageService } from './login-page.service';
+import { AuthService } from './auth.service';
 
 @Component({
     selector   : 'login-page',
@@ -23,8 +22,7 @@ export class LoginPageComponent implements OnInit
      * @param {FormBuilder} _formBuilder
      */
     constructor(
-        public amplifyService: AmplifyService,
-        public loginService: LoginPageService,
+        public authService: AuthService,
         private _fuseConfigService: FuseConfigService,
         private _formBuilder: FormBuilder
     )
@@ -47,9 +45,7 @@ export class LoginPageComponent implements OnInit
             }
         };
 
-        this.amplifyService = amplifyService;
-
-        this.amplifyService.auth(); 
+        this.authService = authService;
 
     }
 
@@ -63,8 +59,17 @@ export class LoginPageComponent implements OnInit
     ngOnInit(): void
     {
         this.loginForm = this._formBuilder.group({
-            email   : ['', [Validators.required, Validators.email]],
+            username: ['', Validators.required],
             password: ['', Validators.required]
         });
+    }
+
+    onSubmit(): void 
+    {
+        console.log(this.loginForm);
+        this.authService.setUsername(this.loginForm.value.username);
+        this.authService.setPassword(this.loginForm.value.password);
+        this.authService.signIn();
+        // this.authService.signOut();
     }
 }
