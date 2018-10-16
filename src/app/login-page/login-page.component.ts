@@ -14,6 +14,8 @@ import { AuthService } from './auth.service';
 export class LoginPageComponent implements OnInit
 {
     loginForm: FormGroup;
+    user: any;
+    signedIn = false;
 
     /**
      * Constructor
@@ -61,6 +63,18 @@ export class LoginPageComponent implements OnInit
         this.loginForm = this._formBuilder.group({
             username: ['', Validators.required],
             password: ['', Validators.required]
+        });
+
+        this.authService.authStateChange$
+          .subscribe(authState => {
+            this.signedIn = authState.state === 'signedIn';
+            
+            if (!authState.user) {
+                this.user = null;
+            } else {
+                this.user = authState.user;
+            }
+            console.log(this.signedIn, this.user);
         });
     }
 

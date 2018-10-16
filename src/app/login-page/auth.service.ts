@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { AmplifyService } from 'aws-amplify-angular';
+import { Observable } from 'rxjs/Observable';
+import { AuthState } from 'aws-amplify-angular/dist/src/providers/auth.state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private signedIn = false;
   private username: string;
   private password: string;
   errorMessage: string;
-  user: any;
+  authStateChange$: Observable<AuthState>;
 
   constructor(
       public amplifyService: AmplifyService) 
@@ -19,19 +20,9 @@ export class AuthService {
 
           this.amplifyService.auth(); 
 
-          this.amplifyService.authStateChange$
-          .subscribe(authState => {
-            this.signedIn = authState.state === 'signedIn';
-            
-            if (!authState.user) {
-                this.user = null;
-            } else {
-                this.user = authState.user;
-            }
-            console.log(this.signedIn, this.user);
-        });
-      }
+          this.authStateChange$ = this.amplifyService.authStateChange$;
 
+      }
 
     public setUsername(username: string) {
         this.username = username;
@@ -41,10 +32,6 @@ export class AuthService {
         this.password = password;
     }  
     
-    public isSignedIn(): boolean 
-    {
-        return this.signedIn;
-    }
 
   /** signin */
   public signIn() 
