@@ -12,6 +12,10 @@ import { navigation } from 'app/navigation/navigation';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material';
 
+import { AuthService } from 'app/login-page/auth.service';
+
+import { Router } from '@angular/router';
+
 @Component({
     selector   : 'toolbar',
     templateUrl: './toolbar.component.html',
@@ -43,7 +47,9 @@ export class ToolbarComponent implements OnInit, OnDestroy
         private _fuseSidebarService: FuseSidebarService,
         private _translateService: TranslateService,
         private _iconRegistry: MatIconRegistry,
-        private _sanitizer: DomSanitizer
+        private _sanitizer: DomSanitizer,
+        private _authService: AuthService,
+        private router: Router
     )
     {
         // Set the defaults
@@ -116,6 +122,14 @@ export class ToolbarComponent implements OnInit, OnDestroy
                 this.hiddenNavbar = settings.layout.navbar.hidden === true;
             });
 
+         this._authService.authStateChange$
+          .subscribe(authState => {
+            if (authState.state !== 'signedIn') 
+            {
+                this.router.navigate(['/login']);
+            }
+          });
+
         // Set the selected language from default languages
         this.selectedLanguage = _.find(this.languages, {'id': this._translateService.currentLang});
     }
@@ -167,5 +181,11 @@ export class ToolbarComponent implements OnInit, OnDestroy
 
         // Use the selected language for translations
         this._translateService.use(lang.id);
+    }
+
+    logout(): void 
+    {
+       console.log('Signing out');
+       this._authService.signOut();
     }
 }

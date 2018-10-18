@@ -5,6 +5,8 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
 import { AuthService } from './auth.service';
 
+import { Router } from '@angular/router';
+
 @Component({
     selector   : 'login-page',
     templateUrl: './login-page.component.html',
@@ -26,7 +28,8 @@ export class LoginPageComponent implements OnInit
     constructor(
         public authService: AuthService,
         private _fuseConfigService: FuseConfigService,
-        private _formBuilder: FormBuilder
+        private _formBuilder: FormBuilder,
+        private router: Router
     )
     {
         // Configure the layout
@@ -74,7 +77,11 @@ export class LoginPageComponent implements OnInit
             } else {
                 this.user = authState.user;
             }
-            console.log(this.signedIn, this.user);
+            
+            if (this.signedIn)
+            {
+               this.router.navigate(['/']);
+            }
         });
     }
 

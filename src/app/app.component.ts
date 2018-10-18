@@ -10,6 +10,7 @@ import { FuseNavigationService } from '@fuse/components/navigation/navigation.se
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { AuthService } from 'app/login-page/auth.service';
 
 import { navigation } from 'app/navigation/navigation';
 import { locale as navigationEnglish } from 'app/navigation/i18n/en';
@@ -26,7 +27,6 @@ export class AppComponent implements OnInit, OnDestroy
 {
     fuseConfig: any;
     navigation: any;
-    isUserLoggedIn = true;
 
     // Private
     private _unsubscribeAll: Subject<any>;
@@ -52,7 +52,8 @@ export class AppComponent implements OnInit, OnDestroy
         private _fuseTranslationLoaderService: FuseTranslationLoaderService,
         private _translateService: TranslateService,
         private _platform: Platform,
-        private router: Router
+        private router: Router,
+        private _authService: AuthService
     )
     {
 
@@ -96,9 +97,9 @@ export class AppComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
-        if (!this.isUserLoggedIn) 
+        if (!this._authService.isSignedIn) 
         {
-            this.router.navigate(['/login']);
+           this.router.navigate(['/login']);
         }
         
         // Subscribe to config changes

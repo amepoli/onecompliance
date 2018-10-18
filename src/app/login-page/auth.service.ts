@@ -12,6 +12,7 @@ export class AuthService {
   private password: string;
   errorMessage: string;
   authStateChange$: Observable<AuthState>;
+  isSignedIn = false;
 
   constructor(
       public amplifyService: AmplifyService) 
@@ -38,12 +39,14 @@ export class AuthService {
   {
     this.amplifyService.auth().signIn(this.username, this.password)
     .then(user => {
+      this.isSignedIn = false;
       if (user['challengeName'] === 'SMS_MFA' || user['challengeName'] === 'SOFTWARE_TOKEN_MFA') {
         this.amplifyService.setAuthState({ state: 'confirmSignIn', user: user });
       } else if (user['challengeName'] === 'NEW_PASSWORD_REQUIRED') {
         this.amplifyService.setAuthState({ state: 'requireNewPassword', user: user });
       } else {
         this.amplifyService.setAuthState({ state: 'signedIn', user: user });
+        this.isSignedIn = true; 
       }
     })
     .catch((err) => {
@@ -53,6 +56,7 @@ export class AuthService {
 
   public signOut() 
   {
+    this.isSignedIn = false;
     this.amplifyService.auth().signOut();
   }
 
