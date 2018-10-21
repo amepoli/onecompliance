@@ -20,6 +20,9 @@ import { AppComponent } from 'app/app.component';
 import { AppStoreModule } from 'app/store/store.module';
 import { LayoutModule } from 'app/layout/layout.module';
 import { LoginPageModule } from 'app/login-page/login-page.module';
+import { RegisterModule } from 'app/login-page/register.module';
+import { ForgotPasswordModule } from 'app/login-page/forgot-password.module';
+import { MailConfirmModule } from 'app/login-page/mail-confirm.module';
 import { EmployeesModule } from 'app/gorico/employees/employees.module';
 import { MngtUnitsModule } from 'app/gorico/mngt-units/mngt-units.module';
 import { SelectedElementModule } from 'app/gorico/selected-element/selected-element.module';
@@ -45,10 +48,6 @@ const appRoutes: Routes = [
     {
         path        : 'angular-material-elements',
         loadChildren: './main/angular-material-elements/angular-material-elements.module#AngularMaterialElementsModule'
-    },
-    {
-        path      : '**',
-        redirectTo: 'gorico/employees'
     }
 ];
 
@@ -88,6 +87,9 @@ const appRoutes: Routes = [
 
         // nikapov modules
         LoginPageModule,
+        RegisterModule,
+        ForgotPasswordModule,
+        MailConfirmModule,
         EmployeesModule,
         SelectedElementModule,
         MngtUnitsModule,

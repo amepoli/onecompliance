@@ -10,6 +10,7 @@ export class AuthService {
 
   private username: string;
   private password: string;
+  private email: string;
   errorMessage: string;
   authStateChange$: Observable<AuthState>;
   isSignedIn = false;
@@ -32,6 +33,10 @@ export class AuthService {
     public setPassword(password: string) {
         this.password = password;
     }  
+
+    public setEmail(email:string) {
+      this.email = email;
+    }
     
 
   /** signin */
@@ -58,6 +63,15 @@ export class AuthService {
   {
     this.isSignedIn = false;
     this.amplifyService.auth().signOut();
+  }
+
+  public signUp() 
+  {
+    this.amplifyService.auth().signUp(this.username,
+      this.password,
+      this.email)
+    .then(user => this.amplifyService.setAuthState({ state: 'confirmSignUp', user: { 'username': this.username } }))
+    .catch(err => this._setError(err));
   }
 
   _setError(err) {

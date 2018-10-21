@@ -97,11 +97,13 @@ export class AppComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
-        if (!this._authService.isSignedIn) 
+
+       if (!this._authService.isSignedIn) 
         {
            this.router.navigate(['/login']);
+           console.log('Redirecting to login page');
         }
-        
+
         // Subscribe to config changes
         this._fuseConfigService.config
             .pipe(takeUntil(this._unsubscribeAll))

@@ -91,6 +91,5 @@ export class LoginPageComponent implements OnInit
         this.authService.setUsername(this.loginForm.value.username);
         this.authService.setPassword(this.loginForm.value.password);
         this.authService.signIn();
-        // this.authService.signOut();
     }
 }
