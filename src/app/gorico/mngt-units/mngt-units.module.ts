@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MngtUnitsComponent } from './mngt-units.component';
 import { RouterModule } from '@angular/router';
 import { FullListModule } from 'app/gorico/full-list/full-list.module';
+import { AmplifyAngularModule } from 'aws-amplify-angular';
 
 
 const routes = [
@@ -16,7 +17,8 @@ const routes = [
   imports: [
     RouterModule.forChild(routes),
     FullListModule,
-    CommonModule
+    CommonModule,
+    AmplifyAngularModule
   ],
   declarations: [MngtUnitsComponent]
 })

@@ -26,21 +26,21 @@ export class AuthService {
 
       }
 
-    public setUsername(username: string) {
+    public setUsername(username: string): void {
         this.username = username;
     }
     
-    public setPassword(password: string) {
+    public setPassword(password: string): void {
         this.password = password;
     }  
 
-    public setEmail(email:string) {
+    public setEmail(email: string): void {
       this.email = email;
     }
     
 
   /** signin */
-  public signIn() 
+  public signIn(): void
   {
     this.amplifyService.auth().signIn(this.username, this.password)
     .then(user => {
@@ -59,13 +59,13 @@ export class AuthService {
     });
   }
 
-  public signOut() 
+  public signOut(): void 
   {
     this.isSignedIn = false;
     this.amplifyService.auth().signOut();
   }
 
-  public signUp() 
+  public signUp(): void 
   {
     this.amplifyService.auth().signUp(this.username,
       this.password,
@@ -74,7 +74,8 @@ export class AuthService {
     .catch(err => this._setError(err));
   }
 
-  _setError(err) {
+  _setError(err): void 
+    {
     if (!err) {
       this.errorMessage = null;
       return;

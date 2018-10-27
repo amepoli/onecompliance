@@ -8,7 +8,7 @@ import Amplify from 'aws-amplify';
 import amplify from './aws-exports';
 
 
-
+Amplify.configure(amplify);
 
 if ( environment.production )
 {
@@ -34,4 +34,3 @@ else
     bootstrap().catch(err => console.log(err));
 }
 
-Amplify.configure(amplify);
