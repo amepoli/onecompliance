@@ -1,0 +1,17 @@
+SELECT centri_1.id_centro_gest AS ID, centri_1.codice, centri_1.descrizione, 
+anagr.codice || ' - ' || anagr.cognome || ' ' || anagr.nome  as responsabile,
+centri_1.ute_ref as Referente, centri_1.parente
+FROM 
+(SELECT *, NULL as parente FROM entrasp.centri_gestionali WHERE codice_part='DEMO' AND id_centro_gest_parent IS NULL
+UNION
+SELECT centri_3.*, centri_2.descrizione as parente
+ FROM entrasp.centri_gestionali CENTRI_2 
+ JOIN entrasp.centri_gestionali CENTRI_3 
+ ON centri_2.id_centro_gest = centri_3.id_centro_gest_parent
+ WHERE centri_2.codice_part='DEMO' AND centri_3.codice_part='DEMO') 
+ AS CENTRI_1
+JOIN entrasp.anagrafiche_id  ANAGR
+ON id_responsabile=id_anagrafica
+WHERE centri_1.codice_part='DEMO' AND anagr.codice_part='DEMO'
+ORDER BY ID;
+
