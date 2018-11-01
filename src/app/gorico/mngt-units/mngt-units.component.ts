@@ -17,7 +17,7 @@ myInit = { // OPTIONAL
     }, // OPTIONAL
     response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
     queryStringParameters: {  // OPTIONAL
-       // name: 'param'
+       codice_part: 'DEMO'
     }
 };
 
