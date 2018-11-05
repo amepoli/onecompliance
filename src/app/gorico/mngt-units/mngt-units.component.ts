@@ -3,8 +3,6 @@ import { MngtUnitsService } from './mngt-units.service';
 import { DataSource } from '@angular/cdk/collections';
 import { MngtUnit } from './mngt-units.model';
 import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject, of } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
 
 
 @Component({
@@ -28,21 +26,13 @@ currentSource = new MngtUnitDataSource(this.unitsService);
 
 export class MngtUnitDataSource extends DataSource<any> {
 
-    private loadingSubject = new BehaviorSubject<boolean>(false); 
-
-    public loading$ = this.loadingSubject.asObservable();
-
     constructor(private unitsService: MngtUnitsService) {
       super();
     }
     connect(): Observable<MngtUnit[]> {
-      this.loadingSubject.next(true);
-      return this.unitsService.getData()
-       .pipe(
-           catchError(() => of([])),
-           finalize(() => this.loadingSubject.next(false)));
+
+      return this.unitsService.getData();
     }
     disconnect() {
-        this.loadingSubject.complete();
     }
   }
