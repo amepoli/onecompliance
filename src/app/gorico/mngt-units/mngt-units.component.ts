@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AmplifyService } from 'aws-amplify-angular';
+import { MngtUnitsService } from './mngt-units.service';
+import { DataSource } from '@angular/cdk/collections';
+import { MngtUnit } from './mngt-units.model';
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-mngt-units',
@@ -8,38 +14,35 @@ import { AmplifyService } from 'aws-amplify-angular';
 })
 export class MngtUnitsComponent implements OnInit {
 
-private dataTable: any;
-private session: any;
-apiName = 'gorico';
-path = '/management-units'; 
-myInit = { // OPTIONAL
-    headers: {
-    }, // OPTIONAL
-    response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
-    queryStringParameters: {  // OPTIONAL
-       codice_part: 'DEMO'
-    }
-};
+currentColumns = ['id', 'codice', 'descrizione', 'responsabile', 'referente', 'parente'];
+currentSource = new MngtUnitDataSource(this.unitsService);
 
-
-  constructor(
-      private amplifyService: AmplifyService
-  ) { 
-      this.amplifyService = amplifyService;
+  constructor(private unitsService: MngtUnitsService) { 
   }
 
   ngOnInit(): void {
 
-    this.amplifyService.auth();
-
-    this.dataTable = this.amplifyService.api().get(this.apiName, this.path, this.myInit)
-        .then(response => {
-            console.log(response);
-    }).catch(error => {
-        console.log(error.response);
-    });
-
-
   }
 
 }
+
+export class MngtUnitDataSource extends DataSource<any> {
+
+    private loadingSubject = new BehaviorSubject<boolean>(false); 
+
+    public loading$ = this.loadingSubject.asObservable();
+
+    constructor(private unitsService: MngtUnitsService) {
+      super();
+    }
+    connect(): Observable<MngtUnit[]> {
+      this.loadingSubject.next(true);
+      return this.unitsService.getData()
+       .pipe(
+           catchError(() => of([])),
+           finalize(() => this.loadingSubject.next(false)));
+    }
+    disconnect() {
+        this.loadingSubject.complete();
+    }
+  }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild, Input} from '@angular/core';
 import {MatPaginator, MatSort, MatTableDataSource, MatRow} from '@angular/material';
 import { Router } from '@angular/router';
 
@@ -8,8 +8,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./full-list.component.scss']
 })
 export class FullListComponent implements OnInit {
-    displayedColumns = ['id', 'name', 'progress', 'color'];
-    dataSource: MatTableDataSource<UserData>;
+    @Input() displayedColumns: string[] = ['id', 'name', 'progress', 'color'];
+    @Input() dataSource: MatTableDataSource<UserData>;
     selectedRow: MatRow = null;
   
     @ViewChild(MatPaginator) paginator: MatPaginator;
