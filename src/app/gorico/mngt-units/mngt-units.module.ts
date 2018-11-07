@@ -2,8 +2,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MngtUnitsComponent } from './mngt-units.component';
 import { RouterModule } from '@angular/router';
-import { FullListModule } from 'app/gorico/full-list/full-list.module';
 import { AmplifyAngularModule } from 'aws-amplify-angular';
+import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 const routes = [
@@ -16,9 +20,13 @@ const routes = [
 @NgModule({
   imports: [
     RouterModule.forChild(routes),
-    FullListModule,
     CommonModule,
-    AmplifyAngularModule
+    AmplifyAngularModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatPaginatorModule,
+    MatInputModule,
+    MatProgressSpinnerModule
   ],
   declarations: [MngtUnitsComponent]
 })
