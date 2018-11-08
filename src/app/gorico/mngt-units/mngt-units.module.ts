@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCard, MatCardModule } from '@angular/material/card';
 
 
 const routes = [
@@ -26,7 +27,8 @@ const routes = [
     MatFormFieldModule,
     MatPaginatorModule,
     MatInputModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatCardModule
   ],
   declarations: [MngtUnitsComponent]
 })

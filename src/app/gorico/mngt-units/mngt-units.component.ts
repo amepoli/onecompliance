@@ -16,6 +16,7 @@ export class MngtUnitsComponent implements OnInit {
   displayedColumns = ['id', 'codice', 'descrizione', 'responsabile', 'referente', 'parente'];
   dataSource: MatTableDataSource<any>;
   selectedRow: MatRow = null;
+  isLoading = true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -25,12 +26,17 @@ export class MngtUnitsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.unitsService.getData().subscribe(results => {
-      this.mngtUnits = results;
-      this.dataSource = new MatTableDataSource(this.mngtUnits);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    });
+    this.unitsService.getData().subscribe(
+      results => {
+        this.mngtUnits = results;
+        this.dataSource = new MatTableDataSource(this.mngtUnits);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.isLoading = false;
+      },
+      error => {
+          this.isLoading = false;
+      });
   }
 
   applyFilter(filterValue: string) {
