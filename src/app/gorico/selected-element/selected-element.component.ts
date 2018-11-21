@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
+import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
+
 
 @Component({
   selector: 'selected-element',
@@ -6,13 +10,51 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./selected-element.component.scss']
 })
 export class SelectedElementComponent implements OnInit {
-
+    
+  @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
   n = 1;
   tot = 50;
+  regConfig_it: FieldConfig[] = [
+    {
+      type: 'input',
+      label: 'Codice',
+      inputType: 'text',
+      name: 'code',
+      validations: [
+        {
+          name: 'required',
+          validator: Validators.required,
+          message: 'Codice mancante'
+        },
+        {
+          name: 'pattern',
+          validator: Validators.pattern('^[a-zA-Z]+$'),
+          message: 'Accetta solo testo'
+        }
+      ]
+    },
+    {
+        type: 'input',
+        label: 'Descrizione',
+        inputType: 'text',
+        name: 'Description',
+        validations: [
+          {
+            name: 'required',
+            validator: Validators.required,
+            message: 'Descrizione mancante'
+          },
+        ]
+      }
+    ];
+
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  submit(value: any) {
   }
 
 }
