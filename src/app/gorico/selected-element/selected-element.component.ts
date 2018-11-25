@@ -45,6 +45,15 @@ export class SelectedElementComponent implements OnInit {
             message: 'Descrizione mancante'
           },
         ]
+      },
+      {
+        type: 'combobox',
+        label: 'Centro gestionale di livello superiore',
+        name: 'superiore',
+        options: [{id: '1', name: 'Amministrazione'}, 
+                  {id: '2', name: 'Commerciale'}, 
+                  {id: '3', name: 'Compliance'}, 
+                  {id: '4', name: 'Consiglio di Amministrazione'}]
       }
     ];
 

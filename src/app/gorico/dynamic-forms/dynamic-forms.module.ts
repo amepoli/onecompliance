@@ -12,6 +12,8 @@ import { RadiobuttonComponent } from './components/radiobutton/radiobutton.compo
 import { CheckboxComponent } from './components/checkbox/checkbox.component';
 import { DynamicFieldDirective } from './components/dynamic-field/dynamic-field.directive';
 import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.component';
+import { ComboboxComponent } from './components/combobox/combobox.component';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 @NgModule({
   declarations: [
@@ -22,14 +24,16 @@ import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.com
     RadiobuttonComponent,
     CheckboxComponent,
     DynamicFieldDirective,
-    DynamicFormComponent
+    DynamicFormComponent,
+    ComboboxComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     MaterialModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    NgxMatSelectSearchModule
   ],
   exports: [
     InputComponent,
@@ -39,7 +43,8 @@ import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.com
     RadiobuttonComponent,
     CheckboxComponent,
     DynamicFieldDirective,
-    DynamicFormComponent
+    DynamicFormComponent,
+    ComboboxComponent
   ], 
   entryComponents: [
     InputComponent,
@@ -47,7 +52,8 @@ import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.com
     SelectComponent,
     DateComponent,
     RadiobuttonComponent,
-    CheckboxComponent
+    CheckboxComponent,
+    ComboboxComponent
   ],
   providers: []
 })
