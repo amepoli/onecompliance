@@ -20,6 +20,7 @@ export class SelectedElementComponent implements OnInit {
       label: 'Codice',
       inputType: 'text',
       name: 'code',
+      value: 'CdA',
       validations: [
         {
           name: 'required',
@@ -29,7 +30,7 @@ export class SelectedElementComponent implements OnInit {
         {
           name: 'pattern',
           validator: Validators.pattern('^[a-zA-Z]+$'),
-          message: 'Accetta solo testo'
+          message: 'Accetta solo testo senza spazi'
         }
       ]
     },
@@ -50,8 +51,9 @@ export class SelectedElementComponent implements OnInit {
         type: 'combobox',
         label: 'Centro gestionale di livello superiore',
         name: 'superiore',
+        selected: '3',
         options: [{id: '1', name: 'Amministrazione'}, 
-                  {id: '2', name: 'Commerciale'}, 
+                  {id: '2', name: 'Commerciale'},
                   {id: '3', name: 'Compliance'}, 
                   {id: '4', name: 'Consiglio di Amministrazione'}]
       }
