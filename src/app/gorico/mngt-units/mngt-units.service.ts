@@ -17,15 +17,19 @@ export class MngtUnitsService {
         }, // OPTIONAL
         response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
         queryStringParameters: {  // OPTIONAL
-           codice_part: 'DEMO' // TODO: parametric, depending on user 
+           codice_part: 'DEMO', // TODO: parametric, depending on user
+           id: '' 
         }
   };
 
   constructor(private amplifyService: AmplifyService) { 
   }
 
-  getData(): Observable<MngtUnit[]> {
+  getData(codice_part: string, id: string): Observable<any> {
     this.amplifyService.auth();
+
+    this.myInit.queryStringParameters.codice_part = codice_part;
+    this.myInit.queryStringParameters.id = id;
 
     return from(this.amplifyService.api().get(this.apiName, this.path, this.myInit))
            .pipe(map(res => res['data']));

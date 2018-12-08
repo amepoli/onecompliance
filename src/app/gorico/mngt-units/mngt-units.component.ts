@@ -13,10 +13,13 @@ import { Router } from '@angular/router';
 export class MngtUnitsComponent implements OnInit {
 
   private mngtUnits: MngtUnit[];
-  displayedColumns = ['id', 'codice', 'descrizione', 'responsabile', 'referente', 'parente'];
+  // displayedColumns = ['id', 'codice', 'descrizione', 'responsabile', 'referente', 'parente'];
+  displayedColumns = ['id_centro_gest', 'codice', 'descrizione', 'responsabile', 'ute_ref', 'parente'];
   dataSource: MatTableDataSource<any>;
   selectedRow: MatRow = null;
   isLoading = true;
+
+  codice_part = 'DEMO'; // TODO: make this parametric
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -26,7 +29,7 @@ export class MngtUnitsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.unitsService.getData().subscribe(
+    this.unitsService.getData(this.codice_part, '').subscribe(
       results => {
         this.mngtUnits = results;
         this.dataSource = new MatTableDataSource(this.mngtUnits);
@@ -51,7 +54,9 @@ export class MngtUnitsComponent implements OnInit {
     getRecord(row: MatRow) {
         console.log(row);
         this.selectedRow = row;
-        setTimeout(() => { this.router.navigate(['/gorico/details']); }, 50);
+        const id = row['id_centro_gest'];
+        setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: { part: this.codice_part,
+            id: id } }); }, 50);
     }
 }
 
