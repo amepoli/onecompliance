@@ -102,7 +102,7 @@ export class SelectedElementComponent implements OnInit {
             results => {
               this.isLoading = false;
               for (let result of results) {
-                  if (result['validations'] {
+                  if (result['validations']) {
                   for (let validator of result['validations']) {
                      if (validator['name'] === 'required') {
                         validator['validator'] = Validators.required;
