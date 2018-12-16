@@ -122,6 +122,7 @@ export class SelectedElementComponent implements OnInit {
   }
 
   submit(value: any) {
+      console.log(value);
   }
 
 }
