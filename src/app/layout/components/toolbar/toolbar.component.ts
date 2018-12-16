@@ -14,7 +14,7 @@ import {MatIconRegistry} from '@angular/material';
 
 import { AuthService } from 'app/login-page/auth.service';
 
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector   : 'toolbar',
@@ -31,6 +31,11 @@ export class ToolbarComponent implements OnInit, OnDestroy
     navigation: any;
     selectedLanguage: any;
     userStatusOptions: any[];
+
+    codice_part = 'DEMO'; // TODO: make this parametric
+
+    queryParams: any;
+    table: string;
 
     // Private
     private _unsubscribeAll: Subject<any>;
@@ -49,7 +54,8 @@ export class ToolbarComponent implements OnInit, OnDestroy
         private _iconRegistry: MatIconRegistry,
         private _sanitizer: DomSanitizer,
         private _authService: AuthService,
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute
     )
     {
         // Set the defaults
@@ -113,6 +119,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
+
         // Subscribe to the config changes
         this._fuseConfigService.config
             .pipe(takeUntil(this._unsubscribeAll))
@@ -129,6 +136,12 @@ export class ToolbarComponent implements OnInit, OnDestroy
                 this.router.navigate(['/login']);
             }
           });
+
+        this.route.queryParams.subscribe(params => {
+          this.table = params['table']; 
+        });
+
+        this._authService.setCode(this.codice_part);
 
         // Set the selected language from default languages
         this.selectedLanguage = _.find(this.languages, {'id': this._translateService.currentLang});
@@ -187,5 +200,22 @@ export class ToolbarComponent implements OnInit, OnDestroy
     {
        console.log('Signing out');
        this._authService.signOut();
+    }
+
+    addElement(): void
+    {
+        if (!this.table) {
+            this.table = this.router.url.split('/', 3)[2];
+        }
+        
+        this.router.navigate(['/gorico/details'], { queryParams: { table: this.table , part: this.codice_part,
+            id: 'NEW' } });
+    }
+
+    gotoList(): void 
+    {
+        if (this.table) {
+            this.router.navigate(['/gorico/' + this.table]);
+        }
     }
 }

@@ -11,6 +11,7 @@ export class AuthService {
   private username: string;
   private password: string;
   private email: string;
+  private code: string;
   errorMessage: string;
   authStateChange$: Observable<AuthState>;
   isSignedIn = false;
@@ -36,6 +37,14 @@ export class AuthService {
 
     public setEmail(email: string): void {
       this.email = email;
+    }
+
+    public setCode(code: string): void {
+        this.code = code;
+    }
+
+    public getCode(): string {
+        return this.code;
     }
     
 

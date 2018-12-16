@@ -32,6 +32,7 @@ export class SelectedElementComponent implements OnInit {
       .subscribe(params => {
         this.id = params.id;
         this.codice_part = params.part;
+        console.log(params);
         
         this.unitsService.getData(this.codice_part, this.id).subscribe(
             results => {

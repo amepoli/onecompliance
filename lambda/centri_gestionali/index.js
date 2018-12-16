@@ -194,17 +194,24 @@ if (id === '') {
     });
   } else {  //NEW element
     client.connect();
-    client.query(queryString_next, function (err, result) {
-      client.end();
-      form 
-      var jsonObj = JSON.stringify(form);
-      var response = {
-        "statusCode": 200,
-        "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-        "body": jsonObj,
-        "isBase64Encoded": false
-      };
-      callback(null, response);
+    client.query(queryString_centri, function (err, result) {
+      form[3]['options']=result.rows;
+      client.query(queryString_anagr, function (err, result) {
+        form[4]['options']=result.rows;
+        client.query(queryString_next, function (err, result) {
+          var jsonString = result.rows[0];
+          client.end();
+          form[0]['value'] = jsonString['prossimo'];
+          var jsonObj = JSON.stringify(form);
+          var response = {
+            "statusCode": 200,
+            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
+            "body": jsonObj,
+            "isBase64Encoded": false
+          };
+          callback(null, response);
+        });
+      });
     });
   }
 }
