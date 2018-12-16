@@ -34,7 +34,7 @@ entrasp.centri_gestionali_descr('${codice_part}',cg.id_centro_gest_parent) as pa
 FROM entrasp.centri_gestionali CG WHERE cg.codice_part='${codice_part}';`
 
 var queryString_element = 
-`SELECT codice,descrizione,id_centro_gest_parent,id_responsabile,ute_ref,flag_grc_controller,flag_grc_gestore from entrasp.centri_gestionali 
+`SELECT id_centro_gest,codice,descrizione,id_centro_gest_parent,id_responsabile,flag_grc_controller,flag_grc_gestore from entrasp.centri_gestionali 
 WHERE codice_part='${codice_part}' AND id_centro_gest='${id}';`
 
 var queryString_centri=
@@ -43,13 +43,25 @@ var queryString_centri=
 var queryString_anagr=
 `SELECT id_anagrafica AS id, codice, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part='${codice_part}';`
 
+var queryString_next = 
+`SELECT (MAX(id_centro_gest)+1) as prossimo from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
+
 var form = [
+    { 
+      type: 'input',
+      label: 'ID',
+      inputType: 'text',
+      name: 'id_centro_gest',
+      value: '',
+      readonly: 'true'
+    },
     {
       type: 'input',
       label: 'Codice',
       inputType: 'text',
-      name: 'code',
+      name: 'codice',
       value: '',
+      readonly: 'false',
       validations: [
         {
           name: 'required',
@@ -58,8 +70,8 @@ var form = [
         },
         {
           name: 'pattern',
-          validator: '^[a-zA-Z]+$',
-          message: 'Accetta solo testo senza spazi'
+          validator: '^[a-zA-Z1-9&_ ]+$',
+          message: 'Uso caratteri non ammessi'
         }
       ]
     },
@@ -67,8 +79,9 @@ var form = [
         type: 'input',
         label: 'Descrizione',
         inputType: 'text',
-        name: 'Description',
+        name: 'descrizione',
         value: '',
+        readonly: 'false',
         validations: [
           {
             name: 'required',
@@ -81,6 +94,7 @@ var form = [
         type: 'combobox',
         label: 'Centro gestionale di livello superiore',
         name: 'superiore',
+        value: '',
         selected: '',
         options: []
       },
@@ -88,29 +102,20 @@ var form = [
         type: 'combobox',
         label: 'Responsabile',
         name: 'responsabile',
+        value: '',
         selected: '',
         options: []
       },
       {
-        type: 'combobox',
-        label: 'Utente Referente',
-        name: 'referente',
-        selected: '4',
-        options: [{id: '1', name: 'Poli Amedeo'}, 
-                  {id: '2', name: 'Nicola Capovilla'},
-                  {id: '3', name: 'Francesco Guarneri'}, 
-                  {id: '4', name: 'Arlotta Carlo'}]
-      },
-      {
         type: 'checkbox',
         label: 'Supervisore di tutti i sondaggi',
-        name: 'check_supervisore',
+        name: 'flag_grc_controller',
         value: false
       },
       {
         type: 'checkbox',
         label: 'Gestore di tutti i modelli di test',
-        name: 'check_gestore',
+        name: 'flag_grc_gestore',
         value: false
       }
     ];
@@ -145,9 +150,9 @@ if (id === '') {
   if (id !== 'NEW') {
     client.connect();
     client.query(queryString_centri, function (err, result) {
-      form[2]['options']=result.rows;
+      form[3]['options']=result.rows;
       client.query(queryString_anagr, function (err, result) {
-        form[3]['options']=result.rows;
+        form[4]['options']=result.rows;
         var query = client.query(queryString_element);
         query.on("row", function (row, result) {
           result.addRow(row);
@@ -155,17 +160,20 @@ if (id === '') {
         query.on("end", function (result) {
           var jsonString = result.rows[0];
           client.end();
+          if (jsonString['id_centro_gest']) {
+            form[0]['value'] = jsonString['id_centro_gest'];
+          }
           if (jsonString['codice']) {
-            form[0]['value'] = jsonString['codice'];
+            form[1]['value'] = jsonString['codice'];
           }
           if (jsonString['descrizione']) {
-            form[1]['value'] = jsonString['descrizione'];
+            form[2]['value'] = jsonString['descrizione'];
           }
           if (jsonString['id_centro_gest_parent']) {
-            form[2]['selected'] = jsonString['id_centro_gest_parent'];
+            form[3]['selected'] = jsonString['id_centro_gest_parent'];
           }
           if (jsonString['id_responsabile']) {
-            form[3]['selected'] = jsonString['id_responsabile'];
+            form[4]['selected'] = jsonString['id_responsabile'];
           }
           if (jsonString['flag_grc_controller'] === '1') {
             form[5]['value'] = 'true';
@@ -185,14 +193,19 @@ if (id === '') {
       });
     });
   } else {  //NEW element
-    var jsonObj = JSON.stringify(form);
-    var response = {
+    client.connect();
+    client.query(queryString_next, function (err, result) {
+      client.end();
+      form 
+      var jsonObj = JSON.stringify(form);
+      var response = {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
         "body": jsonObj,
         "isBase64Encoded": false
-    };
-    callback(null, response);
+      };
+      callback(null, response);
+    });
   }
 }
 };

@@ -18,72 +18,7 @@ export class SelectedElementComponent implements OnInit {
   n = 1;
   tot = 50;
   
-  regConfig_it: FieldConfig[] = [
-    {
-      type: 'input',
-      label: 'Codice',
-      inputType: 'text',
-      name: 'code',
-      value: '',
-      validations: [
-        {
-          name: 'required',
-          validator: Validators.required,
-          message: 'Codice mancante'
-        },
-        {
-          name: 'pattern',
-          validator: Validators.pattern('^[a-zA-Z]+$'),
-          message: 'Accetta solo testo senza spazi'
-        }
-      ]
-    },
-    {
-        type: 'input',
-        label: 'Descrizione',
-        inputType: 'text',
-        name: 'Description',
-        value: '',
-        validations: [
-          {
-            name: 'required',
-            validator: Validators.required,
-            message: 'Descrizione mancante'
-          },
-        ]
-      },
-      {
-        type: 'combobox',
-        label: 'Centro gestionale di livello superiore',
-        name: 'superiore',
-        options: []
-      },
-      {
-        type: 'combobox',
-        label: 'Responsabile',
-        name: 'responsabile',
-        options: []
-      },
-      {
-        type: 'combobox',
-        label: 'Utente Referente',
-        name: 'referente',
-        options: []
-      },
-      {
-        type: 'checkbox',
-        label: 'Supervisore di tutti i sondaggi',
-        name: 'check_supervisore',
-        value: false
-      },
-      {
-        type: 'checkbox',
-        label: 'Gestore di tutti i modelli di test',
-        name: 'check_gestore',
-        value: false
-      }
-    ];
-
+  regConfig_it: FieldConfig[] = []; 
   id: string;
   codice_part: string;
   isLoading = true;
@@ -101,6 +36,7 @@ export class SelectedElementComponent implements OnInit {
         this.unitsService.getData(this.codice_part, this.id).subscribe(
             results => {
               this.isLoading = false;
+              // console.log(results);
               for (let result of results) {
                   if (result['validations']) {
                   for (let validator of result['validations']) {

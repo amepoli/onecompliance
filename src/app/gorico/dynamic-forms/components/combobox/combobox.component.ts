@@ -6,8 +6,8 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'combobox',
   template: `
-<mat-form-field style="width:100%;">
-<mat-select [formControl]="itemCtrl" [placeholder]="field.label">
+<mat-form-field style="width:100%;" [formGroup]="group">
+<mat-select [ngModel]="field.value" [formControlName]="field.name" [placeholder]="field.label">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
 <mat-option *ngFor="let item of filteredItems | async" [value]="item">{{item.name}}</mat-option>
 </mat-select>
@@ -18,9 +18,6 @@ import { takeUntil } from 'rxjs/operators';
 export class ComboboxComponent implements OnInit, OnDestroy {
   field: FieldConfig;
   group: FormGroup;
-
-  /** control for the selected bank */
-  public itemCtrl: FormControl = new FormControl();
 
   /** control for the MatSelect filter keyword */
   public itemFilterCtrl: FormControl = new FormControl();
@@ -36,12 +33,12 @@ export class ComboboxComponent implements OnInit, OnDestroy {
   ngOnInit() {
     
     if (this.field.selected) {
-        const selected = this.field.options.find(x => x.id === this.field.selected);
-        this.itemCtrl.setValue(selected);
+        this.field.value = this.field.options.find(x => x.id === this.field.selected);
     }
-    
+
       // load the initial bank list
     this.filteredItems.next(this.field.options.slice());
+    
     // listen for search field value changes
     this.itemFilterCtrl.valueChanges
       .pipe(takeUntil(this._onDestroy))

@@ -12,6 +12,7 @@ export interface FieldConfig {
   label?: string;
   name?: string;
   inputType?: string;
+  readonly?: boolean;
   options?: Item[];
   collections?: any;
   type: string;
