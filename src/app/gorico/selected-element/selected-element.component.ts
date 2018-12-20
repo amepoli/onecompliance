@@ -60,6 +60,13 @@ export class SelectedElementComponent implements OnInit {
 
   submit(value: any) {
       console.log(value);
+      if (this.id === 'NEW') {
+          this.unitsService.pushData(this.codice_part, value).subscribe(
+              result => {
+                  console.log(result);
+              }
+          );
+      }
   }
 
 }

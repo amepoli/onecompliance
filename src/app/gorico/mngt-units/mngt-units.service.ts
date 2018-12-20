@@ -12,15 +12,25 @@ export class MngtUnitsService {
 
   private apiName = 'gorico';
   private path = '/management-units'; 
-  private myInit = { // OPTIONAL
+  private myGetInit = { // OPTIONAL
         headers: {
         }, // OPTIONAL
         response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
         queryStringParameters: {  // OPTIONAL
-           codice_part: 'DEMO', // TODO: parametric, depending on user
+           codice_part: 'DEMO', 
            id: '' 
         }
   };
+
+  private myPutPostInit = { // OPTIONAL
+    body: {
+    },
+    headers: {
+    }, // OPTIONAL
+    queryStringParameters: {  // OPTIONAL
+       codice_part: 'DEMO' 
+    }
+};
 
   constructor(private amplifyService: AmplifyService) { 
   }
@@ -28,11 +38,19 @@ export class MngtUnitsService {
   getData(codice_part: string, id: string): Observable<any> {
     this.amplifyService.auth();
 
-    this.myInit.queryStringParameters.codice_part = codice_part;
-    this.myInit.queryStringParameters.id = id;
+    this.myGetInit.queryStringParameters.codice_part = codice_part;
+    this.myGetInit.queryStringParameters.id = id;
 
-    return from(this.amplifyService.api().get(this.apiName, this.path, this.myInit))
+    return from(this.amplifyService.api().get(this.apiName, this.path, this.myGetInit))
            .pipe(map(res => res['data']));
   }
-}
 
+  pushData(codice_part: string, jsonData: any): Observable<any> { 
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters.codice_part = codice_part;
+    this.myPutPostInit.body = jsonData;
+
+    return from(this.amplifyService.api().put(this.apiName, this.path, this.myPutPostInit));
+          // .pipe(map(res => res['data']));
+  }
+}
