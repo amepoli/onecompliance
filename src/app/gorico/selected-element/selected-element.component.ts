@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import 'rxjs/add/operator/filter';
 import { MngtUnitsService } from '../mngt-units/mngt-units.service';
 
@@ -21,10 +21,12 @@ export class SelectedElementComponent implements OnInit {
   regConfig_it: FieldConfig[] = []; 
   id: string;
   codice_part: string;
+  table: string;
   isLoading = true;
 
   constructor(private unitsService: MngtUnitsService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute,
+              private router: Router) { }
   
   ngOnInit() {
     this.route.queryParams
@@ -32,6 +34,7 @@ export class SelectedElementComponent implements OnInit {
       .subscribe(params => {
         this.id = params.id;
         this.codice_part = params.part;
+        this.table = params.table;
         console.log(params);
         
         this.unitsService.getData(this.codice_part, this.id).subscribe(
@@ -67,6 +70,15 @@ export class SelectedElementComponent implements OnInit {
               }
           );
       }
+  }
+
+  delElement() {
+    this.unitsService.deleteData(this.codice_part, this.id).subscribe(
+      result => {
+        console.log(result);
+        this.router.navigate(['/gorico/' + this.table]);
+      }
+    )
   }
 
 }
