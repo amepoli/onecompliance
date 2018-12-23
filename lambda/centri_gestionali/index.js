@@ -135,7 +135,32 @@ var queryString_anagr=
 var queryString_next = 
 `SELECT (MAX(id_centro_gest)+1) as prossimo from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
 
-
+if (event.httpMethod === "DELETE") {
+  var deleteString = `DELETE FROM entrasp.centri_gestionali
+      WHERE codice_part='${codice_part}' AND id_centro_gest='${id}';`;
+  let client;
+  pool.connect().then(c => {
+        client = c;
+        return client.query(deleteString);
+    }).then(res => {
+      client.release();
+      var response = {
+          "statusCode": 200,
+          "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
+          "isBase64Encoded": false,
+          "body": JSON.stringify(res.rows)
+      };
+      callback(null, response);
+    }).catch(error => {
+        console.log("ERROR", error);
+        const response =  {
+            "isBase64Encoded": false,
+            "statusCode": 500,
+            "body": JSON.stringify(error)
+        };
+        callback(null, response);
+    });
+}
 
 if (event.httpMethod === "PUT") {
   
