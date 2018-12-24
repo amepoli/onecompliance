@@ -69,6 +69,12 @@ export class SelectedElementComponent implements OnInit {
                   console.log(result);
               }
           );
+      } else {
+        this.unitsService.updateData(this.codice_part, value).subscribe(
+          result => {
+            console.log(result);
+          }
+        )
       }
   }
 

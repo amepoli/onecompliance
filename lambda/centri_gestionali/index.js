@@ -135,6 +135,45 @@ var queryString_anagr=
 var queryString_next = 
 `SELECT (MAX(id_centro_gest)+1) as prossimo from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
 
+if (event.httpMethod === "POST") {
+  var body = JSON.parse(event.body.toString());
+  body.flag_grc_controller = (body.flag_grc_controller == true) ? 1 : 0;
+  body.flag_grc_gestore = (body.flag_grc_gestore == true) ? 1 : 0;
+  var updateString = `
+    UPDATE entrasp.centri_gestionali
+    SET codice = '${body['codice']}',
+        descrizione = '${body['descrizione']}',
+        id_centro_gest_parent = ${body.superiore.id},
+        id_responsabile = ${body.responsabile.id},
+        flag_grc_controller = ${body['flag_grc_controller']},
+        flag_grc_gestore = ${body['flag_grc_gestore']}
+    WHERE codice_part='${codice_part}' AND id_centro_gest='${body['id_centro_gest']}'`;
+    console.log(updateString);
+  let client;
+  pool.connect().then(c => {
+        client = c;
+        return client.query(updateString);
+    }).then(res => {
+        client.release();
+        var response = {
+            "statusCode": 200,
+            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
+            "isBase64Encoded": false,
+            "body": JSON.stringify(res.rows)
+        };
+        console.log(response);
+        callback(null, response);
+    }).catch(error => {
+        console.log("ERROR", error);
+        const response =  {
+            "isBase64Encoded": false,
+            "statusCode": 500,
+            "body": JSON.stringify(error)
+        };
+        callback(null, response);
+    });
+}
+
 if (event.httpMethod === "DELETE") {
   var deleteString = `DELETE FROM entrasp.centri_gestionali
       WHERE codice_part='${codice_part}' AND id_centro_gest='${id}';`;

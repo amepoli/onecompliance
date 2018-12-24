@@ -60,4 +60,11 @@ export class MngtUnitsService {
     this.myGetInit.queryStringParameters.id = id;
     return from(this.amplifyService.api().del(this.apiName, this.path, this.myGetInit));
   }
+
+  updateData(codice_part: string, jsonData: any): Observable<any> { 
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters.codice_part = codice_part;
+    this.myPutPostInit.body = jsonData;
+    return from(this.amplifyService.api().post(this.apiName, this.path, this.myPutPostInit));
+  }
 }
