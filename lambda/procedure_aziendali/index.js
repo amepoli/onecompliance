@@ -27,7 +27,7 @@ var form = [
       type: 'input',
       label: 'ID',
       inputType: 'text',
-      name: 'id_centro_gest',
+      name: 'id_procedura',
       value: '',
       readonly: 'true'
     },
@@ -53,6 +53,21 @@ var form = [
     },
     {
         type: 'input',
+        label: 'Descrizione breve',
+        inputType: 'text',
+        name: 'descrizione_breve',
+        value: '',
+        readonly: 'false',
+        validations: [
+          {
+            name: 'required',
+            validator: 'Validators.required',
+            message: 'Descrizione mancante'
+          },
+        ]
+      },
+    	{
+        type: 'input',
         label: 'Descrizione',
         inputType: 'text',
         name: 'descrizione',
@@ -68,52 +83,44 @@ var form = [
       },
       {
         type: 'combobox',
-        label: 'Centro gestionale di livello superiore',
-        name: 'superiore',
+        label: 'Centro gestionale responsabile',
+        name: 'id_centro_gest',
         value: '',
         selected: '',
         options: []
       },
-      {
+	  {
         type: 'combobox',
-        label: 'Responsabile',
-        name: 'responsabile',
+        label: 'Stato attuazione',
+        name: 'stato_attuazione',
         value: '',
         selected: '',
         options: []
       },
-      {
-        type: 'checkbox',
-        label: 'Supervisore di tutti i sondaggi',
-        name: 'flag_grc_controller',
-        value: false
+	  {
+        type: 'combobox',
+        label: 'Tipo procedura',
+        name: 'tipo_procedura',
+        value: '',
+        selected: '',
+        options: []
       },
-      {
-        type: 'checkbox',
-        label: 'Gestore di tutti i modelli di test',
-        name: 'flag_grc_gestore',
-        value: false
-      }
-    ];
+	  {
+        type: 'combobox',
+        label: 'Tipo processo',
+        name: 'id_tipo_processo',
+        value: '',
+        selected: '',
+        options: []
+      }     
+	  
+	  ;
 
 
 var queryString = 
-`SELECT centri_1.id_centro_gest AS ID, centri_1.codice, centri_1.descrizione, 
-anagr.codice || ' - ' || anagr.cognome || ' ' || anagr.nome  as responsabile,
-centri_1.ute_ref as Referente, centri_1.parente
-FROM 
-(SELECT *, NULL as parente FROM entrasp.centri_gestionali WHERE codice_part='${codice_part}' AND id_centro_gest_parent IS NULL
-UNION
-SELECT centri_3.*, centri_2.descrizione as parente
- FROM entrasp.centri_gestionali CENTRI_2 
- JOIN entrasp.centri_gestionali CENTRI_3 
- ON centri_2.id_centro_gest = centri_3.id_centro_gest_parent
- WHERE centri_2.codice_part='${codice_part}' AND centri_3.codice_part='${codice_part}') 
- AS CENTRI_1
-JOIN entrasp.anagrafiche_id  ANAGR
-ON id_responsabile=id_anagrafica
-WHERE centri_1.codice_part='${codice_part}' AND anagr.codice_part='${codice_part}'
-ORDER BY ID;`;
+`SELECT procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('DEMO',procedure_aziendali.id_centro_gest)
+FROM entrasp.procedure_aziendali
+ WHERE codice_azienda='DEMO';`;
 
 var queryString_new =
 `SELECT cg.id_centro_gest, CG.codice, CG.descrizione, 
