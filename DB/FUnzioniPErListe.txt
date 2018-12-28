@@ -1,0 +1,171 @@
+
+  /* FUNZIONE 2 
+  FUNZIONE 2*/
+
+  CREATE OR REPLACE FUNCTION entrasp.MdT_codTitolo(
+    codice_azienda text,
+    id_mdt numeric)
+  RETURNS text AS
+$BODY$
+SELECT 
+codice || ' - ' || titolo
+FROM 
+  entrasp.modelli_test
+
+WHERE 
+  codice_azienda=$1 AND
+  id_modello_test=$2
+$BODY$
+  LANGUAGE sql VOLATILE
+  COST 100;
+ALTER FUNCTION entrasp.MdT_codTitolo(text, numeric)
+  OWNER TO postgres;
+
+  /* FUNZIONE 1 
+  FUNZIONE 1*/
+
+CREATE OR REPLACE FUNCTION entrasp.centri_gestionali_descr(
+    codicepart text,
+    idcg numeric)
+  RETURNS text AS
+$BODY$
+SELECT 
+descrizione
+FROM 
+  entrasp.centri_gestionali
+
+WHERE 
+  codice_part=$1 AND
+  id_centro_gest=$2
+$BODY$
+  LANGUAGE sql VOLATILE
+  COST 100;
+ALTER FUNCTION entrasp.centri_gestionali_descr(text, numeric)
+  OWNER TO postgres;
+  
+    /* FUNZIONE 3 
+  FUNZIONE 3*/
+
+  
+CREATE OR REPLACE FUNCTION entrasp.anagrafiche_id_codcognnome(
+    codicepart text,
+    idanagrafica numeric)
+  RETURNS text AS
+$BODY$
+SELECT 
+codice || ' - ' || cognome || ' ' || nome  
+FROM 
+  entrasp.anagrafiche_id
+
+WHERE 
+  codice_part=$1 AND
+  id_anagrafica=$2
+$BODY$
+  LANGUAGE sql VOLATILE
+  COST 100;
+ALTER FUNCTION entrasp.anagrafiche_id_codcognnome(text, numeric)
+  OWNER TO postgres;
+
+    /* FUNZIONE 4 
+  FUNZIONE 4*/
+  
+CREATE OR REPLACE FUNCTION entrasp.cpl_giudizi_verifiche_descrizione(
+    codiceAzienda text,
+    idGiudizio numeric)
+  RETURNS text AS
+$BODY$
+SELECT 
+descrizione
+FROM 
+  entrasp.cpl_giudizi_verifiche
+
+WHERE 
+  codice_azienda=$1 AND
+  id_giudizio=$2
+$BODY$
+  LANGUAGE sql VOLATILE
+  COST 100;
+ALTER FUNCTION entrasp.cpl_giudizi_verifiche_descrizione(text, numeric)
+  OWNER TO postgres;
+
+    /* FUNZIONE 5 
+  FUNZIONE 5*/
+  
+CREATE OR REPLACE FUNCTION entrasp.cpl_soglie_descrizione(
+    codiceAzienda text,
+    tipoSoglia text,
+	valore numeric)
+  RETURNS text AS
+$BODY$
+SELECT 
+descrizione
+FROM 
+  entrasp.cpl_soglie
+
+WHERE 
+  codice_azienda=$1 AND
+  tipo_soglia=$2 AND
+  valore between soglia_da AND soglia_a
+$BODY$
+  LANGUAGE sql VOLATILE
+  COST 100;
+ALTER FUNCTION entrasp.cpl_soglie_descrizione(text, text, numeric)
+  OWNER TO postgres;
+
+  
+/* QUERY 1 
+	CENTRI GESTIONALI*/
+SELECT cg.id_centro_gest, CG.codice, CG.descrizione, 
+entrasp.anagrafiche_id_codcognnome('DEMO',cg.id_responsabile) as responsabile,
+cg.ute_ref,
+entrasp.centri_gestionali_descr('DEMO',cg.id_centro_gest_parent) as parente
+FROM entrasp.centri_gestionali CG WHERE cg.codice_part='DEMO';
+
+/* QUERY 2 
+	MODELLI DI TEST 2*/
+select codice, id_modello_test, titolo, entrasp.centri_gestionali_descr('DEMO',id_centro_gest), stato 
+from entrasp.modelli_test 
+WHERE codice_azienda='DEMO';
+ 
+/* QUERY 3 
+	SONDAGGI */
+ select sondaggi.codice_azienda, sondaggi.id_sondaggio, sondaggi.data_comp, sondaggi.data_prevista, sondaggi.data_esecuzione, sondaggi.titolo, entrasp.MdT_codTitolo('DEMO', sondaggi.id_modello_test), entrasp.centri_gestionali_descr('DEMO',sondaggi.id_centro_gest), entrasp.cpl_giudizi_verifiche_descrizione('DEMO', cpl_risultati.id_risultato), sondaggi.stato 
+FROM entrasp.sondaggi, entrasp.cpl_risultati 
+WHERE sondaggi.codice_azienda='DEMO' AND sondaggi.id_sondaggio = cpl_risultati.id_sondaggio AND sondaggi.codice_azienda = cpl_risultati.codice_azienda;
+
+/* QUERY 4 
+	PROCEDURE AZIENDALI */	
+SELECT procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('DEMO',procedure_aziendali.id_centro_gest)
+FROM entrasp.procedure_aziendali
+ WHERE codice_azienda='DEMO';  
+
+/* QUERY 5 
+	RISCHI */	
+
+SELECT 
+codice_azienda, codice_rischio, titolo,  entrasp.centri_gestionali_descr('DEMO',rischi.id_centro_gest), 
+entrasp.cpl_soglie_descrizione('DEMO', 'T', intensita_totale_pre), 
+entrasp.cpl_soglie_descrizione('DEMO', 'T', intensita_totale_post), 
+entrasp.cpl_soglie_descrizione('DEMO', 'T', intensita_totale_post_rilevata)
+FROM 
+  entrasp.rischi
+ WHERE codice_azienda='DEMO';
+ 
+ /* QUERY 6 DIPENDENTI */
+ SELECT 
+  anagrafiche_id.id_anagrafica, 
+  anagrafiche_id.codice, 
+  anagrafiche_id.cognome, 
+  anagrafiche_id.nome, 
+  ruoli_anagrafiche.codice_part
+FROM 
+  entrasp.anagrafiche_id, 
+  entrasp.ruoli, 
+  entrasp.ruoli_anagrafiche
+WHERE 
+  anagrafiche_id.codice_part = ruoli_anagrafiche.codice_part AND
+  ruoli_anagrafiche.codice_ruolo = ruoli.codice_ruolo AND
+  ruoli.codice_ruolo ='DIP' AND
+  anagrafiche_id.codice_part='DEMO' ;
+
+ 
