@@ -218,8 +218,8 @@ var queryString_next =
 `SELECT (MAX(id_centro_gest)+1) as prossimo from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
 
 if (event.httpMethod === "DELETE") {
-  var deleteString = `DELETE FROM entrasp.centri_gestionali
-      WHERE codice_part='${codice_part}' AND id_centro_gest='${id}';`;
+  var deleteString = `DELETE FROM entrasp.procedure_aziendali
+      WHERE codice_azienda='${codice_azienda}' AND id_procedura='${id}';`;
   let client;
   pool.connect().then(c => {
         client = c;
