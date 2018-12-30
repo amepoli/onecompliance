@@ -76,6 +76,7 @@ export class SelectedElementComponent implements OnInit {
           }
         )
       }
+      this.router.navigate(['/gorico/' + this.table]);
   }
 
   delElement() {

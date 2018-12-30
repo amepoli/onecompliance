@@ -116,10 +116,9 @@ WHERE centri_1.codice_part='${codice_part}' AND anagr.codice_part='${codice_part
 ORDER BY ID;`;
 
 var queryString_new =
-`SELECT cg.id_centro_gest, CG.codice, CG.descrizione, 
-entrasp.anagrafiche_id_codcognnome('${codice_part}',cg.id_responsabile) as responsabile,
-cg.ute_ref,
-entrasp.centri_gestionali_descr('${codice_part}',cg.id_centro_gest_parent) as parente
+`SELECT cg.id_centro_gest as ID, CG.codice as Codice, CG.descrizione as Descrizione, 
+entrasp.anagrafiche_id_codcognnome('${codice_part}',cg.id_responsabile) as Responsabile,
+entrasp.centri_gestionali_descr('${codice_part}',cg.id_centro_gest_parent) as Parente
 FROM entrasp.centri_gestionali CG WHERE cg.codice_part='${codice_part}';`
 
 var queryString_element = 

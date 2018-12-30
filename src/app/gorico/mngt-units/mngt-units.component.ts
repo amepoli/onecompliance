@@ -15,7 +15,7 @@ export class MngtUnitsComponent implements OnInit {
 
   private mngtUnits: MngtUnit[];
   // displayedColumns = ['id', 'codice', 'descrizione', 'responsabile', 'referente', 'parente'];
-  displayedColumns = ['id_centro_gest', 'codice', 'descrizione', 'responsabile', 'ute_ref', 'parente'];
+  displayedColumns = ['ID', 'Codice', 'Descrizione', 'Responsabile', 'Parente'];
   dataSource: MatTableDataSource<any>;
   selectedRow: MatRow = null;
   isLoading = true;
@@ -36,6 +36,7 @@ export class MngtUnitsComponent implements OnInit {
 
     this.unitsService.getData(this.codice_part, '').subscribe(
       results => {
+        console.log(results);
         this.mngtUnits = results;
         this.dataSource = new MatTableDataSource(this.mngtUnits);
         this.dataSource.paginator = this.paginator;
@@ -59,7 +60,7 @@ export class MngtUnitsComponent implements OnInit {
     getRecord(row: MatRow) {
         console.log(row);
         this.selectedRow = row;
-        const id = row['id_centro_gest'];
+        const id = row['id'];
         const table = this.router.url.split('/', 3)[2];
         setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: { table: table, part: this.codice_part,
             id: id } }); }, 50);

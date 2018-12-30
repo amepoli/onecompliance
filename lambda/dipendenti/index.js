@@ -27,7 +27,7 @@ var form = [
       type: 'input',
       label: 'ID',
       inputType: 'text',
-      name: 'id_centro_gest',
+      name: 'id_anagrafica',
       value: '',
       readonly: 'true'
     },
@@ -52,79 +52,68 @@ var form = [
       ]
     },
     {
-        type: 'input',
-        label: 'Descrizione',
-        inputType: 'text',
-        name: 'descrizione',
-        value: '',
-        readonly: 'false',
-        validations: [
-          {
-            name: 'required',
-            validator: 'Validators.required',
-            message: 'Descrizione mancante'
-          },
-        ]
-      },
-      {
-        type: 'combobox',
-        label: 'Centro gestionale di livello superiore',
-        name: 'superiore',
-        value: '',
-        selected: '',
-        options: []
-      },
-      {
-        type: 'combobox',
-        label: 'Responsabile',
-        name: 'responsabile',
-        value: '',
-        selected: '',
-        options: []
-      },
-      {
-        type: 'checkbox',
-        label: 'Supervisore di tutti i sondaggi',
-        name: 'flag_grc_controller',
-        value: false
-      },
-      {
-        type: 'checkbox',
-        label: 'Gestore di tutti i modelli di test',
-        name: 'flag_grc_gestore',
-        value: false
-      }
+      type: 'input',
+      label: 'Nome',
+      inputType: 'text',
+      name: 'nome',
+      value: '',
+      readonly: 'false',
+      validations: [
+        {
+          name: 'required',
+          validator: 'Validators.required',
+          message: 'Nome obbligatorio'
+        },
+        {
+          name: 'pattern',
+          validator: '^[a-zA-Z ]+$',
+          message: 'Uso caratteri non ammessi'
+        }
+      ]
+    },
+    {
+      type: 'input',
+      label: 'Cognome',
+      inputType: 'text',
+      name: 'cognome',
+      value: '',
+      readonly: 'false',
+      validations: [
+        {
+          name: 'required',
+          validator: 'Validators.required',
+          message: 'Cognome obbligatorio'
+        },
+        {
+          name: 'pattern',
+          validator: '^[a-zA-Z ]+$',
+          message: 'Uso caratteri non ammessi'
+        }
+      ]
+    }
     ];
 
 
 var queryString = 
-`SELECT centri_1.id_centro_gest AS ID, centri_1.codice, centri_1.descrizione, 
-anagr.codice || ' - ' || anagr.cognome || ' ' || anagr.nome  as responsabile,
-centri_1.ute_ref as Referente, centri_1.parente
+`SELECT 
+anagrafiche_id.id_anagrafica, 
+anagrafiche_id.codice, 
+anagrafiche_id.cognome, 
+anagrafiche_id.nome, 
+ruoli_anagrafiche.codice_part
 FROM 
-(SELECT *, NULL as parente FROM entrasp.centri_gestionali WHERE codice_part='${codice_part}' AND id_centro_gest_parent IS NULL
-UNION
-SELECT centri_3.*, centri_2.descrizione as parente
- FROM entrasp.centri_gestionali CENTRI_2 
- JOIN entrasp.centri_gestionali CENTRI_3 
- ON centri_2.id_centro_gest = centri_3.id_centro_gest_parent
- WHERE centri_2.codice_part='${codice_part}' AND centri_3.codice_part='${codice_part}') 
- AS CENTRI_1
-JOIN entrasp.anagrafiche_id  ANAGR
-ON id_responsabile=id_anagrafica
-WHERE centri_1.codice_part='${codice_part}' AND anagr.codice_part='${codice_part}'
-ORDER BY ID;`;
-
-var queryString_new =
-`SELECT cg.id_centro_gest, CG.codice, CG.descrizione, 
-entrasp.anagrafiche_id_codcognnome('${codice_part}',cg.id_responsabile) as responsabile,
-cg.ute_ref,
-entrasp.centri_gestionali_descr('${codice_part}',cg.id_centro_gest_parent) as parente
-FROM entrasp.centri_gestionali CG WHERE cg.codice_part='${codice_part}';`
+entrasp.anagrafiche_id, 
+entrasp.ruoli, 
+entrasp.ruoli_anagrafiche
+WHERE 
+anagrafiche_id.codice_part = ruoli_anagrafiche.codice_part AND
+ruoli_anagrafiche.codice_ruolo = ruoli.codice_ruolo AND
+ruoli.codice_ruolo ='DIP' AND
+anagrafiche_id.codice_part='${codice_part}' ;`;
 
 var queryString_element = 
 `SELECT id_centro_gest,codice,descrizione,id_centro_gest_parent,id_responsabile,flag_grc_controller,flag_grc_gestore from entrasp.centri_gestionali 
-WHERE codice_part='${codice_part}' AND id_centro_gest='${id}';`
+WHERE codice_part='${codice_part}' AND id_anagrafiche='${id}';`
 
 var queryString_centri=
 `SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
