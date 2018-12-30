@@ -23,99 +23,174 @@ var id = event.queryStringParameters.id;
 
 
 var form = [
-    { 
-      type: 'input',
-      label: 'ID',
-      inputType: 'text',
-      name: 'id_procedura',
-      value: '',
-      readonly: 'true'
-    },
-    {
-      type: 'input',
-      label: 'Codice',
-      inputType: 'text',
-      name: 'codice',
-      value: '',
-      readonly: 'false',
-      validations: [
-        {
-          name: 'required',
-          validator: 'Validators.required',
-          message: 'Codice mancante'
-        },
-        {
-          name: 'pattern',
-          validator: '^[a-zA-Z1-9&_ ]+$',
-          message: 'Uso caratteri non ammessi'
-        }
-      ]
-    },
-    {
-        type: 'input',
-        label: 'Descrizione breve',
-        inputType: 'text',
-        name: 'descrizione_breve',
-        value: '',
-        readonly: 'false',
-        validations: [
-          {
-            name: 'required',
-            validator: 'Validators.required',
-            message: 'Descrizione mancante'
-          },
-        ]
-      },
-    	{
-        type: 'input',
-        label: 'Descrizione',
-        inputType: 'text',
-        name: 'descrizione',
-        value: '',
-        readonly: 'false',
-        validations: [
-          {
-            name: 'required',
-            validator: 'Validators.required',
-            message: 'Descrizione mancante'
-          },
-        ]
-      },
-      {
-        type: 'combobox',
-        label: 'Centro gestionale responsabile',
-        name: 'id_centro_gest',
-        value: '',
-        selected: '',
-        options: []
-      },
-	  {
-        type: 'combobox',
-        label: 'Stato attuazione',
-        name: 'stato_attuazione',
-        value: '',
-        selected: '',
-        options: []
-      },
-	  {
-        type: 'combobox',
-        label: 'Tipo procedura',
-        name: 'tipo_procedura',
-        value: '',
-        selected: '',
-        options: []
-      },
-	  {
-        type: 'combobox',
-        label: 'Tipo processo',
-        name: 'id_tipo_processo',
-        value: '',
-        selected: '',
-        options: []
-      }     
-	  
-	  ;
-
+{type: 'input',
+ label: 'codice_azienda',
+ inputType: 'text',
+ name: 'codice_azienda',
+ value: '',
+ readonly: 'true',
+ isVisible: 'false',
+ newLine: 'true'
+},
+{type: 'input',
+ label: 'codice',
+ inputType: 'text',
+ name: 'codice',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+ validations: [
+{
+name: 'required',
+validator: 'Validators.required',
+message: 'Descrizione mancante'
+}
+]
+},
+{type: 'input',
+ label: 'descrizione_breve',
+ inputType: 'text',
+ name: 'descrizione_breve',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+ validations: [
+{
+name: 'required',
+validator: 'Validators.required',
+message: 'Codice mancante'
+},
+{
+name: 'pattern',
+validator: '^[a-zA-Z1-9&_ ]+$',
+message: 'Uso caratteri non ammessi'
+}
+]
+},
+{type: 'input',
+ label: 'id_procedura',
+ inputType: 'text',
+ name: 'id_procedura',
+ value: '',
+ readonly: 'true',
+ isVisible: 'true',
+ newLine: 'true'
+},
+{type: 'combobox',
+ label: 'id_procedura_parent',
+ inputType: 'text',
+ name: 'id_procedura_parent',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+ options: []
+},
+{type: 'input',
+ label: 'ordinamento',
+ inputType: 'text',
+ name: 'ordinamento',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+},
+{type: 'input',
+ label: 'tree_path',
+ inputType: 'text',
+ name: 'tree_path',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+},
+{type: 'input',
+ label: 'frequenza',
+ inputType: 'text',
+ name: 'frequenza',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+},
+{type: 'input',
+ label: 'strumento_informatico',
+ inputType: 'text',
+ name: 'strumento_informatico',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+},
+{type: 'combobox',
+ label: 'id_centro_gest',
+ inputType: 'text',
+ name: 'id_centro_gest',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+ options: []
+},
+{type: 'input',
+ label: 'codice_part',
+ inputType: 'text',
+ name: 'codice_part',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+},
+{type: 'input',
+ label: 'descrizione',
+ inputType: 'text',
+ name: 'descrizione',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+ validations: [
+{
+name: 'required',
+validator: 'Validators.required',
+message: 'Descrizione mancante'
+}
+]
+},
+{type: 'combobox',
+ label: 'tipo_procedura',
+ inputType: 'text',
+ name: 'tipo_procedura',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+ options: []
+},
+{type: 'combobox',
+ label: 'stato_attuazione',
+ inputType: 'text',
+ name: 'stato_attuazione',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+ options: []
+},
+{type: 'combobox',
+ label: 'id_tipo_processo',
+ inputType: 'text',
+ name: 'id_tipo_processo',
+ value: '',
+ readonly: 'false',
+ isVisible: 'true',
+ newLine: 'true'
+ options: []
+}
+]
+    
 
 var queryString = 
 `SELECT procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('DEMO',procedure_aziendali.id_centro_gest)
@@ -175,13 +250,11 @@ if (event.httpMethod === "PUT") {
   body.flag_grc_controller = (body.flag_grc_controller == true) ? 1 : 0;
   body.flag_grc_gestore = (body.flag_grc_gestore == true) ? 1 : 0;
   
-  var insertNewString = `INSERT INTO entrasp.centri_gestionali 
-        (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro, tree_path, flag_grc_controller, flag_grc_gestore)
-        VALUES
-       ('${codice_part}', ${body['id_centro_gest']}, '${body['codice']}', '${body['descrizione']}', 
-         ${body.superiore.id}, ${body.responsabile.id}, 209, '${body['codice']}', 
-         ${body['flag_grc_controller']}, ${body['flag_grc_gestore']})
-         RETURNING id_centro_gest;`;
+  var insertNewString = `INSERT INTO entrasp.id_tipo_processo
+(codice_azienda, codice, descrizione_breve, id_procedura_parent, ordinamento, tree_path, frequenza, strumento_informatico, id_centro_gest, codice_part, descrizione, tipo_procedura, stato_attuazione, id_tipo_processo)
+Values
+(${body['codice_azienda'], ${body['codice'], ${body['descrizione_breve'], ${body[id_procedura_parent], ${body[ordinamento], ${body['tree_path'], ${body['frequenza'], ${body['strumento_informatico'], ${body[id_centro_gest], ${body['codice_part'], ${body['descrizione'], ${body['tipo_procedura'], ${body['stato_attuazione'], ${body[id_tipo_processo])
+RETURNING id_procedura;`;
          
   console.log(insertNewString);
   let client;
