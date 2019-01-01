@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
 import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
-import { MngtUnit } from './mngt-units.model';
 import { map } from 'rxjs/operators';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class MngtUnitsService {
+export class GenericTableService {
 
   private apiName = 'gorico';
-  private path = '/management-units'; 
+  path = ''; // to ovveride in derived components
   private myGetInit = { // OPTIONAL
         headers: {
         }, // OPTIONAL
@@ -51,7 +50,6 @@ export class MngtUnitsService {
     this.myPutPostInit.body = jsonData;
 
     return from(this.amplifyService.api().put(this.apiName, this.path, this.myPutPostInit));
-          // .pipe(map(res => res['data']));
   }
 
   deleteData(codice_part: string, id: string): Observable<any> {
