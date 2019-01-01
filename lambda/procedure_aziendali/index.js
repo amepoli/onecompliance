@@ -21,188 +21,184 @@ context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prev
 var codice_part = event.queryStringParameters.codice_part;
 var id = event.queryStringParameters.id;
 
+// from this point on I try to generate the lambda in automatic
 
 var form = [
-{type: 'input',
- label: 'codice_azienda',
- inputType: 'text',
- name: 'codice_azienda',
- value: '',
- readonly: 'true',
- isVisible: 'false',
- newLine: 'true'
-},
-{type: 'input',
- label: 'codice',
- inputType: 'text',
- name: 'codice',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
- validations: [
-{
-name: 'required',
-validator: 'Validators.required',
-message: 'Descrizione mancante'
-}
-]
-},
-{type: 'input',
- label: 'descrizione_breve',
- inputType: 'text',
- name: 'descrizione_breve',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
- validations: [
-{
-name: 'required',
-validator: 'Validators.required',
-message: 'Codice mancante'
-},
-{
-name: 'pattern',
-validator: '^[a-zA-Z1-9&_ ]+$',
-message: 'Uso caratteri non ammessi'
-}
-]
-},
-{type: 'input',
- label: 'id_procedura',
- inputType: 'text',
- name: 'id_procedura',
- value: '',
- readonly: 'true',
- isVisible: 'true',
- newLine: 'true'
-},
-{type: 'combobox',
- label: 'id_procedura_parent',
- inputType: 'text',
- name: 'id_procedura_parent',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
- options: []
-},
-{type: 'input',
- label: 'ordinamento',
- inputType: 'text',
- name: 'ordinamento',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
-},
-{type: 'input',
- label: 'tree_path',
- inputType: 'text',
- name: 'tree_path',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
-},
-{type: 'input',
- label: 'frequenza',
- inputType: 'text',
- name: 'frequenza',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
-},
-{type: 'input',
- label: 'strumento_informatico',
- inputType: 'text',
- name: 'strumento_informatico',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
-},
-{type: 'combobox',
- label: 'id_centro_gest',
- inputType: 'text',
- name: 'id_centro_gest',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
- options: []
-},
-{type: 'input',
- label: 'codice_part',
- inputType: 'text',
- name: 'codice_part',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
-},
-{type: 'input',
- label: 'descrizione',
- inputType: 'text',
- name: 'descrizione',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
- validations: [
-{
-name: 'required',
-validator: 'Validators.required',
-message: 'Descrizione mancante'
-}
-]
-},
-{type: 'combobox',
- label: 'tipo_procedura',
- inputType: 'text',
- name: 'tipo_procedura',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
- options: []
-},
-{type: 'combobox',
- label: 'stato_attuazione',
- inputType: 'text',
- name: 'stato_attuazione',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
- options: []
-},
-{type: 'combobox',
- label: 'id_tipo_processo',
- inputType: 'text',
- name: 'id_tipo_processo',
- value: '',
- readonly: 'false',
- isVisible: 'true',
- newLine: 'true'
- options: []
-}
-]
-    
+		{type: 'input',
+		 label: 'codice_azienda',
+		 inputType: 'text',
+		 name: 'codice_azienda',
+		 value: '',
+		 readonly: 'true',
+		 isVisible: 'false',
+		 newLine: 'true'
+		},
+		{type: 'input',
+		 label: 'codice',
+		 inputType: 'text',
+		 name: 'codice',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		 validations: [
+		{
+		name: 'required',
+		validator: 'Validators.required',
+		message: 'Descrizione mancante'
+		}
+		]
+		},
+		{type: 'input',
+		 label: 'descrizione_breve',
+		 inputType: 'text',
+		 name: 'descrizione_breve',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		 validations: [
+		{
+		name: 'required',
+		validator: 'Validators.required',
+		message: 'Codice mancante'
+		},
+		{
+		name: 'pattern',
+		validator: '^[a-zA-Z1-9&_ ]+$',
+		message: 'Uso caratteri non ammessi'
+		}
+		]
+		},
+		{type: 'input',
+		 label: 'id_procedura',
+		 inputType: 'text',
+		 name: 'id_procedura',
+		 value: '',
+		 readonly: 'true',
+		 isVisible: 'true',
+		 newLine: 'true'
+		},
+		{type: 'combobox',
+		 label: 'id_procedura_parent',
+		 inputType: 'text',
+		 name: 'id_procedura_parent',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		 options: []
+		},
+		{type: 'input',
+		 label: 'ordinamento',
+		 inputType: 'text',
+		 name: 'ordinamento',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		},
+		{type: 'input',
+		 label: 'tree_path',
+		 inputType: 'text',
+		 name: 'tree_path',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		},
+		{type: 'input',
+		 label: 'frequenza',
+		 inputType: 'text',
+		 name: 'frequenza',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		},
+		{type: 'input',
+		 label: 'strumento_informatico',
+		 inputType: 'text',
+		 name: 'strumento_informatico',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		},
+		{type: 'combobox',
+		 label: 'id_centro_gest',
+		 inputType: 'text',
+		 name: 'id_centro_gest',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		 options: []
+		},
+		{type: 'input',
+		 label: 'codice_part',
+		 inputType: 'text',
+		 name: 'codice_part',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		},
+		{type: 'input',
+		 label: 'descrizione',
+		 inputType: 'text',
+		 name: 'descrizione',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		 validations: [
+		{
+		name: 'required',
+		validator: 'Validators.required',
+		message: 'Descrizione mancante'
+		}
+		]
+		},
+		{type: 'combobox',
+		 label: 'tipo_procedura',
+		 inputType: 'text',
+		 name: 'tipo_procedura',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		 options: []
+		},
+		{type: 'combobox',
+		 label: 'stato_attuazione',
+		 inputType: 'text',
+		 name: 'stato_attuazione',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		 options: []
+		},
+		{type: 'combobox',
+		 label: 'id_tipo_processo',
+		 inputType: 'text',
+		 name: 'id_tipo_processo',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		 options: []
+		}
 
-var queryString = 
-`SELECT procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('DEMO',procedure_aziendali.id_centro_gest)
-FROM entrasp.procedure_aziendali
- WHERE codice_azienda='DEMO';`;
+    ];
+
+
 
 var queryString_new =
-`SELECT cg.id_centro_gest, CG.codice, CG.descrizione, 
-entrasp.anagrafiche_id_codcognnome('${codice_part}',cg.id_responsabile) as responsabile,
-cg.ute_ref,
-entrasp.centri_gestionali_descr('${codice_part}',cg.id_centro_gest_parent) as parente
-FROM entrasp.centri_gestionali CG WHERE cg.codice_part='${codice_part}';`
+`SELECT procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('DEMO',procedure_aziendali.id_centro_gest)
+FROM entrasp.procedure_aziendali
+WHERE codice_azienda='DEMO'; `
 
 var queryString_element = 
 `SELECT id_centro_gest,codice,descrizione,id_centro_gest_parent,id_responsabile,flag_grc_controller,flag_grc_gestore from entrasp.centri_gestionali 
@@ -217,9 +213,44 @@ var queryString_anagr=
 var queryString_next = 
 `SELECT (MAX(id_centro_gest)+1) as prossimo from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
 
+if (event.httpMethod === "POST") {
+  var body = JSON.parse(event.body.toString());
+  body.flag_grc_controller = (body.flag_grc_controller == true) ? 1 : 0;
+  body.flag_grc_gestore = (body.flag_grc_gestore == true) ? 1 : 0;
+  var updateString = `Update entrasp.procedure_aziendali
+					SET codice_azienda=${body['codice_azienda'], codice=${body['codice'], descrizione_breve=${body['descrizione_breve'], id_procedura_parent=${body[id_procedura_parent], ordinamento=${body[ordinamento], tree_path=${body['tree_path'], frequenza=${body['frequenza'], strumento_informatico=${body['strumento_informatico'], id_centro_gest=${body[id_centro_gest], codice_part=${body['codice_part'], descrizione=${body['descrizione'], tipo_procedura=${body['tipo_procedura'], stato_attuazione=${body['stato_attuazione'], id_tipo_processo=${body[id_tipo_processo], 0=${body['0'], 0=${body['0'], 0=${body['0'], 0=${body['0'], 0=${body['0'], 0=${body['0'], 0=${body['0'], 0=${body['0'], 0=${body['0'], 0=${body['0'], 0=${body['0'], 0=${body['0'], 0=${body['0'], 0=${body['0']
+					WHERE codice_azienda=${body['codice_azienda'] AND id_procedura=${body['id_procedura'];`
+
+    console.log(updateString);
+  let client;
+  pool.connect().then(c => {
+        client = c;
+        return client.query(updateString);
+    }).then(res => {
+        client.release();
+        var response = {
+            "statusCode": 200,
+            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
+            "isBase64Encoded": false,
+            "body": JSON.stringify(res.rows)
+        };
+        console.log(response);
+        callback(null, response);
+    }).catch(error => {
+        console.log("ERROR", error);
+        const response =  {
+            "isBase64Encoded": false,
+            "statusCode": 500,
+            "body": JSON.stringify(error)
+        };
+        callback(null, response);
+    });
+}
+
 if (event.httpMethod === "DELETE") {
   var deleteString = `DELETE FROM entrasp.procedure_aziendali
-      WHERE codice_azienda='${codice_azienda}' AND id_procedura='${id}';`;
+WHERE codice_azienda=${body['codice_azienda'] AND id_procedura=${body['id_procedura'];`
+
   let client;
   pool.connect().then(c => {
         client = c;
@@ -254,7 +285,7 @@ if (event.httpMethod === "PUT") {
 (codice_azienda, codice, descrizione_breve, id_procedura_parent, ordinamento, tree_path, frequenza, strumento_informatico, id_centro_gest, codice_part, descrizione, tipo_procedura, stato_attuazione, id_tipo_processo)
 Values
 (${body['codice_azienda'], ${body['codice'], ${body['descrizione_breve'], ${body[id_procedura_parent], ${body[ordinamento], ${body['tree_path'], ${body['frequenza'], ${body['strumento_informatico'], ${body[id_centro_gest], ${body['codice_part'], ${body['descrizione'], ${body['tipo_procedura'], ${body['stato_attuazione'], ${body[id_tipo_processo])
-RETURNING id_procedura;`;
+RETURNING id_procedura;`
          
   console.log(insertNewString);
   let client;

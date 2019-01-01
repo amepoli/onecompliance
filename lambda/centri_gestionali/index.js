@@ -21,6 +21,7 @@ context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prev
 var codice_part = event.queryStringParameters.codice_part;
 var id = event.queryStringParameters.id;
 
+// from this point on I try to generate the lambda in automatic
 
 var form = [
     { 
