@@ -27,6 +27,7 @@ import { EmployeesModule } from 'app/gorico/employees/employees.module';
 import { MngtUnitsModule } from 'app/gorico/mngt-units/mngt-units.module';
 import { SelectedElementModule } from 'app/gorico/selected-element/selected-element.module';
 import {AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
+import { GenericTableModule } from './gorico/generic-table/generic-table.module';
 
 const appRoutes: Routes = [
     {

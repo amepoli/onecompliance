@@ -4,7 +4,7 @@ import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import 'rxjs/add/operator/filter';
-import { MngtUnitsService } from '../mngt-units/mngt-units.service';
+import { GenericTableService } from '../generic-table/generic-table.service';
 
 
 @Component({
@@ -24,7 +24,7 @@ export class SelectedElementComponent implements OnInit {
   table: string;
   isLoading = true;
 
-  constructor(private unitsService: MngtUnitsService,
+  constructor(private unitsService: GenericTableService,
               private route: ActivatedRoute,
               private router: Router) { }
   
