@@ -4,6 +4,5 @@ export interface MngtUnit {
     codice: string;
     descrizione: string;
     responsabile: string;
-    referente: string;
     parente: string;
   }

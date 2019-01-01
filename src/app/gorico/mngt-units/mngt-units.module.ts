@@ -8,7 +8,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatCard, MatCardModule } from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
+import { MatSortModule } from '@angular/material/sort';
 
 
 const routes = [
@@ -28,7 +29,8 @@ const routes = [
     MatPaginatorModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    MatCardModule
+    MatCardModule,
+    MatSortModule
   ],
   declarations: [MngtUnitsComponent]
 })
