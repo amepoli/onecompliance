@@ -5,7 +5,7 @@ import { Router} from '@angular/router';
 import { AuthService } from 'app/login-page/auth.service';
 
 @Component({
-  selector: 'app-mngt-units',
+  selector: 'mngt-units',
   templateUrl: '../generic-table/generic-table.component.html',
   styleUrls: ['../generic-table/generic-table.component.scss']
 })

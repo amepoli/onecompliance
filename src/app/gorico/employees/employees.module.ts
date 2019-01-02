@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { GenericTableModule } from '../generic-table/generic-table.module';
 import { EmployeesComponent } from './employees.component';
 import { RouterModule } from '@angular/router';
-import { FullListModule } from 'app/gorico/full-list/full-list.module';
 
 const routes = [
     {
@@ -14,8 +13,7 @@ const routes = [
 @NgModule({
   imports: [
     RouterModule.forChild(routes),
-    FullListModule,
-    CommonModule
+    GenericTableModule
   ],
   declarations: [EmployeesComponent]
 })

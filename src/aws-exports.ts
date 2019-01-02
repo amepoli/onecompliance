@@ -9,7 +9,7 @@ const awsmobile =  {
     "aws_cloud_logic_custom": [
         {
             "name": "gorico",
-            "endpoint": "https://hg8c0zzl82.execute-api.eu-central-1.amazonaws.com/Prod",
+            "endpoint": "https://qovyfcdvfj.execute-api.eu-central-1.amazonaws.com/Prod",
             "region": "eu-central-1"
         }
     ]
