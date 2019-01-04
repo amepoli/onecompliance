@@ -35,7 +35,7 @@ export const navigation: FuseNavigation[] = [
                 translate: 'NAV.PROCESSES',
                 icon: 'build',
                 type : 'item',
-                url  : '/login'
+                url  : '/gorico/processes'
             },
             {
                 id       : 'workflow',

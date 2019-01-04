@@ -32,8 +32,8 @@ export class ComboboxComponent implements OnInit, OnDestroy {
   constructor() {}
   ngOnInit() {
     
-    if (this.field.selected) {
-        this.field.value = this.field.options.find(x => x.id === this.field.selected);
+    if (this.field.value) {
+        this.field.value = this.field.options.find(x => x.id === this.field.value);
     }
 
       // load the initial bank list

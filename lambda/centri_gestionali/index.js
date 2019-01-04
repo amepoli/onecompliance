@@ -72,7 +72,6 @@ var form = [
         label: 'Centro gestionale di livello superiore',
         name: 'superiore',
         value: '',
-        selected: '',
         options: []
       },
       {
@@ -80,7 +79,6 @@ var form = [
         label: 'Responsabile',
         name: 'responsabile',
         value: '',
-        selected: '',
         options: []
       },
       {
@@ -296,10 +294,10 @@ if (id === '') {
             form[2]['value'] = jsonString['descrizione'];
           }
           if (jsonString['id_centro_gest_parent']) {
-            form[3]['selected'] = jsonString['id_centro_gest_parent'];
+            form[3]['value'] = jsonString['id_centro_gest_parent'];
           }
           if (jsonString['id_responsabile']) {
-            form[4]['selected'] = jsonString['id_responsabile'];
+            form[4]['value'] = jsonString['id_responsabile'];
           }
           if (jsonString['flag_grc_controller'] === '1') {
             form[5]['value'] = 'true';
