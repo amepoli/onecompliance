@@ -4,7 +4,7 @@ import { FieldConfig } from "../../field.interface";
 @Component({
   selector: "app-textarea",
   template: `
-<mat-form-field *ngIf="field.isVisible != 'false'" style="width:100%;" [formGroup]="group">
+<mat-form-field *ngIf="field.isVisible != 'false'" [ngStyle]="{'margin-right': '10px', 'margin-left': '10px','width': field.newLine != 'false' ? '100%' : ''}" [formGroup]="group">
 <mat-label>{{field.name}}</mat-label>
 <textarea matInput [formControlName]="field.name" [readonly]="field.readonly" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5"></textarea>
 <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">

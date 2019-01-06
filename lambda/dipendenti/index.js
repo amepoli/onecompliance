@@ -57,6 +57,7 @@ var form = [
       name: 'nome',
       value: '',
       readonly: 'false',
+      newLine: 'false',
       validations: [
         {
           name: 'required',
@@ -77,6 +78,7 @@ var form = [
       name: 'cognome',
       value: '',
       readonly: 'false',
+      newLine: 'false',
       validations: [
         {
           name: 'required',
