@@ -13,6 +13,7 @@ import { CheckboxComponent } from './components/checkbox/checkbox.component';
 import { DynamicFieldDirective } from './components/dynamic-field/dynamic-field.directive';
 import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.component';
 import { ComboboxComponent } from './components/combobox/combobox.component';
+import { TextAreaComponent } from './components/textarea/textarea.component';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 @NgModule({
@@ -25,7 +26,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     CheckboxComponent,
     DynamicFieldDirective,
     DynamicFormComponent,
-    ComboboxComponent
+    ComboboxComponent,
+    TextAreaComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +46,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     CheckboxComponent,
     DynamicFieldDirective,
     DynamicFormComponent,
-    ComboboxComponent
+    ComboboxComponent,
+    TextAreaComponent
   ], 
   entryComponents: [
     InputComponent,
@@ -53,7 +56,8 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     DateComponent,
     RadiobuttonComponent,
     CheckboxComponent,
-    ComboboxComponent
+    ComboboxComponent,
+    TextAreaComponent
   ],
   providers: []
 })

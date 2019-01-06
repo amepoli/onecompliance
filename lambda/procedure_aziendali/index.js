@@ -24,91 +24,91 @@ var id = event.queryStringParameters.id;
 // from this point on I try to generate the lambda in automatic
 
 var form = [
-		{
+	{
       type: 'input',
-		  label: 'Codice azienda',
-		  inputType: 'text',
-		  name: 'codice_azienda',
-		  value: '',
-		  readonly: 'true',
-		  isVisible: 'false',
-		  newLine: 'true'
+	  label: 'Codice azienda',
+      inputType: 'text',
+	  name: 'codice_azienda',
+	  value: '',
+	  readonly: 'true',
+	  isVisible: 'false',
+	  newLine: 'true'
     },
     {
       type: 'input',
       label: 'ID procedura',
-		  inputType: 'text',
-		  name: 'id_procedura',
-		  value: '',
-		  readonly: 'true',
-		  isVisible: 'true',
-		  newLine: 'true'
+	  inputType: 'text',
+	  name: 'id_procedura',
+	  value: '',
+	  readonly: 'true',
+	  isVisible: 'true',
+	  newLine: 'true'
     },
     {
       type: 'combobox',
-		  label: 'Procedura principale',
-		  inputType: 'text',
-		  name: 'id_procedura_parent',
-		  value: '',
-		  readonly: 'false',
-		  isVisible: 'true',
-		  newLine: 'true',
-		  options: []
-		},
-		{
+	  label: 'Procedura principale',
+	  inputType: 'text',
+	  name: 'id_procedura_parent',
+	  value: '',
+	  readonly: 'false',
+	  isVisible: 'true',
+	  newLine: 'true',
+	  options: []
+	},
+	{
       type: 'input',
-		  label: 'Codice',
-		  inputType: 'text',
-		  name: 'codice',
-		  value: '',
-		  readonly: 'false',
-		  isVisible: 'true',
-		  newLine: 'true',
-		  validations: [
-		  {
-		    name: 'required',
-		    validator: 'Validators.required',
-		    message: 'Codice mancante'
-		  }
-		  ]
-		},
-		{
+	  label: 'Codice',
+	  inputType: 'text',
+	  name: 'codice',
+	  value: '',
+	  readonly: 'false',
+	  isVisible: 'true',
+	  newLine: 'true',
+	  validations: [
+	    {
+	      name: 'required',
+	      validator: 'Validators.required',
+	      message: 'Codice mancante'
+	    }
+	  ]
+    },
+    {
       type: 'input',
-		  label: 'Descrizione breve',
-		  inputType: 'text',
-		  name: 'descrizione_breve',
-		  value: '',
-		  readonly: 'false',
-		  isVisible: 'true',
-		  newLine: 'true',
-		  validations: [
+	  label: 'Descrizione breve',
+	  inputType: 'text',
+	  name: 'descrizione_breve',
+	  value: '',
+	  readonly: 'false',
+	  isVisible: 'true',
+	  newLine: 'true',
+	  validations: [
 		  {
 		    name: 'required',
 		    validator: 'Validators.required',
 		    message: 'Descrizione mancante'
 		  },
-		  {
-		    name: 'pattern',
-		    validator: '^[a-zA-Z1-9&_,.;: ]+$',
-		    message: 'Uso caratteri non ammessi'
-		  }
-		  ]
+	      {
+	        name: 'pattern',
+	        validator: '^[a-zA-Z1-9&_,.;: ]+$',
+	        message: 'Uso caratteri non ammessi'
+	      }   
+	  ]
     },
     {
-      type: 'input',
-		  label: 'Descrizione',
-		  inputType: 'text',
-		  name: 'descrizione',
-		  value: '',
-		  readonly: 'false',
-		  isVisible: 'true',
-		  newLine: 'true',
-		  validations: [{
-		     name: 'required',
-		     validator: 'Validators.required',
-		     message: 'Descrizione mancante'
-		  }]
-		},
+      type: 'textarea',
+	  label: 'Descrizione',
+	  inputType: 'text',
+	  name: 'descrizione',
+	  value: '',
+	  readonly: 'false',
+	  isVisible: 'true',
+	  newLine: 'true',
+	  validations: [{
+		  name: 'required',
+		  validator: 'Validators.required',
+		  message: 'Descrizione mancante'
+	  }]
+    },
 	/*	{
       type: 'input',
 		  label: 'ordinamento',
@@ -146,17 +146,17 @@ var form = [
 		 isVisible: 'true',
 		 newLine: 'true'
 		}, */
-		{
+	{
       type: 'combobox',
-		  label: 'Centro gestionale',
-		  inputType: 'text',
-		  name: 'id_centro_gest',
-		  value: '',
-		  readonly: 'false',
-		  isVisible: 'true',
-		  newLine: 'true', 
-		  options: []
-		},
+	  label: 'Centro gestionale',
+	  inputType: 'text',
+	  name: 'id_centro_gest',
+	  value: '',
+	  readonly: 'false',
+	  isVisible: 'true',
+	  newLine: 'true', 
+	  options: []
+    },
 	/*	{type: 'input',
 		 label: 'codice_part',
 		 inputType: 'text',
@@ -166,47 +166,46 @@ var form = [
 		 isVisible: 'true',
 		 newLine: 'true'
 		},*/
-		{
+	{
       type: 'combobox',
-		  label: 'Tipo procedura',
-		  inputType: 'text',
-		  name: 'tipo_procedura',
-		  value: '',
-		  readonly: 'false',
-		  isVisible: 'true',
-		  newLine: 'true',
-		  options: [
+	  label: 'Tipo procedura',
+	  inputType: 'text',
+	  name: 'tipo_procedura',
+	  value: '',
+	  readonly: 'false',
+	  isVisible: 'true',
+	  newLine: 'true',
+	  options: [
         { id: '0', name: 'Procedura normale' }, 
         { id: '1', name: 'Presidio' }, 
         { id: '2', name: 'Procedura e presidio'}]
-		},
-		{
+	},
+	{
       type: 'combobox',
-		  label: 'Stato attuazione',
-		  inputType: 'text',
-		  name: 'stato_attuazione',
-		  value: '',
-		  readonly: 'false',
-		  isVisible: 'true',
-		  newLine: 'true',
-		  options: [
+	  label: 'Stato attuazione',
+	  inputType: 'text',
+	  name: 'stato_attuazione',
+	  value: '',
+	  readonly: 'false',
+	  isVisible: 'true',
+	  newLine: 'true',
+	  options: [
         { id: '0', name: 'Attivo' }, 
         { id: '1', name: 'In Implementazione' }, 
         { id: '2', name: 'Auspicabile'}]
-		},
-		{
+	},
+	{
       type: 'combobox',
-		  label: 'Tipo processo',
-		  inputType: 'text',
-		  name: 'id_tipo_processo',
-		  value: '',
-		  readonly: 'false',
-		  isVisible: 'true',
-		  newLine: 'true',
-		  options: []
-		}
-
-    ];
+	  label: 'Tipo processo',
+	  inputType: 'text',
+	  name: 'id_tipo_processo',
+	  value: '',
+	  readonly: 'false',
+	  isVisible: 'true',
+	  newLine: 'true',
+	  options: []
+	}
+];
 
 
 

@@ -15,6 +15,7 @@ import { DateComponent } from "../date/date.component";
 import { RadiobuttonComponent } from "../radiobutton/radiobutton.component";
 import { CheckboxComponent } from "../checkbox/checkbox.component";
 import { ComboboxComponent } from "../combobox/combobox.component";
+import { TextAreaComponent } from '../textarea/textarea.component';
 
 const componentMapper = {
   input: InputComponent,
@@ -23,7 +24,8 @@ const componentMapper = {
   date: DateComponent,
   radiobutton: RadiobuttonComponent,
   checkbox: CheckboxComponent,
-  combobox: ComboboxComponent
+  combobox: ComboboxComponent,
+  textarea: TextAreaComponent
 };
 @Directive({
   selector: "[dynamicField]"
