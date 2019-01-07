@@ -31,6 +31,9 @@ export class GenericTableService {
     }
 };
 
+  indexArray: number[];
+  currentIndex: number;
+
   constructor(private amplifyService: AmplifyService) { 
   }
 

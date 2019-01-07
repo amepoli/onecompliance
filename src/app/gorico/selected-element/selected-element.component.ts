@@ -24,11 +24,14 @@ export class SelectedElementComponent implements OnInit {
   table: string;
   isLoading = true;
 
-  constructor(private unitsService: GenericTableService,
+  constructor(private tableService: GenericTableService,
               private route: ActivatedRoute,
               private router: Router) { }
   
   ngOnInit() {
+    this.n = this.tableService.currentIndex + 1;
+    this.tot = this.tableService.indexArray.length;
+
     this.route.queryParams
       .filter(params => params.id)
       .subscribe(params => {
@@ -37,7 +40,7 @@ export class SelectedElementComponent implements OnInit {
         this.table = params.table;
         console.log(params);
         
-        this.unitsService.getData(this.codice_part, this.id).subscribe(
+        this.tableService.getData(this.codice_part, this.id).subscribe(
             results => {
               this.isLoading = false;
               // console.log(results);
@@ -64,13 +67,13 @@ export class SelectedElementComponent implements OnInit {
   submit(value: any) {
       console.log(value);
       if (this.id === 'NEW') {
-          this.unitsService.pushData(this.codice_part, value).subscribe(
+          this.tableService.pushData(this.codice_part, value).subscribe(
               result => {
                   console.log(result);
               }
           );
       } else {
-        this.unitsService.updateData(this.codice_part, value).subscribe(
+        this.tableService.updateData(this.codice_part, value).subscribe(
           result => {
             console.log(result);
           }
@@ -80,7 +83,7 @@ export class SelectedElementComponent implements OnInit {
   }
 
   delElement() {
-    this.unitsService.deleteData(this.codice_part, this.id).subscribe(
+    this.tableService.deleteData(this.codice_part, this.id).subscribe(
       result => {
         console.log(result);
         this.router.navigate(['/gorico/' + this.table]);

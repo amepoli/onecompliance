@@ -5,6 +5,7 @@ import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/mate
 import { Router} from '@angular/router';
 
 import { AuthService } from 'app/login-page/auth.service';
+import { Sort } from 'aws-sdk/clients/alexaforbusiness';
 
 
 @Component({
@@ -22,30 +23,35 @@ export class GenericTableComponent implements OnInit {
 
   codice_part: string;
 
-  mapResponse = (response: any[]) => response.map((p) => ({
-    ID: parseInt( p.id, 10),
-  }));
+  indexArray: number[];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(protected unitsService: GenericTableService,
+  mapResponse = (response: any[]) => response.map((p) => ({
+    ID: parseInt( p.id, 10),
+  }))
+
+  constructor(protected tableService: GenericTableService,
               protected router: Router,
               protected authService: AuthService) { 
-  };
+  }
 
   ngOnInit(): void {
 
+    
+
     this.codice_part = this.authService.getCode();
 
-    this.unitsService.getData(this.codice_part, '').subscribe(
+    this.tableService.getData(this.codice_part, '').subscribe(
       results => {
-        console.log(results);
-
         this.dataSource = new MatTableDataSource(this.mapResponse(results));
         this.dataSource.sort = this.sort;
-        //this.dataSource.sortingDataAccessor = (data, sortHeaderId) => data[sortHeaderId.toLowerCase()];
         this.dataSource.paginator = this.paginator;
+        // triggers any change in displayed datasource, setting the array of indexes
+        this.dataSource.connect().subscribe(d => {
+          this.indexArray = d.map(a => a.ID);
+        });
         this.isLoading = false;
       },
       error => {
@@ -62,14 +68,15 @@ export class GenericTableComponent implements OnInit {
     }
   }
 
-    getRecord(row: MatRow) {
-        console.log(row);
+  getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
         const id = row['ID'];
         const table = this.router.url.split('/', 3)[2];
+        this.tableService.indexArray = this.indexArray;
+        this.tableService.currentIndex = index;
         setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: { table: table, part: this.codice_part,
             id: id } }); }, 50);
-    }
+  }
     
 }
 
