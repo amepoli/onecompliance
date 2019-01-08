@@ -4,7 +4,7 @@ import { FieldConfig } from "../../field.interface";
 @Component({
   selector: "app-checkbox",
   template: `
-<div [ngStyle]="{'margin-right': '10px', 'margin-left': '10px','width': field.newLine != 'false' ? '100%' : ''}" *ngIf="field.isVisible != 'false'" [formGroup]="group" >
+<div [ngStyle]="{'margin-right': '5%', 'margin-left': '5%', 'width': field.width+'%'}" *ngIf="field.isVisible != 'false'" [formGroup]="group" >
 <mat-checkbox [ngModel]="field.value" [formControlName]="field.name">{{field.label}}</mat-checkbox>
 </div>
 `,

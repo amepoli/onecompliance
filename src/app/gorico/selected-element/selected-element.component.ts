@@ -44,24 +44,47 @@ export class SelectedElementComponent implements OnInit {
             results => {
               this.isLoading = false;
               // console.log(results);
+              let sameLineElements: FieldConfig[] = [];
               for (let result of results) {
                   if (result['validations']) {
-                  for (let validator of result['validations']) {
-                     if (validator['name'] === 'required') {
-                        validator['validator'] = Validators.required;
-                     }
-                     if (validator['name'] === 'pattern') {
-                         validator['validator'] = Validators.pattern(validator['validator']);
-                     }
+                   for (let validator of result['validations']) {
+                      if (validator['name'] === 'required') {
+                         validator['validator'] = Validators.required;
+                      }
+                      if (validator['name'] === 'pattern') {
+                          validator['validator'] = Validators.pattern(validator['validator']);
+                      }
+                   }
                   }
+                  if (result['newLine'] === 'false') {
+                     sameLineElements.push(result);
+                  } else {
+                    result.width = this.processInlineElements(sameLineElements);
+                    sameLineElements = [];
                   }
                 }
+              this.processInlineElements(sameLineElements); // handles inline elements of last line
+              sameLineElements = [];
+              console.log(results);
               this.regConfig_it = results; 
             },
             error => {
               this.isLoading = false;
-            });
+          });
       });
+  }
+
+  private processInlineElements (elements: FieldConfig[]) : Number {
+    let numElements = 1 + elements.length; // current + previouses
+    let sumWidths = 0;
+    if (elements.length) { // some elements to put on the same line
+      let singleWidth = Math.floor(100/numElements);
+       for (let element of elements) {
+        element.width = singleWidth  - 10; // considering 10% margins;
+        sumWidths += singleWidth;
+      }
+    }  
+    return (100 - 10 - sumWidths); // considering 10% margins
   }
 
   submit(value: any) {

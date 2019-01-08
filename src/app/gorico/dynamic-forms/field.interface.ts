@@ -15,6 +15,7 @@ export interface FieldConfig {
   readonly?: boolean;
   isVisible?: boolean;
   newLine?: boolean;
+  width?: number;
   options?: Item[];
   collections?: any;
   type: string;
