@@ -114,4 +114,30 @@ export class SelectedElementComponent implements OnInit {
     )
   }
 
+  toElement(target: string) {
+    let indexArray = this.tableService.indexArray;
+    let currentIndex = this.tableService.currentIndex;
+    let targetIndex = currentIndex;
+    if (target === 'first') {
+        targetIndex = 0;
+    }
+    if (target === 'prev') {
+        if (currentIndex > 0) {
+            targetIndex = currentIndex - 1;
+        } 
+    }
+    if (target === 'next') {
+        if (currentIndex < (indexArray.length - 1)) {
+            targetIndex = currentIndex + 1;
+        } 
+    }
+    if (target === 'last') {
+        targetIndex = indexArray.length - 1;
+    }
+
+    this.tableService.currentIndex = targetIndex;
+    this.n = targetIndex + 1;
+    this.router.navigate(['/gorico/details'], { queryParams: { table: this.table, part: this.codice_part, id: indexArray[targetIndex] } });
+  }
+
 }
