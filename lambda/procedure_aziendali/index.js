@@ -185,14 +185,15 @@ var form = [
 	  label: 'Stato attuazione',
 	  inputType: 'text',
 	  name: 'stato_attuazione',
-	  value: '',
+	  value: '3',
 	  readonly: 'false',
 	  isVisible: 'true',
 	  newLine: 'true',
 	  options: [
         { id: '0', name: 'Attivo' }, 
         { id: '1', name: 'In Implementazione' }, 
-        { id: '2', name: 'Auspicabile'}]
+        { id: '2', name: 'Auspicabile'},
+        { id: '3', name: 'Non valorizzato'}]
 	},
 	{
       type: 'combobox',
