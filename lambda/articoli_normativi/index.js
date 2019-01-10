@@ -18,7 +18,7 @@ exports.handler = function(event, context, callback) {
   
 context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prevents the lambda to hang
 
-var codice_part = event.queryStringParameters.codice_part;
+var codice = event.queryStringParameters.codice;
 var id = event.queryStringParameters.id;
 
 // from this point on I try to generate the lambda in automatic
@@ -155,22 +155,16 @@ var form = [
 		}
 	];
 
-var queryString=`SELECT entrasp.testi_normativi_rif_descr(${body['id_testo_normativo_parent']}), note, rif_esterno_url, entrasp.articoli_normativi_rub_descr(${body['codice_articolo_normativo_parent']}), rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi;`	
+var queryString=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo_parent), note, rif_esterno_url, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent), rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi;`	
 
-var queryString_element=`SELECT id_testo_normativo_parent, note, rif_esterno_url, codice_articolo_normativo_parent, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`
+var queryString_element=`SELECT id_testo_normativo_parent, note, rif_esterno_url, codice_articolo_normativo_parent, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id}' AND codice_articolo_normativo='${codice}';`
 
-var queryString_id_testo_normativo_parent_cmb=
-`SELECT entrasp.testi_normativi_rif_descr(${body['id_testo_normativo_parent']}) FROM articoli_normativi;`	
 
-var queryString_id_testo_normativo_cmb=`SELECT entrasp.testi_normativi_rif_descr(${body['id_testo_normativo']}) FROM articoli_normativi;`	
-
-var queryString_codice_articolo_normativo_parent_cmb=`SELECT entrasp.articoli_normativi_rub_descr(${body['codice_articolo_normativo_parent']}) FROM articoli_normativi;`
-
-var queryString_next = 
-`SELECT (MAX(id_procedura)+1) as prossimo from entrasp.procedure_aziendali WHERE codice_azienda='${codice_part}';`
+var queryString_id_testo_normativo_parent_cmb=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) FROM articoli_normativi;`	var queryString_id_testo_normativo_cmb=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo) FROM testi_normativi;`	
+var queryString_codice_articolo_normativo_parent_cmb=`SELECT entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) FROM articoli_normativi;`
 
 var deleteString=
-`DELETE FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`	
+`DELETE FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id}' AND codice_articolo_normativo='${codice}';`	
 
 var body;
 
