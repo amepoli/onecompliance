@@ -15,6 +15,7 @@ const routes = [
     RouterModule.forChild(routes),
     GenericTableModule
   ],
-  declarations: [MngtUnitsComponent]
+  declarations: [MngtUnitsComponent],
+  exports: [MngtUnitsComponent]
 })
 export class MngtUnitsModule { }

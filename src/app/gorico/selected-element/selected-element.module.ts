@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { MatMenuModule, MatToolbarModule, MatTabsModule, MatIconModule, MatButtonModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DynamicFormsModule} from 'app/gorico/dynamic-forms/dynamic-forms.module';
+import { BottomTabsModule } from 'app/gorico/bottom-tabs/bottom-tabs.module';
 
 
 const routes = [
@@ -27,7 +28,8 @@ const routes = [
     MatTabsModule,
     MatIconModule,
     MatButtonModule,
-    DynamicFormsModule
+    DynamicFormsModule,
+    BottomTabsModule
   ],
   declarations: [SelectedElementComponent]
 })

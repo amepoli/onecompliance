@@ -5,7 +5,7 @@ import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/mate
 import { Router} from '@angular/router';
 
 import { AuthService } from 'app/login-page/auth.service';
-import { Sort } from 'aws-sdk/clients/alexaforbusiness';
+
 
 
 @Component({

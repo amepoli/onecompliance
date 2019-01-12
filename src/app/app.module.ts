@@ -29,6 +29,7 @@ import { SelectedElementModule } from 'app/gorico/selected-element/selected-elem
 import {AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
 import { ProcessesModule } from './gorico/processes/processes.module';
 
+
 const appRoutes: Routes = [
     {
         path        : 'apps',
