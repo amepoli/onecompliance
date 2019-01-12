@@ -1,6 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { SplitComponent } from 'angular-split';
 import { GenericTableService } from 'app/gorico/generic-table/generic-table.service';
+import { Event } from 'aws-sdk/clients/dms';
 
 @Component({
   selector: 'split-view',
@@ -26,9 +27,8 @@ export class SplitViewComponent implements OnInit {
 
     setTimeout(() => { 
         this.setTopSize(); // wait a bit so the bottom table is rendered
+        this.previousSize = this.docSize;
     }, 500);
-
-    this.previousSize = this.docSize;
 
     this.splitComp.dragEnd.subscribe((result) => {
         this.top_drag_size = result.sizes[0] * this.previousSize / this.screenSize;
@@ -40,6 +40,12 @@ export class SplitViewComponent implements OnInit {
     // recalculate the size on every click on the document
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: Event): void { 
+        this.setTopSize();
+        this.previousSize = this.docSize;
+    }
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event: Event): void{
         this.setTopSize();
         this.previousSize = this.docSize;
     }
