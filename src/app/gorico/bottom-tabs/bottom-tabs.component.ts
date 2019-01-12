@@ -9,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
 export class BottomTabsComponent implements OnInit {
 
   Tabs = [
-    { label: 'Tab1' },
+    { label: 'Tab1', table: 'mngtUnits' },
     { label: 'Tab2' },
     { label: '...' }
   ];

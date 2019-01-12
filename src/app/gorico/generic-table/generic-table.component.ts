@@ -14,6 +14,8 @@ import { AuthService } from 'app/login-page/auth.service';
   styleUrls: ['./generic-table.component.scss']
 })
 
+
+
 export class GenericTableComponent implements OnInit {
 
   displayedColumns = []; // to override in derived classes
