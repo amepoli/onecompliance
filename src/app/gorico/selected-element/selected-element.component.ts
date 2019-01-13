@@ -77,6 +77,10 @@ export class SelectedElementComponent implements OnInit {
   }
 
   private processInlineElements (elements: FieldConfig[]) : Number {
+      // this is a small trick to reload indexes if coming from subtable 
+    this.n = this.tableService.currentIndex + 1;
+    this.tot = this.tableService.indexArray.length;
+
     let numElements = 1 + elements.length; // current + previouses
     let sumWidths = 0;
     if (elements.length) { // some elements to put on the same line

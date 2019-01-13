@@ -12,8 +12,8 @@ export class SplitViewComponent implements OnInit {
 
   @ViewChild('splitComp') splitComp: SplitComponent;
 
-  top_drag_size = 70; 
-  top_size = 70; // initial ratio is 70:30
+  top_drag_size = 60; 
+  top_size = 60; // initial ratio is 60:40
   bottom_size = 100 - this.top_size;  
   previousSize = 0;
   screenSize: number;

@@ -75,7 +75,7 @@ export class GenericTableComponent implements OnInit {
   getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
         const id = row['ID'];
-        const table = this.router.url.split('/', 3)[2];
+        const table = this.path.slice(1);
         this.tableService.indexArray = this.indexArray;
         this.tableService.currentIndex = index;
         setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: { table: table, part: this.codice_part,
