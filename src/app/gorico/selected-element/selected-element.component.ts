@@ -23,6 +23,7 @@ export class SelectedElementComponent implements OnInit {
   codice_part: string;
   table: string;
   isLoading = true;
+  path: string;
 
   constructor(private tableService: GenericTableService,
               private route: ActivatedRoute,
@@ -37,10 +38,11 @@ export class SelectedElementComponent implements OnInit {
       .subscribe(params => {
         this.id = params.id;
         this.codice_part = params.part;
-        this.table = params.table;
+        this.table = params.table;  
+        this.path = '/' + this.table; // table names must match with the path
         console.log(params);
         
-        this.tableService.getData(this.codice_part, this.id).subscribe(
+        this.tableService.getData(this.path, this.codice_part, this.id).subscribe(
             results => {
               this.isLoading = false;
               // console.log(results);
@@ -90,13 +92,13 @@ export class SelectedElementComponent implements OnInit {
   submit(value: any) {
       console.log(value);
       if (this.id === 'NEW') {
-          this.tableService.pushData(this.codice_part, value).subscribe(
+          this.tableService.pushData(this.path, this.codice_part, value).subscribe(
               result => {
                   console.log(result);
               }
           );
       } else {
-        this.tableService.updateData(this.codice_part, value).subscribe(
+        this.tableService.updateData(this.path, this.codice_part, value).subscribe(
           result => {
             console.log(result);
           }
@@ -106,7 +108,7 @@ export class SelectedElementComponent implements OnInit {
   }
 
   delElement() {
-    this.tableService.deleteData(this.codice_part, this.id).subscribe(
+    this.tableService.deleteData(this.path, this.codice_part, this.id).subscribe(
       result => {
         console.log(result);
         this.router.navigate(['/gorico/' + this.table]);

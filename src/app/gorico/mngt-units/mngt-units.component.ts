@@ -15,12 +15,13 @@ export class MngtUnitsComponent extends GenericTableComponent {
   constructor(protected unitsService: GenericTableService,
               protected router: Router,
               protected authService: AuthService) {
-      super(unitsService,router,authService); 
-      unitsService.path = '/management-units';
+      super(unitsService, router, authService); 
+      this.path = '/mngt-units';
   }
 
   ngOnInit(): void {
 
+    console.log('Management Units initialized');
     this.displayedColumns = ['ID', 'Codice', 'Descrizione', 'Responsabile', 'Parente'];
 
     this.mapResponse = (response: any[]) => response.map((p) => ({
@@ -35,5 +36,4 @@ export class MngtUnitsComponent extends GenericTableComponent {
   }
   
 }
-
 

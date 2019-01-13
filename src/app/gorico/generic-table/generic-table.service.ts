@@ -10,7 +10,6 @@ import { map } from 'rxjs/operators';
 export class GenericTableService {
 
   private apiName = 'gorico';
-  path = ''; // to ovveride in derived components
   private myGetInit = { // OPTIONAL
         headers: {
         }, // OPTIONAL
@@ -37,35 +36,35 @@ export class GenericTableService {
   constructor(private amplifyService: AmplifyService) { 
   }
 
-  getData(codice_part: string, id: string): Observable<any> {
+  getData(path: string, codice_part: string, id: string): Observable<any> {
     this.amplifyService.auth();
 
     this.myGetInit.queryStringParameters.codice_part = codice_part;
     this.myGetInit.queryStringParameters.id = id;
 
-    return from(this.amplifyService.api().get(this.apiName, this.path, this.myGetInit))
+    return from(this.amplifyService.api().get(this.apiName, path, this.myGetInit))
            .pipe(map(res => res['data']));
   }
 
-  pushData(codice_part: string, jsonData: any): Observable<any> { 
+  pushData(path: string, codice_part: string, jsonData: any): Observable<any> { 
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters.codice_part = codice_part;
     this.myPutPostInit.body = jsonData;
 
-    return from(this.amplifyService.api().put(this.apiName, this.path, this.myPutPostInit));
+    return from(this.amplifyService.api().put(this.apiName, path, this.myPutPostInit));
   }
 
-  deleteData(codice_part: string, id: string): Observable<any> {
+  deleteData(path: string, codice_part: string, id: string): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters.codice_part = codice_part;
     this.myGetInit.queryStringParameters.id = id;
-    return from(this.amplifyService.api().del(this.apiName, this.path, this.myGetInit));
+    return from(this.amplifyService.api().del(this.apiName, path, this.myGetInit));
   }
 
-  updateData(codice_part: string, jsonData: any): Observable<any> { 
+  updateData(path: string, codice_part: string, jsonData: any): Observable<any> { 
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters.codice_part = codice_part;
     this.myPutPostInit.body = jsonData;
-    return from(this.amplifyService.api().post(this.apiName, this.path, this.myPutPostInit));
+    return from(this.amplifyService.api().post(this.apiName, path, this.myPutPostInit));
   }
 }

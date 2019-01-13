@@ -5,7 +5,7 @@ import { MngtUnitsComponent } from './mngt-units.component';
 
 const routes = [
     {
-        path     : 'gorico/mng_units',
+        path     : 'gorico/mngt-units',
         component: MngtUnitsComponent
     }
 ];

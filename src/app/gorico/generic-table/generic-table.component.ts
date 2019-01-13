@@ -27,6 +27,8 @@ export class GenericTableComponent implements OnInit {
 
   indexArray: number[];
 
+  path = ''; // to override in derived classes
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -45,7 +47,7 @@ export class GenericTableComponent implements OnInit {
 
     this.codice_part = this.authService.getCode();
 
-    this.tableService.getData(this.codice_part, '').subscribe(
+    this.tableService.getData(this.path, this.codice_part, '').subscribe(
       results => {
         this.dataSource = new MatTableDataSource(this.mapResponse(results));
         this.dataSource.sort = this.sort;

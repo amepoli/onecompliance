@@ -28,7 +28,7 @@ export class SplitViewComponent implements OnInit {
     setTimeout(() => { 
         this.setTopSize(); // wait a bit so the bottom table is rendered
         this.previousSize = this.docSize;
-    }, 500);
+    }, 1000);
 
     this.splitComp.dragEnd.subscribe((result) => {
         this.top_drag_size = result.sizes[0] * this.previousSize / this.screenSize;
@@ -55,7 +55,6 @@ export class SplitViewComponent implements OnInit {
     this.docSize = this.el.nativeElement.offsetHeight;
     this.top_size = this.top_drag_size * this.screenSize / this.docSize;
     this.bottom_size = 100 - this.top_size; 
-    console.log(this.docSize, this.top_size);
   }
 
 }

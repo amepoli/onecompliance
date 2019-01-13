@@ -25,7 +25,7 @@ export const navigation: FuseNavigation[] = [
                         title: 'Management Units',
                         translate: 'NAV.MGTUNITS',
                         type : 'item',
-                        url  : '/gorico/mng_units'
+                        url  : '/gorico/mngt-units'
                     }
                 ]
             },
