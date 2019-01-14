@@ -45,8 +45,8 @@ export const navigation: FuseNavigation[] = [
                 url  : '/login'
             },
             {
-                id       : 'presidi',
-                title    : 'Presidi',
+                id       : 'controls',
+                title    : 'Controls',
                 translate: 'NAV.CONTROLS',
                 icon: 'person_pin_circle',
                 type : 'item',
@@ -135,6 +135,29 @@ export const navigation: FuseNavigation[] = [
                         id   : 'forms',
                         title: 'Forms',
                         translate: 'NAV.FORMS',
+                        type : 'item',
+                        url  : '/login'
+                    }
+                ]
+            },
+            {
+                id       : 'laws',
+                title    : 'Laws',
+                translate: 'NAV.LAWS',
+                type     : 'collapsable',
+                icon     : 'account_balance',
+                children : [
+                    {
+                        id   : 'law',
+                        title: 'Law',
+                        translate: 'NAV.LAW',
+                        type : 'item',
+                        url  : '/login'
+                    },
+                    {
+                        id   : 'articles',
+                        title: 'Articles',
+                        translate: 'NAV.ARTICLES',
                         type : 'item',
                         url  : '/login'
                     }

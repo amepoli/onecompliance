@@ -26,11 +26,12 @@ var id = event.queryStringParameters.id;
     
 
 var form = [
-		{type: 'comboBox',
+		{type: 'combobox',
 		 label: 'id_testo_normativo_parent',
 		 inputType: 'text',
 		 name: 'id_testo_normativo_parent',
-		 value: '',
+         value: '',
+         options: [],
 		 readonly: 'false',
 		 isVisible: 'false',
 		 newLine: 'True'
@@ -53,20 +54,22 @@ var form = [
 		 isVisible: 'false',
 		 newLine: 'True'
 		}, 
-		{type: 'comboBox',
+		{type: 'combobox',
 		 label: 'Testo normativo',
 		 inputType: 'text',
 		 name: 'id_testo_normativo',
-		 value: '',
+         value: '',
+         options: [],
 		 readonly: 'false',
 		 isVisible: 'true',
 		 newLine: 'True'
 		}, 
-		{type: 'comboBox',
-		 label: 'Articolo parent',
+		{type: 'combobox',
+		 label: 'Articolo padre',
 		 inputType: 'text',
 		 name: 'codice_articolo_normativo_parent',
-		 value: '',
+         value: '',
+         options: [],
 		 readonly: 'false',
 		 isVisible: 'true',
 		 newLine: 'True'
@@ -80,7 +83,7 @@ var form = [
 		 isVisible: 'false',
 		 newLine: 'True'
 		}, 
-		{type: 'textArea',
+		{type: 'textarea',
 		 label: 'Rubrica',
 		 inputType: 'text',
 		 name: 'rubrica',
@@ -89,7 +92,7 @@ var form = [
 		 isVisible: 'true',
 		 newLine: 'True'
 		}, 
-		{type: 'textArea',
+		{type: 'textarea',
 		 label: 'Testo articolo',
 		 inputType: 'text',
 		 name: 'descrizione',
@@ -160,8 +163,9 @@ var queryString=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo_par
 var queryString_element=`SELECT id_testo_normativo_parent, note, rif_esterno_url, codice_articolo_normativo_parent, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id}' AND codice_articolo_normativo='${codice}';`
 
 
-var queryString_id_testo_normativo_parent_cmb=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) FROM articoli_normativi;`	var queryString_id_testo_normativo_cmb=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo) FROM testi_normativi;`	
-var queryString_codice_articolo_normativo_parent_cmb=`SELECT entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) FROM articoli_normativi;`
+var queryString_id_testo_normativo_parent_cmb=`SELECT id_testo_normativo_parent AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM articoli_normativi;`	
+var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name FROM testi_normativi;`	
+var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo_parent AS id, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS name FROM articoli_normativi;`
 
 var deleteString=
 `DELETE FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id}' AND codice_articolo_normativo='${codice}';`	
@@ -188,7 +192,7 @@ var insertNewString=`INSERT INTO entrasp.articoli_normativi
 (id_testo_normativo_parent, note, rif_esterno_url, id_testo_normativo, codice_articolo_normativo_parent, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max)
 Values
 ('${body[id_testo_normativo_parent]}', '${body[note]}', '${body[rif_esterno_url]}', '${id_testo_normativo}', '${body[codice_articolo_normativo_parent]}', '${codice_articolo_normativo}', '${body[rubrica]}', '${descrizione}', '${body[sanz_amm_min_quote]}', '${sanz_amm_max_quote}', '${body[sanz_int_min]}', '${body[sanz_int_max]}')
-RETURNING id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`"	
+RETURNING id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`	
 
 var updateString=`UPDATE entrasp.articoli_normativi
 SET id_testo_normativo_parent=${body[id_testo_normativo_parent]}, note='${body[note]}', rif_esterno_url='${body[rif_esterno_url]}', codice_articolo_normativo_parent='${body[codice_articolo_normativo_parent]}', rubrica='${body[rubrica]}', descrizione='${descrizione}', sanz_amm_min_quote='${body[sanz_amm_min_quote]}', sanz_amm_max_quote='${sanz_amm_max_quote}', sanz_int_min='${body[sanz_int_min]}', sanz_int_max='${body[sanz_int_max]}'
@@ -282,7 +286,7 @@ if (event.httpMethod === "GET") {
   if (id === '') { // query the full table
     pool.connect().then(c => {
           client = c;
-          return client.query(queryString);
+          return client.query(queryString_id);
       }).then(res => {
         client.release();
         var response = {
@@ -305,22 +309,22 @@ if (event.httpMethod === "GET") {
   // start unrolling all combo box values
   pool.connect().then(c => {
       client = c;
-      return client.query(queryString_procedura_parent_cmb);
+      return client.query(queryString_id_testo_normativo_parent_cmb);
   }).then(res => {
     client.release();
-    form[2]['options']=res.rows;
+    form[0]['options']=res.rows;
     pool.connect().then(c => {
       client = c;
-      return client.query(queryString_centro_gest_cmb);
+      return client.query(queryString_id_testo_normativo_cmb);
     }).then(res => {
       client.release();
-      form[6]['options']=res.rows;
+      form[3]['options']=res.rows;
       pool.connect().then(c => {
       client = c;
-      return client.query(queryString_tipo_processo_cmb);
+      return client.query(queryString_codice_articolo_normativo_parent_cmb);
     }).then(res => {
       client.release();
-      form[9]['options']=res.rows;
+      form[4]['options']=res.rows;
       // unrolling of combo box values finishes here
       if (id !== 'NEW') {  // existing element
         pool.connect().then(c => {
@@ -329,35 +333,11 @@ if (event.httpMethod === "GET") {
         }).then(res => {
         client.release();
           var jsonString = res.rows[0];
-          if (jsonString['codice_azienda']) {
-            form[0]['value'] = jsonString['codice_azienda'];
-          }
-          if (jsonString['id_procedura']) {
-            form[1]['value'] = jsonString['id_procedura'];
-          }
-          if (jsonString['id_procedura_parent']) {
-            form[2]['value'] = jsonString['id_procedura_parent'];
-          }
-          if (jsonString['codice']) {
-            form[3]['value'] = jsonString['codice'];
-          }
-          if (jsonString['descrizione_breve']) {
-            form[4]['value'] = jsonString['descrizione_breve'];
-          }
-          if (jsonString['descrizione']) {
-            form[5]['value'] = jsonString['descrizione'];
-          }
-          if (jsonString['id_centro_gest']) {
-            form[6]['value'] = jsonString['id_centro_gest'];
-          }
-          if (jsonString['tipo_procedura']) {
-            form[7]['value'] = jsonString['tipo_procedura'];
-          }
-          if (jsonString['stato_attuazione']) {
-            form[8]['value'] = jsonString['stato_attuazione'];
-          }
-          if (jsonString['id_tipo_processo']) {
-            form[9]['value'] = jsonString['id_tipo_processo'];
+          var i = 0;
+          for (element in form) {
+              if (jsonString[element.name]) {
+                  form[i++]['value'] = jsonString[element.name];
+              }
           }
           var jsonObj = JSON.stringify(form);
           var response = {
