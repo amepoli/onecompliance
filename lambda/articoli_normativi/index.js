@@ -158,7 +158,7 @@ var form = [
 		}
 	];
 
-var queryString=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo_parent), note, rif_esterno_url, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent), rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi;`	
+var queryString=`SELECT id_testo_normativo, codice_articolo_normativo, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent), note, rif_esterno_url, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) as articolo_padre, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi;`	
 
 var queryString_element=`SELECT id_testo_normativo_parent, note, rif_esterno_url, codice_articolo_normativo_parent, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id}' AND codice_articolo_normativo='${codice}';`
 
@@ -286,7 +286,7 @@ if (event.httpMethod === "GET") {
   if (id === '') { // query the full table
     pool.connect().then(c => {
           client = c;
-          return client.query(queryString_id);
+          return client.query(queryString);
       }).then(res => {
         client.release();
         var response = {

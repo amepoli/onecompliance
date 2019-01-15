@@ -159,7 +159,7 @@ export const navigation: FuseNavigation[] = [
                         title: 'Articles',
                         translate: 'NAV.ARTICLES',
                         type : 'item',
-                        url  : '/login'
+                        url  : '/gorico/articles'
                     }
                 ]
             }
