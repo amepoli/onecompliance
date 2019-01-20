@@ -18,13 +18,14 @@ exports.handler = function(event, context, callback) {
   
 context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prevents the lambda to hang
 
-var codice = event.queryStringParameters.codice;
-var id = event.queryStringParameters.id;
+    
+
+var id_testo_normativo=event.queryStringParameters.key1
+var codice_articolo_normativo=event.queryStringParameters.key2
 
 // from this point on I try to generate the lambda in automatic
 
-    
-
+   
 var form = [
 		{type: 'combobox',
 		 label: 'id_testo_normativo_parent',
@@ -158,10 +159,11 @@ var form = [
 		}
 	];
 
-var queryString=`SELECT id_testo_normativo, codice_articolo_normativo, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent), note, rif_esterno_url, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) as articolo_padre, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi;`	
+//primi campi le chiavi primarie secondo l'ordine di cui alle righe 21 e 22, poi i nomi dei soli campi da visualizzare con le funzioni con un AS
+    
+var queryString=`SELECT , id_testo_normativo, codice_articolo_normativo, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS Testo_normativo, codice_articolo_normativo, rubrica FROM entrasp.articoli_normativi;`
 
-var queryString_element=`SELECT id_testo_normativo_parent, note, rif_esterno_url, codice_articolo_normativo_parent, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id}' AND codice_articolo_normativo='${codice}';`
-
+var queryString_element=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS Testo_normativo_parent, note, rif_esterno_url, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS Testo_normativo, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS Articolo_normativo_parent, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`
 
 var queryString_id_testo_normativo_parent_cmb=`SELECT id_testo_normativo_parent AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM articoli_normativi;`	
 var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name FROM testi_normativi;`	
