@@ -4,7 +4,8 @@ import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import 'rxjs/add/operator/filter';
-import { GenericTableService } from '../generic-table/generic-table.service';
+import { GenericTableService, operationType } from '../generic-table/generic-table.service';
+import { element } from 'protractor';
 
 
 @Component({
@@ -19,11 +20,11 @@ export class SelectedElementComponent implements OnInit {
   tot = 50;
   
   regConfig_it: FieldConfig[] = []; 
-  id: string;
-  codice_part: string;
+  primaryKeys: any;
   table: string;
   isLoading = true;
   path: string;
+  operation: operationType;
 
   constructor(private tableService: GenericTableService,
               private route: ActivatedRoute,
@@ -31,18 +32,17 @@ export class SelectedElementComponent implements OnInit {
   
   ngOnInit() {
     this.n = this.tableService.currentIndex + 1;
-    this.tot = this.tableService.indexArray.length;
+    this.tot = this.tableService.keysArray.length;
 
     this.route.queryParams
-      .filter(params => params.id)
       .subscribe(params => {
-        this.id = params.id;
-        this.codice_part = params.part;
+        this.primaryKeys = this.getKeys(params);
         this.table = params.table;  
         this.path = '/' + this.table; // table names must match with the path
+        this.operation = params.operation;
         console.log(params);
         
-        this.tableService.getData(this.path, this.codice_part, this.id).subscribe(
+        this.tableService.getData(this.path, this.primaryKeys, this.operation).subscribe(
             results => {
               this.isLoading = false;
               // console.log(results);
@@ -76,15 +76,25 @@ export class SelectedElementComponent implements OnInit {
       });
   }
 
-  private processInlineElements (elements: FieldConfig[]) : Number {
+  private getKeys(obj) {
+    const newObj = Object.keys(obj).reduce(function(no,key) {
+        if (key.substring(0, 3) === 'key') {
+          no[key] = obj[key];
+        }
+        return no;
+    }, {});
+    return newObj;
+  }
+
+  private processInlineElements (elements: FieldConfig[]): Number {
       // this is a small trick to reload indexes if coming from subtable 
     this.n = this.tableService.currentIndex + 1;
-    this.tot = this.tableService.indexArray.length;
+    this.tot = this.tableService.keysArray.length;
 
-    let numElements = 1 + elements.length; // current + previouses
+    const numElements = 1 + elements.length; // current + previouses
     let sumWidths = 0;
     if (elements.length) { // some elements to put on the same line
-      let singleWidth = Math.floor(100/numElements);
+      const singleWidth = Math.floor(100 / numElements);
        for (let element of elements) {
         element.width = singleWidth  - 10; // considering 10% margins;
         sumWidths += singleWidth;
@@ -95,24 +105,24 @@ export class SelectedElementComponent implements OnInit {
 
   submit(value: any) {
       console.log(value);
-      if (this.id === 'NEW') {
-          this.tableService.pushData(this.path, this.codice_part, value).subscribe(
+      if (this.operation === operationType.create) {  // new record
+          this.tableService.pushData(this.path, this.primaryKeys, value).subscribe(
               result => {
                   console.log(result);
               }
           );
-      } else {
-        this.tableService.updateData(this.path, this.codice_part, value).subscribe(
+      } else {  // this.operation = "select", need to update the record
+        this.tableService.updateData(this.path, this.primaryKeys, value).subscribe(
           result => {
             console.log(result);
           }
-        )
+        );
       }
       this.router.navigate(['/gorico/' + this.table]);
   }
 
   delElement() {
-    this.tableService.deleteData(this.path, this.codice_part, this.id).subscribe(
+    this.tableService.deleteData(this.path, this.primaryKeys).subscribe(
       result => {
         console.log(result);
         this.router.navigate(['/gorico/' + this.table]);
@@ -121,8 +131,8 @@ export class SelectedElementComponent implements OnInit {
   }
 
   toElement(target: string) {
-    let indexArray = this.tableService.indexArray;
-    let currentIndex = this.tableService.currentIndex;
+    const indexArray = this.tableService.keysArray;
+    const currentIndex = this.tableService.currentIndex;
     let targetIndex = currentIndex;
     if (target === 'first') {
         targetIndex = 0;
@@ -143,7 +153,9 @@ export class SelectedElementComponent implements OnInit {
 
     this.tableService.currentIndex = targetIndex;
     this.n = targetIndex + 1;
-    this.router.navigate(['/gorico/details'], { queryParams: { table: this.table, part: this.codice_part, id: indexArray[targetIndex] } });
+    const targetKeys = this.tableService.keysArray[targetIndex];
+    const mergedParams = Object.assign({}, {table: this.table, operation: operationType.select}, targetKeys);
+    this.router.navigate(['/gorico/details'], { queryParams: mergedParams });
   }
 
 }

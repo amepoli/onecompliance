@@ -14,6 +14,8 @@ import {MatIconRegistry} from '@angular/material';
 
 import { AuthService } from 'app/login-page/auth.service';
 
+import { GenericTableService, operationType } from 'app/gorico/generic-table/generic-table.service';
+
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -35,7 +37,6 @@ export class ToolbarComponent implements OnInit, OnDestroy
     codice_part = 'DEMO'; // TODO: make this parametric
 
     queryParams: any;
-    table: string;
 
     // Private
     private _unsubscribeAll: Subject<any>;
@@ -55,7 +56,8 @@ export class ToolbarComponent implements OnInit, OnDestroy
         private _sanitizer: DomSanitizer,
         private _authService: AuthService,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private tableService: GenericTableService
     )
     {
         // Set the defaults
@@ -137,8 +139,9 @@ export class ToolbarComponent implements OnInit, OnDestroy
             }
           });
 
-        this.route.queryParams.subscribe(params => {
-          this.table = params['table']; 
+        this.queryParams = this.tableService.tableParams; // default params in list view
+        this.route.queryParams.subscribe(params => {  // change of params when in single record view
+          this.queryParams = params; 
         });
 
         this._authService.setCode(this.codice_part);
@@ -204,18 +207,12 @@ export class ToolbarComponent implements OnInit, OnDestroy
 
     addElement(): void
     {
-        if (!this.table) {
-            this.table = this.router.url.split('/', 3)[2];
-        }
-        
-        this.router.navigate(['/gorico/details'], { queryParams: { table: this.table , part: this.codice_part,
-            id: 'NEW' } });
+        const params = Object.assign({}, {operation: operationType.create}, this.queryParams);
+        this.router.navigate(['/gorico/details'], { queryParams: params });
     }
 
     gotoList(): void 
     {
-        if (this.table) {
-            this.router.navigate(['/gorico/' + this.table]);
-        }
+        this.router.navigate(['/gorico/' + this.queryParams['table']]);
     }
 }

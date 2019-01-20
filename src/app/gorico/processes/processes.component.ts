@@ -19,6 +19,7 @@ export class ProcessesComponent extends GenericTableComponent {
   }
 
   ngOnInit(): void {
+/*
     this.displayedColumns = ['ID', 'Codice', 'DescrizioneBreve', 'CentroGestionale'];
 
     this.mapResponse = (response: any[]) => response.map((p) => ({
@@ -27,7 +28,7 @@ export class ProcessesComponent extends GenericTableComponent {
       DescrizioneBreve: p.descrizione_breve,
       CentroGestionale: p.centro_gest
     }));
-
+*/
     super.ngOnInit();
   }
 

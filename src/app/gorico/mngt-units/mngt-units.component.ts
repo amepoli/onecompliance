@@ -12,25 +12,31 @@ import { AuthService } from 'app/login-page/auth.service';
 export class MngtUnitsComponent extends GenericTableComponent {
 
 
-  constructor(protected unitsService: GenericTableService,
+  constructor(protected tableService: GenericTableService,
               protected router: Router,
               protected authService: AuthService) {
-      super(unitsService, router, authService); 
+      super(tableService, router, authService); 
       this.path = '/mngt-units';
   }
 
   ngOnInit(): void {
 
-    console.log('Management Units initialized');
-    this.displayedColumns = ['ID', 'Codice', 'Descrizione', 'Responsabile', 'Parente'];
+    this.displayedColumns = [
+        {key: 'codice_part', label: 'Codice Part', isPrimary: true, isHidden: true},    // key1
+        {key: 'id', label: 'ID', isPrimary: true, isHidden: false},                     // key2
+        {key: 'codice', label: 'Codice', isPrimary: false, isHidden: false},
+        {key: 'descrizione', label: 'Descrizione', isPrimary: false, isHidden: false},
+        {key: 'responsabile', label: 'Responsabile', isPrimary: false, isHidden: false},
+        {key: 'parente', label: 'Centro Superiore', isPrimary: true, isHidden: false}   // key3
+    ];
 
-    this.mapResponse = (response: any[]) => response.map((p) => ({
-      ID: parseInt( p.id, 10),
-      Codice: p.codice,
-      Descrizione: p.descrizione,
-      Responsabile: p.responsabile,
-      Parente: p.parente
-    }));
+    this.fullListPrimaryKeyValues.key1 = this.authService.getCode();   // codice part
+
+    this.processResponse = (response: any[]) => { 
+        response.forEach((p) => {
+          p.id = parseInt( p.id, 10);
+        });
+     };
 
     super.ngOnInit();
   }

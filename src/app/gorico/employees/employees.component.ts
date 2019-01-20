@@ -19,6 +19,7 @@ export class EmployeesComponent extends GenericTableComponent {
   }
 
   ngOnInit(): void {
+/*
     this.displayedColumns = ['ID', 'Codice', 'Cognome', 'Nome'];
 
     this.mapResponse = (response: any[]) => response.map((p) => ({
@@ -27,7 +28,7 @@ export class EmployeesComponent extends GenericTableComponent {
       Cognome: p.cognome,
       Nome: p.nome
     }));
-
+*/
     super.ngOnInit();
   }
 

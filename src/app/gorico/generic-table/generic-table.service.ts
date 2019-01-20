@@ -3,6 +3,11 @@ import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+export enum operationType {
+    list,
+    create,
+    select
+}
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +20,8 @@ export class GenericTableService {
         }, // OPTIONAL
         response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
         queryStringParameters: {  // OPTIONAL
-           codice_part: 'DEMO', 
-           id: '' 
+           key1: 'DEMO', // codice
+           key2: ''      // id
         }
   };
 
@@ -26,44 +31,47 @@ export class GenericTableService {
     headers: {
     }, // OPTIONAL
     queryStringParameters: {  // OPTIONAL
-       codice_part: 'DEMO' 
+       key1: 'DEMO', // codice
+       key2: ''          // id
     }
 };
 
-  indexArray: number[];
-  currentIndex: number;
+
+  keysArray: any[]; // contains an array of all primary keys (one for each row) of current list
+  currentIndex: number;  // this is the index of currently selected row in the parent list (single record view)
+  tableParams: any;  // this is the set of table params of current list 
 
   constructor(private amplifyService: AmplifyService) { 
   }
 
-  getData(path: string, codice_part: string, id: string): Observable<any> {
+  getData(path: string, primaryKeyValues: any, operation: number): Observable<any> {
     this.amplifyService.auth();
 
-    this.myGetInit.queryStringParameters.codice_part = codice_part;
-    this.myGetInit.queryStringParameters.id = id;
+    this.myGetInit.queryStringParameters = primaryKeyValues;
+
+    this.myGetInit.queryStringParameters['operation'] = operationType[operation];
 
     return from(this.amplifyService.api().get(this.apiName, path, this.myGetInit))
            .pipe(map(res => res['data']));
   }
 
-  pushData(path: string, codice_part: string, jsonData: any): Observable<any> { 
+  pushData(path: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters.codice_part = codice_part;
+    this.myPutPostInit.queryStringParameters = primaryKeyValues;
     this.myPutPostInit.body = jsonData;
 
     return from(this.amplifyService.api().put(this.apiName, path, this.myPutPostInit));
   }
 
-  deleteData(path: string, codice_part: string, id: string): Observable<any> {
+  deleteData(path: string, primaryKeyValues: any): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters.codice_part = codice_part;
-    this.myGetInit.queryStringParameters.id = id;
+    this.myGetInit.queryStringParameters = primaryKeyValues;
     return from(this.amplifyService.api().del(this.apiName, path, this.myGetInit));
   }
 
-  updateData(path: string, codice_part: string, jsonData: any): Observable<any> { 
+  updateData(path: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters.codice_part = codice_part;
+    this.myPutPostInit.queryStringParameters = primaryKeyValues;
     this.myPutPostInit.body = jsonData;
     return from(this.amplifyService.api().post(this.apiName, path, this.myPutPostInit));
   }

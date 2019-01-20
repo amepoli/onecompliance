@@ -18,10 +18,10 @@ exports.handler = function(event, context, callback) {
   
 context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prevents the lambda to hang
 
-var codice_part = event.queryStringParameters.codice_part;
-var id = event.queryStringParameters.id;
+var codice_part = event.queryStringParameters.key1;
+var id = event.queryStringParameters.key2;
+var operation = event.queryStringParameters.operation;
 
-// from this point on I try to generate the lambda in automatic
 
 var form = [
     { 
@@ -115,7 +115,7 @@ WHERE centri_1.codice_part='${codice_part}' AND anagr.codice_part='${codice_part
 ORDER BY ID;`;
 
 var queryString_new =
-`SELECT cg.id_centro_gest as ID, CG.codice as Codice, CG.descrizione as Descrizione, 
+`SELECT cg.codice_part, cg.id_centro_gest as ID, CG.codice as Codice, CG.descrizione as Descrizione, 
 entrasp.anagrafiche_id_codcognnome('${codice_part}',cg.id_responsabile) as Responsabile,
 entrasp.centri_gestionali_descr('${codice_part}',cg.id_centro_gest_parent) as Parente
 FROM entrasp.centri_gestionali CG WHERE cg.codice_part='${codice_part}';`
@@ -242,7 +242,7 @@ if (event.httpMethod === "PUT") {
 if (event.httpMethod === "GET") {
 
 let client;
-if (id === '') {
+if (operation === 'list') {
   pool.connect().then(c => {
         client = c;
         return client.query(queryString_new);
@@ -264,8 +264,7 @@ if (id === '') {
         };
         callback(null, response);
    });
-} else {    //query one element or NEW element
-  if (id !== 'NEW') {
+} else if (operation === 'select') { //query one element
     pool.connect().then(c => {
         client = c;
         return client.query(queryString_centri);
@@ -316,7 +315,7 @@ if (id === '') {
         });
       });
     });
-  } else {  //NEW element
+  } else {  // operation == 'create' --> NEW element
     pool.connect().then(c => {
         client = c;
         return client.query(queryString_centri);
@@ -348,6 +347,5 @@ if (id === '') {
       });
     });
   }
-}
 }
 };
