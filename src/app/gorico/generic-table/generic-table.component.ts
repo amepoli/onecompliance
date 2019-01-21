@@ -6,7 +6,21 @@ import { Router} from '@angular/router';
 
 import { AuthService } from 'app/login-page/auth.service';
 
+export interface columnType {
+  key: string;
+  label: string;
+  isPrimary: boolean;
+  isHidden: boolean;
+}
 
+export interface primaryKeys {
+  key1: string;
+  key2: string;
+  key3: string;
+  key4: string;
+  key5: string;
+  key6: string;
+}
 
 @Component({
   selector: 'app-generic-table',
@@ -19,12 +33,9 @@ import { AuthService } from 'app/login-page/auth.service';
 export class GenericTableComponent implements OnInit {
 
   // variables to override
-  displayedColumns = [
-      {key: 'codice', label: 'Codice', isPrimary: true, isHidden: true},
-      {key: 'id', label: 'ID', isPrimary: true, isHidden: false}
-  ];
+  displayedColumns: columnType[];
 
-  fullListPrimaryKeyValues = {key1: 'DEMO', key2: '', key3: '', key4: '', key5: '', key6: ''};  // primary key values used to retrieve the full table
+  fullListPrimaryKeyValues: primaryKeys = {key1: '', key2: '', key3: '', key4: '', key5: '', key6:''};  // primary key values used to retrieve the full table
 
   // end variables to override
 
@@ -102,11 +113,11 @@ export class GenericTableComponent implements OnInit {
         setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: mergedParams }); }, 50);
   }
 
-  getColumnDef(column) {
-      return column.label;
-  }
 
-    
+  getColumnLabels(columns: columnType[]) {
+    return columns.map(c => c.label);
+  }
 }
+  
 
 
