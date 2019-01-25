@@ -155,7 +155,7 @@ export class SelectedElementComponent implements OnInit {
     this.n = targetIndex + 1;
     const targetKeys = this.tableService.keysArray[targetIndex];
     const mergedParams = Object.assign({}, {table: this.table, operation: operationType.select}, targetKeys);
-    this.router.navigate(['/gorico/details'], { queryParams: mergedParams });
+    this.router.navigate(['/gorico/details'], { queryParams: mergedParams, skipLocationChange: true });
   }
 
 }
