@@ -20,8 +20,9 @@ context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prev
 
     
 
-var id_testo_normativo=event.queryStringParameters.key1
-var codice_articolo_normativo=event.queryStringParameters.key2
+var id_testo_normativo=event.queryStringParameters.key1;
+var codice_articolo_normativo=event.queryStringParameters.key2;
+var operation = event.queryStringParameters.operation;
 
 // from this point on I try to generate the lambda in automatic
 
@@ -161,16 +162,16 @@ var form = [
 
 //primi campi le chiavi primarie secondo l'ordine di cui alle righe 21 e 22, poi i nomi dei soli campi da visualizzare con le funzioni con un AS
     
-var queryString=`SELECT , id_testo_normativo, codice_articolo_normativo, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS Testo_normativo, codice_articolo_normativo, rubrica FROM entrasp.articoli_normativi;`
+var queryString=`SELECT id_testo_normativo, codice_articolo_normativo, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS testo_normativo, rubrica FROM entrasp.articoli_normativi;`;
 
-var queryString_element=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS Testo_normativo_parent, note, rif_esterno_url, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS Testo_normativo, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS Articolo_normativo_parent, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`
+var queryString_element=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS testo_normativo_parent, note, rif_esterno_url, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS Testo_normativo, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS Articolo_normativo_parent, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;
 
-var queryString_id_testo_normativo_parent_cmb=`SELECT id_testo_normativo_parent AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM articoli_normativi;`	
-var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name FROM testi_normativi;`	
-var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo_parent AS id, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS name FROM articoli_normativi;`
+var queryString_id_testo_normativo_parent_cmb=`SELECT id_testo_normativo_parent AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM articoli_normativi;`;	
+var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name FROM testi_normativi;`;	
+var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo_parent AS id, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS name FROM articoli_normativi;`;
 
 var deleteString=
-`DELETE FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id}' AND codice_articolo_normativo='${codice}';`	
+`DELETE FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`	
 
 var body;
 
@@ -180,31 +181,31 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
 
 // Please note the difference between processing numeric or string types of selected choices
 var id_testo_normativo_parent=body.id_testo_normativo_parent?`'${body.id_testo_normativo_parent.id}'` : null;
-var note=body.note?`'${body.note.id}'` : null;
-var rif_esterno_url=body.rif_esterno_url?`'${body.rif_esterno_url.id}'` : null;
-var id_testo_normativo=body.id_testo_normativo?`'${body.id_testo_normativo.id}'` : null;
+var note=body.note?`'${body.note}'` : null;
+var rif_esterno_url=body.rif_esterno_url?`'${body.rif_esterno_url}'` : null;
+id_testo_normativo=body.id_testo_normativo?`'${body.id_testo_normativo.id}'` : id_testo_normativo;
 var codice_articolo_normativo_parent=body.codice_articolo_normativo_parent?`'${body.codice_articolo_normativo_parent.id}'` : null;
-var codice_articolo_normativo=body.codice_articolo_normativo?`'${body.codice_articolo_normativo.id}'` : null;
-var rubrica=body.rubrica?`'${body.rubrica.id}'` : null;
-var sanz_amm_min_quote=body.sanz_amm_min_quote?`'${body.sanz_amm_min_quote.id}'` : null;
-var sanz_int_min=body.sanz_int_min?`'${body.sanz_int_min.id}'` : null;
-var sanz_int_max=body.sanz_int_max?`'${body.sanz_int_max.id}'` : null;
+codice_articolo_normativo=body.codice_articolo_normativo?`'${body.codice_articolo_normativo}'` : codice_articolo_normativo;
+var rubrica=body.rubrica?`'${body.rubrica}'` : null;
+var descrizione=body.descrizione?`'${body.descrizione}'` : null;
+var sanz_amm_min_quote=body.sanz_amm_min_quote?`'${body.sanz_amm_min_quote}'` : null;
+var sanz_amm_max_quote=body.sanz_amm_max_quote?`'${body.sanz_amm_max_quote}'` : null;
+var sanz_int_min=body.sanz_int_min?`'${body.sanz_int_min}'` : null;
+var sanz_int_max=body.sanz_int_max?`'${body.sanz_int_max}'` : null;
    
 var insertNewString=`INSERT INTO entrasp.articoli_normativi
 (id_testo_normativo_parent, note, rif_esterno_url, id_testo_normativo, codice_articolo_normativo_parent, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max)
 Values
-('${body[id_testo_normativo_parent]}', '${body[note]}', '${body[rif_esterno_url]}', '${id_testo_normativo}', '${body[codice_articolo_normativo_parent]}', '${codice_articolo_normativo}', '${body[rubrica]}', '${descrizione}', '${body[sanz_amm_min_quote]}', '${sanz_amm_max_quote}', '${body[sanz_int_min]}', '${body[sanz_int_max]}')
-RETURNING id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`	
+('${id_testo_normativo_parent}', '${note}', '${rif_esterno_url}', '${id_testo_normativo}', '${codice_articolo_normativo_parent}', '${codice_articolo_normativo}', '${rubrica}', '${descrizione}', '${sanz_amm_min_quote}', '${sanz_amm_max_quote}', '${sanz_int_min}', '${sanz_int_max}')
+RETURNING id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;	
 
 var updateString=`UPDATE entrasp.articoli_normativi
-SET id_testo_normativo_parent=${body[id_testo_normativo_parent]}, note='${body[note]}', rif_esterno_url='${body[rif_esterno_url]}', codice_articolo_normativo_parent='${body[codice_articolo_normativo_parent]}', rubrica='${body[rubrica]}', descrizione='${descrizione}', sanz_amm_min_quote='${body[sanz_amm_min_quote]}', sanz_amm_max_quote='${sanz_amm_max_quote}', sanz_int_min='${body[sanz_int_min]}', sanz_int_max='${body[sanz_int_max]}'
+SET id_testo_normativo_parent=${id_testo_normativo_parent}, note='${note}', rif_esterno_url='${rif_esterno_url}', codice_articolo_normativo_parent='${codice_articolo_normativo_parent}', rubrica='${rubrica}', descrizione='${descrizione}', sanz_amm_min_quote='${sanz_amm_min_quote}', sanz_amm_max_quote='${sanz_amm_max_quote}', sanz_int_min='${sanz_int_min}', sanz_int_max='${sanz_int_max}'
 WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`	
    
 }
 
 if (event.httpMethod === "POST") {
-  console.log(body);
-  console.log(updateString);
   let client;
   pool.connect().then(c => {
        client = c;
@@ -217,7 +218,6 @@ if (event.httpMethod === "POST") {
             "isBase64Encoded": false,
             "body": JSON.stringify(res.rows)
         };
-        console.log(response);
         callback(null, response);
    }).catch(error => {
         console.log("ERROR", error);
@@ -285,7 +285,7 @@ if (event.httpMethod === "PUT") {
 
 if (event.httpMethod === "GET") {
   let client;
-  if (id === '') { // query the full table
+  if (operation === 'list') { // query the full table
     pool.connect().then(c => {
           client = c;
           return client.query(queryString);
@@ -328,7 +328,7 @@ if (event.httpMethod === "GET") {
       client.release();
       form[4]['options']=res.rows;
       // unrolling of combo box values finishes here
-      if (id !== 'NEW') {  // existing element
+      if (operation === 'select') { //query one element
         pool.connect().then(c => {
         client = c;
         return client.query(queryString_element);
@@ -336,7 +336,7 @@ if (event.httpMethod === "GET") {
         client.release();
           var jsonString = res.rows[0];
           var i = 0;
-          for (element in form) {
+          for (let element in form) {
               if (jsonString[element.name]) {
                   form[i++]['value'] = jsonString[element.name];
               }
@@ -350,15 +350,7 @@ if (event.httpMethod === "GET") {
          };
          callback(null, response);
         });
-      } else {  //NEW element
-        pool.connect().then(c => {
-          client = c;
-          return client.query(queryString_next);
-          }).then(res => {
-            client.release();
-            var jsonString = res.rows[0];
-            form[0]['value'] = codice_part;
-            form[1]['value'] = jsonString['prossimo'];
+      } else {  // operation == 'create' --> NEW element
             var jsonObj = JSON.stringify(form);
             var response = {
               "statusCode": 200,
@@ -367,7 +359,6 @@ if (event.httpMethod === "GET") {
               "isBase64Encoded": false
             };
             callback(null, response);
-          });
       }
       });
     });

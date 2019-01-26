@@ -18,8 +18,9 @@ exports.handler = function(event, context, callback) {
   
 context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prevents the lambda to hang
 
-var codice_part = event.queryStringParameters.codice_part;
-var id = event.queryStringParameters.id;
+var codice_azienda = event.queryStringParameters.key1;
+var id = event.queryStringParameters.key2;
+var operation = event.queryStringParameters.operation;
 
 // from this point on I try to generate the lambda in automatic
 
@@ -211,30 +212,30 @@ var form = [
 
 
 var queryString =
-`SELECT procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('${codice_part}',procedure_aziendali.id_centro_gest) AS centro_gest
+`SELECT codice_azienda, procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('${codice_azienda}',procedure_aziendali.id_centro_gest) AS centro_gest
 FROM entrasp.procedure_aziendali
-WHERE codice_azienda='${codice_part}'; `
+WHERE codice_azienda='${codice_azienda}'; `
 
 var queryString_element = 
 `SELECT codice_azienda,id_procedura,id_procedura_parent,codice,descrizione_breve,descrizione,
 id_centro_gest,tipo_procedura,stato_attuazione,id_tipo_processo 
 FROM entrasp.procedure_aziendali
-WHERE codice_azienda='${codice_part}' AND id_procedura='${id}';`
+WHERE codice_azienda='${codice_azienda}' AND id_procedura='${id}';`
 
 var queryString_procedura_parent_cmb =
-`SELECT id_procedura AS id, descrizione_breve AS name from entrasp.procedure_aziendali WHERE codice_azienda='${codice_part}';`
+`SELECT id_procedura AS id, descrizione_breve AS name from entrasp.procedure_aziendali WHERE codice_azienda='${codice_azienda}';`
 
 var queryString_centro_gest_cmb=
-`SELECT id_centro_gest AS id, descrizione AS name from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
+`SELECT id_centro_gest AS id, descrizione AS name from entrasp.centri_gestionali WHERE codice_part='${codice_azienda}';`
 
 var queryString_tipo_processo_cmb=
-`SELECT id_tipo_processo AS id, descrizione AS name from entrasp.tipi_processi WHERE codice_azienda='${codice_part}';`
+`SELECT id_tipo_processo AS id, descrizione AS name from entrasp.tipi_processi WHERE codice_azienda='${codice_azienda}';`
 
 var queryString_next = 
-`SELECT (MAX(id_procedura)+1) as prossimo from entrasp.procedure_aziendali WHERE codice_azienda='${codice_part}';`
+`SELECT (MAX(id_procedura)+1) as prossimo from entrasp.procedure_aziendali WHERE codice_azienda='${codice_azienda}';`
 
 var deleteString = `DELETE FROM entrasp.procedure_aziendali
-      WHERE codice_azienda='${codice_part}' AND id_procedura='${id}';`;
+      WHERE codice_azienda='${codice_azienda}' AND id_procedura='${id}';`;
 
 var body;
 
@@ -254,7 +255,7 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
         (codice_azienda, id_procedura, id_procedura_parent, codice, descrizione_breve,
          descrizione, id_centro_gest, tipo_procedura, stato_attuazione, id_tipo_processo)
         VALUES
-       ('${codice_part}', ${body.id_procedura}, ${id_procedura_parent}, '${body.codice}', 
+       ('${codice_azienda}', ${body.id_procedura}, ${id_procedura_parent}, '${body.codice}', 
         '${body.descrizione_breve}', '${body.descrizione}', ${id_centro_gest}, 
         ${tipo_procedura},${stato_attuazione}, ${id_tipo_processo})
          RETURNING id_procedura;`;
@@ -269,12 +270,10 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
              tipo_procedura = ${tipo_procedura},
              stato_attuazione = ${stato_attuazione},
              id_tipo_processo = ${id_tipo_processo}
-         WHERE codice_azienda='${codice_part}' AND id_procedura='${body.id_procedura}';`;   
+         WHERE codice_azienda='${codice_azienda}' AND id_procedura='${body.id_procedura}';`;   
 }
 
 if (event.httpMethod === "POST") {
-  console.log(body);
-  console.log(updateString);
   let client;
   pool.connect().then(c => {
        client = c;
@@ -355,7 +354,7 @@ if (event.httpMethod === "PUT") {
 
 if (event.httpMethod === "GET") {
   let client;
-  if (id === '') { // query the full table
+  if (operation === 'list') { // query the full table
     pool.connect().then(c => {
           client = c;
           return client.query(queryString);
@@ -398,7 +397,7 @@ if (event.httpMethod === "GET") {
       client.release();
       form[9]['options']=res.rows;
       // unrolling of combo box values finishes here
-      if (id !== 'NEW') {  // existing element
+      if (operation === 'select') { //query one element
         pool.connect().then(c => {
         client = c;
         return client.query(queryString_element);
@@ -444,14 +443,14 @@ if (event.httpMethod === "GET") {
          };
          callback(null, response);
         });
-      } else {  //NEW element
+      } else {  // operation == 'create' --> NEW element
         pool.connect().then(c => {
           client = c;
           return client.query(queryString_next);
           }).then(res => {
             client.release();
             var jsonString = res.rows[0];
-            form[0]['value'] = codice_part;
+            form[0]['value'] = codice_azienda;
             form[1]['value'] = jsonString['prossimo'];
             var jsonObj = JSON.stringify(form);
             var response = {

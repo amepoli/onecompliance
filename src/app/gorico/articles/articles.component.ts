@@ -19,15 +19,17 @@ export class ArticlesComponent extends GenericTableComponent {
   }
 
   ngOnInit(): void {
-/*
-    this.displayedColumns = ['ID', 'Codice', 'Testo'];
 
-    this.mapResponse = (response: any[]) => response.map((p) => ({
-      ID: p.id_testo_normativo,
-      Codice: p.codice_articolo_normativo,
-      Testo: p.descrizione
-    }));
-*/
+    this.displayedColumns = [
+        {key: 'id_testo_normativo', label: 'ID Testo', isPrimary: true, isHidden: true},    // key1
+        {key: 'codice_articolo_normativo', label: 'Codice Articolo', isPrimary: true, isHidden: false},                     // key2
+        {key: 'testo_normativo', label: 'Testo Normativo', isPrimary: false, isHidden: false},
+        {key: 'rubrica', label: 'Rubrica', isPrimary: false, isHidden: false}  
+    ];
+
+    this.processResponse = (response: any[]) => { 
+        return;
+     };
     super.ngOnInit();
   }
 }
