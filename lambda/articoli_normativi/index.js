@@ -20,9 +20,9 @@ context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prev
 
     
 
-var id_testo_normativo=event.queryStringParameters.key1;
-var codice_articolo_normativo=event.queryStringParameters.key2;
-var operation = event.queryStringParameters.operation;
+var id_testo_normativo = event.queryStringParameters.key1;
+var codice_articolo_normativo = event.queryStringParameters.key2;
+var operation = event.queryStringParameters.operation;  // list, select or create
 
 // from this point on I try to generate the lambda in automatic
 
@@ -166,12 +166,12 @@ var queryString=`SELECT id_testo_normativo, codice_articolo_normativo, entrasp.t
 
 var queryString_element=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS testo_normativo_parent, note, rif_esterno_url, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS Testo_normativo, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS Articolo_normativo_parent, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;
 
-var queryString_id_testo_normativo_parent_cmb=`SELECT id_testo_normativo_parent AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM articoli_normativi;`;	
-var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name FROM testi_normativi;`;	
-var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo_parent AS id, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS name FROM articoli_normativi;`;
+var queryString_id_testo_normativo_parent_cmb=`SELECT id_testo_normativo_parent AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM entrasp.articoli_normativi;`;	
+var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name FROM entrasp.testi_normativi;`;	
+var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo_parent AS id, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS name FROM entrasp.articoli_normativi;`;
 
 var deleteString=
-`DELETE FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`	
+`DELETE FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;	
 
 var body;
 
@@ -180,18 +180,18 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
    body = JSON.parse(event.body.toString()); // drove me crazy!!!!
 
 // Please note the difference between processing numeric or string types of selected choices
-var id_testo_normativo_parent=body.id_testo_normativo_parent?`'${body.id_testo_normativo_parent.id}'` : null;
-var note=body.note?`'${body.note}'` : null;
-var rif_esterno_url=body.rif_esterno_url?`'${body.rif_esterno_url}'` : null;
-id_testo_normativo=body.id_testo_normativo?`'${body.id_testo_normativo.id}'` : id_testo_normativo;
-var codice_articolo_normativo_parent=body.codice_articolo_normativo_parent?`'${body.codice_articolo_normativo_parent.id}'` : null;
-codice_articolo_normativo=body.codice_articolo_normativo?`'${body.codice_articolo_normativo}'` : codice_articolo_normativo;
-var rubrica=body.rubrica?`'${body.rubrica}'` : null;
-var descrizione=body.descrizione?`'${body.descrizione}'` : null;
-var sanz_amm_min_quote=body.sanz_amm_min_quote?`'${body.sanz_amm_min_quote}'` : null;
-var sanz_amm_max_quote=body.sanz_amm_max_quote?`'${body.sanz_amm_max_quote}'` : null;
-var sanz_int_min=body.sanz_int_min?`'${body.sanz_int_min}'` : null;
-var sanz_int_max=body.sanz_int_max?`'${body.sanz_int_max}'` : null;
+var id_testo_normativo_parent = body.id_testo_normativo_parent ? `'${body.id_testo_normativo_parent.id}'` : null;
+var note = body.note ? `'${body.note}'` : null;
+var rif_esterno_url = body.rif_esterno_url ? `'${body.rif_esterno_url}'` : null;
+id_testo_normativo = body.id_testo_normativo ? `'${body.id_testo_normativo.id}'` : id_testo_normativo;
+var codice_articolo_normativo_parent = body.codice_articolo_normativo_parent ? `'${body.codice_articolo_normativo_parent.id}'` : null;
+codice_articolo_normativo = body.codice_articolo_normativo ? `'${body.codice_articolo_normativo}'` : codice_articolo_normativo;
+var rubrica = body.rubrica ? `'${body.rubrica}'` : null;
+var descrizione = body.descrizione ? `'${body.descrizione}'` : null;
+var sanz_amm_min_quote = body.sanz_amm_min_quote ? `'${body.sanz_amm_min_quote}'` : null;
+var sanz_amm_max_quote = body.sanz_amm_max_quote ? `'${body.sanz_amm_max_quote}'` : null;
+var sanz_int_min = body.sanz_int_min ? `'${body.sanz_int_min}'` : null;
+var sanz_int_max = body.sanz_int_max ? `'${body.sanz_int_max}'` : null;
    
 var insertNewString=`INSERT INTO entrasp.articoli_normativi
 (id_testo_normativo_parent, note, rif_esterno_url, id_testo_normativo, codice_articolo_normativo_parent, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max)
