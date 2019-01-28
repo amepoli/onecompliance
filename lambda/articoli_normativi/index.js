@@ -166,9 +166,13 @@ var queryString=`SELECT id_testo_normativo, codice_articolo_normativo, entrasp.t
 
 var queryString_element=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS testo_normativo_parent, note, rif_esterno_url, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS Testo_normativo, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS Articolo_normativo_parent, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;
 
-var queryString_id_testo_normativo_parent_cmb=`SELECT id_testo_normativo_parent AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM entrasp.articoli_normativi;`;	
-var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name FROM entrasp.testi_normativi;`;	
-var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo_parent AS id, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS name FROM entrasp.articoli_normativi;`;
+/* XXX Messaggio temporaneo per NIcola XXXX QUesta var che segue dobbiamo discuterla. 
+E' un combobox che dovrebbe automaticamente derivare dalla scelta fatta sul combobox  codice_articolo_normativo_parent.*/
+
+/* var queryString_id_testo_normativo_parent_cmb=`SELECT id_testo_normativo_parent AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM entrasp.articoli_normativi;`; */	
+
+var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS testo_normativo FROM entrasp.testi_normativi;`;	
+var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo AS id, entrasp.articoli_normativi_cod_rub(codice_articolo_normativo) AS codice_articolo FROM entrasp.articoli_normativi;`;
 
 var deleteString=
 `DELETE FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;	

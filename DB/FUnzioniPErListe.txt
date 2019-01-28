@@ -205,6 +205,24 @@ $BODY$
   COST 100;
 ALTER FUNCTION entrasp.articoli_normativi_rub_descr(text)
   OWNER TO postgres;  
+  
+  
+/* FUNZIONE 11-bis */  
+  
+  CREATE OR REPLACE FUNCTION entrasp.articoli_normativi_cod_rub(codice_articolo_normativo text)
+  RETURNS text AS
+$BODY$
+SELECT codice_articolo_normativo||'-'||rubrica
+FROM 
+  entrasp.articoli_normativi
+WHERE 
+  codice_articolo_normativo=$1 
+$BODY$
+  LANGUAGE sql VOLATILE
+  COST 100;
+ALTER FUNCTION entrasp.articoli_normativi_cod_rub(text)
+  OWNER TO postgres;
+
 
   /* FUNZIONE 12 */  
 CREATE OR REPLACE FUNCTION entrasp.modelli_test_risultati_descr(id_risultato numeric, codice_azienda text)
