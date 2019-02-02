@@ -313,12 +313,12 @@ if (event.httpMethod === "GET") {
      });
 } else {    //query one element or NEW element
   // start unrolling all combo box values
-  pool.connect().then(c => {
+  /*pool.connect().then(c => {
       client = c;
       return client.query(queryString_id_testo_normativo_parent_cmb);
   }).then(res => {
     client.release();
-    form[0]['options']=res.rows;
+    form[0]['options']=res.rows; */
     pool.connect().then(c => {
       client = c;
       return client.query(queryString_id_testo_normativo_cmb);
