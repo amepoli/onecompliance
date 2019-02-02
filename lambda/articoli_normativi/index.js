@@ -36,25 +36,25 @@ var form = [
          options: [],
 		 readonly: 'false',
 		 isVisible: 'false',
-		 newLine: 'True'
+		 newLine: 'true'
 		}, 
-		{type: 'text',
+		{type: 'input',
 		 label: 'note',
 		 inputType: 'text',
 		 name: 'note',
 		 value: '',
 		 readonly: 'false',
 		 isVisible: 'false',
-		 newLine: 'True'
+		 newLine: 'true'
 		}, 
-		{type: 'text',
+		{type: 'input',
 		 label: 'rif_esterno_url',
 		 inputType: 'text',
 		 name: 'rif_esterno_url',
 		 value: '',
 		 readonly: 'false',
 		 isVisible: 'false',
-		 newLine: 'True'
+		 newLine: 'true'
 		}, 
 		{type: 'combobox',
 		 label: 'Testo normativo',
@@ -64,7 +64,7 @@ var form = [
          options: [],
 		 readonly: 'false',
 		 isVisible: 'true',
-		 newLine: 'True'
+		 newLine: 'true'
 		}, 
 		{type: 'combobox',
 		 label: 'Articolo padre',
@@ -74,16 +74,16 @@ var form = [
          options: [],
 		 readonly: 'false',
 		 isVisible: 'true',
-		 newLine: 'True'
+		 newLine: 'true'
 		}, 
-		{type: 'text',
+		{type: 'input',
 		 label: 'Codice articolo',
 		 inputType: 'text',
 		 name: 'codice_articolo_normativo',
 		 value: '',
 		 readonly: 'true',
 		 isVisible: 'false',
-		 newLine: 'True'
+		 newLine: 'true'
 		}, 
 		{type: 'textarea',
 		 label: 'Rubrica',
@@ -92,7 +92,7 @@ var form = [
 		 value: '',
 		 readonly: 'true',
 		 isVisible: 'true',
-		 newLine: 'True'
+		 newLine: 'true'
 		}, 
 		{type: 'textarea',
 		 label: 'Testo articolo',
@@ -101,7 +101,7 @@ var form = [
 		 value: '',
 		 readonly: 'false',
 		 isVisible: 'true',
-		 newLine: 'True',
+		 newLine: 'true',
 		 validations: [
 					{
 					name: 'required',
@@ -115,23 +115,23 @@ var form = [
 					}
 					]
 		}, 
-		{type: 'text',
+		{type: 'input',
 		 label: 'Sanzione amm. Min quote',
 		 inputType: 'text',
 		 name: 'sanz_amm_min_quote',
 		 value: '',
 		 readonly: 'false',
 		 isVisible: 'true',
-		 newLine: 'False'
+		 newLine: 'false'
 		}, 
-		{type: 'text',
+		{type: 'input',
 		 label: 'Max quote',
 		 inputType: 'text',
 		 name: 'sanz_amm_max_quote',
 		 value: '',
 		 readonly: 'false',
 		 isVisible: 'true',
-		 newLine: 'True',
+		 newLine: 'true',
 		 validations: [
 					{
 					name: 'required',
@@ -140,23 +140,23 @@ var form = [
 					}
 					]
 		}, 
-		{type: 'text',
+		{type: 'input',
 		 label: 'Sanzione int. Min',
 		 inputType: 'text',
 		 name: 'sanz_int_min',
 		 value: '',
 		 readonly: 'false',
 		 isVisible: 'true',
-		 newLine: 'False'
+		 newLine: 'false'
 		}, 
-		{type: 'text',
+		{type: 'input',
 		 label: 'Max',
 		 inputType: 'text',
 		 name: 'sanz_int_max',
 		 value: '',
 		 readonly: 'false',
 		 isVisible: 'true',
-		 newLine: 'True'
+		 newLine: 'true'
 		}
 	];
 
@@ -171,8 +171,8 @@ E' un combobox che dovrebbe automaticamente derivare dalla scelta fatta sul comb
 
 /* var queryString_id_testo_normativo_parent_cmb=`SELECT id_testo_normativo_parent AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM entrasp.articoli_normativi;`; */	
 
-var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS testo_normativo FROM entrasp.testi_normativi;`;	
-var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo AS id, entrasp.articoli_normativi_cod_rub(codice_articolo_normativo) AS codice_articolo FROM entrasp.articoli_normativi;`;
+var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name FROM entrasp.testi_normativi;`;	
+var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo AS id, entrasp.articoli_normativi_cod_rub(codice_articolo_normativo) AS name FROM entrasp.articoli_normativi;`;
 
 var deleteString=
 `DELETE FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;	
@@ -313,12 +313,12 @@ if (event.httpMethod === "GET") {
      });
 } else {    //query one element or NEW element
   // start unrolling all combo box values
-  pool.connect().then(c => {
-      client = c;
+  /* pool.connect().then(c => {
+     client = c;
       return client.query(queryString_id_testo_normativo_parent_cmb);
   }).then(res => {
     client.release();
-    form[0]['options']=res.rows;
+    form[0]['options']=res.rows; */
     pool.connect().then(c => {
       client = c;
       return client.query(queryString_id_testo_normativo_cmb);
@@ -339,10 +339,11 @@ if (event.httpMethod === "GET") {
         }).then(res => {
         client.release();
           var jsonString = res.rows[0];
-          var i = 0;
-          for (let element in form) {
+          for (var i=0; i < form.length; i++) {
+            var element = form[i];
               if (jsonString[element.name]) {
-                  form[i++]['value'] = jsonString[element.name];
+                  console.log(jsonString[element.name]);
+                  form[i]['value'] = jsonString[element.name];
               }
           }
           var jsonObj = JSON.stringify(form);
@@ -366,7 +367,7 @@ if (event.httpMethod === "GET") {
       }
       });
     });
-   });
+//   });
 }
 }
 };

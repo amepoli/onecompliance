@@ -32,6 +32,10 @@ export class ComboboxComponent implements OnInit, OnDestroy {
   constructor() {}
   ngOnInit() {
     
+    // filter out null values
+
+    this.field.options = this.field.options.filter(x => x.name !== null); 
+
     if (this.field.value) {
         this.field.value = this.field.options.find(x => x.id === this.field.value);
     }
