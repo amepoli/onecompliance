@@ -26,26 +26,16 @@ var operation = event.queryStringParameters.operation;  // list, select or creat
 
 // from this point on I try to generate the lambda in automatic
 
-   
 var form = [
 		{type: 'combobox',
 		 label: 'id_testo_normativo_parent',
 		 inputType: 'text',
 		 name: 'id_testo_normativo_parent',
-         value: '',
-         options: [],
-		 readonly: 'false',
-		 isVisible: 'false',
-		 newLine: 'true'
-		}, 
-		{type: 'input',
-		 label: 'note',
-		 inputType: 'text',
-		 name: 'note',
 		 value: '',
 		 readonly: 'false',
 		 isVisible: 'false',
-		 newLine: 'true'
+		 newLine: 'true',
+		 options: []
 		}, 
 		{type: 'input',
 		 label: 'rif_esterno_url',
@@ -57,24 +47,14 @@ var form = [
 		 newLine: 'true'
 		}, 
 		{type: 'combobox',
-		 label: 'Testo normativo',
+		 label: 'Testo Normativo',
 		 inputType: 'text',
 		 name: 'id_testo_normativo',
-         value: '',
-         options: [],
+		 value: '',
 		 readonly: 'false',
 		 isVisible: 'true',
-		 newLine: 'true'
-		}, 
-		{type: 'combobox',
-		 label: 'Articolo padre',
-		 inputType: 'text',
-		 name: 'codice_articolo_normativo_parent',
-         value: '',
-         options: [],
-		 readonly: 'false',
-		 isVisible: 'true',
-		 newLine: 'true'
+		 newLine: 'true',
+		 options: []
 		}, 
 		{type: 'input',
 		 label: 'Codice articolo',
@@ -82,7 +62,7 @@ var form = [
 		 name: 'codice_articolo_normativo',
 		 value: '',
 		 readonly: 'true',
-		 isVisible: 'false',
+		 isVisible: 'true',
 		 newLine: 'true'
 		}, 
 		{type: 'textarea',
@@ -115,6 +95,25 @@ var form = [
 					}
 					]
 		}, 
+		{type: 'combobox',
+		 label: 'Articolo parent',
+		 inputType: 'text',
+		 name: 'codice_articolo_normativo_parent',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true',
+		 options: []
+		}, 
+		{type: 'input',
+		 label: 'note',
+		 inputType: 'text',
+		 name: 'note',
+		 value: '',
+		 readonly: 'false',
+		 isVisible: 'true',
+		 newLine: 'true'
+		}, 
 		{type: 'input',
 		 label: 'Sanzione amm. Min quote',
 		 inputType: 'text',
@@ -132,13 +131,6 @@ var form = [
 		 readonly: 'false',
 		 isVisible: 'true',
 		 newLine: 'true',
-		 validations: [
-					{
-					name: 'required',
-					validator: 'Validators.required',
-					message: 'Descrizione mancante'
-					}
-					]
 		}, 
 		{type: 'input',
 		 label: 'Sanzione int. Min',
@@ -160,18 +152,22 @@ var form = [
 		}
 	];
 
+
+   
 //primi campi le chiavi primarie secondo l'ordine di cui alle righe 21 e 22, poi i nomi dei soli campi da visualizzare con le funzioni con un AS
     
 var queryString=`SELECT id_testo_normativo, codice_articolo_normativo, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS testo_normativo, rubrica FROM entrasp.articoli_normativi;`;
 
-var queryString_element=`SELECT entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS testo_normativo_parent, note, rif_esterno_url, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS Testo_normativo, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo_parent) AS Articolo_normativo_parent, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;
+var queryString_element=`SELECT id_testo_normativo_parent, rif_esterno_url, id_testo_normativo, codice_articolo_normativo, rubrica, descrizione, codice_articolo_normativo || '££' || id_testo_normativo AS codice_articolo_normativo_parent, note, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;
+
 
 /* XXX Messaggio temporaneo per NIcola XXXX QUesta var che segue dobbiamo discuterla. 
 E' un combobox che dovrebbe automaticamente derivare dalla scelta fatta sul combobox  codice_articolo_normativo_parent.*/
 
 /* var queryString_id_testo_normativo_parent_cmb=`SELECT id_testo_normativo_parent AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM entrasp.articoli_normativi;`; */	
 
-var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name FROM entrasp.testi_normativi;`;	
+
+var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name  FROM entrasp.testi_normativi;`;
 var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo AS id, entrasp.articoli_normativi_cod_rub(codice_articolo_normativo) AS name FROM entrasp.articoli_normativi;`;
 
 var deleteString=
@@ -324,13 +320,13 @@ if (event.httpMethod === "GET") {
       return client.query(queryString_id_testo_normativo_cmb);
     }).then(res => {
       client.release();
-      form[3]['options']=res.rows;
+      form[2]['options']=res.rows;
       pool.connect().then(c => {
       client = c;
       return client.query(queryString_codice_articolo_normativo_parent_cmb);
     }).then(res => {
       client.release();
-      form[4]['options']=res.rows;
+      form[6]['options']=res.rows;
       // unrolling of combo box values finishes here
       if (operation === 'select') { //query one element
         pool.connect().then(c => {
