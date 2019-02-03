@@ -14,21 +14,28 @@ export class EmployeesComponent extends GenericTableComponent {
   constructor(protected unitsService: GenericTableService,
               protected router: Router,
               protected authService: AuthService) {
-    super(unitsService,router,authService); 
+    super(unitsService, router, authService); 
     this.path = '/employees';
   }
 
   ngOnInit(): void {
-/*
-    this.displayedColumns = ['ID', 'Codice', 'Cognome', 'Nome'];
 
-    this.mapResponse = (response: any[]) => response.map((p) => ({
-      ID: parseInt( p.id_anagrafica, 10),
-      Codice: p.codice,
-      Cognome: p.cognome,
-      Nome: p.nome
-    }));
-*/
+    this.displayedColumns = [
+        {key: 'codice_part', label: 'Codice Parte Azienda', isPrimary: true, isHidden: true},    // key1
+        {key: 'id_anagrafica', label: 'ID', isPrimary: true, isHidden: false},                     // key2
+        {key: 'codice', label: 'Codice', isPrimary: false, isHidden: false},
+        {key: 'cognome', label: 'Cognome', isPrimary: false, isHidden: false},
+        {key: 'nome', label: 'Nome', isPrimary: false, isHidden: false}  
+    ];
+
+    this.fullListPrimaryKeyValues.key1 = this.authService.getCode();   // codice part
+
+    this.processResponse = (response: any[]) => { 
+        response.forEach((p) => {
+          p.id_anagrafica = parseInt( p.id_anagrafica, 10);
+        });
+     };
+
     super.ngOnInit();
   }
 

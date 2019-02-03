@@ -18,8 +18,9 @@ exports.handler = function(event, context, callback) {
   
 context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prevents the lambda to hang
 
-var codice_part = event.queryStringParameters.codice_part;
-var id = event.queryStringParameters.id;
+var codice_part = event.queryStringParameters.key1;
+var id = event.queryStringParameters.key2;
+var operation = event.queryStringParameters.operation;
 
 var form = [
     { 
@@ -97,11 +98,11 @@ var form = [
 
 var queryString = 
 `SELECT 
+anagrafiche_id.codice_part,
 anagrafiche_id.id_anagrafica, 
 anagrafiche_id.codice, 
 anagrafiche_id.cognome, 
-anagrafiche_id.nome, 
-ruoli_anagrafiche.codice_part
+anagrafiche_id.nome
 FROM 
 entrasp.anagrafiche_id, 
 entrasp.ruoli, 
@@ -114,10 +115,10 @@ anagrafiche_id.codice_part='${codice_part}' ;`;
 
 var queryString_element = 
 `SELECT id_anagrafica,codice,cognome,nome from entrasp.anagrafiche_id 
-WHERE codice_part='${codice_part}' AND id_anagrafica='${id}';`
+WHERE codice_part='${codice_part}' AND id_anagrafica='${id}';`;
 
 var queryString_next = 
-`SELECT (MAX(id_anagrafica)+1) as prossimo from entrasp.anagrafiche_id WHERE codice_part='${codice_part}';`
+`SELECT (MAX(id_anagrafica)+1) as prossimo from entrasp.anagrafiche_id WHERE codice_part='${codice_part}';`;
 
 var deleteString = `DELETE FROM entrasp.anagrafiche_id
       WHERE codice_part='${codice_part}' AND id_anagrafica='${id}';`;
@@ -224,7 +225,7 @@ if (event.httpMethod === "PUT") {
 
 if (event.httpMethod === "GET") {
   let client;
-  if (id === '') {
+  if (operation === 'list') { // query the full table 
     pool.connect().then(c => {
           client = c;
           
@@ -248,24 +249,18 @@ if (event.httpMethod === "GET") {
           callback(null, response);
      });
 } else {    //query one element or NEW element
-  if (id !== 'NEW') {
+  if (operation === 'select') { //query one element
     pool.connect().then(c => {
         client = c;
         return client.query(queryString_element);
         }).then(res => {
         client.release();
           var jsonString = res.rows[0];
-          if (jsonString['id_anagrafica']) {
-            form[0]['value'] = jsonString['id_anagrafica'];
-          }
-          if (jsonString['codice']) {
-            form[1]['value'] = jsonString['codice'];
-          }
-          if (jsonString['nome']) {
-            form[2]['value'] = jsonString['nome'];
-          }
-          if (jsonString['cognome']) {
-            form[3]['value'] = jsonString['cognome'];
+          for (var i=0; i < form.length; i++) {
+            var element = form[i];
+              if (jsonString[element.name]) {
+                  form[i]['value'] = jsonString[element.name];
+              }
           }
           var jsonObj = JSON.stringify(form);
           var response = {
@@ -276,7 +271,7 @@ if (event.httpMethod === "GET") {
          };
          callback(null, response);
         });
-  } else {  //NEW element
+  } else {  // operation == 'create' --> NEW element
     pool.connect().then(c => {
         client = c;
         return client.query(queryString_next);

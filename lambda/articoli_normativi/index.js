@@ -342,7 +342,6 @@ if (event.httpMethod === "GET") {
           for (var i=0; i < form.length; i++) {
             var element = form[i];
               if (jsonString[element.name]) {
-                  console.log(jsonString[element.name]);
                   form[i]['value'] = jsonString[element.name];
               }
           }
