@@ -1,26 +1,10 @@
-var pg = require("pg");
-
-const Pool = require('pg-pool');
-const pool = new Pool({
-    host: 'goricotest.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-    database: 'GoRiCo',
-    user: 'postgres',
-    password: 'et2themax',
-    port: 5432,
-    max: 1,
-    min: 0,
-    idleTimeoutMillis: 300000,
-    connectionTimeoutMillis: 1000
-});
+var processor = require('process_request');
 
 
 exports.handler = function(event, context, callback) {
-  
-context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prevents the lambda to hang
 
 var codice_part = event.queryStringParameters.key1;
 var id = event.queryStringParameters.key2;
-var operation = event.queryStringParameters.operation;
 
 var form = [
     { 
@@ -95,8 +79,9 @@ var form = [
     }
     ];
 
+var queries = {};
 
-var queryString = 
+queries.list = 
 `SELECT 
 anagrafiche_id.codice_part,
 anagrafiche_id.id_anagrafica, 
@@ -113,14 +98,14 @@ ruoli_anagrafiche.codice_ruolo = ruoli.codice_ruolo AND
 ruoli.codice_ruolo ='DIP' AND
 anagrafiche_id.codice_part='${codice_part}' ;`;
 
-var queryString_element = 
+queries.element = 
 `SELECT id_anagrafica,codice,cognome,nome from entrasp.anagrafiche_id 
 WHERE codice_part='${codice_part}' AND id_anagrafica='${id}';`;
 
-var queryString_next = 
-`SELECT (MAX(id_anagrafica)+1) as prossimo from entrasp.anagrafiche_id WHERE codice_part='${codice_part}';`;
+queries.next = 
+`SELECT (MAX(id_anagrafica)+1) as id_anagrafica from entrasp.anagrafiche_id WHERE codice_part='${codice_part}';`;
 
-var deleteString = `DELETE FROM entrasp.anagrafiche_id
+queries.delete = `DELETE FROM entrasp.anagrafiche_id
       WHERE codice_part='${codice_part}' AND id_anagrafica='${id}';`;
 
 var body;
@@ -128,14 +113,14 @@ var body;
 if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
    body = JSON.parse(event.body.toString()); // drove me crazy!!!!
    
-   var insertNewString = `INSERT INTO entrasp.anagrafiche_id 
+   queries.new = `INSERT INTO entrasp.anagrafiche_id 
         (codice_part, id_anagrafica, codice, cognome, nome)
         VALUES
        ('${codice_part}', ${body['id_anagrafica']}, '${body['codice']}', '${body['cognome']}', 
          '${body['nome']}')
          RETURNING id_anagrafica;`;
     
-     var updateString = `
+   queries.update = `
          UPDATE entrasp.anagrafiche_id
          SET codice = '${body['codice']}',
              cognome = '${body['cognome']}',
@@ -143,152 +128,11 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
          WHERE codice_part='${codice_part}' AND id_anagrafica='${body['id_anagrafica']}'`;   
 }
 
-if (event.httpMethod === "POST") {
+var ret_callback = function(return_value) {
+  console.log(return_value.status);
+  callback(null, return_value.response);
+};
 
-  let client;
-  pool.connect().then(c => {
-       client = c;
-        return client.query(updateString);
-    }).then(res => {
-        client.release();
-        var response = {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-            "isBase64Encoded": false,
-            "body": JSON.stringify(res.rows)
-        };
-        console.log(response);
-        callback(null, response);
-   }).catch(error => {
-        console.log("ERROR", error);
-        const response =  {
-           "isBase64Encoded": false,
-            "statusCode": 500,
-            "body": JSON.stringify(error)
-        };
-        callback(null, response);
-      });
-}
+processor.process_request(event, context, form, queries, ret_callback);
 
-if (event.httpMethod === "DELETE") {
-  
-  let client;
-  pool.connect().then(c => {
-        client = c;
-        return client.query(deleteString);
-    }).then(res => {
-      client.release();
-      var response = {
-          "statusCode": 200,
-          "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-          "isBase64Encoded": false,
-          "body": JSON.stringify(res.rows)
-      };
-      callback(null, response);
-    }).catch(error => {
-        console.log("ERROR", error);
-        const response =  {
-            "isBase64Encoded": false,
-            "statusCode": 500,
-            "body": JSON.stringify(error)
-        };
-        callback(null, response);
-    });
-}
-
-if (event.httpMethod === "PUT") {
-
-  let client;
-  pool.connect().then(c => {
-        client = c;
-        return client.query(insertNewString);
-    }).then(res => {
-        client.release();
-        var response = {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-            "isBase64Encoded": false,
-            "body": JSON.stringify(res.rows)
-        };
-        console.log(response);
-        callback(null, response);
-    }).catch(error => {
-        console.log("ERROR", error);
-        const response =  {
-            "isBase64Encoded": false,
-            "statusCode": 500,
-            "body": JSON.stringify(error)
-        };
-        callback(null, response);
-    });
-}
-
-if (event.httpMethod === "GET") {
-  let client;
-  if (operation === 'list') { // query the full table 
-    pool.connect().then(c => {
-          client = c;
-          
-          return client.query(queryString);
-      }).then(res => {
-        client.release();
-        var response = {
-          "statusCode": 200,
-          "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-          "body": JSON.stringify(res.rows),
-          "isBase64Encoded": false
-        };
-        callback(null, response);
-      }).catch(error => {
-          console.log("ERROR", error);
-          const response =  {
-              "isBase64Encoded": false,
-              "statusCode": 500,
-              "body": JSON.stringify(error)
-          };
-          callback(null, response);
-     });
-} else {    //query one element or NEW element
-  if (operation === 'select') { //query one element
-    pool.connect().then(c => {
-        client = c;
-        return client.query(queryString_element);
-        }).then(res => {
-        client.release();
-          var jsonString = res.rows[0];
-          for (var i=0; i < form.length; i++) {
-            var element = form[i];
-              if (jsonString[element.name]) {
-                  form[i]['value'] = jsonString[element.name];
-              }
-          }
-          var jsonObj = JSON.stringify(form);
-          var response = {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-            "body": jsonObj,
-            "isBase64Encoded": false
-         };
-         callback(null, response);
-        });
-  } else {  // operation == 'create' --> NEW element
-    pool.connect().then(c => {
-        client = c;
-        return client.query(queryString_next);
-        }).then(res => {
-          client.release();
-          var jsonString = res.rows[0];
-          form[0]['value'] = jsonString['prossimo'];
-          var jsonObj = JSON.stringify(form);
-          var response = {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-            "body": jsonObj,
-            "isBase64Encoded": false
-          };
-          callback(null, response);
-        });
-  }
-}
-}
 };
