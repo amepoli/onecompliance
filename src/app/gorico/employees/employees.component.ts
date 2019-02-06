@@ -11,10 +11,10 @@ import { AuthService } from 'app/login-page/auth.service';
 })
 export class EmployeesComponent extends GenericTableComponent {
 
-  constructor(protected unitsService: GenericTableService,
+  constructor(protected tableService: GenericTableService,
               protected router: Router,
               protected authService: AuthService) {
-    super(unitsService, router, authService); 
+    super(tableService, router, authService); 
     this.path = '/employees';
   }
 

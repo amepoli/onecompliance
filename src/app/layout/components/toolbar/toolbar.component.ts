@@ -207,8 +207,8 @@ export class ToolbarComponent implements OnInit, OnDestroy
 
     addElement(): void
     {
-        const params = Object.assign({}, {operation: operationType.create}, this.queryParams);
-        this.router.navigate(['/gorico/details'], { queryParams: params });
+        const params = Object.assign({}, this.queryParams, {operation: operationType.create});
+        this.router.navigate(['/gorico/details'], { queryParams: params/*, skipLocationChange: true*/ });
     }
 
     gotoList(): void 

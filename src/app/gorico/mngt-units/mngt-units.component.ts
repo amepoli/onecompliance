@@ -27,7 +27,7 @@ export class MngtUnitsComponent extends GenericTableComponent {
         {key: 'codice', label: 'Codice', isPrimary: false, isHidden: false},
         {key: 'descrizione', label: 'Descrizione', isPrimary: false, isHidden: false},
         {key: 'responsabile', label: 'Responsabile', isPrimary: false, isHidden: false},
-        {key: 'parente', label: 'Centro Superiore', isPrimary: true, isHidden: false}   // key3
+        {key: 'parente', label: 'Centro Superiore', isPrimary: false, isHidden: false}   // key3
     ];
 
     this.fullListPrimaryKeyValues.key1 = this.authService.getCode();   // codice part

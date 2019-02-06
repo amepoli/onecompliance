@@ -110,7 +110,7 @@ export class GenericTableComponent implements OnInit {
         this.tableService.keysArray = this.keysArray;
         this.tableService.currentIndex = index;
         const mergedParams = Object.assign({}, {table: table, operation: operationType.select}, this.keysArray[index]);
-        setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: mergedParams, skipLocationChange: true }); }, 50);
+        setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: mergedParams /*,  skipLocationChange: true*/ }); }, 50);
   }
 
 

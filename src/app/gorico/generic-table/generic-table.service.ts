@@ -37,8 +37,8 @@ export class GenericTableService {
 };
 
 
-  keysArray: any[]; // contains an array of all primary keys (one for each row) of current list
-  currentIndex: number;  // this is the index of currently selected row in the parent list (single record view)
+  keysArray: any[] = []; // contains an array of all primary keys (one for each row) of current list
+  currentIndex: number = 0;  // this is the index of currently selected row in the parent list (single record view)
   tableParams: any;  // this is the set of table params of current list 
 
   constructor(private amplifyService: AmplifyService) { 
