@@ -68,7 +68,7 @@ export class GenericTableComponent implements OnInit {
     // set current table params in the service
     const table = this.router.url.split('/', 3)[2];
     this.tableService.tableParams = Object.assign({}, {table: table}, this.fullListPrimaryKeyValues);
-
+    console.log(this.tableService.tableParams);
     this.tableService.getData(this.path, this.fullListPrimaryKeyValues, operationType.list).subscribe(
       results => {
         this.processResponse(results);

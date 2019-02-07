@@ -140,8 +140,9 @@ export class ToolbarComponent implements OnInit, OnDestroy
           });
 
         this.queryParams = this.tableService.tableParams; // default params in list view
+        
         this.route.queryParams.subscribe(params => {  // change of params when in single record view
-          this.queryParams = params; 
+          this.queryParams =  params;
         });
 
         this._authService.setCode(this.codice_part);
@@ -207,6 +208,10 @@ export class ToolbarComponent implements OnInit, OnDestroy
 
     addElement(): void
     {
+        if (!this.queryParams.table) { // table and keys not coming with queryparams when in list view
+            this.queryParams =  this.tableService.tableParams; 
+        }
+
         const params = Object.assign({}, this.queryParams, {operation: operationType.create});
         this.router.navigate(['/gorico/details'], { queryParams: params/*, skipLocationChange: true*/ });
     }

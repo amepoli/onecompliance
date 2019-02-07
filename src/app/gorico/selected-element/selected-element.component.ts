@@ -16,8 +16,8 @@ import { element } from 'protractor';
 export class SelectedElementComponent implements OnInit {
     
   @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
-  n = 1;
-  tot = 1;
+  n = 0;
+  tot = 0;
   
   regConfig_it: FieldConfig[] = []; 
   primaryKeys: any;
