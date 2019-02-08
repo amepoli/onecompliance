@@ -3,11 +3,8 @@ import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-export enum operationType {
-    list,
-    create,
-    select
-}
+export type operationType = 'list' | 'create' | 'select';
+
 
 @Injectable({
   providedIn: 'root'
@@ -44,12 +41,12 @@ export class GenericTableService {
   constructor(private amplifyService: AmplifyService) { 
   }
 
-  getData(path: string, primaryKeyValues: any, operation: number): Observable<any> {
+  getData(path: string, primaryKeyValues: any, operation: operationType): Observable<any> {
     this.amplifyService.auth();
 
     this.myGetInit.queryStringParameters = primaryKeyValues;
 
-    this.myGetInit.queryStringParameters['operation'] = operationType[operation];
+    this.myGetInit.queryStringParameters['operation'] = operation;
 
     return from(this.amplifyService.api().get(this.apiName, path, this.myGetInit))
            .pipe(map(res => res['data']));

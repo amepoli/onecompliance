@@ -69,7 +69,7 @@ export class GenericTableComponent implements OnInit {
     const table = this.router.url.split('/', 3)[2];
     this.tableService.tableParams = Object.assign({}, {table: table}, this.fullListPrimaryKeyValues);
     console.log(this.tableService.tableParams);
-    this.tableService.getData(this.path, this.fullListPrimaryKeyValues, operationType.list).subscribe(
+    this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'list').subscribe(
       results => {
         this.processResponse(results);
         this.dataSource = new MatTableDataSource(results);
@@ -109,7 +109,7 @@ export class GenericTableComponent implements OnInit {
         const table = this.path.slice(1);
         this.tableService.keysArray = this.keysArray;
         this.tableService.currentIndex = index;
-        const mergedParams = Object.assign({}, {table: table, operation: operationType.select}, this.keysArray[index]);
+        const mergedParams = Object.assign({}, {table: table, operation: 'select'}, this.keysArray[index]);
         setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: mergedParams /*,  skipLocationChange: true*/ }); }, 50);
   }
 

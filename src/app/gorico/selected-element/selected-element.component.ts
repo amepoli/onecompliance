@@ -104,8 +104,7 @@ export class SelectedElementComponent implements OnInit {
   }
 
   submit(value: any) {
-      console.log(value);
-      if (this.operation === operationType.create) {  // new record
+      if (this.operation === 'create') {  // new record
           this.tableService.pushData(this.path, this.primaryKeys, value).subscribe(
               result => {
                   console.log(result);
@@ -154,7 +153,7 @@ export class SelectedElementComponent implements OnInit {
     this.tableService.currentIndex = targetIndex;
     this.n = targetIndex + 1;
     const targetKeys = this.tableService.keysArray[targetIndex];
-    const mergedParams = Object.assign({}, {table: this.table, operation: operationType.select}, targetKeys);
+    const mergedParams = Object.assign({}, {table: this.table, operation: 'select'}, targetKeys);
     this.router.navigate(['/gorico/details'], { queryParams: mergedParams/*, skipLocationChange: true */});
   }
 
