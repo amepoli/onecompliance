@@ -52,14 +52,14 @@ var form = [
       {
         type: 'combobox',
         label: 'Centro gestionale di livello superiore',
-        name: 'superiore',
+        name: 'id_centro_gest_parent',
         value: '',
         options: []
       },
       {
         type: 'combobox',
         label: 'Responsabile',
-        name: 'responsabile',
+        name: 'id_responsabile',
         value: '',
         options: []
       },
@@ -80,9 +80,9 @@ var form = [
 var queries = {};
 
 queries.list =
-`SELECT cg.codice_part, cg.id_centro_gest as ID, CG.codice as Codice, CG.descrizione as Descrizione, 
-entrasp.anagrafiche_id_codcognnome('${codice_part}',cg.id_responsabile) as Responsabile,
-entrasp.centri_gestionali_descr('${codice_part}',cg.id_centro_gest_parent) as Parente
+`SELECT cg.codice_part, cg.id_centro_gest, CG.codice, CG.descrizione, 
+entrasp.anagrafiche_id_codcognnome('${codice_part}',cg.id_responsabile) as responsabile,
+entrasp.centri_gestionali_descr('${codice_part}',cg.id_centro_gest_parent) as parente
 FROM entrasp.centri_gestionali CG WHERE cg.codice_part='${codice_part}';`
 
 queries.element = 
@@ -90,7 +90,7 @@ queries.element =
 WHERE codice_part='${codice_part}' AND id_centro_gest='${id}';`
 
 queries.next = 
-`SELECT (MAX(id_centro_gest)+1) as prossimo from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
+`SELECT (MAX(id_centro_gest)+1) as id_centro_gest from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
 
 queries.delete = `DELETE FROM entrasp.centri_gestionali
 WHERE codice_part='${codice_part}' AND id_centro_gest='${id}';`;
@@ -103,7 +103,7 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
       (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro, tree_path, flag_grc_controller, flag_grc_gestore)
       VALUES
      ('${codice_part}', ${body['id_centro_gest']}, '${body['codice']}', '${body['descrizione']}', 
-     ${body.superiore.id}, ${body.responsabile.id}, 209, '${body['codice']}', 
+     ${body.id_centro_gest_parent.id}, ${body.id_responsabile.id}, 209, '${body['codice']}', 
      ${body['flag_grc_controller']}, ${body['flag_grc_gestore']})
      RETURNING id_centro_gest;`;
   body.flag_grc_controller = (body.flag_grc_controller == true) ? 1 : 0;
@@ -112,8 +112,8 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
     UPDATE entrasp.centri_gestionali
     SET codice = '${body['codice']}',
         descrizione = '${body['descrizione']}',
-        id_centro_gest_parent = ${body.superiore.id},
-        id_responsabile = ${body.responsabile.id},
+        id_centro_gest_parent = ${body.id_centro_gest_parent.id},
+        id_responsabile = ${body.id_responsabile.id},
         flag_grc_controller = ${body['flag_grc_controller']},
         flag_grc_gestore = ${body['flag_grc_gestore']}
     WHERE codice_part='${codice_part}' AND id_centro_gest='${body['id_centro_gest']}'`;

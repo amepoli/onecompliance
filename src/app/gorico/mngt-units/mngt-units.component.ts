@@ -23,7 +23,7 @@ export class MngtUnitsComponent extends GenericTableComponent {
 
     this.displayedColumns = [
         {key: 'codice_part', label: 'Codice Part', isPrimary: true, isHidden: true},    // key1
-        {key: 'id', label: 'ID', isPrimary: true, isHidden: false},                     // key2
+        {key: 'id_centro_gest', label: 'ID', isPrimary: true, isHidden: false},                     // key2
         {key: 'codice', label: 'Codice', isPrimary: false, isHidden: false},
         {key: 'descrizione', label: 'Descrizione', isPrimary: false, isHidden: false},
         {key: 'responsabile', label: 'Responsabile', isPrimary: false, isHidden: false},
