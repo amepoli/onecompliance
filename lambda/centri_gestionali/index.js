@@ -99,6 +99,8 @@ var body;
 
 if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
   body = JSON.parse(event.body.toString());
+  body.flag_grc_controller = (body.flag_grc_controller == true) ? 1 : 0;
+  body.flag_grc_gestore = (body.flag_grc_gestore == true) ? 1 : 0;
   queries.new = `INSERT INTO entrasp.centri_gestionali 
       (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro, tree_path, flag_grc_controller, flag_grc_gestore)
       VALUES
@@ -106,8 +108,6 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
      ${body.id_centro_gest_parent.id}, ${body.id_responsabile.id}, 209, '${body['codice']}', 
      ${body['flag_grc_controller']}, ${body['flag_grc_gestore']})
      RETURNING id_centro_gest;`;
-  body.flag_grc_controller = (body.flag_grc_controller == true) ? 1 : 0;
-  body.flag_grc_gestore = (body.flag_grc_gestore == true) ? 1 : 0;
   queries.update = `
     UPDATE entrasp.centri_gestionali
     SET codice = '${body['codice']}',
@@ -123,18 +123,18 @@ var queryString_centri=
 `SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
 
 var queryString_anagr=
-`SELECT id_anagrafica AS id, codice, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part='${codice_part}';`
+`SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part='${codice_part}';`
 
-// WARNING: if form is changed position of combobox queries should be updated accordingly
+// WARNING: whenever form changes, position of combobox queries should be updated accordingly
   
 queries.combo = [
   {
     queryString: queryString_centri,
-    position: 3
+    name: 'id_centro_gest_parent'
   },
   {
     queryString: queryString_anagr,
-    position: 4
+    name: 'id_responsabile'
   }
 ];
 

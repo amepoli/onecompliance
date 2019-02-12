@@ -1,26 +1,9 @@
-var pg = require("pg");
-
-const Pool = require('pg-pool');
-const pool = new Pool({
-    host: 'goricotest.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-    database: 'GoRiCo',
-    user: 'postgres',
-    password: 'et2themax',
-    port: 5432,
-    max: 1,
-    min: 0,
-    idleTimeoutMillis: 300000,
-    connectionTimeoutMillis: 1000
-});
-
+var processor = require('process_request');
 
 exports.handler = function(event, context, callback) {
-  
-context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prevents the lambda to hang
 
 var codice_azienda = event.queryStringParameters.key1;
 var id = event.queryStringParameters.key2;
-var operation = event.queryStringParameters.operation;
 
 // from this point on I try to generate the lambda in automatic
 
@@ -210,13 +193,14 @@ var form = [
 ];
 
 
+var queries = {};
 
-var queryString =
+queries.list =
 `SELECT codice_azienda, procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('${codice_azienda}',procedure_aziendali.id_centro_gest) AS centro_gest
 FROM entrasp.procedure_aziendali
 WHERE codice_azienda='${codice_azienda}'; `
 
-var queryString_element = 
+queries.element = 
 `SELECT codice_azienda,id_procedura,id_procedura_parent,codice,descrizione_breve,descrizione,
 id_centro_gest,tipo_procedura,stato_attuazione,id_tipo_processo 
 FROM entrasp.procedure_aziendali
@@ -231,10 +215,25 @@ var queryString_centro_gest_cmb=
 var queryString_tipo_processo_cmb=
 `SELECT id_tipo_processo AS id, descrizione AS name from entrasp.tipi_processi WHERE codice_azienda='${codice_azienda}';`
 
-var queryString_next = 
-`SELECT (MAX(id_procedura)+1) as prossimo from entrasp.procedure_aziendali WHERE codice_azienda='${codice_azienda}';`
+queries.combo = [
+    {
+      queryString: queryString_procedura_parent_cmb,
+      name: 'id_procedura_parent'
+    },
+    {
+      queryString: queryString_centro_gest_cmb,
+      name: 'id_centro_gest'
+    },
+    {
+      queryString: queryString_tipo_processo_cmb,
+      name: 'id_tipo_processo'
+    }
+];
 
-var deleteString = `DELETE FROM entrasp.procedure_aziendali
+queries.next = 
+`SELECT (MAX(id_procedura)+1) as id_procedura from entrasp.procedure_aziendali WHERE codice_azienda='${codice_azienda}';`
+
+queries.delete = `DELETE FROM entrasp.procedure_aziendali
       WHERE codice_azienda='${codice_azienda}' AND id_procedura='${id}';`;
 
 var body;
@@ -251,7 +250,7 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
    var id_tipo_processo = body.id_tipo_processo.id ? `'${body.id_tipo_processo.id}'` : null;
    
    
-   var insertNewString = `INSERT INTO entrasp.procedure_aziendali 
+   queries.new = `INSERT INTO entrasp.procedure_aziendali 
         (codice_azienda, id_procedura, id_procedura_parent, codice, descrizione_breve,
          descrizione, id_centro_gest, tipo_procedura, stato_attuazione, id_tipo_processo)
         VALUES
@@ -260,7 +259,7 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
         ${tipo_procedura},${stato_attuazione}, ${id_tipo_processo})
          RETURNING id_procedura;`;
     
-     var updateString = `
+    queries.update = `
          UPDATE entrasp.procedure_aziendali
          SET id_procedura_parent = ${id_procedura_parent},
              codice = '${body.codice}',
@@ -273,198 +272,11 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
          WHERE codice_azienda='${codice_azienda}' AND id_procedura='${body.id_procedura}';`;   
 }
 
-if (event.httpMethod === "POST") {
-  let client;
-  pool.connect().then(c => {
-       client = c;
-        return client.query(updateString);
-    }).then(res => {
-        client.release();
-        var response = {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-            "isBase64Encoded": false,
-            "body": JSON.stringify(res.rows)
-        };
-        console.log(response);
-        callback(null, response);
-   }).catch(error => {
-        console.log("ERROR", error);
-        const response =  {
-           "isBase64Encoded": false,
-            "statusCode": 500,
-            "body": JSON.stringify(error)
-        };
-        callback(null, response);
-      });
-}
-
-if (event.httpMethod === "DELETE") {
+var ret_callback = function(return_value) {
+    console.log(return_value.status);
+    callback(null, return_value.response);
+  };
   
-  let client;
-  pool.connect().then(c => {
-        client = c;
-        return client.query(deleteString);
-    }).then(res => {
-      client.release();
-      var response = {
-          "statusCode": 200,
-          "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-          "isBase64Encoded": false,
-          "body": JSON.stringify(res.rows)
-      };
-      callback(null, response);
-    }).catch(error => {
-        console.log("ERROR", error);
-        const response =  {
-            "isBase64Encoded": false,
-            "statusCode": 500,
-            "body": JSON.stringify(error)
-        };
-        callback(null, response);
-    });
-}
-
-if (event.httpMethod === "PUT") {
-
-  let client;
-  pool.connect().then(c => {
-        client = c;
-        return client.query(insertNewString);
-    }).then(res => {
-        client.release();
-        var response = {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-            "isBase64Encoded": false,
-            "body": JSON.stringify(res.rows)
-        };
-        console.log(response);
-        callback(null, response);
-    }).catch(error => {
-        console.log("ERROR", error);
-        const response =  {
-            "isBase64Encoded": false,
-            "statusCode": 500,
-            "body": JSON.stringify(error)
-        };
-        callback(null, response);
-    });
-}
-
-if (event.httpMethod === "GET") {
-  let client;
-  if (operation === 'list') { // query the full table
-    pool.connect().then(c => {
-          client = c;
-          return client.query(queryString);
-      }).then(res => {
-        client.release();
-        var response = {
-          "statusCode": 200,
-          "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-          "body": JSON.stringify(res.rows),
-          "isBase64Encoded": false
-        };
-        callback(null, response);
-      }).catch(error => {
-          console.log("ERROR", error);
-          const response =  {
-              "isBase64Encoded": false,
-              "statusCode": 500,
-              "body": JSON.stringify(error)
-          };
-          callback(null, response);
-     });
-} else {    //query one element or NEW element
-  // start unrolling all combo box values
-  pool.connect().then(c => {
-      client = c;
-      return client.query(queryString_procedura_parent_cmb);
-  }).then(res => {
-    client.release();
-    form[2]['options']=res.rows;
-    pool.connect().then(c => {
-      client = c;
-      return client.query(queryString_centro_gest_cmb);
-    }).then(res => {
-      client.release();
-      form[6]['options']=res.rows;
-      pool.connect().then(c => {
-      client = c;
-      return client.query(queryString_tipo_processo_cmb);
-    }).then(res => {
-      client.release();
-      form[9]['options']=res.rows;
-      // unrolling of combo box values finishes here
-      if (operation === 'select') { //query one element
-        pool.connect().then(c => {
-        client = c;
-        return client.query(queryString_element);
-        }).then(res => {
-        client.release();
-          var jsonString = res.rows[0];
-          if (jsonString['codice_azienda']) {
-            form[0]['value'] = jsonString['codice_azienda'];
-          }
-          if (jsonString['id_procedura']) {
-            form[1]['value'] = jsonString['id_procedura'];
-          }
-          if (jsonString['id_procedura_parent']) {
-            form[2]['value'] = jsonString['id_procedura_parent'];
-          }
-          if (jsonString['codice']) {
-            form[3]['value'] = jsonString['codice'];
-          }
-          if (jsonString['descrizione_breve']) {
-            form[4]['value'] = jsonString['descrizione_breve'];
-          }
-          if (jsonString['descrizione']) {
-            form[5]['value'] = jsonString['descrizione'];
-          }
-          if (jsonString['id_centro_gest']) {
-            form[6]['value'] = jsonString['id_centro_gest'];
-          }
-          if (jsonString['tipo_procedura']) {
-            form[7]['value'] = jsonString['tipo_procedura'];
-          }
-          if (jsonString['stato_attuazione']) {
-            form[8]['value'] = jsonString['stato_attuazione'];
-          }
-          if (jsonString['id_tipo_processo']) {
-            form[9]['value'] = jsonString['id_tipo_processo'];
-          }
-          var jsonObj = JSON.stringify(form);
-          var response = {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-            "body": jsonObj,
-            "isBase64Encoded": false
-         };
-         callback(null, response);
-        });
-      } else {  // operation == 'create' --> NEW element
-        pool.connect().then(c => {
-          client = c;
-          return client.query(queryString_next);
-          }).then(res => {
-            client.release();
-            var jsonString = res.rows[0];
-            form[0]['value'] = codice_azienda;
-            form[1]['value'] = jsonString['prossimo'];
-            var jsonObj = JSON.stringify(form);
-            var response = {
-              "statusCode": 200,
-              "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-              "body": jsonObj,
-              "isBase64Encoded": false
-            };
-            callback(null, response);
-          });
-      }
-      });
-    });
-   });
-}
-}
+processor.process_request(event, context, form, queries, ret_callback);
+  
 };
