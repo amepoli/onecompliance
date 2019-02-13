@@ -9,16 +9,6 @@ var codice_articolo_normativo = event.queryStringParameters.key2;
 // from this point on I try to generate the lambda in automatic
 
 var form = [
-		{type: 'combobox',
-		 label: 'id_testo_normativo_parent',
-		 inputType: 'text',
-		 name: 'id_testo_normativo_parent',
-		 value: '',
-		 readonly: 'false',
-		 isVisible: 'false',
-		 newLine: 'true',
-		 options: []
-		}, 
 		{type: 'input',
 		 label: 'rif_esterno_url',
 		 inputType: 'text',
@@ -78,9 +68,9 @@ var form = [
 					]
 		}, 
 		{type: 'combobox',
-		 label: 'Articolo parent',
+		 label: 'Art. 231 di riferimento',
 		 inputType: 'text',
-		 name: 'codice_articolo_normativo_parent',
+		 name: 'articolo_normativo_parent',
 		 value: '',
 		 readonly: 'false',
 		 isVisible: 'true',
@@ -142,28 +132,23 @@ var queries = {};
 
 queries.list =`SELECT id_testo_normativo, codice_articolo_normativo, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS testo_normativo, rubrica FROM entrasp.articoli_normativi;`;
 
-queries.element =`SELECT id_testo_normativo_parent, rif_esterno_url, id_testo_normativo, codice_articolo_normativo, rubrica, descrizione, codice_articolo_normativo || '££' || id_testo_normativo AS codice_articolo_normativo_parent, note, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;
+queries.element =`SELECT rif_esterno_url, id_testo_normativo, codice_articolo_normativo, rubrica, descrizione, codice_articolo_normativo_parent || '££' || id_testo_normativo_parent AS articolo_normativo_parent, note, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;
 
 
 /* XXX Messaggio temporaneo per NIcola XXXX QUesta var che segue dobbiamo discuterla. 
 E' un combobox che dovrebbe automaticamente derivare dalla scelta fatta sul combobox  codice_articolo_normativo_parent.*/
 
-var queryString_id_testo_normativo_parent_cmb=`SELECT codice_articolo_normativo || '££' || id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM entrasp.articoli_normativi;`; 	
 var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name  FROM entrasp.testi_normativi;`;
-var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo AS id, entrasp.articoli_normativi_cod_rub(codice_articolo_normativo) AS name FROM entrasp.articoli_normativi;`;
+var queryString_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo_parent || '££' || id_testo_normativo_parent AS id, entrasp.articoli_normativi_cod_rub(codice_articolo_normativo_parent, id_testo_normativo_parent) AS name FROM entrasp.articoli_normativi;`;
 
 queries.combo = [
-  {
-    queryString: queryString_id_testo_normativo_parent_cmb,
-    name: 'id_testo_normativo_parent'
-  },
   {
     queryString: queryString_id_testo_normativo_cmb,
     name: 'id_testo_normativo'
   },
   {
-    queryString: queryString_codice_articolo_normativo_parent_cmb,
-    name: 'codice_articolo_normativo_parent'
+    queryString: queryString_articolo_normativo_parent_cmb,
+    name: 'articolo_normativo_parent'
   }
 ];
 
