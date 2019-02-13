@@ -1,28 +1,10 @@
-var pg = require("pg");
-
-const Pool = require('pg-pool');
-const pool = new Pool({
-    host: 'goricotest.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-    database: 'GoRiCo',
-    user: 'postgres',
-    password: 'et2themax',
-    port: 5432,
-    max: 1,
-    min: 0,
-    idleTimeoutMillis: 300000,
-    connectionTimeoutMillis: 1000
-});
-
+var processor = require('process_request');
 
 exports.handler = function(event, context, callback) {
-  
-context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prevents the lambda to hang
-
-    
 
 var id_testo_normativo = event.queryStringParameters.key1;
 var codice_articolo_normativo = event.queryStringParameters.key2;
-var operation = event.queryStringParameters.operation;  // list, select or create
+
 
 // from this point on I try to generate the lambda in automatic
 
@@ -90,7 +72,7 @@ var form = [
 					},
 					{
 					name: 'pattern',
-					validator: '^[a-zA-Z1-9&_ ]+$',
+					validator: '^[a-zA-Z0-9&_ ]+$',
 					message: 'Uso caratteri non ammessi'
 					}
 					]
@@ -156,26 +138,40 @@ var form = [
    
 //primi campi le chiavi primarie secondo l'ordine di cui alle righe 21 e 22, poi i nomi dei soli campi da visualizzare con le funzioni con un AS
     
-var queryString=`SELECT id_testo_normativo, codice_articolo_normativo, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS testo_normativo, rubrica FROM entrasp.articoli_normativi;`;
+var queries = {};
 
-var queryString_element=`SELECT id_testo_normativo_parent, rif_esterno_url, id_testo_normativo, codice_articolo_normativo, rubrica, descrizione, codice_articolo_normativo || '££' || id_testo_normativo AS codice_articolo_normativo_parent, note, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;
+queries.list =`SELECT id_testo_normativo, codice_articolo_normativo, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS testo_normativo, rubrica FROM entrasp.articoli_normativi;`;
+
+queries.element =`SELECT id_testo_normativo_parent, rif_esterno_url, id_testo_normativo, codice_articolo_normativo, rubrica, descrizione, codice_articolo_normativo || '££' || id_testo_normativo AS codice_articolo_normativo_parent, note, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;
 
 
 /* XXX Messaggio temporaneo per NIcola XXXX QUesta var che segue dobbiamo discuterla. 
 E' un combobox che dovrebbe automaticamente derivare dalla scelta fatta sul combobox  codice_articolo_normativo_parent.*/
 
-/* var queryString_id_testo_normativo_parent_cmb=`SELECT id_testo_normativo_parent AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM entrasp.articoli_normativi;`; */	
-
-
+var queryString_id_testo_normativo_parent_cmb=`SELECT codice_articolo_normativo || '££' || id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo_parent) AS name FROM entrasp.articoli_normativi;`; 	
 var queryString_id_testo_normativo_cmb=`SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name  FROM entrasp.testi_normativi;`;
 var queryString_codice_articolo_normativo_parent_cmb=`SELECT codice_articolo_normativo AS id, entrasp.articoli_normativi_cod_rub(codice_articolo_normativo) AS name FROM entrasp.articoli_normativi;`;
 
-var deleteString=
+queries.combo = [
+  {
+    queryString: queryString_id_testo_normativo_parent_cmb,
+    name: 'id_testo_normativo_parent'
+  },
+  {
+    queryString: queryString_id_testo_normativo_cmb,
+    name: 'id_testo_normativo'
+  },
+  {
+    queryString: queryString_codice_articolo_normativo_parent_cmb,
+    name: 'codice_articolo_normativo_parent'
+  }
+];
+
+queries.delete =
 `DELETE FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;	
 
 var body;
 
-    
 if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
    body = JSON.parse(event.body.toString()); // drove me crazy!!!!
 
@@ -193,176 +189,23 @@ var sanz_amm_max_quote = body.sanz_amm_max_quote ? `'${body.sanz_amm_max_quote}'
 var sanz_int_min = body.sanz_int_min ? `'${body.sanz_int_min}'` : null;
 var sanz_int_max = body.sanz_int_max ? `'${body.sanz_int_max}'` : null;
    
-var insertNewString=`INSERT INTO entrasp.articoli_normativi
+queries.new = `INSERT INTO entrasp.articoli_normativi
 (id_testo_normativo_parent, note, rif_esterno_url, id_testo_normativo, codice_articolo_normativo_parent, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max)
 Values
 ('${id_testo_normativo_parent}', '${note}', '${rif_esterno_url}', '${id_testo_normativo}', '${codice_articolo_normativo_parent}', '${codice_articolo_normativo}', '${rubrica}', '${descrizione}', '${sanz_amm_min_quote}', '${sanz_amm_max_quote}', '${sanz_int_min}', '${sanz_int_max}')
 RETURNING id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;	
 
-var updateString=`UPDATE entrasp.articoli_normativi
+queries.update =`UPDATE entrasp.articoli_normativi
 SET id_testo_normativo_parent=${id_testo_normativo_parent}, note='${note}', rif_esterno_url='${rif_esterno_url}', codice_articolo_normativo_parent='${codice_articolo_normativo_parent}', rubrica='${rubrica}', descrizione='${descrizione}', sanz_amm_min_quote='${sanz_amm_min_quote}', sanz_amm_max_quote='${sanz_amm_max_quote}', sanz_int_min='${sanz_int_min}', sanz_int_max='${sanz_int_max}'
 WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`	
    
 }
 
-if (event.httpMethod === "POST") {
-  let client;
-  pool.connect().then(c => {
-       client = c;
-        return client.query(updateString);
-    }).then(res => {
-        client.release();
-        var response = {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-            "isBase64Encoded": false,
-            "body": JSON.stringify(res.rows)
-        };
-        callback(null, response);
-   }).catch(error => {
-        console.log("ERROR", error);
-        const response =  {
-           "isBase64Encoded": false,
-            "statusCode": 500,
-            "body": JSON.stringify(error)
-        };
-        callback(null, response);
-      });
-}
+var ret_callback = function(return_value) {
+  console.log(return_value.status);
+  callback(null, return_value.response);
+};
 
-if (event.httpMethod === "DELETE") {
-  
-  let client;
-  pool.connect().then(c => {
-        client = c;
-        return client.query(deleteString);
-    }).then(res => {
-      client.release();
-      var response = {
-          "statusCode": 200,
-          "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-          "isBase64Encoded": false,
-          "body": JSON.stringify(res.rows)
-      };
-      callback(null, response);
-    }).catch(error => {
-        console.log("ERROR", error);
-        const response =  {
-            "isBase64Encoded": false,
-            "statusCode": 500,
-            "body": JSON.stringify(error)
-        };
-        callback(null, response);
-    });
-}
+processor.process_request(event, context, form, queries, ret_callback);
 
-if (event.httpMethod === "PUT") {
-
-  let client;
-  pool.connect().then(c => {
-        client = c;
-        return client.query(insertNewString);
-    }).then(res => {
-        client.release();
-        var response = {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-            "isBase64Encoded": false,
-            "body": JSON.stringify(res.rows)
-        };
-        console.log(response);
-        callback(null, response);
-    }).catch(error => {
-        console.log("ERROR", error);
-        const response =  {
-            "isBase64Encoded": false,
-            "statusCode": 500,
-            "body": JSON.stringify(error)
-        };
-        callback(null, response);
-    });
-}
-
-if (event.httpMethod === "GET") {
-  let client;
-  if (operation === 'list') { // query the full table
-    pool.connect().then(c => {
-          client = c;
-          return client.query(queryString);
-      }).then(res => {
-        client.release();
-        var response = {
-          "statusCode": 200,
-          "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-          "body": JSON.stringify(res.rows),
-          "isBase64Encoded": false
-        };
-        callback(null, response);
-      }).catch(error => {
-          console.log("ERROR", error);
-          const response =  {
-              "isBase64Encoded": false,
-              "statusCode": 500,
-              "body": JSON.stringify(error)
-          };
-          callback(null, response);
-     });
-} else {    //query one element or NEW element
-  // start unrolling all combo box values
-  /* pool.connect().then(c => {
-     client = c;
-      return client.query(queryString_id_testo_normativo_parent_cmb);
-  }).then(res => {
-    client.release();
-    form[0]['options']=res.rows; */
-    pool.connect().then(c => {
-      client = c;
-      return client.query(queryString_id_testo_normativo_cmb);
-    }).then(res => {
-      client.release();
-      form[2]['options']=res.rows;
-      pool.connect().then(c => {
-      client = c;
-      return client.query(queryString_codice_articolo_normativo_parent_cmb);
-    }).then(res => {
-      client.release();
-      form[6]['options']=res.rows;
-      // unrolling of combo box values finishes here
-      if (operation === 'select') { //query one element
-        pool.connect().then(c => {
-        client = c;
-        return client.query(queryString_element);
-        }).then(res => {
-        client.release();
-          var jsonString = res.rows[0];
-          for (var i=0; i < form.length; i++) {
-            var element = form[i];
-              if (jsonString[element.name]) {
-                  form[i]['value'] = jsonString[element.name];
-              }
-          }
-          var jsonObj = JSON.stringify(form);
-          var response = {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-            "body": jsonObj,
-            "isBase64Encoded": false
-         };
-         callback(null, response);
-        });
-      } else {  // operation == 'create' --> NEW element
-            var jsonObj = JSON.stringify(form);
-            var response = {
-              "statusCode": 200,
-              "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"},
-              "body": jsonObj,
-              "isBase64Encoded": false
-            };
-            callback(null, response);
-      }
-      });
-    });
-//   });
-}
-}
 };
