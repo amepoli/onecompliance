@@ -9,15 +9,7 @@ var codice_articolo_normativo = event.queryStringParameters.key2;
 // from this point on I try to generate the lambda in automatic
 
 var form = [
-		{type: 'input',
-		 label: 'rif_esterno_url',
-		 inputType: 'text',
-		 name: 'rif_esterno_url',
-		 value: '',
-		 readonly: 'false',
-		 isVisible: 'false',
-		 newLine: 'true'
-		}, 
+		
 		{type: 'combobox',
 		 label: 'Testo Normativo',
 		 inputType: 'text',
@@ -33,7 +25,7 @@ var form = [
 		 inputType: 'text',
 		 name: 'codice_articolo_normativo',
 		 value: '',
-		 readonly: 'true',
+		 readonly: 'false',
 		 isVisible: 'true',
 		 newLine: 'true'
 		}, 
@@ -127,7 +119,7 @@ var queries = {};
 
 queries.list =`SELECT id_testo_normativo, codice_articolo_normativo, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS testo_normativo, rubrica FROM entrasp.articoli_normativi;`;
 
-queries.element =`SELECT rif_esterno_url, id_testo_normativo, codice_articolo_normativo, rubrica, descrizione, codice_articolo_normativo_parent || '££' || id_testo_normativo_parent AS articolo_normativo_parent, note, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;
+queries.element =`SELECT id_testo_normativo, codice_articolo_normativo, rubrica, descrizione, codice_articolo_normativo_parent || '££' || id_testo_normativo_parent AS articolo_normativo_parent, note, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;
 
 
 /* XXX Messaggio temporaneo per NIcola XXXX QUesta var che segue dobbiamo discuterla. 
@@ -156,29 +148,29 @@ if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
    body = JSON.parse(event.body.toString()); // drove me crazy!!!!
 
 // Please note the difference between processing numeric or string types of selected choices
-var id_testo_normativo_parent = body.id_testo_normativo_parent ? `'${body.id_testo_normativo_parent.id}'` : null;
+//var id_testo_normativo_parent = body.id_testo_normativo_parent ? `'${body.id_testo_normativo_parent.id}'` : null;
 var note = body.note ? `'${body.note}'` : null;
-var rif_esterno_url = body.rif_esterno_url ? `'${body.rif_esterno_url}'` : null;
+//var rif_esterno_url = body.rif_esterno_url ? `'${body.rif_esterno_url}'` : null;
 id_testo_normativo = body.id_testo_normativo ? `'${body.id_testo_normativo.id}'` : id_testo_normativo;
-var codice_articolo_normativo_parent = body.codice_articolo_normativo_parent ? `'${body.codice_articolo_normativo_parent.id}'` : null;
+//var codice_articolo_normativo_parent = body.codice_articolo_normativo_parent ? `'${body.codice_articolo_normativo_parent.id}'` : null;
 codice_articolo_normativo = body.codice_articolo_normativo ? `'${body.codice_articolo_normativo}'` : codice_articolo_normativo;
 var rubrica = body.rubrica ? `'${body.rubrica}'` : null;
-var descrizione = body.descrizione ? `'${body.descrizione}'` : null;
+var descrizione = body.descrizione ? `${body.descrizione}` : null;
+if (descrizione) descrizione = '\'' + descrizione.replace(/'/g, "''") + '\''; //add external quotes and replace internal single quotes with two quotes (Postgres syntax)
 var sanz_amm_min_quote = body.sanz_amm_min_quote ? `'${body.sanz_amm_min_quote}'` : null;
 var sanz_amm_max_quote = body.sanz_amm_max_quote ? `'${body.sanz_amm_max_quote}'` : null;
 var sanz_int_min = body.sanz_int_min ? `'${body.sanz_int_min}'` : null;
 var sanz_int_max = body.sanz_int_max ? `'${body.sanz_int_max}'` : null;
    
 queries.new = `INSERT INTO entrasp.articoli_normativi
-(note, rif_esterno_url, id_testo_normativo, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max)
+(note, id_testo_normativo, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max)
 Values
-('${note}', '${rif_esterno_url}', '${id_testo_normativo}', '${codice_articolo_normativo}', '${rubrica}', '${descrizione}', '${sanz_amm_min_quote}', '${sanz_amm_max_quote}', '${sanz_int_min}', '${sanz_int_max}')
-RETURNING id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`;	
+(${note}, ${id_testo_normativo}, ${codice_articolo_normativo}, ${rubrica}, ${descrizione}, ${sanz_amm_min_quote}, ${sanz_amm_max_quote}, ${sanz_int_min}, ${sanz_int_max});`;	
 
 queries.update =`UPDATE entrasp.articoli_normativi
-SET id_testo_normativo_parent=${id_testo_normativo_parent}, note='${note}', rif_esterno_url='${rif_esterno_url}', codice_articolo_normativo_parent='${codice_articolo_normativo_parent}', rubrica='${rubrica}', descrizione='${descrizione}', sanz_amm_min_quote='${sanz_amm_min_quote}', sanz_amm_max_quote='${sanz_amm_max_quote}', sanz_int_min='${sanz_int_min}', sanz_int_max='${sanz_int_max}'
-WHERE id_testo_normativo='${id_testo_normativo}' AND codice_articolo_normativo='${codice_articolo_normativo}';`	
-   
+SET note=${note}, rubrica=${rubrica}, descrizione=${descrizione}, sanz_amm_min_quote=${sanz_amm_min_quote}, sanz_amm_max_quote=${sanz_amm_max_quote}, sanz_int_min=${sanz_int_min}, sanz_int_max=${sanz_int_max}
+WHERE id_testo_normativo=${id_testo_normativo} AND codice_articolo_normativo=${codice_articolo_normativo};`;
+console.log(queries.update);   
 }
 
 var ret_callback = function(return_value) {
