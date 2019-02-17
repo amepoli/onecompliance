@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GenericTableService, operationType } from './generic-table.service';
+import { GenericTableService } from './generic-table.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
+import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 
 import { Router} from '@angular/router';
 
@@ -44,6 +45,25 @@ export class GenericTableComponent implements OnInit {
   isLoading = true;
 
   keysArray: any[];
+
+  showAdvSearch: boolean = false;
+
+  regConfig_it: FieldConfig[] = [
+    { 
+        type: 'input',
+        label: 'ID',
+        inputType: 'text',
+        name: 'id_centro_gest',
+        value: ''      
+    },
+    {
+        type: 'input',
+        label: 'Codice',
+        inputType: 'text',
+        name: 'codice',
+        value: ''
+    }
+  ]; 
 
   path = ''; // to override in derived classes
 
@@ -116,6 +136,14 @@ export class GenericTableComponent implements OnInit {
 
   getColumnLabels(columns: columnType[]) {
     return columns.map(c => c.label);
+  }
+
+  advSearch() {
+    if (this.showAdvSearch) {
+        this.showAdvSearch = false;
+    } else {
+        this.showAdvSearch = true;
+    }
   }
 }
   

@@ -1,13 +1,21 @@
 <div class="full-width">
 
-  <div class="div1">
-      <mat-form-field>
+
+  <div class="table_header">
+      <mat-form-field class="filter"> 
           <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
       </mat-form-field>
-      </div>
-      <div class="div2">
+      <button mat-button (click)="advSearch()">
+            <mat-icon >search</mat-icon>
+            Advanced Search 
+      </button>
       <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="50"></mat-paginator>
       </div>
+
+      <div>
+        <dynamic-form *ngIf="showAdvSearch" [fields]='regConfig_it' (submit)='submit($event)'>
+        </dynamic-form>
+    </div>
       
         <div class="mat-elevation-z8">
       

@@ -8,7 +8,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatSortModule } from '@angular/material/sort';
+import { MatIconModule, MatButtonModule } from '@angular/material';
 import { GenericTableComponent } from './generic-table.component';
+import { DynamicFormsModule} from 'app/gorico/dynamic-forms/dynamic-forms.module';
 
 
 @NgModule({
@@ -22,7 +24,10 @@ import { GenericTableComponent } from './generic-table.component';
     MatInputModule,
     MatProgressSpinnerModule,
     MatCardModule,
-    MatSortModule
+    MatSortModule,
+    MatIconModule,
+    MatButtonModule,
+    DynamicFormsModule
   ],
   exports: [
     CommonModule,
@@ -33,7 +38,10 @@ import { GenericTableComponent } from './generic-table.component';
     MatInputModule,
     MatProgressSpinnerModule,
     MatCardModule,
-    MatSortModule
+    MatSortModule,
+    MatIconModule,
+    MatButtonModule,
+    DynamicFormsModule
   ]
 })
 

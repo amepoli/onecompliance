@@ -3,7 +3,7 @@ import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-export type operationType = 'list' | 'create' | 'select';
+export type operationType = 'list' | 'create' | 'select' | 'search';
 
 
 @Injectable({

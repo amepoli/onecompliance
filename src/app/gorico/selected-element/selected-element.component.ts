@@ -5,8 +5,6 @@ import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynami
 import { ActivatedRoute, Router } from '@angular/router';
 import 'rxjs/add/operator/filter';
 import { GenericTableService, operationType } from '../generic-table/generic-table.service';
-import { element } from 'protractor';
-
 
 @Component({
   selector: 'selected-element',
