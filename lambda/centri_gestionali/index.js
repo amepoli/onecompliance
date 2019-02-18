@@ -5,7 +5,7 @@ exports.handler = function(event, context, callback) {
 var codice_part = event.queryStringParameters.key1;
 var id = event.queryStringParameters.key2;
 
-var form = [
+var element_form = [
     { 
       type: 'input',
       label: 'ID',
@@ -76,6 +76,51 @@ var form = [
         value: false
       }
     ];
+
+var search_form = [
+    { 
+      type: 'input',
+      label: 'ID',
+      inputType: 'text',
+      name: 'id_centro_gest',
+      value: '',
+      readonly: 'false'
+    },
+    {
+      type: 'input',
+      label: 'Codice',
+      inputType: 'text',
+      name: 'codice',
+      value: '',
+      readonly: 'false'
+    },
+    {
+        type: 'input',
+        label: 'Descrizione',
+        inputType: 'text',
+        name: 'descrizione',
+        value: '',
+        readonly: 'false'
+      },
+      {
+        type: 'combobox',
+        label: 'Responsabile',
+        name: 'id_responsabile',
+        value: '',
+        options: []
+      },
+      {
+        type: 'checkbox',
+        label: 'Solo principali',
+        name: 'flag_principali',
+        value: true
+      }
+    ];
+
+var form = {
+    element_form: element_form,
+    search_form: search_form
+}
 
 var queries = {};
 

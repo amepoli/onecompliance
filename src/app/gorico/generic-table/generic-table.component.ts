@@ -48,22 +48,7 @@ export class GenericTableComponent implements OnInit {
 
   showAdvSearch: boolean = false;
 
-  regConfig_it: FieldConfig[] = [
-    { 
-        type: 'input',
-        label: 'ID',
-        inputType: 'text',
-        name: 'id_centro_gest',
-        value: ''      
-    },
-    {
-        type: 'input',
-        label: 'Codice',
-        inputType: 'text',
-        name: 'codice',
-        value: ''
-    }
-  ]; 
+  regConfig_it: FieldConfig[] = []; 
 
   path = ''; // to override in derived classes
 
@@ -142,6 +127,12 @@ export class GenericTableComponent implements OnInit {
     if (this.showAdvSearch) {
         this.showAdvSearch = false;
     } else {
+        if (this.regConfig_it.length === 0) {
+            this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'search').subscribe(
+                results => {
+                    this.regConfig_it = results;
+                });
+        }
         this.showAdvSearch = true;
     }
   }
