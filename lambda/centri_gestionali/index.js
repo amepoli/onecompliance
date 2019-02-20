@@ -108,13 +108,13 @@ var search_form = [
         name: 'id_responsabile',
         value: '',
         options: []
-      },
+      }/*,
       {
         type: 'checkbox',
         label: 'Solo principali',
         name: 'flag_principali',
         value: true
-      }
+      }*/
     ];
 
 var form = {
@@ -142,7 +142,7 @@ WHERE codice_part='${codice_part}' AND id_centro_gest='${id}';`;
 
 var body;
 
-if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
+if ((event.httpMethod === "POST" && event.queryStringParameters.operation != 'search') || event.httpMethod === "PUT") {
   body = JSON.parse(event.body.toString());
   body.flag_grc_controller = (body.flag_grc_controller == true) ? 1 : 0;
   body.flag_grc_gestore = (body.flag_grc_gestore == true) ? 1 : 0;
