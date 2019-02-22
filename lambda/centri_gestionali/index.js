@@ -108,13 +108,13 @@ var search_form = [
         name: 'id_responsabile',
         value: '',
         options: []
-      }/*,
+      },
       {
         type: 'checkbox',
         label: 'Solo principali',
         name: 'flag_principali',
         value: true
-      }*/
+      }
     ];
 
 var form = {
@@ -139,6 +139,12 @@ queries.next =
 
 queries.delete = `DELETE FROM entrasp.centri_gestionali
 WHERE codice_part='${codice_part}' AND id_centro_gest='${id}';`;
+
+
+queries.conditions = {
+  flag_principali: {test: true, condition: 'id_centro_gest_parent IS null'}
+};
+
 
 var body;
 

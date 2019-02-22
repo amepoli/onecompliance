@@ -138,6 +138,7 @@ export class GenericTableComponent implements OnInit {
         this.tableService.updateData(this.path, this.fullListPrimaryKeyValues, value).subscribe(
             result => {
                 console.log(result);
+                this.dataSource.data = result;
             }
         );
         this.showAdvSearch = false;
