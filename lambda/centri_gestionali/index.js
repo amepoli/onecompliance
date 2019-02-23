@@ -3,7 +3,7 @@ var processor = require('process_request');
 exports.handler = function(event, context, callback) {
   
 var codice_part = event.queryStringParameters.key1;
-var id = event.queryStringParameters.key2;
+var id_centro_gest = event.queryStringParameters.key2;
 
 var element_form = [
     { 
@@ -132,13 +132,13 @@ FROM entrasp.centri_gestionali CG WHERE cg.codice_part='${codice_part}';`
 
 queries.element = 
 `SELECT id_centro_gest,codice,descrizione,id_centro_gest_parent,id_responsabile,flag_grc_controller,flag_grc_gestore from entrasp.centri_gestionali 
-WHERE codice_part='${codice_part}' AND id_centro_gest='${id}';`
+WHERE codice_part='${codice_part}' AND id_centro_gest='${id_centro_gest}';`
 
 queries.next = 
 `SELECT (MAX(id_centro_gest)+1) as id_centro_gest from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
 
 queries.delete = `DELETE FROM entrasp.centri_gestionali
-WHERE codice_part='${codice_part}' AND id_centro_gest='${id}';`;
+WHERE codice_part='${codice_part}' AND id_centro_gest='${id_centro_gest}';`;
 
 
 queries.conditions = {
@@ -150,24 +150,31 @@ var body;
 
 if ((event.httpMethod === "POST" && event.queryStringParameters.operation != 'search') || event.httpMethod === "PUT") {
   body = JSON.parse(event.body.toString());
-  body.flag_grc_controller = (body.flag_grc_controller == true) ? 1 : 0;
-  body.flag_grc_gestore = (body.flag_grc_gestore == true) ? 1 : 0;
+  var flag_grc_controller = (body.flag_grc_controller === true) ? 1 : 0;
+  var flag_grc_gestore = (body.flag_grc_gestore === true) ? 1 : 0;
+  codice_part = body.codice_part ? `'${body.codice_part}'` : '\'' + codice_part + '\'';
+  id_centro_gest = body.id_centro_gest ? `${body.id_centro_gest}` : id_centro_gest;
+  var codice = body.codice ? `'${body.codice}'` : null;
+  var descrizione = body.descrizione ? `${body.descrizione}` : null;
+  if (descrizione) descrizione = '\'' + descrizione.replace(/'/g, "''") + '\''; //add external quotes and replace internal single quotes with two quotes (Postgres syntax)
+  var id_centro_gest_parent = body.id_centro_gest_parent ? `${body.id_centro_gest_parent.id}` : null;
+  var id_responsabile = body.id_responsabile ? `${body.id_responsabile.id}` : null;
   queries.new = `INSERT INTO entrasp.centri_gestionali 
       (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro, tree_path, flag_grc_controller, flag_grc_gestore)
       VALUES
-     ('${codice_part}', ${body['id_centro_gest']}, '${body['codice']}', '${body['descrizione']}', 
-     ${body.id_centro_gest_parent.id}, ${body.id_responsabile.id}, 209, '${body['codice']}', 
-     ${body['flag_grc_controller']}, ${body['flag_grc_gestore']})
+     (${codice_part}, ${id_centro_gest}, ${codice}, ${descrizione}, 
+     ${id_centro_gest_parent}, ${id_responsabile}, 209, ${codice}, 
+     ${flag_grc_controller}, ${flag_grc_gestore})
      RETURNING id_centro_gest;`;
   queries.update = `
     UPDATE entrasp.centri_gestionali
-    SET codice = '${body['codice']}',
-        descrizione = '${body['descrizione']}',
-        id_centro_gest_parent = ${body.id_centro_gest_parent.id},
-        id_responsabile = ${body.id_responsabile.id},
-        flag_grc_controller = ${body['flag_grc_controller']},
-        flag_grc_gestore = ${body['flag_grc_gestore']}
-    WHERE codice_part='${codice_part}' AND id_centro_gest='${body['id_centro_gest']}'`;
+    SET codice = ${codice},
+        descrizione = ${descrizione},
+        id_centro_gest_parent = ${id_centro_gest_parent},
+        id_responsabile = ${id_responsabile},
+        flag_grc_controller = ${flag_grc_controller},
+        flag_grc_gestore = ${flag_grc_gestore}
+    WHERE codice_part=${codice_part} AND id_centro_gest=${id_centro_gest}`;
 }
 
 var queryString_centri=
