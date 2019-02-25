@@ -142,7 +142,8 @@ WHERE codice_part='${codice_part}' AND id_centro_gest='${id_centro_gest}';`;
 
 
 queries.conditions = {
-  flag_principali: {test: true, condition: 'id_centro_gest_parent IS null'}
+  flag_principali: {test: true, condition: 'id_centro_gest_parent IS null'},
+  descrizione: {condition: 'descrizione Like \'%$param%\''}
 };
 
 

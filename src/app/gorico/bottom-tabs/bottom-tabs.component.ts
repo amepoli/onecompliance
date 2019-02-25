@@ -1,5 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
+export interface TabType  {
+    label: string;
+    table: string;
+    condition: {name: string, value: string};
+}
 
 @Component({
   selector: 'bottom-tabs',
@@ -8,11 +13,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BottomTabsComponent implements OnInit {
 
-  Tabs = [
-    { label: 'Tab1', table: 'mngtUnits' },
-    { label: 'Tab2' },
-    { label: '...' }
-  ];
+@Input() Tabs: TabType[];
 
   constructor() { }
 

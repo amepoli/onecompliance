@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { GenericTableService } from './generic-table.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
@@ -32,6 +32,8 @@ export interface primaryKeys {
 
 
 export class GenericTableComponent implements OnInit {
+
+@Input() condition: {name: string, value: string};  // sub-table condition
 
     // variables to override
     displayedColumns: columnType[];
