@@ -7,7 +7,7 @@ var id = event.queryStringParameters.key2;
 
 // from this point on I try to generate the lambda in automatic
 
-var form = [
+var element_form = [
 	{
       type: 'input',
 	  label: 'Codice azienda',
@@ -21,7 +21,7 @@ var form = [
     {
       type: 'input',
       label: 'ID procedura',
-	  inputType: 'text',
+	  inputType: 'number',
 	  name: 'id_procedura',
 	  value: '',
 	  readonly: 'true',
@@ -31,7 +31,7 @@ var form = [
     {
       type: 'combobox',
 	  label: 'Procedura principale',
-	  inputType: 'text',
+	  inputType: 'number',
 	  name: 'id_procedura_parent',
 	  value: '',
 	  readonly: 'false',
@@ -81,7 +81,6 @@ var form = [
     {
       type: 'textarea',
 	  label: 'Descrizione',
-	  inputType: 'text',
 	  name: 'descrizione',
 	  value: '',
 	  readonly: 'false',
@@ -111,17 +110,24 @@ var form = [
 		 readonly: 'false',
 		 isVisible: 'true',
 		 newLine: 'true'
-		},
-		{type: 'input',
+		}, */
+		{type: 'combobox',
 		 label: 'frequenza',
 		 inputType: 'text',
 		 name: 'frequenza',
 		 value: '',
 		 readonly: 'false',
 		 isVisible: 'true',
-		 newLine: 'true'
-		},
-		{type: 'input',
+		 newLine: 'true',
+		  options: [
+        { id: 'Ad evento', name: 'Ad evento' }, 
+        { id: 'Giornaliero', name: 'Giornaliero' }, 
+        { id: 'Settimanale', name: 'Settimanale'},
+        { id: 'Mensile', name: 'Mensile'},
+        { id: 'Annuale', name: 'Annuale'}]
+		}, 
+	{
+		type: 'input',
 		 label: 'strumento_informatico',
 		 inputType: 'text',
 		 name: 'strumento_informatico',
@@ -129,12 +135,11 @@ var form = [
 		 readonly: 'false',
 		 isVisible: 'true',
 		 newLine: 'true'
-		}, */
+	}, 
 	{
       type: 'combobox',
 	  label: 'Centro gestionale',
-	  inputType: 'text',
-	  name: 'id_centro_gest',
+	  name: 'id_centro_gest_codice_part',
 	  value: '',
 	  readonly: 'false',
 	  isVisible: 'true',
@@ -153,8 +158,8 @@ var form = [
 	{
       type: 'combobox',
 	  label: 'Tipo procedura',
-	  inputType: 'text',
 	  name: 'tipo_procedura',
+	  inputType: 'number',
 	  value: '',
 	  readonly: 'false',
 	  isVisible: 'true',
@@ -167,23 +172,22 @@ var form = [
 	{
       type: 'combobox',
 	  label: 'Stato attuazione',
-	  inputType: 'text',
 	  name: 'stato_attuazione',
-	  value: '3',
+	  inputType: 'text',
+	  value: '',
 	  readonly: 'false',
 	  isVisible: 'true',
 	  newLine: 'true',
 	  options: [
-        { id: '0', name: 'Attivo' }, 
-        { id: '1', name: 'In Implementazione' }, 
-        { id: '2', name: 'Auspicabile'},
-        { id: '3', name: 'Non valorizzato'}]
+        { id: 'A', name: 'Attivo' }, 
+        { id: 'I', name: 'In Implementazione' }, 
+        { id: 'S', name: 'Auspicabile'}]
 	},
 	{
       type: 'combobox',
 	  label: 'Tipo processo',
-	  inputType: 'text',
 	  name: 'id_tipo_processo',
+	  inputType: 'number',
 	  value: '',
 	  readonly: 'false',
 	  isVisible: 'true',
@@ -192,85 +196,108 @@ var form = [
 	}
 ];
 
+var search_form = [
+        {
+      type: 'input',
+      label: 'Codice',
+      inputType: 'text',
+      name: 'codice',
+      value: '',
+      readonly: 'false'
+    },
+    {
+        type: 'input',
+        label: 'Descrizione',
+        inputType: 'text',
+        name: 'descrizione',
+        value: '',
+        readonly: 'false'
+      }
+    ];
+
+var form = {
+    element_form: element_form,
+    search_form: search_form
+};
+
 
 var queries = {};
 
 queries.list =
-`SELECT codice_azienda, procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('${codice_azienda}',procedure_aziendali.id_centro_gest) AS centro_gest
+`SELECT codice_azienda, procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('${codice_azienda}', procedure_aziendali.id_centro_gest) AS centro_gest
 FROM entrasp.procedure_aziendali
-WHERE codice_azienda='${codice_azienda}'; `
+WHERE codice_azienda='${codice_azienda}'; `;
 
 queries.element = 
-`SELECT codice_azienda,id_procedura,id_procedura_parent,codice,descrizione_breve,descrizione,
-id_centro_gest,tipo_procedura,stato_attuazione,id_tipo_processo 
+`SELECT codice_azienda, id_procedura, id_procedura_parent, codice, descrizione_breve, descrizione,
+id_centro_gest, tipo_procedura, stato_attuazione, id_tipo_processo 
 FROM entrasp.procedure_aziendali
-WHERE codice_azienda='${codice_azienda}' AND id_procedura='${id}';`
-
-var queryString_procedura_parent_cmb =
-`SELECT id_procedura AS id, descrizione_breve AS name from entrasp.procedure_aziendali WHERE codice_azienda='${codice_azienda}';`
-
-var queryString_centro_gest_cmb=
-`SELECT id_centro_gest AS id, descrizione AS name from entrasp.centri_gestionali WHERE codice_part='${codice_azienda}';`
-
-var queryString_tipo_processo_cmb=
-`SELECT id_tipo_processo AS id, descrizione AS name from entrasp.tipi_processi WHERE codice_azienda='${codice_azienda}';`
-
-queries.combo = [
-    {
-      queryString: queryString_procedura_parent_cmb,
-      name: 'id_procedura_parent'
-    },
-    {
-      queryString: queryString_centro_gest_cmb,
-      name: 'id_centro_gest'
-    },
-    {
-      queryString: queryString_tipo_processo_cmb,
-      name: 'id_tipo_processo'
-    }
-];
+WHERE codice_azienda='${codice_azienda}' AND id_procedura='${id}';`;
 
 queries.next = 
-`SELECT (MAX(id_procedura)+1) as id_procedura from entrasp.procedure_aziendali WHERE codice_azienda='${codice_azienda}';`
+`SELECT (MAX(id_procedura)+1) as id_procedura from entrasp.procedure_aziendali WHERE codice_azienda='${codice_azienda}';`;
 
 queries.delete = `DELETE FROM entrasp.procedure_aziendali
       WHERE codice_azienda='${codice_azienda}' AND id_procedura='${id}';`;
 
+queries.conditions = {
+  codice: {condition: 'codice Like \'%$param%\''},
+  descrizione: {condition: 'descrizione Like \'%$param%\''}
+};
+
+
 var body;
 
-if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
-   body = JSON.parse(event.body.toString()); // drove me crazy!!!!
+if ((event.httpMethod === "POST" && event.queryStringParameters.operation != 'search') || event.httpMethod === "PUT") {
+  body = JSON.parse(event.body.toString());
+  
+   var id_centro_gest = body.id_centro_gest_codice_part !== 'null' ? body.id_centro_gest_codice_part[0] : null;
+   var codice_part = body.id_centro_gest_codice_part !== 'null' ? '\'' + body.id_centro_gest_codice_part[1] + '\'' : null;
 
-   // Check of non null value needed for all combo box selected choices
-   // Please note the difference between processing numeric or string types of selected choices
-   var id_procedura_parent = body.id_procedura_parent.id ? `'${body.id_procedura_parent.id}'` : null;
-   var id_centro_gest = body.id_centro_gest.id ? body.id_centro_gest.id : null;
-   var stato_attuazione = body.stato_attuazione.id ? `'${body.stato_attuazione.id}'` : null;
-   var tipo_procedura = body.tipo_procedura.id ? `'${body.tipo_procedura.id}'` : null;
-   var id_tipo_processo = body.id_tipo_processo.id ? `'${body.id_tipo_processo.id}'` : null;
-   
-   
    queries.new = `INSERT INTO entrasp.procedure_aziendali 
         (codice_azienda, id_procedura, id_procedura_parent, codice, descrizione_breve,
-         descrizione, id_centro_gest, tipo_procedura, stato_attuazione, id_tipo_processo)
+         descrizione, id_centro_gest, codice_part, tipo_procedura, stato_attuazione, id_tipo_processo)
         VALUES
-       ('${codice_azienda}', ${body.id_procedura}, ${id_procedura_parent}, '${body.codice}', 
-        '${body.descrizione_breve}', '${body.descrizione}', ${id_centro_gest}, 
-        ${tipo_procedura},${stato_attuazione}, ${id_tipo_processo})
+       ('${codice_azienda}', ${body.id_procedura}, ${body.id_procedura_parent}, ${body.codice}, 
+        ${body.descrizione_breve}, ${body.descrizione}, ${id_centro_gest}, ${codice_part}, 
+        ${body.tipo_procedura},${body.stato_attuazione}, ${body.id_tipo_processo})
          RETURNING id_procedura;`;
     
     queries.update = `
          UPDATE entrasp.procedure_aziendali
-         SET id_procedura_parent = ${id_procedura_parent},
-             codice = '${body.codice}',
-             descrizione_breve = '${body.descrizione_breve}',
-             descrizione = '${body.descrizione}',
+         SET id_procedura_parent = ${body.id_procedura_parent},
+             codice = ${body.codice},
+             descrizione_breve = ${body.descrizione_breve},
+             descrizione = ${body.descrizione},
              id_centro_gest = ${id_centro_gest},
-             tipo_procedura = ${tipo_procedura},
-             stato_attuazione = ${stato_attuazione},
-             id_tipo_processo = ${id_tipo_processo}
-         WHERE codice_azienda='${codice_azienda}' AND id_procedura='${body.id_procedura}';`;   
+             codice_part =  ${codice_part}, 
+             tipo_procedura = ${body.tipo_procedura},
+             stato_attuazione = ${body.stato_attuazione},
+             id_tipo_processo = ${body.id_tipo_processo}
+         WHERE codice_azienda='${codice_azienda}' AND id_procedura=${body.id_procedura};`;   
+         console.log(queries.update);
 }
+
+var queryString_id_tipo_processo_cmb=`SELECT id_tipo_processo AS id, entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda) AS name  FROM entrasp.tipi_processi WHERE codice_azienda='${codice_azienda}';`;	
+var queryString_id_centro_gest_cmb=`SELECT id_centro_gest || '££' || codice_part AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='${codice_azienda}';`;
+//var queryString_id_centro_gest_cmb=`SELECT '{ id_centro_gest: ' + id_centro_gest || ', codice_part: ' || codice_part || ' }' AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='${codice_azienda}';`;
+var queryString_id_procedura_parent_cmb=`SELECT id_procedura AS id, entrasp.procedure_aziendali_descr(id_procedura, codice_azienda) AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda='${codice_azienda}';`;
+
+queries.combo = [
+  {
+    queryString: queryString_id_tipo_processo_cmb,
+    name: 'id_tipo_processo'
+  },
+  {
+    queryString: queryString_id_centro_gest_cmb,
+    name: 'id_centro_gest'
+  },
+  {
+    queryString: queryString_id_procedura_parent_cmb,
+    name: 'id_procedura_parent'
+  }
+];
+
 
 var ret_callback = function(return_value) {
     console.log(return_value.status);

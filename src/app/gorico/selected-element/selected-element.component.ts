@@ -104,12 +104,13 @@ export class SelectedElementComponent implements OnInit {
   private processForm (value: any, form: FieldConfig[]) { // prepare fields for postgresql query
     console.log(value);
     let form_keys = form.map(c => c.name);
+    // tslint:disable-next-line:forin
     for (let key in value) {
       let item = form[form_keys.indexOf(key)];
       switch (item.type) {
         case 'input': {
           if (item.inputType === 'text') {
-            if (value[key] !== '') {
+            if (value[key] !== '' && value[key] !== 'null') {
               value[key] = '\'' + value[key].replace(/'/g, "''") + '\''; // format the string for postgresql
             } else {
               value[key] = 'null';
@@ -121,9 +122,14 @@ export class SelectedElementComponent implements OnInit {
           }
           break;
         }
-        case 'combobox':{
-          if (value[key] !== '') {
+        case 'combobox': {
+          if (value[key] !== '' && value[key] !== 'null') {
             value[key] = value[key].id; 
+            if (value[key].includes('££')) {
+                value[key].split('££');  // array with multiple keys, quotas have to be handled by lambda
+            } else if (item.inputType === 'text'){
+                value[key] = '\'' + value[key] + '\'';
+            }
           } else {
             value[key] = 'null';
           }
@@ -131,6 +137,14 @@ export class SelectedElementComponent implements OnInit {
         }
         case 'checkbox':{
           value[key] = value[key] ? '1' : '0';
+          break;
+        }
+        case 'textarea': {
+            if (value[key] !== '' && value[key] !== 'null') {
+                value[key] = '\'' + value[key].replace(/'/g, "''") + '\''; // format the string for postgresql
+            } else {
+                value[key] = 'null';
+            }
         }
       }
     }
