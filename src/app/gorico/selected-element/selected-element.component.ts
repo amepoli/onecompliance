@@ -101,7 +101,44 @@ export class SelectedElementComponent implements OnInit {
     return (100 - 10 - sumWidths); // considering 10% margins
   }
 
+  private processForm (value: any, form: FieldConfig[]) { // prepare fields for postgresql query
+    console.log(value);
+    let form_keys = form.map(c => c.name);
+    for (let key in value) {
+      let item = form[form_keys.indexOf(key)];
+      switch (item.type) {
+        case 'input': {
+          if (item.inputType === 'text') {
+            if (value[key] !== '') {
+              value[key] = '\'' + value[key].replace(/'/g, "''") + '\''; // format the string for postgresql
+            } else {
+              value[key] = 'null';
+            }
+          } else { // number
+            if (value[key] === '') {
+              value[key] = 'null';
+            }
+          }
+          break;
+        }
+        case 'combobox':{
+          if (value[key] !== '') {
+            value[key] = value[key].id; 
+          } else {
+            value[key] = 'null';
+          }
+          break;
+        }
+        case 'checkbox':{
+          value[key] = value[key] ? '1' : '0';
+        }
+      }
+    }
+    console.log(value);
+  }
+
   submit(value: any) {
+      this.processForm(value,this.regConfig_it);
       if (this.operation === 'create') {  // new record
           this.tableService.pushData(this.path, this.primaryKeys, value).subscribe(
               result => {
