@@ -139,12 +139,22 @@ var element_form = [
 	{
       type: 'combobox',
 	  label: 'Centro gestionale',
+	  inputType: 'multiple',
 	  name: 'id_centro_gest_codice_part',
 	  value: '',
 	  readonly: 'false',
 	  isVisible: 'true',
 	  newLine: 'true', 
-	  options: []
+	  options: [],
+	  keys: [
+	  	{
+	  		name: 'id_centro_gest',
+	  		inputType: 'number'
+	  	},
+	  	{
+	  		name: 'codice_part',
+	  		inputType: 'text'
+	  	}]
     },
 	/*	{type: 'input',
 		 label: 'codice_part',
@@ -197,6 +207,14 @@ var element_form = [
 ];
 
 var search_form = [
+	  {
+	  	type: 'input',
+	  	label: 'ID',
+	  	inputType: 'number',
+	  	name: 'id_procedura',
+	  	value: '',
+	  	readonly: 'false'
+	  },
         {
       type: 'input',
       label: 'Codice',
@@ -226,7 +244,7 @@ var queries = {};
 queries.list =
 `SELECT codice_azienda, procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('${codice_azienda}', procedure_aziendali.id_centro_gest) AS centro_gest
 FROM entrasp.procedure_aziendali
-WHERE codice_azienda='${codice_azienda}'; `;
+WHERE codice_azienda='${codice_azienda}';`;
 
 queries.element = 
 `SELECT codice_azienda, id_procedura, id_procedura_parent, codice, descrizione_breve, descrizione,
@@ -250,16 +268,14 @@ var body;
 
 if ((event.httpMethod === "POST" && event.queryStringParameters.operation != 'search') || event.httpMethod === "PUT") {
   body = JSON.parse(event.body.toString());
-  
-   var id_centro_gest = body.id_centro_gest_codice_part !== 'null' ? body.id_centro_gest_codice_part[0] : null;
-   var codice_part = body.id_centro_gest_codice_part !== 'null' ? '\'' + body.id_centro_gest_codice_part[1] + '\'' : null;
+
 
    queries.new = `INSERT INTO entrasp.procedure_aziendali 
         (codice_azienda, id_procedura, id_procedura_parent, codice, descrizione_breve,
          descrizione, id_centro_gest, codice_part, tipo_procedura, stato_attuazione, id_tipo_processo)
         VALUES
        ('${codice_azienda}', ${body.id_procedura}, ${body.id_procedura_parent}, ${body.codice}, 
-        ${body.descrizione_breve}, ${body.descrizione}, ${id_centro_gest}, ${codice_part}, 
+        ${body.descrizione_breve}, ${body.descrizione}, ${body.id_centro_gest_codice_part.id_centro_gest}, ${body.id_centro_gest_codice_part.codice_part}, 
         ${body.tipo_procedura},${body.stato_attuazione}, ${body.id_tipo_processo})
          RETURNING id_procedura;`;
     
@@ -269,8 +285,8 @@ if ((event.httpMethod === "POST" && event.queryStringParameters.operation != 'se
              codice = ${body.codice},
              descrizione_breve = ${body.descrizione_breve},
              descrizione = ${body.descrizione},
-             id_centro_gest = ${id_centro_gest},
-             codice_part =  ${codice_part}, 
+             id_centro_gest = ${body.id_centro_gest_codice_part.id_centro_gest},
+             codice_part =  ${body.id_centro_gest_codice_part.codice_part}, 
              tipo_procedura = ${body.tipo_procedura},
              stato_attuazione = ${body.stato_attuazione},
              id_tipo_processo = ${body.id_tipo_processo}
@@ -280,7 +296,6 @@ if ((event.httpMethod === "POST" && event.queryStringParameters.operation != 'se
 
 var queryString_id_tipo_processo_cmb=`SELECT id_tipo_processo AS id, entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda) AS name  FROM entrasp.tipi_processi WHERE codice_azienda='${codice_azienda}';`;	
 var queryString_id_centro_gest_cmb=`SELECT id_centro_gest || '££' || codice_part AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='${codice_azienda}';`;
-//var queryString_id_centro_gest_cmb=`SELECT '{ id_centro_gest: ' + id_centro_gest || ', codice_part: ' || codice_part || ' }' AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='${codice_azienda}';`;
 var queryString_id_procedura_parent_cmb=`SELECT id_procedura AS id, entrasp.procedure_aziendali_descr(id_procedura, codice_azienda) AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda='${codice_azienda}';`;
 
 queries.combo = [
@@ -290,7 +305,7 @@ queries.combo = [
   },
   {
     queryString: queryString_id_centro_gest_cmb,
-    name: 'id_centro_gest'
+    name: 'id_centro_gest_codice_part'
   },
   {
     queryString: queryString_id_procedura_parent_cmb,
