@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 export interface TabType  {
     label: string;
     name: string;
-    keys: [];
+    keys: {};
 }
 
 @Component({
