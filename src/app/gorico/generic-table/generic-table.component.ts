@@ -33,7 +33,7 @@ export interface primaryKeys {
 
 export class GenericTableComponent implements OnInit {
 
-@Input() condition: {name: string, value: string};  // sub-table condition
+    @Input() subt_keys: {};  // sub-table conditions
 
     // variables to override
     displayedColumns: columnType[];
@@ -74,7 +74,7 @@ export class GenericTableComponent implements OnInit {
     ngOnInit(): void {
         // set current table params in the service
         const table = this.router.url.split('/', 3)[2];
-        this.tableService.tableParams = Object.assign({}, { table: table }, this.fullListPrimaryKeyValues);
+        this.tableService.tableParams = Object.assign({}, { table: table }, this.fullListPrimaryKeyValues, this.subt_keys);
         console.log(this.tableService.tableParams);
         this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'list').subscribe(
             results => {

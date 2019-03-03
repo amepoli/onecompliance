@@ -2,8 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 
 export interface TabType  {
     label: string;
-    table: string;
-    condition: {name: string, value: string};
+    name: string;
+    keys: [];
 }
 
 @Component({
