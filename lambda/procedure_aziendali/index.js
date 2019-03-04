@@ -253,7 +253,8 @@ var subtable_form = [
 
 var form = {
     element_form: element_form,
-    search_form: search_form
+    search_form: search_form,
+    subtable_form: subtable_form
 };
 
 

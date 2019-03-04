@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
+import { TabType } from 'app/gorico/bottom-tabs/bottom-tabs.component';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import 'rxjs/add/operator/filter';
@@ -23,6 +24,7 @@ export class SelectedElementComponent implements OnInit {
     isLoading = true;
     path: string;
     operation: operationType;
+    tabs: TabType[];
 
     constructor(private tableService: GenericTableService,
         private route: ActivatedRoute,
@@ -67,6 +69,19 @@ export class SelectedElementComponent implements OnInit {
                         sameLineElements = [];
                         console.log(results);
                         this.regConfig_it = results;
+                        // now get subtables entries
+                        this.tableService.getData(this.path, this.primaryKeys, 'sublist').subscribe(
+                            sublist => {
+                                this.tabs = sublist.map(c => {
+                                    let tab: TabType;
+                                    tab.name = c.name;
+                                    tab.label = c.table;
+                                    c.keys.forEach(key => {
+                                        tab.keys[key] = this.regConfig_it[key] ? this.regConfig_it[key] : 'null';
+                                    });
+                                    return tab;
+                                });
+                            });
                     },
                     error => {
                         this.isLoading = false;
