@@ -236,17 +236,17 @@ var search_form = [
 var subtable_form = [
     {
         label: 'Sotto Procedure',
-        name: 'sotto_procedure',
+        name: 'procedure',
         keys: ['id_procedura_parent']
     },
     {
         label: 'Rischi',
-        name: 'procedure_rischi', // will be handled by risks lambda
+        name: 'rischi', // will be handled by risks lambda
         keys: [] // TODO
     },
     {
         label: 'Modelli di Progetto',
-        name: 'procedure_modelli',          // will be handled by models lambda
+        name: 'modelli',          // will be handled by models lambda
         keys: [] // TODO
     }
 ]

@@ -15,6 +15,7 @@ const routes = [
     RouterModule.forChild(routes),
     GenericTableModule
   ],
-  declarations: [ProcessesComponent]
+  declarations: [ProcessesComponent],
+  exports: [ProcessesComponent]
 })
 export class ProcessesModule { }

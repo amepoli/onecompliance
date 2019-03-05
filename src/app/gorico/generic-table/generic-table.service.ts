@@ -15,7 +15,7 @@ export class GenericTableService {
   private myGetInit = { // OPTIONAL
         headers: {
         }, // OPTIONAL
-        response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
+        //response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
         queryStringParameters: {  // OPTIONAL
            key1: 'DEMO', // codice
            key2: ''      // id
@@ -48,8 +48,8 @@ export class GenericTableService {
 
     this.myGetInit.queryStringParameters['operation'] = operation;
 
-    return from(this.amplifyService.api().get(this.apiName, path, this.myGetInit))
-           .pipe(map(res => res['data']));
+    return from(this.amplifyService.api().get(this.apiName, path, this.myGetInit));
+        //   .pipe(map(res => res['data']));
   }
 
   pushData(path: string, primaryKeyValues: any, jsonData: any): Observable<any> { 

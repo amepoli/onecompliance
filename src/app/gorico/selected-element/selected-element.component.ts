@@ -73,14 +73,15 @@ export class SelectedElementComponent implements OnInit {
                         this.tableService.getData(this.path, this.primaryKeys, 'sublist').subscribe(
                             sublist => {
                                 this.tabs = sublist.map(c => {
-                                    let tab: TabType;
-                                    tab.name = c.name;
-                                    tab.label = c.table;
+                                    const tab: TabType = {name: c.name, label: c.label, keys: {}};
                                     c.keys.forEach(key => {
-                                        tab.keys[key] = this.regConfig_it[key] ? this.regConfig_it[key] : 'null';
+                                        const pos = this.regConfig_it.map(c => c.name).indexOf(key);
+                                        console.log(pos);
+                                        tab.keys[key] = this.regConfig_it[pos].value;
                                     });
                                     return tab;
                                 });
+                                console.log(this.tabs);
                             });
                     },
                     error => {
