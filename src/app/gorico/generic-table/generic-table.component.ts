@@ -72,10 +72,14 @@ export class GenericTableComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // set current table params in the service
-        const table = this.router.url.split('/', 3)[2];
-        this.tableService.tableParams = Object.assign({}, { table: table }, this.fullListPrimaryKeyValues, {sub_keys: this.sub_keys});
-        console.log(this.tableService.tableParams);
+        if (!this.sub_keys) { // main list 
+            // set current table params in the service
+            const table = this.router.url.split('/', 3)[2];
+            this.tableService.tableParams = Object.assign({}, { table: table }, this.fullListPrimaryKeyValues);
+            console.log(this.tableService.tableParams);
+        } else { //sublist
+            this.fullListPrimaryKeyValues = Object.assign({}, this.fullListPrimaryKeyValues, {sub_keys: JSON.stringify(this.sub_keys)});
+        }
         this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'list').subscribe(
             results => {
                 this.processResponse(results);
