@@ -236,17 +236,17 @@ var search_form = [
 var subtable_form = [
     {
         label: 'Sotto Procedure',
-        name: 'procedure',
-        keys: ['id_procedura_parent']
+        table: 'procedure',
+        keys: ['id_procedura']
     },
     {
         label: 'Rischi',
-        name: 'rischi', // will be handled by risks lambda
+        table: 'rischi', // will be handled by risks lambda
         keys: [] // TODO
     },
     {
         label: 'Modelli di Progetto',
-        name: 'modelli',          // will be handled by models lambda
+        table: 'modelli',          // will be handled by models lambda
         keys: [] // TODO
     }
 ]
@@ -278,8 +278,13 @@ queries.delete = `DELETE FROM entrasp.procedure_aziendali
       WHERE codice_azienda='${codice_azienda}' AND id_procedura='${id}';`;
 
 queries.conditions = {  // special conditions (different from key=value) for search and subtable keys
-  codice: {condition: 'codice Like \'%$param%\''},
-  descrizione: {condition: 'descrizione Like \'%$param%\''}
+  search: {
+	codice: {condition: 'codice Like \'%$param%\''},
+	descrizione: {condition: 'descrizione Like \'%$param%\''}
+  },
+  sub_table: {
+  	id_procedura: {condition: 'id_procedura_parent = $param'}
+  }
 };
 
 

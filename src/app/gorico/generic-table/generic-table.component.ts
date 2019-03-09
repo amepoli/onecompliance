@@ -79,6 +79,7 @@ export class GenericTableComponent implements OnInit {
             console.log(this.tableService.tableParams);
         } else { //sublist
             this.fullListPrimaryKeyValues = Object.assign({}, this.fullListPrimaryKeyValues, {sub_keys: JSON.stringify(this.sub_keys)});
+            console.log(this.fullListPrimaryKeyValues);
         }
         this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'list').subscribe(
             results => {
@@ -87,18 +88,20 @@ export class GenericTableComponent implements OnInit {
                 this.dataSource.sort = this.sort;
                 this.dataSource.paginator = this.paginator;
                 // triggers any change in displayed datasource, setting the array of primary keys
-                this.dataSource.connect().subscribe(source => {
-                    this.keysArray = source.map(row => {
-                        const keys = {};
-                        let i = 1;
-                        for (const column of this.displayedColumns) {
-                            if (column.isPrimary) {
-                                keys['key' + i++] = row[column.key]; // key1, key2, etc.
+                if (!this.sub_keys) { // main list 
+                    this.dataSource.connect().subscribe(source => {
+                        this.keysArray = source.map(row => {
+                            const keys = {};
+                            let i = 1;
+                            for (const column of this.displayedColumns) {
+                                if (column.isPrimary) {
+                                    keys['key' + i++] = row[column.key]; // key1, key2, etc.
+                                }
                             }
-                        }
-                        return keys;
+                            return keys;
+                        });
                     });
-                });
+                }
                 this.isLoading = false;
             },
             error => {

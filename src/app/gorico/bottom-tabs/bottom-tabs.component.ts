@@ -1,8 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material';
 
 export interface TabType  {
     label: string;
-    name: string;
+    table: string;
     keys: {};
 }
 
@@ -15,9 +16,15 @@ export class BottomTabsComponent implements OnInit {
 
 @Input() Tabs: TabType[];
 
+ activeIndex = 0;
+
   constructor() { }
 
   ngOnInit() {
+  }
+
+  tabChanged(tabChangeEvent: MatTabChangeEvent): void {
+      this.activeIndex = tabChangeEvent.index;
   }
 
 }

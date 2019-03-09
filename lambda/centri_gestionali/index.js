@@ -117,9 +117,28 @@ var search_form = [
       }
     ];
 
+    var subtable_form = [
+        {
+            label: 'Centri gestionali',
+            table: 'centri_gest',
+            keys: ['id_centro_gest']
+        },
+        {
+            label: 'Elenco Personale',
+            table: 'personale', 
+            keys: [] // TODO
+        },
+        {
+            label: 'Procedure aziendali',
+            table: 'procedure',          
+            keys: [] // TODO
+        }
+    ];
+
 var form = {
     element_form: element_form,
-    search_form: search_form
+    search_form: search_form,
+    subtable_form: subtable_form
 };
 
 var queries = {};
@@ -142,8 +161,13 @@ WHERE codice_part='${codice_part}' AND id_centro_gest='${id_centro_gest}';`;
 
 
 queries.conditions = {
-  flag_principali: {test: true, condition: 'id_centro_gest_parent IS null'},
-  descrizione: {condition: 'descrizione Like \'%$param%\''}
+    search: {
+        flag_principali: { test: true, condition: 'id_centro_gest_parent IS null' },
+        descrizione: { condition: 'descrizione Like \'%$param%\'' }
+    },
+    sub_table: {
+        id_centro_gest: {condition: 'id_centro_gest_parent = $param'}
+    }
 };
 
 
