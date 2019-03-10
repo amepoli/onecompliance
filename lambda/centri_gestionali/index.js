@@ -1,9 +1,6 @@
 var processor = require('process_request');
 
 exports.handler = function(event, context, callback) {
-  
-var codice_part = event.queryStringParameters.key1;
-var id_centro_gest = event.queryStringParameters.key2;
 
 var element_form = [
     { 
@@ -117,6 +114,45 @@ var search_form = [
       }
     ];
 
+    var table_form = [
+        {
+            key: 'codice_part', 
+            label: 'Codice Part', 
+            isPrimary: true, 
+            isHidden: true
+        },    
+        {
+            key: 'id_centro_gest', 
+            label: 'ID', 
+            isPrimary: true, 
+            isHidden: false
+        },                     
+        {
+            key: 'codice', 
+            label: 'Codice', 
+            isPrimary: false, 
+            isHidden: false
+        },
+        {
+            key: 'descrizione', 
+            label: 'Descrizione', 
+            isPrimary: false, 
+            isHidden: false
+        },
+        {
+            key: 'responsabile', 
+            label: 'Responsabile', 
+            isPrimary: false, 
+            isHidden: false
+        },
+        {
+            key: 'parente', 
+            label: 'Centro Superiore', 
+            isPrimary: false, 
+            isHidden: false
+        } 
+    ];
+
     var subtable_form = [
         {
             label: 'Centri gestionali',
@@ -136,6 +172,7 @@ var search_form = [
     ];
 
 var form = {
+    table_form: table_form,
     element_form: element_form,
     search_form: search_form,
     subtable_form: subtable_form
@@ -143,27 +180,29 @@ var form = {
 
 var queries = {};
 
-queries.list =
+queries.list = // WHERE conditions automatically added based on queryString parameters
 `SELECT cg.codice_part, cg.id_centro_gest, CG.codice, CG.descrizione, 
-entrasp.anagrafiche_id_codcognnome('${codice_part}',cg.id_responsabile) as responsabile,
-entrasp.centri_gestionali_descr('${codice_part}',cg.id_centro_gest_parent) as parente
-FROM entrasp.centri_gestionali CG WHERE cg.codice_part='${codice_part}';`;
+entrasp.anagrafiche_id_codcognnome('$codice_part',cg.id_responsabile) as responsabile,
+entrasp.centri_gestionali_descr('$codice_part',cg.id_centro_gest_parent) as parente
+FROM entrasp.centri_gestionali CG;`;
 
 queries.element = 
 `SELECT id_centro_gest,codice,descrizione,id_centro_gest_parent,id_responsabile,flag_grc_controller,flag_grc_gestore from entrasp.centri_gestionali 
-WHERE codice_part='${codice_part}' AND id_centro_gest='${id_centro_gest}';`;
+WHERE codice_part='$codice_part' AND id_centro_gest='$id_centro_gest';`;
 
 queries.next = 
-`SELECT (MAX(id_centro_gest)+1) as id_centro_gest from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`;
+`SELECT (MAX(id_centro_gest)+1) as id_centro_gest from entrasp.centri_gestionali WHERE codice_part='$codice_part';`;
 
 queries.delete = `DELETE FROM entrasp.centri_gestionali
-WHERE codice_part='${codice_part}' AND id_centro_gest='${id_centro_gest}';`;
+WHERE codice_part='$codice_part' AND id_centro_gest='$id_centro_gest';`;
 
 
 queries.conditions = {
     search: {
         flag_principali: { test: true, condition: 'id_centro_gest_parent IS null' },
         descrizione: { condition: 'descrizione Like \'%$param%\'' }
+    },
+    table: {
     },
     sub_table: {
         id_centro_gest: {condition: 'id_centro_gest_parent = $param'}
@@ -178,7 +217,7 @@ if ((event.httpMethod === "POST" && event.queryStringParameters.operation != 'se
   queries.new = `INSERT INTO entrasp.centri_gestionali 
       (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro, tree_path, flag_grc_controller, flag_grc_gestore)
       VALUES
-     ('${codice_part}', ${body.id_centro_gest}, ${body.codice}, ${body.descrizione}, 
+     (${body.codice_part}, ${body.id_centro_gest}, ${body.codice}, ${body.descrizione}, 
      ${body.id_centro_gest_parent}, ${body.id_responsabile}, 209, ${body.codice}, 
      ${body.flag_grc_controller}, ${body.flag_grc_gestore})
      RETURNING id_centro_gest;`;
@@ -190,14 +229,14 @@ if ((event.httpMethod === "POST" && event.queryStringParameters.operation != 'se
         id_responsabile = ${body.id_responsabile},
         flag_grc_controller = ${body.flag_grc_controller},
         flag_grc_gestore = ${body.flag_grc_gestore}
-    WHERE codice_part='${codice_part}' AND id_centro_gest=${body.id_centro_gest}`;
+    WHERE codice_part=${body.codice_part} AND id_centro_gest=${body.id_centro_gest}`;
 }
 
 var queryString_centri_cmb=
-`SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part='${codice_part}';`
+`SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part='$codice_part';`
 
 var queryString_anagr_cmb=
-`SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part='${codice_part}';`
+`SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part='$codice_part';`
 
 // WARNING: whenever form changes, position of combobox queries should be updated accordingly
   

@@ -31,12 +31,12 @@ export class SelectedElementComponent implements OnInit {
         private router: Router) { }
 
     ngOnInit() {
-        this.n = this.tableService.currentIndex + 1;
+        this.n = this.tableService.currentIndex + 1; 
         this.tot = this.tableService.keysArray.length;
 
         this.route.queryParams
             .subscribe(params => {
-                this.primaryKeys = this.getKeys(params);
+                this.primaryKeys = JSON.parse(params.keys);
                 this.table = params.table;
                 this.path = '/' + this.table; // table names must match with the path
                 this.operation = params.operation;
@@ -70,7 +70,7 @@ export class SelectedElementComponent implements OnInit {
                         console.log(results);
                         this.regConfig_it = results;
                         // now get subtables entries
-                        this.tableService.getData(this.path, this.primaryKeys, 'sublist').subscribe(
+                        this.tableService.getData(this.path, this.primaryKeys, 'subkeys').subscribe(
                             sublist => {
                                 this.tabs = sublist.map(c => {
                                     const tab: TabType = {table: c.table, label: c.label, keys: {}};
@@ -87,16 +87,6 @@ export class SelectedElementComponent implements OnInit {
                         this.isLoading = false;
                     });
             });
-    }
-
-    private getKeys(obj) {
-        const newObj = Object.keys(obj).reduce(function (no, key) {
-            if (key.substring(0, 3) === 'key') {
-                no[key] = obj[key];
-            }
-            return no;
-        }, {});
-        return newObj;
     }
 
     private processInlineElements(elements: FieldConfig[]): Number {

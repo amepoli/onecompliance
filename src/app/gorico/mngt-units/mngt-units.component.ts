@@ -21,16 +21,7 @@ export class MngtUnitsComponent extends GenericTableComponent {
 
   ngOnInit(): void {
 
-    this.displayedColumns = [
-        {key: 'codice_part', label: 'Codice Part', isPrimary: true, isHidden: true},    // key1
-        {key: 'id_centro_gest', label: 'ID', isPrimary: true, isHidden: false},                     // key2
-        {key: 'codice', label: 'Codice', isPrimary: false, isHidden: false},
-        {key: 'descrizione', label: 'Descrizione', isPrimary: false, isHidden: false},
-        {key: 'responsabile', label: 'Responsabile', isPrimary: false, isHidden: false},
-        {key: 'parente', label: 'Centro Superiore', isPrimary: false, isHidden: false}   // key3
-    ];
-
-    this.fullListPrimaryKeyValues.key1 = this.authService.getCode();   // codice part
+    this.fullListPrimaryKeyValues['codice_part'] = this.authService.getCode();   // codice part
 
     this.processResponse = (response: any[]) => { 
         response.forEach((p) => {
