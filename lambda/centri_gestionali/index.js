@@ -157,7 +157,12 @@ var search_form = [
         {
             label: 'Centri gestionali',
             table: 'centri_gest',
-            keys: ['id_centro_gest']
+            keys: [
+                { 
+                    parent: 'id_centro_gest',
+                    son: 'id_centro_gest_parent'
+                }
+            ]
         },
         {
             label: 'Elenco Personale',
@@ -180,7 +185,7 @@ var form = {
 
 var queries = {};
 
-queries.list = // WHERE conditions automatically added based on queryString parameters
+queries.list = // WHERE conditions automatically added based on url parameters
 `SELECT cg.codice_part, cg.id_centro_gest, CG.codice, CG.descrizione, 
 entrasp.anagrafiche_id_codcognnome('$codice_part',cg.id_responsabile) as responsabile,
 entrasp.centri_gestionali_descr('$codice_part',cg.id_centro_gest_parent) as parente
@@ -205,7 +210,6 @@ queries.conditions = {
     table: {
     },
     sub_table: {
-        id_centro_gest: {condition: 'id_centro_gest_parent = $param'}
     }
 };
 
