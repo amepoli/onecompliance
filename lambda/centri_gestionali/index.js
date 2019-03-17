@@ -4,6 +4,15 @@ exports.handler = function(event, context, callback) {
 
 var element_form = [
     { 
+        type: 'input',
+        label: 'Codice Part',
+        inputType: 'text',
+        name: 'codice_part',
+        isVisible: 'false',
+        value: '',
+        readonly: 'true'
+      },
+    { 
       type: 'input',
       label: 'ID',
       inputType: 'number',
@@ -192,7 +201,7 @@ entrasp.centri_gestionali_descr('$codice_part',cg.id_centro_gest_parent) as pare
 FROM entrasp.centri_gestionali CG;`;
 
 queries.element = 
-`SELECT id_centro_gest,codice,descrizione,id_centro_gest_parent,id_responsabile,flag_grc_controller,flag_grc_gestore from entrasp.centri_gestionali 
+`SELECT codice_part,id_centro_gest,codice,descrizione,id_centro_gest_parent,id_responsabile,flag_grc_controller,flag_grc_gestore from entrasp.centri_gestionali 
 WHERE codice_part='$codice_part' AND id_centro_gest='$id_centro_gest';`;
 
 queries.next = 

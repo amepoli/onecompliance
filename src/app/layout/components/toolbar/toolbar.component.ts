@@ -210,8 +210,10 @@ export class ToolbarComponent implements OnInit, OnDestroy
     {
         if (!this.queryParams.table) { // table and keys not coming with queryparams when in list view
             this.queryParams =  this.tableService.tableParams; 
+            if (this.queryParams.keys) { // stringify keys to push to url
+                this.queryParams.keys = JSON.stringify(this.queryParams.keys);
+            }
         }
-
         const params = Object.assign({}, this.queryParams, {operation: 'create'});
         this.router.navigate(['/gorico/details'], { queryParams: params/*, skipLocationChange: true*/ });
     }

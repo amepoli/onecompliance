@@ -50,7 +50,7 @@ export class GenericTableService {
 
   pushData(path: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = primaryKeyValues;
+    this.myPutPostInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues)};;
     this.myPutPostInit.body = jsonData;
 
     return from(this.amplifyService.api().put(this.apiName, path, this.myPutPostInit));
@@ -58,13 +58,13 @@ export class GenericTableService {
 
   deleteData(path: string, primaryKeyValues: any): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = primaryKeyValues;
+    this.myGetInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues)};
     return from(this.amplifyService.api().del(this.apiName, path, this.myGetInit));
   }
 
   updateData(path: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = primaryKeyValues;
+    this.myPutPostInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues)};
     this.myPutPostInit.body = jsonData;
     return from(this.amplifyService.api().post(this.apiName, path, this.myPutPostInit));
   }
