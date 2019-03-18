@@ -40,9 +40,7 @@ export class GenericTableService {
   getData(path: string, primaryKeyValues: any, operation: operationType): Observable<any> {
     this.amplifyService.auth();
 
-    this.myGetInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues)};
-
-    this.myGetInit.queryStringParameters = Object.assign({}, this.myGetInit.queryStringParameters, {operation: operation}); 
+    this.myGetInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues), operation: operation}; 
 
     return from(this.amplifyService.api().get(this.apiName, path, this.myGetInit));
         //   .pipe(map(res => res['data']));
@@ -68,4 +66,12 @@ export class GenericTableService {
     this.myPutPostInit.body = jsonData;
     return from(this.amplifyService.api().post(this.apiName, path, this.myPutPostInit));
   }
+ 
+  searchData(path: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues), operation: 'search'};
+    this.myPutPostInit.body = jsonData;
+    return from(this.amplifyService.api().post(this.apiName, path, this.myPutPostInit));
+  }
+
 }

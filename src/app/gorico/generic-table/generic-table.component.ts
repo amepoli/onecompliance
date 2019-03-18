@@ -141,7 +141,7 @@ export class GenericTableComponent implements OnInit {
     }
 
     submit(value: any) {
-        this.tableService.updateData(this.path, this.fullListPrimaryKeyValues, value).subscribe(
+        this.tableService.searchData(this.path, this.fullListPrimaryKeyValues, value).subscribe(
             result => {
                 console.log(result);
                 this.dataSource.data = result;
