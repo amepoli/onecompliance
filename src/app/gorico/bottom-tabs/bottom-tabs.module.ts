@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material';
 import { BottomTabsComponent } from './bottom-tabs.component';
 import { MngtUnitsModule } from 'app/gorico/mngt-units/mngt-units.module';
+import { ProcessesModule } from 'app/gorico/processes/processes.module';
 
 @NgModule({
   declarations: [BottomTabsComponent],
   imports: [
     CommonModule,
     MatTabsModule,
-    MngtUnitsModule
+    MngtUnitsModule,
+    ProcessesModule
   ],
   exports: [BottomTabsComponent]
 })

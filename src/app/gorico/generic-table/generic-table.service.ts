@@ -3,7 +3,7 @@ import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-export type operationType = 'list' | 'create' | 'select' | 'search';
+export type operationType = 'list' | 'sublist' | 'create' | 'select' | 'search' | 'keys' | 'subkeys' ;
 
 
 @Injectable({
@@ -11,14 +11,12 @@ export type operationType = 'list' | 'create' | 'select' | 'search';
 })
 export class GenericTableService {
 
-  private apiName = 'gorico';
+  private apiName = 'gorico'; 
   private myGetInit = { // OPTIONAL
         headers: {
         }, // OPTIONAL
-        response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
+        // response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
         queryStringParameters: {  // OPTIONAL
-           key1: 'DEMO', // codice
-           key2: ''      // id
         }
   };
 
@@ -28,8 +26,6 @@ export class GenericTableService {
     headers: {
     }, // OPTIONAL
     queryStringParameters: {  // OPTIONAL
-       key1: 'DEMO', // codice
-       key2: ''          // id
     }
 };
 
@@ -44,17 +40,17 @@ export class GenericTableService {
   getData(path: string, primaryKeyValues: any, operation: operationType): Observable<any> {
     this.amplifyService.auth();
 
-    this.myGetInit.queryStringParameters = primaryKeyValues;
+    this.myGetInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues)};
 
-    this.myGetInit.queryStringParameters['operation'] = operation;
+    this.myGetInit.queryStringParameters = Object.assign({}, this.myGetInit.queryStringParameters, {operation: operation}); 
 
-    return from(this.amplifyService.api().get(this.apiName, path, this.myGetInit))
-           .pipe(map(res => res['data']));
+    return from(this.amplifyService.api().get(this.apiName, path, this.myGetInit));
+        //   .pipe(map(res => res['data']));
   }
 
   pushData(path: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = primaryKeyValues;
+    this.myPutPostInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues)};;
     this.myPutPostInit.body = jsonData;
 
     return from(this.amplifyService.api().put(this.apiName, path, this.myPutPostInit));
@@ -62,13 +58,13 @@ export class GenericTableService {
 
   deleteData(path: string, primaryKeyValues: any): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = primaryKeyValues;
+    this.myGetInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues)};
     return from(this.amplifyService.api().del(this.apiName, path, this.myGetInit));
   }
 
   updateData(path: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = primaryKeyValues;
+    this.myPutPostInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues)};
     this.myPutPostInit.body = jsonData;
     return from(this.amplifyService.api().post(this.apiName, path, this.myPutPostInit));
   }

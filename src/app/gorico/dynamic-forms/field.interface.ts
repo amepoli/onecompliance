@@ -8,6 +8,11 @@ export interface Item{
     id: string;
     name: string;
 } 
+
+export interface Key {
+    name: string;
+    inputType: string;
+}
 export interface FieldConfig {
   label?: string;
   name?: string;
@@ -21,4 +26,5 @@ export interface FieldConfig {
   type: string;
   value?: any;
   validations?: Validator[];
+  keys?: Key[];
 }

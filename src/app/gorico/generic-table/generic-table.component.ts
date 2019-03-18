@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { GenericTableService } from './generic-table.service';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { GenericTableService, operationType } from './generic-table.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 
@@ -14,15 +14,6 @@ export interface columnType {
     isHidden: boolean;
 }
 
-export interface primaryKeys {
-    key1: string;
-    key2: string;
-    key3: string;
-    key4: string;
-    key5: string;
-    key6: string;
-}
-
 @Component({
     selector: 'app-generic-table',
     templateUrl: './generic-table.component.html',
@@ -33,10 +24,12 @@ export interface primaryKeys {
 
 export class GenericTableComponent implements OnInit {
 
+    @Input() sub_keys: {};  // sub-table conditions
+
     // variables to override
     displayedColumns: columnType[];
 
-    fullListPrimaryKeyValues: primaryKeys = { key1: '', key2: '', key3: '', key4: '', key5: '', key6: '' };  // primary key values used to retrieve the full table
+    fullListPrimaryKeyValues: any = {};  // primary key values used to retrieve the full table
 
     // end variables to override
 
@@ -70,33 +63,46 @@ export class GenericTableComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // set current table params in the service
-        const table = this.router.url.split('/', 3)[2];
-        this.tableService.tableParams = Object.assign({}, { table: table }, this.fullListPrimaryKeyValues);
-        console.log(this.tableService.tableParams);
-        this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'list').subscribe(
-            results => {
-                this.processResponse(results);
-                this.dataSource = new MatTableDataSource(results);
-                this.dataSource.sort = this.sort;
-                this.dataSource.paginator = this.paginator;
-                // triggers any change in displayed datasource, setting the array of primary keys
-                this.dataSource.connect().subscribe(source => {
-                    this.keysArray = source.map(row => {
-                        const keys = {};
-                        let i = 1;
-                        for (const column of this.displayedColumns) {
-                            if (column.isPrimary) {
-                                keys['key' + i++] = row[column.key]; // key1, key2, etc.
-                            }
+        this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'keys').subscribe(
+            keys => {
+                let operation: operationType;
+                this.displayedColumns = keys;
+                if (!this.sub_keys) { // main list 
+                    // set current table params in the service
+                    const table = this.router.url.split('/', 3)[2];
+                    this.tableService.tableParams = Object.assign({}, { table: table }, { keys: this.fullListPrimaryKeyValues });
+                    operation = 'list';
+                    console.log(this.tableService.tableParams);
+                } else { // sublist, merge primary keys and son table keys
+                    this.fullListPrimaryKeyValues = Object.assign({}, this.fullListPrimaryKeyValues, this.sub_keys);
+                    operation = 'sublist';
+                    console.log(this.fullListPrimaryKeyValues);
+                }
+                this.tableService.getData(this.path, this.fullListPrimaryKeyValues, operation).subscribe(
+                    results => {
+                        this.processResponse(results);
+                        this.dataSource = new MatTableDataSource(results);
+                        this.dataSource.sort = this.sort;
+                        this.dataSource.paginator = this.paginator;
+                        // triggers any change in displayed datasource, setting the array of primary keys
+                        if (!this.sub_keys) { // main list 
+                            this.dataSource.connect().subscribe(source => {
+                                this.keysArray = source.map(row => {
+                                    const key_values = {};
+                                    for (const column of this.displayedColumns) {
+                                        if (column.isPrimary) {
+                                            key_values[column.key] = row[column.key];
+                                        }
+                                    }
+                                    return key_values;
+                                });
+                            });
                         }
-                        return keys;
+                        this.isLoading = false;
+                    },
+                    error => {
+                        this.isLoading = false;
                     });
-                });
-                this.isLoading = false;
-            },
-            error => {
-                this.isLoading = false;
             });
     }
 
@@ -114,7 +120,7 @@ export class GenericTableComponent implements OnInit {
         const table = this.path.slice(1);
         this.tableService.keysArray = this.keysArray;
         this.tableService.currentIndex = index;
-        const mergedParams = Object.assign({}, { table: table, operation: 'select' }, this.keysArray[index]);
+        const mergedParams = { table: table, keys: JSON.stringify(this.keysArray[index]), operation: 'select' };
         setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: mergedParams /*,  skipLocationChange: true*/ }); }, 50);
     }
 

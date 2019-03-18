@@ -1,16 +1,15 @@
 var processor = require('process_request');
 
-
 exports.handler = function(event, context, callback) {
 
 var codice_part = event.queryStringParameters.key1;
 var id = event.queryStringParameters.key2;
 
-var form = [
+var element_form = [
     { 
       type: 'input',
       label: 'ID',
-      inputType: 'text',
+      inputType: 'number',
       name: 'id_anagrafica',
       value: '',
       readonly: 'true'
@@ -79,10 +78,33 @@ var form = [
     }
     ];
 
+var search_form = [
+    {type: 'input',
+		 label: 'Nome',
+		 inputType: 'text',
+		 name: 'nome',
+		 value: '',
+		 readonly: 'false'
+		  },
+	  {type: 'input',
+		 label: 'Cognome',
+		 inputType: 'text',
+		 name: 'cognome',
+		 value: '',
+		 readonly: 'false'
+		}	
+    ];
+
+var form = {
+    element_form: element_form,
+    search_form: search_form
+};
+
+
 var queries = {};
 
 queries.list = 
-`SELECT 
+`SELECT distinct
 anagrafiche_id.codice_part,
 anagrafiche_id.id_anagrafica, 
 anagrafiche_id.codice, 
@@ -108,24 +130,27 @@ queries.next =
 queries.delete = `DELETE FROM entrasp.anagrafiche_id
       WHERE codice_part='${codice_part}' AND id_anagrafica='${id}';`;
 
+queries.conditions = {
+  nome: {condition: 'nome Like \'%$param%\''},
+  cognome: {condition: 'cognome Like \'%$param%\''}
+};
+
 var body;
 
-if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
+if ((event.httpMethod === "POST" && event.queryStringParameters.operation != 'search') || event.httpMethod === "PUT") {
    body = JSON.parse(event.body.toString()); // drove me crazy!!!!
-   
    queries.new = `INSERT INTO entrasp.anagrafiche_id 
         (codice_part, id_anagrafica, codice, cognome, nome)
         VALUES
-       ('${codice_part}', ${body['id_anagrafica']}, '${body['codice']}', '${body['cognome']}', 
-         '${body['nome']}')
+       ('${codice_part}', ${body.id_anagrafica}, ${body.codice}, ${body.cognome}, ${body.nome})
          RETURNING id_anagrafica;`;
     
    queries.update = `
          UPDATE entrasp.anagrafiche_id
-         SET codice = '${body['codice']}',
-             cognome = '${body['cognome']}',
-             nome = '${body['nome']}'
-         WHERE codice_part='${codice_part}' AND id_anagrafica='${body['id_anagrafica']}'`;   
+         SET codice = ${body.codice},
+             cognome = ${body.cognome},
+             nome = ${body.nome}
+         WHERE codice_part='${codice_part}' AND id_anagrafica=${body.id_anagrafica}`;   
 }
 
 var ret_callback = function(return_value) {
