@@ -1,51 +1,48 @@
 <div class="full-width">
 
 
-  <div class="table_header">
-      <mat-form-field class="filter"> 
-          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-      </mat-form-field>
-      <button *ngIf="!showAdvSearch" mat-button (click)="advSearch()">
-            <mat-icon >search</mat-icon>
-            Advanced Search 
-      </button>
-      <button *ngIf="showAdvSearch" mat-button type="submit" form="myform">
-        <mat-icon >search</mat-icon>
-        Advanced Search 
-  </button>
-      <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="50"></mat-paginator>
-      </div>
+    <div *ngIf="showTableHeader" class="table_header">
+        <mat-form-field class="filter">
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+        </mat-form-field>
+        <button *ngIf="!showAdvSearch" mat-button (click)="advSearch()">
+            <mat-icon>search</mat-icon>
+            Advanced Search
+        </button>
+        <button *ngIf="showAdvSearch" mat-button type="submit" form="myform">
+            <mat-icon>search</mat-icon>
+            Advanced Search
+        </button>
+        <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="50"></mat-paginator>
+    </div>
 
-      <div *ngIf="showAdvSearch">
+    <div *ngIf="showAdvSearch">
         <dynamic-form [fields]='regConfig_it' (submit)='submit($event)'>
         </dynamic-form>
     </div>
-      
-        <div class="mat-elevation-z8">
-      
-          <table mat-table *ngIf="!isLoading" [dataSource]="dataSource" matSort>
-          
+
+    <div class="mat-elevation-z8">
+
+        <table mat-table *ngIf="!isLoading" [dataSource]="dataSource" matSort>
+
             <ng-container [matColumnDef]="column.label" *ngFor="let column of displayedColumns">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header="{{column.key}}" [hidden]="column.isHidden"> {{column.label}} </th>
-       
-              <td mat-cell *matCellDef="let element" [hidden]="column.isHidden"> {{element[column.key]}} </td>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="{{column.key}}" [hidden]="column.isHidden">
+                    {{column.label}} </th>
+
+                <td mat-cell *matCellDef="let element" [hidden]="column.isHidden"> {{element[column.key]}} </td>
             </ng-container>
-        
+
             <tr mat-header-row *matHeaderRowDef="getColumnLabels(displayedColumns)"></tr>
-  
-            <tr mat-row *matRowDef="let row; columns: getColumnLabels(displayedColumns); let i = index;" 
-                        (click)="getRecord(i, row)"
-                        [style.background]="selectedRow == row ? 'lightblue' : ''">
+
+            <tr mat-row *matRowDef="let row; columns: getColumnLabels(displayedColumns); let i = index;"
+                (click)="getRecord(i, row)" [style.background]="selectedRow == row ? 'lightblue' : ''">
             </tr>
-          </table>
-  
-          <mat-card *ngIf="isLoading" 
-                    style="display: flex; justify-content: center; align-items: center">
-              <mat-progress-spinner 
-                  color="primary" 
-                  mode="indeterminate">
-              </mat-progress-spinner>
-          </mat-card>
-        
-        </div>
-   </div>
+        </table>
+
+        <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
+            <mat-progress-spinner color="primary" mode="indeterminate">
+            </mat-progress-spinner>
+        </mat-card>
+
+    </div>
+</div>

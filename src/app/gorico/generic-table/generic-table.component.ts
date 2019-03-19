@@ -41,6 +41,8 @@ export class GenericTableComponent implements OnInit {
 
     showAdvSearch: boolean = false;
 
+    showTableHeader: boolean = true; // only shown in parent table, not in subtable
+
     regConfig_it: FieldConfig[] = [];
 
     path = ''; // to override in derived classes
@@ -68,18 +70,21 @@ export class GenericTableComponent implements OnInit {
                 let operation: operationType;
                 this.displayedColumns = keys;
                 if (!this.sub_keys) { // main list 
+                    this.showTableHeader = true;
                     // set current table params in the service
                     const table = this.router.url.split('/', 3)[2];
                     this.tableService.tableParams = Object.assign({}, { table: table }, { keys: this.fullListPrimaryKeyValues });
                     operation = 'list';
                     console.log(this.tableService.tableParams);
                 } else { // sublist, merge primary keys and son table keys
+                    this.showTableHeader = false;
                     this.fullListPrimaryKeyValues = Object.assign({}, this.fullListPrimaryKeyValues, this.sub_keys);
                     operation = 'sublist';
                     console.log(this.fullListPrimaryKeyValues);
                 }
                 this.tableService.getData(this.path, this.fullListPrimaryKeyValues, operation).subscribe(
                     results => {
+                        console.log(results);
                         this.processResponse(results);
                         this.dataSource = new MatTableDataSource(results);
                         this.dataSource.sort = this.sort;
