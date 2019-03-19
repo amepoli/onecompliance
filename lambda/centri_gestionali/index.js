@@ -170,6 +170,10 @@ var search_form = [
                 { 
                     parent: 'id_centro_gest',
                     son: 'id_centro_gest_parent'
+                },
+                { 
+                    parent: 'codice_part',
+                    son: 'codice_part'
                 }
             ]
         },
@@ -196,60 +200,43 @@ var queries = {};
 
 queries.list = // WHERE conditions automatically added based on url parameters
 `SELECT cg.codice_part, cg.id_centro_gest, CG.codice, CG.descrizione, 
-entrasp.anagrafiche_id_codcognnome('$codice_part',cg.id_responsabile) as responsabile,
-entrasp.centri_gestionali_descr('$codice_part',cg.id_centro_gest_parent) as parente
+entrasp.anagrafiche_id_codcognnome('$codice_part$',cg.id_responsabile) as responsabile,
+entrasp.centri_gestionali_descr('$codice_part$',cg.id_centro_gest_parent) as parente
 FROM entrasp.centri_gestionali CG;`;
 
 queries.element = 
 `SELECT codice_part,id_centro_gest,codice,descrizione,id_centro_gest_parent,id_responsabile,flag_grc_controller,flag_grc_gestore from entrasp.centri_gestionali 
-WHERE codice_part='$codice_part' AND id_centro_gest='$id_centro_gest';`;
+WHERE codice_part='$codice_part$' AND id_centro_gest='$id_centro_gest$';`;
 
 queries.next = 
-`SELECT (MAX(id_centro_gest)+1) as id_centro_gest from entrasp.centri_gestionali WHERE codice_part='$codice_part';`;
+`SELECT (MAX(id_centro_gest)+1) as id_centro_gest from entrasp.centri_gestionali WHERE codice_part='$codice_part$';`;
 
 queries.delete = `DELETE FROM entrasp.centri_gestionali
-WHERE codice_part='$codice_part' AND id_centro_gest='$id_centro_gest';`;
+WHERE codice_part='$codice_part$' AND id_centro_gest='$id_centro_gest$';`;
 
-
-queries.conditions = {
-    search: {
-        flag_principali: { test: true, condition: 'id_centro_gest_parent IS null' },
-        descrizione: { condition: 'descrizione Like \'%$param%\'' }
-    },
-    table: {
-    },
-    sub_table: {
-    }
-};
-
-
-var body;
-
-if ((event.httpMethod === "POST" && event.queryStringParameters.operation != 'search') || event.httpMethod === "PUT") {
-  body = JSON.parse(event.body.toString());
-  queries.new = `INSERT INTO entrasp.centri_gestionali 
+queries.new = `INSERT INTO entrasp.centri_gestionali 
       (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro, tree_path, flag_grc_controller, flag_grc_gestore)
       VALUES
-     (${body.codice_part}, ${body.id_centro_gest}, ${body.codice}, ${body.descrizione}, 
-     ${body.id_centro_gest_parent}, ${body.id_responsabile}, 209, ${body.codice}, 
-     ${body.flag_grc_controller}, ${body.flag_grc_gestore})
+     ($codice_part$, $id_centro_gest$, $codice$, $descrizione$, 
+     $id_centro_gest_parent$, $id_responsabile$, 209, $codice$, 
+     $flag_grc_controller$, $flag_grc_gestore$)
      RETURNING id_centro_gest;`;
-  queries.update = `
+     
+queries.update = `
     UPDATE entrasp.centri_gestionali
-    SET codice = ${body.codice},
-        descrizione = ${body.descrizione},
-        id_centro_gest_parent = ${body.id_centro_gest_parent},
-        id_responsabile = ${body.id_responsabile},
-        flag_grc_controller = ${body.flag_grc_controller},
-        flag_grc_gestore = ${body.flag_grc_gestore}
-    WHERE codice_part=${body.codice_part} AND id_centro_gest=${body.id_centro_gest}`;
-}
+    SET codice = $codice$,
+        descrizione = $descrizione$,
+        id_centro_gest_parent = $id_centro_gest_parent$,
+        id_responsabile = $id_responsabile$,
+        flag_grc_controller = $flag_grc_controller$,
+        flag_grc_gestore = $flag_grc_gestore$
+    WHERE codice_part=$codice_part$ AND id_centro_gest=$id_centro_gest$`;
 
 var queryString_centri_cmb=
-`SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part='$codice_part';`
+`SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part='$codice_part$';`;
 
 var queryString_anagr_cmb=
-`SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part='$codice_part';`
+`SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part='$codice_part$';`;
 
 // WARNING: whenever form changes, position of combobox queries should be updated accordingly
   
@@ -264,8 +251,19 @@ queries.combo = [
   }
 ];
 
+queries.conditions = {
+    search: {
+        flag_principali: { test: true, condition: 'id_centro_gest_parent IS null' },
+        descrizione: { condition: 'descrizione Like \'%$param%\'' }
+    },
+    table: {
+    },
+    sub_table: {
+    }
+};
+
 var ret_callback = function(return_value) {
-  console.log(return_value.status);
+  console.log(return_value.status, return_value.query);
   callback(null, return_value.response);
 };
 
