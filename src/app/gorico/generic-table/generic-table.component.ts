@@ -26,6 +26,8 @@ export class GenericTableComponent implements OnInit {
 
     @Input() sub_keys: {};  // sub-table conditions
 
+    isMainTable: boolean = true; // main or subtable
+
     // variables to override
     displayedColumns: columnType[];
 
@@ -41,7 +43,7 @@ export class GenericTableComponent implements OnInit {
 
     showAdvSearch: boolean = false;
 
-    showTableHeader: boolean = true; // only shown in parent table, not in subtable
+    showRowBar: boolean = false;
 
     regConfig_it: FieldConfig[] = [];
 
@@ -70,14 +72,14 @@ export class GenericTableComponent implements OnInit {
                 let operation: operationType;
                 this.displayedColumns = keys;
                 if (!this.sub_keys) { // main list 
-                    this.showTableHeader = true;
+                    this.isMainTable = true;
                     // set current table params in the service
                     const table = this.router.url.split('/', 3)[2];
                     this.tableService.tableParams = Object.assign({}, { table: table }, { keys: this.fullListPrimaryKeyValues });
                     operation = 'list';
                     console.log(this.tableService.tableParams);
                 } else { // sublist, merge primary keys and son table keys
-                    this.showTableHeader = false;
+                    this.isMainTable = false;
                     this.fullListPrimaryKeyValues = Object.assign({}, this.fullListPrimaryKeyValues, this.sub_keys);
                     operation = 'sublist';
                     console.log(this.fullListPrimaryKeyValues);
@@ -122,11 +124,15 @@ export class GenericTableComponent implements OnInit {
 
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
-        const table = this.path.slice(1);
-        this.tableService.keysArray = this.keysArray;
-        this.tableService.currentIndex = index;
-        const mergedParams = { table: table, keys: JSON.stringify(this.keysArray[index]), operation: 'select' };
-        setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: mergedParams /*,  skipLocationChange: true*/ }); }, 50);
+        if (this.isMainTable) {
+            const table = this.path.slice(1);
+            this.tableService.keysArray = this.keysArray;
+            this.tableService.currentIndex = index;
+            const mergedParams = { table: table, keys: JSON.stringify(this.keysArray[index]), operation: 'select' };
+            setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: mergedParams /*,  skipLocationChange: true*/ }); }, 50);
+        } else {
+            this.showRowBar = !this.showRowBar;
+        }
     }
 
 

@@ -1,7 +1,6 @@
 <div class="full-width">
 
-
-    <div *ngIf="showTableHeader" class="table_header">
+    <div *ngIf="isMainTable" class="table_header">
         <mat-form-field class="filter">
             <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
         </mat-form-field>
@@ -21,9 +20,13 @@
         </dynamic-form>
     </div>
 
-    <div class="mat-elevation-z8">
+    <div *ngIf="showRowBar"> 
+        RowBar
+    </div>
 
-        <table mat-table *ngIf="!isLoading" [dataSource]="dataSource" matSort>
+    <div class="mat-elevation-z2">
+
+        <table mat-table  *ngIf="!isLoading" [dataSource]="dataSource" matSort>
 
             <ng-container [matColumnDef]="column.label" *ngFor="let column of displayedColumns">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header="{{column.key}}" [hidden]="column.isHidden">
@@ -35,7 +38,7 @@
             <tr mat-header-row *matHeaderRowDef="getColumnLabels(displayedColumns)"></tr>
 
             <tr mat-row *matRowDef="let row; columns: getColumnLabels(displayedColumns); let i = index;"
-                (click)="getRecord(i, row)" [style.background]="selectedRow == row ? 'lightblue' : ''">
+                (click)="getRecord(i, row)" [style.background]="(selectedRow == row && (showRowBar || isMainTable)) ? 'lightblue' : ''">
             </tr>
         </table>
 
