@@ -43,8 +43,6 @@ export class GenericTableComponent implements OnInit {
 
     showAdvSearch: boolean = false;
 
-    showRowBar: boolean = false;
-
     regConfig_it: FieldConfig[] = [];
 
     path = ''; // to override in derived classes
@@ -131,13 +129,18 @@ export class GenericTableComponent implements OnInit {
             const mergedParams = { table: table, keys: JSON.stringify(this.keysArray[index]), operation: 'select' };
             setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: mergedParams /*,  skipLocationChange: true*/ }); }, 50);
         } else {
-            this.showRowBar = !this.showRowBar;
+
         }
     }
 
 
     getColumnLabels(columns: columnType[]) {
-        return columns.map(c => c.label);
+        let colLabels = columns.map(c => c.label);
+        if (!this.isMainTable) {
+            colLabels.unshift('Actions');
+        }
+        return colLabels;
+
     }
 
     advSearch() {

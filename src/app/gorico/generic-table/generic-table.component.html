@@ -29,17 +29,34 @@
         <table mat-table  *ngIf="!isLoading" [dataSource]="dataSource" matSort>
 
             <ng-container [matColumnDef]="column.label" *ngFor="let column of displayedColumns">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header="{{column.key}}" [hidden]="column.isHidden">
-                    {{column.label}} </th>
-
-                <td mat-cell *matCellDef="let element" [hidden]="column.isHidden"> {{element[column.key]}} </td>
+                <mat-header-cell *matHeaderCellDef mat-sort-header="{{column.key}}" [hidden]="column.isHidden">
+                    {{column.label}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [hidden]="column.isHidden"> {{element[column.key]}} </mat-cell>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="getColumnLabels(displayedColumns)"></tr>
+            <ng-container matColumnDef="Actions">
+                <mat-header-cell *matHeaderCellDef>
+                  <button mat-icon-button color="primary" (click)="addNew()">
+                    <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
+                  </button>
+                </mat-header-cell>
+          
+                <mat-cell *matCellDef="let row; let i=index;">
+                  <button mat-icon-button color="accent" (click)="startEdit(i, row.id, row.title, row.state, row.url, row.created_at, row.updated_at)">
+                    <mat-icon aria-label="Edit">edit</mat-icon>
+                  </button>
+          
+                  <button mat-icon-button color="accent" (click)="deleteItem(i, row.id, row.title, row.state, row.url)">
+                    <mat-icon aria-label="Delete">delete</mat-icon>
+                  </button>
+                </mat-cell>
+              </ng-container>
 
-            <tr mat-row *matRowDef="let row; columns: getColumnLabels(displayedColumns); let i = index;"
-                (click)="getRecord(i, row)" [style.background]="(selectedRow == row && (showRowBar || isMainTable)) ? 'lightblue' : ''">
-            </tr>
+            <mat-header-row *matHeaderRowDef="getColumnLabels(displayedColumns)"></mat-header-row>
+
+            <mat-row *matRowDef="let row; columns: getColumnLabels(displayedColumns); let i = index;"
+                (click)="getRecord(i, row)" [style.background]="(selectedRow == row && isMainTable) ? 'lightblue' : ''">
+            </mat-row>
         </table>
 
         <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
