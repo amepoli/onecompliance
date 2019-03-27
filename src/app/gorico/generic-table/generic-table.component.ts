@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { GenericTableService, operationType } from './generic-table.service';
-import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatRow, MatDialog } from '@angular/material';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 
 import { Router } from '@angular/router';
 
 import { AuthService } from 'app/login-page/auth.service';
+import { AddDialogComponent } from '../dialogs/add.dialog/add.dialog.component';
 
 export interface columnType {
     key: string;
@@ -59,7 +60,8 @@ export class GenericTableComponent implements OnInit {
     // end methods to override
 
 
-    constructor(protected tableService: GenericTableService,
+    constructor(public addDialog: MatDialog,
+        protected tableService: GenericTableService,
         protected router: Router,
         protected authService: AuthService) {
     }
@@ -162,6 +164,17 @@ export class GenericTableComponent implements OnInit {
             }
         );
         this.showAdvSearch = false;
+    }
+
+    addNew(): void {
+        const dialogRef = this.addDialog.open(AddDialogComponent, {
+            width: '800px',
+            data: {}
+          });
+      
+          dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+          });
     }
 }
 

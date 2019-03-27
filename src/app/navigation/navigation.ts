@@ -162,6 +162,59 @@ export const navigation: FuseNavigation[] = [
                         url  : '/gorico/articles'
                     }
                 ]
+            },
+            {
+                id       : 'configuration',
+                title    : 'Configuration',
+                translate: 'NAV.CONFIG',
+                type     : 'collapsable',
+                icon     : 'settings',
+                children : [
+                    {
+                        id   : 'testformtype',
+                        title: 'Test Form Types',
+                        translate: 'NAV.TFTYPES',
+                        type : 'item',
+                        url  : '/login'
+                    },
+                    {
+                        id   : 'tasktypes',
+                        title: 'Task Types',
+                        translate: 'NAV.TASKTYPES',
+                        type : 'item',
+                        url  : '/login'
+                    },
+                    {
+                        id   : 'risktypes',
+                        title: 'Risk Types',
+                        translate: 'NAV.RISKTYPES',
+                        type : 'item',
+                        url  : '/login'
+                    },
+                    {
+                        id   : 'topics',
+                        title: 'Topics',
+                        translate: 'NAV.TOPICS',
+                        type : 'item',
+                        url  : '/login'
+                    }
+                ]
+            },
+            {
+                id       : 'procac',
+                title    : 'Processing Activities',
+                translate: 'NAV.PROCACT',
+                icon: 'play_for_work',
+                type : 'item',
+                url  : '/login'
+            },
+            {
+                id       : 'tasks',
+                title    : 'Tasks',
+                translate: 'NAV.TASKS',
+                icon: 'rowing',
+                type : 'item',
+                url  : '/login'
             }
         ]
     }

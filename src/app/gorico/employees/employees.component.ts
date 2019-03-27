@@ -3,6 +3,7 @@ import { GenericTableService } from './../generic-table/generic-table.service';
 import { GenericTableComponent } from '../generic-table/generic-table.component';
 import { Router} from '@angular/router';
 import { AuthService } from 'app/login-page/auth.service';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'employees',
@@ -11,10 +12,11 @@ import { AuthService } from 'app/login-page/auth.service';
 })
 export class EmployeesComponent extends GenericTableComponent {
 
-  constructor(protected tableService: GenericTableService,
+  constructor(public addDialog: MatDialog,
+              protected tableService: GenericTableService,
               protected router: Router,
               protected authService: AuthService) {
-    super(tableService, router, authService); 
+    super(addDialog, tableService, router, authService); 
     this.path = '/employees';
   }
 
