@@ -9,7 +9,6 @@ export const locale = {
             'PROCESSES'   : 'Processes',
             'CONTROLS'    : 'Controls',
             'RISKS'       : 'Risks',
-            'REPORTS'     : 'Reports',
             'TEST'        : 'Test Forms',
             'GENERIC'     : 'Generic',
             'QUEST'       : 'Questionnaires',

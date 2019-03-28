@@ -61,9 +61,9 @@ export const navigation: FuseNavigation[] = [
                 url  : '/login'
             },
             {
-                id       : 'reports',
-                title    : 'Reports',
-                translate: 'NAV.REPORTS',
+                id       : 'tasks',
+                title    : 'Tasks',
+                translate: 'NAV.TASKS',
                 icon: 'new_releases',
                 type : 'item',
                 url  : '/login'
@@ -205,14 +205,6 @@ export const navigation: FuseNavigation[] = [
                 title    : 'Processing Activities',
                 translate: 'NAV.PROCACT',
                 icon: 'play_for_work',
-                type : 'item',
-                url  : '/login'
-            },
-            {
-                id       : 'tasks',
-                title    : 'Tasks',
-                translate: 'NAV.TASKS',
-                icon: 'rowing',
                 type : 'item',
                 url  : '/login'
             }

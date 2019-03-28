@@ -81,6 +81,7 @@ export class GenericTableComponent implements OnInit {
                 } else { // sublist, merge primary keys and son table keys
                     this.isMainTable = false;
                     this.fullListPrimaryKeyValues = Object.assign({}, this.fullListPrimaryKeyValues, this.sub_keys);
+                    this.tableService.tableParams = Object.assign({}, this.tableService.tableParams, { sub_keys: this.sub_keys });
                     operation = 'sublist';
                     console.log(this.fullListPrimaryKeyValues);
                 }
@@ -173,7 +174,9 @@ export class GenericTableComponent implements OnInit {
           });
       
           dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed');
+            if (result) {
+                this.addNew();
+            }
           });
     }
 }

@@ -11,9 +11,13 @@ export class AddDialogComponent {
 
   constructor(public dialogRef: MatDialogRef<AddDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public tableService: GenericTableService) { }
+    public tableService: GenericTableService) { 
+        console.log(tableService.tableParams);
+    }
 
-    onNoClick(): void {
+    onClose(): void {
         this.dialogRef.close();
       }
+    
+
 }
