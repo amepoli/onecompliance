@@ -46,27 +46,10 @@ export class SelectedElementComponent implements OnInit {
                     results => {
                         this.isLoading = false;
                         // console.log(results);
-                        let sameLineElements: FieldConfig[] = [];
-                        for (let result of results) {
-                            if (result['validations']) {
-                                for (let validator of result['validations']) {
-                                    if (validator['name'] === 'required') {
-                                        validator['validator'] = Validators.required;
-                                    }
-                                    if (validator['name'] === 'pattern') {
-                                        validator['validator'] = Validators.pattern(validator['validator']);
-                                    }
-                                }
-                            }
-                            if (result['newLine'] === 'false') {
-                                sameLineElements.push(result);
-                            } else {
-                                result.width = this.processInlineElements(sameLineElements);
-                                sameLineElements = [];
-                            }
-                        }
-                        this.processInlineElements(sameLineElements); // handles inline elements of last line
-                        sameLineElements = [];
+                        this.tableService.process_form(results);
+                        // this is a small trick to reload indexes if coming from subtable 
+                        this.n = this.tableService.currentIndex + 1;
+                        this.tot = this.tableService.keysArray.length;
                         console.log(results);
                         this.regConfig_it = results;
                         // now get subtables entries
@@ -89,95 +72,8 @@ export class SelectedElementComponent implements OnInit {
             });
     }
 
-    private processInlineElements(elements: FieldConfig[]): Number {
-        // this is a small trick to reload indexes if coming from subtable 
-        this.n = this.tableService.currentIndex + 1;
-        this.tot = this.tableService.keysArray.length;
-
-        const numElements = 1 + elements.length; // current + previouses
-        let sumWidths = 0;
-        if (elements.length) { // some elements to put on the same line
-            const singleWidth = Math.floor(100 / numElements);
-            for (let element of elements) {
-                element.width = singleWidth - 10; // considering 10% margins;
-                sumWidths += singleWidth;
-            }
-        }
-        return (100 - 10 - sumWidths); // considering 10% margins
-    }
-
-    private processForm(value: any, form: FieldConfig[]) { // prepare fields for postgresql query
-        console.log(value);
-        let form_keys = form.map(c => c.name);
-        // tslint:disable-next-line:forin
-        for (const key in value) {
-            const item = form[form_keys.indexOf(key)];
-            switch (item.type) {
-                case 'input': {
-                    if (item.inputType === 'text') {
-                        if (value[key] !== '' && value[key] !== 'null') {
-                            value[key] = '\'' + value[key].replace(/'/g, "''") + '\''; // format the string for postgresql
-                        } else {
-                            value[key] = 'null';
-                        }
-                    } else { // number
-                        if (value[key] === '') {
-                            value[key] = 'null';
-                        }
-                    }
-                    break;
-                }
-                case 'combobox': {
-                    if (value[key] !== '' && value[key] !== 'null') {
-                        value[key] = value[key].id;
-                        if (item.inputType === 'multiple') {
-                            const combo_keys = item.keys.map(c => c.name);
-                            const combo_types = item.keys.map(c => c.inputType);
-                            const input_values = value[key].split('££');  // array with multiple keys
-                            const output_values = {};
-                            input_values.forEach(element => {
-                                const combo_key = combo_keys.shift();
-                                const combo_type = combo_types.shift();
-                                if (combo_type === 'text') {
-                                    element = '\'' + element + '\'';
-                                }
-                                output_values[combo_key] = element;
-                            });
-                            value[key] = output_values;
-                        } else if (item.inputType === 'text') {
-                            value[key] = '\'' + value[key] + '\'';
-                        }
-                    } else {
-                        if (item.inputType === 'multiple') {
-                            const output_values = {};
-                            item.keys.forEach(element => {
-                                output_values[element.name] = 'null';
-                            });
-                            value[key] = output_values;
-                        } else {
-                            value[key] = 'null';
-                        }
-                    }
-                    break;
-                }
-                case 'checkbox': {
-                    value[key] = value[key] ? '1' : '0';
-                    break;
-                }
-                case 'textarea': {
-                    if (value[key] !== '' && value[key] !== 'null') {
-                        value[key] = '\'' + value[key].replace(/'/g, "''") + '\''; // format the string for postgresql
-                    } else {
-                        value[key] = 'null';
-                    }
-                }
-            }
-        }
-        console.log(value);
-    }
-
     submit(value: any) {
-        this.processForm(value, this.regConfig_it);
+        this.tableService.prepare_form(value, this.regConfig_it);
         if (this.operation === 'create') {  // new record
             this.tableService.pushData(this.path, this.primaryKeys, value).subscribe(
                 result => {

@@ -170,7 +170,7 @@ export class GenericTableComponent implements OnInit {
     addNew(): void {
         const dialogRef = this.addDialog.open(AddDialogComponent, {
             width: '800px',
-            data: {}
+            data: this.tableService.tableParams
           });
       
           dialogRef.afterClosed().subscribe(result => {

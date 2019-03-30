@@ -9,7 +9,7 @@ import { takeUntil } from 'rxjs/operators';
 <mat-form-field [ngStyle]="{'margin-right': '5%', 'margin-left': '5%','width': field.width+'%'}" *ngIf="field.isVisible != 'false'" [formGroup]="group">
 <mat-select [ngModel]="field.value" [formControlName]="field.name" [placeholder]="field.label">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
-<mat-option *ngFor="let item of filteredItems | async" [value]="item">{{item.name}}</mat-option>
+<mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly">{{item.name}}</mat-option>
 </mat-select>
 </mat-form-field>
 `,
