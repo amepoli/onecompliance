@@ -199,7 +199,8 @@ var form = {
 var queries = {};
 
 queries.list = // WHERE conditions automatically added based on url parameters
-`SELECT cg.codice_part, cg.id_centro_gest, CG.codice, CG.descrizione, 
+`SELECT cg.codice_part, cg.id_centro_gest, CG.codice, CG.descrizione, cg.id_centro_gest_parent, cg.id_responsabile,
+cg.flag_grc_controller, cg.flag_grc_gestore,
 entrasp.anagrafiche_id_codcognnome('$codice_part$',cg.id_responsabile) as responsabile,
 entrasp.centri_gestionali_descr('$codice_part$',cg.id_centro_gest_parent) as parente
 FROM entrasp.centri_gestionali CG;`;

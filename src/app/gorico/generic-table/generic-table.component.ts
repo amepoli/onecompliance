@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
 import { GenericTableService, operationType } from './generic-table.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow, MatDialog } from '@angular/material';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
@@ -50,6 +50,7 @@ export class GenericTableComponent implements OnInit {
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
+    @ViewChild('List') private List: ElementRef;
 
 
     // methods to override
@@ -89,6 +90,7 @@ export class GenericTableComponent implements OnInit {
                     results => {
                         console.log(results);
                         this.processResponse(results);
+                        this.tableService.fullTable = results;
                         this.dataSource = new MatTableDataSource(results);
                         this.dataSource.sort = this.sort;
                         this.dataSource.paginator = this.paginator;
@@ -157,7 +159,7 @@ export class GenericTableComponent implements OnInit {
 
     }
 
-    submit(value: any) {
+    submit_search(value: any) {
         this.tableService.searchData(this.path, this.fullListPrimaryKeyValues, value).subscribe(
             result => {
                 console.log(result);
@@ -168,6 +170,7 @@ export class GenericTableComponent implements OnInit {
     }
 
     addNew(): void {
+        /* Pop-up example
         const dialogRef = this.addDialog.open(AddDialogComponent, {
             width: '800px',
             data: this.tableService.tableParams
@@ -177,7 +180,12 @@ export class GenericTableComponent implements OnInit {
             if (result) {
                 this.addNew();
             }
-          });
+          });*/
+        
+    }
+
+    quickAdd(): void {
+        this.tableService.scrollToBottom();
     }
 }
 

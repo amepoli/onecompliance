@@ -31,8 +31,6 @@ export class MngtUnitsComponent extends GenericTableComponent {
         });
      };
 
-     console.log('Hey!');
-
     super.ngOnInit();
   }
   

@@ -35,6 +35,7 @@ export class GenericTableService {
   keysArray: any[] = []; // contains an array of all primary keys (one for each row) of current list
   currentIndex: number = 0;  // this is the index of currently selected row in the parent list (single record view)
   tableParams: any;  // this is the set of table params of current list 
+  fullTable: any; // this is the current full list
 
   constructor(private amplifyService: AmplifyService) { 
   }
@@ -182,6 +183,11 @@ export class GenericTableService {
                 }
             }
         }
+    }
+
+    scrollToBottom(): void {
+        const mainEl = document.getElementById('container-3'); // in the hierarchy, this is the element scrolling
+        mainEl.scrollTop = mainEl.scrollHeight; // scroll to bottom
     }
 
 }
