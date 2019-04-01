@@ -40,6 +40,8 @@ export class GenericTableComponent implements OnInit {
     selectedRow: MatRow = null;
     isLoading = true;
 
+    showQuickAdd = false;
+
     keysArray: any[];
 
     showAdvSearch: boolean = false;
@@ -141,9 +143,10 @@ export class GenericTableComponent implements OnInit {
 
     getColumnLabels(columns: columnType[]) {
         let colLabels = columns.map(c => c.label);
-        if (!this.isMainTable) {
+        // comment out to enable icons on rows
+       /* if (!this.isMainTable) {
             colLabels.unshift('Actions');
-        }
+        }*/
         return colLabels;
 
     }
@@ -185,7 +188,13 @@ export class GenericTableComponent implements OnInit {
     }
 
     quickAdd(): void {
-        this.tableService.scrollToBottom();
+        this.showQuickAdd = true;
+        setTimeout(() => {this.tableService.scrollToBottom()}, 50);
+        
+    }
+
+    fullView(): void {
+        
     }
 }
 
