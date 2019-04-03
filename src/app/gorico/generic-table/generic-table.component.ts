@@ -48,7 +48,9 @@ export class GenericTableComponent implements OnInit {
 
     regConfig_it: FieldConfig[] = [];
 
-    path = ''; // to override in derived classes
+    path: string; // to override in derived classes
+
+    protected tableName: string;
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -70,24 +72,23 @@ export class GenericTableComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.tableName = this.path.slice(1);
 
         this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'keys').subscribe(
             keys => {
                 let operation: operationType;
                 this.displayedColumns = keys;
+                this.tableService.tableParams = Object.assign({}, { table: this.tableName }, { keys: this.fullListPrimaryKeyValues });
+                console.log(this.tableService.tableParams);
                 if (!this.sub_keys) { // main list 
                     this.isMainTable = true;
                     // set current table params in the service
-                    const table = this.router.url.split('/', 3)[2];
-                    this.tableService.tableParams = Object.assign({}, { table: table }, { keys: this.fullListPrimaryKeyValues });
                     operation = 'list';
-                    console.log(this.tableService.tableParams);
                 } else { // sublist, merge primary keys and son table keys
                     this.isMainTable = false;
                     this.fullListPrimaryKeyValues = Object.assign({}, this.fullListPrimaryKeyValues, this.sub_keys);
                     this.tableService.tableParams = Object.assign({}, this.tableService.tableParams, { sub_keys: this.sub_keys });
                     operation = 'sublist';
-                    console.log(this.fullListPrimaryKeyValues);
                 }
                 this.tableService.getData(this.path, this.fullListPrimaryKeyValues, operation).subscribe(
                     results => {
@@ -98,7 +99,6 @@ export class GenericTableComponent implements OnInit {
                         this.dataSource.sort = this.sort;
                         this.dataSource.paginator = this.paginator;
                         // triggers any change in displayed datasource, setting the array of primary keys
-                        if (!this.sub_keys) { // main list 
                             this.dataSource.connect().subscribe(source => {
                                 this.keysArray = source.map(row => {
                                     const key_values = {};
@@ -110,7 +110,6 @@ export class GenericTableComponent implements OnInit {
                                     return key_values;
                                 });
                             });
-                        }
                         this.isLoading = false;
                     },
                     error => {
@@ -130,15 +129,10 @@ export class GenericTableComponent implements OnInit {
 
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
-        if (this.isMainTable) {
-            const table = this.path.slice(1);
             this.tableService.keysArray = this.keysArray;
             this.tableService.currentIndex = index;
-            const mergedParams = { table: table, keys: JSON.stringify(this.keysArray[index]), operation: 'select' };
+            const mergedParams = { table: this.tableName, keys: JSON.stringify(this.keysArray[index]), operation: 'select' };
             setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: mergedParams /*,  skipLocationChange: true*/ }); }, 50);
-        } else {
-
-        }
     }
 
 
