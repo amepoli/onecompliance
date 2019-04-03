@@ -27,7 +27,7 @@ export class GenericTableComponent implements OnInit {
 
     @Input() sub_keys: {};  // sub-table conditions
 
-    isMainTable: boolean = true; // main or subtable
+    isMainTable = true; // main or subtable
 
     // variables to override
     displayedColumns: columnType[];
@@ -70,6 +70,7 @@ export class GenericTableComponent implements OnInit {
     }
 
     ngOnInit(): void {
+
         this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'keys').subscribe(
             keys => {
                 let operation: operationType;
@@ -194,7 +195,7 @@ export class GenericTableComponent implements OnInit {
     }
 
     fullView(): void {
-        
+        this.tableService.setFullScreen(!this.tableService.getFullScreen()); // toggle full view
     }
 }
 

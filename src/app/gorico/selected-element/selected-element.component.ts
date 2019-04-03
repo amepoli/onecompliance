@@ -25,6 +25,7 @@ export class SelectedElementComponent implements OnInit {
     path: string;
     operation: operationType;
     tabs: TabType[];
+    tabFullScreen: boolean;
 
     constructor(private tableService: GenericTableService,
         private route: ActivatedRoute,
@@ -33,6 +34,9 @@ export class SelectedElementComponent implements OnInit {
     ngOnInit() {
         this.n = this.tableService.currentIndex + 1; 
         this.tot = this.tableService.keysArray.length;
+        this.tabFullScreen = this.tableService.getFullScreen();
+
+        this.tableService.isFullScreen().subscribe(value => this.tabFullScreen = value);
 
         this.route.queryParams
             .subscribe(params => {

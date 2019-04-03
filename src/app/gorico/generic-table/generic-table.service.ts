@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AmplifyService } from 'aws-amplify-angular';
-import { Observable, from } from 'rxjs';
+import { Observable, from, BehaviorSubject } from 'rxjs';
 import { FieldConfig } from '../dynamic-forms/field.interface';
 import { Validators } from '@angular/forms';
 
@@ -36,8 +36,22 @@ export class GenericTableService {
   currentIndex: number = 0;  // this is the index of currently selected row in the parent list (single record view)
   tableParams: any;  // this is the set of table params of current list 
   fullTable: any; // this is the current full list
+  private fullScreen: BehaviorSubject<boolean>; // trigger full view of sublist in single record view 
 
   constructor(private amplifyService: AmplifyService) { 
+      this.fullScreen = new BehaviorSubject<boolean>(false);
+  }
+
+  public isFullScreen(): Observable<boolean> {
+    return this.fullScreen.asObservable();
+  }
+  
+  public setFullScreen(newValue: boolean): void {
+    this.fullScreen.next(newValue);
+  }
+
+  public getFullScreen(): boolean {
+      return this.fullScreen.getValue();
   }
 
   getData(path: string, primaryKeyValues: any, operation: operationType): Observable<any> {
