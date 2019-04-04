@@ -18,7 +18,7 @@ import { FieldConfig, Validator } from '../../field.interface';
   exportAs: 'dynamicForm',
   selector: 'dynamic-form',
   template: `
-  <form class='dynamic-form' id='myform' [formGroup]='form' (submit)='onSubmit($event)'>
+  <form class='dynamic-form' [id]='formName' [formGroup]='form' (submit)='onSubmit($event)'>
   <ng-container *ngFor='let field of fields;' dynamicField [field]='field' [group]='form'>
   </ng-container>
   </form>
@@ -27,6 +27,8 @@ import { FieldConfig, Validator } from '../../field.interface';
 })
 export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() fields: FieldConfig[] = [];
+
+  @Input() formName: string;
 
   @Output() submit: EventEmitter<any> = new EventEmitter<any>();
 

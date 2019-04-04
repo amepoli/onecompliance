@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 
 import { AuthService } from 'app/login-page/auth.service';
 import { AddDialogComponent } from '../dialogs/add.dialog/add.dialog.component';
+import { AnyKindOfDictionary } from 'lodash';
 
 export interface columnType {
     key: string;
@@ -90,32 +91,38 @@ export class GenericTableComponent implements OnInit {
                     this.tableService.tableParams = Object.assign({}, this.tableService.tableParams, { sub_keys: this.sub_keys });
                     operation = 'sublist';
                 }
-                this.tableService.getData(this.path, this.fullListPrimaryKeyValues, operation).subscribe(
-                    results => {
-                        console.log(results);
-                        this.processResponse(results);
-                        this.tableService.fullTable = results;
-                        this.dataSource = new MatTableDataSource(results);
-                        this.dataSource.sort = this.sort;
-                        this.dataSource.paginator = this.paginator;
-                        // triggers any change in displayed datasource, setting the array of primary keys
-                            this.dataSource.connect().subscribe(source => {
-                                this.keysArray = source.map(row => {
-                                    const key_values = {};
-                                    for (const column of this.displayedColumns) {
-                                        if (column.isPrimary) {
-                                            key_values[column.key] = row[column.key];
-                                        }
-                                    }
-                                    return key_values;
-                                });
-                            });
-                        this.isLoading = false;
-                    },
-                    error => {
-                        this.isLoading = false;
-                    });
+
+                this.loadTable(operation);
             });
+    }
+
+    loadTable(tableType: operationType): void {
+        this.tableService.getData(this.path, this.fullListPrimaryKeyValues, tableType).subscribe(
+            results => {
+                console.log(results);
+                this.processResponse(results);
+                this.tableService.fullTable = results;
+                this.dataSource = new MatTableDataSource(results);
+                this.dataSource.sort = this.sort;
+                this.dataSource.paginator = this.paginator;
+                // triggers any change in displayed datasource, setting the array of primary keys
+                this.dataSource.connect().subscribe(source => {
+                    this.keysArray = source.map(row => {
+                        const key_values = {};
+                        for (const column of this.displayedColumns) {
+                            if (column.isPrimary) {
+                                key_values[column.key] = row[column.key];
+                            }
+                        }
+                        return key_values;
+                    });
+                });
+                this.isLoading = false;
+            },
+            error => {
+                this.isLoading = false;
+            });
+        
     }
 
     applyFilter(filterValue: string) {
@@ -129,19 +136,19 @@ export class GenericTableComponent implements OnInit {
 
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
-            this.tableService.keysArray = this.keysArray;
-            this.tableService.currentIndex = index;
-            const mergedParams = { table: this.tableName, keys: JSON.stringify(this.keysArray[index]), operation: 'select' };
-            setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: mergedParams /*,  skipLocationChange: true*/ }); }, 50);
+        this.tableService.keysArray = this.keysArray;
+        this.tableService.currentIndex = index;
+        const mergedParams = { table: this.tableName, keys: JSON.stringify(this.keysArray[index]), operation: 'select' };
+        setTimeout(() => { this.router.navigate(['/gorico/details'], { queryParams: mergedParams /*,  skipLocationChange: true*/ }); }, 50);
     }
 
 
     getColumnLabels(columns: columnType[]) {
         let colLabels = columns.map(c => c.label);
         // comment out to enable icons on rows
-       /* if (!this.isMainTable) {
-            colLabels.unshift('Actions');
-        }*/
+        /* if (!this.isMainTable) {
+             colLabels.unshift('Actions');
+         }*/
         return colLabels;
 
     }
@@ -179,18 +186,47 @@ export class GenericTableComponent implements OnInit {
                 this.addNew();
             }
           });*/
-        
+
     }
+
 
     quickAdd(): void {
         this.showQuickAdd = true;
-        setTimeout(() => {this.tableService.scrollToBottom()}, 50);
-        
+
+        this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'create').subscribe(
+            results => {
+                this.tableService.process_form(results);
+                this.regConfig_it = results;
+                setTimeout(() => { this.tableService.scrollToBottom() }, 50);
+            });
+
     }
 
     fullView(): void {
         this.tableService.setFullScreen(!this.tableService.getFullScreen()); // toggle full view
     }
+
+    submit_new(value: any): void {
+        console.log(value);
+        const operation = this.isMainTable ? 'list' : 'sublist';
+        this.showQuickAdd = false;
+        console.log(value, this.regConfig_it);
+        this.tableService.prepare_form(value, this.regConfig_it);
+        this.tableService.pushData(this.path, this.fullListPrimaryKeyValues, value).subscribe(
+            result => {
+                setTimeout(() => {
+                    this.loadTable(operation); // reload table
+                    setTimeout(() => {this.tableService.scrollToBottom(), 50});
+            }, 50);
+    
+            }
+        );   
+    }
+
+    cancel(): void {
+        this.showQuickAdd = false;
+    }
+    
 }
 
 

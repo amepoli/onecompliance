@@ -8,7 +8,7 @@
             <mat-icon>search</mat-icon>
             Advanced Search
         </button>
-        <button *ngIf="showAdvSearch" mat-button type="submit" form="myform">
+        <button *ngIf="showAdvSearch" mat-button type="submit" form="search_form">
             <mat-icon>search</mat-icon>
             Advanced Search
         </button>
@@ -16,7 +16,7 @@
     </div>
 
     <div *ngIf="showAdvSearch">
-        <dynamic-form [fields]='regConfig_it' (submit)='submit_search($event)'>
+        <dynamic-form [fields]='regConfig_it' (submit)='submit_search($event)' formName='search_form'>
         </dynamic-form>
     </div>
 
@@ -25,7 +25,7 @@
             <mat-icon>add</mat-icon>
             Quick Add
         </button>
-    
+
         <button *ngIf="!isMainTable" mat-button (click)="fullView()">
             <mat-icon>open_with</mat-icon>
             Full View / Reduce
@@ -34,7 +34,7 @@
 
     <div class="mat-elevation-z2">
 
-        <table mat-table  *ngIf="!isLoading" [dataSource]="dataSource" matSort>
+        <table mat-table *ngIf="!isLoading" [dataSource]="dataSource" matSort>
 
             <ng-container [matColumnDef]="column.label" *ngFor="let column of displayedColumns">
                 <mat-header-cell *matHeaderCellDef mat-sort-header="{{column.key}}" [hidden]="column.isHidden">
@@ -75,10 +75,21 @@
     </div>
 
     <div *ngIf="showQuickAdd">
-        <p>This is a test</p>
+        <br>
+        <dynamic-form [fields]='regConfig_it' (submit)='submit_new($event)' formName='add_form'>
+        </dynamic-form>
+        <br>
+        <div class="save_button">
+            <button mat-button type="submit" form="add_form">
+                <mat-icon>save</mat-icon> Enter
+            </button>
+            <button mat-button (click)="cancel()">
+                <mat-icon>clear</mat-icon> Cancel
+            </button>
+        </div>
     </div>
 
-    <button mat-button class="quick_add" (click)="quickAdd()">
+    <button *ngIf="!showQuickAdd" mat-button class="quick_add" (click)="quickAdd()">
         <mat-icon>add</mat-icon>
         Quick Add
     </button>
