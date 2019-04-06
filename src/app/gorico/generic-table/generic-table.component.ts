@@ -122,7 +122,7 @@ export class GenericTableComponent implements OnInit {
             error => {
                 this.isLoading = false;
             });
-        
+
     }
 
     applyFilter(filterValue: string) {
@@ -195,6 +195,24 @@ export class GenericTableComponent implements OnInit {
 
         this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'create').subscribe(
             results => {
+                if (!this.isMainTable) {
+                    // recover son keys and make them readonly
+                    const son_keys = [];
+                    const values = [];
+                    const sub_keys = this.tableService.tableParams['sub_keys'];
+                    // tslint:disable-next-line:forin
+                    for (const key in sub_keys) {
+                        son_keys.push(sub_keys[key]['son']);
+                        values.push(sub_keys[key]['value']);
+                    }
+                    results.forEach(element => {
+                        const idx = son_keys.indexOf(element['name']);
+                        if (idx >= 0) {
+                            element['value'] = values[idx];
+                            element['readonly'] = true;
+                        }
+                    });
+                }
                 this.tableService.process_form(results);
                 this.regConfig_it = results;
                 setTimeout(() => { this.tableService.scrollToBottom() }, 50);
@@ -216,17 +234,17 @@ export class GenericTableComponent implements OnInit {
             result => {
                 setTimeout(() => {
                     this.loadTable(operation); // reload table
-                    setTimeout(() => {this.tableService.scrollToBottom(), 50});
-            }, 50);
-    
+                    setTimeout(() => { this.tableService.scrollToBottom(), 50 });
+                }, 50);
+
             }
-        );   
+        );
     }
 
     cancel(): void {
         this.showQuickAdd = false;
     }
-    
+
 }
 
 

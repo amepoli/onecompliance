@@ -138,6 +138,9 @@ export class GenericTableService {
             const item = form[form_keys.indexOf(key)];
             switch (item.type) {
                 case 'input': {
+                    if (value[key]['value']) { // sublist primary key
+                        value[key] = value[key]['value'];
+                    }
                     if (item.inputType === 'text') {
                         if (value[key] !== '' && value[key] !== 'null') {
                             value[key] = '\'' + value[key].replace(/'/g, "''") + '\''; // format the string for postgresql
