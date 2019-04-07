@@ -230,6 +230,7 @@ export class GenericTableComponent implements OnInit {
         this.showQuickAdd = false;
         console.log(value, this.regConfig_it);
         this.tableService.prepare_form(value, this.regConfig_it);
+        this.replacekeys(value);
         this.tableService.pushData(this.path, this.fullListPrimaryKeyValues, value).subscribe(
             result => {
                 setTimeout(() => {
@@ -243,6 +244,33 @@ export class GenericTableComponent implements OnInit {
 
     cancel(): void {
         this.showQuickAdd = false;
+    }
+
+    private replacekeys(keys) {
+       let queryString =  `INSERT INTO entrasp.procedure_aziendali 
+       (codice_azienda, id_procedura, id_procedura_parent, codice, descrizione_breve,
+        descrizione, id_centro_gest, codice_part, tipo_procedura, stato_attuazione, id_tipo_processo)
+       VALUES
+      ($codice_azienda$, $id_procedura$, $id_procedura_parent$, $codice$, 
+       $descrizione_breve$, $descrizione$, $id_centro_gest_codice_part.id_centro_gest$, $id_centro_gest_codice_part.codice_part$, 
+       $tipo_procedura$, $stato_attuazione$, $id_tipo_processo$)
+        RETURNING id_procedura;`;
+        if (queryString) {
+            for (var key in keys) {
+                let key_array = key.split('.', 2);
+                key = key_array[0];
+                let key_sec =  key_array[1];
+                let toReplace = '$' + key + '$';
+                let replacement_temp = key_sec ? keys[key][key_sec] : keys[key];
+                let replacement = replacement_temp.value ? replacement_temp.value : replacement_temp; // handle subtables
+                let newString = queryString.replace(toReplace, replacement);
+                while (newString !== queryString) { // handle multiple occurences
+                    queryString = newString;
+                    newString = queryString.replace(toReplace, replacement);
+                }
+            }
+        }
+        console.log(queryString);
     }
 
 }

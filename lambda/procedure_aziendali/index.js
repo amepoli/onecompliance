@@ -2,9 +2,6 @@ var processor = require('process_request');
 
 exports.handler = function(event, context, callback) {
 
-var codice_azienda = event.queryStringParameters.key1;
-var id = event.queryStringParameters.key2;
-
 // from this point on I try to generate the lambda in automatic
 
 var element_form = [
@@ -233,11 +230,54 @@ var search_form = [
       }
     ];
 
+    var table_form = [
+        {
+            key: 'codice_azienda', 
+            label: 'Codice Azienda', 
+            isPrimary: true, 
+            isHidden: true
+        },    
+        {
+            key: 'id_procedura', 
+            label: 'ID', 
+            isPrimary: true, 
+            isHidden: false
+        },                     
+        {
+            key: 'codice', 
+            label: 'Codice', 
+            isPrimary: false, 
+            isHidden: false
+        },
+        {
+            key: 'descrizione_breve', 
+            label: 'Descrizione Breve', 
+            isPrimary: false, 
+            isHidden: false
+        },
+        {
+            key: 'centro_gest', 
+            label: 'Centro Gestionale', 
+            isPrimary: false, 
+            isHidden: false
+        } 
+    ];
+
+
 var subtable_form = [
     {
         label: 'Sotto Procedure',
         table: 'procedure',
-        keys: ['id_procedura']
+        keys: [
+            {
+                parent: 'id_procedura',
+                son: 'id_procedura_parent'
+            },
+            {
+                parent: 'codice_azienda',
+                son: 'codice_azienda'
+            }
+        ]
     },
     {
         label: 'Rischi',
@@ -252,6 +292,7 @@ var subtable_form = [
 ]
 
 var form = {
+    table_form: table_form,
     element_form: element_form,
     search_form: search_form,
     subtable_form: subtable_form
@@ -261,67 +302,59 @@ var form = {
 var queries = {};
 
 queries.list =
-`SELECT codice_azienda, procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('${codice_azienda}', procedure_aziendali.id_centro_gest) AS centro_gest
-FROM entrasp.procedure_aziendali
-WHERE codice_azienda='${codice_azienda}';`;
+`SELECT codice_azienda, procedure_aziendali.id_procedura, procedure_aziendali.codice, procedure_aziendali.descrizione_breve, entrasp.centri_gestionali_descr('$codice_azienda$', procedure_aziendali.id_centro_gest) AS centro_gest
+FROM entrasp.procedure_aziendali;`;
 
 queries.element = 
 `SELECT codice_azienda, id_procedura, id_procedura_parent, codice, descrizione_breve, descrizione,
 id_centro_gest, tipo_procedura, stato_attuazione, id_tipo_processo 
 FROM entrasp.procedure_aziendali
-WHERE codice_azienda='${codice_azienda}' AND id_procedura='${id}';`;
+WHERE codice_azienda='$codice_azienda$' AND id_procedura='$id_procedura$';`;
 
 queries.next = 
-`SELECT (MAX(id_procedura)+1) as id_procedura from entrasp.procedure_aziendali WHERE codice_azienda='${codice_azienda}';`;
+`SELECT (MAX(id_procedura)+1) as id_procedura from entrasp.procedure_aziendali WHERE codice_azienda='$codice_azienda$';`;
 
 queries.delete = `DELETE FROM entrasp.procedure_aziendali
-      WHERE codice_azienda='${codice_azienda}' AND id_procedura='${id}';`;
+      WHERE codice_azienda='$codice_azienda$' AND id_procedura='$id_procedura$';`;
 
 queries.conditions = {  // special conditions (different from key=value) for search and subtable keys
   search: {
 	codice: {condition: 'codice Like \'%$param%\''},
 	descrizione: {condition: 'descrizione Like \'%$param%\''}
   },
+  table: {
+
+  },
   sub_table: {
-  	id_procedura: {condition: 'id_procedura_parent = $param'}
   }
 };
 
-
-
-var body;
-
-if ((event.httpMethod === "POST" && event.queryStringParameters.operation != 'search') || event.httpMethod === "PUT") {
-  body = JSON.parse(event.body.toString());
-
-
-   queries.new = `INSERT INTO entrasp.procedure_aziendali 
+queries.new = `INSERT INTO entrasp.procedure_aziendali 
         (codice_azienda, id_procedura, id_procedura_parent, codice, descrizione_breve,
          descrizione, id_centro_gest, codice_part, tipo_procedura, stato_attuazione, id_tipo_processo)
         VALUES
-       ('${codice_azienda}', ${body.id_procedura}, ${body.id_procedura_parent}, ${body.codice}, 
-        ${body.descrizione_breve}, ${body.descrizione}, ${body.id_centro_gest_codice_part.id_centro_gest}, ${body.id_centro_gest_codice_part.codice_part}, 
-        ${body.tipo_procedura},${body.stato_attuazione}, ${body.id_tipo_processo})
+       ($codice_azienda$, $id_procedura$, $id_procedura_parent$, $codice$, 
+        $descrizione_breve$, $descrizione$, $id_centro_gest_codice_part.id_centro_gest$, $id_centro_gest_codice_part.codice_part$, 
+        $tipo_procedura$, $stato_attuazione$, $id_tipo_processo$)
          RETURNING id_procedura;`;
-    
-    queries.update = `
-         UPDATE entrasp.procedure_aziendali
-         SET id_procedura_parent = ${body.id_procedura_parent},
-             codice = ${body.codice},
-             descrizione_breve = ${body.descrizione_breve},
-             descrizione = ${body.descrizione},
-             id_centro_gest = ${body.id_centro_gest_codice_part.id_centro_gest},
-             codice_part =  ${body.id_centro_gest_codice_part.codice_part}, 
-             tipo_procedura = ${body.tipo_procedura},
-             stato_attuazione = ${body.stato_attuazione},
-             id_tipo_processo = ${body.id_tipo_processo}
-         WHERE codice_azienda='${codice_azienda}' AND id_procedura=${body.id_procedura};`;   
-         console.log(queries.update);
-}
 
-var queryString_id_tipo_processo_cmb=`SELECT id_tipo_processo AS id, entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda) AS name  FROM entrasp.tipi_processi WHERE codice_azienda='${codice_azienda}';`;	
-var queryString_id_centro_gest_cmb=`SELECT id_centro_gest || '££' || codice_part AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='${codice_azienda}';`;
-var queryString_id_procedura_parent_cmb=`SELECT id_procedura AS id, entrasp.procedure_aziendali_descr(id_procedura, codice_azienda) AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda='${codice_azienda}';`;
+queries.update = `
+         UPDATE entrasp.procedure_aziendali
+         SET id_procedura_parent = $id_procedura_parent$,
+             codice = $codice$,
+             descrizione_breve = $descrizione_breve$,
+             descrizione = $descrizione$,
+             id_centro_gest = $id_centro_gest_codice_part.id_centro_gest$,
+             codice_part =  $id_centro_gest_codice_part.codice_part$, 
+             tipo_procedura = $tipo_procedura$,
+             stato_attuazione = $stato_attuazione$,
+             id_tipo_processo = $id_tipo_processo$
+         WHERE codice_azienda='$codice_azienda$' AND id_procedura=$id_procedura$;`;   
+
+
+var queryString_id_tipo_processo_cmb=`SELECT id_tipo_processo AS id, entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda) AS name  FROM entrasp.tipi_processi WHERE codice_azienda='$codice_azienda$';`;	
+var queryString_id_centro_gest_cmb=`SELECT id_centro_gest || '££' || codice_part AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='$codice_azienda$';`;
+var queryString_id_procedura_parent_cmb=`SELECT id_procedura AS id, entrasp.procedure_aziendali_descr(id_procedura, codice_azienda) AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda='$codice_azienda$';`;
 
 queries.combo = [
   {
@@ -340,7 +373,7 @@ queries.combo = [
 
 
 var ret_callback = function(return_value) {
-    console.log(return_value.status);
+    console.log(return_value.status, return_value.query);
     callback(null, return_value.response);
   };
   
