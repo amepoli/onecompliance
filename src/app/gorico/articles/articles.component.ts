@@ -22,13 +22,6 @@ export class ArticlesComponent extends GenericTableComponent {
 
   ngOnInit(): void {
 
-    this.displayedColumns = [
-        {key: 'id_testo_normativo', label: 'ID Testo', isPrimary: true, isHidden: true},    // key1
-        {key: 'codice_articolo_normativo', label: 'Codice Articolo', isPrimary: true, isHidden: false},                     // key2
-        {key: 'testo_normativo', label: 'Testo Normativo', isPrimary: false, isHidden: false},
-        {key: 'rubrica', label: 'Rubrica', isPrimary: false, isHidden: false}  
-    ];
-
     this.processResponse = (response: any[]) => { 
         return;
      };
