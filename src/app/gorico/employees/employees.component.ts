@@ -22,15 +22,7 @@ export class EmployeesComponent extends GenericTableComponent {
 
   ngOnInit(): void {
 
-    this.displayedColumns = [
-        {key: 'codice_part', label: 'Codice Parte Azienda', isPrimary: true, isHidden: true},    // key1
-        {key: 'id_anagrafica', label: 'ID', isPrimary: true, isHidden: false},                     // key2
-        {key: 'codice', label: 'Codice', isPrimary: false, isHidden: false},
-        {key: 'cognome', label: 'Cognome', isPrimary: false, isHidden: false},
-        {key: 'nome', label: 'Nome', isPrimary: false, isHidden: false}  
-    ];
-
-    this.fullListPrimaryKeyValues.key1 = this.authService.getCode();   // codice part
+    this.fullListPrimaryKeyValues['codice_part'] = this.authService.getCode();   // codice part
 
     this.processResponse = (response: any[]) => { 
         response.forEach((p) => {
