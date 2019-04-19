@@ -17,6 +17,7 @@ export class SelectedElementComponent implements OnInit {
     @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
     n = 0;
     tot = 0;
+    n_attach = 0;
 
     regConfig_it: FieldConfig[] = [];
     primaryKeys: any;
@@ -129,6 +130,10 @@ export class SelectedElementComponent implements OnInit {
         const targetKeys = JSON.stringify(this.tableService.keysArray[targetIndex]);
         const mergedParams = { table: this.table, operation: 'select', keys: targetKeys };
         this.router.navigate(['/gorico/details'], { queryParams: mergedParams/*, skipLocationChange: true */ });
+    }
+
+    showAttachments() {
+
     }
 
 }
