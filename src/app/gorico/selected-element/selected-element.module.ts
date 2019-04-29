@@ -7,6 +7,8 @@ import { MatMenuModule, MatToolbarModule, MatTabsModule, MatIconModule, MatButto
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DynamicFormsModule} from 'app/gorico/dynamic-forms/dynamic-forms.module';
 import { BottomTabsModule } from 'app/gorico/bottom-tabs/bottom-tabs.module';
+import { AttachDialogComponent } from '../dialogs/attach.dialog/attach.dialog.component';
+import { MatDialogModule } from '@angular/material';
 
 
 const routes = [
@@ -29,8 +31,10 @@ const routes = [
     MatIconModule,
     MatButtonModule,
     DynamicFormsModule,
-    BottomTabsModule
+    BottomTabsModule,
+    MatDialogModule
   ],
-  declarations: [SelectedElementComponent]
+  declarations: [SelectedElementComponent, AttachDialogComponent],
+  entryComponents: [AttachDialogComponent]
 })
 export class SelectedElementModule { }

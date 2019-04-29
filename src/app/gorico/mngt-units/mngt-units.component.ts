@@ -3,7 +3,6 @@ import { GenericTableService } from './../generic-table/generic-table.service';
 import { GenericTableComponent } from '../generic-table/generic-table.component';
 import { Router} from '@angular/router';
 import { AuthService } from 'app/login-page/auth.service';
-import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'mngt-units',
@@ -13,11 +12,11 @@ import { MatDialog } from '@angular/material';
 export class MngtUnitsComponent extends GenericTableComponent {
 
 
-  constructor(public addDialog: MatDialog,
+  constructor(
               protected tableService: GenericTableService,
               protected router: Router,
               protected authService: AuthService) {
-      super(addDialog,tableService, router, authService); 
+      super(tableService, router, authService); 
       this.path = '/mngt-units';
   }
 

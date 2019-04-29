@@ -12,11 +12,9 @@ import { MatIconModule, MatButtonModule } from '@angular/material';
 import { GenericTableComponent } from './generic-table.component';
 import { DynamicFormsModule} from 'app/gorico/dynamic-forms/dynamic-forms.module';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AddDialogComponent } from '../dialogs/add.dialog/add.dialog.component';
-
 
 @NgModule({
-  declarations: [GenericTableComponent, AddDialogComponent],
+  declarations: [GenericTableComponent],
   imports: [
     CommonModule,
     AmplifyAngularModule,
@@ -46,8 +44,7 @@ import { AddDialogComponent } from '../dialogs/add.dialog/add.dialog.component';
     MatButtonModule,
     DynamicFormsModule,
     MatDialogModule
-  ],
-  entryComponents: [AddDialogComponent]
+  ]
 })
 
 export class GenericTableModule { }

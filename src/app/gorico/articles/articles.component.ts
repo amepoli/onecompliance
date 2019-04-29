@@ -12,11 +12,11 @@ import { MatDialog } from '@angular/material';
 })
 export class ArticlesComponent extends GenericTableComponent {
 
-  constructor(public addDialog: MatDialog,
+  constructor(
     protected unitsService: GenericTableService,
     protected router: Router,
     protected authService: AuthService) {
-    super(addDialog,unitsService,router,authService); 
+    super(unitsService,router,authService); 
     this.path = '/articles';
   }
 

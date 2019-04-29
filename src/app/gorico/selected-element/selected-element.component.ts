@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { TabType } from 'app/gorico/bottom-tabs/bottom-tabs.component';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import 'rxjs/add/operator/filter';
 import { GenericTableService, operationType } from '../generic-table/generic-table.service';
+import { MatDialog } from '@angular/material';
+import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
 
 @Component({
     selector: 'selected-element',
@@ -28,7 +29,8 @@ export class SelectedElementComponent implements OnInit {
     tabs: TabType[];
     tabFullScreen: boolean;
 
-    constructor(private tableService: GenericTableService,
+    constructor(public attachDialog: MatDialog,
+        private tableService: GenericTableService,
         private route: ActivatedRoute,
         private router: Router) { }
 
@@ -36,7 +38,6 @@ export class SelectedElementComponent implements OnInit {
         this.n = this.tableService.currentIndex + 1; 
         this.tot = this.tableService.keysArray.length;
         this.tabFullScreen = this.tableService.getFullScreen();
-
         this.tableService.isFullScreen().subscribe(value => this.tabFullScreen = value);
 
         this.route.queryParams
@@ -133,7 +134,17 @@ export class SelectedElementComponent implements OnInit {
     }
 
     showAttachments() {
-
+        // Pop-up example
+        const dialogRef = this.attachDialog.open(AttachDialogComponent, {
+            width: '800px',
+            data: this.tableService.tableParams
+          });
+      
+          dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                
+            }
+          });
     }
 
 }

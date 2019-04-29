@@ -6,8 +6,6 @@ import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { Router } from '@angular/router';
 
 import { AuthService } from 'app/login-page/auth.service';
-import { AddDialogComponent } from '../dialogs/add.dialog/add.dialog.component';
-import { AnyKindOfDictionary } from 'lodash';
 
 export interface columnType {
     key: string;
@@ -66,7 +64,7 @@ export class GenericTableComponent implements OnInit {
     // end methods to override
 
 
-    constructor(public addDialog: MatDialog,
+    constructor(
         protected tableService: GenericTableService,
         protected router: Router,
         protected authService: AuthService) {

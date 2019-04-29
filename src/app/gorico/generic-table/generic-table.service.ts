@@ -5,7 +5,7 @@ import { FieldConfig } from '../dynamic-forms/field.interface';
 import { Validators } from '@angular/forms';
 
 
-export type operationType = 'list' | 'sublist' | 'create' | 'select' | 'search' | 'keys' | 'subkeys' ;
+export type operationType = 'list' | 'sublist' | 'create' | 'select' | 'search' | 'keys' | 'subkeys' | 'attach';
 
 
 @Injectable({
