@@ -36,6 +36,9 @@ export class GenericTableService {
   currentIndex: number = 0;  // this is the index of currently selected row in the parent list (single record view)
   tableParams: any;  // this is the set of table params of current list 
   fullTable: any; // this is the current full list
+
+  currentPath: string; // current main table's path
+
   private fullScreen: BehaviorSubject<boolean>; // trigger full view of sublist in single record view 
 
   constructor(private amplifyService: AmplifyService) { 
@@ -54,41 +57,41 @@ export class GenericTableService {
       return this.fullScreen.getValue();
   }
 
-  getData(path: string, primaryKeyValues: any, operation: operationType): Observable<any> {
+  getData(tableName: string, primaryKeyValues: any, operation: operationType): Observable<any> {
     this.amplifyService.auth();
 
-    this.myGetInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues), operation: operation}; 
+    this.myGetInit.queryStringParameters = {tablename: tableName, keys: JSON.stringify(primaryKeyValues), operation: operation}; 
 
-    return from(this.amplifyService.api().get(this.apiName, path, this.myGetInit));
+    return from(this.amplifyService.api().get(this.apiName, '/table', this.myGetInit));
         //   .pipe(map(res => res['data']));
   }
 
-  pushData(path: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
+  pushData(tableName: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues)};;
+    this.myPutPostInit.queryStringParameters = {tablename: tableName, keys: JSON.stringify(primaryKeyValues)};;
     this.myPutPostInit.body = jsonData;
 
-    return from(this.amplifyService.api().put(this.apiName, path, this.myPutPostInit));
+    return from(this.amplifyService.api().put(this.apiName, '/table', this.myPutPostInit));
   }
 
-  deleteData(path: string, primaryKeyValues: any): Observable<any> {
+  deleteData(tableName: string, primaryKeyValues: any): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues)};
-    return from(this.amplifyService.api().del(this.apiName, path, this.myGetInit));
+    this.myGetInit.queryStringParameters = {tablename: tableName, keys: JSON.stringify(primaryKeyValues)};
+    return from(this.amplifyService.api().del(this.apiName, '/table', this.myGetInit));
   }
 
-  updateData(path: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
+  updateData(tableName: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues)};
+    this.myPutPostInit.queryStringParameters = {tablename: tableName, keys: JSON.stringify(primaryKeyValues)};
     this.myPutPostInit.body = jsonData;
-    return from(this.amplifyService.api().post(this.apiName, path, this.myPutPostInit));
+    return from(this.amplifyService.api().post(this.apiName, '/table', this.myPutPostInit));
   }
  
-  searchData(path: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
+  searchData(tableName: string, primaryKeyValues: any, jsonData: any): Observable<any> { 
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = {keys: JSON.stringify(primaryKeyValues), operation: 'search'};
+    this.myPutPostInit.queryStringParameters = {tablename: tableName, keys: JSON.stringify(primaryKeyValues), operation: 'search'};
     this.myPutPostInit.body = jsonData;
-    return from(this.amplifyService.api().post(this.apiName, path, this.myPutPostInit));
+    return from(this.amplifyService.api().post(this.apiName, '/table', this.myPutPostInit));
   }
 
   // helper functions 

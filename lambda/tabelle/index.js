@@ -13,6 +13,10 @@ const pool = new Pool({
   connectionTimeoutMillis: 1000
 });
 
+const AWS = require('aws-sdk');
+AWS.config.update({region: 'eu-central-1'});
+const dynamo = new AWS.DynamoDB.DocumentClient();
+
 function single_element(comboQueries, operation, form, queryString_element, queryString_next, return_value, callback, last) {
 
   let client;
@@ -42,7 +46,7 @@ function single_element(comboQueries, operation, form, queryString_element, quer
   } else {
     last(operation, form, queryString_element, queryString_next, return_value, callback);
   }
-};
+}
 
 function queryListWithConditions(keys, queryString, conditions) {
 
@@ -93,8 +97,7 @@ function replacekeys(queryString, keys) {
     return queryString;
 }
 
-module.exports = {
-  process_request: function (event, context, form, queries, callback) {
+function process_request (event, context, form, queries, callback) {
 
     context.callbackWaitsForEmptyEventLoop = false; // don't know why, but this prevents the lambda to hang
 
@@ -371,5 +374,44 @@ module.exports = {
         // LAST FUNCTION OF single_element -- END
       }
     }
-  }
 }
+
+// LAMBDA FUNCTION
+
+exports.handler = (event, context, callback) => {
+  
+var ret_callback = function(return_value) {
+  console.log(return_value.status, return_value.query);
+
+  callback(null, return_value.response);
+};
+
+  
+const param = {
+    TableName: 'GoricoTables',
+    Key: {
+        TableName: event.queryStringParameters.tablename
+    }
+};
+
+dynamo.get(param, function(err, data) {
+    if (err) {
+        console.log('DynamoDB error: ' + err); 
+        callback(null, {
+                    "isBase64Encoded": false,
+                    "statusCode": 500,
+                    "body": JSON.stringify(err)
+                  });
+    } else {
+        console.log('DynamoDB success: ' + JSON.stringify(data.Item));
+        
+        const form = data.Item.form;
+        
+        const queries = data.Item.queries;
+        
+        process_request(event, context, form, queries, ret_callback);
+    }
+  });
+
+
+};

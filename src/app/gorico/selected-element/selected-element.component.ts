@@ -44,11 +44,10 @@ export class SelectedElementComponent implements OnInit {
             .subscribe(params => {
                 this.primaryKeys = JSON.parse(params.keys);
                 this.table = params.table;
-                this.path = '/' + this.table; // table names must match with the path
                 this.operation = params.operation;
                 console.log(params);
 
-                this.tableService.getData(this.path, this.primaryKeys, this.operation).subscribe(
+                this.tableService.getData(this.table, this.primaryKeys, this.operation).subscribe(
                     results => {
                         this.isLoading = false;
                         // console.log(results);
@@ -59,7 +58,7 @@ export class SelectedElementComponent implements OnInit {
                         console.log(results);
                         this.regConfig_it = results;
                         // now get subtables entries
-                        this.tableService.getData(this.path, this.primaryKeys, 'subkeys').subscribe(
+                        this.tableService.getData(this.table, this.primaryKeys, 'subkeys').subscribe(
                             sublist => {
                                 this.tabs = sublist.map(c => {
                                     const tab: TabType = {table: c.table, label: c.label, keys: {}};
@@ -81,26 +80,26 @@ export class SelectedElementComponent implements OnInit {
     submit(value: any) {
         this.tableService.prepare_form(value, this.regConfig_it);
         if (this.operation === 'create') {  // new record
-            this.tableService.pushData(this.path, this.primaryKeys, value).subscribe(
+            this.tableService.pushData(this.table, this.primaryKeys, value).subscribe(
                 result => {
                     console.log(result);
                 }
             );
         } else {  // this.operation = "select", need to update the record
-            this.tableService.updateData(this.path, this.primaryKeys, value).subscribe(
+            this.tableService.updateData(this.table, this.primaryKeys, value).subscribe(
                 result => {
                     console.log(result);
                 }
             );
         }
-        this.router.navigate(['/gorico/' + this.table]);
+        this.router.navigate(['/gorico/' + this.tableService.currentPath]);
     }
 
     delElement() {
-        this.tableService.deleteData(this.path, this.primaryKeys).subscribe(
+        this.tableService.deleteData(this.table, this.primaryKeys).subscribe(
             result => {
                 console.log(result);
-                this.router.navigate(['/gorico/' + this.table]);
+                this.router.navigate(['/gorico/' + this.tableService.currentPath]);
             }
         )
     }

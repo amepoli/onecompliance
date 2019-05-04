@@ -17,7 +17,10 @@ export class MngtUnitsComponent extends GenericTableComponent {
               protected router: Router,
               protected authService: AuthService) {
       super(tableService, router, authService); 
-      this.path = '/mngt-units';
+      
+      this.tableName = 'centri_gestionali';
+      this.isMainTable = true;
+      this.path = 'mngt-units';
   }
 
   ngOnInit(): void {

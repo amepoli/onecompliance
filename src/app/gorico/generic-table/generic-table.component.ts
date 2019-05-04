@@ -26,8 +26,6 @@ export class GenericTableComponent implements OnInit {
 
     @Input() sub_keys: {};  // sub-table conditions
 
-    isMainTable = true; // main or subtable
-
     // variables to override
     displayedColumns: columnType[];
 
@@ -47,9 +45,10 @@ export class GenericTableComponent implements OnInit {
 
     regConfig_it: FieldConfig[] = [];
 
-    path: string; // to override in derived classes
-
-    protected tableName: string;
+    // to override in derived classes
+    protected tableName: string; 
+    protected isMainTable: boolean; // main or subtable
+    protected path: string; // only in case of main tables
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -71,9 +70,14 @@ export class GenericTableComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.tableName = this.path.slice(1);
 
-        this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'keys').subscribe(
+        if (this.path) {
+            this.tableService.currentPath = this.path; // main table path
+        } else {
+            this.path = this.tableService.currentPath; // subtable path 
+        }
+
+        this.tableService.getData(this.tableName, this.fullListPrimaryKeyValues, 'keys').subscribe(
             keys => {
                 let operation: operationType;
                 this.displayedColumns = keys;
@@ -95,7 +99,7 @@ export class GenericTableComponent implements OnInit {
     }
 
     loadTable(tableType: operationType): void {
-        this.tableService.getData(this.path, this.fullListPrimaryKeyValues, tableType).subscribe(
+        this.tableService.getData(this.tableName, this.fullListPrimaryKeyValues, tableType).subscribe(
             results => {
                 console.log(results);
                 this.processResponse(results);
@@ -153,7 +157,7 @@ export class GenericTableComponent implements OnInit {
 
     advSearch() {
         if (this.regConfig_it.length === 0) {
-            this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'search').subscribe(
+            this.tableService.getData(this.tableName, this.fullListPrimaryKeyValues, 'search').subscribe(
                 results => {
                     this.regConfig_it = results;
                 });
@@ -163,7 +167,7 @@ export class GenericTableComponent implements OnInit {
     }
 
     submit_search(value: any) {
-        this.tableService.searchData(this.path, this.fullListPrimaryKeyValues, value).subscribe(
+        this.tableService.searchData(this.tableName, this.fullListPrimaryKeyValues, value).subscribe(
             result => {
                 console.log(result);
                 this.dataSource.data = result;
@@ -191,7 +195,7 @@ export class GenericTableComponent implements OnInit {
     quickAdd(): void {
         this.showQuickAdd = true;
 
-        this.tableService.getData(this.path, this.fullListPrimaryKeyValues, 'create').subscribe(
+        this.tableService.getData(this.tableName, this.fullListPrimaryKeyValues, 'create').subscribe(
             results => {
                 if (!this.isMainTable) {
                     // recover son keys and make them readonly
@@ -228,7 +232,7 @@ export class GenericTableComponent implements OnInit {
         this.showQuickAdd = false;
         console.log(value, this.regConfig_it);
         this.tableService.prepare_form(value, this.regConfig_it);
-        this.tableService.pushData(this.path, this.fullListPrimaryKeyValues, value).subscribe(
+        this.tableService.pushData(this.tableName, this.fullListPrimaryKeyValues, value).subscribe(
             result => {
                 setTimeout(() => {
                     this.loadTable(operation); // reload table
