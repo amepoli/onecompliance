@@ -16,7 +16,9 @@ export class EmployeesComponent extends GenericTableComponent {
               protected router: Router,
               protected authService: AuthService) {
     super(tableService, router, authService); 
-    this.path = '/employees';
+    this.tableName = 'anagrafiche_id';
+    this.isMainTable = true;
+    this.path = 'employees';
   }
 
   ngOnInit(): void {
