@@ -17,7 +17,9 @@ export class ArticlesComponent extends GenericTableComponent {
     protected router: Router,
     protected authService: AuthService) {
     super(unitsService,router,authService); 
-    this.path = '/articles';
+    this.tableName = 'articoli_normativi';
+    this.isMainTable = true;
+    this.path = 'articles';
   }
 
   ngOnInit(): void {

@@ -16,7 +16,10 @@ export class ProcessesComponent extends GenericTableComponent {
               protected router: Router,
               protected authService: AuthService) {
     super(unitsService,router,authService); 
-    this.path = '/processes';
+
+    this.tableName = 'procedure_aziendali';
+    this.isMainTable = true;
+    this.path = 'processes';
   }
 
   ngOnInit(): void {

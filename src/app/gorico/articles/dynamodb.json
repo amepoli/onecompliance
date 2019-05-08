@@ -1,0 +1,208 @@
+{
+    "form": {
+        "element_form": [
+            {
+                "type": "combobox",
+                "label": "Testo Normativo",
+                "inputType": "text",
+                "name": "id_testo_normativo",
+                "value": " ",
+                "readonly": "false",
+                "isVisible": "true",
+                "newLine": "true",
+                "options": []
+            },
+            {
+                "type": "input",
+                "label": "Codice articolo",
+                "inputType": "text",
+                "name": "codice_articolo_normativo",
+                "value": " ",
+                "readonly": "false",
+                "isVisible": "true",
+                "newLine": "true"
+            },
+            {
+                "type": "textarea",
+                "label": "Rubrica",
+                "inputType": "text",
+                "name": "rubrica",
+                "value": " ",
+                "readonly": "false",
+                "isVisible": "true",
+                "newLine": "true"
+            },
+            {
+                "type": "textarea",
+                "label": "Testo articolo",
+                "inputType": "text",
+                "name": "descrizione",
+                "value": " ",
+                "readonly": "false",
+                "isVisible": "true",
+                "newLine": "true",
+                "validations": [
+                    {
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "message": "Codice mancante"
+                    }
+                ]
+            },
+            {
+                "type": "combobox",
+                "label": "Art. 231 di riferimento",
+                "inputType": "text",
+                "name": "articolo_normativo_parent",
+                "value": " ",
+                "readonly": "false",
+                "isVisible": "false",
+                "newLine": "true",
+                "options": []
+            },
+            {
+                "type": "input",
+                "label": "note",
+                "inputType": "text",
+                "name": "note",
+                "value": " ",
+                "readonly": "false",
+                "isVisible": "true",
+                "newLine": "true"
+            },
+            {
+                "type": "input",
+                "label": "Sanzione amm. Min quote",
+                "inputType": "text",
+                "name": "sanz_amm_min_quote",
+                "value": " ",
+                "readonly": "false",
+                "isVisible": "true",
+                "newLine": "false"
+            },
+            {
+                "type": "input",
+                "label": "Max quote",
+                "inputType": "text",
+                "name": "sanz_amm_max_quote",
+                "value": " ",
+                "readonly": "false",
+                "isVisible": "true",
+                "newLine": "true"
+            },
+            {
+                "type": "input",
+                "label": "Sanzione int. Min",
+                "inputType": "text",
+                "name": "sanz_int_min",
+                "value": " ",
+                "readonly": "false",
+                "isVisible": "true",
+                "newLine": "false"
+            },
+            {
+                "type": "input",
+                "label": "Max",
+                "inputType": "text",
+                "name": "sanz_int_max",
+                "value": " ",
+                "readonly": "false",
+                "isVisible": "true",
+                "newLine": "true"
+            }
+        ],
+        "search_form": [
+            {
+                "type": "combobox",
+                "label": "Testo Normativo",
+                "name": "id_testo_normativo",
+                "value": " ",
+                "options": []
+            },
+            {
+                "type": "input",
+                "label": "Rubrica",
+                "inputType": "text",
+                "name": "rubrica",
+                "value": " ",
+                "readonly": "false"
+            }
+        ],
+        "subtable_form": [
+            {
+                "label": "Sub-articoli",
+                "table": "articoli_normativi",
+                "keys": []
+            },
+            {
+                "label": "Riferimenti Normativi",
+                "table": " ",
+                "keys": []
+            },
+            {
+                "label": "Articoli riferiti a questo",
+                "table": " ",
+                "keys": []
+            },
+            {
+                "label": "Rischi associati",
+                "table": " ",
+                "keys": []
+            }
+        ],
+        "table_form": [
+            {
+                "key": "id_testo_normativo",
+                "label": "ID Testo",
+                "isPrimary": true,
+                "isHidden": true
+            },
+            {
+                "key": "codice_articolo_normativo",
+                "label": "Codice Articolo",
+                "isPrimary": true,
+                "isHidden": false
+            },
+            {
+                "key": "testo_normativo",
+                "label": "Testo Normativo",
+                "isPrimary": false,
+                "isHidden": false
+            },
+            {
+                "key": "rubrica",
+                "label": "Rubrica",
+                "isPrimary": false,
+                "isHidden": false
+            }
+        ]
+    },
+    "queries": {
+        "combo": [
+            {
+                "queryString": "SELECT id_testo_normativo AS id, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS name  FROM entrasp.testi_normativi;",
+                "name": "id_testo_normativo"
+            },
+            {
+                "queryString": "SELECT codice_articolo_normativo || '££' || id_testo_normativo AS id, entrasp.articoli_normativi_cod_rub(codice_articolo_normativo, id_testo_normativo) AS name FROM entrasp.articoli_normativi;",
+                "name": "articolo_normativo_parent"
+            }
+        ],
+        "conditions": {
+            "search": {
+                "rubrica": {
+                    "condition": "rubrica Like '%$param%'"
+                }
+            },
+            "sub_table": {},
+            "table": {}
+        },
+        "delete": "DELETE FROM entrasp.articoli_normativi WHERE id_testo_normativo='$id_testo_normativo$' AND codice_articolo_normativo='$codice_articolo_normativo$';",
+        "element": "SELECT id_testo_normativo, codice_articolo_normativo, rubrica, descrizione, codice_articolo_normativo_parent || '££' || id_testo_normativo_parent AS articolo_normativo_parent, note, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max FROM entrasp.articoli_normativi WHERE id_testo_normativo='$id_testo_normativo$' AND codice_articolo_normativo='$codice_articolo_normativo$';",
+        "list": "SELECT id_testo_normativo, codice_articolo_normativo, entrasp.testi_normativi_rif_descr(id_testo_normativo) AS testo_normativo, rubrica FROM entrasp.articoli_normativi;",
+        "new": "INSERT INTO entrasp.articoli_normativi (note, id_testo_normativo, codice_articolo_normativo, rubrica, descrizione, sanz_amm_min_quote, sanz_amm_max_quote, sanz_int_min, sanz_int_max) Values ($note$, $id_testo_normativo$, $codice_articolo_normativo$, $rubrica$, $descrizione$, $sanz_amm_min_quote$, $sanz_amm_max_quote$, $sanz_int_min$, $sanz_int_max$);",
+        "next": " ",
+        "update": "UPDATE entrasp.articoli_normativi SET note=$note$, rubrica=$rubrica$, descrizione=$descrizione$, sanz_amm_min_quote=$sanz_amm_min_quote$, sanz_amm_max_quote=$sanz_amm_max_quote$, sanz_int_min=$sanz_int_min$, sanz_int_max=$sanz_int_max$ WHERE id_testo_normativo=$id_testo_normativo$ AND codice_articolo_normativo=$codice_articolo_normativo$;"
+    },
+    "TableName": "articoli_normativi"
+}
