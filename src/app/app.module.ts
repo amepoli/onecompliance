@@ -29,6 +29,7 @@ import { SelectedElementModule } from 'app/gorico/selected-element/selected-elem
 import {AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
 import { ProcessesModule } from './gorico/processes/processes.module';
 import { ArticlesModule } from './gorico/articles/articles.module';
+import { RisksModule } from './gorico/risks/risks.module';
 
 
 const appRoutes: Routes = [
@@ -98,7 +99,8 @@ const appRoutes: Routes = [
         MngtUnitsModule,
         AmplifyAngularModule,
         ProcessesModule,
-        ArticlesModule
+        ArticlesModule,
+        RisksModule
 
     ],
     providers: [

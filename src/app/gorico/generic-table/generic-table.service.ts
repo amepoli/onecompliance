@@ -110,7 +110,7 @@ export class GenericTableService {
                     }
                 }
             }
-            if (result['newLine'] === 'false') {
+            if (result['newLine'] === false) {
                 sameLineElements.push(result);
             } else {
                 result.width = this.processInlineElements(sameLineElements);

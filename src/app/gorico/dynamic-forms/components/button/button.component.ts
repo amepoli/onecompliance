@@ -4,7 +4,7 @@ import { FieldConfig } from "../../field.interface";
 @Component({
   selector: "app-button",
   template: `
-<div class="demo-full-width margin-top" *ngIf="field.isVisible != 'false'" [formGroup]="group">
+<div class="demo-full-width margin-top" *ngIf="field.isVisible != false" [formGroup]="group">
 <button type="submit" mat-raised-button color="primary">{{field.label}}</button>
 </div>
 `,
