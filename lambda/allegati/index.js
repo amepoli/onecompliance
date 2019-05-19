@@ -16,14 +16,32 @@ const pool = new Pool({
 });
 
 
-exports.handler = async (event, context) => {
+function getDateFormat() {
+    var d = new Date();
+    var month = d.getMonth() + 1; 
+    return d.getFullYear() + '-' + month.toString() + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+}
 
-    context.callbackWaitsForEmptyEventLoop = false;
+function getMimeType() {
+    // to be overridden using mimetype ( https://github.com/jshttp/mime-types ) on actual content
+    return 'application/pdf';
+}
+
+exports.handler = async (event, context) => {
     
     const codice_azienda = event['codice_azienda'];
     const numItems = event['numItems'];
     const keys = event['keys'];
     const table = event['table'];
+    const nickname = event['nickname'];
+    const revisione_corrente = event['revisione_corrente'];
+    const autore = event['autore'];
+    const descrizione = event['descrizione'];
+    const descrizione_breve = event['descrizione_breve'];
+    const url = event['url'];
+    const id_tipo_allegato = event['id_tipo_allegato'];
+    
+    const action = 'insert';
     
     const s3Params = { 
         Bucket: 'gorico2.core',
@@ -38,19 +56,11 @@ exports.handler = async (event, context) => {
       }
     };
 
-    let s3Objects, client;
-    let allitems = [];
+    let client, body;
     let decnames = [];
     
 
     try {
-       s3Objects = await s3.listObjectsV2(s3Params).promise();
-       //console.log(s3Objects);
-
-       s3Objects['Contents'].forEach(function(item) {
-           let encodedName = item.Key.split(codice_azienda + '/')[1];
-           allitems.push(encodedName);
-       });
        
        const data = await dynamo.get(DynamoParams).promise();
        
@@ -69,24 +79,38 @@ exports.handler = async (event, context) => {
        client = await pool.connect();
        //console.log(names);
        let query, response; 
-       query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${codice_azienda}' AND nome_business_object='${bus_object}' AND chiave='${chiave}';`;
-
-       response = await client.query(query);
-       let ids = response['rows'].map(f => f['id_risorsa']);
-       for (let i= 0; i< ids.length; i++) {
-           query = `select * from entrasp.cdms_risorse_revisioni where codice_azienda='${codice_azienda}' AND id_risorsa=${ids[i]};`;
+       if (action === 'get') {
+           query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${codice_azienda}' AND nome_business_object='${bus_object}' AND chiave='${chiave}';`;
            response = await client.query(query);
-           decnames.push(response['rows']);
+           let ids = response['rows'].map(f => f['id_risorsa']);
+            for (let i= 0; i< ids.length; i++) {
+                query = `select * from entrasp.cdms_risorse where codice_azienda='${codice_azienda}' AND id_risorsa=${ids[i]};`;
+                response = await client.query(query);
+                decnames.push(response['rows']);
+            }
+            body = decnames;
+       } else if (action === 'insert') {
+           query = `SELECT (MAX(id_risorsa)+1) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${codice_azienda}';`;
+           response = await client.query(query);
+           const nextId = response['rows'][0]['id_risorsa'];
+           const date = getDateFormat();
+           const mimeType = getMimeType();
+           query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, content_type, flag_indexed, id_tipo_allegato)
+                    values ('${codice_azienda}', ${nextId}, '${nickname}',${revisione_corrente}, '${descrizione}', '${autore}', '${date}', '${date}', '${url}','${descrizione_breve}', '${date}', '${mimeType}', 1, ${id_tipo_allegato}) returning id_risorsa;`;
+           response = await client.query(query);
+           query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) values ('${codice_azienda}', ${nextId}, '${bus_object}','${chiave}');`;
+           response = await client.query(query);
+           body = { id_risorsa: nextId };
        }
-       
-      await client.release();
     } catch (e) {
        console.log(e);
     }
     
+           
+    await client.release();
     
     return {
         statusCode: 200,
-        body: JSON.stringify(decnames || {message: 'No objects found in s3 bucket'})
+        body: JSON.stringify(body || {message: 'No objects found in s3 bucket'})
     };
 };
