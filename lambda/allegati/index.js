@@ -15,16 +15,16 @@ const pool = new Pool({
   connectionTimeoutMillis: 1000
 });
 
+const uuidv4 = require('uuid/v4');
+
+var crypto = require('crypto')
+  , shasum = crypto.createHash('sha1');
+
 
 function getDateFormat() {
     var d = new Date();
     var month = d.getMonth() + 1; 
     return d.getFullYear() + '-' + month.toString() + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-}
-
-function getMimeType() {
-    // to be overridden using mimetype ( https://github.com/jshttp/mime-types ) on actual content
-    return 'application/pdf';
 }
 
 exports.handler = async (event, context) => {
@@ -40,13 +40,25 @@ exports.handler = async (event, context) => {
     const descrizione_breve = event['descrizione_breve'];
     const url = event['url'];
     const id_tipo_allegato = event['id_tipo_allegato'];
+    const fileType = event['filetype'];
+    const size = event['dimensione'];
+    const checksum = event['checksum'];
+    const id_risorsa = event['id_risorsa'];
+    
+    const filename = event['filename'];
+    if (!filename) filename = uuidv4(); // generate a 'unique' UUID as filename
     
     const action = 'insert';
     
-    const s3Params = { 
+    const s3ParamsInsert = { 
         Bucket: 'gorico2.core',
-        Prefix: codice_azienda,
-        MaxKeys: numItems
+        Key: codice_azienda + '/' + filename,
+        Expires: 1000, //expiry time in sec
+    };
+    
+    const s3ParamsGet = { 
+        Bucket: 'gorico2.core',
+        Key: codice_azienda + '/' + filename
     };
     
     const DynamoParams = {
@@ -59,6 +71,7 @@ exports.handler = async (event, context) => {
     let client, body;
     let decnames = [];
     
+    const date = getDateFormat();
 
     try {
        
@@ -79,7 +92,8 @@ exports.handler = async (event, context) => {
        client = await pool.connect();
        //console.log(names);
        let query, response; 
-       if (action === 'get') {
+       
+       if (action === 'getlist') {
            query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${codice_azienda}' AND nome_business_object='${bus_object}' AND chiave='${chiave}';`;
            response = await client.query(query);
            let ids = response['rows'].map(f => f['id_risorsa']);
@@ -88,19 +102,33 @@ exports.handler = async (event, context) => {
                 response = await client.query(query);
                 decnames.push(response['rows']);
             }
-            body = decnames;
+            body = {result: 'OK', list: decnames};
+            
        } else if (action === 'insert') {
+           // create a temporary signed URL for the object 
+           const signedUrl = await s3.getSignedUrl('putObject', s3ParamsInsert).promise();
+           // fill postgresql tables
            query = `SELECT (MAX(id_risorsa)+1) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${codice_azienda}';`;
            response = await client.query(query);
            const nextId = response['rows'][0]['id_risorsa'];
-           const date = getDateFormat();
-           const mimeType = getMimeType();
            query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, content_type, flag_indexed, id_tipo_allegato)
-                    values ('${codice_azienda}', ${nextId}, '${nickname}',${revisione_corrente}, '${descrizione}', '${autore}', '${date}', '${date}', '${url}','${descrizione_breve}', '${date}', '${mimeType}', 1, ${id_tipo_allegato}) returning id_risorsa;`;
+                    values ('${codice_azienda}', ${nextId}, '${nickname}',${revisione_corrente}, '${descrizione}', '${autore}', '${date}', '${date}', '${url}','${descrizione_breve}', '${date}', '${fileType}', 1, ${id_tipo_allegato}) returning id_risorsa;`;
            response = await client.query(query);
            query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) values ('${codice_azienda}', ${nextId}, '${bus_object}','${chiave}');`;
            response = await client.query(query);
-           body = { id_risorsa: nextId };
+           body = { result: 'OK', signed_url: signedUrl };
+           
+       } else if (action === 'confirm') {
+           const object = await s3.getObject(s3ParamsGet).promise();
+           const actual_checksum = shasum.update(object.Body).digest('hex');
+           if (checksum === actual_checksum) { // file correctly uploaded
+               query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, revisore, client_file_name, Content_type, dimensione, checksum_sha1) 
+                  values ('${codice_azienda}', ${id_risorsa}, '${revisione_corrente}','${date}', '${filename}', '${autore}', '${nickname}, '${fileType}', ${size}, '${checksum}');`;
+               response = await client.query(query);
+               body = { result: 'OK'};
+           } else { // error with file upload
+               // TODO: delete entries in insert mode tables
+           }
        }
     } catch (e) {
        console.log(e);
@@ -111,6 +139,6 @@ exports.handler = async (event, context) => {
     
     return {
         statusCode: 200,
-        body: JSON.stringify(body || {message: 'No objects found in s3 bucket'})
+        body: JSON.stringify(body || {result: 'KO'})
     };
 };
