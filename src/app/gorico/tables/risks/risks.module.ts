@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { GenericTableModule } from '../generic-table/generic-table.module';
+import { GenericTableModule } from '../../generic-table/generic-table.module';
 import { RisksComponent } from './risks.component';
 import { RouterModule } from '@angular/router';
 

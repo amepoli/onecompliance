@@ -23,13 +23,13 @@ import { LoginPageModule } from 'app/login-page/login-page.module';
 import { RegisterModule } from 'app/login-page/register.module';
 import { ForgotPasswordModule } from 'app/login-page/forgot-password.module';
 import { MailConfirmModule } from 'app/login-page/mail-confirm.module';
-import { EmployeesModule } from 'app/gorico/employees/employees.module';
-import { MngtUnitsModule } from 'app/gorico/mngt-units/mngt-units.module';
+import { EmployeesModule } from 'app/gorico/tables/employees/employees.module';
+import { MngtUnitsModule } from 'app/gorico/tables/mngt-units/mngt-units.module';
 import { SelectedElementModule } from 'app/gorico/selected-element/selected-element.module';
 import {AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
-import { ProcessesModule } from './gorico/processes/processes.module';
-import { ArticlesModule } from './gorico/articles/articles.module';
-import { RisksModule } from './gorico/risks/risks.module';
+import { ProcessesModule } from './gorico/tables/processes/processes.module';
+import { ArticlesModule } from './gorico/tables/articles/articles.module';
+import { RisksModule } from './gorico/tables/risks/risks.module';
 
 
 const appRoutes: Routes = [
