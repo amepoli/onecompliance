@@ -50,7 +50,7 @@ export const navigation: FuseNavigation[] = [
                 translate: 'NAV.CONTROLS',
                 icon: 'person_pin_circle',
                 type : 'item',
-                url  : '/login'
+                url  : '/gorico/controls'
             },
             {
                 id       : 'risks',
