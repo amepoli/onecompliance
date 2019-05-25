@@ -1,0 +1,228 @@
+{
+    "form": {
+      "element_form": [
+        {
+          "inputType": "text",
+          "isVisible": false,
+          "label": "Codice Part",
+          "name": "codice_part",
+          "readonly": true,
+          "type": "input",
+          "value": " "
+        },
+        {
+          "inputType": "number",
+          "label": "ID",
+          "name": "id_centro_gest",
+          "readonly": true,
+          "type": "input",
+          "value": " "
+        },
+        {
+          "inputType": "text",
+          "label": "Codice",
+          "name": "codice",
+          "readonly": false,
+          "type": "input",
+          "validations": [
+            {
+              "message": "Codice mancante",
+              "name": "required",
+              "validator": "Validators.required"
+            },
+            {
+              "message": "Uso caratteri non ammessi",
+              "name": "pattern",
+              "validator": "^[a-zA-Z0-9&_ ]+$"
+            }
+          ],
+          "value": " "
+        },
+        {
+          "inputType": "text",
+          "label": "Descrizione",
+          "name": "descrizione",
+          "readonly": false,
+          "type": "input",
+          "validations": [
+            {
+              "message": "Descrizione mancante",
+              "name": "required",
+              "validator": "Validators.required"
+            }
+          ],
+          "value": " "
+        },
+        {
+          "label": "Centro gestionale di livello superiore",
+          "name": "id_centro_gest_parent",
+          "options": [],
+          "type": "combobox",
+          "value": " "
+        },
+        {
+          "label": "Responsabile",
+          "name": "id_responsabile",
+          "options": [],
+          "type": "combobox",
+          "value": " "
+        },
+        {
+          "label": "Supervisore di tutti i sondaggi",
+          "name": "flag_grc_controller",
+          "type": "checkbox",
+          "value": false
+        },
+        {
+          "label": "Gestore di tutti i modelli di test",
+          "name": "flag_grc_gestore",
+          "type": "checkbox",
+          "value": false
+        }
+      ],
+      "search_form": [
+        {
+          "inputType": "number",
+          "label": "ID",
+          "name": "id_centro_gest",
+          "readonly": "false",
+          "type": "input",
+          "value": " "
+        },
+        {
+          "inputType": "text",
+          "label": "Codice",
+          "name": "codice",
+          "readonly": "false",
+          "type": "input",
+          "value": " "
+        },
+        {
+          "inputType": "text",
+          "label": "Descrizione",
+          "name": "descrizione",
+          "readonly": "false",
+          "type": "input",
+          "value": " "
+        },
+        {
+          "label": "Responsabile",
+          "name": "id_responsabile",
+          "options": [],
+          "type": "combobox",
+          "value": " "
+        },
+        {
+          "label": "Solo principali",
+          "name": "flag_principali",
+          "type": "checkbox",
+          "value": true
+        }
+      ],
+      "subtable_form": [
+        {
+          "keys": [
+            {
+              "parent": "id_centro_gest",
+              "son": "id_centro_gest_parent"
+            },
+            {
+              "parent": "codice_part",
+              "son": "codice_part"
+            }
+          ],
+          "label": "Centri gestionali",
+          "table": "centri_gest"
+        },
+        {
+          "keys": [],
+          "label": "Elenco Personale",
+          "table": "personale"
+        },
+        {
+          "keys": [
+            {
+              "parent": "id_centro_gest",
+              "son": "id_centro_gest"
+            },
+            {
+              "parent": "codice_part",
+              "son": "codice_part"
+            }
+          ],
+          "label": "Procedure aziendali",
+          "table": "procedure"
+        }
+      ],
+      "table_form": [
+        {
+          "isHidden": true,
+          "isPrimary": true,
+          "key": "codice_part",
+          "label": "Codice Part"
+        },
+        {
+          "isHidden": false,
+          "isPrimary": true,
+          "key": "id_centro_gest",
+          "label": "ID"
+        },
+        {
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "codice",
+          "label": "Codice"
+        },
+        {
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "descrizione",
+          "label": "Descrizione"
+        },
+        {
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "responsabile",
+          "label": "Responsabile"
+        },
+        {
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "parente",
+          "label": "Centro Superiore"
+        }
+      ]
+    },
+    "queries": {
+      "combo": [
+        {
+          "name": "id_centro_gest_parent",
+          "queryString": "SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part='$codice_part$';"
+        },
+        {
+          "name": "id_responsabile",
+          "queryString": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part='$codice_part$';"
+        }
+      ],
+      "conditions": {
+        "search": {
+          "descrizione": {
+            "condition": "descrizione Like '%$param%'"
+          },
+          "flag_principali": {
+            "condition": "id_centro_gest_parent IS null",
+            "test": true
+          }
+        },
+        "sub_table": {},
+        "table": {}
+      },
+      "delete": "DELETE FROM entrasp.centri_gestionali WHERE codice_part='$codice_part$' AND id_centro_gest='$id_centro_gest$';",
+      "element": "SELECT codice_part,id_centro_gest,codice,descrizione,id_centro_gest_parent,id_responsabile,flag_grc_controller,flag_grc_gestore from entrasp.centri_gestionali WHERE codice_part='$codice_part$' AND id_centro_gest='$id_centro_gest$';",
+      "list": "SELECT cg.codice_part, cg.id_centro_gest, CG.codice, CG.descrizione, cg.id_centro_gest_parent, cg.id_responsabile, cg.flag_grc_controller, cg.flag_grc_gestore, entrasp.anagrafiche_id_codcognnome('$codice_part$',cg.id_responsabile) as responsabile, entrasp.centri_gestionali_descr('$codice_part$',cg.id_centro_gest_parent) as parente FROM entrasp.centri_gestionali CG;",
+      "new": "INSERT INTO entrasp.centri_gestionali      (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro, tree_path, flag_grc_controller, flag_grc_gestore)    VALUES   ($codice_part$, $id_centro_gest$, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, 209, $codice$, $flag_grc_controller$, $flag_grc_gestore$) RETURNING id_centro_gest;",
+      "next": "SELECT (MAX(id_centro_gest)+1) as id_centro_gest from entrasp.centri_gestionali WHERE codice_part='$codice_part$';",
+      "update": "UPDATE entrasp.centri_gestionali SET codice = $codice$, descrizione = $descrizione$, id_centro_gest_parent = $id_centro_gest_parent$, id_responsabile = $id_responsabile$, flag_grc_controller = $flag_grc_controller$, flag_grc_gestore = $flag_grc_gestore$ WHERE codice_part=$codice_part$ AND id_centro_gest=$id_centro_gest$"
+    },
+    "TableName": "presidi"
+  }
