@@ -5,7 +5,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
   host: 'goricotest.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-  database: 'GoRiCo',
+  database: 'gorico',
   user: 'postgres',
   password: 'et2themax',
   port: 5432,
@@ -50,13 +50,13 @@ exports.handler = async (event, context) => {
     
     const action = 'insert';
     
-    const s3ParamsInsert = { 
+    const s3ParamsGetInsert = { 
         Bucket: 'gorico2.core',
         Key: codice_azienda + '/' + filename,
         Expires: 1000, //expiry time in sec
     };
     
-    const s3ParamsGet = { 
+    const s3ParamsGetList = { 
         Bucket: 'gorico2.core',
         Key: codice_azienda + '/' + filename
     };
@@ -106,7 +106,7 @@ exports.handler = async (event, context) => {
             
        } else if (action === 'insert') {
            // create a temporary signed URL for the object 
-           const signedUrl = await s3.getSignedUrl('putObject', s3ParamsInsert).promise();
+           const signedUrl = await s3.getSignedUrl('putObject', s3ParamsGetInsert).promise();
            // fill postgresql tables
            query = `SELECT (MAX(id_risorsa)+1) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${codice_azienda}';`;
            response = await client.query(query);
@@ -119,7 +119,7 @@ exports.handler = async (event, context) => {
            body = { result: 'OK', signed_url: signedUrl };
            
        } else if (action === 'confirm') {
-           const object = await s3.getObject(s3ParamsGet).promise();
+           const object = await s3.getObject(s3ParamsGetList).promise();
            const actual_checksum = shasum.update(object.Body).digest('hex');
            if (checksum === actual_checksum) { // file correctly uploaded
                query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, revisore, client_file_name, Content_type, dimensione, checksum_sha1) 
@@ -127,8 +127,15 @@ exports.handler = async (event, context) => {
                response = await client.query(query);
                body = { result: 'OK'};
            } else { // error with file upload
-               // TODO: delete entries in insert mode tables
+               query = `delete entrasp.cdms_risorse where codice_azienda='${codice_azienda}' and id_risorsa=${id_risorsa};`;
+               response = await client.query(query);
+               query = `delete entrasp.cdms_risorse_oggetti where codice_azienda='${codice_azienda}' and id_risorsa=${id_risorsa};`;
+               response = await client.query(query);
            }
+       } else if (action === 'get') {
+           // create a temporary signed URL for the object 
+           const signedUrl = await s3.getSignedUrl('getObject', s3ParamsGetInsert).promise();
+           body = { result: 'OK', signed_url: signedUrl };
        }
     } catch (e) {
        console.log(e);

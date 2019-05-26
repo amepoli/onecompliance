@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { SelectedElementComponent } from './selected-element.component';
 import { SplitViewModule } from 'app/layout/split-view/split-view.module';
 import { RouterModule } from '@angular/router';
-import { MatMenuModule, MatToolbarModule, MatTabsModule, MatIconModule, MatButtonModule} from '@angular/material';
+import { MatMenuModule, MatToolbarModule, MatTabsModule, MatIconModule, MatButtonModule, MatFormFieldModule, 
+    MatOptionModule, MatSelectModule, MatInputModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DynamicFormsModule} from 'app/gorico/dynamic-forms/dynamic-forms.module';
 import { BottomTabsModule } from 'app/gorico/bottom-tabs/bottom-tabs.module';
@@ -32,7 +33,11 @@ const routes = [
     MatButtonModule,
     DynamicFormsModule,
     BottomTabsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatFormFieldModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatInputModule
   ],
   declarations: [SelectedElementComponent, AttachDialogComponent],
   entryComponents: [AttachDialogComponent]
