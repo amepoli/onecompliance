@@ -9,6 +9,9 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DynamicFormsModule} from 'app/gorico/dynamic-forms/dynamic-forms.module';
 import { BottomTabsModule } from 'app/gorico/bottom-tabs/bottom-tabs.module';
 import { AttachDialogComponent } from '../dialogs/attach.dialog/attach.dialog.component';
+import { HttpClientModule } from '@angular/common/http';
+import { FileUploadComponent } from '../file-uploader/file-upload/file-upload.component';
+import { ProgressComponent } from '../file-uploader/progress/progress.component';
 import { MatDialogModule } from '@angular/material';
 
 
@@ -37,9 +40,10 @@ const routes = [
     MatFormFieldModule,
     MatOptionModule,
     MatSelectModule,
-    MatInputModule
+    MatInputModule,
+    HttpClientModule
   ],
-  declarations: [SelectedElementComponent, AttachDialogComponent],
+  declarations: [SelectedElementComponent, AttachDialogComponent, FileUploadComponent, ProgressComponent],
   entryComponents: [AttachDialogComponent]
 })
 export class SelectedElementModule { }

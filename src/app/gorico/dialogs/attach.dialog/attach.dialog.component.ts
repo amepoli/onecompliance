@@ -14,6 +14,8 @@ export class AttachDialogComponent {
 
   attach = false;
 
+  progress = 0;
+
   form: FormGroup;
 
   constructor(private _formBuilder: FormBuilder,
