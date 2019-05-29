@@ -64,7 +64,9 @@ export class SelectedElementComponent implements OnInit {
                                     const tab: TabType = {table: c.table, label: c.label, keys: {}};
                                     c.keys.forEach(key => {
                                         const pos = this.regConfig_it.map(c => c.name).indexOf(key.parent);
-                                        tab.keys[key.parent] = { value: this.regConfig_it[pos].value , son: key.son }; 
+                                        let value = this.regConfig_it[pos].value;
+                                        value = value['id'] ? value.id : value; // check if it a combobox type of key
+                                        tab.keys[key.parent] = { value: value , son: key.son }; 
                                     });
                                     return tab;
                                 });
