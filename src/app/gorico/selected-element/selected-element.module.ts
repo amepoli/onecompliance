@@ -13,6 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FileUploadComponent } from '../file-uploader/file-upload/file-upload.component';
 import { ProgressComponent } from '../file-uploader/progress/progress.component';
 import { MatDialogModule } from '@angular/material';
+import { FileManagerModule } from 'app/main/apps/file-manager/file-manager.module';
 
 
 const routes = [
@@ -41,7 +42,8 @@ const routes = [
     MatOptionModule,
     MatSelectModule,
     MatInputModule,
-    HttpClientModule
+    HttpClientModule,
+    FileManagerModule
   ],
   declarations: [SelectedElementComponent, AttachDialogComponent, FileUploadComponent, ProgressComponent],
   entryComponents: [AttachDialogComponent]

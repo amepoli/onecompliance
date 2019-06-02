@@ -11,9 +11,10 @@ import { FileManagerDetailsSidebarComponent } from 'app/main/apps/file-manager/s
 import { FileManagerFileListComponent } from 'app/main/apps/file-manager/file-list/file-list.component';
 import { FileManagerMainSidebarComponent } from 'app/main/apps/file-manager/sidebars/main/main.component';
 
+
 const routes: Routes = [
     {
-        path     : '**',
+        path     : 'files',
         component: FileManagerComponent,
         children : [],
         resolve  : {
@@ -43,6 +44,9 @@ const routes: Routes = [
     ],
     providers   : [
         FileManagerService
+    ],
+    exports : [
+        FileManagerComponent
     ]
 })
 export class FileManagerModule
