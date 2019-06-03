@@ -78,4 +78,9 @@ export class FileManagerComponent implements OnInit, OnDestroy
     {
         this._fuseSidebarService.getSidebar(name).toggleOpen();
     }
+
+    fileAdd(): void 
+    {
+        this._fileManagerService.addFile();
+    }
 }

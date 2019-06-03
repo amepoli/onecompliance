@@ -2,6 +2,7 @@ import { Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import { GenericTableService } from 'app/gorico/generic-table/generic-table.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 
 @Component({
   selector: 'app-attach.dialog',
@@ -11,18 +12,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 export class AttachDialogComponent {
 
-  attach = false;
+  attach: boolean;
 
-  progress = 0;
+  progress: number;
 
   form: FormGroup;
-
-  files: string[] = ['Prova1', 'Test2', 'Eccoqua'];
 
   constructor(private _formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<AttachDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public tableService: GenericTableService) { 
+    public tableService: GenericTableService,
+    public fileService: FileManagerService) { 
 
         /*
         this.tableService.getData('/' + this.data.table, this.data.keys, 'attach').subscribe(
@@ -51,11 +51,15 @@ export class AttachDialogComponent {
             descrizione  : [''],
             tipo   : ['']
         });
-    }
 
-    onAttach(): void {
-        this.attach = true;
-      }
+        this.fileService.onFileAdd.subscribe(result => {
+            this.attach = true;
+        });
+
+        this.attach = false;
+
+        this.progress = 0;
+    }
 
     onSave(): void {
         this.attach = false;

@@ -152,6 +152,7 @@ export class FileManagerService // implements Resolve<any>
 
     onFilesChanged: BehaviorSubject<any>;
     onFileSelected: BehaviorSubject<any>;
+    onFileAdd: BehaviorSubject<any>;
 
     /**
      * Constructor
@@ -165,6 +166,7 @@ export class FileManagerService // implements Resolve<any>
         // Set the defaults
         this.onFilesChanged = new BehaviorSubject({});
         this.onFileSelected = new BehaviorSubject({});
+        this.onFileAdd = new BehaviorSubject({});
     }
 
     /**
@@ -211,5 +213,9 @@ export class FileManagerService // implements Resolve<any>
     {
         this.onFilesChanged.next(this.files); 
         this.onFileSelected.next(this.files[0]);
+    }
+
+    addFile(): void {
+        this.onFileAdd.next(null);
     }
 }
