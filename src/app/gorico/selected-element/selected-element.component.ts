@@ -7,6 +7,7 @@ import 'rxjs/add/operator/filter';
 import { GenericTableService, operationType } from '../generic-table/generic-table.service';
 import { MatDialog } from '@angular/material';
 import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
+import { AuthService } from 'app/login-page/auth.service';
 
 @Component({
     selector: 'selected-element',
@@ -31,6 +32,7 @@ export class SelectedElementComponent implements OnInit {
 
     constructor(public attachDialog: MatDialog,
         private tableService: GenericTableService,
+        private authService: AuthService,
         private route: ActivatedRoute,
         private router: Router) { }
 
@@ -138,7 +140,7 @@ export class SelectedElementComponent implements OnInit {
         // Pop-up example
         const dialogRef = this.attachDialog.open(AttachDialogComponent, {
             width: '800px',
-            data: this.tableService.tableParams
+            data: { table: this.table, keys: this.primaryKeys, company: this.authService.getCode() }
           });
       
           dialogRef.afterClosed().subscribe(result => {

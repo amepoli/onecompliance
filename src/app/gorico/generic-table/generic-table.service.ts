@@ -5,7 +5,7 @@ import { FieldConfig } from '../dynamic-forms/field.interface';
 import { Validators } from '@angular/forms';
 
 
-export type operationType = 'list' | 'sublist' | 'create' | 'select' | 'search' | 'keys' | 'subkeys' | 'attach';
+export type operationType = 'list' | 'sublist' | 'create' | 'select' | 'search' | 'keys' | 'subkeys' ;
 
 
 @Injectable({
@@ -92,6 +92,12 @@ export class GenericTableService {
     this.myPutPostInit.queryStringParameters = {tablename: tableName, keys: JSON.stringify(primaryKeyValues), operation: 'search'};
     this.myPutPostInit.body = jsonData;
     return from(this.amplifyService.api().post(this.apiName, '/table', this.myPutPostInit));
+  }
+
+  getAttachList(tableName: string, primaryKeyValues: any, company: string) {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = {table: tableName, keys: JSON.stringify(primaryKeyValues), codice_azienda: company }; 
+    return from(this.amplifyService.api().get(this.apiName, '/attach', this.myGetInit));
   }
 
   // helper functions 

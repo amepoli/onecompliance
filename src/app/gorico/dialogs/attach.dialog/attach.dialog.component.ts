@@ -10,6 +10,8 @@ import { FileManagerService } from 'app/main/apps/file-manager/file-manager.serv
   styleUrls: ['./attach.dialog.component.scss']
 })
 
+
+
 export class AttachDialogComponent {
 
   attach: boolean;
@@ -24,12 +26,12 @@ export class AttachDialogComponent {
     public tableService: GenericTableService,
     public fileService: FileManagerService) { 
 
-        /*
-        this.tableService.getData('/' + this.data.table, this.data.keys, 'attach').subscribe(
+        
+        this.tableService.getAttachList(data.table, data.keys, data.company).subscribe(
             results => {
                 console.log(results);
             });
-        */
+        
 
         // Reactive Form
         this.form = this._formBuilder.group({
