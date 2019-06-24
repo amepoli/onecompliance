@@ -1,11 +1,6 @@
-import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { GenericTableService } from '../../generic-table/generic-table.service';
+import { Component, OnInit, Input } from '@angular/core';
+import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
-import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
-
-import { Router } from '@angular/router';
-
-import { AuthService } from 'app/login-page/auth.service';
 
 export interface columnType {
     key: string;
@@ -37,45 +32,14 @@ export class TableViewComponent implements OnInit {
     selectedRow: MatRow = null;
     isLoading = true;
 
-    showQuickAdd = false;
-
     keysArray: any[];
 
-    showAdvSearch: boolean = false;
-
-    regConfig_it: FieldConfig[] = [];
-
-    // to override in derived classes
-    protected tableName: string; 
-    protected isMainTable: boolean; // main or subtable
-    protected path: string; // only in case of main tables
-
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatSort) sort: MatSort;
-    @ViewChild('List') private List: ElementRef;
-
-
-    // methods to override
-    processResponse = (response: any[]) => {
-        response.forEach((p) => {
-        });
-    }
-    // end methods to override
-
-
     constructor(
-        protected tableService: GenericTableService,
-        protected router: Router,
-        protected authService: AuthService) {
+        protected backendService: BackendService) {
     }
 
     ngOnInit(): void {
 
-        if (this.path) {
-            this.tableService.currentPath = this.path; // main table path
-        } else {
-            this.path = this.tableService.currentPath; // subtable path 
-        }
 
         this.tableService.getData(this.tableName, this.fullListPrimaryKeyValues, 'keys').subscribe(
             keys => {
