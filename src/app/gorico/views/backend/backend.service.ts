@@ -30,13 +30,18 @@ export class BackendService {
 constructor(private amplifyService: AmplifyService) { 
 }
 
-  getData(tableName: string, primaryKeyValues: any, operation: operationType): Observable<any> {
+  getView(entryName: string, keys: any) {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = {entryName: entryName, keys: JSON.stringify(keys)};
+    return from(this.amplifyService.api().get(this.apiName, '/view', this.myGetInit));
+  }
+
+  getData(entryName: string, keys: any): Observable<any> {
     this.amplifyService.auth();
 
-    this.myGetInit.queryStringParameters = {tablename: tableName, keys: JSON.stringify(primaryKeyValues), operation: operation}; 
+    this.myGetInit.queryStringParameters = {entryName: entryName, keys: JSON.stringify(keys)}; 
 
-    return from(this.amplifyService.api().get(this.apiName, '/table', this.myGetInit));
-        //   .pipe(map(res => res['data']));
+    return from(this.amplifyService.api().get(this.apiName, '/data', this.myGetInit));
   }
 
   pushData(tableName: string, primaryKeyValues: any, jsonData: any): Observable<any> { 

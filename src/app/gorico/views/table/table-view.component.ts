@@ -31,6 +31,7 @@ export class TableViewComponent implements OnInit {
     dataSource: MatTableDataSource<any>;
     selectedRow: MatRow = null;
     isLoading = true;
+    entryName: string;
 
     keysArray: any[];
 
@@ -40,34 +41,19 @@ export class TableViewComponent implements OnInit {
 
     ngOnInit(): void {
 
+        this.entryName = this.viewSettings['entryName'];
 
-        this.tableService.getData(this.tableName, this.fullListPrimaryKeyValues, 'keys').subscribe(
-            keys => {
-                let operation: operationType;
-                this.displayedColumns = keys;
-                this.tableService.tableParams = Object.assign({}, { table: this.tableName }, { keys: this.fullListPrimaryKeyValues });
-                console.log(this.tableService.tableParams);
-                if (!this.sub_keys) { // main list 
-                    this.isMainTable = true;
-                    // set current table params in the service
-                    operation = 'list';
-                } else { // sublist, merge primary keys and son table keys
-                    this.isMainTable = false;
-                    this.fullListPrimaryKeyValues = Object.assign({}, this.fullListPrimaryKeyValues, this.sub_keys);
-                    this.tableService.tableParams = Object.assign({}, this.tableService.tableParams, { sub_keys: this.sub_keys });
-                    operation = 'sublist';
-                }
-
-                this.loadTable(operation);
+        this.backendService.getView(this.entryName, this.viewSettings).subscribe(
+            params => {
+                this.displayedColumns = this.getColumnLabels(this.viewSettings);
+                this.loadTable(this.viewSettings);
             });
     }
 
-    loadTable(tableType: operationType): void {
-        this.tableService.getData(this.tableName, this.fullListPrimaryKeyValues, tableType).subscribe(
+    loadTable(viewSettings: any): void {
+        this.backendService.getData(this.entryName, this.viewSettings).subscribe(
             results => {
                 console.log(results);
-                this.processResponse(results);
-                this.tableService.fullTable = results;
                 this.dataSource = new MatTableDataSource(results);
                 this.dataSource.sort = this.sort;
                 this.dataSource.paginator = this.paginator;
@@ -109,12 +95,8 @@ export class TableViewComponent implements OnInit {
     }
 
 
-    getColumnLabels(columns: columnType[]) {
-        let colLabels = columns.map(c => c.label);
-        // comment out to enable icons on rows
-        /* if (!this.isMainTable) {
-             colLabels.unshift('Actions');
-         }*/
+    getColumnLabels(viewSettings: any) {
+        let colLabels = viewSettings['keys'].map(c => c.column.key);
         return colLabels;
 
     }
