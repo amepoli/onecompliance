@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 
@@ -19,7 +19,10 @@ export interface columnType {
 
 export class TableViewComponent implements OnInit {
 
-    @Input() viewSettings: {};  // sub-table conditions
+    @Input() tableData: { entryName: string, primaryKeys: any };  
+
+    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatSort) sort: MatSort;
 
     // variables to override
     displayedColumns: columnType[];
@@ -31,7 +34,8 @@ export class TableViewComponent implements OnInit {
     dataSource: MatTableDataSource<any>;
     selectedRow: MatRow = null;
     isLoading = true;
-    entryName: string;
+
+    viewSettings: any;
 
     keysArray: any[];
 
@@ -41,17 +45,16 @@ export class TableViewComponent implements OnInit {
 
     ngOnInit(): void {
 
-        this.entryName = this.viewSettings['entryName'];
-
-        this.backendService.getView(this.entryName, this.viewSettings).subscribe(
+        this.backendService.getView(this.tableData.entryName, this.tableData.primaryKeys).subscribe(
             params => {
+                this.viewSettings = params;
                 this.displayedColumns = this.getColumnLabels(this.viewSettings);
-                this.loadTable(this.viewSettings);
+                this.loadTable();
             });
     }
 
-    loadTable(viewSettings: any): void {
-        this.backendService.getData(this.entryName, this.viewSettings).subscribe(
+    loadTable(): void {
+        this.backendService.getData(this.tableData.entryName, this.viewSettings).subscribe(
             results => {
                 console.log(results);
                 this.dataSource = new MatTableDataSource(results);
@@ -61,10 +64,11 @@ export class TableViewComponent implements OnInit {
                 this.dataSource.connect().subscribe(source => {
                     this.keysArray = source.map(row => {
                         const key_values = {};
-                        for (const column of this.displayedColumns) {
-                            if (column.isPrimary) {
-                                key_values[column.key] = row[column.key];
-                            }
+                        const primaryKeys = this.viewSettings.keys.filter(entry => {
+                            return entry.isPrimary;
+                        });
+                        for (const primaryKey of primaryKeys) {
+                                key_values[primaryKey.column.key] = row[primaryKey.column.key];
                         }
                         return key_values;
                     });
