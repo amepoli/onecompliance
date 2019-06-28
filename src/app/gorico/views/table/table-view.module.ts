@@ -9,12 +9,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatSortModule } from '@angular/material/sort';
 import { MatIconModule, MatButtonModule } from '@angular/material';
-import { GenericTableComponent } from './generic-table.component';
+import { TableViewComponent } from './table-view.component';
 import { DynamicFormsModule} from 'app/gorico/dynamic-forms/dynamic-forms.module';
 import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
-  declarations: [GenericTableComponent],
+  declarations: [TableViewComponent],
   imports: [
     CommonModule,
     AmplifyAngularModule,
