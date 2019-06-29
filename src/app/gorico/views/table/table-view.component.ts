@@ -21,17 +21,12 @@ export interface columnType {
 
 export class TableViewComponent implements OnInit {
 
-    @Input() tableData: { entryName: string, primaryKeys: any, showHeader: boolean };  
+    @Input() tableData: { entryName: string, keys: any, showHeader: boolean };  
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
-    // variables to override
     displayedColumns: columnType[];
-
-    fullListPrimaryKeyValues: any = {};  // primary key values used to retrieve the full table
-
-    // end variables to override
 
     dataSource: MatTableDataSource<any>;
     selectedRow: MatRow = null;
@@ -48,7 +43,7 @@ export class TableViewComponent implements OnInit {
 
     ngOnInit(): void {
 
-        this.backendService.getView(this.tableData.entryName, this.tableData.primaryKeys).subscribe(
+    this.backendService.getView(this.tableData.entryName, this.tableData.keys).subscribe(
             params => {
                 this.viewSettings = params;
                 this.displayedColumns = this.getColumnLabels(this.viewSettings);
@@ -57,7 +52,7 @@ export class TableViewComponent implements OnInit {
     }
 
     loadTable(): void {
-        this.backendService.getData(this.tableData.entryName, this.viewSettings).subscribe(
+        this.backendService.getData(this.tableData.entryName, this.viewSettings, false).subscribe(
             results => {
                 console.log(results);
                 this.dataSource = new MatTableDataSource(results);
