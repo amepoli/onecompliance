@@ -1,8 +1,6 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
-
-import { Router } from '@angular/router';
 
 export interface columnType {
     key: string;
@@ -22,6 +20,7 @@ export interface columnType {
 export class TableViewComponent implements OnInit {
 
     @Input() tableData: { entryName: string, keys: any, showHeader: boolean };  
+    @Output() recordDataToParent = new EventEmitter<any>();
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -37,7 +36,6 @@ export class TableViewComponent implements OnInit {
     keysArray: any[];
 
     constructor(
-        protected router: Router,
         protected backendService: BackendService) {
     }
 
@@ -62,7 +60,7 @@ export class TableViewComponent implements OnInit {
                 this.dataSource.connect().subscribe(source => {
                     this.keysArray = source.map(row => {
                         const key_values = {};
-                        const primaryKeys = this.viewSettings.keys.filter(entry => {
+                        const primaryKeys = this.viewSettings.table_keys.filter(entry => {
                             return entry.isPrimary;
                         });
                         for (const primaryKey of primaryKeys) {
@@ -91,7 +89,7 @@ export class TableViewComponent implements OnInit {
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
         const mergedParams = { entry: this.tableData.entryName, keys: JSON.stringify(this.keysArray[index]) };
-        setTimeout(() => { this.router.navigate(['/gorico/item'], { queryParams: mergedParams }); }, 50);
+        setTimeout(() => { this.recordDataToParent.emit({ queryParams: mergedParams }); }, 50);
     }
 
 

@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import 'rxjs/add/operator/filter';
 import { BackendService } from '../backend/backend.service';
 import { MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
+
 
 @Component({
     selector: 'form-view',
@@ -14,6 +15,8 @@ import { Validators } from '@angular/forms';
 export class FormViewComponent implements OnInit {
 
     @Input() tableData: { entryName: string, keys: any, index: number, total: number, isNew: boolean };
+    @Output() notifyParent = new EventEmitter<any>();
+
 
     @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
     n = 0;
@@ -98,6 +101,7 @@ export class FormViewComponent implements OnInit {
         this.backendService.updateData(this.tableData.entryName, this.tableData.keys, value).subscribe(
             result => {
                 console.log(result);
+                this.notifyParent.emit('');
             }
         );
     }
