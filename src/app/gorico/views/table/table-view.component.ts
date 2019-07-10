@@ -20,7 +20,7 @@ export interface columnType {
 export class TableViewComponent implements OnInit {
 
     @Input() tableData: { entryName: string, keys: any, showHeader: boolean };  
-    @Output() recordDataToParent = new EventEmitter<any>();
+    @Output() sendEvent = new EventEmitter<any>();
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -89,7 +89,7 @@ export class TableViewComponent implements OnInit {
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
         const mergedParams = { entry: this.tableData.entryName, keys: JSON.stringify(this.keysArray[index]) };
-        setTimeout(() => { this.recordDataToParent.emit({ queryParams: mergedParams }); }, 50);
+        setTimeout(() => { this.sendEvent.emit({ eventType: 'rowClick', queryParams: mergedParams }); }, 50);
     }
 
 
