@@ -64,7 +64,7 @@ export class TableViewComponent implements OnInit {
                             return entry.isPrimary;
                         });
                         for (const primaryKey of primaryKeys) {
-                                key_values[primaryKey.column.key] = row[primaryKey.column.key];
+                                key_values[primaryKey.key] = row[primaryKey.key];
                         }
                         return key_values;
                     });
@@ -94,7 +94,7 @@ export class TableViewComponent implements OnInit {
 
 
     getColumnLabels(viewSettings: any) {
-        let colLabels = viewSettings['keys'].map(c => c.column.key);
+        let colLabels = viewSettings['keys'].map(c => c.key);
         return colLabels;
 
     }
