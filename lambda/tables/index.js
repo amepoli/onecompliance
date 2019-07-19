@@ -24,10 +24,11 @@ function replaceKeys(queryString, keys, keyTypes) {
         for (var key in keys) {
             for (var delimiter in delimiters) {
                 let keyType = keyTypes.find(e => (e.key === key));
-                var bracket = (delimiter === '$' && keyType && keyType.type === 'text') ? '\'' : '';
-                if (typeof keys[key] === 'object') { // key of type multiple
+                if (typeof keys[key] === 'object') { // key with multiple subkeys
                     // tslint:disable-next-line:forin
                     for (var subkey in keys[key]) {
+                        let subKeyType = keyType.dataType.find(e => (e.key === subkey));
+                        let bracket = (delimiter === '$' && subKeyType && subKeyType.dataType === 'text') ? '\'' : '';
                         let toReplace = delimiter + key + '.' + subkey + delimiter;
                         let replacement = bracket + keys[key][subkey] + bracket;
                         let newString = queryString.replace(toReplace, replacement);
@@ -37,6 +38,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                         }
                     }
                 } else {
+                    let bracket = (delimiter === '$' && keyType && keyType.dataType === 'text') ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
                     // TO BE CHECKED
                     //let replacement = keys[key].value ? keys[key].value : keys[key]; // handle subtables
@@ -79,7 +81,8 @@ function getTableQuery(entry_params, table_keys, isForm) {
         var fieldString = comma + element.key;
         if (!isForm && element.hasOwnProperty('queryFunct')) { // overridden by funct
             keyTypes = entry_keys.map(k => {
-                return {key: k.key, type: k.dataType}; // TODO: to handle subkeys
+                let dataType = k.subKeys ? k.subKeys : k.dataType;
+                return {key: k.key, dataType: dataType}; 
             });
             fieldString = comma + replaceKeys(element.queryFunct, table_keys, keyTypes);
         }
@@ -137,14 +140,13 @@ exports.handler = async (event, context) => {
 
     var table_keys = queryParams['key'];
 
-    var entry_params;
+    var queryData;
 
     try {
         // read the entry params from DynamoDB
-        entry_params = await dynamo.get(DynamoParams).promise();
+        let entry_params = await dynamo.get(DynamoParams).promise();
 
         let queryString;
-        var queryData;
 
         if (isSearchRequest) {
             queryString = getSearchQuery(entry_params, table_keys, search_keys);
@@ -163,20 +165,22 @@ exports.handler = async (event, context) => {
 
         queryString.comboQueries.forEach(element => {
             let query = element.comboQuery;
-            // TODO: perform the query
+            let comboData = await client.query(query);
+            let comboEntry = new Object;
+            comboEntry[element.key] = comboData;
+            Object.assign(queryData, comboEntry);
         });
-
 
     } catch (e) {
         console.log(e);
         return {
-            statusCode: 400
+            statusCode: 500
         }
     }
 
 
     return {
         statusCode: 200,
-        body: JSON.stringify(data)
+        body: JSON.stringify(queryData)
     };
 };
