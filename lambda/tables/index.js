@@ -3,7 +3,7 @@ var pg = require("pg");
 const Pool = require('pg-pool');
 const pool = new Pool({
     host: 'goricotest.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-    database: 'GoRiCo',
+    database: 'gorico',
     user: 'postgres',
     password: 'et2themax',
     port: 5432,
@@ -22,7 +22,7 @@ function replaceKeys(queryString, keys, keyTypes) {
     var delimiters = ['$', '€'];
     if (queryString) {
         for (var key in keys) {
-            for (var delimiter in delimiters) {
+            delimiters.forEach(delimiter => {
                 let keyType = keyTypes.find(e => (e.key === key));
                 if (typeof keys[key] === 'object') { // key with multiple subkeys
                     // tslint:disable-next-line:forin
@@ -49,7 +49,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                         newString = queryString.replace(toReplace, replacement);
                     }
                 }
-            }
+            });
         }
     }
     return queryString;
@@ -70,37 +70,43 @@ function getTableQuery(entry_params, table_keys, isForm) {
     } else {
         entry_keys = entry_params.table_keys;
     }
+        
     if (!entry_keys) return '';
+
 
     var queryString = 'SELECT ';
     var comma = ''; // first entry has no comma 
-
-    entry_keys.forEach(element => {
-
-        if (!element.key) continue;
-        var fieldString = comma + element.key;
-        if (!isForm && element.hasOwnProperty('queryFunct')) { // overridden by funct
-            keyTypes = entry_keys.map(k => {
-                let dataType = k.subKeys ? k.subKeys : k.dataType;
+    
+    let keyTypes = entry_keys.map(k => {
+                let dataType = k.subKeys ? k.subKeys : k.format.dataType;
                 return {key: k.key, dataType: dataType}; 
             });
-            fieldString = comma + replaceKeys(element.queryFunct, table_keys, keyTypes);
+
+
+    entry_keys.forEach(element => {
+        
+        if (!element.key) {
+            return;
+        }
+        var fieldString = comma + element.key;
+        if (!isForm && element.hasOwnProperty('queryFunct')) { // overridden by funct
+            fieldString = comma + replaceKeys(element.queryFunct, table_keys, keyTypes) + ' AS ' + element.key;
         }
         if (isForm) { // check if combobox, then save query fields for later processing
             if (element.format.viewType === 'combobox') {
                 const comboQuery = element.format.comboQuery;
                 if (comboQuery) {
-                    comboQueries.push({ key: key, comboQuery: comboQuery });
+                    comboQueries.push({ key: element.key, comboQuery: comboQuery });
                 }
-                continue; // this key does not concurr to the main query
+                return; // this key does not concurr to the main query
             }
         }
         queryString = queryString + fieldString;
         comma = ','; // needed only the first time
     });
 
-    if (entry_keys.origin) {
-        queryString = queryString + ' FROM ' + entry_keys.origin;
+    if (entry_params.origin) {
+        queryString = queryString + ' FROM ' + entry_params.origin;
     } else {
         return { mainQuery: '', comboQueries: [] }; // Huston, we have a problem
     }
@@ -109,8 +115,10 @@ function getTableQuery(entry_params, table_keys, isForm) {
 
     for (const key in table_keys) {
         if (table_keys.hasOwnProperty(key)) {
-            const element = table_keys[key];
-            var fieldString = comma + key + '=' + element;
+            let keyType = keyTypes.find(e => (e.key === key));
+            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            let element = table_keys[key];
+            let fieldString = comma + key + '=' + delimiter + element + delimiter;
             queryString = queryString + fieldString;
             comma = ','; // needed only the first time
         }
@@ -138,13 +146,15 @@ exports.handler = async (event, context) => {
 
     var isFormRecord = (queryParams['form'] === '1');
 
-    var table_keys = queryParams['key'];
+    var table_keys = queryParams['keys'];
 
     var queryData;
 
     try {
         // read the entry params from DynamoDB
         let entry_params = await dynamo.get(DynamoParams).promise();
+        
+        entry_params = entry_params.Item;
 
         let queryString;
 
@@ -157,27 +167,35 @@ exports.handler = async (event, context) => {
         } else { // table query
             queryString = getTableQuery(entry_params, table_keys, false);
         }
+        
+        console.log(queryString);
 
-        let client = await pool.connect();
+        var client = await pool.connect();
         if (queryString.mainQuery && queryString.mainQuery !== '') {
             queryData = await client.query(queryString.mainQuery);
         }
-
-        queryString.comboQueries.forEach(element => {
-            let query = element.comboQuery;
-            let comboData = await client.query(query);
-            let comboEntry = new Object;
-            comboEntry[element.key] = comboData;
-            Object.assign(queryData, comboEntry);
-        });
+        
+        if (queryString.comboQueries) {
+            for (let index = 0; index < queryString.comboQueries.length; index++) {
+                let element = queryString.comboQueries[index];
+                let query = element.comboQuery;
+                let comboData = await client.query(query);
+                let comboEntry = new Object;
+                comboEntry[element.key] = comboData;
+                Object.assign(queryData, comboEntry);
+            }
+        }
+        
+        await client.release();
 
     } catch (e) {
         console.log(e);
         return {
             statusCode: 500
-        }
+        };
     }
 
+    console.log(queryData);
 
     return {
         statusCode: 200,
