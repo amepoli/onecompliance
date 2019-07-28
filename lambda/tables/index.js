@@ -56,7 +56,7 @@ function replaceKeys(queryString, keys, keyTypes) {
 }
 
 // build the Postgresql query from parameters
-function getTableQuery(entry_params, table_keys, isForm) {
+function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
     if (entry_params.query) {  // pre-defined query
         return { mainQuery: entry_params.query, comboQueries: [] };
@@ -78,7 +78,7 @@ function getTableQuery(entry_params, table_keys, isForm) {
     var comma = ''; // first entry has no comma 
     
     var keyTypes = entry_keys.map(k => {
-                let dataType = k.subKeys ? k.subKeys : k.format.dataType;
+                let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
                 return {key: k.key, dataType: dataType}; 
             });
 
@@ -124,11 +124,29 @@ function getTableQuery(entry_params, table_keys, isForm) {
         }
     }
     
+    if (search_keys) {
+        
+        let search_params = entry_params.search_keys;
+        let search_types = search_params.map(k => {
+                let dataType = k.format.dataType ? k.format.dataType : '';
+                return {key: k.fieldName, dataType: dataType}; 
+            });
+    
+        for (const key in search_keys) {
+            if (search_keys.hasOwnProperty(key)) {
+                let search_param = search_params.find(s => (s.fieldName === key));
+                let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
+                queryString = queryString + comma + fieldString;
+                comma = ' AND '; // needed only the first time if no table_keys
+            }
+        }
+    }
+    
     queryString = queryString + ';';
 
     return { mainQuery: queryString, comboQueries: comboQueries };
 
-};
+}
 
 exports.handler = async (event, context) => {
 
@@ -143,8 +161,8 @@ exports.handler = async (event, context) => {
         }
     };
 
-    var searchKeys = queryParams['search_keys'];
-    var isSearchRequest = searchKeys ? true : false;
+    var search_keys = queryParams['search_keys'];
+    var isSearchRequest = search_keys ? true : false;
 
     var isNewRecord = (queryParams['new'] === 1);
 
@@ -163,13 +181,13 @@ exports.handler = async (event, context) => {
         let queryString;
 
         if (isSearchRequest) {
-            queryString = getSearchQuery(entry_params, table_keys, search_keys);
+            queryString = getTableQuery(entry_params, table_keys, false, search_keys);
         } else if (isNewRecord) {
             queryString = getNewQuery(entry_params, table_keys);
         } else if (isFormRecord) {
-            queryString = getTableQuery(entry_params, table_keys, true);
+            queryString = getTableQuery(entry_params, table_keys, true, null);
         } else { // table query
-            queryString = getTableQuery(entry_params, table_keys, false);
+            queryString = getTableQuery(entry_params, table_keys, false, null);
         }
 
         var client = await pool.connect();
