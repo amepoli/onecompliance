@@ -77,7 +77,7 @@ function getTableQuery(entry_params, table_keys, isForm) {
     var queryString = 'SELECT ';
     var comma = ''; // first entry has no comma 
     
-    let keyTypes = entry_keys.map(k => {
+    var keyTypes = entry_keys.map(k => {
                 let dataType = k.subKeys ? k.subKeys : k.format.dataType;
                 return {key: k.key, dataType: dataType}; 
             });
@@ -94,11 +94,11 @@ function getTableQuery(entry_params, table_keys, isForm) {
         }
         if (isForm) { // check if combobox, then save query fields for later processing
             if (element.format.viewType === 'combobox') {
-                const comboQuery = element.format.comboQuery;
+                let comboQuery = element.format.comboQuery;
                 if (comboQuery) {
+                    comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
                     comboQueries.push({ key: element.key, comboQuery: comboQuery });
                 }
-                return; // this key does not concurr to the main query
             }
         }
         queryString = queryString + fieldString;
@@ -120,9 +120,11 @@ function getTableQuery(entry_params, table_keys, isForm) {
             let element = table_keys[key];
             let fieldString = comma + key + '=' + delimiter + element + delimiter;
             queryString = queryString + fieldString;
-            comma = ','; // needed only the first time
+            comma = ' AND '; // needed only the first time
         }
     }
+    
+    queryString = queryString + ';';
 
     return { mainQuery: queryString, comboQueries: comboQueries };
 
@@ -131,6 +133,8 @@ function getTableQuery(entry_params, table_keys, isForm) {
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
+    
+    console.log(queryParams);
 
     const DynamoParams = {
         TableName: 'views',
@@ -142,9 +146,9 @@ exports.handler = async (event, context) => {
     var searchKeys = queryParams['search_keys'];
     var isSearchRequest = searchKeys ? true : false;
 
-    var isNewRecord = (queryParams['new'] === '1');
+    var isNewRecord = (queryParams['new'] === 1);
 
-    var isFormRecord = (queryParams['form'] === '1');
+    var isFormRecord = (queryParams['form'] === 1);
 
     var table_keys = queryParams['keys'];
 
@@ -167,12 +171,15 @@ exports.handler = async (event, context) => {
         } else { // table query
             queryString = getTableQuery(entry_params, table_keys, false);
         }
-        
-        console.log(queryString);
 
         var client = await pool.connect();
         if (queryString.mainQuery && queryString.mainQuery !== '') {
             queryData = await client.query(queryString.mainQuery);
+            if (isFormRecord) {
+                queryData = queryData.rows[0];
+            } else {
+                queryData = queryData.rows;
+            }
         }
         
         if (queryString.comboQueries) {
@@ -181,7 +188,9 @@ exports.handler = async (event, context) => {
                 let query = element.comboQuery;
                 let comboData = await client.query(query);
                 let comboEntry = new Object;
-                comboEntry[element.key] = comboData;
+                comboEntry[element.key] = new Object;
+                comboEntry[element.key]['value'] = queryData[element.key];
+                comboEntry[element.key]['options'] = comboData.rows;
                 Object.assign(queryData, comboEntry);
             }
         }
@@ -194,8 +203,6 @@ exports.handler = async (event, context) => {
             statusCode: 500
         };
     }
-
-    console.log(queryData);
 
     return {
         statusCode: 200,
