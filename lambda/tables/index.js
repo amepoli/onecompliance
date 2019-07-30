@@ -62,9 +62,9 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
         return { mainQuery: entry_params.query, comboQueries: [] };
     }
 
-    var comboQueries = [];
+    let comboQueries = [];
 
-    var entry_keys;
+    let entry_keys;
     if (isForm) {
         entry_keys = entry_params.form_keys;
     } else {
@@ -74,10 +74,10 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     if (!entry_keys) return '';
 
 
-    var queryString = 'SELECT ';
-    var comma = ''; // first entry has no comma 
+    let queryString = 'SELECT ';
+    let comma = ''; // first entry has no comma 
     
-    var keyTypes = entry_keys.map(k => {
+    let keyTypes = entry_keys.map(k => {
                 let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
                 return {key: k.key, dataType: dataType}; 
             });
@@ -88,7 +88,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
         if (!element.key) {
             return;
         }
-        var fieldString = comma + element.key;
+        let fieldString = comma + element.key;
         if (!isForm && element.hasOwnProperty('queryFunct')) { // overridden by funct
             fieldString = comma + replaceKeys(element.queryFunct, table_keys, keyTypes) + ' AS ' + element.key;
         }
@@ -148,6 +148,45 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
 }
 
+function getNewQuery(entry_params, table_keys) {
+    
+   let entry_keys = entry_params.form_keys;
+   
+   let mqString = '';
+   
+   let defaultValues = {};
+   
+   let keyTypes = entry_keys.map(k => {
+                let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
+                return {key: k.key, dataType: dataType}; 
+            });
+   
+   entry_keys.forEach(element => {
+        if (element.autoGenerate && element.autoGenerate === true && element.format.dataType === 'number') {  // there should be only one entry, otherwise last one dominates 
+            mqString = 'SELECT (MAX(' + element.key + ')+1) AS ' + element.key + ' FROM ' + entry_params.origin;;
+            let  comma = ' WHERE ';
+            for (const key in table_keys) {
+                if (table_keys.hasOwnProperty(key)) {
+                    let keyType = keyTypes.find(e => (e.key === key));
+                    let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+                    let element = table_keys[key];
+                    let fieldString = comma + key + '=' + delimiter + element + delimiter;
+                    mqString = mqString + fieldString;
+                    comma = ' AND '; // needed only the first time
+                }   
+            }
+        }
+        if (element.format.value || table_keys[element.key]) {
+            let obj = new Object;
+            obj[element.key] = table_keys[element.key] ? table_keys[element.key] : element.format.value;
+            Object.assign(defaultValues, obj);
+        }
+        
+   });
+ 
+    return { mainQuery: mqString, comboQueries: [], defaultValues: defaultValues };
+}
+
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
@@ -189,15 +228,21 @@ exports.handler = async (event, context) => {
         } else { // table query
             queryString = getTableQuery(entry_params, table_keys, false, null);
         }
+        
+        console.log(queryString);
 
         var client = await pool.connect();
         if (queryString.mainQuery && queryString.mainQuery !== '') {
             queryData = await client.query(queryString.mainQuery);
-            if (isFormRecord) {
+            if (isFormRecord || isNewRecord) {
                 queryData = queryData.rows[0];
             } else {
                 queryData = queryData.rows;
             }
+        }
+        
+        if (isNewRecord && queryString.defaultValues) { // only for new records, merge default values
+            Object.assign(queryData, queryString.defaultValues);
         }
         
         if (queryString.comboQueries) {
