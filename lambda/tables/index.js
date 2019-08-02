@@ -58,10 +58,6 @@ function replaceKeys(queryString, keys, keyTypes) {
 // build the Postgresql query from parameters
 function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
-    if (entry_params.query) {  // pre-defined query
-        return { mainQuery: entry_params.query, comboQueries: [] };
-    }
-
     let comboQueries = [];
 
     let entry_keys;
@@ -72,15 +68,22 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     }
         
     if (!entry_keys) return '';
-
-
-    let queryString = 'SELECT ';
-    let comma = ''; // first entry has no comma 
     
     let keyTypes = entry_keys.map(k => {
-                let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
-                return {key: k.key, dataType: dataType}; 
-            });
+        let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
+        return {key: k.key, dataType: dataType}; 
+    });
+
+    if (!isForm && entry_params.selectTableQuery) {  // pre-defined query for table view
+        return { mainQuery: replaceKeys(entry_params.selectTableQuery, table_keys, keyTypes), comboQueries: [] };
+    }
+
+    if (isForm && entry_params.selectFormQuery) { // pre-defined query for form view
+        return { mainQuery: replaceKeys(entry_params.selectFormQuery, table_keys, keyTypes), comboQueries: [] };
+    }
+    
+    let queryString = 'SELECT ';
+    let comma = ''; // first entry has no comma 
 
 
     entry_keys.forEach(element => {
@@ -137,7 +140,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
                 let search_param = search_params.find(s => (s.fieldName === key));
                 let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
                 queryString = queryString + comma + fieldString;
-                comma = ' AND '; // needed only the first time if no table_keys
+                comma = ' AND '; // needed only the first time if no table_
             }
         }
     }
@@ -163,7 +166,7 @@ function getNewQuery(entry_params, table_keys) {
    
    entry_keys.forEach(element => {
         if (element.autoGenerate && element.autoGenerate === true && element.format.dataType === 'number') {  // there should be only one entry, otherwise last one dominates 
-            mqString = 'SELECT (MAX(' + element.key + ')+1) AS ' + element.key + ' FROM ' + entry_params.origin;;
+            mqString = 'SELECT (MAX(' + element.key + ')+1) AS ' + element.key + ' FROM ' + entry_params.origin;
             let  comma = ' WHERE ';
             for (const key in table_keys) {
                 if (table_keys.hasOwnProperty(key)) {
@@ -187,9 +190,124 @@ function getNewQuery(entry_params, table_keys) {
     return { mainQuery: mqString, comboQueries: [], defaultValues: defaultValues };
 }
 
+function getInsertUpdateQuery(entry_params, table_keys, body, newRecord) {
+    
+    let entry_keys = entry_params.form_keys;
+    
+    if (!entry_keys) return '';
+    
+    let keyTypes = entry_keys.map(k => {
+                let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
+                return {key: k.key, dataType: dataType}; 
+            });
+    
+    if (newRecord && entry_params.insertQuery) {  // pre-defined query to insert a new record
+        return replaceKeys(entry_params.insertQuery, table_keys, keyTypes);
+    }
+    
+    if (!newRecord && entry_params.updateQuery) {  // pre-defined query to update an existing record
+        return replaceKeys(entry_params.updateQuery, table_keys, keyTypes);
+    }
+    
+    let queryString = newRecord ? 'INSERT INTO ' + entry_params.origin + ' (' : 'UPDATE ' + entry_params.origin + ' SET ';
+    
+    let comma = ''; // first entry has no comma 
+    
+    let values = {};
+    
+    entry_keys.forEach(element => {
+        
+        if (!element.key) {
+            return;
+        } 
+        
+        let value;
+        
+        if (!body[element.key]) {  // no value passed for the key
+            if (element.format.value) {
+                value = element.format.value; // use default value 
+            } else {
+                return;   // no value passed and no default, skip the key
+            }
+        } else {
+            value = body[element.key];
+        }
+        
+        queryString = queryString + comma + element.key;
+        values[element.key] = value;
+        if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
+            let keyType = keyTypes.find(e => (e.key === element.key));
+            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            queryString = queryString + '=' + delimiter + value + delimiter;
+        }
+        comma = ', ';
+    });
+    
+    if (newRecord) { // complete the INSERT query
+        comma = ') VALUES (';
+        for (const key in values) {
+            let keyType = keyTypes.find(e => (e.key === key));
+            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            let value = values[key];
+            let fieldString = comma + delimiter + value + delimiter;
+            queryString = queryString + fieldString;
+            comma = ', '; // needed only the first time
+        }
+    } else { // add WHERE conditions to UPDATE query
+         comma = ' WHERE ';
+         for (const key in table_keys) {
+            if (table_keys.hasOwnProperty(key)) {
+                let keyType = keyTypes.find(e => (e.key === key));
+                let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+                let element = table_keys[key];
+                let fieldString = comma + key + '=' + delimiter + element + delimiter;
+                queryString = queryString + fieldString;
+                comma = ' AND '; // needed only the first time
+            }
+        }
+    }
+
+    
+    queryString = newRecord ? queryString + ');' : queryString + ';';
+    
+    return queryString;
+    
+}
+
+function getDeleteQuery(entry_params, table_keys) {
+    
+    
+    let queryString = 'DELETE FROM ' + entry_params.origin;
+    
+    let entry_keys = entry_params.form_keys;
+    
+    let keyTypes = entry_keys.map(k => {
+                let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
+                return {key: k.key, dataType: dataType}; 
+            });
+    
+    let comma = ' WHERE ';
+
+    for (const key in table_keys) {
+        if (table_keys.hasOwnProperty(key)) {
+            let keyType = keyTypes.find(e => (e.key === key));
+            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            let element = table_keys[key];
+            let fieldString = comma + key + '=' + delimiter + element + delimiter;
+            queryString = queryString + fieldString;
+            comma = ' AND '; // needed only the first time
+        }
+    }
+    
+    return { mainQuery: queryString, comboQueries: [] };
+    
+}
+
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
+    
+    const method = event.httpMethod;
     
     console.log(queryParams);
 
@@ -219,14 +337,21 @@ exports.handler = async (event, context) => {
 
         let queryString;
 
-        if (isSearchRequest) {
-            queryString = getTableQuery(entry_params, table_keys, false, search_keys);
-        } else if (isNewRecord) {
-            queryString = getNewQuery(entry_params, table_keys);
-        } else if (isFormRecord) {
+        if (method === 'GET') {
+            if (isSearchRequest) {
+                queryString = getTableQuery(entry_params, table_keys, false, search_keys);
+            } else if (isNewRecord) {
+                queryString = getNewQuery(entry_params, table_keys);
+            } else if (isFormRecord) {
+                queryString = getTableQuery(entry_params, table_keys, true, null);
+            } else { // table query
+                queryString = getTableQuery(entry_params, table_keys, false, null);
+            }
+        } else if (method === 'POST') {
+            // have to check if the record exists (update) or is new (insert), so try to recover it
             queryString = getTableQuery(entry_params, table_keys, true, null);
-        } else { // table query
-            queryString = getTableQuery(entry_params, table_keys, false, null);
+        } else if (method === 'DELETE') {
+            queryString = getDeleteQuery(entry_params, table_keys);
         }
         
         console.log(queryString);
@@ -241,11 +366,12 @@ exports.handler = async (event, context) => {
             }
         }
         
+        
         if (isNewRecord && queryString.defaultValues) { // only for new records, merge default values
             Object.assign(queryData, queryString.defaultValues);
         }
         
-        if (queryString.comboQueries) {
+        if (queryData && queryString.comboQueries) {
             for (let index = 0; index < queryString.comboQueries.length; index++) {
                 let element = queryString.comboQueries[index];
                 let query = element.comboQuery;
@@ -258,10 +384,19 @@ exports.handler = async (event, context) => {
             }
         }
         
+        if (method === 'POST') { // insert or update the record
+            let newRecord = queryData.length ? false : true;
+            //let body = JSON.parse(event.body.toString()); // production scenario
+            let body = event.body; // test scenario
+            queryString = getInsertUpdateQuery(entry_params, table_keys, body, newRecord);
+            await client.query(queryString); // perform the INSERT/UPDATE operation
+        }
+        
         await client.release();
 
     } catch (e) {
         console.log(e);
+        await client.release();
         return {
             statusCode: 500
         };
