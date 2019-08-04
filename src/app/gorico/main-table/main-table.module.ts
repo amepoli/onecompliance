@@ -6,11 +6,20 @@ import { MatIconModule, MatButtonModule } from '@angular/material';
 import { MainTableComponent } from './main-table.component';
 import { TableViewModule } from 'app/gorico/views/table/table-view.module';
 import { MatCardModule } from '@angular/material/card';
+import { RouterModule } from '@angular/router';
+
+const routes = [
+    {
+        path     : 'gorico/main-table/:table_name',
+        component: MainTableComponent
+    }
+];
 
 @NgModule({
   declarations: [MainTableComponent],
   imports: [
     CommonModule,
+    RouterModule.forChild(routes),
     MatProgressSpinnerModule,
     MatIconModule,
     MatButtonModule,
@@ -24,7 +33,8 @@ import { MatCardModule } from '@angular/material/card';
     MatIconModule,
     MatButtonModule,
     MatCardModule,
-    TableViewModule
+    TableViewModule,
+    MainTableComponent
   ]
 })
 

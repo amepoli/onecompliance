@@ -25,7 +25,7 @@ export const navigation: FuseNavigation[] = [
                         title: 'Management Units',
                         translate: 'NAV.MGTUNITS',
                         type : 'item',
-                        url  : '/gorico/mngt-units'
+                        url  : '/gorico/main-table/centri_gestionali'
                     }
                 ]
             },

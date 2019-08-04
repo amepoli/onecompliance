@@ -19,7 +19,7 @@ export interface columnType {
 
 export class TableViewComponent implements OnInit {
 
-    @Input() tableData: { entryName: string, keys: any, showHeader: boolean };  
+    @Input() tableData: { entryName: string, showHeader: boolean };  
     @Output() sendEvent = new EventEmitter<any>();
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -41,7 +41,7 @@ export class TableViewComponent implements OnInit {
 
     ngOnInit(): void {
 
-    this.backendService.getView(this.tableData.entryName, this.tableData.keys).subscribe(
+    this.backendService.getView(this.tableData.entryName).subscribe(
             params => {
                 this.viewSettings = params;
                 this.displayedColumns = this.getColumnLabels(this.viewSettings);

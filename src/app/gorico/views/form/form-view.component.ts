@@ -27,7 +27,7 @@ export class FormViewComponent implements OnInit {
 
     viewSettings: any;
 
-    constructor(public attachDialog: MatDialog,
+    constructor(public attachDialog: MatDialog, 
         private backendService: BackendService) { 
 
         }
@@ -36,7 +36,7 @@ export class FormViewComponent implements OnInit {
         this.n = this.tableData.index;
         this.tot = this.tableData.total;
 
-        this.backendService.getView(this.tableData.entryName, this.tableData.keys).subscribe(
+        this.backendService.getView(this.tableData.entryName).subscribe(
             params => {
                 this.viewSettings = params;
                 this.loadTable();

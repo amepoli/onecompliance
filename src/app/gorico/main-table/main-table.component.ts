@@ -24,7 +24,6 @@ export class MainTableComponent implements OnInit {
     // to override in derived classes
     protected tableParams = { 
         entryName: '', 
-        keys: {},
         showHeader: true
     };
 
@@ -37,10 +36,10 @@ export class MainTableComponent implements OnInit {
 
     ngOnInit(): void {
 
-        this.route.queryParams
+        this.route.params
             .subscribe(params => {
+                console.log(params);
                 this.tableParams.entryName = params.tableName;
-                this.tableParams.keys = JSON.parse(params.keys);
                 this.loadTable = true;
             });
     }

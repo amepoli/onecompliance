@@ -13,8 +13,9 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material';
 
 import { AuthService } from 'app/login-page/auth.service';
+import { BackendService } from 'app/gorico/views/backend/backend.service';
 
-import { GenericTableService, operationType } from 'app/gorico/generic-table/generic-table.service';
+import { GenericTableService } from 'app/gorico/generic-table/generic-table.service';
 
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -34,7 +35,8 @@ export class ToolbarComponent implements OnInit, OnDestroy
     selectedLanguage: any;
     userStatusOptions: any[];
 
-    codice_part = 'DEMO'; // TODO: make this parametric
+    codice_part =  'DEMO'; // TODO: make this parametric
+    codice_azienda =  'DEMO'; // TODO: make this parametric
 
     queryParams: any;
 
@@ -55,6 +57,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
         private _iconRegistry: MatIconRegistry,
         private _sanitizer: DomSanitizer,
         private _authService: AuthService,
+        private _backendService: BackendService,
         private router: Router,
         private route: ActivatedRoute,
         private tableService: GenericTableService
@@ -145,7 +148,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
           this.queryParams =  params;
         });
 
-        this._authService.setCode(this.codice_part);
+        this._backendService.currentKeys = Object.assign(this._backendService.currentKeys, { codice_part: this.codice_part, codice_azienda: this.codice_azienda });
 
         // Set the selected language from default languages
         this.selectedLanguage = _.find(this.languages, {'id': this._translateService.currentLang});

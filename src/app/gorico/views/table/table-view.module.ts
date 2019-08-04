@@ -37,7 +37,11 @@ import { TableViewComponent } from './table-view.component';
     MatCardModule,
     MatSortModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    TableViewComponent
+  ],
+  entryComponents: [
+      TableViewComponent
   ]
 })
 

@@ -24,14 +24,16 @@ export class BackendService {
     }, // OPTIONAL
     queryStringParameters: {  // OPTIONAL
     }
-};
+  };
+
+  currentKeys = {};
  
 constructor(private amplifyService: AmplifyService) { 
 }
 
-  getView(entryName: string, keys: any):  Observable<any> {
+  getView(entryName: string):  Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {entryName: entryName, keys: JSON.stringify(keys)};
+    this.myGetInit.queryStringParameters = {entryName: entryName};
     return from(this.amplifyService.api().get(this.apiName, '/view', this.myGetInit));
   }
 
