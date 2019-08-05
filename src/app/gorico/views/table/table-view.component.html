@@ -12,15 +12,15 @@
 
         <table mat-table *ngIf="!isLoading" [dataSource]="dataSource" matSort>
 
-            <ng-container [matColumnDef]="column.label" *ngFor="let column of displayedColumns">
-                <mat-header-cell *matHeaderCellDef mat-sort-header="{{column.key}}" [hidden]="column.isHidden">
-                    {{column.label}} </mat-header-cell>
-                <mat-cell *matCellDef="let element" [hidden]="column.isHidden"> {{element[column.key]}} </mat-cell>
+            <ng-container [matColumnDef]="entry.key" *ngFor="let entry of viewKeys">
+                <mat-header-cell *matHeaderCellDef mat-sort-header [hidden]="entry.isHidden">
+                    {{entry.label}} </mat-header-cell>
+                <mat-cell *matCellDef="let row" [hidden]="entry.isHidden"> {{row[entry.key]}} </mat-cell>
             </ng-container>
 
-            <mat-header-row *matHeaderRowDef="getColumnLabels(displayedColumns)"></mat-header-row>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 
-            <mat-row *matRowDef="let row; columns: getColumnLabels(displayedColumns); let i = index;"
+            <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;"
                 (click)="getRecord(i, row)" [style.background]="(selectedRow == row) ? 'lightblue' : ''">
             </mat-row>
         </table>

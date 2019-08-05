@@ -2,11 +2,10 @@ import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angu
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 
-export interface columnType {
-    key: string;
-    label: string;
-    isPrimary: boolean;
-    isHidden: boolean;
+export interface tableViewParams {
+    entryName: string, 
+    keys: any, 
+    showHeader: boolean 
 }
 
 @Component({
@@ -19,21 +18,21 @@ export interface columnType {
 
 export class TableViewComponent implements OnInit {
 
-    @Input() tableData: { entryName: string, showHeader: boolean };  
+    @Input() tableData: tableViewParams;  
     @Output() sendEvent = new EventEmitter<any>();
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
-    displayedColumns: columnType[];
+    displayedColumns: string[];
 
     dataSource: MatTableDataSource<any>;
     selectedRow: MatRow = null;
     isLoading = true;
 
-    viewSettings: any;
+    viewKeys: any; // view fields as specified by the backend
 
-    keysArray: any[];
+    keysArray: any[];  // list of primary keys values, one entry for each table row
 
     constructor(
         protected backendService: BackendService) {
@@ -43,14 +42,14 @@ export class TableViewComponent implements OnInit {
 
     this.backendService.getView(this.tableData.entryName).subscribe(
             params => {
-                this.viewSettings = params;
-                this.displayedColumns = this.getColumnLabels(this.viewSettings);
+                this.viewKeys = params['table_keys'];
+                this.displayedColumns = this.getColumnLabels(this.viewKeys);
                 this.loadTable();
             });
     }
 
     loadTable(): void {
-        this.backendService.getData(this.tableData.entryName, this.viewSettings, false).subscribe(
+        this.backendService.getData(this.tableData.entryName, this.tableData.keys, false, false).subscribe(
             results => {
                 console.log(results);
                 this.dataSource = new MatTableDataSource(results);
@@ -60,7 +59,7 @@ export class TableViewComponent implements OnInit {
                 this.dataSource.connect().subscribe(source => {
                     this.keysArray = source.map(row => {
                         const key_values = {};
-                        const primaryKeys = this.viewSettings.table_keys.filter(entry => {
+                        const primaryKeys = this.viewKeys.table_keys.filter(entry => {
                             return entry.isPrimary;
                         });
                         for (const primaryKey of primaryKeys) {
@@ -93,8 +92,8 @@ export class TableViewComponent implements OnInit {
     }
 
 
-    getColumnLabels(viewSettings: any) {
-        let colLabels = viewSettings['keys'].map(c => c.key);
+    getColumnLabels(viewKeys: any) {
+        let colLabels = viewKeys.map(c => c.label);
         return colLabels;
 
     }

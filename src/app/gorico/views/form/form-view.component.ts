@@ -45,7 +45,7 @@ export class FormViewComponent implements OnInit {
 
     private loadTable(): void {
 
-        this.backendService.getData(this.tableData.entryName, this.tableData.keys, this.tableData.isNew).subscribe(
+        this.backendService.getData(this.tableData.entryName, this.tableData.keys, true, this.tableData.isNew).subscribe(
             results => {
                 this.isLoading = false;
                 // console.log(results);

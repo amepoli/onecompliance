@@ -1,7 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 
 import { Router, ActivatedRoute } from '@angular/router';
+
+import { BackendService } from 'app/gorico/views/backend/backend.service'
+
+import { tableViewParams } from 'app/gorico/views/table/table-view.component';
 
 @Component({
     selector: 'main-table',
@@ -21,17 +24,18 @@ export class MainTableComponent implements OnInit {
 
     showAdvSearch = false;
 
-    // to override in derived classes
-    protected tableParams = { 
-        entryName: '', 
+    protected tableParams: tableViewParams = {
+        entryName: '',
+        keys: {},
         showHeader: true
-    };
+    }; 
 
     @ViewChild('List') private List: ElementRef;
 
     constructor(
         protected route: ActivatedRoute,
-        protected router: Router) {
+        protected router: Router,
+        protected backendService: BackendService) {
     }
 
     ngOnInit(): void {
@@ -40,6 +44,8 @@ export class MainTableComponent implements OnInit {
             .subscribe(params => {
                 console.log(params);
                 this.tableParams.entryName = params.tableName;
+                this.tableParams.keys = this.backendService.currentKeys;
+                this.tableParams.showHeader = true;
                 this.loadTable = true;
             });
     }
