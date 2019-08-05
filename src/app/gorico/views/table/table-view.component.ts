@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 
 export interface tableViewParams {
-    entryName: string, 
-    keys: any, 
-    showHeader: boolean 
+    entryName: string,
+    keys: any,
+    showHeader: boolean
 }
 
 @Component({
@@ -16,9 +16,9 @@ export interface tableViewParams {
 
 
 
-export class TableViewComponent implements OnInit {
+export class TableViewComponent implements OnChanges {
 
-    @Input() tableData: tableViewParams;  
+    @Input() tableData: tableViewParams;
     @Output() sendEvent = new EventEmitter<any>();
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -38,14 +38,16 @@ export class TableViewComponent implements OnInit {
         protected backendService: BackendService) {
     }
 
-    ngOnInit(): void {
+    ngOnChanges(changes: SimpleChanges): void {
 
-    this.backendService.getView(this.tableData.entryName).subscribe(
-            params => {
-                this.viewKeys = params['table_keys'];
-                this.displayedColumns = this.getColumnLabels(this.viewKeys);
-                this.loadTable();
-            });
+        if (changes.tableData) {
+            this.backendService.getView(this.tableData.entryName).subscribe(
+                params => {
+                    this.viewKeys = params['table_keys'];
+                    this.displayedColumns = this.getColumnLabels(this.viewKeys);
+                    this.loadTable();
+                });
+        }
     }
 
     loadTable(): void {
@@ -63,7 +65,7 @@ export class TableViewComponent implements OnInit {
                             return entry.isPrimary;
                         });
                         for (const primaryKey of primaryKeys) {
-                                key_values[primaryKey.key] = row[primaryKey.key];
+                            key_values[primaryKey.key] = row[primaryKey.key];
                         }
                         return key_values;
                     });

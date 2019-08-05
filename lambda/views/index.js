@@ -22,13 +22,15 @@ exports.handler = async (event, context) => {
     } catch (e) {
         console.log(e);
         return {
-            statusCode: 400
-        }
+            "statusCode": 500
+        };
     }
 
 
     return {
-        statusCode: 200,
-        body: JSON.stringify(data)
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "statusCode": 200,
+        "body": JSON.stringify(data.Item)
     };
 };

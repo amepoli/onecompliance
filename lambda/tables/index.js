@@ -403,7 +403,10 @@ exports.handler = async (event, context) => {
     }
 
     return {
-        statusCode: 200,
-        body: JSON.stringify(queryData)
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "statusCode": 200,
+        "body": JSON.stringify(queryData)
+
     };
 };

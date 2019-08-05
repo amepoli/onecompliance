@@ -43,9 +43,7 @@ export class MainTableComponent implements OnInit {
         this.route.params
             .subscribe(params => {
                 console.log(params);
-                this.tableParams.entryName = params.tableName;
-                this.tableParams.keys = this.backendService.currentKeys;
-                this.tableParams.showHeader = true;
+                this.tableParams = { entryName: params.table_name, keys: this.backendService.currentKeys, showHeader: true };
                 this.loadTable = true;
             });
     }
