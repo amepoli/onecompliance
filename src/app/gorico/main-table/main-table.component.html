@@ -1,6 +1,6 @@
 <div class="full-width" #List>
 
-    <button mat-button (click)="advSearch()">
+    <button *ngIf="!singleRecord" mat-button (click)="advSearch()">
         <mat-icon>search</mat-icon>
         Advanced Search
     </button>
@@ -17,6 +17,8 @@
 
     </div>
 
-    <table-view *ngIf="loadTable" [tableData]="tableParams" (sendEvent)='onEvent($event)'></table-view> 
+    <table-view *ngIf="loadTable && !singleRecord" [tableData]="tableParams" (sendEvent)='onEvent($event)'></table-view> 
+
+    <form-view *ngIf="singleRecord" [tableData]="formParams"> </form-view>   
 
 </div>

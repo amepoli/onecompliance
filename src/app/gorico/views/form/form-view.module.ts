@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormViewComponent } from './form-view.component';
 import { MatMenuModule, MatToolbarModule, MatTabsModule, MatIconModule, MatButtonModule, MatFormFieldModule, 
-    MatOptionModule, MatSelectModule, MatInputModule} from '@angular/material';
+    MatOptionModule, MatSelectModule, MatInputModule, MatCardModule, MatProgressSpinnerModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
 
@@ -20,7 +20,9 @@ import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
     MatFormFieldModule,
     MatOptionModule,
     MatSelectModule,
-    MatInputModule
+    MatInputModule,
+    MatCardModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     CommonModule,
@@ -35,9 +37,15 @@ import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
     MatFormFieldModule,
     MatOptionModule,
     MatSelectModule,
-    MatInputModule
+    MatInputModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    FormViewComponent
   ],
-  declarations: [FormViewComponent]
+  declarations: [FormViewComponent],
+  entryComponents: [
+      FormViewComponent
+  ]
 })
 
 export class FormViewModule { }

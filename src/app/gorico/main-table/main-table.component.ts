@@ -5,6 +5,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { BackendService } from 'app/gorico/views/backend/backend.service'
 
 import { tableViewParams } from 'app/gorico/views/table/table-view.component';
+import { formViewParams } from '../views/form/form-view.component';
+
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'main-table',
@@ -20,9 +23,11 @@ export class MainTableComponent implements OnInit {
 
     showQuickAdd = false;
 
-    keysArray: any[];
-
     showAdvSearch = false;
+
+    singleRecord = false;
+
+    private currentTotal = 0;
 
     protected tableParams: tableViewParams = {
         entryName: '',
@@ -30,12 +35,21 @@ export class MainTableComponent implements OnInit {
         showHeader: true
     }; 
 
+    protected formParams: formViewParams = {
+        entryName: '',
+        keys: {},
+        index: 0,
+        total: this.currentTotal,
+        isNew: false
+    }
+
     @ViewChild('List') private List: ElementRef;
 
     constructor(
         protected route: ActivatedRoute,
         protected router: Router,
-        protected backendService: BackendService) {
+        protected backendService: BackendService,
+        protected location: Location) {
     }
 
     ngOnInit(): void {
@@ -44,7 +58,17 @@ export class MainTableComponent implements OnInit {
             .subscribe(params => {
                 console.log(params);
                 this.tableParams = { entryName: params.table_name, keys: this.backendService.currentKeys, showHeader: true };
+                this.singleRecord = false;
                 this.loadTable = true;
+            });
+        
+        this.route.queryParams
+            .subscribe(params => {
+                if (params.index) { 
+                    this.formParams = { entryName: this.tableParams.entryName, keys: this.backendService.currentKeys, index: params.index, total: this.currentTotal, isNew: false};
+                    console.log(this.formParams);
+                    this.singleRecord = true;
+                }
             });
     }
 
@@ -58,9 +82,13 @@ export class MainTableComponent implements OnInit {
 
         let paramKeys: any;
         if (event.eventType === 'rowClick') {
-            paramKeys = event.keys;
+            paramKeys = event.queryParams.keys;
+            this.currentTotal = event.queryParams.total;
+            Object.assign(this.backendService.currentKeys, JSON.parse(paramKeys));
+            // navigate to the single record component
+            this.router.navigate([this.router.url], { queryParams: { index: event.queryParams.index } });
         }
-        // navigate to the single record component
+        
     }
 
     quickAdd(): void {

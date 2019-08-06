@@ -7,6 +7,7 @@ import { MainTableComponent } from './main-table.component';
 import { TableViewModule } from 'app/gorico/views/table/table-view.module';
 import { MatCardModule } from '@angular/material/card';
 import { RouterModule } from '@angular/router';
+import { FormViewModule } from '../views/form/form-view.module';
 
 const routes = [
     {
@@ -24,7 +25,8 @@ const routes = [
     MatIconModule,
     MatButtonModule,
     MatCardModule,
-    TableViewModule
+    TableViewModule,
+    FormViewModule
   ],
   exports: [
     CommonModule,
@@ -34,6 +36,7 @@ const routes = [
     MatButtonModule,
     MatCardModule,
     TableViewModule,
+    FormViewModule,
     MainTableComponent
   ]
 })

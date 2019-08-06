@@ -6,6 +6,13 @@ import { BackendService } from '../backend/backend.service';
 import { MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
 
+export interface formViewParams { 
+    entryName: string, 
+    keys: any, 
+    index: number, 
+    total: number, 
+    isNew: boolean 
+}
 
 @Component({
     selector: 'form-view',
@@ -14,7 +21,7 @@ import { Validators } from '@angular/forms';
 })
 export class FormViewComponent implements OnInit {
 
-    @Input() tableData: { entryName: string, keys: any, index: number, total: number, isNew: boolean };
+    @Input() tableData: formViewParams;
     @Output() notifyParent = new EventEmitter<any>();
 
 
