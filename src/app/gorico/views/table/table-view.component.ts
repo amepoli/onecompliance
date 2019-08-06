@@ -30,7 +30,9 @@ export class TableViewComponent implements OnChanges {
     selectedRow: MatRow = null;
     isLoading = true;
 
-    viewKeys: any; // view fields as specified by the backend
+    viewKeys: any[];  // view fields as specified by the backend
+
+    currentKeys: any; // relevant keys passed by the parent component 
 
     keysArray: any[];  // list of primary keys values, one entry for each table row
 
@@ -43,15 +45,16 @@ export class TableViewComponent implements OnChanges {
         if (changes.tableData) {
             this.backendService.getView(this.tableData.entryName).subscribe(
                 params => {
-                    this.viewKeys = params['table_keys'];
+                    this.viewKeys = params.table_keys;
                     this.displayedColumns = this.getColumnLabels(this.viewKeys);
+                    this.currentKeys = this.getCurrentKeys(this.viewKeys, this.tableData.keys);
                     this.loadTable();
                 });
         }
     }
 
     loadTable(): void {
-        this.backendService.getData(this.tableData.entryName, this.tableData.keys, false, false).subscribe(
+        this.backendService.getData(this.tableData.entryName, this.currentKeys, false, false).subscribe(
             results => {
                 console.log(results);
                 this.dataSource = new MatTableDataSource(results);
@@ -61,7 +64,7 @@ export class TableViewComponent implements OnChanges {
                 this.dataSource.connect().subscribe(source => {
                     this.keysArray = source.map(row => {
                         const key_values = {};
-                        const primaryKeys = this.viewKeys.table_keys.filter(entry => {
+                        const primaryKeys = this.viewKeys.filter(entry => {
                             return entry.isPrimary;
                         });
                         for (const primaryKey of primaryKeys) {
@@ -98,6 +101,22 @@ export class TableViewComponent implements OnChanges {
         let colLabels = viewKeys.map(c => c.label);
         return colLabels;
 
+    }
+
+    getCurrentKeys(validKeysArray: any[], inputKeys:any) {
+
+        let outputKeys = {};
+        for (const key in inputKeys) {
+            if (inputKeys.hasOwnProperty(key)) {
+                const element = inputKeys[key];
+                if (validKeysArray.find(e => e.key === key)) {
+                    outputKeys[key] = element;
+                }
+                
+            }
+        }
+
+        return outputKeys;
     }
 
 }

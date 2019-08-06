@@ -317,15 +317,20 @@ exports.handler = async (event, context) => {
             entryKey: queryParams['entry_name']
         }
     };
-
-    var search_keys = queryParams['search_keys'];
+    
+    var search_keys = queryParams['search_keys'];  
+    if (search_keys) {
+        search_keys = JSON.parse(search_keys); // production scenario only
+    }
+    
     var isSearchRequest = search_keys ? true : false;
 
     var isNewRecord = (queryParams['new'] === 1);
 
     var isFormRecord = (queryParams['form'] === 1);
 
-    var table_keys = queryParams['keys'];
+    //var table_keys = queryParams['keys']; // test scenario
+    var table_keys = JSON.parse(queryParams['keys']); // production scenario
 
     var queryData;
 
@@ -386,8 +391,8 @@ exports.handler = async (event, context) => {
         
         if (method === 'POST') { // insert or update the record
             let newRecord = queryData.length ? false : true;
-            //let body = JSON.parse(event.body.toString()); // production scenario
-            let body = event.body; // test scenario
+            let body = JSON.parse(event.body.toString()); // production scenario
+            //let body = event.body; // test scenario
             queryString = getInsertUpdateQuery(entry_params, table_keys, body, newRecord);
             await client.query(queryString); // perform the INSERT/UPDATE operation
         }
