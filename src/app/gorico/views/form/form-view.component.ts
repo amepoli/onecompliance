@@ -68,10 +68,12 @@ export class FormViewComponent implements OnInit {
     }
 
     private getFormData(formKeys: any[], values: any): FieldConfig[] {
+
         let fieldValues: FieldConfig[] = [];
 
         for (const key in values) {
             if (values.hasOwnProperty(key)) {
+                // TODO: handle multiple keys fields (combobox only)
                 const element = values[key];
                 const field = formKeys.find(e => (e.key === key));
                 let fieldValue: FieldConfig;
@@ -79,8 +81,16 @@ export class FormViewComponent implements OnInit {
                     fieldValue = {
                         label: field.label,
                         name: field.key,
-                        type: field.format.viewType
-                    }
+                        type: field.format.viewType,
+                        value: element.value ? element.value : element,
+                        inputType: field.format.dataType ? field.format.dataType : '',
+                        readonly: field.readOnly ? field.readOnly : false,
+                        isVisible: field.isHidden ? !field.isHidden : true,
+                        newLine: field.newLine ? field.newLine : true,
+                        options: element.options ? element.options : [],
+                        validations: field.validations ? field.validations : []
+                    };
+                    fieldValues.push(fieldValue);
                 }
                 
             }
