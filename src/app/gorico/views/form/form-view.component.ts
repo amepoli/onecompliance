@@ -34,6 +34,8 @@ export class FormViewComponent implements OnInit {
 
     viewSettings: any;
 
+    currentKeys: any; // relevant keys passed by the parent component 
+
     constructor(public attachDialog: MatDialog, 
         private backendService: BackendService) { 
 
@@ -46,23 +48,46 @@ export class FormViewComponent implements OnInit {
         this.backendService.getView(this.tableData.entryName).subscribe(
             params => {
                 this.viewSettings = params;
+                this.currentKeys = this.getCurrentKeys(this.viewSettings.form_keys, this.tableData.keys);
                 this.loadTable();
             });
     }
 
     private loadTable(): void {
 
-        this.backendService.getData(this.tableData.entryName, this.tableData.keys, true, this.tableData.isNew).subscribe(
+        this.backendService.getData(this.tableData.entryName, this.currentKeys, true, this.tableData.isNew).subscribe(
             results => {
                 this.isLoading = false;
-                // console.log(results);
-                this.process_form(results);
                 console.log(results);
-                this.formData = results;
+                this.formData = this.getFormData(this.viewSettings.form_keys, results);
+                this.process_form(this.formData);
             },
             error => {
                 this.isLoading = false;
             });
+    }
+
+    private getFormData(formKeys: any[], values: any): FieldConfig[] {
+        let fieldValues: FieldConfig[] = [];
+
+        for (const key in values) {
+            if (values.hasOwnProperty(key)) {
+                const element = values[key];
+                const field = formKeys.find(e => (e.key === key));
+                let fieldValue: FieldConfig;
+                if (field) {
+                    fieldValue = {
+                        label: field.label,
+                        name: field.key,
+                        type: field.format.viewType
+                    }
+                }
+                
+            }
+        }
+
+        return fieldValues;
+
     }
 
     private process_form(input_form: FieldConfig[]): void { // pre-process form got from back-end
@@ -119,6 +144,22 @@ export class FormViewComponent implements OnInit {
                 console.log(result);
             }
         )
+    }
+
+    getCurrentKeys(validKeysArray: any[], inputKeys:any) {
+
+        let outputKeys = {};
+        for (const key in inputKeys) {
+            if (inputKeys.hasOwnProperty(key)) {
+                const element = inputKeys[key];
+                if (validKeysArray.find(e => e.key === key)) {
+                    outputKeys[key] = element;
+                }
+                
+            }
+        }
+
+        return outputKeys;
     }
 
 }

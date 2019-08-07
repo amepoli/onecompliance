@@ -325,9 +325,9 @@ exports.handler = async (event, context) => {
     
     var isSearchRequest = search_keys ? true : false;
 
-    var isNewRecord = (queryParams['new'] === 1);
+    var isNewRecord = (queryParams['new'] === '1');
 
-    var isFormRecord = (queryParams['form'] === 1);
+    var isFormRecord = (queryParams['form'] === '1');
 
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = JSON.parse(queryParams['keys']); // production scenario
@@ -406,6 +406,8 @@ exports.handler = async (event, context) => {
             statusCode: 500
         };
     }
+    
+    console.log(queryData);
 
     return {
         "isBase64Encoded": false,
