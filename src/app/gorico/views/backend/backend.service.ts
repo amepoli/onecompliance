@@ -26,7 +26,9 @@ export class BackendService {
     }
   };
 
-  currentKeys = {};
+  currentTableKeys = {};
+
+  currentFormKeys = {};
  
 constructor(private amplifyService: AmplifyService) { 
 }

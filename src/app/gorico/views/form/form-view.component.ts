@@ -36,6 +36,8 @@ export class FormViewComponent implements OnInit {
 
     currentKeys: any; // relevant keys passed by the parent component 
 
+    tabFullScreen: false;
+
     constructor(public attachDialog: MatDialog, 
         private backendService: BackendService) { 
 

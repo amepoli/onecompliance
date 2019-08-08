@@ -57,17 +57,18 @@ export class MainTableComponent implements OnInit {
         this.route.params
             .subscribe(params => {
                 console.log(params);
-                this.tableParams = { entryName: params.table_name, keys: this.backendService.currentKeys, showHeader: true };
-                this.singleRecord = false;
-                this.loadTable = true;
+                this.tableParams = { entryName: params.table_name, keys: this.backendService.currentTableKeys, showHeader: true };
             });
         
         this.route.queryParams
             .subscribe(params => {
                 if (params.index) { 
-                    this.formParams = { entryName: this.tableParams.entryName, keys: this.backendService.currentKeys, index: params.index, total: this.currentTotal, isNew: false};
+                    this.formParams = { entryName: this.tableParams.entryName, keys: this.backendService.currentFormKeys, index: params.index, total: this.currentTotal, isNew: false};
                     console.log(this.formParams);
                     this.singleRecord = true;
+                } else {
+                    this.singleRecord = false;
+                    this.loadTable = true;
                 }
             });
     }
@@ -84,7 +85,7 @@ export class MainTableComponent implements OnInit {
         if (event.eventType === 'rowClick') {
             paramKeys = event.queryParams.keys;
             this.currentTotal = event.queryParams.total;
-            Object.assign(this.backendService.currentKeys, JSON.parse(paramKeys));
+            this.backendService.currentFormKeys = JSON.parse(paramKeys);
             // navigate to the single record component
             this.router.navigate([this.router.url], { queryParams: { index: event.queryParams.index } });
         }
