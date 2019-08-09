@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -17,7 +17,7 @@ import { Location } from '@angular/common';
 
 
 
-export class MainTableComponent implements OnInit {
+export class MainTableComponent implements OnInit, AfterContentInit {
 
     loadTable = false;
 
@@ -28,6 +28,8 @@ export class MainTableComponent implements OnInit {
     singleRecord = false;
 
     private currentTotal = 0;
+
+    private currentKeysArray: any[]; // list of primary keys provided by the table-view
 
     protected tableParams: tableViewParams = {
         entryName: '',
@@ -73,6 +75,10 @@ export class MainTableComponent implements OnInit {
             });
     }
 
+    ngAfterContentInit() {
+        this.backendService.currentTableName = this.tableParams.entryName;
+    }
+
 
     advSearch() {
         this.showAdvSearch = true;
@@ -81,15 +87,35 @@ export class MainTableComponent implements OnInit {
 
     onEvent(event: any) {
 
-        let paramKeys: any;
+        let newIndex = 0; // only modified if a navigation event is coming from the form-view
         if (event.eventType === 'rowClick') {
-            paramKeys = event.queryParams.keys;
+            this.currentKeysArray = JSON.parse(event.queryParams.keysArray);
             this.currentTotal = event.queryParams.total;
-            this.backendService.currentFormKeys = JSON.parse(paramKeys);
+            this.backendService.currentFormKeys = this.currentKeysArray[event.queryParams.index - 1];
             // navigate to the single record component
             this.router.navigate([this.router.url], { queryParams: { index: event.queryParams.index } });
+        } else if (event.eventType === 'first') {
+            newIndex = 1;
+        } else if (event.eventType === 'last') {
+            newIndex = this.formParams.total;
+        } else if (event.eventType === 'prev') {
+            if (this.formParams.index > 1) { 
+                newIndex =  this.formParams.index - 1;
+            }
+        } else if (event.eventType === 'next') {
+            if (this.formParams.index <  this.formParams.total) {
+                newIndex = (Number(this.formParams.index) + 1);
+            }
         }
-        
+
+        if (newIndex) {
+            this.formParams.index = newIndex;
+            this.backendService.currentFormKeys = this.currentKeysArray[newIndex - 1]; 
+            // replace the url index query param to reload the page 
+            let url: string = this.router.url.substring(0, this.router.url.indexOf("?"));
+            this.router.navigate([url], { queryParams: { index: newIndex } });
+        }
+       
     }
 
     quickAdd(): void {

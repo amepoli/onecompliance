@@ -29,6 +29,8 @@ export class BackendService {
   currentTableKeys = {};
 
   currentFormKeys = {};
+
+  currentTableName: string;
  
 constructor(private amplifyService: AmplifyService) { 
 }

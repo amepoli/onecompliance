@@ -92,7 +92,7 @@ export class TableViewComponent implements OnChanges {
 
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
-        const mergedParams = { entry: this.tableData.entryName, keys: JSON.stringify(this.keysArray[index]), index: index, total: this.keysArray.length};
+        const mergedParams = { entry: this.tableData.entryName, keysArray: JSON.stringify(this.keysArray), index: index+1, total: this.keysArray.length};
         setTimeout(() => { this.sendEvent.emit({ eventType: 'rowClick', queryParams: mergedParams }); }, 50);
     }
 

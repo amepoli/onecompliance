@@ -15,8 +15,6 @@ import {MatIconRegistry} from '@angular/material';
 import { AuthService } from 'app/login-page/auth.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';
 
-import { GenericTableService } from 'app/gorico/generic-table/generic-table.service';
-
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -38,8 +36,6 @@ export class ToolbarComponent implements OnInit, OnDestroy
     codice_part =  'DEMO'; // TODO: make this parametric
     codice_azienda =  'DEMO'; // TODO: make this parametric
 
-    queryParams: any;
-
     // Private
     private _unsubscribeAll: Subject<any>;
 
@@ -59,8 +55,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
         private _authService: AuthService,
         private _backendService: BackendService,
         private router: Router,
-        private route: ActivatedRoute,
-        private tableService: GenericTableService
+        private route: ActivatedRoute
     )
     {
         // Set the defaults
@@ -142,11 +137,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
             }
           });
 
-        this.queryParams = this.tableService.tableParams; // default params in list view
-        
-        this.route.queryParams.subscribe(params => {  // change of params when in single record view
-          this.queryParams =  params;
-        });
+
 
         this._backendService.currentTableKeys = Object.assign(this._backendService.currentTableKeys, { codice_part: this.codice_part, codice_azienda: this.codice_azienda });
 
@@ -211,18 +202,11 @@ export class ToolbarComponent implements OnInit, OnDestroy
 
     addElement(): void
     {
-        if (!this.queryParams.table) { // table and keys not coming with queryparams when in list view
-            this.queryParams =  this.tableService.tableParams; 
-            if (this.queryParams.keys) { // stringify keys to push to url
-                this.queryParams.keys = JSON.stringify(this.queryParams.keys);
-            }
-        }
-        const params = Object.assign({}, this.queryParams, {operation: 'create'});
-        this.router.navigate(['/gorico/details'], { queryParams: params/*, skipLocationChange: true*/ });
+        
     }
 
     gotoList(): void 
     {
-        this.router.navigate(['/gorico/' + this.tableService.currentPath]);
+        this.router.navigate(['/gorico/main-table/' + this._backendService.currentTableName]);
     }
 }

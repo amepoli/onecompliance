@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ViewChild, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import 'rxjs/add/operator/filter';
@@ -19,10 +19,10 @@ export interface formViewParams {
     templateUrl: './form-view.component.html',
     styleUrls: ['./form-view.component.scss']
 })
-export class FormViewComponent implements OnInit {
+export class FormViewComponent implements OnChanges {
 
     @Input() tableData: formViewParams;
-    @Output() notifyParent = new EventEmitter<any>();
+    @Output() sendEvent = new EventEmitter<any>();
 
 
     @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
@@ -43,7 +43,7 @@ export class FormViewComponent implements OnInit {
 
         }
 
-    ngOnInit() {
+    ngOnChanges() {
         this.n = this.tableData.index;
         this.tot = this.tableData.total;
 
@@ -145,7 +145,7 @@ export class FormViewComponent implements OnInit {
         this.backendService.updateData(this.tableData.entryName, this.tableData.keys, value).subscribe(
             result => {
                 console.log(result);
-                this.notifyParent.emit('');
+                this.sendEvent.emit('');
             }
         );
     }
@@ -156,6 +156,10 @@ export class FormViewComponent implements OnInit {
                 console.log(result);
             }
         )
+    }
+
+    toElement(target: string) {
+        this.sendEvent.emit({ eventType: target });
     }
 
     getCurrentKeys(validKeysArray: any[], inputKeys:any) {
