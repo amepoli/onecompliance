@@ -139,7 +139,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
 
 
 
-        this._backendService.currentTableKeys = Object.assign(this._backendService.currentTableKeys, { codice_part: this.codice_part, codice_azienda: this.codice_azienda });
+        this._backendService.globalTableKeys = Object.assign(this._backendService.globalTableKeys, { codice_part: this.codice_part, codice_azienda: this.codice_azienda });
 
         // Set the selected language from default languages
         this.selectedLanguage = _.find(this.languages, {'id': this._translateService.currentLang});

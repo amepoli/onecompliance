@@ -5,13 +5,64 @@ import 'rxjs/add/operator/filter';
 import { BackendService } from '../backend/backend.service';
 import { MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
+import { TabType } from '../../bottom-tabs/bottom-tabs.component';
 
 export interface formViewParams { 
-    entryName: string, 
-    keys: any, 
-    index: number, 
-    total: number, 
-    isNew: boolean 
+    entryName: string; 
+    keys: any;
+    index: number; 
+    total: number; 
+    isNew: boolean; 
+}
+
+export type formDataType = 'text' | 'date' | 'number' | 'boolean';
+
+export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'radiobutton';
+
+export interface formViewKey { // as per API specification
+    isHidden: boolean;
+    autoGenerate?: boolean;
+    readOnly: boolean;
+    isPrimary: boolean;
+    newLine: boolean;
+    key: string;
+    label: string;
+    subKeys?: [
+        {
+            key: string,
+            dataType: formDataType
+        }
+    ];
+    format: {
+        viewType: formViewType,
+        dataType?: formDataType,
+        value?: any,
+        options: [
+            {
+                id: number,
+                name: string
+            }
+        ],
+        comboQuery?: string,
+        validations?: [
+            {
+                message: string,
+                name: string,
+                validator: string
+            }
+        ] 
+        };
+}
+
+export interface tabViewKey { // as per API specification
+    label: string;
+    entryKey: string;
+    keys: [
+        {
+            parent: string,
+            son: string
+        }
+    ];
 }
 
 @Component({
@@ -32,7 +83,9 @@ export class FormViewComponent implements OnChanges {
     formData: FieldConfig[] = [];
     isLoading = true;
 
-    viewSettings: any;
+    viewKeys: formViewKey[]; // view form fields as specified by the backend
+
+    tabKeys: tabViewKey[]; // view tab fields as specified by the backend
 
     currentKeys: any; // relevant keys passed by the parent component 
 
@@ -49,10 +102,17 @@ export class FormViewComponent implements OnChanges {
 
         this.backendService.getView(this.tableData.entryName).subscribe(
             params => {
-                this.viewSettings = params;
-                this.currentKeys = this.getCurrentKeys(this.viewSettings.form_keys, this.tableData.keys);
+                let tabs: TabType[];
+                this.viewKeys = params.form_keys;
+                this.tabKeys = params.subTables;
+                this.currentKeys = this.getCurrentKeys(this.viewKeys, this.tableData.keys);
+                // send the tabs parameter to the main view 
+                tabs = this.getTabs(this.tabKeys, this.tableData.keys);
+                this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
+                // load the form
                 this.loadTable();
             });
+            
     }
 
     private loadTable(): void {
@@ -61,7 +121,7 @@ export class FormViewComponent implements OnChanges {
             results => {
                 this.isLoading = false;
                 console.log(results);
-                this.formData = this.getFormData(this.viewSettings.form_keys, results);
+                this.formData = this.getFormData(this.viewKeys, results);
                 this.process_form(this.formData);
             },
             error => {
@@ -69,7 +129,7 @@ export class FormViewComponent implements OnChanges {
             });
     }
 
-    private getFormData(formKeys: any[], values: any): FieldConfig[] {
+    private getFormData(formKeys: formViewKey[], values: any): FieldConfig[] {
 
         let fieldValues: FieldConfig[] = [];
 
@@ -90,7 +150,7 @@ export class FormViewComponent implements OnChanges {
                         isVisible: field.isHidden ? !field.isHidden : true,
                         newLine: field.newLine ? field.newLine : true,
                         options: element.options ? element.options : [],
-                        validations: field.validations ? field.validations : []
+                        validations: field.format.validations ? field.format.validations : []
                     };
                     fieldValues.push(fieldValue);
                 }
@@ -100,6 +160,25 @@ export class FormViewComponent implements OnChanges {
 
         return fieldValues;
 
+    }
+
+
+    getTabs (tabKeys: tabViewKey[], keys: any): TabType[] {
+        const tabs: TabType[] = [];
+        tabKeys.forEach(tabKey => {
+            const tab: TabType = { 
+                table: tabKey.entryKey, 
+                label: tabKey.label,
+                keys: {}
+            };
+            tabKey.keys.forEach(key => {
+                if (keys[key.parent]) {
+                    tab.keys[key.son] = keys[key.parent];
+                }
+            });
+            tabs.push(tab);
+        });
+        return tabs;
     }
 
     private process_form(input_form: FieldConfig[]): void { // pre-process form got from back-end
@@ -162,7 +241,7 @@ export class FormViewComponent implements OnChanges {
         this.sendEvent.emit({ eventType: target });
     }
 
-    getCurrentKeys(validKeysArray: any[], inputKeys:any) {
+    getCurrentKeys(validKeysArray: formViewKey[], inputKeys:any) {
 
         let outputKeys = {};
         for (const key in inputKeys) {

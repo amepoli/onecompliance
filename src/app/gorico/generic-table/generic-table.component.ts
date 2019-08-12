@@ -47,7 +47,7 @@ export class GenericTableComponent implements OnInit {
 
     // to override in derived classes
     protected tableName: string; 
-    protected isMainTable: boolean; // main or subtable
+    isMainTable: boolean; // main or subtable
     protected path: string; // only in case of main tables
 
     @ViewChild(MatPaginator) paginator: MatPaginator;

@@ -17,8 +17,16 @@
 
     </div>
 
-    <table-view *ngIf="loadTable && !singleRecord" [tableData]="tableParams" (sendEvent)='onEvent($event)'></table-view> 
+    <table-view *ngIf="loadTable && !singleRecord" [tableData]="tableParams" (sendEvent)='onEvent($event)'></table-view>
 
-    <form-view *ngIf="singleRecord" [tableData]="formParams" (sendEvent)='onEvent($event)'> </form-view>   
+    <form-view *ngIf="singleRecord && !fullScreenTab" [tableData]="formParams" (sendEvent)='onEvent($event)'>
+    </form-view>
+
+    <ng-container *ngIf="singleRecord && showTabs">
+        <br><br>
+        <hr>
+
+        <bottom-tabs [Tabs]='tabs' (sendEvent)='onEvent($event)'></bottom-tabs>
+    </ng-container>
 
 </div>

@@ -6,6 +6,7 @@ import { BackendService } from 'app/gorico/views/backend/backend.service'
 
 import { tableViewParams } from 'app/gorico/views/table/table-view.component';
 import { formViewParams } from '../views/form/form-view.component';
+import { TabType } from '../bottom-tabs/bottom-tabs.component';
 
 import { Location } from '@angular/common';
 
@@ -25,25 +26,38 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
     showAdvSearch = false;
 
+    showTabs = false;
+
     singleRecord = false;
 
-    private currentTotal = 0;
+    fullScreenTab = false;
 
-    private currentKeysArray: any[]; // list of primary keys provided by the table-view
+    tabs: TabType[] = [];
 
-    protected tableParams: tableViewParams = {
+    private level = 0; // used to trigger reload when navigating in sub-tables 
+
+    private levelArray: number[] = []; // used to keep history of levels
+
+    private tableParams: tableViewParams = {
         entryName: '',
         keys: {},
         showHeader: true
     }; 
 
-    protected formParams: formViewParams = {
+    private formParams: formViewParams = {
         entryName: '',
         keys: {},
         index: 0,
-        total: this.currentTotal,
+        total: 0,
         isNew: false
-    }
+    };
+
+
+    private currentKeys: any[]; // current list of primary keys provided by the table-view
+
+    private currentKeysArray: any[][] = []; // history of primary keys 
+
+    private programmaticNavigation = true; // true if navigating through buttons (vs. browser history)
 
     @ViewChild('List') private List: ElementRef;
 
@@ -59,18 +73,28 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         this.route.params
             .subscribe(params => {
                 console.log(params);
-                this.tableParams = { entryName: params.table_name, keys: this.backendService.currentTableKeys, showHeader: true };
+                this.tableParams = { entryName: params.table_name, keys: this.backendService.globalTableKeys, showHeader: true };
             });
         
         this.route.queryParams
             .subscribe(params => {
                 if (params.index) { 
-                    this.formParams = { entryName: this.tableParams.entryName, keys: this.backendService.currentFormKeys, index: params.index, total: this.currentTotal, isNew: false};
-                    console.log(this.formParams);
+                    if (this.programmaticNavigation) {
+                        this.programmaticNavigation = false;
+                    } else {
+                        this.currentKeys = this.currentKeysArray.pop(); // get from history
+                        this.level = this.levelArray.pop();
+                    }
+                    this.formParams = { entryName: this.tableParams.entryName, keys: this.currentKeys[params.index - 1], 
+                        index: params.index, total: this.currentKeys.length, isNew: false};
+                    console.log(this.currentKeysArray);
                     this.singleRecord = true;
+                    this.showTabs = false;
                 } else {
                     this.singleRecord = false;
                     this.loadTable = true;
+                    this.currentKeysArray = []; // flush history when in table view
+                    this.level = 0;
                 }
             });
     }
@@ -89,11 +113,15 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
         if (event.eventType === 'rowClick') {
-            this.currentKeysArray = JSON.parse(event.queryParams.keysArray);
-            this.currentTotal = event.queryParams.total;
-            this.backendService.currentFormKeys = this.currentKeysArray[event.queryParams.index - 1];
+            this.levelArray.push(this.level); // add to history
+            this.level = this.level + 1; // update
+            this.currentKeysArray.push(this.currentKeys); // add to history
+            this.currentKeys = JSON.parse(event.queryParams.keysArray); // update
+            this.programmaticNavigation = true;
             // navigate to the single record component
-            this.router.navigate([this.router.url], { queryParams: { index: event.queryParams.index } });
+            let url: string = this.router.url.substring(0, this.router.url.indexOf('/gorico')) 
+                + 'gorico/main-table/' + event.queryParams.entry;
+            this.router.navigate([url], { queryParams: { index: event.queryParams.index, level: this.level } });
         } else if (event.eventType === 'first') {
             newIndex = 1;
         } else if (event.eventType === 'last') {
@@ -106,14 +134,20 @@ export class MainTableComponent implements OnInit, AfterContentInit {
             if (this.formParams.index <  this.formParams.total) {
                 newIndex = (Number(this.formParams.index) + 1);
             }
+        } else if (event.eventType === 'tabData'){
+            // fill the bottom tabs
+            this.tabs = event.queryParams.tabs;
+            this.showTabs = true;
         }
 
         if (newIndex) {
-            this.formParams.index = newIndex;
-            this.backendService.currentFormKeys = this.currentKeysArray[newIndex - 1]; 
+            this.formParams.index = newIndex; 
+            this.currentKeysArray.push(this.currentKeys); // add to history
+            this.levelArray.push(this.level); // add to history
+            this.programmaticNavigation = true;
             // replace the url index query param to reload the page 
-            let url: string = this.router.url.substring(0, this.router.url.indexOf("?"));
-            this.router.navigate([url], { queryParams: { index: newIndex } });
+            let url: string = this.router.url.substring(0, this.router.url.indexOf('?'));
+            this.router.navigate([url], { queryParams: { index: newIndex, level: this.level} });
         }
        
     }

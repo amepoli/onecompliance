@@ -3,9 +3,23 @@ import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 
 export interface tableViewParams {
-    entryName: string,
-    keys: any,
-    showHeader: boolean
+    entryName: string;
+    keys: any;
+    showHeader: boolean;
+}
+
+export type tableDataType = 'text' | 'date' | 'number' | 'boolean';
+
+export interface tableViewKey { // as per API specification
+    isHidden: boolean;
+    isPrimary: boolean;
+    key: string;
+    label: string;
+    queryFunct?: string;
+    format: {
+        dataType: tableDataType,
+        value?: any 
+        };
 }
 
 @Component({
@@ -30,7 +44,7 @@ export class TableViewComponent implements OnChanges {
     selectedRow: MatRow = null;
     isLoading = true;
 
-    viewKeys: any[];  // view fields as specified by the backend
+    viewKeys: tableViewKey[];  // view fields as specified by the backend
 
     currentKeys: any; // relevant keys passed by the parent component 
 
@@ -92,18 +106,18 @@ export class TableViewComponent implements OnChanges {
 
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
-        const mergedParams = { entry: this.tableData.entryName, keysArray: JSON.stringify(this.keysArray), index: index+1, total: this.keysArray.length};
+        const mergedParams = { entry: this.tableData.entryName, keysArray: JSON.stringify(this.keysArray), index: index + 1, total: this.keysArray.length};
         setTimeout(() => { this.sendEvent.emit({ eventType: 'rowClick', queryParams: mergedParams }); }, 50);
     }
 
 
-    getColumnLabels(viewKeys: any) {
+    getColumnLabels(viewKeys: tableViewKey[]) {
         let colLabels = viewKeys.map(c => c.label);
         return colLabels;
 
     }
 
-    getCurrentKeys(validKeysArray: any[], inputKeys:any) {
+    getCurrentKeys(validKeysArray: tableViewKey[], inputKeys: any) {
 
         let outputKeys = {};
         for (const key in inputKeys) {

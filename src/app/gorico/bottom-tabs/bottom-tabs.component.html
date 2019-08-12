@@ -1,10 +1,7 @@
 <mat-tab-group (selectedTabChange)="tabChanged($event)">
     <mat-tab *ngFor='let tab of Tabs; let idx = index' [label]="tab.label" >
-        <ng-container *ngIf="activeIndex === idx && tab.table === 'centri_gest'" >
-            <mngt-units [sub_keys]='tab.keys'></mngt-units>
-        </ng-container>
-        <ng-container *ngIf="activeIndex === idx && tab.table === 'procedure'" >
-            <processes [sub_keys]='tab.keys'></processes>
+        <ng-container *ngIf="activeIndex === idx" >
+            <table-view [tableData]='tableParams' (sendEvent)='onEvent($event)'></table-view>
         </ng-container>
     </mat-tab>
   </mat-tab-group> 

@@ -26,9 +26,7 @@ export class BackendService {
     }
   };
 
-  currentTableKeys = {};
-
-  currentFormKeys = {};
+  globalTableKeys = {};
 
   currentTableName: string;
  
