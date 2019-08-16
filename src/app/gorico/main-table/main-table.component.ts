@@ -22,10 +22,6 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
     loadTable = false;
 
-    showQuickAdd = false;
-
-    showAdvSearch = false;
-
     showTabs = false;
 
     singleRecord = false;
@@ -103,12 +99,6 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         this.backendService.currentTableName = this.tableParams.entryName;
     }
 
-
-    advSearch() {
-        this.showAdvSearch = true;
-
-    }
-
     onEvent(event: any) {
 
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
@@ -152,20 +142,10 @@ export class MainTableComponent implements OnInit, AfterContentInit {
        
     }
 
-    quickAdd(): void {
-        this.showQuickAdd = true;
-
-        // TODO
-
-    }
-
     fullView(): void {
         // toggle full view
     }
 
-    cancel(): void {
-        this.showQuickAdd = false;
-    }
 }
 
 

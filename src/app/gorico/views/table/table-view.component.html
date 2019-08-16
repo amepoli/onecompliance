@@ -5,7 +5,31 @@
             <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
         </mat-form-field>
         <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="50"></mat-paginator>
+
     </div>
+
+    <button *ngIf="tableData.showHeader" mat-button (click)="advSearch()">
+        <mat-icon>search</mat-icon>
+        Advanced Search
+    </button>
+
+    <div *ngIf="showAdvSearch" class="adv-search">
+        <dynamic-form class="form-container" [fields]='searchData' (submit)='search_submit($event)' formName='search_form'>
+        </dynamic-form>
+        <button mat-button type="submit" form="search_form">
+                <mat-icon>keyboard_return</mat-icon>
+                Search</button>
+        <br>
+    </div>
+
+    
+
+    <button mat-button (click)="quickAdd()">
+        <mat-icon>add</mat-icon>
+        Quick Add
+    </button>
+
+
 
 
     <div class="mat-elevation-z2">
@@ -20,8 +44,8 @@
 
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 
-            <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;"
-                (click)="getRecord(i, row)" [style.background]="(selectedRow == row) ? 'lightblue' : ''">
+            <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;" (click)="getRecord(i, row)"
+                [style.background]="(selectedRow == row) ? 'lightblue' : ''">
             </mat-row>
         </table>
 

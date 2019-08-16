@@ -39,10 +39,14 @@ constructor(private amplifyService: AmplifyService) {
     return from(this.amplifyService.api().get(this.apiName, '/view', this.myGetInit));
   }
 
-  getData(entryName: string, keys: any, isForm: boolean, isNew: boolean): Observable<any> {
+  getData(entryName: string, keys: any, search_keys: any, isForm: boolean, isNew: boolean): Observable<any> {
     this.amplifyService.auth();
 
     this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), form: isForm ? 1: 0, new: isNew ? 1 : 0}; 
+
+    if (search_keys) {
+      this.myGetInit.queryStringParameters['search_keys'] = search_keys; 
+    }
 
     return from(this.amplifyService.api().get(this.apiName, '/data', this.myGetInit));
   }

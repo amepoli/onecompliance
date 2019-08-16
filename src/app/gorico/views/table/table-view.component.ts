@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
+import { FieldConfig, Item } from '../../dynamic-forms/field.interface';
 
 export interface tableViewParams {
     entryName: string;
@@ -22,6 +23,24 @@ export interface tableViewKey { // as per API specification
         };
 }
 
+export interface searchViewKey { // as per API specification
+    fieldName: string;	// form field name, might or not correspond to a postgres column
+    newLine: boolean; 	// new line with the next field
+    label: string;		// displayed key name
+    queryCond: string; 	// postgres query condition (after WHERE clause), mandatory to link w/ a Postgres column
+    format: {		//  DataFormat type
+		viewType: string; 		// form view type, one among “input” | “combobox” | “checkbox” | “radiobutton” 
+		dataType?: string; 				//  only if viewtype=”input”
+		value?: any;  		// default value
+        options?: [					// in caseof combobox | radiobutton
+			{				
+			  id: number,			// combobox entry ID
+ 			  name: string			// displayed entry value
+		}];
+		comboQuery?: string,		// combobox query, returns an array of [{“id”: Number, “name”: String}]
+    }
+} 
+
 @Component({
     selector: 'table-view',
     templateUrl: './table-view.component.html',
@@ -38,6 +57,14 @@ export class TableViewComponent implements OnChanges {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
+    showQuickAdd = false;
+
+    showAdvSearch = false;
+
+    searchData: FieldConfig[];
+
+    searchOptions: Item[] =[]; // search options for comboboxes
+
     displayedColumns: string[];
 
     dataSource: MatTableDataSource<any>;
@@ -45,6 +72,8 @@ export class TableViewComponent implements OnChanges {
     isLoading = true;
 
     viewKeys: tableViewKey[];  // view fields as specified by the backend
+
+    searchKeys: searchViewKey[];
 
     currentKeys: any; // relevant keys passed by the parent component 
 
@@ -60,17 +89,23 @@ export class TableViewComponent implements OnChanges {
             this.backendService.getView(this.tableData.entryName).subscribe(
                 params => {
                     this.viewKeys = params.table_keys;
+                    this.searchKeys = params.search_keys;
                     this.displayedColumns = this.getColumnLabels(this.viewKeys);
                     this.currentKeys = this.getCurrentKeys(this.viewKeys, this.tableData.keys);
-                    this.loadTable();
+                    this.loadTable(null);
                 });
         }
     }
 
-    loadTable(): void {
-        this.backendService.getData(this.tableData.entryName, this.currentKeys, false, false).subscribe(
+    loadTable(search_keys: any): void {
+        this.backendService.getData(this.tableData.entryName, this.currentKeys, search_keys, false, false).subscribe(
             results => {
                 console.log(results);
+                if (results.search_options) { // got some search combobox options
+                    this.searchOptions = results.search_options; // store them
+                    delete results.search_options; // and remove them from results
+                }
+                this.searchData = this.getSearchData(this.searchKeys);
                 this.dataSource = new MatTableDataSource(results);
                 this.dataSource.sort = this.sort;
                 this.dataSource.paginator = this.paginator;
@@ -93,6 +128,50 @@ export class TableViewComponent implements OnChanges {
                 this.isLoading = false;
             });
 
+    }
+
+    private getSearchData(searchKeys: searchViewKey[]): FieldConfig[] {
+
+        let fieldValues: FieldConfig[] = [];
+
+        searchKeys.forEach(field => {
+            let fieldValue: FieldConfig;
+            let options = this.searchOptions[field.fieldName] ? this.searchOptions[field.fieldName] : [];
+            fieldValue = {
+                label: field.label,
+                name: field.fieldName,
+                value: null,
+                type: field.format.viewType,
+                inputType: field.format.dataType ? field.format.dataType : '',
+                newLine: field.newLine ? field.newLine : true,
+                options: options,
+                validations: []
+            };
+            fieldValues.push(fieldValue);
+        });
+        
+        return fieldValues;
+
+    }
+
+    advSearch() {
+        this.showAdvSearch = !this.showAdvSearch;
+    }
+
+    quickAdd(): void {
+        this.showQuickAdd = true;
+
+        // TODO
+
+    }
+
+    search_submit(value: any) {
+        console.log(value);
+        this.loadTable(value);
+    }
+
+    cancel(): void {
+        this.showQuickAdd = false;
     }
 
     applyFilter(filterValue: string) {

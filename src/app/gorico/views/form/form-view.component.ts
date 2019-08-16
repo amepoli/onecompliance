@@ -117,7 +117,7 @@ export class FormViewComponent implements OnChanges {
 
     private loadTable(): void {
 
-        this.backendService.getData(this.tableData.entryName, this.currentKeys, true, this.tableData.isNew).subscribe(
+        this.backendService.getData(this.tableData.entryName, this.currentKeys, null, true, this.tableData.isNew).subscribe(
             results => {
                 this.isLoading = false;
                 console.log(results);

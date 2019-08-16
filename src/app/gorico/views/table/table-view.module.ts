@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSortModule } from '@angular/material/sort';
 import { MatIconModule, MatButtonModule } from '@angular/material';
 import { TableViewComponent } from './table-view.component';
+import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
 
 @NgModule({
   declarations: [TableViewComponent],
@@ -24,7 +25,8 @@ import { TableViewComponent } from './table-view.component';
     MatCardModule,
     MatSortModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    DynamicFormsModule
   ],
   exports: [
     CommonModule,
@@ -38,6 +40,7 @@ import { TableViewComponent } from './table-view.component';
     MatSortModule,
     MatIconModule,
     MatButtonModule,
+    DynamicFormsModule,
     TableViewComponent
   ],
   entryComponents: [
