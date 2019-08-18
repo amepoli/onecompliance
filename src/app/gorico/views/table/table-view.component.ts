@@ -1,8 +1,7 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 import { FieldConfig, Item } from '../../dynamic-forms/field.interface';
-import { Location } from '@angular/common';
 
 export interface tableViewParams {
     entryName: string;
@@ -64,7 +63,7 @@ export class TableViewComponent implements OnChanges {
 
     searchData: FieldConfig[];
 
-    searchOptions: Item[] =[]; // search options for comboboxes
+    searchOptions = []; // search options for comboboxes
 
     displayedColumns: string[];
 
@@ -81,8 +80,7 @@ export class TableViewComponent implements OnChanges {
     keysArray: any[];  // list of primary keys values, one entry for each table row
 
     constructor(
-        protected backendService: BackendService,
-        protected location: Location) {
+        protected backendService: BackendService) {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -105,7 +103,7 @@ export class TableViewComponent implements OnChanges {
                 console.log(results);
                 if (results.search_options) { // got some search combobox options
                     this.searchOptions = results.search_options; // store them
-                    delete results.search_options; // and remove them from results
+                    results = results.table_data; // and get the table data
                 }
                 this.searchData = this.getSearchData(this.searchKeys);
                 this.dataSource = new MatTableDataSource(results);
@@ -138,7 +136,11 @@ export class TableViewComponent implements OnChanges {
 
         searchKeys.forEach(field => {
             let fieldValue: FieldConfig;
-            let options = this.searchOptions[field.fieldName] ? this.searchOptions[field.fieldName] : [];
+            let searchEntry = this.searchOptions ? this.searchOptions.find(e => e.fieldName === field.fieldName) : null;
+            let options = [];
+            if (searchEntry) {
+                options = searchEntry.options;
+            }
             fieldValue = {
                 label: field.label,
                 name: field.fieldName,
@@ -175,12 +177,16 @@ export class TableViewComponent implements OnChanges {
             if (value.hasOwnProperty(key)) {
                 const element = value[key];
                 if (element && element != '') {
-                    cleanedValues[key] = element;
+                    cleanedValues[key] = element.id ? element.id : element;
                 }
             }
         }
-        this.location.go('/gorico/main-table/' + this.backendService.currentTableName + '/search');
         this.loadTable(cleanedValues);
+    }
+
+    cancel_search() {
+        this.showAdvSearch = false;
+        this.loadTable(null);
     }
 
     cancel(): void {

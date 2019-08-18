@@ -387,7 +387,7 @@ exports.handler = async (event, context) => {
             Object.assign(queryData, queryString.defaultValues);
         }
         
-        let searchCombos = []; // only applicable if GET table view
+        let searchOptions = []; // only applicable if GET table view
         if (queryData && queryString.comboQueries) {
             for (let index = 0; index < queryString.comboQueries.length; index++) {
                 let element = queryString.comboQueries[index];
@@ -400,13 +400,13 @@ exports.handler = async (event, context) => {
                     comboEntry[element.key]['options'] = comboData.rows;
                     Object.assign(queryData, comboEntry);
                 } else { // table view, add search combobox to search_combos field's array
-                    searchCombos.push({fieldName: element.key, options: comboData.rows });
+                    searchOptions.push({fieldName: element.key, options: comboData.rows });
                 }
             }
         }
         
-        if (!isFormRecord && searchCombos.length) { // at least one search combobox, return it as search_combos key
-            Object.assign(queryData, { search_combos: searchCombos });
+        if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
+            queryData = { table_data: queryData, search_options: searchOptions};
         }
         
         if (method === 'POST') { // insert or update the record
