@@ -14,6 +14,10 @@ const routes = [
     {
         path     : 'gorico/main-table/:table_name',
         component: MainTableComponent
+    },
+    {
+      path     : 'gorico/main-table/:table_name/search',
+      component: MainTableComponent
     }
 ];
 

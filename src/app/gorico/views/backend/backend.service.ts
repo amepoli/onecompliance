@@ -45,7 +45,7 @@ constructor(private amplifyService: AmplifyService) {
     this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), form: isForm ? 1: 0, new: isNew ? 1 : 0}; 
 
     if (search_keys) {
-      this.myGetInit.queryStringParameters['search_keys'] = search_keys; 
+      this.myGetInit.queryStringParameters['search_keys'] = JSON.stringify(search_keys); 
     }
 
     return from(this.amplifyService.api().get(this.apiName, '/data', this.myGetInit));

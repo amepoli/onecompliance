@@ -54,8 +54,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
         private _sanitizer: DomSanitizer,
         private _authService: AuthService,
         private _backendService: BackendService,
-        private router: Router,
-        private route: ActivatedRoute
+        private router: Router
     )
     {
         // Set the defaults

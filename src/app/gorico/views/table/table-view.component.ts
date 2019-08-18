@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges, S
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 import { FieldConfig, Item } from '../../dynamic-forms/field.interface';
+import { Location } from '@angular/common';
 
 export interface tableViewParams {
     entryName: string;
@@ -80,7 +81,8 @@ export class TableViewComponent implements OnChanges {
     keysArray: any[];  // list of primary keys values, one entry for each table row
 
     constructor(
-        protected backendService: BackendService) {
+        protected backendService: BackendService,
+        protected location: Location) {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -167,7 +169,18 @@ export class TableViewComponent implements OnChanges {
 
     search_submit(value: any) {
         console.log(value);
-        this.loadTable(value);
+        // clean-up null or empty values
+        let cleanedValues = {};
+        for (const key in value) {
+            if (value.hasOwnProperty(key)) {
+                const element = value[key];
+                if (element && element != '') {
+                    cleanedValues[key] = element;
+                }
+            }
+        }
+        this.location.go('/gorico/main-table/' + this.backendService.currentTableName + '/search');
+        this.loadTable(cleanedValues);
     }
 
     cancel(): void {

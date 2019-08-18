@@ -103,7 +103,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
                     comboQueries.push({ key: element.key, comboQuery: comboQuery });
                 }
             }
-        }
+        } 
         queryString = queryString + fieldString;
         comma = ','; // needed only the first time
     });
@@ -146,6 +146,17 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     }
     
     queryString = queryString + ';';
+    
+    if (!isForm) { // in case of full table -> fill comboboxes of search form, if any
+        let search_params = entry_params.search_keys;
+        search_params.forEach(element => {
+            let comboQuery = element.format.comboQuery;
+            if (comboQuery) {
+                comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
+                comboQueries.push({ key: element.fieldName, comboQuery: comboQuery });
+            }
+        });
+    }
 
     return { mainQuery: queryString, comboQueries: comboQueries };
 
@@ -376,17 +387,26 @@ exports.handler = async (event, context) => {
             Object.assign(queryData, queryString.defaultValues);
         }
         
+        let searchCombos = []; // only applicable if GET table view
         if (queryData && queryString.comboQueries) {
             for (let index = 0; index < queryString.comboQueries.length; index++) {
                 let element = queryString.comboQueries[index];
                 let query = element.comboQuery;
                 let comboData = await client.query(query);
-                let comboEntry = new Object;
-                comboEntry[element.key] = new Object;
-                comboEntry[element.key]['value'] = queryData[element.key];
-                comboEntry[element.key]['options'] = comboData.rows;
-                Object.assign(queryData, comboEntry);
+                if (isFormRecord) { // form record, add combobox options to relevant field
+                    let comboEntry = new Object;
+                    comboEntry[element.key] = new Object;
+                    comboEntry[element.key]['value'] = queryData[element.key];
+                    comboEntry[element.key]['options'] = comboData.rows;
+                    Object.assign(queryData, comboEntry);
+                } else { // table view, add search combobox to search_combos field's array
+                    searchCombos.push({fieldName: element.key, options: comboData.rows });
+                }
             }
+        }
+        
+        if (!isFormRecord && searchCombos.length) { // at least one search combobox, return it as search_combos key
+            Object.assign(queryData, { search_combos: searchCombos });
         }
         
         if (method === 'POST') { // insert or update the record
