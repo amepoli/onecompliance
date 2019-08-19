@@ -134,6 +134,10 @@ export class TableViewComponent implements OnChanges {
 
         let fieldValues: FieldConfig[] = [];
 
+        if (!searchKeys) {
+            return fieldValues;
+        }
+
         searchKeys.forEach(field => {
             let fieldValue: FieldConfig;
             let searchEntry = this.searchOptions ? this.searchOptions.find(e => e.fieldName === field.fieldName) : null;

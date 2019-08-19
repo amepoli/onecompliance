@@ -147,7 +147,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     
     queryString = queryString + ';';
     
-    if (!isForm) { // in case of full table -> fill comboboxes of search form, if any
+    if (!isForm && entry_params.search_keys) { // in case of full table -> fill comboboxes of search form, if any
         let search_params = entry_params.search_keys;
         search_params.forEach(element => {
             let comboQuery = element.format.comboQuery;
