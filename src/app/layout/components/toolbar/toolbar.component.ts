@@ -201,7 +201,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
 
     addElement(): void
     {
-        
+        this.router.navigate(['/gorico/main-table/' + this._backendService.currentTableName], { queryParams: {new: 1 }});
     }
 
     gotoList(): void 

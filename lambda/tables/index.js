@@ -1,5 +1,3 @@
-var pg = require("pg");
-
 const Pool = require('pg-pool');
 const pool = new Pool({
     host: 'goricotest.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
@@ -170,6 +168,8 @@ function getNewQuery(entry_params, table_keys) {
    
    let defaultValues = {};
    
+   let comboQueries = [];
+   
    let keyTypes = entry_keys.map(k => {
                 let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
                 return {key: k.key, dataType: dataType}; 
@@ -189,16 +189,26 @@ function getNewQuery(entry_params, table_keys) {
                     comma = ' AND '; // needed only the first time
                 }   
             }
-        }
-        if (element.format.value || table_keys[element.key]) {
+        }  else { // set other keys' values and check for combobox queries
             let obj = new Object;
-            obj[element.key] = table_keys[element.key] ? table_keys[element.key] : element.format.value;
+            if (table_keys[element.key]) {
+                obj[element.key] = table_keys[element.key];
+            } else if (element.format.value) {
+                obj[element.key] = element.format.value;
+            } else {
+                obj[element.key] = '';
+            }
             Object.assign(defaultValues, obj);
+            let comboQuery = element.format.comboQuery;
+            if (comboQuery) {
+                comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
+                comboQueries.push({ key: element.key, comboQuery: comboQuery });
+            }
         }
         
    });
  
-    return { mainQuery: mqString, comboQueries: [], defaultValues: defaultValues };
+    return { mainQuery: mqString, comboQueries: comboQueries, defaultValues: defaultValues };
 }
 
 function getInsertUpdateQuery(entry_params, table_keys, body, newRecord) {
@@ -393,7 +403,7 @@ exports.handler = async (event, context) => {
                 let element = queryString.comboQueries[index];
                 let query = element.comboQuery;
                 let comboData = await client.query(query);
-                if (isFormRecord) { // form record, add combobox options to relevant field
+                if (isFormRecord || isNewRecord) { // form/new record, add combobox options to relevant field
                     let comboEntry = new Object;
                     comboEntry[element.key] = new Object;
                     comboEntry[element.key]['value'] = queryData[element.key];

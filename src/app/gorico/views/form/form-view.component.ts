@@ -106,9 +106,11 @@ export class FormViewComponent implements OnChanges {
                 this.viewKeys = params.form_keys;
                 this.tabKeys = params.subTables;
                 this.currentKeys = this.getCurrentKeys(this.viewKeys, this.tableData.keys);
-                // send the tabs parameter to the main view 
-                tabs = this.getTabs(this.tabKeys, this.tableData.keys);
-                this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
+                if (!this.tableData.isNew) {
+                    // send the tabs parameter to the main view 
+                    tabs = this.getTabs(this.tabKeys, this.tableData.keys);
+                    this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
+                }
                 // load the form
                 this.loadTable();
             });

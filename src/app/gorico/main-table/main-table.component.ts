@@ -86,6 +86,11 @@ export class MainTableComponent implements OnInit, AfterContentInit {
                     console.log(this.currentKeysArray);
                     this.singleRecord = true;
                     this.showTabs = false;
+                } else if (params.new) {
+                    this.formParams = { entryName: this.tableParams.entryName, keys: this.backendService.globalTableKeys, 
+                        index: 1, total: 1, isNew: true};
+                        this.singleRecord = true;
+                        this.showTabs = false;
                 } else {
                     this.singleRecord = false;
                     this.loadTable = true;
