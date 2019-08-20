@@ -193,7 +193,7 @@ function getNewQuery(entry_params, table_keys) {
             let obj = new Object;
             if (table_keys[element.key]) {
                 obj[element.key] = table_keys[element.key];
-            } else if (element.format.value) {
+            } else if (element.format.hasOwnProperty('value')) {
                 obj[element.key] = element.format.value;
             } else {
                 obj[element.key] = '';
@@ -259,6 +259,9 @@ function getInsertUpdateQuery(entry_params, table_keys, body, newRecord) {
         if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
             let keyType = keyTypes.find(e => (e.key === element.key));
             let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            if (value.id) { // combobox 
+                value = value.id;
+            }
             queryString = queryString + '=' + delimiter + value + delimiter;
         }
         comma = ', ';
@@ -270,6 +273,9 @@ function getInsertUpdateQuery(entry_params, table_keys, body, newRecord) {
             let keyType = keyTypes.find(e => (e.key === key));
             let delimiter = (keyType.dataType === 'text') ? '\'' : '';
             let value = values[key];
+            if (value.id) { // combobox 
+                value = value.id;
+            }
             let fieldString = comma + delimiter + value + delimiter;
             queryString = queryString + fieldString;
             comma = ', '; // needed only the first time
@@ -393,37 +399,42 @@ exports.handler = async (event, context) => {
         }
         
         
-        if (isNewRecord && queryString.defaultValues) { // only for new records, merge default values
-            Object.assign(queryData, queryString.defaultValues);
-        }
-        
-        let searchOptions = []; // only applicable if GET table view
-        if (queryData && queryString.comboQueries) {
-            for (let index = 0; index < queryString.comboQueries.length; index++) {
-                let element = queryString.comboQueries[index];
-                let query = element.comboQuery;
-                let comboData = await client.query(query);
-                if (isFormRecord || isNewRecord) { // form/new record, add combobox options to relevant field
-                    let comboEntry = new Object;
-                    comboEntry[element.key] = new Object;
-                    comboEntry[element.key]['value'] = queryData[element.key];
-                    comboEntry[element.key]['options'] = comboData.rows;
-                    Object.assign(queryData, comboEntry);
-                } else { // table view, add search combobox to search_combos field's array
-                    searchOptions.push({fieldName: element.key, options: comboData.rows });
+        if (method === 'GET') {
+            
+            if (isNewRecord && queryString.defaultValues) { // only for new records, merge default values
+                Object.assign(queryData, queryString.defaultValues);
+            }
+
+            let searchOptions = []; 
+            if (queryData && queryString.comboQueries) {
+                for (let index = 0; index < queryString.comboQueries.length; index++) {
+                    let element = queryString.comboQueries[index];
+                    let query = element.comboQuery;
+                    let comboData = await client.query(query);
+                    if (isFormRecord || isNewRecord) { // form/new record, add combobox options to relevant field
+                        let comboEntry = new Object;
+                        comboEntry[element.key] = new Object;
+                        comboEntry[element.key]['value'] = queryData[element.key];
+                        comboEntry[element.key]['options'] = comboData.rows;
+                        Object.assign(queryData, comboEntry);
+                    }
+                    else { // table view, add search combobox to search_combos field's array
+                        searchOptions.push({ fieldName: element.key, options: comboData.rows });
+                    }
                 }
             }
-        }
-        
-        if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
-            queryData = { table_data: queryData, search_options: searchOptions};
+
+            if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
+                queryData = { table_data: queryData, search_options: searchOptions };
+            }
         }
         
         if (method === 'POST') { // insert or update the record
             let newRecord = queryData.length ? false : true;
-            let body = JSON.parse(event.body.toString()); // production scenario
+            let body = JSON.parse(event.body); // production scenario 
             //let body = event.body; // test scenario
             queryString = getInsertUpdateQuery(entry_params, table_keys, body, newRecord);
+            console.log(queryString);
             await client.query(queryString); // perform the INSERT/UPDATE operation
         }
         

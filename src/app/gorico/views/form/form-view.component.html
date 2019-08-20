@@ -18,8 +18,16 @@
         </div>
 
         <div class="div2">
-            <button mat-button type="submit" form="element_form">
+            <button *ngIf="savingState === 'save'" mat-button type="submit" form="element_form">
                 <mat-icon>save</mat-icon>
+            </button>
+
+            <button *ngIf="savingState === 'saving'" mat-button>
+                <mat-icon>cloud_upload</mat-icon>
+            </button>
+
+            <button *ngIf="savingState === 'done'" mat-button>
+                <mat-icon>cloud_done</mat-icon>
             </button>
 
             <button mat-button>
@@ -38,12 +46,13 @@
 
     <br><br>
 
-<div class="full-width">
-    <dynamic-form *ngIf="!isLoading" class="form-container" [fields]='formData' (submit)='submit($event)' formName='element_form'>
-    </dynamic-form>
-    
-    <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
-        <mat-progress-spinner color="primary" mode="indeterminate">
-        </mat-progress-spinner>
-    </mat-card>
-</div>
+    <div class="full-width">
+        <dynamic-form *ngIf="!isLoading" class="form-container" [fields]='formData' (submit)='submit($event)'
+            formName='element_form'>
+        </dynamic-form>
+
+        <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
+            <mat-progress-spinner color="primary" mode="indeterminate">
+            </mat-progress-spinner>
+        </mat-card>
+    </div>

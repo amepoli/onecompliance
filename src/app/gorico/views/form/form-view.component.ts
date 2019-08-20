@@ -6,6 +6,7 @@ import { BackendService } from '../backend/backend.service';
 import { MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
 import { TabType } from '../../bottom-tabs/bottom-tabs.component';
+import { Router } from '@angular/router';
 
 export interface formViewParams { 
     entryName: string; 
@@ -65,6 +66,8 @@ export interface tabViewKey { // as per API specification
     ];
 }
 
+type savingStateType = 'save' | 'saving' | 'done';
+
 @Component({
     selector: 'form-view',
     templateUrl: './form-view.component.html',
@@ -77,6 +80,7 @@ export class FormViewComponent implements OnChanges {
 
 
     @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
+
     n = 0;
     tot = 0;
 
@@ -91,43 +95,61 @@ export class FormViewComponent implements OnChanges {
 
     tabFullScreen: false;
 
-    constructor(public attachDialog: MatDialog, 
-        private backendService: BackendService) { 
+    savingState: savingStateType = 'save';
 
+    constructor(public attachDialog: MatDialog, 
+        private backendService: BackendService,
+        private router: Router) { 
+        
         }
 
     ngOnChanges() {
-        this.n = this.tableData.index;
-        this.tot = this.tableData.total;
+        let _this = this; // useful to debug
+        _this.n = _this.tableData.index;
+        _this.tot = _this.tableData.total;
 
-        this.backendService.getView(this.tableData.entryName).subscribe(
+        _this.backendService.getView(_this.tableData.entryName).subscribe(
             params => {
                 let tabs: TabType[];
-                this.viewKeys = params.form_keys;
-                this.tabKeys = params.subTables;
-                this.currentKeys = this.getCurrentKeys(this.viewKeys, this.tableData.keys);
-                if (!this.tableData.isNew) {
+                _this.viewKeys = params.form_keys;
+                _this.tabKeys = params.subTables;
+                _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
+                if (!_this.tableData.isNew) {
                     // send the tabs parameter to the main view 
-                    tabs = this.getTabs(this.tabKeys, this.tableData.keys);
-                    this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
+                    tabs = _this.getTabs(_this.tabKeys, _this.tableData.keys);
+                    _this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
                 }
                 // load the form
-                this.loadTable();
+                _this.loadTable();
             });
             
     }
 
     private loadTable(): void {
 
-        this.backendService.getData(this.tableData.entryName, this.currentKeys, null, true, this.tableData.isNew).subscribe(
+        let _this = this; // useful to debug
+        _this.backendService.getData(_this.tableData.entryName, _this.currentKeys, null, true, _this.tableData.isNew).subscribe(
             results => {
-                this.isLoading = false;
+                _this.isLoading = false;
                 console.log(results);
-                this.formData = this.getFormData(this.viewKeys, results);
-                this.process_form(this.formData);
+                // add primary keys to current keys if new record
+                if (_this.tableData.isNew) {
+                    for (const key in results) {
+                        if (results.hasOwnProperty(key)) {
+                            const element = results[key];
+                            let viewKey = _this.viewKeys.find(e => e.key === key);
+                            if (viewKey.isPrimary) {
+                               _this.currentKeys[key] = element;
+                            }
+                        }
+                    }
+                }
+                // prepare the form
+                _this.formData = _this.getFormData(_this.viewKeys, results);
+                _this.process_form(_this.formData);
             },
             error => {
-                this.isLoading = false;
+                _this.isLoading = false;
             });
     }
 
@@ -222,19 +244,36 @@ export class FormViewComponent implements OnChanges {
     }
 
 
-    submit(value: any) {
-        this.backendService.updateData(this.tableData.entryName, this.tableData.keys, value).subscribe(
+    submit(values: any) {
+        // process the booleans (1/0 instead of true/false)
+        for (const value in values) {
+            if (values.hasOwnProperty(value)) {
+                const element = values[value];
+                if (element === true) {
+                    values[value] = '1';
+                } 
+                if (element === false) {
+                    values[value] = '0';
+                }
+            }
+        }
+        this.savingState = 'saving';
+        this.backendService.updateData(this.tableData.entryName, this.currentKeys, values).subscribe(
             result => {
                 console.log(result);
-                this.sendEvent.emit('');
+                this.savingState = 'done';
+                setTimeout(() => { this.savingState = 'save'; }, 1000);  
             }
         );
     }
 
     delElement() {
-        this.backendService.deleteData(this.tableData.entryName, this.tableData.keys).subscribe(
+        this.backendService.deleteData(this.tableData.entryName, this.currentKeys).subscribe(
             result => {
                 console.log(result);
+                // navigate back to main view
+                let url: string = this.router.url.substring(0, this.router.url.indexOf('?'));
+                this.router.navigate([url]);
             }
         )
     }
@@ -251,8 +290,7 @@ export class FormViewComponent implements OnChanges {
                 const element = inputKeys[key];
                 if (validKeysArray.find(e => e.key === key)) {
                     outputKeys[key] = element;
-                }
-                
+                }   
             }
         }
 
