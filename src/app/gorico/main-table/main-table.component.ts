@@ -37,7 +37,8 @@ export class MainTableComponent implements OnInit, AfterContentInit {
     private tableParams: tableViewParams = {
         entryName: '',
         keys: {},
-        showHeader: true
+        showHeader: true,
+        showFullScreenButton: false
     }; 
 
     private formParams: formViewParams = {
@@ -69,11 +70,12 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         this.route.params
             .subscribe(params => {
                 console.log(params);
-                this.tableParams = { entryName: params.table_name, keys: this.backendService.globalTableKeys, showHeader: true };
+                this.tableParams = { entryName: params.table_name, keys: this.backendService.globalTableKeys, showHeader: true, showFullScreenButton: false };
             });
         
         this.route.queryParams
             .subscribe(params => {
+                this.fullScreenTab = false; // reset in case of fullScrren Tab view
                 if (params.index) { 
                     if (this.programmaticNavigation) {
                         this.programmaticNavigation = false;
@@ -133,6 +135,8 @@ export class MainTableComponent implements OnInit, AfterContentInit {
             // fill the bottom tabs
             this.tabs = event.queryParams.tabs;
             this.showTabs = true;
+        } else if (event.eventType === 'fullScreen') {
+            this.fullScreenTab = event.queryParams.value;
         }
 
         if (newIndex) {

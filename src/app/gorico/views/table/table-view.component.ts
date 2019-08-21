@@ -7,6 +7,7 @@ export interface tableViewParams {
     entryName: string;
     keys: any;
     showHeader: boolean;
+    showFullScreenButton: boolean;
 }
 
 export type tableDataType = 'text' | 'date' | 'number' | 'boolean';
@@ -70,6 +71,8 @@ export class TableViewComponent implements OnChanges {
     dataSource: MatTableDataSource<any>;
     selectedRow: MatRow = null;
     isLoading = true;
+
+    isFullScreen = false;
 
     viewKeys: tableViewKey[];  // view fields as specified by the backend
 
@@ -233,6 +236,13 @@ export class TableViewComponent implements OnChanges {
         }
 
         return outputKeys;
+    }
+
+    fullScreen() {
+
+        this.isFullScreen = !this.isFullScreen;
+        this.sendEvent.emit({ eventType: 'fullScreen', queryParams: {value: this.isFullScreen} });
+    
     }
 
 }

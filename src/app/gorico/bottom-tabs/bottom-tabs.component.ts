@@ -25,18 +25,18 @@ export class BottomTabsComponent implements OnInit {
     constructor() { }
 
     ngOnInit() {
-        this.tableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys, showHeader: false };
+        this.tableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys, showHeader: false, showFullScreenButton: true };
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
         this.activeIndex = tabChangeEvent.index;
-        this.tableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys, showHeader: false };
+        this.tableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys, showHeader: false, showFullScreenButton: true };
     }
 
     onEvent(event: any) {
-        if (event.eventType === 'rowClick') {
-            this.sendEvent.emit(event); // passthrough to the parent component
-        }
+        
+        this.sendEvent.emit(event); // passthrough to the parent component
+        
     }
 
 }

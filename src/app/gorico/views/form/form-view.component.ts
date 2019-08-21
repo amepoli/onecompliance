@@ -93,8 +93,6 @@ export class FormViewComponent implements OnChanges {
 
     currentKeys: any; // relevant keys passed by the parent component 
 
-    tabFullScreen: false;
-
     savingState: savingStateType = 'save';
 
     constructor(public attachDialog: MatDialog, 
