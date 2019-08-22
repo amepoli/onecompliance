@@ -2,6 +2,7 @@ import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleCha
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 import { FieldConfig, Item } from '../../dynamic-forms/field.interface';
+import { formViewParams } from '../form/form-view.component';
 
 export interface tableViewParams {
     entryName: string;
@@ -58,6 +59,15 @@ export class TableViewComponent implements OnChanges {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
 
+    quickAddFormParams: formViewParams = {
+        entryName: '',
+        keys: {},
+        index: 1,
+        total: 1,
+        isNew: true,
+        showNavBar: false
+    };
+
     showQuickAdd = false;
 
     showAdvSearch = false;
@@ -89,6 +99,8 @@ export class TableViewComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
 
         if (changes.tableData) {
+            this.quickAddFormParams.entryName = this.tableData.entryName;
+            this.quickAddFormParams.keys = this.tableData.keys;
             this.backendService.getView(this.tableData.entryName).subscribe(
                 params => {
                     this.viewKeys = params.table_keys;
@@ -170,10 +182,7 @@ export class TableViewComponent implements OnChanges {
     }
 
     quickAdd(): void {
-        this.showQuickAdd = true;
-
-        // TODO
-
+        this.showQuickAdd = !this.showQuickAdd;
     }
 
     search_submit(value: any) {
@@ -245,6 +254,14 @@ export class TableViewComponent implements OnChanges {
     
     }
 
+    onEvent(event:any) {
+        if (event.eventType === 'savedForm') { // quick add form view submitted the new record
+            this.showQuickAdd = false; // hide quick add
+            this.loadTable(null); // reload the table to visualize the record
+        } else  { // forward to parent
+            this.sendEvent.emit(event);
+        }
+    }
 }
 
 

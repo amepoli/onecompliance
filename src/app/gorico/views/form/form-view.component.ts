@@ -6,7 +6,7 @@ import { BackendService } from '../backend/backend.service';
 import { MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
 import { TabType } from '../../bottom-tabs/bottom-tabs.component';
-import { Router } from '@angular/router';
+import {Location} from '@angular/common';
 
 export interface formViewParams { 
     entryName: string; 
@@ -14,6 +14,7 @@ export interface formViewParams {
     index: number; 
     total: number; 
     isNew: boolean; 
+    showNavBar: boolean;
 }
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
@@ -97,7 +98,7 @@ export class FormViewComponent implements OnChanges {
 
     constructor(public attachDialog: MatDialog, 
         private backendService: BackendService,
-        private router: Router) { 
+        private location: Location) { 
         
         }
 
@@ -137,7 +138,7 @@ export class FormViewComponent implements OnChanges {
                             const element = results[key];
                             let viewKey = _this.viewKeys.find(e => e.key === key);
                             if (viewKey.isPrimary) {
-                               _this.currentKeys[key] = element;
+                               _this.currentKeys[key] = element.hasOwnProperty('value') ? element.value : element; // resolve with vlaue if combobox
                             }
                         }
                     }
@@ -255,12 +256,16 @@ export class FormViewComponent implements OnChanges {
                 }
             }
         }
+
         this.savingState = 'saving';
         this.backendService.updateData(this.tableData.entryName, this.currentKeys, values).subscribe(
             result => {
                 console.log(result);
                 this.savingState = 'done';
-                setTimeout(() => { this.savingState = 'save'; }, 1000);  
+                setTimeout(() => {
+                    this.savingState = 'save';
+                    this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+                }, 1000);
             }
         );
     }
@@ -269,9 +274,8 @@ export class FormViewComponent implements OnChanges {
         this.backendService.deleteData(this.tableData.entryName, this.currentKeys).subscribe(
             result => {
                 console.log(result);
-                // navigate back to main view
-                let url: string = this.router.url.substring(0, this.router.url.indexOf('?'));
-                this.router.navigate([url]);
+                // navigate backward
+                this.location.back();
             }
         )
     }

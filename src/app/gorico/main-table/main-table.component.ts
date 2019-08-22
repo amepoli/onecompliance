@@ -46,7 +46,8 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         keys: {},
         index: 0,
         total: 0,
-        isNew: false
+        isNew: false,
+        showNavBar: true
     };
 
 
@@ -84,13 +85,13 @@ export class MainTableComponent implements OnInit, AfterContentInit {
                         this.level = this.levelArray.pop();
                     }
                     this.formParams = { entryName: this.tableParams.entryName, keys: this.currentKeys[params.index - 1], 
-                        index: params.index, total: this.currentKeys.length, isNew: false};
+                        index: params.index, total: this.currentKeys.length, isNew: false, showNavBar: true};
                     console.log(this.currentKeysArray);
                     this.singleRecord = true;
                     this.showTabs = false;
                 } else if (params.new) {
                     this.formParams = { entryName: this.tableParams.entryName, keys: this.backendService.globalTableKeys, 
-                        index: 1, total: 1, isNew: true};
+                        index: 1, total: 1, isNew: true, showNavBar: true};
                         this.singleRecord = true;
                         this.showTabs = false;
                 } else {
@@ -137,6 +138,8 @@ export class MainTableComponent implements OnInit, AfterContentInit {
             this.showTabs = true;
         } else if (event.eventType === 'fullScreen') {
             this.fullScreenTab = event.queryParams.value;
+        } else {
+            return; // not handled
         }
 
         if (newIndex) {

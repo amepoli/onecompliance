@@ -11,6 +11,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatIconModule, MatButtonModule } from '@angular/material';
 import { TableViewComponent } from './table-view.component';
 import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
+import { FormViewModule } from '../form/form-view.module';
 
 @NgModule({
   declarations: [TableViewComponent],
@@ -26,7 +27,8 @@ import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
     MatSortModule,
     MatIconModule,
     MatButtonModule,
-    DynamicFormsModule
+    DynamicFormsModule,
+    FormViewModule
   ],
   exports: [
     CommonModule,

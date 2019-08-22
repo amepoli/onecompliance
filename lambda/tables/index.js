@@ -172,7 +172,7 @@ function getNewQuery(entry_params, table_keys) {
    
    let keyTypes = entry_keys.map(k => {
                 let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
-                return {key: k.key, dataType: dataType}; 
+                return {key: k.key, dataType: dataType, isPrimary: k.isPrimary}; 
             });
    
    entry_keys.forEach(element => {
@@ -182,6 +182,7 @@ function getNewQuery(entry_params, table_keys) {
             for (const key in table_keys) {
                 if (table_keys.hasOwnProperty(key)) {
                     let keyType = keyTypes.find(e => (e.key === key));
+                    if (keyType.isPrimary) continue; // avoid to add subtables primary keys to the WHERE condition
                     let delimiter = (keyType.dataType === 'text') ? '\'' : '';
                     let element = table_keys[key];
                     let fieldString = comma + key + '=' + delimiter + element + delimiter;
