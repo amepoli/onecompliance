@@ -18,7 +18,7 @@ export const navigation: FuseNavigation[] = [
                         title: 'Employees',
                         translate: 'NAV.EMPLOYEES',
                         type : 'item',
-                        url  : '/gorico/employees'
+                        url  : '/gorico/main-table/anagrafiche'
                     },
                     {
                         id   : 'management_units',
