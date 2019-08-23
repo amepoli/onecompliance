@@ -71,6 +71,7 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         this.route.params
             .subscribe(params => {
                 console.log(params);
+                this.backendService.currentTableName = params.table_name;
                 this.tableParams = { entryName: params.table_name, keys: this.backendService.globalTableKeys, showHeader: true, showFullScreenButton: false };
             });
         
@@ -104,7 +105,7 @@ export class MainTableComponent implements OnInit, AfterContentInit {
     }
 
     ngAfterContentInit() {
-        this.backendService.currentTableName = this.tableParams.entryName;
+        // this.backendService.currentTableName = this.tableParams.entryName;
     }
 
     onEvent(event: any) {

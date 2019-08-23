@@ -25,7 +25,9 @@ export class BottomTabsComponent implements OnInit {
     constructor() { }
 
     ngOnInit() {
-        this.tableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys, showHeader: false, showFullScreenButton: true };
+        if (this.Tabs.length) {
+            this.tableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys, showHeader: false, showFullScreenButton: true };
+        } 
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
