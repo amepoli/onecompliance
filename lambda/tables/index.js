@@ -169,6 +169,10 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     if (!isForm && entry_params.search_keys) { // in case of full table -> fill comboboxes of search form, if any
         let search_params = entry_params.search_keys;
         search_params.forEach(element => {
+            // check if the search key is part of the table keys set
+            let found = entry_keys.find(e => e.key === element.key);
+            if (found == null) return;
+            // check if is combobox
             let comboQuery = element.format.comboQuery;
             if (comboQuery) {
                 comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);

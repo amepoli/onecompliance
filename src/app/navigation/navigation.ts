@@ -58,7 +58,7 @@ export const navigation: FuseNavigation[] = [
                 translate: 'NAV.RISKS',
                 icon: 'report_problem',
                 type : 'item',
-                url  : '/gorico/risks'
+                url  : '/gorico/main-table/rischi'
             },
             {
                 id       : 'tasks',
