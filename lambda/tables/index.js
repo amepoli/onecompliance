@@ -157,9 +157,11 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
         for (const key in search_keys) {
             if (search_keys.hasOwnProperty(key)) {
                 let search_param = search_params.find(s => (s.fieldName === key));
-                let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
-                queryString = queryString + comma + fieldString;
-                comma = ' AND '; // needed only the first time if no table_
+                if (search_param != null && search_param.queryCond != null) {
+                    let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
+                    queryString = queryString + comma + fieldString;
+                    comma = ' AND '; // needed only the first time if no table_
+                }
             }
         }
     }
@@ -428,9 +430,9 @@ exports.handler = async (event, context) => {
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = JSON.parse(queryParams['keys']); // production scenario
 
-    var queryData;
+    var queryData = {};
     
-    var queryString;
+    var queryString = {};
 
     try {
         // read the entry params from DynamoDB

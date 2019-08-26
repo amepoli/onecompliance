@@ -167,12 +167,12 @@ export class FormViewComponent implements OnChanges {
                         label: field.label,
                         name: field.key,
                         type: field.format.viewType,
-                        value: element.value ? element.value : element,
-                        inputType: field.format.dataType ? field.format.dataType : '',
+                        value: element ? (element.value ? element.value : element) : null,
+                        inputType: field.format.dataType ? field.format.dataType : 'text',
                         readonly: field.readOnly ? field.readOnly : false,
                         isVisible: field.isHidden ? !field.isHidden : true,
                         newLine: field.newLine ? field.newLine : true,
-                        options: element.options ? element.options : [],
+                        options: (element && element.options) ? element.options : [],
                         validations: field.format.validations ? field.format.validations : []
                     };
                     fieldValues.push(fieldValue);

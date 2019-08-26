@@ -97,38 +97,43 @@ export class TableViewComponent implements OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-
+        let _this = this;
         if (changes.tableData) {
-            this.quickAddFormParams.entryName = this.tableData.entryName;
-            this.quickAddFormParams.keys = this.tableData.keys;
-            this.backendService.getView(this.tableData.entryName).subscribe(
+            _this.quickAddFormParams.entryName = _this.tableData.entryName;
+            _this.quickAddFormParams.keys = _this.tableData.keys;
+            _this.backendService.getView(_this.tableData.entryName).subscribe(
                 params => {
-                    this.viewKeys = params.table_keys;
-                    this.searchKeys = params.search_keys;
-                    this.displayedColumns = this.getColumnLabels(this.viewKeys);
-                    this.currentKeys = this.getCurrentKeys(this.viewKeys, this.tableData.keys);
-                    this.loadTable(null);
+                    if (params.table_keys != null) {
+                        _this.viewKeys = params.table_keys;
+                        _this.searchKeys = params.search_keys;
+                        _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
+                        _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
+                        _this.loadTable(null);
+                    } else {
+                        _this.isLoading = false;
+                    }
                 });
         }
     }
 
     loadTable(search_keys: any): void {
-        this.backendService.getData(this.tableData.entryName, this.currentKeys, search_keys, false, false).subscribe(
+        let _this = this;
+        _this.backendService.getData(_this.tableData.entryName, _this.currentKeys, search_keys, false, false).subscribe(
             results => {
                 console.log(results);
                 if (results.search_options) { // got some search combobox options
-                    this.searchOptions = results.search_options; // store them
+                    _this.searchOptions = results.search_options; // store them
                     results = results.table_data; // and get the table data
                 }
-                this.searchData = this.getSearchData(this.searchKeys);
-                this.dataSource = new MatTableDataSource(results);
-                this.dataSource.sort = this.sort;
-                this.dataSource.paginator = this.paginator;
+                _this.searchData = _this.getSearchData(_this.searchKeys);
+                _this.dataSource = new MatTableDataSource(results);
+                _this.dataSource.sort = _this.sort;
+                _this.dataSource.paginator = _this.paginator;
                 // triggers any change in displayed datasource, setting the array of primary keys
-                this.dataSource.connect().subscribe(source => {
-                    this.keysArray = source.map(row => {
+                _this.dataSource.connect().subscribe(source => {
+                    _this.keysArray = source.map(row => {
                         const key_values = {};
-                        const primaryKeys = this.viewKeys.filter(entry => {
+                        const primaryKeys = _this.viewKeys.filter(entry => {
                             return entry.isPrimary;
                         });
                         for (const primaryKey of primaryKeys) {
@@ -137,16 +142,16 @@ export class TableViewComponent implements OnChanges {
                         return key_values;
                     });
                 });
-                this.isLoading = false;
+                _this.isLoading = false;
             },
             error => {
-                this.isLoading = false;
+                _this.isLoading = false;
             });
 
     }
 
     private getSearchData(searchKeys: searchViewKey[]): FieldConfig[] {
-
+        let _this = this;
         let fieldValues: FieldConfig[] = [];
 
         if (!searchKeys) {
@@ -155,7 +160,7 @@ export class TableViewComponent implements OnChanges {
 
         searchKeys.forEach(field => {
             let fieldValue: FieldConfig;
-            let searchEntry = this.searchOptions ? this.searchOptions.find(e => e.fieldName === field.fieldName) : null;
+            let searchEntry = _this.searchOptions ? _this.searchOptions.find(e => e.fieldName === field.fieldName) : null;
             let options = [];
             if (searchEntry) {
                 options = searchEntry.options;
