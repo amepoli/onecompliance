@@ -23,15 +23,8 @@ import { LoginPageModule } from 'app/login-page/login-page.module';
 import { RegisterModule } from 'app/login-page/register.module';
 import { ForgotPasswordModule } from 'app/login-page/forgot-password.module';
 import { MailConfirmModule } from 'app/login-page/mail-confirm.module';
-import { EmployeesModule } from 'app/gorico/tables/employees/employees.module';
 import { MainTableModule } from 'app/gorico/main-table/main-table.module';
-import { ControlsModule } from 'app/gorico/tables/controls/controls.module';
-import { SelectedElementModule } from 'app/gorico/selected-element/selected-element.module';
 import {AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
-import { ProcessesModule } from './gorico/tables/processes/processes.module';
-import { ArticlesModule } from './gorico/tables/articles/articles.module';
-import { RisksModule } from './gorico/tables/risks/risks.module';
-
 
 const appRoutes: Routes = [
     {
@@ -95,14 +88,8 @@ const appRoutes: Routes = [
         RegisterModule,
         ForgotPasswordModule,
         MailConfirmModule,
-        EmployeesModule,
-        SelectedElementModule,
         MainTableModule,
-        AmplifyAngularModule,
-        ProcessesModule,
-        ArticlesModule,
-        RisksModule,
-        ControlsModule
+        AmplifyAngularModule
 
     ],
     providers: [

@@ -1,6 +1,5 @@
 import { Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import { GenericTableService } from 'app/gorico/generic-table/generic-table.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 
@@ -23,15 +22,14 @@ export class AttachDialogComponent {
   constructor(private _formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<AttachDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public tableService: GenericTableService,
     public fileService: FileManagerService) { 
 
         
-        this.tableService.getAttachList(data.table, data.keys, data.company).subscribe(
+  /*      this.tableService.getAttachList(data.table, data.keys, data.company).subscribe(
             results => {
                 console.log(results);
             });
-        
+  */      
 
         // Reactive Form
         this.form = this._formBuilder.group({
