@@ -152,7 +152,7 @@ export const navigation: FuseNavigation[] = [
                         title: 'Law',
                         translate: 'NAV.LAW',
                         type : 'item',
-                        url  : '/login'
+                        url  : '/gorico/main-table/testi_normativi'
                     },
                     {
                         id   : 'articles',
