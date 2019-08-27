@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material';
 import { Validators } from '@angular/forms';
 import { TabType } from '../../bottom-tabs/bottom-tabs.component';
 import {Location} from '@angular/common';
+import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
 
 export interface formViewParams { 
     entryName: string; 
@@ -297,6 +298,20 @@ export class FormViewComponent implements OnChanges {
         }
 
         return outputKeys;
+    }
+
+    showAttachments() {
+        // Pop-up example
+        const dialogRef = this.attachDialog.open(AttachDialogComponent, {
+            width: '800px',
+            data: { entryName: this.tableData.entryName, keys: this.currentKeys }
+          });
+      
+          dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                
+            }
+          });
     }
 
 }
