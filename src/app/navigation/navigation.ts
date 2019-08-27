@@ -66,7 +66,7 @@ export const navigation: FuseNavigation[] = [
                 translate: 'NAV.TASKS',
                 icon: 'new_releases',
                 type : 'item',
-                url  : '/login'
+                url  : '/gorico/main-table/compiti'
             },
             {
                 id       : 'testforms',
