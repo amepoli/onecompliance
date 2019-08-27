@@ -35,7 +35,7 @@ export const navigation: FuseNavigation[] = [
                 translate: 'NAV.PROCESSES',
                 icon: 'build',
                 type : 'item',
-                url  : '/gorico/processes'
+                url  : '/login'
             },
             {
                 id       : 'workflow',
@@ -50,7 +50,7 @@ export const navigation: FuseNavigation[] = [
                 translate: 'NAV.CONTROLS',
                 icon: 'person_pin_circle',
                 type : 'item',
-                url  : '/gorico/controls'
+                url  : '/login'
             },
             {
                 id       : 'risks',
@@ -66,7 +66,7 @@ export const navigation: FuseNavigation[] = [
                 translate: 'NAV.TASKS',
                 icon: 'new_releases',
                 type : 'item',
-                url  : '/login'
+                url  : '/gorico/main-table/compiti'
             },
             {
                 id       : 'testforms',
@@ -159,7 +159,7 @@ export const navigation: FuseNavigation[] = [
                         title: 'Articles',
                         translate: 'NAV.ARTICLES',
                         type : 'item',
-                        url  : '/gorico/articles'
+                        url  : '/gorico/main-table/articoli_normativi'
                     }
                 ]
             },
