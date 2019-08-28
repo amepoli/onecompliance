@@ -164,6 +164,21 @@ export const navigation: FuseNavigation[] = [
                 ]
             },
             {
+                id       : 'privacy',
+                title    : 'Privacy',
+                translate: 'NAV.PRIVACY',
+                type     : 'collapsable',
+                icon     : 'lock',
+                children : [
+                    {
+                        id   : 'processing_activities',
+                        title: 'Processing',
+                        translate: 'NAV.PROCACT',
+                        type : 'item',
+                        url  : '/gorico/main-table/cpl_trattamenti_dati'
+                    }
+                ]
+            },{
                 id       : 'configuration',
                 title    : 'Configuration',
                 translate: 'NAV.CONFIG',

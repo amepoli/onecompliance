@@ -22,6 +22,7 @@ export const locale = {
             'TFTYPES'     : 'Tipi Modelli Test',
             'TASKTYPES'   : 'Tipi Segnalazioni',
             'RISKTYPES'   : 'Tipi Rischi',
+            'PRIVACY'     : 'Privacy',
             'TOPICS'      : 'Argomenti',
             'PROCACT'     : 'Trattamento Dati',
             'TASKS'       : 'Segnalazioni',
