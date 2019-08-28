@@ -64,9 +64,9 @@ constructor(private amplifyService: AmplifyService) {
     return from(this.amplifyService.api().post(this.apiName, '/data', this.myPutPostInit));
   }
 
-  getAttachList(tableName: string, primaryKeyValues: any, company: string) {
+  getAttachList(entryName: string, keys: any): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {table: tableName, keys: JSON.stringify(primaryKeyValues), codice_azienda: company }; 
+    this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys) }; 
     return from(this.amplifyService.api().get(this.apiName, '/attach', this.myGetInit));
   }
 

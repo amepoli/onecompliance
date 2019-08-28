@@ -1,10 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormViewComponent } from './form-view.component';
+import { AttachDialogComponent } from '../../dialogs/attach.dialog/attach.dialog.component';
+import { FileUploadComponent } from '../../file-uploader/file-upload/file-upload.component';
+import { ProgressComponent } from '../../file-uploader/progress/progress.component';
 import { MatMenuModule, MatToolbarModule, MatTabsModule, MatIconModule, MatButtonModule, MatFormFieldModule, 
-    MatOptionModule, MatSelectModule, MatInputModule, MatCardModule, MatProgressSpinnerModule} from '@angular/material';
+    MatOptionModule, MatSelectModule, MatInputModule, MatCardModule, MatProgressSpinnerModule, MatDialogModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
+import { FileManagerModule } from 'app/main/apps/file-manager/file-manager.module';
 
 @NgModule({
   imports: [
@@ -22,7 +26,9 @@ import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
     MatSelectModule,
     MatInputModule,
     MatCardModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    FileManagerModule,
+    MatDialogModule
   ],
   exports: [
     CommonModule,
@@ -40,11 +46,18 @@ import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
     MatInputModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    FormViewComponent
+    FormViewComponent,
+    AttachDialogComponent,
+    ProgressComponent,
+    FileManagerModule,
+    FileUploadComponent
   ],
-  declarations: [FormViewComponent],
+  declarations: [FormViewComponent, AttachDialogComponent, FileUploadComponent, ProgressComponent],
   entryComponents: [
-      FormViewComponent
+      FormViewComponent,
+      AttachDialogComponent,
+      FileUploadComponent,
+      ProgressComponent
   ]
 })
 
