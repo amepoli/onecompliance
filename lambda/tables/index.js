@@ -552,9 +552,9 @@ exports.handler = async (event, context) => {
         console.log(e);
         await client.release();
         return {
-            statusCode: 500,
-            error: e,
-            query: queryString
+            "statusCode": 500,
+            "error": e,
+            "query": queryString
         };
     }
     
