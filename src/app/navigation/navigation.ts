@@ -211,7 +211,7 @@ export const navigation: FuseNavigation[] = [
                         title: 'Topics',
                         translate: 'NAV.TOPICS',
                         type : 'item',
-                        url  : '/login'
+                        url  : '/gorico/main-table/argomenti'
                     }
                 ]
             },
