@@ -30,6 +30,27 @@ export class AttachDialogComponent {
         this.backendService.getAttachList(data.entryName, data.keys).subscribe(
             results => {
                 console.log(results);
+                let listFiles = results.list;
+                let files = [];
+                if (listFiles) {
+                    listFiles.forEach(element => {
+                        let file = {
+                            'name'     : element.client_file_name,
+                            'type'     : 'document',
+                            'owner'    : element.autore,
+                            'size'     : this.getFileSize(element.dimensione),
+                            'modified' : new Date(element.data_upd).toString(),
+                            'opened'   : new Date(element.data_ins).toString(),
+                            'created'  : new Date(element.data_creazione).toString(),
+                            'extention': '',
+                            'location' : '',
+                            'offline'  : true
+                        }
+                        files.push(file);
+                    });
+                }
+                this.fileService.files = files;
+                this.fileService.getFiles();
             });
         
 
@@ -65,6 +86,27 @@ export class AttachDialogComponent {
 
     onSave(): void {
         this.attach = false;
+    }
+
+    getFileSize (size: string): string {
+        
+        let fileSize = size;
+
+        if (fileSize == null) {
+            return '0';
+        }
+
+        let numSize = parseInt(size);
+        if (numSize >= 1024 && numSize < 1024*1024) {
+            numSize = numSize / 1024;
+            fileSize = numSize.toFixed(2) + ' KB';
+        } else if (numSize >= 1024*1024) {
+            numSize = numSize / (1024 * 1024);
+            fileSize = numSize.toFixed(2) + ' MB';
+        }
+
+        return fileSize;
+
     }
     
 
