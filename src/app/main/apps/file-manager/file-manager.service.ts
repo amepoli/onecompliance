@@ -153,6 +153,7 @@ export class FileManagerService // implements Resolve<any>
     onFilesChanged: BehaviorSubject<any>;
     onFileSelected: BehaviorSubject<any>;
     onFileAdd: BehaviorSubject<any>;
+    onFileDownload: BehaviorSubject<any>;
 
     /**
      * Constructor
@@ -167,6 +168,7 @@ export class FileManagerService // implements Resolve<any>
         this.onFilesChanged = new BehaviorSubject({});
         this.onFileSelected = new BehaviorSubject({});
         this.onFileAdd = new BehaviorSubject({});
+        this.onFileDownload = new BehaviorSubject({});
     }
 
     /**
@@ -217,5 +219,9 @@ export class FileManagerService // implements Resolve<any>
 
     addFile(): void {
         this.onFileAdd.next(null);
+    }
+
+    download(selected: any): void {
+        this.onFileDownload.next(selected);
     }
 }

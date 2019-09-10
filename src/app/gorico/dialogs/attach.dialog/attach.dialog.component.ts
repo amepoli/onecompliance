@@ -20,6 +20,8 @@ export class AttachDialogComponent {
 
   form: FormGroup;
 
+  listFiles: any[];
+
   constructor(private _formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<AttachDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -30,10 +32,10 @@ export class AttachDialogComponent {
         this.backendService.getAttachList(data.entryName, data.keys).subscribe(
             results => {
                 console.log(results);
-                let listFiles = results.list;
+                this.listFiles = results.list;
                 let files = [];
-                if (listFiles) {
-                    listFiles.forEach(element => {
+                if (this.listFiles) {
+                    this.listFiles.forEach(element => {
                         let file = {
                             'name'     : element.client_file_name,
                             'type'     : 'document',
@@ -77,6 +79,15 @@ export class AttachDialogComponent {
 
         this.fileService.onFileAdd.subscribe(result => {
             this.attach = true;
+        });
+
+        this.fileService.onFileDownload.subscribe(selected => {
+            if (this.listFiles != null) {
+                const fileDesc = this.listFiles.find(e => e.client_file_name === selected.name);
+                if (fileDesc != null) {
+                    // perform the call to backend
+                }
+            }
         });
 
         this.attach = false;

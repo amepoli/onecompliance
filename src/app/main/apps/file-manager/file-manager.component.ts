@@ -84,4 +84,9 @@ export class FileManagerComponent implements OnInit, OnDestroy
     {
         this._fileManagerService.addFile();
     }
+
+    download(): void 
+    {
+        this._fileManagerService.download(this.selected);
+    }
 }
