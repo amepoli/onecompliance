@@ -303,7 +303,7 @@ export class FormViewComponent implements OnChanges {
     showAttachments() {
         // Pop-up example
         const dialogRef = this.attachDialog.open(AttachDialogComponent, {
-            width: '800px',
+            width: '1280px',
             data: { entryName: this.tableData.entryName, keys: this.currentKeys }
           });
       

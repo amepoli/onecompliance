@@ -50,9 +50,10 @@ export class FileManagerComponent implements OnInit, OnDestroy
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(selected => {
             this.selected = selected;
+            console.log(selected);
             // this.pathArr = selected.location.split('>');
         });
-        this._fileManagerService.getFiles();
+        //this._fileManagerService.getFiles();
     }
 
     /**
