@@ -3,6 +3,9 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';
+import { saveAs } from 'file-saver';
+import {HttpClient} from "@angular/common/http";
+import { ResponseType } from '@angular/http';
 
 @Component({
   selector: 'app-attach.dialog',
@@ -26,7 +29,8 @@ export class AttachDialogComponent {
     public dialogRef: MatDialogRef<AttachDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fileService: FileManagerService,
-    private backendService: BackendService) { 
+    private backendService: BackendService,
+    private httpClient: HttpClient) { 
 
         
         this.backendService.getAttachList(data.entryName, data.keys).subscribe(
@@ -85,7 +89,15 @@ export class AttachDialogComponent {
             if (this.listFiles != null) {
                 const fileDesc = this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
-                    // perform the call to backend
+                    this.backendService.getFileURL(data.entryName, data.keys, fileDesc.file_id).subscribe(
+                        url => {
+                            if (url != null) {
+                                this.httpClient.get(url.url, {responseType: 'blob'}).subscribe(
+                                    data => {
+                                        saveAs(data, selected.name);
+                                    });
+                            }
+                        });
                 }
             }
         });
