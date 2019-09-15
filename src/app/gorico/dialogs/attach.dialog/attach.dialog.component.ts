@@ -1,11 +1,11 @@
-import { Component, Inject} from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';
 import { saveAs } from 'file-saver';
-import {HttpClient} from "@angular/common/http";
-import { ResponseType } from '@angular/http';
+import {HttpClient} from '@angular/common/http';
+import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-upload.component';
 
 @Component({
   selector: 'app-attach.dialog',
@@ -15,7 +15,9 @@ import { ResponseType } from '@angular/http';
 
 
 
-export class AttachDialogComponent {
+export class AttachDialogComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('fileUploader') fileUploader: FileUploadComponent;
 
   attach: boolean;
 
@@ -25,15 +27,64 @@ export class AttachDialogComponent {
 
   listFiles: any[];
 
+  file: File;
+
   constructor(private _formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<AttachDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fileService: FileManagerService,
     private backendService: BackendService,
     private httpClient: HttpClient) { 
+        // Reactive Form
+        this.form = this._formBuilder.group({
+            fileContent: new FormControl(null, Validators.required),
+            id: [
+                {
+                    value: 24,
+                    disabled: true
+                }, Validators.required
+            ],
+            fileName: ['', Validators.required],
+            dimension: [
+                {
+                    value: 0,
+                    disabled: true
+                }, Validators.required
+            ],
+            docURL: [''],
+            shortDesc: [''],
+            description: [''],
+            type: ['']
+        });
 
+        this.fileService.onFileAdd.subscribe(result => {
+            this.attach = true;
+        });
+
+
+        this.fileService.onFileDownload.subscribe(selected => {
+            if (this.listFiles != null) {
+                const fileDesc = this.listFiles.find(e => e.client_file_name === selected.name);
+                if (fileDesc != null) {
+                    this.backendService.getFileURL(this.data.entryName, this.data.keys, fileDesc.file_id).subscribe(
+                        url => {
+                            if (url != null) {
+                                this.httpClient.get(url.url, {responseType: 'blob'}).subscribe(
+                                    fileData => {
+                                        saveAs(fileData, selected.name);
+                                    });
+                            }
+                        });
+                }
+            }
+        });
+
+        this.attach = false;
+    }
+
+    ngOnInit() {
         
-        this.backendService.getAttachList(data.entryName, data.keys).subscribe(
+        this.backendService.getAttachList(this.data.entryName, this.data.keys).subscribe(
             results => {
                 console.log(results);
                 this.listFiles = results.list;
@@ -58,57 +109,36 @@ export class AttachDialogComponent {
                 this.fileService.files = files;
                 this.fileService.getFiles();
             });
-        
-
-        // Reactive Form
-        this.form = this._formBuilder.group({
-            id   : [
-                {
-                    value   : 24,
-                    disabled: true
-                }, Validators.required
-            ],
-            nomeFile  : ['', Validators.required],
-            dimensione   : [
-                {
-                    value: 0,
-                    disabled: true
-                }, Validators.required
-            ],
-            docURL    : [''],
-            descBreve : [''],
-            descrizione  : [''],
-            tipo   : ['']
-        });
-
-        this.fileService.onFileAdd.subscribe(result => {
-            this.attach = true;
-        });
-
-        this.fileService.onFileDownload.subscribe(selected => {
-            if (this.listFiles != null) {
-                const fileDesc = this.listFiles.find(e => e.client_file_name === selected.name);
-                if (fileDesc != null) {
-                    this.backendService.getFileURL(data.entryName, data.keys, fileDesc.file_id).subscribe(
-                        url => {
-                            if (url != null) {
-                                this.httpClient.get(url.url, {responseType: 'blob'}).subscribe(
-                                    data => {
-                                        saveAs(data, selected.name);
-                                    });
-                            }
-                        });
-                }
-            }
-        });
-
-        this.attach = false;
 
         this.progress = 0;
     }
 
+    ngAfterViewInit() {
+        if (this.fileUploader != null) {
+            this.fileUploader.registerOnChange(function (file: File): void {
+                this.file = file;
+                console.log('DONE');
+            });
+        }
+    }
+
     onSave(): void {
+
         this.attach = false;
+        if (this.file != null) {
+            this.backendService.createFileURL(this.data.entryName, this.data.keys).subscribe(
+                url => {
+                    console.log(url);
+                    if (url != null) {
+                        const blob = new Blob([this.file]);
+                        this.httpClient.put(url.url, blob).subscribe (
+                        response => {
+                            console.log('File uploaded with filename: ', url.filename);
+                        });
+                    }
+                }
+            )
+        }
     }
 
     getFileSize (size: string): string {

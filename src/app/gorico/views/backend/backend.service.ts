@@ -70,9 +70,15 @@ constructor(private amplifyService: AmplifyService) {
     return from(this.amplifyService.api().get(this.apiName, '/attach', this.myGetInit));
   }
 
-  getFileURL(entryName: string, keys: any, filename: String): Observable<any> {
+  getFileURL(entryName: string, keys: any, filename: string): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), filename: filename}; 
     return from(this.amplifyService.api().get(this.apiName, '/attach', this.myGetInit));
+  }
+
+  createFileURL(entryName: string, keys: any): Observable<any> {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys)};
+    return from(this.amplifyService.api().post(this.apiName, 'attach', this.myPutPostInit));
   }
 }

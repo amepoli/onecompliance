@@ -55,7 +55,7 @@ exports.handler = async (event, context) => {
         }
     } else { // filename not null
         if (event.httpMethod === 'GET') {
-          requestType = (checksum == null) ? 'getFileDetails' : 'fileCheck';
+          requestType = (checksum == null) ? 'getFileURL' : 'fileCheck';
         } else if (event.httpMethod === 'POST') {
             requestType = 'updateFile';
         } else if (event.httpMethod === 'DELETE') {
@@ -156,8 +156,13 @@ exports.handler = async (event, context) => {
                 decnames.push(response['rows'][0]);
             }
             body = {result: 'OK', list: decnames};
-
-            
+       } else if (requestType === 'getFileURL') {
+            var url = s3.getSignedUrl('getObject', s3ParamsGetList);    
+            if (url == null) {
+                body = {result: 'KO'};
+            } else {
+                body = {result: 'OK', url: url}
+            }
        } else if (requestType === 'updateFile') {
            // create a temporary signed URL for the object 
            const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
@@ -189,7 +194,7 @@ exports.handler = async (event, context) => {
        } else if (requestType === 'createNewFile') {
            // create a temporary signed URL for the object 
            const signedUrl = await s3.getSignedUrl('putObject', s3ParamsInsert).promise();
-           body = { result: 'OK', signed_url: signedUrl };
+           body = { result: 'OK', signed_url: signedUrl, filename: filename };
        }
     } catch (e) {
        console.log(e);
