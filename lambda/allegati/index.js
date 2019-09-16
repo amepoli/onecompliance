@@ -177,7 +177,11 @@ exports.handler = async (event, context) => {
            response = await client.query(query);
            body = { result: 'OK', signed_url: signedUrl };
            
-       } else if (action === 'confirm') {
+       }  else if (requestType === 'createNewFile') {
+           // create a temporary signed URL for the object 
+           const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
+           body = { result: 'OK', url: signedUrl, filename: filename };
+       }  else if (requestType === 'confirm') {
            const object = await s3.getObject(s3ParamsGetList).promise();
            const actual_checksum = shasum.update(object.Body).digest('hex');
            if (checksum === actual_checksum) { // file correctly uploaded
@@ -191,10 +195,6 @@ exports.handler = async (event, context) => {
                query = `delete entrasp.cdms_risorse_oggetti where codice_azienda='${codice_azienda}' and id_risorsa=${id_risorsa};`;
                response = await client.query(query);
            }
-       } else if (requestType === 'createNewFile') {
-           // create a temporary signed URL for the object 
-           const signedUrl = await s3.getSignedUrl('putObject', s3ParamsInsert).promise();
-           body = { result: 'OK', signed_url: signedUrl, filename: filename };
        }
     } catch (e) {
        console.log(e);

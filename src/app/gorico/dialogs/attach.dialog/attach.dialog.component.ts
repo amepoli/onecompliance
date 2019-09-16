@@ -114,9 +114,10 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
+        var questo = this;
         if (this.fileUploader != null) {
             this.fileUploader.registerOnChange(function (file: File): void {
-                this.file = file;
+                questo.file = file;
                 console.log('DONE');
             });
         }
