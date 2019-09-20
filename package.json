@@ -7,10 +7,10 @@
     "start": "ng serve --open",
     "start-hmr": "ng serve --configuration hmr --source-map=false --hmr-warning=false",
     "start-hmr-sourcemaps": "ng serve --configuration hmr --source-map=true --hmr-warning=false",
-    "build": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --dev",
-    "build-stats": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --dev --stats-json",
-    "build-prod": "node --max_old_space_size=20000 ./node_modules/@angular/cli/bin/ng build --prod",
-    "build-prod-stats": "node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --prod --stats-json",
+    "build": "node patch.js && node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --dev",
+    "build-stats": "node patch.js && node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --dev --stats-json",
+    "build-prod": "node patch.js && node --max_old_space_size=20000 ./node_modules/@angular/cli/bin/ng build --prod",
+    "build-prod-stats": "node patch.js && node --max_old_space_size=6144 ./node_modules/@angular/cli/bin/ng build --prod --stats-json",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
@@ -89,6 +89,9 @@
     "ts-node": "5.0.1",
     "tslint": "5.9.1",
     "typescript": "2.7.2",
-    "webpack-bundle-analyzer": "2.13.1"
+    "webpack-bundle-analyzer": "2.13.1",
+    "browser": {
+      "crypto": false
+    }
   }
 }

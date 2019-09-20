@@ -6,6 +6,8 @@ import { BackendService } from 'app/gorico/views/backend/backend.service';
 import { saveAs } from 'file-saver';
 import {HttpClient} from '@angular/common/http';
 import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-upload.component';
+import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
+                                        // and https://stackoverflow.com/a/54645398 and then 'npm run build'
 
 @Component({
   selector: 'app-attach.dialog',
@@ -135,6 +137,17 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
                         this.httpClient.put(url.url, blob).subscribe (
                         response => {
                             console.log('File uploaded with filename: ', url.filename);
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                const content = reader.result;
+                                var buffer = Buffer.alloc(content.byteLength)
+                                for (var i = 0; i < content.byteLength; i++) {
+                                     buffer[i] = content[i];
+                                };
+                                const hash = createHash('sha1').update(buffer).digest("hex");
+                                console.log(hash);
+                            };
+                            reader.readAsArrayBuffer(blob);
                         });
                     }
                 }

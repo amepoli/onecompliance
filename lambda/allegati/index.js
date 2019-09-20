@@ -55,9 +55,9 @@ exports.handler = async (event, context) => {
         }
     } else { // filename not null
         if (event.httpMethod === 'GET') {
-          requestType = (checksum == null) ? 'getFileURL' : 'fileCheck';
+          requestType = 'getFileURL';
         } else if (event.httpMethod === 'POST') {
-            requestType = 'updateFile';
+            requestType = (checksum == null) ? 'updateFile' : 'fileCheck';
         } else if (event.httpMethod === 'DELETE') {
             requestType = 'deleteFile';
         } else {
@@ -111,6 +111,7 @@ exports.handler = async (event, context) => {
     let decnames = [];
     
     const date = getDateFormat();
+    const timestamp = (new Date()).getTime();
 
     try {
        
@@ -159,45 +160,69 @@ exports.handler = async (event, context) => {
        } else if (requestType === 'getFileURL') {
             var url = s3.getSignedUrl('getObject', s3ParamsGetList);    
             if (url == null) {
-                body = {result: 'KO'};
+                body = {result: 'KO', reason: 'Something wrong with cloud storage'};
             } else {
-                body = {result: 'OK', url: url}
+                body = {result: 'OK', url: url};
             }
        } else if (requestType === 'updateFile') {
-           // create a temporary signed URL for the object 
-           const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
            // fill postgresql tables
-           query = `SELECT (MAX(id_risorsa)+1) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${codice}';`;
+           const requestBody = JSON.parse(event.body); 
+           query = `update entrasp.cdms_risorse set 
+                   nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
+                   data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica=${timestamp}
+                   where codice_azienda='${codice}' and id_risorsa=${requestBody.id_risorsa}`;
            response = await client.query(query);
-           const nextId = response['rows'][0]['id_risorsa'];
-           query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, content_type, flag_indexed, id_tipo_allegato)
-                    values ('${codice}', ${nextId}, '${keys.nickname}',${keys.revisione_corrente}, '${keys.descrizione}', '${keys.autore}', '${date}', '${date}', '${url}','${descrizione_breve}', '${date}', '${fileType}', 1, ${id_tipo_allegato}) returning id_risorsa;`;
-           response = await client.query(query);
-           query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) values ('${codice_azienda}', ${nextId}, '${bus_object}','${chiave}');`;
-           response = await client.query(query);
-           body = { result: 'OK', signed_url: signedUrl };
+           
+           body = { result: 'OK'};
            
        }  else if (requestType === 'createNewFile') {
            // create a temporary signed URL for the object 
            const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
            body = { result: 'OK', url: signedUrl, filename: filename };
-       }  else if (requestType === 'confirm') {
+           
+       }  else if (requestType === 'fileCheck') {
            const object = await s3.getObject(s3ParamsGetList).promise();
-           const actual_checksum = shasum.update(object.Body).digest('hex');
-           if (checksum === actual_checksum) { // file correctly uploaded
+           const actualChecksum = shasum.update(object.Body).digest('hex');
+           const requestBody = JSON.parse(event.body); 
+           if (checksum === actualChecksum) { // file correctly uploaded
+               query = `SELECT (MAX(id_risorsa)+1) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${codice}';`;
+               response = await client.query(query);
+               const nextId = response['rows'][0]['id_risorsa'];
+               
+               query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) values ('${codice}', ${nextId}, '${bus_object}','${chiave}');`;
+               response = await client.query(query);
+               
+               query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, content_type, flag_indexed, id_tipo_allegato)
+                    values ('${codice}', ${nextId}, '${requestBody.nickname}',1, '${requestBody.descrizione}', '${requestBody.autore}', 
+                    '${date}', '${date}', '${requestBody.url}','${requestBody.descrizione_breve}', '${timestamp}', '${requestBody.fileType}', 1, ${requestBody.id_tipo_allegato}) returning id_risorsa;`;
+               response = await client.query(query);
+               
                query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, revisore, client_file_name, Content_type, dimensione, checksum_sha1) 
-                  values ('${codice_azienda}', ${id_risorsa}, '${revisione_corrente}','${date}', '${filename}', '${autore}', '${nickname}, '${fileType}', ${size}, '${checksum}');`;
+                  values ('${codice}', ${nextId}, 1,'${date}', '${filename}', 
+                          '${requestBody.autore}', '${requestBody.nickname}, '${requestBody.fileType}', ${requestBody.size}, '${checksum}');`;
                response = await client.query(query);
                body = { result: 'OK'};
-           } else { // error with file upload
-               query = `delete entrasp.cdms_risorse where codice_azienda='${codice_azienda}' and id_risorsa=${id_risorsa};`;
-               response = await client.query(query);
-               query = `delete entrasp.cdms_risorse_oggetti where codice_azienda='${codice_azienda}' and id_risorsa=${id_risorsa};`;
-               response = await client.query(query);
+           } else { // wrong checksum 
+               body = { result: 'KO', reason: 'Error with file checksum'};
            }
+           
+       } else if (requestType === 'deleteFile') {
+           // create a temporary signed URL for the object 
+           const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsInsert);
+           
+           const requestBody = JSON.parse(event.body);
+           query = `delete entrasp.cdms_risorse where codice_azienda='${codice}' and id_risorsa=${requestBody.id_risorsa};`;
+           response = await client.query(query);
+           query = `delete entrasp.cdms_risorse_oggetti where codice_azienda='${codice}' and id_risorsa=${requestBody.id_risorsa};`;
+           response = await client.query(query);
+           query = `delete entrasp.cdms_risorse_revisioni where codice_azienda='${codice}' and id_risorsa=${requestBody.id_risorsa};`;
+           response = await client.query(query);
+           
+           body = { result: 'OK', url: signedUrl};
        }
     } catch (e) {
        console.log(e);
+       body = { result: 'KO', reason: 'Server error'};
     }
     
            
@@ -207,6 +232,6 @@ exports.handler = async (event, context) => {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
-        "body": JSON.stringify(body || {result: 'KO'})
+        "body": JSON.stringify(body)
     };
 };
