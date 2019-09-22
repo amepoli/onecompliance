@@ -108,6 +108,7 @@ export class TableViewComponent implements OnChanges {
                         _this.searchKeys = params.search_keys;
                         _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                         _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
+                        _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: {keys: _this.currentKeys} }); // pass current keys to parent view 
                         _this.loadTable(null);
                     } else {
                         _this.isLoading = false;

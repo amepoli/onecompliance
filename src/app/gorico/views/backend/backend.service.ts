@@ -26,7 +26,7 @@ export class BackendService {
     }
   };
 
-  globalTableKeys = {};
+  globalTableKeys = {}; // global to all tables
 
   currentTableName: string;
  
@@ -79,6 +79,13 @@ constructor(private amplifyService: AmplifyService) {
   createFileURL(entryName: string, keys: any): Observable<any> {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys)};
+    return from(this.amplifyService.api().post(this.apiName, '/attach', this.myPutPostInit));
+  }
+
+  checkFile(entryName: string, keys: any, checksum: string, data: any): Observable<any> {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), checksum: checksum};
+    this.myPutPostInit.body = data;
     return from(this.amplifyService.api().post(this.apiName, '/attach', this.myPutPostInit));
   }
 }

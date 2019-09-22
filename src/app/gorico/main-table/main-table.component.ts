@@ -50,6 +50,7 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         showNavBar: true
     };
 
+    private currentTableKeys = {};  // keys set in currently active table/subtable (might be foreing keys of subtable)
 
     private currentKeys: any[]; // current list of primary keys provided by the table-view
 
@@ -68,38 +69,41 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
     ngOnInit(): void {
 
-        this.route.params
+        let _this = this;
+
+        _this.route.params
             .subscribe(params => {
                 console.log(params);
-                this.backendService.currentTableName = params.table_name;
-                this.tableParams = { entryName: params.table_name, keys: this.backendService.globalTableKeys, showHeader: true, showFullScreenButton: false };
+                _this.backendService.currentTableName = params.table_name;
+                _this.tableParams = { entryName: params.table_name, keys: _this.backendService.globalTableKeys, showHeader: true, showFullScreenButton: false };
             });
         
-        this.route.queryParams
+        _this.route.queryParams
             .subscribe(params => {
-                this.fullScreenTab = false; // reset in case of fullScrren Tab view
+                _this.fullScreenTab = false; // reset in case of fullScrren Tab view
                 if (params.index) { 
-                    if (this.programmaticNavigation) {
-                        this.programmaticNavigation = false;
+                    if (_this.programmaticNavigation) {
+                        _this.programmaticNavigation = false;
                     } else {
-                        this.currentKeys = this.currentKeysArray.pop(); // get from history
-                        this.level = this.levelArray.pop();
+                        _this.currentKeys = _this.currentKeysArray.pop(); // get from history
+                        _this.level = _this.levelArray.pop();
                     }
-                    this.formParams = { entryName: this.tableParams.entryName, keys: this.currentKeys[params.index - 1], 
-                        index: params.index, total: this.currentKeys.length, isNew: false, showNavBar: true};
-                    console.log(this.currentKeysArray);
-                    this.singleRecord = true;
-                    this.showTabs = false;
+                    _this.formParams = { entryName: _this.tableParams.entryName, keys: _this.currentKeys[params.index - 1], 
+                        index: params.index, total: _this.currentKeys.length, isNew: false, showNavBar: true};
+                    console.log(_this.currentKeysArray);
+                    _this.singleRecord = true;
+                    _this.showTabs = false;
                 } else if (params.new) {
-                    this.formParams = { entryName: this.tableParams.entryName, keys: this.backendService.globalTableKeys, 
+                    const newRecordKeys = Object.assign({},_this.currentTableKeys, _this.backendService.globalTableKeys);
+                    _this.formParams = { entryName: _this.tableParams.entryName, keys: newRecordKeys, 
                         index: 1, total: 1, isNew: true, showNavBar: true};
-                        this.singleRecord = true;
-                        this.showTabs = false;
+                        _this.singleRecord = true;
+                        _this.showTabs = false;
                 } else {
-                    this.singleRecord = false;
-                    this.loadTable = true;
-                    this.currentKeysArray = []; // flush history when in table view
-                    this.level = 0;
+                    _this.singleRecord = false;
+                    _this.loadTable = true;
+                    _this.currentKeysArray = []; // flush history when in table view
+                    _this.level = 0;
                 }
             });
     }
@@ -139,7 +143,10 @@ export class MainTableComponent implements OnInit, AfterContentInit {
             this.showTabs = true;
         } else if (event.eventType === 'fullScreen') {
             this.fullScreenTab = event.queryParams.value;
-        } else {
+        } else if (event.eventType === 'currentTableKeys') {  // table in subtable view providing its current keys
+            this.currentTableKeys = event.queryParams.keys;
+        }
+        else {
             return; // not handled
         }
 

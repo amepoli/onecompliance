@@ -132,18 +132,7 @@ export class FormViewComponent implements OnChanges {
             results => {
                 _this.isLoading = false;
                 console.log(results);
-                // add primary keys to current keys if new record
-                if (_this.tableData.isNew) {
-                    for (const key in results) {
-                        if (results.hasOwnProperty(key)) {
-                            const element = results[key];
-                            let viewKey = _this.viewKeys.find(e => e.key === key);
-                            if (viewKey.isPrimary) {
-                               _this.currentKeys[key] = element.hasOwnProperty('value') ? element.value : element; // resolve with vlaue if combobox
-                            }
-                        }
-                    }
-                }
+                // TODO: need to distinguish by keys and already set values 
                 // prepare the form
                 _this.formData = _this.getFormData(_this.viewKeys, results);
                 _this.process_form(_this.formData);

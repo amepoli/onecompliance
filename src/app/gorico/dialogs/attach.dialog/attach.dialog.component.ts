@@ -8,6 +8,8 @@ import {HttpClient} from '@angular/common/http';
 import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-upload.component';
 import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
                                         // and https://stackoverflow.com/a/54645398 and then 'npm run build'
+import { formViewParams } from 'app/gorico/views/form/form-view.component';
+                                        
 
 @Component({
   selector: 'app-attach.dialog',
@@ -31,14 +33,24 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
 
   file: File;
 
+  newTypeParams: formViewParams = {
+    entryName: 'tipi_allegati',
+    keys: {},
+    index: 0,
+    total: 0,
+    isNew: true,
+    showNavBar: false
+};
+
   constructor(private _formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<AttachDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fileService: FileManagerService,
     private backendService: BackendService,
-    private httpClient: HttpClient) { 
+    private httpClient: HttpClient) {
+        const questo = this; 
         // Reactive Form
-        this.form = this._formBuilder.group({
+        questo.form = questo._formBuilder.group({
             fileContent: new FormControl(null, Validators.required),
             id: [
                 {
@@ -59,19 +71,24 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
             type: ['']
         });
 
-        this.fileService.onFileAdd.subscribe(result => {
-            this.attach = true;
+        questo.fileService.onFileAdd.subscribe(result => {
+            
+            if (questo.data.keys.codice_azienda == null) {
+                questo.data.keys['codice_azienda'] =  questo.data.keys.codice_part; // hack as tipi_allegati uses codice_azienda
+            }
+            questo.newTypeParams.keys = questo.data.keys;
+            questo.attach = true;
         });
 
 
-        this.fileService.onFileDownload.subscribe(selected => {
-            if (this.listFiles != null) {
-                const fileDesc = this.listFiles.find(e => e.client_file_name === selected.name);
+        questo.fileService.onFileDownload.subscribe(selected => {
+            if (questo.listFiles != null) {
+                const fileDesc = questo.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
-                    this.backendService.getFileURL(this.data.entryName, this.data.keys, fileDesc.file_id).subscribe(
+                    questo.backendService.getFileURL(questo.data.entryName, questo.data.keys, fileDesc.file_id).subscribe(
                         url => {
                             if (url != null) {
-                                this.httpClient.get(url.url, {responseType: 'blob'}).subscribe(
+                                questo.httpClient.get(url.url, {responseType: 'blob'}).subscribe(
                                     fileData => {
                                         saveAs(fileData, selected.name);
                                     });
@@ -81,11 +98,11 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
             }
         });
 
-        this.attach = false;
+        questo.attach = false;
     }
 
     ngOnInit() {
-        
+
         this.backendService.getAttachList(this.data.entryName, this.data.keys).subscribe(
             results => {
                 console.log(results);
@@ -126,17 +143,21 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
     }
 
     onSave(): void {
-
-        this.attach = false;
-        if (this.file != null) {
-            this.backendService.createFileURL(this.data.entryName, this.data.keys).subscribe(
-                url => {
-                    console.log(url);
-                    if (url != null) {
-                        const blob = new Blob([this.file]);
-                        this.httpClient.put(url.url, blob).subscribe (
-                        response => {
-                            console.log('File uploaded with filename: ', url.filename);
+        const questo = this;
+        console.log(event);
+        questo.attach = false;
+        if (questo.file != null) {
+            // get the S3 URL 
+            questo.backendService.createFileURL(questo.data.entryName, questo.data.keys).subscribe(
+                responseURL => {
+                    console.log(responseURL);
+                    if (responseURL != null) {
+                        const blob = new Blob([questo.file]);
+                        // upload the file using obtained url
+                        questo.httpClient.put(responseURL.url, blob).subscribe (
+                        responsePut => {
+                            console.log('File uploaded with filename: ', responseURL.filename);
+                            // retrieve file content
                             const reader = new FileReader();
                             reader.onload = function (e) {
                                 const content = reader.result;
@@ -144,8 +165,19 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
                                 for (var i = 0; i < content.byteLength; i++) {
                                      buffer[i] = content[i];
                                 };
+                                // create file content hash
                                 const hash = createHash('sha1').update(buffer).digest("hex");
                                 console.log(hash);
+                                // check that the file has been correctly uploaded and pass file params to the backend
+                                const fileParams = {
+
+                                };
+                                questo.backendService.checkFile(questo.data.entryName, questo.data.keys, hash, fileParams).subscribe(
+                                    responseCheck => {
+
+                                    }
+                                )
+
                             };
                             reader.readAsArrayBuffer(blob);
                         });
@@ -153,6 +185,10 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
                 }
             )
         }
+    }
+
+    onNewType(event: any) {
+
     }
 
     getFileSize (size: string): string {
