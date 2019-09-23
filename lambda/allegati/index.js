@@ -184,23 +184,27 @@ exports.handler = async (event, context) => {
            const object = await s3.getObject(s3ParamsGetList).promise();
            const actualChecksum = shasum.update(object.Body).digest('hex');
            const requestBody = JSON.parse(event.body); 
+           console.log(checksum, actualChecksum);
            if (checksum === actualChecksum) { // file correctly uploaded
                query = `SELECT (MAX(id_risorsa)+1) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${codice}';`;
                response = await client.query(query);
                const nextId = response['rows'][0]['id_risorsa'];
                
                query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) values ('${codice}', ${nextId}, '${bus_object}','${chiave}');`;
-               response = await client.query(query);
+               //response = await client.query(query);
+               console.log(query);
                
                query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, content_type, flag_indexed, id_tipo_allegato)
                     values ('${codice}', ${nextId}, '${requestBody.nickname}',1, '${requestBody.descrizione}', '${requestBody.autore}', 
-                    '${date}', '${date}', '${requestBody.url}','${requestBody.descrizione_breve}', '${timestamp}', '${requestBody.fileType}', 1, ${requestBody.id_tipo_allegato}) returning id_risorsa;`;
-               response = await client.query(query);
+                    '${date}', '${date}', '${requestBody.url}','${requestBody.descrizione_breve}', '${timestamp}', '${requestBody.content_type}', 1, ${requestBody.id_tipo_allegato}) returning id_risorsa;`;
+               //response = await client.query(query);
+               console.log(query);
                
-               query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, revisore, client_file_name, Content_type, dimensione, checksum_sha1) 
+               query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1) 
                   values ('${codice}', ${nextId}, 1,'${date}', '${filename}', 
-                          '${requestBody.autore}', '${requestBody.nickname}, '${requestBody.fileType}', ${requestBody.size}, '${checksum}');`;
-               response = await client.query(query);
+                          '${requestBody.autore}', '${requestBody.nickname}, '${requestBody.content_type}', ${requestBody.dimensione}, '${checksum}');`;
+               //response = await client.query(query);
+               console.log(query);
                body = { result: 'OK'};
            } else { // wrong checksum 
                body = { result: 'KO', reason: 'Error with file checksum'};

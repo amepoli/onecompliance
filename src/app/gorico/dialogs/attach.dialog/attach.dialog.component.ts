@@ -9,6 +9,7 @@ import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-u
 import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
                                         // and https://stackoverflow.com/a/54645398 and then 'npm run build'
 import { formViewParams } from 'app/gorico/views/form/form-view.component';
+import { AuthService } from 'app/login-page/auth.service';
                                         
 
 @Component({
@@ -47,7 +48,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fileService: FileManagerService,
     private backendService: BackendService,
-    private httpClient: HttpClient) {
+    private httpClient: HttpClient,
+    private authService: AuthService) {
         const questo = this; 
         // Reactive Form
         questo.form = questo._formBuilder.group({
@@ -137,6 +139,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
         if (this.fileUploader != null) {
             this.fileUploader.registerOnChange(function (file: File): void {
                 questo.file = file;
+                questo.form.value.fileName = file.name;
+                questo.form.value.dimension = file.size;
                 console.log('DONE');
             });
         }
@@ -169,8 +173,16 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
                                 const hash = createHash('sha1').update(buffer).digest("hex");
                                 console.log(hash);
                                 // check that the file has been correctly uploaded and pass file params to the backend
+                                var mime = require('mime-types');
                                 const fileParams = {
-
+                                    nickname: questo.form.value.fileName,
+                                    descrizione: questo.form.value.description,
+                                    url: questo.form.value.docURL,
+                                    descrizione_breve: questo.form.value.shortDesc,
+                                    content_type: mime.lookup(questo.form.value.fileName),
+                                    id_tipo_allegato: questo.form.value.type.value,
+                                    dimensione: questo.form.value.dimension,
+                                    autore: questo.authService.getUsername
                                 };
                                 questo.backendService.checkFile(questo.data.entryName, questo.data.keys, hash, fileParams).subscribe(
                                     responseCheck => {
