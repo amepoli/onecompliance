@@ -1,7 +1,7 @@
 const Pool = require('pg-pool');
 const pool = new Pool({
-    host: 'goricotest.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-    database: 'gorico',
+    host: 'goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
+    database: 'Gorico',
     user: 'postgres',
     password: 'et2themax',
     port: 5432,
@@ -209,7 +209,7 @@ function getNewQuery(entry_params, table_keys) {
             for (const key in table_keys) {
                 if (table_keys.hasOwnProperty(key)) {
                     let keyType = keyTypes.find(e => (e.key === key));
-                    if (keyType.isPrimary) continue; // avoid to add subtables primary keys to the WHERE condition
+                    if (!keyType.isPrimary) continue; // avoid to add subtables foreing keys to the WHERE condition
                     let delimiter = (keyType.dataType === 'text') ? '\'' : '';
                     let element = table_keys[key];
                     let fieldString = comma + key + '=' + delimiter + element + delimiter;
@@ -552,6 +552,8 @@ exports.handler = async (event, context) => {
         console.log(e);
         await client.release();
         return {
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
             "statusCode": 500,
             "error": e,
             "query": queryString

@@ -6,7 +6,8 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'combobox',
   template: `
-<mat-form-field [ngStyle]="{'margin-right': '5%', 'margin-left': '5%','width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
+<mat-form-field [ngStyle]="{'margin-right': '5%', 'margin-left': '5%','width': field.width+'%'}" *ngIf="field.isVisible != false" appearance="outline" [formGroup]="group">
+<mat-label>{{field.label}}</mat-label>
 <mat-select [ngModel]="field.value" [formControlName]="field.name" [placeholder]="field.label">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
 <mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly">{{item.name}}</mat-option>
