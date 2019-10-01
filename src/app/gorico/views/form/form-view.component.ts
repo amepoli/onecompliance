@@ -132,7 +132,10 @@ export class FormViewComponent implements OnChanges {
             results => {
                 _this.isLoading = false;
                 console.log(results);
-                // TODO: need to distinguish by keys and already set values 
+                if (_this.tableData.isNew) {  // handle newly set primary keys
+                    let primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
+                    _this.currentKeys = _this.getCurrentKeys(primaryKeys, results);
+                } 
                 // prepare the form
                 _this.formData = _this.getFormData(_this.viewKeys, results);
                 _this.process_form(_this.formData);
@@ -238,10 +241,18 @@ export class FormViewComponent implements OnChanges {
         for (const value in values) {
             if (values.hasOwnProperty(value)) {
                 const element = values[value];
-                if (element === true) {
+                if (element == null) {
+                    continue; // skip null entries
+                }
+                // decode combos
+                if (element['id'] != null) {
+                    values[value] = element['id'];
+                }
+                // encode boolean
+                else if (element === true) {
                     values[value] = '1';
                 } 
-                if (element === false) {
+                else if (element === false) {
                     values[value] = '0';
                 }
             }
