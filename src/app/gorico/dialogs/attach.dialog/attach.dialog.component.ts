@@ -139,9 +139,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
         if (this.fileUploader != null) {
             this.fileUploader.registerOnChange(function (file: File): void {
                 questo.file = file;
-                questo.form.value.fileName = file.name;
-                questo.form.value.dimension = file.size;
-                console.log('DONE');
+                questo.form.patchValue({fileName: file.name, dimension: file.size});
             });
         }
     }
@@ -165,7 +163,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
                             const reader = new FileReader();
                             reader.onload = function (e) {
                                 const content = reader.result;
-                                var buffer = Buffer.alloc(content.byteLength)
+                                var buffer = Buffer.alloc(content.byteLength);
                                 for (var i = 0; i < content.byteLength; i++) {
                                      buffer[i] = content[i];
                                 };
@@ -184,9 +182,9 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
                                     dimensione: questo.form.value.dimension,
                                     autore: questo.authService.getUsername
                                 };
-                                questo.backendService.checkFile(questo.data.entryName, questo.data.keys, hash, fileParams).subscribe(
+                                questo.backendService.checkFile(questo.data.entryName, questo.data.keys, hash, responseURL.filename, fileParams).subscribe(
                                     responseCheck => {
-
+                                        console.log(responseCheck);
                                     }
                                 )
 
