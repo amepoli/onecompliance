@@ -178,7 +178,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
                                     url: questo.form.value.docURL,
                                     descrizione_breve: questo.form.value.shortDesc,
                                     content_type: mime.lookup(questo.form.value.fileName),
-                                    id_tipo_allegato: questo.form.value.type.value,
+                                    // id_tipo_allegato: questo.form.value.type.value,
+                                    id_tipo_allegato: 2,
                                     dimensione: questo.form.value.dimension,
                                     autore: questo.authService.getUsername
                                 };
