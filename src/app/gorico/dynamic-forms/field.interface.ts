@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+
 export interface Validator {
   name: string;
   validator: any;
@@ -27,4 +29,5 @@ export interface FieldConfig {
   value?: any;
   validations?: Validator[];
   keys?: Key[];
+  onChange?(value: any): Observable<any>;
 }
