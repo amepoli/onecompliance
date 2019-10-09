@@ -75,10 +75,16 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
 
         questo.fileService.onFileAdd.subscribe(result => {
             
-            if (questo.data.keys.codice_azienda == null) {
-                questo.data.keys['codice_azienda'] =  questo.data.keys.codice_part; // hack as tipi_allegati uses codice_azienda
+            // recover attachment types
+            for (const key in questo.data.keys) { 
+                if (questo.data.keys.hasOwnProperty(key)) {
+                    const element = questo.data.keys[key];
+                    questo.newTypeParams.keys[key] = element;
+                }
             }
-            questo.newTypeParams.keys = questo.data.keys;
+            if (questo.newTypeParams.keys.codice_azienda == null ) { // hack, tipi_allegati requires this field
+                questo.newTypeParams.keys.codice_azienda = questo.newTypeParams.keys.codice_part;
+            }
             questo.attach = true;
         });
 
