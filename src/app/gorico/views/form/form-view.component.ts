@@ -20,7 +20,7 @@ export interface formViewParams {
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
-export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'radiobutton';
+export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'radiobutton' | 'button';
 
 export interface formViewKey { // as per API specification
     isHidden: boolean;
@@ -114,12 +114,12 @@ export class FormViewComponent implements OnChanges {
                 _this.viewKeys = params.form_keys;
                 _this.tabKeys = params.subTables;
                 _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
-                if (!_this.tableData.isNew) {
+                if (!_this.tableData.isNew && _this.tabKeys != null) {
                     // send the tabs parameter to the main view 
                     tabs = _this.getTabs(_this.tabKeys, _this.tableData.keys);
                     _this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
                 }
-                // load the form
+                // load the form 
                 _this.loadTable();
             });
             

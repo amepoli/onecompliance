@@ -149,8 +149,8 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
     if (entry_params.origin) {
         queryString = queryString + ' FROM ' + entry_params.origin;
-    } else {
-        return { mainQuery: '', comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries}; // Huston, we have a problem
+    } else {  // no underlying table, skip building of main query, still there might be some combos
+        return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries}; 
     }
 
     comma = ' WHERE ';
@@ -416,7 +416,7 @@ function getDeleteQuery(entry_params, table_keys) {
 async function processPreMainPost(queryString, client, notFullTable) {
     
         let local_keys = {}; // additional keys generated with pre-main-post processing  
-        let queryData;
+        let queryData = {};
         
         console.log('queryString : ', queryString);
         
