@@ -8,7 +8,7 @@ import {HttpClient} from '@angular/common/http';
 import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-upload.component';
 import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
                                         // and https://stackoverflow.com/a/54645398 and then 'npm run build'
-import { formViewParams } from 'app/gorico/views/form/form-view.component';
+import { formViewParams, FormViewComponent } from 'app/gorico/views/form/form-view.component';
 import { AuthService } from 'app/login-page/auth.service';
                                         
 
@@ -24,6 +24,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
 
   @ViewChild('fileUploader') fileUploader: FileUploadComponent;
 
+  @ViewChild('formRef') formRef: FormViewComponent;
+
   attach: boolean;
 
   progress: number;
@@ -33,6 +35,15 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
   listFiles: any[];
 
   file: File;
+
+  formParams: formViewParams = {
+      entryName: 'fe_attachment_form',
+      keys: {},
+      index: 0,
+      total: 0,
+      isNew: true,
+      showNavBar: false
+  };
 
   newTypeParams: formViewParams = {
     entryName: 'tipi_allegati',
@@ -50,28 +61,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
     private backendService: BackendService,
     private httpClient: HttpClient,
     private authService: AuthService) {
+
         const questo = this; 
-        // Reactive Form
-        questo.form = questo._formBuilder.group({
-            fileContent: new FormControl(null, Validators.required),
-            id: [
-                {
-                    value: 24,
-                    disabled: true
-                }, Validators.required
-            ],
-            fileName: ['', Validators.required],
-            dimension: [
-                {
-                    value: 0,
-                    disabled: true
-                }, Validators.required
-            ],
-            docURL: [''],
-            shortDesc: [''],
-            description: [''],
-            type: ['']
-        });
 
         questo.fileService.onFileAdd.subscribe(result => {
             
@@ -106,6 +97,11 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
             }
         });
 
+        questo.formParams.keys = questo.data.keys;
+        // hack, fe_attachment_form needs this field
+        if (questo.formParams.keys.codice_azienda == null) {
+            questo.formParams.keys.codice_azienda = questo.formParams.keys.codice_part;
+        }
         questo.attach = false;
     }
 
@@ -145,6 +141,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
         if (this.fileUploader != null) {
             this.fileUploader.registerOnChange(function (file: File): void {
                 questo.file = file;
+                questo.form = questo.formRef.form.form; // getting the FormGroup
                 questo.form.patchValue({fileName: file.name, dimension: file.size});
             });
         }

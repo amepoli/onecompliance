@@ -20,88 +20,13 @@
 
                 <br><br>
 
-                <app-file-upload formControlName="fileContent" [progress]="progress" [hidden]="!attach" #fileUploader></app-file-upload>
+                <app-file-upload [progress]="progress" [hidden]="!attach" #fileUploader></app-file-upload>
              
                 <br><br>
 
-                <!-- REACTIVE FORM (taken from https://github.com/nikapov/fuse-angular/blob/master/src/app/main/ui/forms/forms.component.html) -->
+                <form-view *ngIf="attach" [tableData]="formParams" (sendEvent)='onNewType($event)' #formRef></form-view>
 
-                <form *ngIf="attach" class="mat-card mat-elevation-z4 p-24 mr-24" fxLayout="column" fxLayoutAlign="center"
-                    fxFlex="1 0 auto" name="form" [formGroup]="form" (ngSubmit)="onSave()" id="formAttach">
-
-                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-
-                        <mat-form-field appearance="outline" fxFlex="100">
-                            <mat-label>ID</mat-label>
-                            <input matInput formControlName="id">
-                            <mat-icon matSuffix class="disabled-text">fingerprint</mat-icon>
-                        </mat-form-field>
-
-                    </div>
-
-                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-
-                        <mat-form-field appearance="outline" class="w-75-p">
-                            <mat-label>Nome file</mat-label>
-                            <input matInput formControlName="fileName" required>
-                            <mat-icon matSuffix class="secondary-text">local_offer</mat-icon>
-                            <mat-error>Nome file obbligatorio!</mat-error>
-                        </mat-form-field>
-
-                        <mat-form-field appearance="outline" class="w-25-p">
-                            <mat-label>Dimensione</mat-label>
-                            <input matInput formControlName="dimension" required readonly>
-                            <mat-icon matSuffix class="disabled-text">photo_size_select_small</mat-icon>
-                        </mat-form-field>
-
-                    </div>
-
-                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-
-                        <mat-form-field class="w-100-p" appearance="outline" fxFlex="100">
-                            <mat-label>URL documento</mat-label>
-                            <input matInput formControlName="docURL">
-                            <mat-icon matSuffix class="secondary-text">link</mat-icon>
-                        </mat-form-field>
-
-                    </div>
-
-                    <div fxLayout="row wrap" fxLayoutAlign="start center" fxFlex="1 0 auto">
-
-                        <mat-form-field class="w-100-p" appearance="outline" fxFlex="100">
-                            <mat-label>Descrizione breve</mat-label>
-                            <textarea matInput formControlName="shortDesc">
-                        </textarea>
-                        </mat-form-field>
-                    </div>
-
-                    <div fxLayout="row wrap" fxLayoutAlign="start center" fxFlex="1 0 auto">
-
-                        <mat-form-field class="w-100-p" appearance="outline" fxFlex="100">
-                            <mat-label>Descrizione</mat-label>
-                            <textarea matInput formControlName="description"></textarea>
-                        </mat-form-field>
-
-                    </div>
-
-                    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-
-                        <mat-form-field class="w-100-p" appearance="outline" fxFlex="100">
-                            <mat-label>Tipo documento</mat-label>
-                            <mat-select formControlName="type" required>
-                                <mat-option [value]="'Rendiconto'">
-                                    Rendiconto
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-
-                    </div>
-
-                </form>
-
-                <form-view *ngIf="attach" [tableData]="newTypeParams" (sendEvent)='onNewType($event)'></form-view>
-
-                <!-- / REACTIVE FORM EXAMPLE -->
+                <form-view *ngIf="attach" [tableData]="newTypeParams" (sendEvent)='onSave()'></form-view>
 
             </div>
         </div>
@@ -111,6 +36,6 @@
 </div>
 
 <div mat-dialog-actions>
-    <button *ngIf="attach" mat-button type="submit" form="formAttach">Salva</button>
+    <!--button *ngIf="attach" mat-button type="submit" form="formAttach">Salva</button-->
     <button mat-button [mat-dialog-close]="" cdkFocusInitial>Chiudi</button>
 </div>
