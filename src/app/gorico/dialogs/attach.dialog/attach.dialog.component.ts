@@ -8,7 +8,7 @@ import {HttpClient} from '@angular/common/http';
 import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-upload.component';
 import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
                                         // and https://stackoverflow.com/a/54645398 and then 'npm run build'
-import { formViewParams, FormViewComponent } from 'app/gorico/views/form/form-view.component';
+import { formGetterParams, FormGetterComponent } from 'app/gorico/views/form-getter/form-getter.component';
 import { AuthService } from 'app/login-page/auth.service';
                                         
 
@@ -24,7 +24,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
 
   @ViewChild('fileUploader') fileUploader: FileUploadComponent;
 
-  @ViewChild('formRef') formRef: FormViewComponent;
+  @ViewChild('formRef') formRef: FormGetterComponent;
 
   attach: boolean;
 
@@ -36,22 +36,16 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
 
   file: File;
 
-  formParams: formViewParams = {
+  formParams: formGetterParams = {
       entryName: 'fe_attachment_form',
       keys: {},
-      index: 0,
-      total: 0,
-      isNew: true,
-      showNavBar: false
+      isNew: true
   };
 
-  newTypeParams: formViewParams = {
+  newTypeParams: formGetterParams = {
     entryName: 'tipi_allegati',
     keys: {},
-    index: 0,
-    total: 0,
-    isNew: true,
-    showNavBar: false
+    isNew: true
 };
 
   constructor(private _formBuilder: FormBuilder,

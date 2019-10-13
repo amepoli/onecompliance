@@ -1,61 +1,12 @@
 import { Component, ViewChild, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
-import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
+
 import 'rxjs/add/operator/filter';
 import { BackendService } from '../backend/backend.service';
 import { MatDialog } from '@angular/material';
-import { Validators } from '@angular/forms';
 import { TabType } from '../../bottom-tabs/bottom-tabs.component';
 import {Location} from '@angular/common';
 import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
-
-export interface formViewParams { 
-    entryName: string; 
-    keys: any;
-    index: number; 
-    total: number; 
-    isNew: boolean; 
-    showNavBar: boolean;
-}
-
-export type formDataType = 'text' | 'date' | 'number' | 'boolean';
-
-export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'radiobutton' | 'button';
-
-export interface formViewKey { // as per API specification
-    isHidden: boolean;
-    autoGenerate?: boolean;
-    readOnly: boolean;
-    isPrimary: boolean;
-    newLine: boolean;
-    key: string;
-    label: string;
-    subKeys?: [
-        {
-            key: string,
-            dataType: formDataType
-        }
-    ];
-    format: {
-        viewType: formViewType,
-        dataType?: formDataType,
-        value?: any,
-        options: [
-            {
-                id: number,
-                name: string
-            }
-        ],
-        comboQuery?: string,
-        validations?: [
-            {
-                message: string,
-                name: string,
-                validator: string
-            }
-        ] 
-        };
-}
+import { FormGetterComponent } from '../form-getter/form-getter.component';
 
 export interface tabViewKey { // as per API specification
     label: string;
@@ -66,6 +17,15 @@ export interface tabViewKey { // as per API specification
             son: string
         }
     ];
+}
+
+export interface formViewParams {
+    entryName: string;
+    keys: any;
+    index: number;
+    total: number;
+    isNew: boolean;
+    showNavBar: boolean;
 }
 
 type savingStateType = 'save' | 'saving' | 'done';
@@ -80,20 +40,17 @@ export class FormViewComponent implements OnChanges {
     @Input() tableData: formViewParams;
     @Output() sendEvent = new EventEmitter<any>();
 
-
-    @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
+    @ViewChild(FormGetterComponent) formGetter: FormGetterComponent;
 
     n = 0;
     tot = 0;
 
-    formData: FieldConfig[] = [];
-    isLoading = true;
-
-    viewKeys: formViewKey[]; // view form fields as specified by the backend
 
     tabKeys: tabViewKey[]; // view tab fields as specified by the backend
 
     currentKeys: any; // relevant keys passed by the parent component 
+
+    getterParams: any; // params for the child formGetter form view
 
     savingState: savingStateType = 'save';
 
@@ -104,80 +61,29 @@ export class FormViewComponent implements OnChanges {
         }
 
     ngOnChanges() {
-        let _this = this; // useful to debug
+        const _this = this; // useful to debug
+        _this.getterParams = {
+            entryName: _this.tableData.entryName,
+            keys: _this.tableData.keys,
+            isNew: _this.tableData.isNew
+        };
         _this.n = _this.tableData.index;
         _this.tot = _this.tableData.total;
-
-        _this.backendService.getView(_this.tableData.entryName).subscribe(
-            params => {
-                let tabs: TabType[];
-                _this.viewKeys = params.form_keys;
-                _this.tabKeys = params.subTables;
-                _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
-                if (!_this.tableData.isNew && _this.tabKeys != null) {
-                    // send the tabs parameter to the main view 
-                    tabs = _this.getTabs(_this.tabKeys, _this.tableData.keys);
-                    _this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
+        _this.formGetter.sendEvent.subscribe(
+            event => {
+                if (event.eventType === 'formData') {
+                    let tabs: TabType[];
+                    _this.currentKeys = event.viewKeys;
+                    _this.tabKeys = event.tabKeys;
+                    if (!_this.tableData.isNew && _this.tabKeys != null) {
+                        // send the tabs parameter to the main view 
+                        tabs = _this.getTabs(_this.tabKeys, _this.tableData.keys);
+                        _this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
+                    }
                 }
-                // load the form 
-                _this.loadTable();
-            });
-            
-    }
-
-    private loadTable(): void {
-
-        let _this = this; // useful to debug
-        _this.backendService.getData(_this.tableData.entryName, _this.currentKeys, null, true, _this.tableData.isNew).subscribe(
-            results => {
-                _this.isLoading = false;
-                console.log(results);
-                if (_this.tableData.isNew) {  // handle newly set primary keys
-                    let primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
-                    _this.currentKeys = _this.getCurrentKeys(primaryKeys, results);
-                } 
-                // prepare the form
-                _this.formData = _this.getFormData(_this.viewKeys, results);
-                _this.process_form(_this.formData);
-            },
-            error => {
-                _this.isLoading = false;
-            });
-    }
-
-    private getFormData(formKeys: formViewKey[], values: any): FieldConfig[] {
-
-        let fieldValues: FieldConfig[] = [];
-
-        for (const key in values) {
-            if (values.hasOwnProperty(key)) {
-                // TODO: handle multiple keys fields (combobox only)
-                const element = values[key];
-                const field = formKeys.find(e => (e.key === key));
-                let fieldValue: FieldConfig;
-                if (field) {
-                    fieldValue = {
-                        label: field.label,
-                        name: field.key,
-                        type: field.format.viewType,
-                        value: element ? (element.value ? element.value : element) : null,
-                        inputType: field.format.dataType ? field.format.dataType : 'text',
-                        readonly: field.readOnly ? field.readOnly : false,
-                        isVisible: field.isHidden ? !field.isHidden : true,
-                        newLine: field.newLine ? field.newLine : true,
-                        options: (element && element.options) ? element.options : [],
-                        validations: field.format.validations ? field.format.validations : []
-                    };
-                    fieldValues.push(fieldValue);
-                }
-                
             }
-        }
-
-        return fieldValues;
-
+        );
     }
-
 
     getTabs (tabKeys: tabViewKey[], keys: any): TabType[] {
         const tabs: TabType[] = [];
@@ -196,45 +102,6 @@ export class FormViewComponent implements OnChanges {
         });
         return tabs;
     }
-
-    private process_form(input_form: FieldConfig[]): void { // pre-process form got from back-end
-
-        let sameLineElements: FieldConfig[] = [];
-        for (let result of input_form) {
-            if (result['validations']) {
-                for (const validator of result['validations']) {
-                    if (validator['name'] === 'required') {
-                        validator['validator'] = Validators.required;
-                    }
-                    if (validator['name'] === 'pattern') {
-                        validator['validator'] = Validators.pattern(validator['validator']);
-                    }
-                }
-            }
-            if (result['newLine'] === false) {
-                sameLineElements.push(result);
-            } else {
-                result.width = this.processInlineElements(sameLineElements);
-                sameLineElements = [];
-            }
-        }
-        this.processInlineElements(sameLineElements); // handles inline elements of last line
-    }
-
-    private processInlineElements(elements: FieldConfig[]): number {
-
-        const numElements = 1 + elements.length; // current + previouses
-        let sumWidths = 0;
-        if (elements.length) { // some elements to put on the same line
-            const singleWidth = Math.floor(100 / numElements);
-            for (let element of elements) {
-                element.width = singleWidth - 10; // considering 10% margins;
-                sumWidths += singleWidth;
-            }
-        }
-        return (100 - 10 - sumWidths); // considering 10% margins
-    }
-
 
     submit(values: any) {
         // process the booleans (1/0 instead of true/false)
@@ -283,21 +150,6 @@ export class FormViewComponent implements OnChanges {
 
     toElement(target: string) {
         this.sendEvent.emit({ eventType: target });
-    }
-
-    getCurrentKeys(validKeysArray: formViewKey[], inputKeys:any) {
-
-        let outputKeys = {};
-        for (const key in inputKeys) {
-            if (inputKeys.hasOwnProperty(key)) {
-                const element = inputKeys[key];
-                if (validKeysArray.find(e => e.key === key)) {
-                    outputKeys[key] = element;
-                }   
-            }
-        }
-
-        return outputKeys;
     }
 
     showAttachments() {
