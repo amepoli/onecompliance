@@ -114,6 +114,7 @@ export class FormGetterComponent implements OnChanges {
                 if (_this.formParams.isNew) {  // handle newly set primary keys
                     let primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
                     _this.currentKeys = _this.getCurrentKeys(primaryKeys, results);
+                    _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
                 } 
                 // prepare the form
                 _this.formData = _this.getFormData(_this.viewKeys, results);

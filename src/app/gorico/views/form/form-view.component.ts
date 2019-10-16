@@ -80,6 +80,8 @@ export class FormViewComponent implements OnChanges {
                         tabs = _this.getTabs(_this.tabKeys, _this.tableData.keys);
                         _this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
                     }
+                } else if (event.eventType === 'updateKeys') {
+                    _this.currentKeys = event.viewKeys;
                 }
             }
         );
@@ -103,7 +105,8 @@ export class FormViewComponent implements OnChanges {
         return tabs;
     }
 
-    submit(values: any) {
+    onSave() {
+        let values = this.formGetter.form.form.value; // get the form data
         // process the booleans (1/0 instead of true/false)
         for (const value in values) {
             if (values.hasOwnProperty(value)) {
