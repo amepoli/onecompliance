@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material';
 import { TabType } from '../../bottom-tabs/bottom-tabs.component';
 import {Location} from '@angular/common';
 import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
-import { FormGetterComponent } from '../form-getter/form-getter.component';
+import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 
 export interface tabViewKey { // as per API specification
     label: string;
@@ -50,7 +50,7 @@ export class FormViewComponent implements OnChanges {
 
     currentKeys: any; // relevant keys passed by the parent component 
 
-    getterParams: any; // params for the child formGetter form view
+    getterParams: formGetterParams; // params for the child formGetter form view
 
     savingState: savingStateType = 'save';
 
@@ -65,7 +65,8 @@ export class FormViewComponent implements OnChanges {
         _this.getterParams = {
             entryName: _this.tableData.entryName,
             keys: _this.tableData.keys,
-            isNew: _this.tableData.isNew
+            isNew: _this.tableData.isNew,
+            isVisible: true
         };
         _this.n = _this.tableData.index;
         _this.tot = _this.tableData.total;

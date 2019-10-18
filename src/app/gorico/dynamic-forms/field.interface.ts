@@ -29,5 +29,5 @@ export interface FieldConfig {
   value?: any;
   validations?: Validator[];
   keys?: Key[];
-  onChange?(value: any): Observable<any>;
+  eventName?: string;
 }

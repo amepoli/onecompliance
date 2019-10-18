@@ -3,6 +3,7 @@ import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynami
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
 import { Validators } from '@angular/forms';
+import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -22,6 +23,10 @@ export interface formViewKey { // as per API specification
             dataType: formDataType
         }
     ];
+    outputEvent?: {
+        eventName: string,
+        eventTrigger: string
+    }
     format: {
         viewType: formViewType,
         dataType?: formDataType,
@@ -46,7 +51,8 @@ export interface formViewKey { // as per API specification
 export interface formGetterParams {
     entryName: string;
     keys: any;
-    isNew: boolean
+    isNew: boolean;
+    isVisible: boolean;
 }
 
 @Component({
@@ -69,7 +75,8 @@ export class FormGetterComponent implements OnChanges {
     currentKeys: any; // relevant keys passed by the parent component 
 
     constructor(
-        private backendService: BackendService) 
+        private backendService: BackendService,
+        private pubsubService: NgxPubSubService) 
         { }
 
     ngOnChanges() {
@@ -83,6 +90,15 @@ export class FormGetterComponent implements OnChanges {
                 _this.viewKeys = params.form_keys;
                 _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
                 _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables});
+                // handle input events
+                if (params.inputEvents != null) {
+                    params.inputEvents.eventList.forEach(event => {
+                    _this.pubsubService.subscribe(event,
+                        value => { 
+                            _this.eventCallback(event, value, params.inputEvents.actionType, params.inputEvents.actionValue); 
+                        });
+                    });
+                }
                 // load the form 
                 _this.loadTable();
             });
@@ -140,13 +156,14 @@ export class FormGetterComponent implements OnChanges {
                         label: field.label,
                         name: field.key,
                         type: field.format.viewType,
-                        value: element ? ((element.value != null) ? element.value : element) : null,
+                        value: (element != null) ? ((element.value != null) ? element.value : element) : null,
                         inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
                         readonly: (field.readOnly != null) ? field.readOnly : false,
                         isVisible: (field.isHidden != null) ? !field.isHidden : true,
                         newLine: (field.newLine != null) ? field.newLine : true,
                         options: (element != null && element.options != null) ? element.options : [],
-                        validations: (field.format.validations != null) ? field.format.validations : []
+                        validations: (field.format.validations != null) ? field.format.validations : [],
+                        eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null
                     };
                     fieldValues.push(fieldValue);
                 }
@@ -180,6 +197,7 @@ export class FormGetterComponent implements OnChanges {
             }
         }
         this.processInlineElements(sameLineElements); // handles inline elements of last line
+
     }
 
     private processInlineElements(elements: FieldConfig[]): number {
@@ -196,5 +214,11 @@ export class FormGetterComponent implements OnChanges {
         return (100 - 10 - sumWidths); // considering 10% margins
     }
 
+    private eventCallback(event: string, value: any, actionType: string, actionValue: string) {
+        console.log ('Received event: ' + event + ' with value: ' + value);
+        if (actionType === 'show') {
+            this.formParams.isVisible = !this.formParams.isVisible;
+        }
+    }
 
 }

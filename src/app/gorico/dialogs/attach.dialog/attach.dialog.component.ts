@@ -26,6 +26,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
 
   @ViewChild('formRef') formRef: FormGetterComponent;
 
+  @ViewChild('newTypeRef') newTypeRef: FormGetterComponent;
+
   attach: boolean;
 
   progress: number;
@@ -39,13 +41,15 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
   formParams: formGetterParams = {
       entryName: 'fe_attachment_form',
       keys: {},
-      isNew: true
+      isNew: true,
+      isVisible: true
   };
 
   newTypeParams: formGetterParams = {
     entryName: 'tipi_allegati',
     keys: {},
-    isNew: true
+    isNew: true,
+    isVisible: false
 };
 
   constructor(private _formBuilder: FormBuilder,
@@ -132,8 +136,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         var questo = this;
-        if (this.fileUploader != null) {
-            this.fileUploader.registerOnChange(function (file: File): void {
+        if (questo.fileUploader != null) {
+            questo.fileUploader.registerOnChange(function (file: File): void {
                 questo.file = file;
                 questo.form = questo.formRef.form.form; // getting the FormGroup
                 questo.form.patchValue({fileName: file.name, dimension: file.size});

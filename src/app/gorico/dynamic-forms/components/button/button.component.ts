@@ -1,11 +1,12 @@
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { FieldConfig } from "../../field.interface";
+import { NgxPubSubService } from "@pscoped/ngx-pub-sub";
 @Component({
   selector: "app-button",
   template: `
 <div [ngStyle]="{'display': 'inline-block', 'margin-right': '5%', 'margin-left': '5%'}" *ngIf="field.isVisible != false" [formGroup]="group">
-<button mat-raised-button color="primary" (click)="onClickButton($event)">{{field.label}}</button>
+<button mat-raised-button color="primary" (click)="onClickButton()">{{field.label}}</button>
 </div>
 `,
   styles: []
@@ -15,11 +16,11 @@ export class ButtonComponent implements OnInit {
   field: FieldConfig;
   group: FormGroup;
 
-  constructor() {}
+  constructor(private pubsubService: NgxPubSubService) {}
 
-  onClickButton(event) {
-    if (this.field.onChange !== null) {
-        this.field.onChange(this.field.name);
+  onClickButton() {
+    if (this.field.eventName !== null) {
+        this.pubsubService.publishEvent(this.field.eventName, 'click');
     }
   }
 
