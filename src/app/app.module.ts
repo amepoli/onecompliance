@@ -25,6 +25,7 @@ import { ForgotPasswordModule } from 'app/login-page/forgot-password.module';
 import { MailConfirmModule } from 'app/login-page/mail-confirm.module';
 import { MainTableModule } from 'app/gorico/main-table/main-table.module';
 import {AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
+import { NgxPubSubModule } from '@pscoped/ngx-pub-sub';
 
 const appRoutes: Routes = [
     {
@@ -89,7 +90,8 @@ const appRoutes: Routes = [
         ForgotPasswordModule,
         MailConfirmModule,
         MainTableModule,
-        AmplifyAngularModule
+        AmplifyAngularModule,
+        NgxPubSubModule
 
     ],
     providers: [

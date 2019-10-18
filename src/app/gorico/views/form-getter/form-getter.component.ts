@@ -140,13 +140,13 @@ export class FormGetterComponent implements OnChanges {
                         label: field.label,
                         name: field.key,
                         type: field.format.viewType,
-                        value: element ? (element.value ? element.value : element) : null,
-                        inputType: field.format.dataType ? field.format.dataType : 'text',
-                        readonly: field.readOnly ? field.readOnly : false,
-                        isVisible: field.isHidden ? !field.isHidden : true,
-                        newLine: field.newLine ? field.newLine : true,
-                        options: (element && element.options) ? element.options : [],
-                        validations: field.format.validations ? field.format.validations : []
+                        value: element ? ((element.value != null) ? element.value : element) : null,
+                        inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
+                        readonly: (field.readOnly != null) ? field.readOnly : false,
+                        isVisible: (field.isHidden != null) ? !field.isHidden : true,
+                        newLine: (field.newLine != null) ? field.newLine : true,
+                        options: (element != null && element.options != null) ? element.options : [],
+                        validations: (field.format.validations != null) ? field.format.validations : []
                     };
                     fieldValues.push(fieldValue);
                 }
