@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit} from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
@@ -10,6 +10,8 @@ import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/q
                                         // and https://stackoverflow.com/a/54645398 and then 'npm run build'
 import { formGetterParams, FormGetterComponent } from 'app/gorico/views/form-getter/form-getter.component';
 import { AuthService } from 'app/login-page/auth.service';
+import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { Observable, Subscription } from 'rxjs';
                                         
 
 @Component({
@@ -20,14 +22,13 @@ import { AuthService } from 'app/login-page/auth.service';
 
 
 
-export class AttachDialogComponent implements OnInit, AfterViewInit {
+export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('fileUploader') fileUploader: FileUploadComponent;
 
   @ViewChild('formRef') formRef: FormGetterComponent;
 
-  @ViewChild('newTypeRef') newTypeRef: FormGetterComponent;
-
+  @ViewChildren('newTypeRef') newTypeRef: QueryList<FormGetterComponent>;  // see https://expertcodeblog.wordpress.com/2018/01/12/angular-resolve-error-viewchild-annotation-returns-undefined/
   attach: boolean;
 
   progress: number;
@@ -37,6 +38,14 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
   listFiles: any[];
 
   file: File;
+
+  showTypeSave = false;
+
+  subscriptions: Subscription[] = []; 
+
+  newTypeSubscription: Subscription;  
+
+  currentKeys: any;
 
   formParams: formGetterParams = {
       entryName: 'fe_attachment_form',
@@ -58,7 +67,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
     private fileService: FileManagerService,
     private backendService: BackendService,
     private httpClient: HttpClient,
-    private authService: AuthService) {
+    private authService: AuthService,
+    private pubSubService: NgxPubSubService) {
 
         const questo = this; 
 
@@ -100,6 +110,14 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
         if (questo.formParams.keys.codice_azienda == null) {
             questo.formParams.keys.codice_azienda = questo.formParams.keys.codice_part;
         }
+        // subscribe to addType button, small hack as we know what is the associated event
+        let subscription = questo.pubSubService.subscribe('fe_attachment_form_addType', 
+            value => {
+                if (value === 'click') { // button click
+                    questo.showTypeSave = !questo.showTypeSave;  // toggle type save button
+                }
+            });
+        questo.subscriptions.push(subscription);
         questo.attach = false;
     }
 
@@ -140,9 +158,29 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
             questo.fileUploader.registerOnChange(function (file: File): void {
                 questo.file = file;
                 questo.form = questo.formRef.form.form; // getting the FormGroup
-                questo.form.patchValue({fileName: file.name, dimension: file.size});
+                questo.form.patchValue({ fileName: file.name, dimension: file.size });
             });
         }
+        let ext_subscription = questo.newTypeRef.changes.subscribe(
+            (comps: QueryList<FormGetterComponent>) => {
+                if (questo.newTypeSubscription == null) {  // subscribe only first time 
+                    questo.newTypeSubscription = comps.first.sendEvent.subscribe(
+                        event => {
+                            if (event.eventType === 'formData' || event.eventType === 'updateKeys') {
+                                questo.currentKeys = event.viewKeys;
+                            }
+                        }
+                    );
+                    questo.subscriptions.push(questo.newTypeSubscription);
+                }
+            });
+        questo.subscriptions.push(ext_subscription);
+    };
+
+    ngOnDestroy() {
+        this.subscriptions.forEach(subscription => {
+            subscription.unsubscribe();
+        });
     }
 
     onSave(): void {
@@ -200,7 +238,32 @@ export class AttachDialogComponent implements OnInit, AfterViewInit {
     }
 
     onNewType(event: any) {
-
+        let values = this.newTypeRef.first.form.form.value; // get the form data
+        // process the booleans (1/0 instead of true/false)
+        for (const value in values) {
+            if (values.hasOwnProperty(value)) {
+                const element = values[value];
+                if (element == null) {
+                    continue; // skip null entries
+                }
+                // decode combos
+                if (element['id'] != null) {
+                    values[value] = element['id'];
+                }
+                // encode boolean
+                else if (element === true) {
+                    values[value] = '1';
+                } 
+                else if (element === false) {
+                    values[value] = '0';
+                }
+            }
+        }
+        this.backendService.updateData(this.newTypeParams.entryName, this.currentKeys, values).subscribe(
+            result => {
+                this.newTypeRef.first.refreshView(); // reload the table after having added the new type
+            }
+        );
     }
 
     getFileSize (size: string): string {
