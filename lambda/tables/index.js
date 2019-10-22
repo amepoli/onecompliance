@@ -71,7 +71,7 @@ function replaceKeys(queryString, keys, keyTypes) {
 function getKeyTypes(entry_keys) {
     let keyTypes = entry_keys.map(k => {
         let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
-        return {key: k.key, dataType: dataType}; 
+        return {key: k.key, dataType: dataType, isPrimary: k.isPrimary}; 
     });
     return keyTypes;
 }

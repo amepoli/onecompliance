@@ -10,8 +10,7 @@ import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/q
                                         // and https://stackoverflow.com/a/54645398 and then 'npm run build'
 import { formGetterParams, FormGetterComponent } from 'app/gorico/views/form-getter/form-getter.component';
 import { AuthService } from 'app/login-page/auth.service';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
                                         
 
 @Component({
@@ -39,8 +38,6 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   file: File;
 
-  showTypeSave = false;
-
   subscriptions: Subscription[] = []; 
 
   newTypeSubscription: Subscription;  
@@ -67,8 +64,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     private fileService: FileManagerService,
     private backendService: BackendService,
     private httpClient: HttpClient,
-    private authService: AuthService,
-    private pubSubService: NgxPubSubService) {
+    private authService: AuthService) {
 
         const questo = this; 
 
@@ -105,19 +101,18 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         });
 
-        questo.formParams.keys = questo.data.keys;
-        // hack, fe_attachment_form needs this field
-        if (questo.formParams.keys.codice_azienda == null) {
-            questo.formParams.keys.codice_azienda = questo.formParams.keys.codice_part;
-        }
-        // subscribe to addType button, small hack as we know what is the associated event
-        let subscription = questo.pubSubService.subscribe('fe_attachment_form_addType', 
-            value => {
-                if (value === 'click') { // button click
-                    questo.showTypeSave = !questo.showTypeSave;  // toggle type save button
+        // prepare the key for the attachment form
+        for (const key in questo.data.keys) {
+            if (questo.data.keys.hasOwnProperty(key)) {
+                const element = questo.data.keys[key];
+                // hack, fe_attachment_form needs this field
+                if (key === 'codice_part') {
+                    questo.formParams.keys['codice_azienda'] = element;
+                } else {
+                    questo.formParams.keys[key] = element;
                 }
-            });
-        questo.subscriptions.push(subscription);
+            }
+        }
         questo.attach = false;
     }
 
@@ -202,10 +197,12 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                             const reader = new FileReader();
                             reader.onload = function (e) {
                                 const content = reader.result;
+                                /*
                                 var buffer = Buffer.alloc(content.byteLength);
                                 for (var i = 0; i < content.byteLength; i++) {
                                      buffer[i] = content[i];
-                                };
+                                };*/
+                                var buffer = Buffer.from(content);
                                 // create file content hash
                                 const hash = createHash('sha1').update(buffer).digest("hex");
                                 console.log(hash);
@@ -261,7 +258,11 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.backendService.updateData(this.newTypeParams.entryName, this.currentKeys, values).subscribe(
             result => {
-                this.newTypeRef.first.refreshView(); // reload the table after having added the new type
+                this.newTypeParams.isVisible = false; // hide the view 
+                setTimeout(() => {
+                    this.formRef.refreshView();          // refresh the combobox
+                    this.newTypeRef.first.loadTableData(); // load next ID 
+                }, 500); // reload the table after having added the new type
             }
         );
     }

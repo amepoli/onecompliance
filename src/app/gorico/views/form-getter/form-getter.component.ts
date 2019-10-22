@@ -100,7 +100,7 @@ export class FormGetterComponent implements OnChanges {
                     });
                 }
                 // load the form 
-                _this.loadTable();
+                _this.loadTableData();
             });
 
     }
@@ -120,7 +120,7 @@ export class FormGetterComponent implements OnChanges {
         return outputKeys;
     }
 
-    private loadTable(): void {
+    loadTableData(): void {
 
         let _this = this; // useful to debug
         _this.backendService.getData(_this.formParams.entryName, _this.currentKeys, null, true, _this.formParams.isNew).subscribe(
