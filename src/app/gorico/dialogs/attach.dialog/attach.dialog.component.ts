@@ -27,7 +27,9 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('formRef') formRef: FormGetterComponent;
 
+  // tslint:disable-next-line: max-line-length
   @ViewChildren('newTypeRef') newTypeRef: QueryList<FormGetterComponent>;  // see https://expertcodeblog.wordpress.com/2018/01/12/angular-resolve-error-viewchild-annotation-returns-undefined/
+  
   attach: boolean;
 
   progress: number;
@@ -152,7 +154,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         if (questo.fileUploader != null) {
             questo.fileUploader.registerOnChange(function (file: File): void {
                 questo.file = file;
-                questo.form = questo.formRef.form.form; // getting the FormGroup
+                questo.form = questo.formRef.formArray.first.form; // getting the FormGroup
                 questo.form.patchValue({ fileName: file.name, dimension: file.size });
             });
         }
@@ -235,7 +237,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onNewType(event: any) {
-        let values = this.newTypeRef.first.form.form.value; // get the form data
+        let values = this.newTypeRef.first.formArray.first.form.value; // get the form data
         // process the booleans (1/0 instead of true/false)
         for (const value in values) {
             if (values.hasOwnProperty(value)) {

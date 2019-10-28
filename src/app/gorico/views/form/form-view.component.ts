@@ -107,7 +107,7 @@ export class FormViewComponent implements OnChanges {
     }
 
     onSave() {
-        let values = this.formGetter.form.form.value; // get the form data
+        let values = this.formGetter.formArray.first.form.value; // get the form data, assuming there is only one form
         // process the booleans (1/0 instead of true/false)
         for (const value in values) {
             if (values.hasOwnProperty(value)) {

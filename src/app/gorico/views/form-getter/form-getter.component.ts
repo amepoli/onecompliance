@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList } from '@angular/core';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
@@ -65,10 +65,12 @@ export class FormGetterComponent implements OnChanges {
     @Input() formParams: formGetterParams;
     @Output() sendEvent = new EventEmitter<any>();
 
-    @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
+    @ViewChildren(DynamicFormComponent) formArray: QueryList<DynamicFormComponent>;
 
-    formData: FieldConfig[] = [];
+    formData: FieldConfig[][] = [[]];
     isLoading = true;
+
+    numRows = 1;
 
     viewKeys: formViewKey[]; // view form fields as specified by the backend
 
@@ -132,6 +134,7 @@ export class FormGetterComponent implements OnChanges {
                     _this.currentKeys = _this.getCurrentKeys(primaryKeys, results);
                     _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
                 } 
+                _this.numRows = results.length;
                 // prepare the form
                 _this.formData = _this.getFormData(_this.viewKeys, results);
                 _this.process_form(_this.formData);
@@ -141,33 +144,35 @@ export class FormGetterComponent implements OnChanges {
             });
     }
 
-    private getFormData(formKeys: formViewKey[], values: any): FieldConfig[] {
+    private getFormData(formKeys: formViewKey[], values: any): FieldConfig[][] {
 
-        let fieldValues: FieldConfig[] = [];
+        const fieldValues: FieldConfig[][] = [[]];
 
-        for (const key in values) {
-            if (values.hasOwnProperty(key)) {
-                // TODO: handle multiple keys fields (combobox only)
-                const element = values[key];
-                const field = formKeys.find(e => (e.key === key));
-                let fieldValue: FieldConfig;
-                if (field) {
-                    fieldValue = {
-                        label: field.label,
-                        name: field.key,
-                        type: field.format.viewType,
-                        value: (element != null) ? ((element.value != null) ? element.value : element) : null,
-                        inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
-                        readonly: (field.readOnly != null) ? field.readOnly : false,
-                        isVisible: (field.isHidden != null) ? !field.isHidden : true,
-                        newLine: (field.newLine != null) ? field.newLine : true,
-                        options: (element != null && element.options != null) ? element.options : [],
-                        validations: (field.format.validations != null) ? field.format.validations : [],
-                        eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null
-                    };
-                    fieldValues.push(fieldValue);
+        for (let index = 0; index < values.length; index++) {
+            for (const key in values[index]) {
+                if (values[index].hasOwnProperty(key)) {
+                    // TODO: handle multiple keys fields (combobox only)
+                    const element = values[index][key];
+                    const field = formKeys.find(e => (e.key === key));
+                    let fieldValue: FieldConfig;
+                    if (field) {
+                        fieldValue = {
+                            label: field.label,
+                            name: field.key,
+                            type: field.format.viewType,
+                            value: (element != null) ? ((element.value != null) ? element.value : element) : null,
+                            inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
+                            readonly: (field.readOnly != null) ? field.readOnly : false,
+                            isVisible: (field.isHidden != null) ? !field.isHidden : true,
+                            newLine: (field.newLine != null) ? field.newLine : true,
+                            options: (element != null && element.options != null) ? element.options : [],
+                            validations: (field.format.validations != null) ? field.format.validations : [],
+                            eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null
+                        };
+                        fieldValues[index].push(fieldValue);
+                    }
+
                 }
-                
             }
         }
 
@@ -175,28 +180,30 @@ export class FormGetterComponent implements OnChanges {
 
     }
 
-    private process_form(input_form: FieldConfig[]): void { // pre-process form got from back-end
+    private process_form(input_form: FieldConfig[][]): void { // pre-process form got from back-end
 
-        let sameLineElements: FieldConfig[] = [];
-        for (let result of input_form) {
-            if (result['validations']) {
-                for (const validator of result['validations']) {
-                    if (validator['name'] === 'required') {
-                        validator['validator'] = Validators.required;
-                    }
-                    if (validator['name'] === 'pattern') {
-                        validator['validator'] = Validators.pattern(validator['validator']);
+        for (let index = 0; index < input_form.length; index++) {
+            let sameLineElements: FieldConfig[] = [];
+            for (let result of input_form[index]) {
+                if (result['validations']) {
+                    for (const validator of result['validations']) {
+                        if (validator['name'] === 'required') {
+                            validator['validator'] = Validators.required;
+                        }
+                        if (validator['name'] === 'pattern') {
+                            validator['validator'] = Validators.pattern(validator['validator']);
+                        }
                     }
                 }
+                if (result['newLine'] === false) {
+                    sameLineElements.push(result);
+                } else {
+                    result.width = this.processInlineElements(sameLineElements);
+                    sameLineElements = [];
+                }
             }
-            if (result['newLine'] === false) {
-                sameLineElements.push(result);
-            } else {
-                result.width = this.processInlineElements(sameLineElements);
-                sameLineElements = [];
-            }
+            this.processInlineElements(sameLineElements); // handles inline elements of last line
         }
-        this.processInlineElements(sameLineElements); // handles inline elements of last line
 
     }
 
