@@ -138,6 +138,7 @@ export class FormGetterComponent implements OnChanges {
                 // prepare the form
                 _this.formData = _this.getFormData(_this.viewKeys, results);
                 _this.process_form(_this.formData);
+                _this.sendEvent.emit({ eventType: 'updateData', data: _this.formData})
             },
             error => {
                 _this.isLoading = false;

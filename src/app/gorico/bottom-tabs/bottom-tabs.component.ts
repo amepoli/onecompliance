@@ -5,6 +5,7 @@ import { tableViewParams } from 'app/gorico/views/table/table-view.component';
 export interface TabType {
     label: string;
     table: string;
+    type: string;
     keys: {};
 }
 

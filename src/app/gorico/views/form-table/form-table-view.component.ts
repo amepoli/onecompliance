@@ -1,17 +1,55 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild, OnChanges, Input } from '@angular/core';
+import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
+import { BackendService } from 'angular-in-memory-web-api';
+
+
+export interface formTableViewParams {
+  entryName: string;
+  keys: any;
+}
 
 @Component({
   selector: 'app-form-table',
   templateUrl: './form-table.component.html',
   styleUrls: ['./form-table.component.scss']
 })
-export class FormTableViewComponent implements OnInit {
 
-  rowsNumber = 0;
+export class FormTableViewComponent implements OnChanges {
 
-  constructor() { }
+  @ViewChild(FormGetterComponent) formGetter: FormGetterComponent;
 
-  ngOnInit() {
+  @Input() tableData: formTableViewParams;
+
+  currentKeys: any; // relevant keys passed by the parent component 
+
+  getterParams: formGetterParams; // params for the child formGetter form view
+
+  processView = false;   // handle the form-getter child view
+
+  constructor(
+    private backendService: BackendService
+  ) { }
+
+  ngOnChanges() {
+    const _this = this; // useful to debug
+    _this.getterParams = {
+      entryName: _this.tableData.entryName,
+      keys: _this.tableData.keys,
+      isNew: false,
+      isVisible: false  // hide the child view and handle it from parent
+    };
+    _this.formGetter.sendEvent.subscribe(
+      event => {
+        if (event.eventType === 'updateData') {   // child downloaded data
+          if (event.data.length > 1) {            // multiple rows, handle them
+            _this.getterParams.isVisible = false;
+            _this.processView = true;
+          }  else {                               // just one row, let the child process the view
+            _this.processView= false;
+            _this.getterParams.isVisible = true;
+          }
+        }
+      });
   }
 
 }

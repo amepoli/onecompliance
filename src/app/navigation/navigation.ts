@@ -80,7 +80,7 @@ export const navigation: FuseNavigation[] = [
                         title: 'Generic',
                         translate: 'NAV.GENERIC',
                         type : 'item',
-                        url  : '/login'
+                        url  : '/gorico/main-table/modelli_test'
                     },
                     {
                         id   : 'questionnaires',
