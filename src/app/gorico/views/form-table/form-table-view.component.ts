@@ -9,9 +9,9 @@ export interface formTableViewParams {
 }
 
 @Component({
-  selector: 'app-form-table',
-  templateUrl: './form-table.component.html',
-  styleUrls: ['./form-table.component.scss']
+  selector: 'form-table-view',
+  templateUrl: './form-table-view.component.html',
+  styleUrls: ['./form-table-view.component.scss']
 })
 
 export class FormTableViewComponent implements OnChanges {

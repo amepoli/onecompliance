@@ -8,9 +8,12 @@ import {Location} from '@angular/common';
 import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 
+type tabViewType = 'table' | 'tableForm';
+
 export interface tabViewKey { // as per API specification
     label: string;
     entryKey: string;
+    type: tabViewType; 
     keys: [
         {
             parent: string,
@@ -94,6 +97,7 @@ export class FormViewComponent implements OnChanges {
             const tab: TabType = { 
                 table: tabKey.entryKey, 
                 label: tabKey.label,
+                type: (tabKey.type != null && tabKey.type === 'tableForm') ? 'tableForm' : 'table',  // if not defined is a table 
                 keys: {}
             };
             tabKey.keys.forEach(key => {

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material';
 import { tableViewParams } from 'app/gorico/views/table/table-view.component';
+import { formTableViewParams } from '../views/form-table/form-table-view.component';
 
 export interface TabType {
     label: string;
@@ -21,6 +22,8 @@ export class BottomTabsComponent implements OnInit {
 
     tableParams: tableViewParams;
 
+    formTableParams: formTableViewParams;
+
     activeIndex = 0;
 
     constructor() { }
@@ -28,12 +31,14 @@ export class BottomTabsComponent implements OnInit {
     ngOnInit() {
         if (this.Tabs.length) {
             this.tableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys, showHeader: false, showFullScreenButton: true };
+            this.formTableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys };
         } 
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
         this.activeIndex = tabChangeEvent.index;
         this.tableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys, showHeader: false, showFullScreenButton: true };
+        this.formTableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys };
     }
 
     onEvent(event: any) {
