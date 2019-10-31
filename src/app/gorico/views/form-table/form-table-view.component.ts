@@ -1,6 +1,6 @@
 import { Component, ViewChild, OnChanges, Input } from '@angular/core';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
-import { BackendService } from 'angular-in-memory-web-api';
+import { BackendService } from '../backend/backend.service';;
 
 
 export interface formTableViewParams {
