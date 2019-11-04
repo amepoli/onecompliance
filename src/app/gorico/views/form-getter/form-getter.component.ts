@@ -150,6 +150,7 @@ export class FormGetterComponent implements OnChanges {
         const fieldValues: FieldConfig[][] = [[]];
 
         for (let index = 0; index < values.length; index++) {
+            fieldValues[index] = new Array();
             for (const key in values[index]) {
                 if (values[index].hasOwnProperty(key)) {
                     // TODO: handle multiple keys fields (combobox only)
