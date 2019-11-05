@@ -126,14 +126,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
 
     entry_keys.forEach(element => {
-        
-        if (!element.key) {
-            return;
-        }
-        let fieldString = comma + element.key;
-        if (!isForm && element.hasOwnProperty('queryFunct')) { // overridden by funct
-            fieldString = comma + replaceKeys(element.queryFunct, table_keys, keyTypes) + ' AS ' + element.key;
-        }
+
         if (isForm) { // check if combobox, then save query fields for later processing
             if (element.format.viewType === 'combobox') {
                 let comboQuery = element.format.comboQuery;
@@ -142,9 +135,19 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
                     comboQueries.push({ key: element.key, comboQuery: comboQuery });
                 }
             }
-        } 
-        queryString = queryString + fieldString;
+
+        }
+        if (!element.key || (element.sameOrigin != null && !element.sameOrigin)) {  // no table key or the key is from another table
+            return;
+        }
+        
+        let fieldString = comma + element.key;
+        if (!isForm && element.hasOwnProperty('queryFunct')) { // overridden by funct
+            fieldString = comma + replaceKeys(element.queryFunct, table_keys, keyTypes) + ' AS ' + element.key;
+        }
         comma = ','; // needed only the first time
+        queryString = queryString + fieldString;
+        
     });
 
     if (entry_params.origin) {
@@ -205,6 +208,27 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
     return { mainQuery: queryString, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
 
+}
+
+
+function getFieldQuery(entry_params, table_keys, field) {
+   
+   let entry_keys = entry_params.form_keys;
+   
+   let queryString = '';
+   
+   let keyTypes = getKeyTypes(entry_keys);
+   
+   let field_key = entry_keys[field];
+   
+   if (field_key != null) {
+        if (field_key.inputEvents != null && field_key.inputEvents.queryString != null) {
+            queryString = replaceKeys(field_key.inputEvents.queryString, table_keys, keyTypes);
+        }       
+   }
+   
+   return { mainQuery: queryString, comboQueries: [], preProcessQueries: [], postProcessQueries: [] };
+    
 }
 
 function getNewQuery(entry_params, table_keys) {
@@ -461,6 +485,8 @@ async function processPreMainPost(queryString, client, notFullTable) {
         return queryData;
 }
 
+// main function starts here
+
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
@@ -486,6 +512,8 @@ exports.handler = async (event, context) => {
     var isNewRecord = (queryParams['new'] === '1');
 
     var isFormRecord = (queryParams['form'] === '1');
+    
+    var isFieldUpdate = (queryParams['update_field'] != null);
 
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = JSON.parse(queryParams['keys']); // production scenario
@@ -501,7 +529,9 @@ exports.handler = async (event, context) => {
         entry_params = entry_params.Item;
 
         if (method === 'GET') {
-            if (isSearchRequest) {
+            if (isFieldUpdate){
+                queryString = getFieldQuery(entry_params, table_keys, queryParams['update_field']);
+            } else if (isSearchRequest) {
                 queryString = getTableQuery(entry_params, table_keys, false, search_keys);
             } else if (isNewRecord) {
                 queryString = getNewQuery(entry_params, table_keys);
@@ -532,7 +562,7 @@ exports.handler = async (event, context) => {
             }
 
             let searchOptions = []; 
-            if (queryData != null && queryString.comboQueries) {
+            if (queryData != null && queryString.comboQueries != null && queryString.comboQueries.length) {
                 for (let qd_index = 0; qd_index < queryData.length; qd_index++) {
                     for (let index = 0; index < queryString.comboQueries.length; index++) {
                         let element = queryString.comboQueries[index];
