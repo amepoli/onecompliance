@@ -18,6 +18,7 @@ export interface Key {
 export interface FieldConfig {
   label?: string;
   name?: string;
+  index?: number;
   inputType?: string;
   readonly?: boolean;
   isVisible?: boolean;

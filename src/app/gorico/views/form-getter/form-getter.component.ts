@@ -9,6 +9,8 @@ export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
 export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'radiobutton' | 'button';
 
+export type eventActionType = 'show' | 'update' | 'query';
+
 export interface formViewKey { // as per API specification
     isHidden: boolean;
     autoGenerate?: boolean;
@@ -26,7 +28,15 @@ export interface formViewKey { // as per API specification
     outputEvent?: {
         eventName: string,
         eventTrigger: string
-    }
+    };
+    inputEvents?: [
+        {
+            eventName: string,
+            actionType: eventActionType,
+            updateValue?: string,
+            queryString?: string
+        }
+    ];
     format: {
         viewType: formViewType,
         dataType?: formDataType,
@@ -76,6 +86,10 @@ export class FormGetterComponent implements OnChanges {
 
     currentKeys: any; // relevant keys passed by the parent component 
 
+    outputEvent: string; // event to be published to PubSub after (re)loading the table values
+
+    private firstRefresh = true;
+
     constructor(
         private backendService: BackendService,
         private pubsubService: NgxPubSubService) 
@@ -91,15 +105,33 @@ export class FormGetterComponent implements OnChanges {
             params => {
                 _this.viewKeys = params.form_keys;
                 _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
-                _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables});
+                _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables });
                 // handle input events
-                if (params.inputEvents != null) {
-                    params.inputEvents.eventList.forEach(event => {
-                    _this.pubsubService.subscribe(event,
-                        value => { 
-                            _this.eventCallback(event, value, params.inputEvents.actionType, params.inputEvents.actionValue); 
+                if (_this.firstRefresh) {
+                    _this.firstRefresh = false;     // avoid to subscribe to events again when refreshed
+                    if (params.inputEvents != null) {  // subscribe to global table events
+                        params.inputEvents.forEach(event => {
+                            _this.pubsubService.subscribe(event.eventName,
+                                value => {
+                                    _this.eventCallback(event.eventName, value, event.actionType, null, null); // null as keyListener means that the full table is affected
+                                });
                         });
+                    }
+                    _this.viewKeys.forEach(key => {    // subscribe to single field events
+                        if (key.inputEvents != null) {
+                            key.inputEvents.forEach(event => {
+                                _this.pubsubService.subscribe(event.eventName, value => {
+                                    const actionValue = (event.actionType === 'update') ? event.updateValue : null;
+                                    _this.eventCallback(event.eventName, value, event.actionType, actionValue, key.key);
+                                });
+                            });
+                        }
                     });
+
+                }
+                // take note of global table output event if any
+                if (params.outputEvent != null) {
+                    _this.outputEvent = params.outputEvent.eventName;
                 }
                 // load the form 
                 _this.loadTableData();
@@ -137,8 +169,17 @@ export class FormGetterComponent implements OnChanges {
                 _this.numRows = results.length;
                 // prepare the form
                 _this.formData = _this.getFormData(_this.viewKeys, results);
-                _this.process_form(_this.formData);
-                _this.sendEvent.emit({ eventType: 'updateData', data: _this.formData})
+                _this.process_form(_this.formData); 
+                _this.sendEvent.emit({ eventType: 'updateData', data: _this.formData}); // emit event for the parent
+                // check and in case publish a table event on PubSub
+
+                _this.formArray.changes.subscribe(
+                    c => { // publish when last element has been shown
+                        if (!_this.formParams.isNew && _this.outputEvent != null) {
+                            _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: 0, data: _this.formData });
+                        }
+                    }
+                );
             },
             error => {
                 _this.isLoading = false;
@@ -151,17 +192,16 @@ export class FormGetterComponent implements OnChanges {
 
         for (let index = 0; index < values.length; index++) {
             fieldValues[index] = new Array();
-            for (const key in values[index]) {
-                if (values[index].hasOwnProperty(key)) {
-                    // TODO: handle multiple keys fields (combobox only)
-                    const element = values[index][key];
-                    const field = formKeys.find(e => (e.key === key));
+            formKeys.forEach(field => {
+                if (field != null) {
+                    const element = values[index][field.key];
                     let fieldValue: FieldConfig;
-                    if (field) {
+                    if (field != null) {
                         fieldValue = {
                             label: field.label,
                             name: field.key,
                             type: field.format.viewType,
+                            index: index,
                             value: (element != null) ? ((element.value != null) ? element.value : element) : null,
                             inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
                             readonly: (field.readOnly != null) ? field.readOnly : false,
@@ -169,15 +209,13 @@ export class FormGetterComponent implements OnChanges {
                             newLine: (field.newLine != null) ? field.newLine : true,
                             options: (element != null && element.options != null) ? element.options : [],
                             validations: (field.format.validations != null) ? field.format.validations : [],
-                            eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null
+                            eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null  // output events are directly handled by the target field component
                         };
                         fieldValues[index].push(fieldValue);
                     }
-
                 }
-            }
+            }); 
         }
-
         return fieldValues;
 
     }
@@ -223,10 +261,35 @@ export class FormGetterComponent implements OnChanges {
         return (100 - 10 - sumWidths); // considering 10% margins
     }
 
-    private eventCallback(event: string, value: any, actionType: string, actionValue: string) {
+    // callback for pubSub events, value has form of {origin, index, data}
+    private eventCallback(event: string, value: any, actionType: string, actionValue: string, keyListener: string) {
+        const _this = this;
         console.log ('Received event: ' + event + ' with value: ' + value);
+        // get the listener element if not full table
+        let listener: FieldConfig = null;
+        if (keyListener != null) {
+            const targetLine = _this.formData[value.index];  // recover the form "line"
+            if (targetLine != null) {
+                listener = targetLine.find(field => field.name === keyListener);
+            }
+        }
         if (actionType === 'show') {
-            this.formParams.isVisible = !this.formParams.isVisible;
+            if (keyListener == null) {   // act on the full table
+                this.formParams.isVisible = !this.formParams.isVisible;
+            } else if (listener != null) {  // act on the listening element
+                listener.isVisible = !listener.isVisible;
+            }
+        } else if (actionType === 'query' && listener != null) {
+            let chiavi = {};
+            _this.formData[value.index].forEach(field => {
+                chiavi[field.name] = field.value;
+            });
+            _this.backendService.getField(_this.formParams.entryName, keyListener, JSON.stringify(chiavi)).subscribe(
+                result => {
+                    console.log(result);
+                });
+        } else if (actionType === 'update') {
+            // TODO
         }
     }
 

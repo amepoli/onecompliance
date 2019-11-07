@@ -130,7 +130,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
         if (isForm) { // check if combobox, then save query fields for later processing
             if (element.format.viewType === 'combobox') {
                 let comboQuery = element.format.comboQuery;
-                if (comboQuery) {
+                if (comboQuery != null) {
                     comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
                     comboQueries.push({ key: element.key, comboQuery: comboQuery });
                 }
@@ -440,7 +440,7 @@ function getDeleteQuery(entry_params, table_keys) {
 async function processPreMainPost(queryString, client, notFullTable) {
     
         let local_keys = {}; // additional keys generated with pre-main-post processing  
-        let queryData = {};
+        let queryData = [{}];
         
         console.log('queryString : ', queryString);
         
@@ -463,9 +463,9 @@ async function processPreMainPost(queryString, client, notFullTable) {
             let query = replaceLocalKeys(queryString.mainQuery, local_keys);
             queryData = await client.query(query);
             queryData = queryData.rows;
+            console.log('Main query : ', query, ' result : ', queryData);
         }
         
-        console.log('Main Query Data : ', queryData);
         
         // post-processing
         if (queryString.postProcessQueries.length) { // post-processing 
