@@ -284,7 +284,7 @@ export class FormGetterComponent implements OnChanges {
             _this.formData[value.index].forEach(field => {
                 chiavi[field.name] = field.value;
             });
-            _this.backendService.getField(_this.formParams.entryName, keyListener, JSON.stringify(chiavi)).subscribe(
+            _this.backendService.getField(_this.formParams.entryName, keyListener, chiavi).subscribe(
                 result => {
                     console.log(result);
                 });
