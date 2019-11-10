@@ -215,19 +215,27 @@ function getFieldQuery(entry_params, table_keys, field) {
    
    let entry_keys = entry_params.form_keys;
    
-   let queryString = '';
+   let eventQueries = [];  // exploit preprocess queries to run the event queries
    
    let keyTypes = getKeyTypes(entry_keys);
    
-   let field_key = entry_keys[field];
+   let field_key = entry_keys.find(entry => entry.key === field);
+   
+   console.log(field_key);
    
    if (field_key != null) {
-        if (field_key.inputEvents != null && field_key.inputEvents.queryString != null) {
-            queryString = replaceKeys(field_key.inputEvents.queryString, table_keys, keyTypes);
+        if (field_key.inputEvents != null) {
+            field_key.inputEvents.forEach(
+                event => {
+                   if (event.queryString != null) {
+                       const queryString = replaceKeys(event.queryString, table_keys, keyTypes);
+                       eventQueries.push(queryString);
+                   } 
+                });
         }       
    }
    
-   return { mainQuery: queryString, comboQueries: [], preProcessQueries: [], postProcessQueries: [] };
+   return { mainQuery:'', preProcessQueries:[], postProcessQueries:[], comboQueries:[], eventQueries: eventQueries };
     
 }
 
@@ -552,13 +560,21 @@ exports.handler = async (event, context) => {
         // process query string(s) - just check if new insertion in case of POST
         queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE')); 
         
-        // process comboboxes
+        // process comboboxes and/or event queries 
         if (method === 'GET') {
             
             if (queryData != null && isNewRecord && queryString.defaultValues) { // only for new records, merge default values
                 queryData.forEach(item => {
                     Object.assign(item, queryString.defaultValues);
                 });
+            }
+            
+            if (queryString.eventQueries != null) {
+                queryData = [];
+                for (let index = 0; index < queryString.eventQueries.length; index++) {
+                    let eventData = await client.query(queryString.eventQueries[index]);
+                    queryData = queryData.concat(eventData.rows);
+                }
             }
 
             let searchOptions = []; 

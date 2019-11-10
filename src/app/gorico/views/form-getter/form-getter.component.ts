@@ -280,13 +280,20 @@ export class FormGetterComponent implements OnChanges {
                 listener.isVisible = !listener.isVisible;
             }
         } else if (actionType === 'query' && listener != null) {
-            let chiavi = {};
+            const chiavi = {};
             _this.formData[value.index].forEach(field => {
                 chiavi[field.name] = field.value;
             });
             _this.backendService.getField(_this.formParams.entryName, keyListener, chiavi).subscribe(
                 result => {
-                    console.log(result);
+                    console.log(keyListener, result);
+                    const targetViewField = _this.viewKeys.find(viewKey => viewKey.key === keyListener);
+                    const targetFormField = _this.formData[value.index].find(formKey => formKey.name === keyListener);
+                    if (targetViewField.format.viewType === 'combobox') {   // got combobox options
+                        targetFormField.options = result;
+                    } else {                                                // got field value
+                        targetFormField.value = result[keyListener];
+                    }
                 });
         } else if (actionType === 'update') {
             // TODO
