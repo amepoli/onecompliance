@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
@@ -70,7 +70,7 @@ export interface formGetterParams {
     templateUrl: './form-getter.component.html',
     styleUrls: ['./form-getter.component.scss']
 })
-export class FormGetterComponent implements OnChanges {
+export class FormGetterComponent implements OnChanges,AfterViewInit {
 
     @Input() formParams: formGetterParams;
     @Output() sendEvent = new EventEmitter<any>();
@@ -99,8 +99,21 @@ export class FormGetterComponent implements OnChanges {
         this.refreshView();
     }
 
+    ngAfterViewInit() {
+        const _this = this;
+        // check and in case publish a table event on PubSub
+        _this.formArray.changes.subscribe(
+            c => { // publish when last element has been shown
+                if (!_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length) {
+                        // tslint:disable-next-line: max-line-length
+                        _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: -1, data: _this.formData }); // -1 as index indicates the full page as event origin
+                }
+            }
+        );
+    }
+
     refreshView() {
-        let _this = this;
+        const _this = this;
         _this.backendService.getView(_this.formParams.entryName).subscribe(
             params => {
                 _this.viewKeys = params.form_keys;
@@ -171,15 +184,6 @@ export class FormGetterComponent implements OnChanges {
                 _this.formData = _this.getFormData(_this.viewKeys, results);
                 _this.process_form(_this.formData); 
                 _this.sendEvent.emit({ eventType: 'updateData', data: _this.formData}); // emit event for the parent
-                // check and in case publish a table event on PubSub
-
-                _this.formArray.changes.subscribe(
-                    c => { // publish when last element has been shown
-                        if (!_this.formParams.isNew && _this.outputEvent != null) {
-                            _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: 0, data: _this.formData });
-                        }
-                    }
-                );
             },
             error => {
                 _this.isLoading = false;
@@ -264,37 +268,45 @@ export class FormGetterComponent implements OnChanges {
     // callback for pubSub events, value has form of {origin, index, data}
     private eventCallback(event: string, value: any, actionType: string, actionValue: string, keyListener: string) {
         const _this = this;
-        console.log ('Received event: ' + event + ' with value: ' + value);
-        // get the listener element if not full table
-        let listener: FieldConfig = null;
-        if (keyListener != null) {
-            const targetLine = _this.formData[value.index];  // recover the form "line"
-            if (targetLine != null) {
-                listener = targetLine.find(field => field.name === keyListener);
-            }
-        }
+        console.log('Received event: ' + event + ' with value: ' + value);
+
         if (actionType === 'show') {
+            // get the listener element if not full table
+            let listener: FieldConfig = null;
+            if (keyListener != null && value.index >= 0) {
+                const targetLine = _this.formData[value.index];  // recover the form "line"
+                if (targetLine != null) {
+                    listener = targetLine.find(field => field.name === keyListener);
+                }
+            }
             if (keyListener == null) {   // act on the full table
                 this.formParams.isVisible = !this.formParams.isVisible;
             } else if (listener != null) {  // act on the listening element
                 listener.isVisible = !listener.isVisible;
             }
-        } else if (actionType === 'query' && listener != null) {
+        } else if (actionType === 'query') {
             const chiavi = {};
-            _this.formData[value.index].forEach(field => {
-                chiavi[field.name] = field.value;
-            });
-            _this.backendService.getField(_this.formParams.entryName, keyListener, chiavi).subscribe(
-                result => {
-                    console.log(keyListener, result);
-                    const targetViewField = _this.viewKeys.find(viewKey => viewKey.key === keyListener);
-                    const targetFormField = _this.formData[value.index].find(formKey => formKey.name === keyListener);
-                    if (targetViewField.format.viewType === 'combobox') {   // got combobox options
-                        targetFormField.options = result;
-                    } else {                                                // got field value
-                        targetFormField.value = result[keyListener];
-                    }
+            const target_index = (value.index >= 0) ? value.index : null;  // null means the event comes from the full table
+            let index = (target_index == null) ? _this.formArray.length : 1;
+            // iterate over all indexes when full table or instead affect the target index only
+            while (index > 0) {
+                index--;
+                const current_index = (target_index != null) ? target_index : index;
+                _this.formData[current_index].forEach(field => {
+                    chiavi[field.name] = field.value;
                 });
+                _this.backendService.getField(_this.formParams.entryName, keyListener, chiavi).subscribe(
+                    result => {
+                        console.log(keyListener, result);
+                        const targetViewField = _this.viewKeys.find(viewKey => viewKey.key === keyListener);
+                        if (targetViewField.format.viewType === 'combobox') {   // got combobox options
+                            // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
+                        } else {                                                // got field value
+                            const childrenArray = _this.formArray.toArray();
+                            childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
+                        }
+                    });
+            }
         } else if (actionType === 'update') {
             // TODO
         }
