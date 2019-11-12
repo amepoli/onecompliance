@@ -4,6 +4,7 @@ import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
 import { Validators } from '@angular/forms';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { ComboboxComponent } from 'app/gorico/dynamic-forms/components/combobox/combobox.component';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -299,10 +300,12 @@ export class FormGetterComponent implements OnChanges,AfterViewInit {
                     result => {
                         console.log(keyListener, result);
                         const targetViewField = _this.viewKeys.find(viewKey => viewKey.key === keyListener);
+                        const childrenArray = _this.formArray.toArray();
                         if (targetViewField.format.viewType === 'combobox') {   // got combobox options
                             // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
+                            const combobox = <ComboboxComponent>childrenArray[current_index].dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
+                            combobox.setOptions(result);
                         } else {                                                // got field value
-                            const childrenArray = _this.formArray.toArray();
                             childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
                         }
                     });

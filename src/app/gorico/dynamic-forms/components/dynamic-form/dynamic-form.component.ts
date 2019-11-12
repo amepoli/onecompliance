@@ -4,15 +4,17 @@ import {
   Input,
   OnChanges,
   OnInit,
-  Output
+  Output,
+  ViewChildren,
+  QueryList
 } from '@angular/core';
 import {
   FormGroup,
   FormBuilder,
-  Validators,
-  FormControl
+  Validators
 } from '@angular/forms';
 import { FieldConfig, Validator } from '../../field.interface';
+import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive';
 
 @Component({
   exportAs: 'dynamicForm',
@@ -31,6 +33,8 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() formName: string;
 
   @Output() submit: EventEmitter<any> = new EventEmitter<any>();
+
+  @ViewChildren(DynamicFieldDirective) dynamicFields: QueryList<DynamicFieldDirective>;
 
   form: FormGroup;
 

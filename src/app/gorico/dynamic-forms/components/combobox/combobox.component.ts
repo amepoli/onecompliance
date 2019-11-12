@@ -57,6 +57,11 @@ export class ComboboxComponent implements OnInit, OnDestroy {
     this._onDestroy.complete();
   }
 
+  setOptions(options: any[]) {
+    this.field.options = options;
+    this.filteredItems.next(this.field.options.slice());
+  }
+
 
   private filterItems() {
     if (!this.field.options) {
