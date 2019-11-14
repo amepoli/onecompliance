@@ -211,7 +211,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 }
 
 
-function getFieldQuery(entry_params, table_keys, field) {
+function getFieldQuery(entry_params, table_keys, eventInfo) {
    
    let entry_keys = entry_params.form_keys;
    
@@ -219,7 +219,7 @@ function getFieldQuery(entry_params, table_keys, field) {
    
    let keyTypes = getKeyTypes(entry_keys);
    
-   let field_key = entry_keys.find(entry => entry.key === field);
+   let field_key = entry_keys.find(entry => entry.key === eventInfo.field);
    
    console.log(field_key);
    
@@ -227,7 +227,7 @@ function getFieldQuery(entry_params, table_keys, field) {
         if (field_key.inputEvents != null) {
             field_key.inputEvents.forEach(
                 event => {
-                   if (event.queryString != null) {
+                   if (event.queryString != null && event.eventName === eventInfo.name) {
                        const queryString = replaceKeys(event.queryString, table_keys, keyTypes);
                        eventQueries.push(queryString);
                    } 
@@ -521,7 +521,7 @@ exports.handler = async (event, context) => {
 
     var isFormRecord = (queryParams['form'] === '1');
     
-    var isFieldUpdate = (queryParams['update_field'] != null);
+    var isFieldUpdate = (queryParams['event'] != null);
 
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = JSON.parse(queryParams['keys']); // production scenario
@@ -538,7 +538,7 @@ exports.handler = async (event, context) => {
 
         if (method === 'GET') {
             if (isFieldUpdate){
-                queryString = getFieldQuery(entry_params, table_keys, queryParams['update_field']);
+                queryString = getFieldQuery(entry_params, table_keys, JSON.parse(queryParams['event']));
             } else if (isSearchRequest) {
                 queryString = getTableQuery(entry_params, table_keys, false, search_keys);
             } else if (isNewRecord) {

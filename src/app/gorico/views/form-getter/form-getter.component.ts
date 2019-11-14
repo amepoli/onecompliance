@@ -296,7 +296,7 @@ export class FormGetterComponent implements OnChanges,AfterViewInit {
                 _this.formData[current_index].forEach(field => {
                     chiavi[field.name] = field.value;
                 });
-                _this.backendService.getField(_this.formParams.entryName, keyListener, chiavi).subscribe(
+                _this.backendService.getField(_this.formParams.entryName, keyListener, chiavi, event).subscribe(
                     result => {
                         console.log(keyListener, result);
                         const targetViewField = _this.viewKeys.find(viewKey => viewKey.key === keyListener);

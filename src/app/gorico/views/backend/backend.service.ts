@@ -51,9 +51,9 @@ constructor(private amplifyService: AmplifyService) {
     return from(this.amplifyService.api().get(this.apiName, '/data', this.myGetInit));
   }
 
-  getField(entryName: string, field: string, keys: any): Observable<any> {
+  getField(entryName: string, field: string, keys: any, event: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), update_field: field};
+    this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), event: JSON.stringify({name: event, field: field})};
     return from(this.amplifyService.api().get(this.apiName, '/data', this.myGetInit));
   }
 
