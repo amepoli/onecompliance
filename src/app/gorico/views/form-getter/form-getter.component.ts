@@ -286,21 +286,28 @@ export class FormGetterComponent implements OnChanges,AfterViewInit {
                 listener.isVisible = !listener.isVisible;
             }
         } else if (actionType === 'query') {
-            const chiavi = {};
+            let chiavi = {};
             const target_index = (value.index >= 0) ? value.index : null;  // null means the event comes from the full table
             let index = (target_index == null) ? _this.formArray.length : 1;
+            const targetViewField = _this.viewKeys.find(viewKey => viewKey.key === keyListener);
+            const childrenArray = _this.formArray.toArray();
             // iterate over all indexes when full table or instead affect the target index only
             while (index > 0) {
                 index--;
                 const current_index = (target_index != null) ? target_index : index;
-                _this.formData[current_index].forEach(field => {
-                    chiavi[field.name] = field.value;
-                });
+                chiavi = childrenArray[current_index].form.value;
+                // decode form values in case of comboboxes
+                for (const key in chiavi) {
+                    if (chiavi.hasOwnProperty(key)) {
+                        const element = chiavi[key];
+                        if (element != null && element.id != null) {
+                            chiavi[key] = element.id;
+                        }
+                    }
+                }
                 _this.backendService.getField(_this.formParams.entryName, keyListener, chiavi, event).subscribe(
                     result => {
                         console.log(keyListener, result);
-                        const targetViewField = _this.viewKeys.find(viewKey => viewKey.key === keyListener);
-                        const childrenArray = _this.formArray.toArray();
                         if (targetViewField.format.viewType === 'combobox') {   // got combobox options
                             // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
                             const combobox = <ComboboxComponent>childrenArray[current_index].dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;

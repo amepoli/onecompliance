@@ -3,12 +3,13 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { FieldConfig, Item } from '../../field.interface';
 import { ReplaySubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 @Component({
   selector: 'combobox',
   template: `
 <mat-form-field [ngStyle]="{'margin-right': '5%', 'margin-left': '5%','width': field.width+'%'}" *ngIf="field.isVisible != false" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
-<mat-select [ngModel]="field.value" [formControlName]="field.name" [placeholder]="field.label">
+<mat-select [ngModel]="field.value" [formControlName]="field.name" [placeholder]="field.label" (selectionChange)="onSelection($event)">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
 <mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly">{{item.name}}</mat-option>
 </mat-select>
@@ -30,7 +31,8 @@ export class ComboboxComponent implements OnInit, OnDestroy {
    private _onDestroy = new Subject<void>();
 
 
-  constructor() {}
+  constructor(private pubsubService: NgxPubSubService) {}
+
   ngOnInit() {
     
     // filter out null values
@@ -60,6 +62,11 @@ export class ComboboxComponent implements OnInit, OnDestroy {
   setOptions(options: any[]) {
     this.field.options = options;
     this.filteredItems.next(this.field.options.slice());
+  }
+
+  onSelection(event: any) {
+    if (event.value != null && this.field.eventName != null) {
+        this.pubsubService.publishEvent(this.field.eventName, {origin: 'combobox', index: this.field.index, data: event.value.id}); 
   }
 
 
