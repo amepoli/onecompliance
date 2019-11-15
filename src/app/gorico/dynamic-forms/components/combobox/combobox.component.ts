@@ -67,6 +67,7 @@ export class ComboboxComponent implements OnInit, OnDestroy {
   onSelection(event: any) {
     if (event.value != null && this.field.eventName != null) {
         this.pubsubService.publishEvent(this.field.eventName, {origin: 'combobox', index: this.field.index, data: event.value.id}); 
+    }
   }
 
 

@@ -1,10 +1,11 @@
-import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy } from '@angular/core';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
 import { Validators } from '@angular/forms';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ComboboxComponent } from 'app/gorico/dynamic-forms/components/combobox/combobox.component';
+import { Subscription } from 'rxjs';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -71,7 +72,7 @@ export interface formGetterParams {
     templateUrl: './form-getter.component.html',
     styleUrls: ['./form-getter.component.scss']
 })
-export class FormGetterComponent implements OnChanges,AfterViewInit {
+export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy {
 
     @Input() formParams: formGetterParams;
     @Output() sendEvent = new EventEmitter<any>();
@@ -88,6 +89,8 @@ export class FormGetterComponent implements OnChanges,AfterViewInit {
     currentKeys: any; // relevant keys passed by the parent component 
 
     outputEvent: string; // event to be published to PubSub after (re)loading the table values
+
+    subscriptions: Subscription[] = [];
 
     private firstRefresh = true;
 
@@ -113,6 +116,12 @@ export class FormGetterComponent implements OnChanges,AfterViewInit {
         );
     }
 
+    ngOnDestroy() {
+        this.subscriptions.forEach( subscription => {
+            subscription.unsubscribe();
+        });
+    }
+
     refreshView() {
         const _this = this;
         _this.backendService.getView(_this.formParams.entryName).subscribe(
@@ -125,19 +134,21 @@ export class FormGetterComponent implements OnChanges,AfterViewInit {
                     _this.firstRefresh = false;     // avoid to subscribe to events again when refreshed
                     if (params.inputEvents != null) {  // subscribe to global table events
                         params.inputEvents.forEach(event => {
-                            _this.pubsubService.subscribe(event.eventName,
+                            const subcription = _this.pubsubService.subscribe(event.eventName,
                                 value => {
                                     _this.eventCallback(event.eventName, value, event.actionType, null, null); // null as keyListener means that the full table is affected
                                 });
+                            _this.subscriptions.push(subcription);
                         });
                     }
                     _this.viewKeys.forEach(key => {    // subscribe to single field events
                         if (key.inputEvents != null) {
                             key.inputEvents.forEach(event => {
-                                _this.pubsubService.subscribe(event.eventName, value => {
+                                const subscription = _this.pubsubService.subscribe(event.eventName, value => {
                                     const actionValue = (event.actionType === 'update') ? event.updateValue : null;
                                     _this.eventCallback(event.eventName, value, event.actionType, actionValue, key.key);
                                 });
+                                _this.subscriptions.push(subscription);
                             });
                         }
                     });
@@ -266,6 +277,21 @@ export class FormGetterComponent implements OnChanges,AfterViewInit {
         return (100 - 10 - sumWidths); // considering 10% margins
     }
 
+    private replaceSpecialChars(myString: string): string{
+        let processed = null;
+        if (myString != null) {
+            processed = myString.replace(/\\n/g, "\\n")
+            .replace(/\\'/g, "\\'")
+            .replace(/\\"/g, '\\"')
+            .replace(/\\&/g, "\\&")
+            .replace(/\\r/g, "\\r")
+            .replace(/\\t/g, "\\t")
+            .replace(/\\b/g, "\\b")
+            .replace(/\\f/g, "\\f");
+        }
+        return processed;
+    }
+
     // callback for pubSub events, value has form of {origin, index, data}
     private eventCallback(event: string, value: any, actionType: string, actionValue: string, keyListener: string) {
         const _this = this;
@@ -296,12 +322,34 @@ export class FormGetterComponent implements OnChanges,AfterViewInit {
                 index--;
                 const current_index = (target_index != null) ? target_index : index;
                 chiavi = childrenArray[current_index].form.value;
-                // decode form values in case of comboboxes
+                // encode special chars in keys
                 for (const key in chiavi) {
                     if (chiavi.hasOwnProperty(key)) {
                         const element = chiavi[key];
-                        if (element != null && element.id != null) {
-                            chiavi[key] = element.id;
+                        
+                    }
+                }
+                // process values
+                for (const key in chiavi) {
+                    if (chiavi.hasOwnProperty(key)) {
+                        const element = chiavi[key];
+                        if (element == null) {
+                            continue; // skip null entries
+                        }
+                        // decode combos
+                        if (element['id'] != null) {
+                            chiavi[key] = element['id'];
+                        }
+                        // encode boolean
+                        else if (element === true) {
+                            chiavi[key] = '1';
+                        } 
+                        else if (element === false) {
+                            chiavi[key] = '0';
+                        }
+                        // encode special chars
+                        if (typeof element === 'string') {
+                            chiavi[key] = _this.replaceSpecialChars(element);
                         }
                     }
                 }
