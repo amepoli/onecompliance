@@ -19,6 +19,7 @@ export interface formViewKey { // as per API specification
     readOnly: boolean;
     isPrimary: boolean;
     newLine: boolean;
+    size?: number;
     key: string;
     label: string;
     subKeys?: [
@@ -223,6 +224,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             readonly: (field.readOnly != null) ? field.readOnly : false,
                             isVisible: (field.isHidden != null) ? !field.isHidden : true,
                             newLine: (field.newLine != null) ? field.newLine : true,
+                            width: (field.size != null) ? (field.size * 10) - 10 : null, // leave a 5% margin left and right   
                             options: (element != null && element.options != null) ? element.options : [],
                             validations: (field.format.validations != null) ? field.format.validations : [],
                             eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null  // output events are directly handled by the target field component
@@ -251,11 +253,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
                 }
-                if (result['newLine'] === false) {
-                    sameLineElements.push(result);
-                } else {
-                    result.width = this.processInlineElements(sameLineElements);
-                    sameLineElements = [];
+                if (result.width == null) {     // if null, must be null for all elements on the same line, then split the width equally
+                    if (result['newLine'] === false) {
+                        sameLineElements.push(result);
+                    } else {
+                        result.width = this.processInlineElements(sameLineElements);
+                        sameLineElements = [];
+                    }
                 }
             }
             this.processInlineElements(sameLineElements); // handles inline elements of last line
@@ -268,6 +272,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const numElements = 1 + elements.length; // current + previouses
         let sumWidths = 0;
         if (elements.length) { // some elements to put on the same line
+            // process the elements with defined 1/10 size first
             const singleWidth = Math.floor(100 / numElements);
             for (let element of elements) {
                 element.width = singleWidth - 10; // considering 10% margins;
