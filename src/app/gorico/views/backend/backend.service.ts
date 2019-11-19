@@ -51,10 +51,11 @@ constructor(private amplifyService: AmplifyService) {
     return from(this.amplifyService.api().get(this.apiName, '/data', this.myGetInit));
   }
 
-  getField(entryName: string, field: string, keys: any, event: string): Observable<any> {
+  postEvent(entryName: string, field: string, data: any, event: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), event: JSON.stringify({name: event, field: field})};
-    return from(this.amplifyService.api().get(this.apiName, '/data', this.myGetInit));
+    this.myPutPostInit.queryStringParameters = {entry_name: entryName, event: JSON.stringify({name: event, field: field})};
+    this.myPutPostInit.body = data; 
+    return from(this.amplifyService.api().post(this.apiName, '/data', this.myPutPostInit));
   }
 
   deleteData(entryName: string, keys: any): Observable<any> {

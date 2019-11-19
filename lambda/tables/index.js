@@ -211,17 +211,17 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 }
 
 
-function getFieldQuery(entry_params, table_keys, eventInfo) {
+function getEventQuery(entry_params, body, eventInfo) {
    
    let entry_keys = entry_params.form_keys;
    
    let eventQueries = [];  // exploit preprocess queries to run the event queries
    
+   let table_keys = body;  // keys provided with body
+   
    let keyTypes = getKeyTypes(entry_keys);
    
    let field_key = entry_keys.find(entry => entry.key === eventInfo.field);
-   
-   console.log(field_key);
    
    if (field_key != null) {
         if (field_key.inputEvents != null) {
@@ -521,10 +521,10 @@ exports.handler = async (event, context) => {
 
     var isFormRecord = (queryParams['form'] === '1');
     
-    var isFieldUpdate = (queryParams['event'] != null);
+    var isEventUpdate = (queryParams['event'] != null);
 
     //var table_keys = queryParams['keys']; // test scenario
-    var table_keys = JSON.parse(queryParams['keys']); // production scenario
+    var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
 
     var queryData = {};
     
@@ -537,9 +537,7 @@ exports.handler = async (event, context) => {
         entry_params = entry_params.Item;
 
         if (method === 'GET') {
-            if (isFieldUpdate){
-                queryString = getFieldQuery(entry_params, table_keys, JSON.parse(queryParams['event']));
-            } else if (isSearchRequest) {
+            if (isSearchRequest) {
                 queryString = getTableQuery(entry_params, table_keys, false, search_keys);
             } else if (isNewRecord) {
                 queryString = getNewQuery(entry_params, table_keys);
@@ -549,8 +547,12 @@ exports.handler = async (event, context) => {
                 queryString = getTableQuery(entry_params, table_keys, false, null);
             }
         } else if (method === 'POST') {
-            // have to check if the record exists (update) or is new (insert), so try to recover it
-            queryString = getTableQuery(entry_params, table_keys, true, null);
+            if (isEventUpdate){
+                queryString = getEventQuery(entry_params, JSON.parse(event.body), JSON.parse(queryParams['event']));
+            } else {
+                // have to check if the record exists (update) or is new (insert), so try to recover it
+                queryString = getTableQuery(entry_params, table_keys, true, null);
+            }
         } else if (method === 'DELETE') {
             queryString = getDeleteQuery(entry_params, table_keys);
         }
@@ -561,7 +563,7 @@ exports.handler = async (event, context) => {
         queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE')); 
         
         // process comboboxes and/or event queries 
-        if (method === 'GET') {
+        if (method === 'GET' || isEventUpdate) {
             
             if (queryData != null && isNewRecord && queryString.defaultValues) { // only for new records, merge default values
                 queryData.forEach(item => {
@@ -604,7 +606,7 @@ exports.handler = async (event, context) => {
         }
         
         
-        if (method === 'POST') { 
+        if (method === 'POST' && !isEventUpdate) { 
             // perform insert or update depending on previous query
             let newRecord = queryData.length ? false : true;
             let body = JSON.parse(event.body); // production scenario 

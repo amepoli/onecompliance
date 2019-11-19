@@ -277,20 +277,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         return (100 - 10 - sumWidths); // considering 10% margins
     }
 
-    private replaceSpecialChars(myString: string): string{
-        let processed = null;
-        if (myString != null) {
-            processed = myString.replace(/\\n/g, "\\n")
-            .replace(/\\'/g, "\\'")
-            .replace(/\\"/g, '\\"')
-            .replace(/\\&/g, "\\&")
-            .replace(/\\r/g, "\\r")
-            .replace(/\\t/g, "\\t")
-            .replace(/\\b/g, "\\b")
-            .replace(/\\f/g, "\\f");
-        }
-        return processed;
-    }
 
     // callback for pubSub events, value has form of {origin, index, data}
     private eventCallback(event: string, value: any, actionType: string, actionValue: string, keyListener: string) {
@@ -347,13 +333,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         else if (element === false) {
                             chiavi[key] = '0';
                         }
-                        // encode special chars
-                        if (typeof element === 'string') {
-                            chiavi[key] = _this.replaceSpecialChars(element);
-                        }
                     }
                 }
-                _this.backendService.getField(_this.formParams.entryName, keyListener, chiavi, event).subscribe(
+                _this.backendService.postEvent(_this.formParams.entryName, keyListener, chiavi, event).subscribe(
                     result => {
                         console.log(keyListener, result);
                         if (targetViewField.format.viewType === 'combobox') {   // got combobox options
