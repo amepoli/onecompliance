@@ -33,6 +33,8 @@ export class ToolbarComponent implements OnInit, OnDestroy
     selectedLanguage: any;
     userStatusOptions: any[];
 
+    reportList: string[] = [];
+
     codice_part =  'DEMO'; // TODO: make this parametric
     codice_azienda =  'DEMO'; // TODO: make this parametric
 
@@ -208,4 +210,14 @@ export class ToolbarComponent implements OnInit, OnDestroy
     {
         this.router.navigate(['/gorico/main-table/' + this._backendService.currentTableName]);
     }
+
+    getReportList(): void {
+        this.reportList = ['report 1', 'report 2'];
+    }
+
+    getReport(item: string) :void {
+        console.log(item);
+    }
+
+
 }

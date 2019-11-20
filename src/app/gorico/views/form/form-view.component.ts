@@ -56,7 +56,7 @@ export class FormViewComponent implements OnChanges {
     getterParams: formGetterParams; // params for the child formGetter form view
 
     savingState: savingStateType = 'save';
-
+    
     constructor(public attachDialog: MatDialog, 
         private backendService: BackendService,
         private location: Location) { 

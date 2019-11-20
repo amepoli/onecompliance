@@ -45,9 +45,15 @@
 
         <fuse-search-bar (input)="search($event)"></fuse-search-bar>
 
-        <button mat-button>
-            <mat-icon>print</mat-icon>
+        <button mat-button [matMenuTriggerFor]="report_menu">
+            <mat-icon (click)="getReportList()">print</mat-icon>
         </button>
+
+        <mat-menu #report_menu="matMenu">
+            <ng-container *ngFor="let item of reportList">
+                <button mat-menu-item (click)="getReport(item)">{{item}}</button> 
+            </ng-container>
+        </mat-menu>
 
         <button mat-button>
             <mat-icon svgIcon="excel"></mat-icon>
