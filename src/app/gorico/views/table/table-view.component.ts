@@ -1,8 +1,10 @@
-import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 import { FieldConfig, Item } from '../../dynamic-forms/field.interface';
 import { formViewParams } from '../form/form-view.component';
+import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { Subscription } from 'rxjs';
 
 export interface tableViewParams {
     entryName: string;
@@ -51,7 +53,7 @@ export interface searchViewKey { // as per API specification
 
 
 
-export class TableViewComponent implements OnChanges {
+export class TableViewComponent implements OnChanges, OnInit, OnDestroy {
 
     @Input() tableData: tableViewParams;
     @Output() sendEvent = new EventEmitter<any>();
@@ -92,8 +94,37 @@ export class TableViewComponent implements OnChanges {
 
     keysArray: any[];  // list of primary keys values, one entry for each table row
 
+    subscriptions: Subscription[] = [];
+
+    // toolbar pub/sub topics
+    subMsgPrintTopic = '/toolbar/out/print';
+    pubMsgPrintTopic = '/toolbar/in/print';
+
     constructor(
-        protected backendService: BackendService) {
+        protected backendService: BackendService,
+        protected pubSubService: NgxPubSubService) {
+    }
+
+    ngOnInit() {
+        const _this = this;
+        // subscribe to print topic requests
+        _this.subscriptions.push(_this.pubSubService.subscribe(_this.subMsgPrintTopic,
+            msg => {
+                if (msg.type === 'list') {
+                    _this.backendService.getReportList(_this.tableData.entryName, _this.currentKeys).subscribe(
+                        response => {
+                            if (response.result === 'OK') {
+                                // now give results back to the requester
+                                _this.pubSubService.publishEvent(_this.pubMsgPrintTopic, {type: 'list', value: response.list});
+                            }
+                        });
+                } 
+            })
+        );
+    }
+
+    ngOnDestroy() {
+        this.subscriptions.forEach( subscription => { subscription.unsubscribe(); } );
     }
 
     ngOnChanges(changes: SimpleChanges): void {

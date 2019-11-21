@@ -17,6 +17,8 @@ import { BackendService } from 'app/gorico/views/backend/backend.service';
 
 import { Router, ActivatedRoute } from '@angular/router';
 
+import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+
 @Component({
     selector   : 'toolbar',
     templateUrl: './toolbar.component.html',
@@ -34,6 +36,9 @@ export class ToolbarComponent implements OnInit, OnDestroy
     userStatusOptions: any[];
 
     reportList: string[] = [];
+
+    pubMsgPrintTopic = '/toolbar/out/print';
+    subMsgPrintTopic = '/toolbar/in/print';
 
     codice_part =  'DEMO'; // TODO: make this parametric
     codice_azienda =  'DEMO'; // TODO: make this parametric
@@ -56,6 +61,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
         private _sanitizer: DomSanitizer,
         private _authService: AuthService,
         private _backendService: BackendService,
+        private _pubSubService: NgxPubSubService,
         private router: Router
     )
     {
@@ -138,6 +144,12 @@ export class ToolbarComponent implements OnInit, OnDestroy
             }
           });
 
+          this._pubSubService.subscribe(this.subMsgPrintTopic, 
+            msg => {
+                if (msg.type === 'list') {
+                    this.reportList = msg.value;
+                }
+            });
 
 
         this._backendService.globalTableKeys = { codice_part: this.codice_part, codice_azienda: this.codice_azienda };
@@ -212,11 +224,11 @@ export class ToolbarComponent implements OnInit, OnDestroy
     }
 
     getReportList(): void {
-        this.reportList = ['report 1', 'report 2'];
+        this._pubSubService.publishEvent(this.pubMsgPrintTopic, {type: 'list'});
     }
 
     getReport(item: string) :void {
-        console.log(item);
+        this._pubSubService.publishEvent(this.pubMsgPrintTopic, {type: 'item', value: item});
     }
 
 

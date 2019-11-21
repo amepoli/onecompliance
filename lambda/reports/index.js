@@ -13,6 +13,33 @@ const pool = new Pool({
   connectionTimeoutMillis: 1000
 });
 
+function tableName2BusinessObject (table_name) {
+    
+    if (table_name == null) {
+        return null;
+    }
+    
+    let lut = {};
+    
+    let charArray = ['a','b','c','d','e','f','g','h','i','k','j','l','m','n','o','p','q','r','s','t','u','v','x','y','w','z','1','2','3','4','5','6','7','8','9','0'];
+    
+    charArray.forEach(ch => {
+        lut['_' + ch] =  ch.toUpperCase();
+    });
+    
+    let business_object = '';
+    
+    while (business_object !== table_name) {
+        business_object = table_name;
+        for (var toReplace in lut) {
+            table_name = table_name.replace(toReplace, lut[toReplace]);
+        }
+    }
+    
+    return business_object;
+    
+}
+
 
 exports.handler = async (event, context) => {
     
@@ -70,9 +97,12 @@ exports.handler = async (event, context) => {
        //data = data.Item;
        
        //console.log(data);
+       const business_object = tableName2BusinessObject(entryName);
+       
+       console.log(business_object);
        
        if (requestType === 'getList') {
-           const query = `select * from entrasp.object_reports where context_object='${entryName}';`;
+           const query = `select * from entrasp.object_reports where context_object='${business_object}';`;
            const response = await client.query(query);
            body = {result: 'OK', list: response.rows.map(row => row.descrizione)};
        } else {
