@@ -5,6 +5,7 @@ import { FieldConfig, Item } from '../../dynamic-forms/field.interface';
 import { formViewParams } from '../form/form-view.component';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { Subscription } from 'rxjs';
+import {HttpClient} from '@angular/common/http';
 
 export interface tableViewParams {
     entryName: string;
@@ -101,8 +102,9 @@ export class TableViewComponent implements OnChanges, OnInit, OnDestroy {
     pubMsgPrintTopic = '/toolbar/in/print';
 
     constructor(
-        protected backendService: BackendService,
-        protected pubSubService: NgxPubSubService) {
+        private backendService: BackendService,
+        private pubSubService: NgxPubSubService,
+        private httpClient: HttpClient) {
     }
 
     ngOnInit() {
@@ -118,7 +120,17 @@ export class TableViewComponent implements OnChanges, OnInit, OnDestroy {
                                 _this.pubSubService.publishEvent(_this.pubMsgPrintTopic, {type: 'list', value: response.list});
                             }
                         });
-                } 
+                } else if (msg.type === 'item') {
+                    _this.backendService.getReport(_this.tableData.entryName, _this.currentKeys, msg.value).subscribe(
+                        response => {
+                            if (response.result === 'OK') {
+                                _this.httpClient.get(response.url, { responseType: 'blob' }).subscribe(
+                                    fileData => {
+                                        saveAs(fileData, 'report.pdf');
+                                    });
+                            }
+                    });
+                }
             })
         );
     }
