@@ -12,6 +12,7 @@ const pool = new Pool({
   idleTimeoutMillis: 300000,
   connectionTimeoutMillis: 1000
 });
+const request = require('sync-request');
 
 function tableName2BusinessObject (table_name) {
     
@@ -59,7 +60,7 @@ function replaceKeys(queryString, keys) {
                     }
                 } else {
                     let toReplace = delimiter + key + delimiter;
-                    let replacement = keys[key] + bracket;
+                    let replacement = keys[key];
                     let newString = queryString.replace(toReplace, replacement);
                     while (newString !== queryString) { // handle multiple occurences
                         queryString = newString;
@@ -68,10 +69,15 @@ function replaceKeys(queryString, keys) {
                 }
         }
     }
+    
     return queryString;
 }
 
 function getURLFromServer(mainQuery, subQueries, keys) {
+    
+    var requestURL = '';
+    
+    console.log(keys);
 
     let jsonParams = {
         mainReport: { 
@@ -89,7 +95,8 @@ function getURLFromServer(mainQuery, subQueries, keys) {
                 value: "DEMO"
               }
         ]
-    }
+    };
+    
 
     subQueries.forEach(subQuery => {
         jsonParams.subReports.push({
@@ -97,8 +104,14 @@ function getURLFromServer(mainQuery, subQueries, keys) {
             query: replaceKeys(subQuery.query, keys)
         });
     });
-
     
+    console.log(jsonParams);
+
+    var res = request('POST', 'http://172.31.47.204:8080/json', {
+        json: jsonParams
+    });
+    
+    return res.getBody('utf8');
 
 }
 
@@ -114,7 +127,7 @@ exports.handler = async (event, context) => {
     let keys = queryParams['keys'];
 
     if (keys != null) {
-        keys = JSON.parse(keys);
+         keys = JSON.parse(keys);  // comment in case of test
     }
 
     const entryName = queryParams['entry_name'];
@@ -128,7 +141,7 @@ exports.handler = async (event, context) => {
         requestType = 'badRequest';
     } else if (list != null) {
         requestType = 'getList';
-    } else if (report != null) {
+    } else if (reportName != null) {
         requestType = 'getReport';
     }
             
@@ -143,10 +156,10 @@ exports.handler = async (event, context) => {
         };
     }
 
-    const DynamoParams = {
+    var DynamoParams = {
     TableName: 'reports',
     Key: {
-        entryKey: entryName
+        name: entryName
       }
     };
 
@@ -155,11 +168,6 @@ exports.handler = async (event, context) => {
 
     try {
        
-       //
-       
-       //data = data.Item;
-       
-       //console.log(data);
        const business_object = tableName2BusinessObject(entryName);
        
        console.log(business_object);
@@ -169,27 +177,23 @@ exports.handler = async (event, context) => {
            const response = await client.query(query);
            body = {result: 'OK', list: response.rows.map(row => row.descrizione)};
        } else if (requestType === 'getReport') { 
-            const query = `select * from entrasp.object_reports where context_object='${business_object}' and descrizione='${report}';`;
+            const query = `select * from entrasp.object_reports where context_object='${business_object}' and descrizione='${reportName}';`;
             const response = await client.query(query);
             const reports = response.rows[0].report_names;
             if (reports != null) {
                 const reportsArray = reports.split(',');
-                var DynamoParams = {
-                    TableName: 'reports',
-                    Key: {
-                        entryKey: reportsArray.shift()
-                      }
-                    };
+                DynamoParams.Key.name = reportsArray.shift();
                 var data = await dynamo.get(DynamoParams).promise();
-                const mainQuery = { name: DynamoParams.entryKey, query: data.Item.queryString };
+                const mainQuery = { name: DynamoParams.Key.name, query: data.Item.queryString };
                 var subQueries = [];
-                reportsArray.forEach(
-                    report => {
-                        DynamoParams.Key.entryKey = report;
-                        data = await dynamo.get(DynamoParams).promise();
-                        subQueries.push({name: report, query: data.Item.queryString});
-                });
-                const url = getURLFromServer(mainQuery, subQueries , keys); // also replaces parametric keys
+                for (let i = 0; i < reportsArray.length; i++) {
+                    let report = reportsArray[i];
+                    if (report !== 'headerGRC') continue;  //HACK TO REMOVE!!!
+                    DynamoParams.Key.name = report;
+                    data = await dynamo.get(DynamoParams).promise();
+                    subQueries.push({name: report, query: data.Item.queryString});
+                }
+                const url = await getURLFromServer(mainQuery, subQueries , keys); // also replaces parametric keys
                 if (url != null && url !== '') {
                     body = {result: 'OK', url: url }; 
                 } else {
