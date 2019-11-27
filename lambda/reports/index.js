@@ -127,22 +127,24 @@ exports.handler = async (event, context) => {
     let keys = queryParams['keys'];
 
     if (keys != null) {
-         keys = JSON.parse(keys);  // comment in case of test
+       keys = JSON.parse(keys);  // comment out in case of test
     }
 
     const entryName = queryParams['entry_name'];
     const list = queryParams['list'];
-    const reportName = queryParams['report'];
+    
+    const method = event.httpMethod;
 
-    var requestType = '';
+    var reportName, requestType;
     
     
     if (entryName == null || (keys == null && list == null)) {
         requestType = 'badRequest';
-    } else if (list != null) {
+    } else if (method === 'GET') {
         requestType = 'getList';
-    } else if (reportName != null) {
+    } else if (method === 'POST') {
         requestType = 'getReport';
+        reportName = JSON.parse(event.body);
     }
             
     console.log('Lets start '+ requestType);
@@ -178,6 +180,7 @@ exports.handler = async (event, context) => {
            body = {result: 'OK', list: response.rows.map(row => row.descrizione)};
        } else if (requestType === 'getReport') { 
             const query = `select * from entrasp.object_reports where context_object='${business_object}' and descrizione='${reportName}';`;
+            console.log(query);
             const response = await client.query(query);
             const reports = response.rows[0].report_names;
             if (reports != null) {

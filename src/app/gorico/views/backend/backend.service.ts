@@ -104,7 +104,8 @@ constructor(private amplifyService: AmplifyService) {
 
   getReport(entryName: string, keys: any, reportName: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), report: reportName};
-    return from(this.amplifyService.api().get(this.apiName, '/report', this.myGetInit));
+    this.myPutPostInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys)};
+    this.myPutPostInit.body = reportName;
+    return from(this.amplifyService.api().post(this.apiName, '/report', this.myPutPostInit));
   }
 }

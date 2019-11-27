@@ -124,7 +124,8 @@ export class TableViewComponent implements OnChanges, OnInit, OnDestroy {
                     _this.backendService.getReport(_this.tableData.entryName, _this.currentKeys, msg.value).subscribe(
                         response => {
                             if (response.result === 'OK') {
-                                _this.httpClient.get(response.url, { responseType: 'blob' }).subscribe(
+                               const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
+                                _this.httpClient.get(url, { responseType: 'blob' }).subscribe(
                                     fileData => {
                                         saveAs(fileData, 'report.pdf');
                                     });
