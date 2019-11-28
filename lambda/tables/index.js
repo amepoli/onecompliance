@@ -142,8 +142,8 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
         }
         
         let fieldString = comma + element.key;
-        if (!isForm && element.hasOwnProperty('queryFunct')) { // overridden by funct
-            fieldString = comma + replaceKeys(element.queryFunct, table_keys, keyTypes) + ' AS ' + element.key;
+        if (element.hasOwnProperty('queryFunct')) { // overridden by funct
+            fieldString = comma + '(' + replaceKeys(element.queryFunct, table_keys, keyTypes) + ') AS ' + element.key;
         }
         comma = ','; // needed only the first time
         queryString = queryString + fieldString;
@@ -222,6 +222,7 @@ function getEventQuery(entry_params, body, eventInfo) {
    let keyTypes = getKeyTypes(entry_keys);
    
    let field_key = entry_keys.find(entry => entry.key === eventInfo.field);
+
    
    if (field_key != null) {
         if (field_key.inputEvents != null) {
@@ -330,7 +331,7 @@ function getInsertUpdateQuery(entry_params, table_keys, body, newRecord) {
     
     entry_keys.forEach(element => {
         
-        if (!element.key) {
+        if (element.key == null || element.sameOrigin || element.queryFunct != null) { // skip foreing columns
             return;
         } 
         
