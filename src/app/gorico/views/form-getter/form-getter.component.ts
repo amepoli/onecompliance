@@ -304,8 +304,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 listener.isVisible = !listener.isVisible;
             }
         } else if (actionType === 'navigate') {
-            const keys = _this.formData[value.index].map(key => ({key: key.name, value: key.value}));
-            _this.sendEvent.emit({eventType: 'navigate', table: actionValue, keys: keys});
+            const keys = _this.formData[value.index].reduce((outputKeys, key) => {
+                outputKeys[key.name] = key.value;
+                return outputKeys;
+            });
+            _this.sendEvent.emit({eventType: 'navigate', queryParams: {entry: actionValue, keys: keys, index: value.index}});
         } else if (actionType === 'query') {
             let chiavi = {};
             const target_index = (value.index >= 0) ? value.index : null;  // null means the event comes from the full table

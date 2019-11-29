@@ -81,7 +81,7 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         _this.route.queryParams
             .subscribe(params => {
                 _this.fullScreenTab = false; // reset in case of fullScrren Tab view
-                if (params.index) { 
+                if (params.index != null) { 
                     if (_this.programmaticNavigation) {
                         _this.programmaticNavigation = false;
                     } else {
@@ -93,7 +93,7 @@ export class MainTableComponent implements OnInit, AfterContentInit {
                     console.log(_this.currentKeysArray);
                     _this.singleRecord = true;
                     _this.showTabs = false;
-                } else if (params.new) {
+                } else if (params.new != null) {
                     const newRecordKeys = Object.assign({},_this.currentTableKeys, _this.backendService.globalTableKeys);
                     _this.formParams = { entryName: _this.tableParams.entryName, keys: newRecordKeys, 
                         index: 1, total: 1, isNew: true, showNavBar: true};
@@ -115,11 +115,11 @@ export class MainTableComponent implements OnInit, AfterContentInit {
     onEvent(event: any) {
 
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
-        if (event.eventType === 'rowClick') {
+        if (event.eventType === 'navigate') {
             this.levelArray.push(this.level); // add to history
             this.level = this.level + 1; // update
             this.currentKeysArray.push(this.currentKeys); // add to history
-            this.currentKeys = JSON.parse(event.queryParams.keysArray); // update
+            this.currentKeys = event.queryParams.keys; // update
             this.programmaticNavigation = true;
             // navigate to the single record component
             let url: string = this.router.url.substring(0, this.router.url.indexOf('/gorico')) 
@@ -145,10 +145,7 @@ export class MainTableComponent implements OnInit, AfterContentInit {
             this.fullScreenTab = event.queryParams.value;
         } else if (event.eventType === 'currentTableKeys') {  // table in subtable view providing its current keys
             this.currentTableKeys = event.queryParams.keys;
-        } else if (event.eventType === 'navigate') {     // navigation request from children, should contain target table and keys
-
-        }
-        else {
+        } else {
             return; // not handled
         }
 

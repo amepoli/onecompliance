@@ -242,7 +242,7 @@ export class TableViewComponent implements OnChanges, OnInit, OnDestroy {
         for (const key in value) {
             if (value.hasOwnProperty(key)) {
                 const element = value[key];
-                if (element && element != '') {
+                if (element && element !== '') {
                     cleanedValues[key] = element.id ? element.id : element;
                 }
             }
@@ -270,8 +270,8 @@ export class TableViewComponent implements OnChanges, OnInit, OnDestroy {
 
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
-        const mergedParams = { entry: this.tableData.entryName, keysArray: JSON.stringify(this.keysArray), index: index + 1, total: this.keysArray.length};
-        setTimeout(() => { this.sendEvent.emit({ eventType: 'rowClick', queryParams: mergedParams }); }, 50);
+        const mergedParams = { entry: this.tableData.entryName, keys: this.keysArray, index: index + 1, total: this.keysArray.length};
+        setTimeout(() => { this.sendEvent.emit({ eventType: 'navigate', queryParams: mergedParams }); }, 50);
     }
 
 
