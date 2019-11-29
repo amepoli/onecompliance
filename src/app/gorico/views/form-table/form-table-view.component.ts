@@ -1,6 +1,8 @@
-import { Component, ViewChild, OnChanges, Input } from '@angular/core';
+import { Component, ViewChild, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
-import { BackendService } from '../backend/backend.service';;
+import { BackendService } from '../backend/backend.service';
+
+
 
 
 export interface formTableViewParams {
@@ -19,6 +21,8 @@ export class FormTableViewComponent implements OnChanges {
   @ViewChild(FormGetterComponent) formGetter: FormGetterComponent;
 
   @Input() tableData: formTableViewParams;
+
+  @Output() sendEvent = new EventEmitter<any>();
 
   currentKeys: any; // relevant keys passed by the parent component 
 
@@ -41,6 +45,8 @@ export class FormTableViewComponent implements OnChanges {
     _this.formGetter.sendEvent.subscribe(
       event => {
         if (event.eventType === 'updateData') {   // child downloaded data
+        }  else { // just forward the event to parent
+            _this.sendEvent.emit(event);
         }
       });
   }

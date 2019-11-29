@@ -75,8 +75,6 @@ function replaceKeys(queryString, keys) {
 
 function getURLFromServer(mainQuery, subQueries, keys) {
     
-    var requestURL = '';
-    
     console.log(keys);
 
     let jsonParams = {
@@ -89,11 +87,7 @@ function getURLFromServer(mainQuery, subQueries, keys) {
             {
                 key: "LOGO",
                 value: "2pay.png"
-              },
-              {
-                key: "username",
-                value: "DEMO"
-              }
+            }
         ]
     };
     

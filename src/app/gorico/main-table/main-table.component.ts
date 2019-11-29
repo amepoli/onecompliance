@@ -145,6 +145,8 @@ export class MainTableComponent implements OnInit, AfterContentInit {
             this.fullScreenTab = event.queryParams.value;
         } else if (event.eventType === 'currentTableKeys') {  // table in subtable view providing its current keys
             this.currentTableKeys = event.queryParams.keys;
+        } else if (event.eventType === 'navigate') {     // navigation request from children, should contain target table and keys
+
         }
         else {
             return; // not handled

@@ -86,6 +86,8 @@ export class FormViewComponent implements OnChanges {
                     }
                 } else if (event.eventType === 'updateKeys') {
                     _this.currentKeys = event.viewKeys;
+                } else { // just forward the event to parent
+                    _this.sendEvent.emit(event);
                 }
             }
         );

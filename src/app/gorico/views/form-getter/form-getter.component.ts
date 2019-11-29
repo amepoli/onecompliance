@@ -137,7 +137,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         params.inputEvents.forEach(event => {
                             const subcription = _this.pubsubService.subscribe(event.eventName,
                                 value => {
-                                    _this.eventCallback(event.eventName, value, event.actionType, null, null); // null as keyListener means that the full table is affected
+                                    const actionValue = (event.actionType === 'navigate') ? event.actionTarget : null;
+                                    _this.eventCallback(event.eventName, value, event.actionType, actionValue, null); // null as keyListener means that the full table is affected
                                 });
                             _this.subscriptions.push(subcription);
                         });
@@ -165,9 +166,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     }
 
-    getCurrentKeys(validKeysArray: formViewKey[], inputKeys:any) {
+    getCurrentKeys(validKeysArray: formViewKey[], inputKeys: any) {
 
-        let outputKeys = {};
+        const outputKeys = {};
         for (const key in inputKeys) {
             if (inputKeys.hasOwnProperty(key)) {
                 const element = inputKeys[key];
@@ -182,13 +183,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     loadTableData(): void {
 
-        let _this = this; // useful to debug
+        const _this = this; // useful to debug
         _this.backendService.getData(_this.formParams.entryName, _this.currentKeys, null, true, _this.formParams.isNew).subscribe(
             results => {
                 _this.isLoading = false;
                 console.log(results);
                 if (_this.formParams.isNew) {  // handle newly set primary keys
-                    let primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
+                    const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
                     _this.currentKeys = _this.getCurrentKeys(primaryKeys, results);
                     _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
                 } 
@@ -242,7 +243,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
         for (let index = 0; index < input_form.length; index++) {
             let sameLineElements: FieldConfig[] = [];
-            for (let result of input_form[index]) {
+            for (const result of input_form[index]) {
                 if (result['validations']) {
                     for (const validator of result['validations']) {
                         if (validator['name'] === 'required') {
@@ -274,7 +275,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         if (elements.length) { // some elements to put on the same line
             // process the elements with defined 1/10 size first
             const singleWidth = Math.floor(100 / numElements);
-            for (let element of elements) {
+            for (const element of elements) {
                 element.width = singleWidth - 10; // considering 10% margins;
                 sumWidths += singleWidth;
             }
@@ -302,6 +303,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             } else if (listener != null) {  // act on the listening element
                 listener.isVisible = !listener.isVisible;
             }
+        } else if (actionType === 'navigate') {
+            const keys = _this.formData[value.index].map(key => ({key: key.name, value: key.value}));
+            _this.sendEvent.emit({eventType: 'navigate', table: actionValue, keys: keys});
         } else if (actionType === 'query') {
             let chiavi = {};
             const target_index = (value.index >= 0) ? value.index : null;  // null means the event comes from the full table
@@ -313,13 +317,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 index--;
                 const current_index = (target_index != null) ? target_index : index;
                 chiavi = childrenArray[current_index].form.value;
-                // encode special chars in keys
-                for (const key in chiavi) {
-                    if (chiavi.hasOwnProperty(key)) {
-                        const element = chiavi[key];
-                        
-                    }
-                }
                 // process values
                 for (const key in chiavi) {
                     if (chiavi.hasOwnProperty(key)) {
