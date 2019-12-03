@@ -24,15 +24,11 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
     showTabs = false;
 
-    singleRecord = false;
-
     fullScreenTab = false;
 
     tabs: TabType[] = [];
 
-    private level = 0; // used to trigger reload when navigating in sub-tables 
-
-    private levelArray: number[] = []; // used to keep history of levels
+    private navigationHistory: {level: number, tableName: string, type: string, keys: any}[] = [];
 
     private tableParams: tableViewParams = {
         entryName: '',
@@ -50,13 +46,15 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         showNavBar: true
     };
 
+    private level = 0;  // current depth of navigation
+
+    private tableName: string;
+
+    public tableType: string;
+
     private currentTableKeys = {};  // keys set in currently active table/subtable (might be foreing keys of subtable)
 
     private currentKeys: any[]; // current list of primary keys provided by the table-view
-
-    private currentKeysArray: any[][] = []; // history of primary keys 
-
-    private programmaticNavigation = true; // true if navigating through buttons (vs. browser history)
 
     @ViewChild('List') private List: ElementRef;
 
@@ -69,18 +67,19 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
     ngOnInit(): void {
 
-        let _this = this;
+        const _this = this;
 
         _this.route.params
             .subscribe(params => {
-                console.log(params);
-                _this.backendService.currentTableName = params.table_name;
-                _this.tableParams = { entryName: params.table_name, keys: _this.backendService.globalTableKeys, showHeader: true, showFullScreenButton: false };
+                _this.tableName = params.table_name;
+                _this.tableType = 'table';           // only table views from left navigation bar 
+                _this.currentTableKeys = _this.backendService.globalTableKeys;
+                _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
             });
         
         _this.route.queryParams
-            .subscribe(params => {
-                _this.fullScreenTab = false; // reset in case of fullScrren Tab view
+            .subscribe(params => { 
+  /*              
                 if (params.index != null) { 
                     if (_this.programmaticNavigation) {
                         _this.programmaticNavigation = false;
@@ -104,7 +103,7 @@ export class MainTableComponent implements OnInit, AfterContentInit {
                     _this.loadTable = true;
                     _this.currentKeysArray = []; // flush history when in table view
                     _this.level = 0;
-                }
+                } */
             });
     }
 
@@ -114,28 +113,36 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
     onEvent(event: any) {
 
+        const _this = this;
+
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
+        let newTotal = _this.formParams.total; 
         if (event.eventType === 'navigate') {
-            this.levelArray.push(this.level); // add to history
-            this.level = this.level + 1; // update
-            this.currentKeysArray.push(this.currentKeys); // add to history
-            this.currentKeys = event.queryParams.keys; // update
-            this.programmaticNavigation = true;
-            // navigate to the single record component
-            let url: string = this.router.url.substring(0, this.router.url.indexOf('/gorico')) 
-                + 'gorico/main-table/' + event.queryParams.entry;
-            this.router.navigate([url], { queryParams: { index: event.queryParams.index, level: this.level } });
+            _this.fullScreenTab = false; // reset in case of fullScrren Tab view
+            const currentNavigation = {level: _this.level, tableName: _this.tableName, type: _this.tableType, keys: _this.currentTableKeys};
+            _this.navigationHistory.push(currentNavigation);
+            _this.level = _this.level + 1; // going in depth
+            _this.currentKeys = event.queryParams.keys; // update
+            _this.tableName = event.queryParams.entry.name;
+            if (event.queryParams.entry.type === 'table') {
+                _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
+                _this.tableType = 'table';
+            } else if (event.queryParams.entry.type === 'form') { // handled later on
+                newIndex = event.queryParams.index;
+                newTotal = event.queryParams.total;
+            }
+
         } else if (event.eventType === 'first') {
             newIndex = 1;
         } else if (event.eventType === 'last') {
-            newIndex = this.formParams.total;
+            newIndex = _this.formParams.total;
         } else if (event.eventType === 'prev') {
-            if (this.formParams.index > 1) { 
-                newIndex =  this.formParams.index - 1;
+            if (_this.formParams.index > 1) { 
+                newIndex =  _this.formParams.index - 1;
             }
         } else if (event.eventType === 'next') {
-            if (this.formParams.index <  this.formParams.total) {
-                newIndex = (Number(this.formParams.index) + 1);
+            if (_this.formParams.index <  _this.formParams.total) {
+                newIndex = (Number(_this.formParams.index) + 1);
             }
         } else if (event.eventType === 'tabData'){
             // fill the bottom tabs
@@ -149,15 +156,17 @@ export class MainTableComponent implements OnInit, AfterContentInit {
             return; // not handled
         }
 
-        if (newIndex) {
-            this.formParams.index = newIndex; 
-            this.currentKeysArray.push(this.currentKeys); // add to history
-            this.levelArray.push(this.level); // add to history
-            this.programmaticNavigation = true;
-            // replace the url index query param to reload the page 
-            let url: string = this.router.url.substring(0, this.router.url.indexOf('?'));
-            this.router.navigate([url], { queryParams: { index: newIndex, level: this.level} });
+        if (newIndex) { // 
+            _this.formParams = { 
+                entryName: _this.tableName, 
+                index: newIndex, 
+                keys: _this.currentKeys[newIndex - 1], 
+                total: newTotal, 
+                isNew: false, 
+                showNavBar: _this.formParams.showNavBar};
+            _this.tableType = 'form';  // push the visualization only at this point, needed if moving from table to form view
         }
+
        
     }
 

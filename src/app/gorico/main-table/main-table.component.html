@@ -1,16 +1,16 @@
 <div class="full-width" #List>
 
-    <table-view *ngIf="loadTable && !singleRecord" [tableData]="tableParams" (sendEvent)='onEvent($event)'></table-view>
+    <table-view *ngIf="tableType=='table'" [tableData]="tableParams" (sendEvent)='onEvent($event)'></table-view>
 
     <div class="sticky-element">
-        <form-view *ngIf="singleRecord && !fullScreenTab" [tableData]="formParams" (sendEvent)='onEvent($event)'>
+        <form-view *ngIf="tableType=='form' && !fullScreenTab" [tableData]="formParams" (sendEvent)='onEvent($event)'>
         </form-view>
         <br>
         <hr>
         <br>
     </div>
 
-    <ng-container class="scrolling-element" *ngIf="singleRecord && showTabs">
+    <ng-container class="scrolling-element" *ngIf="tableType=='form' && showTabs">
         <bottom-tabs [Tabs]='tabs' (sendEvent)='onEvent($event)'></bottom-tabs>
     </ng-container>
 

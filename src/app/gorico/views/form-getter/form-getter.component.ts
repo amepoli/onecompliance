@@ -137,8 +137,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         params.inputEvents.forEach(event => {
                             const subcription = _this.pubsubService.subscribe(event.eventName,
                                 value => {
-                                    const actionValue = (event.actionType === 'navigate') ? event.actionTarget : null;
-                                    _this.eventCallback(event.eventName, value, event.actionType, actionValue, null); // null as keyListener means that the full table is affected
+                                    _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
                                 });
                             _this.subscriptions.push(subcription);
                         });
@@ -147,8 +146,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         if (key.inputEvents != null) {
                             key.inputEvents.forEach(event => {
                                 const subscription = _this.pubsubService.subscribe(event.eventName, value => {
-                                    const actionValue = (event.actionType === 'update') ? event.updateValue : null;
-                                    _this.eventCallback(event.eventName, value, event.actionType, actionValue, key.key);
+                                    _this.eventCallback(event, value, key.key);
                                 });
                                 _this.subscriptions.push(subscription);
                             });
@@ -285,11 +283,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
 
     // callback for pubSub events, value has form of {origin, index, data}
-    private eventCallback(event: string, value: any, actionType: string, actionValue: string, keyListener: string) {
+    private eventCallback(event: any, value: any, keyListener: string) {
         const _this = this;
         console.log('Received event: ' + event + ' with value: ' + value);
 
-        if (actionType === 'show') {
+        if (event.actionType === 'show') {
             // get the listener element if not full table
             let listener: FieldConfig = null;
             if (keyListener != null && value.index >= 0) {
@@ -303,13 +301,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             } else if (listener != null) {  // act on the listening element
                 listener.isVisible = !listener.isVisible;
             }
-        } else if (actionType === 'navigate') {
+        } else if (event.actionType === 'navigate') {
             const keys = _this.formData[value.index].reduce((outputKeys, key) => {
                 outputKeys[key.name] = key.value;
                 return outputKeys;
             });
-            _this.sendEvent.emit({eventType: 'navigate', queryParams: {entry: actionValue, keys: keys, index: value.index}});
-        } else if (actionType === 'query') {
+            _this.sendEvent.emit({eventType: 'navigate', queryParams: {entry: event.actionTarget, keys: keys, index: value.index}});
+        } else if (event.actionType === 'query') {
             let chiavi = {};
             const target_index = (value.index >= 0) ? value.index : null;  // null means the event comes from the full table
             let index = (target_index == null) ? _this.formArray.length : 1;
@@ -352,7 +350,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     });
             }
-        } else if (actionType === 'update') {
+        } else if (event.actionType === 'update') {
             // TODO
         }
     }

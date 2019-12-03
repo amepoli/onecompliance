@@ -270,7 +270,7 @@ export class TableViewComponent implements OnChanges, OnInit, OnDestroy {
 
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
-        const mergedParams = { entry: this.tableData.entryName, keys: this.keysArray, index: index + 1, total: this.keysArray.length};
+        const mergedParams = { entry: {name: this.tableData.entryName, type: 'form'}, keys: this.keysArray, index: index + 1, total: this.keysArray.length};
         setTimeout(() => { this.sendEvent.emit({ eventType: 'navigate', queryParams: mergedParams }); }, 50);
     }
 

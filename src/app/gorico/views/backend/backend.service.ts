@@ -27,8 +27,6 @@ export class BackendService {
   };
 
   globalTableKeys = {}; // global to all tables
-
-  currentTableName: string;
  
 constructor(private amplifyService: AmplifyService) { 
 }
