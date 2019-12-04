@@ -302,11 +302,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 listener.isVisible = !listener.isVisible;
             }
         } else if (event.actionType === 'navigate') {
-            const keys = _this.formData[value.index].reduce((outputKeys, key) => {
+            const formLine = _this.formData[value.index];
+            const keys = formLine.reduce((outputKeys, key) => {
                 outputKeys[key.name] = key.value;
                 return outputKeys;
-            });
-            _this.sendEvent.emit({eventType: 'navigate', queryParams: {entry: event.actionTarget, keys: keys, index: value.index}});
+            }, {});
+            const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
+            const filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
+            _this.sendEvent.emit({eventType: 'navigate', queryParams: {entry: event.actionTarget, keys: [filteredKeys], index: 1, total: 1}});
         } else if (event.actionType === 'query') {
             let chiavi = {};
             const target_index = (value.index >= 0) ? value.index : null;  // null means the event comes from the full table
@@ -338,7 +341,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
                 }
-                _this.backendService.postEvent(_this.formParams.entryName, keyListener, chiavi, event).subscribe(
+                _this.backendService.postEvent(_this.formParams.entryName, keyListener, chiavi, event.eventName).subscribe(
                     result => {
                         console.log(keyListener, result);
                         if (targetViewField.format.viewType === 'combobox') {   // got combobox options

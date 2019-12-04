@@ -1,4 +1,4 @@
-import { Component, ViewChild, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, ViewChild, Input, Output, EventEmitter, OnChanges, OnInit } from '@angular/core';
 
 import 'rxjs/add/operator/filter';
 import { BackendService } from '../backend/backend.service';
@@ -38,7 +38,7 @@ type savingStateType = 'save' | 'saving' | 'done';
     templateUrl: './form-view.component.html',
     styleUrls: ['./form-view.component.scss']
 })
-export class FormViewComponent implements OnChanges {
+export class FormViewComponent implements OnChanges, OnInit {
 
     @Input() tableData: formViewParams;
     @Output() sendEvent = new EventEmitter<any>();
@@ -63,16 +63,8 @@ export class FormViewComponent implements OnChanges {
         
         }
 
-    ngOnChanges() {
+    ngOnInit() {
         const _this = this; // useful to debug
-        _this.getterParams = {
-            entryName: _this.tableData.entryName,
-            keys: _this.tableData.keys,
-            isNew: _this.tableData.isNew,
-            isVisible: true
-        };
-        _this.n = _this.tableData.index;
-        _this.tot = _this.tableData.total;
         _this.formGetter.sendEvent.subscribe(
             event => {
                 if (event.eventType === 'formData') {
@@ -83,6 +75,8 @@ export class FormViewComponent implements OnChanges {
                         // send the tabs parameter to the main view 
                         tabs = _this.getTabs(_this.tabKeys, _this.tableData.keys);
                         _this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
+                    } else if (_this.tabKeys == null) {
+                        _this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: null } });
                     }
                 } else if (event.eventType === 'updateKeys') {
                     _this.currentKeys = event.viewKeys;
@@ -91,6 +85,20 @@ export class FormViewComponent implements OnChanges {
                 }
             }
         );
+
+    }
+
+    ngOnChanges() {
+        const _this = this; // useful to debug
+        _this.getterParams = {
+            entryName: _this.tableData.entryName,
+            keys: _this.tableData.keys,
+            isNew: _this.tableData.isNew,
+            isVisible: true
+        };
+        _this.n = _this.tableData.index;
+        _this.tot = _this.tableData.total;
+        
     }
 
     getTabs (tabKeys: tabViewKey[], keys: any): TabType[] {

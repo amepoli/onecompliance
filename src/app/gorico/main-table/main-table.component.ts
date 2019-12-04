@@ -28,7 +28,7 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
     tabs: TabType[] = [];
 
-    private navigationHistory: {level: number, tableName: string, type: string, keys: any}[] = [];
+    public navigationHistory: {level: number, tableName: string, type: string, tableKeys: any, primaryKeys: any, params: any, description: string}[] = [];
 
     private tableParams: tableViewParams = {
         entryName: '',
@@ -52,9 +52,11 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
     public tableType: string;
 
+    public currentDescription: string;
+
     private currentTableKeys = {};  // keys set in currently active table/subtable (might be foreing keys of subtable)
 
-    private currentKeys: any[]; // current list of primary keys provided by the table-view
+    private currentPrimaryKeys: any[]; // current list of primary keys provided by the table-view
 
     @ViewChild('List') private List: ElementRef;
 
@@ -76,35 +78,6 @@ export class MainTableComponent implements OnInit, AfterContentInit {
                 _this.currentTableKeys = _this.backendService.globalTableKeys;
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
             });
-        
-        _this.route.queryParams
-            .subscribe(params => { 
-  /*              
-                if (params.index != null) { 
-                    if (_this.programmaticNavigation) {
-                        _this.programmaticNavigation = false;
-                    } else {
-                        _this.currentKeys = _this.currentKeysArray.pop(); // get from history
-                        _this.level = _this.levelArray.pop();
-                    }
-                    _this.formParams = { entryName: _this.tableParams.entryName, keys: _this.currentKeys[params.index - 1], 
-                        index: params.index, total: _this.currentKeys.length, isNew: false, showNavBar: true};
-                    console.log(_this.currentKeysArray);
-                    _this.singleRecord = true;
-                    _this.showTabs = false;
-                } else if (params.new != null) {
-                    const newRecordKeys = Object.assign({},_this.currentTableKeys, _this.backendService.globalTableKeys);
-                    _this.formParams = { entryName: _this.tableParams.entryName, keys: newRecordKeys, 
-                        index: 1, total: 1, isNew: true, showNavBar: true};
-                        _this.singleRecord = true;
-                        _this.showTabs = false;
-                } else {
-                    _this.singleRecord = false;
-                    _this.loadTable = true;
-                    _this.currentKeysArray = []; // flush history when in table view
-                    _this.level = 0;
-                } */
-            });
     }
 
     ngAfterContentInit() {
@@ -118,18 +91,28 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
         let newTotal = _this.formParams.total; 
         if (event.eventType === 'navigate') {
-            _this.fullScreenTab = false; // reset in case of fullScrren Tab view
-            const currentNavigation = {level: _this.level, tableName: _this.tableName, type: _this.tableType, keys: _this.currentTableKeys};
+            _this.fullScreenTab = false; // reset in case of fullScreen Tab view
+            const description = (_this.currentDescription != null) ? _this.currentDescription : (_this.tableType === 'table' ? 'Tabella ' : 'Dettaglio ') + _this.tableName;
+            const currentNavigation = {
+                level: _this.level, 
+                tableName: _this.tableName, 
+                type: _this.tableType, 
+                tableKeys: _this.currentTableKeys, 
+                primaryKeys: _this.currentPrimaryKeys,
+                params: _this.tableType === 'table' ? _this.tableParams : _this.formParams,
+                description: description};
             _this.navigationHistory.push(currentNavigation);
             _this.level = _this.level + 1; // going in depth
-            _this.currentKeys = event.queryParams.keys; // update
+            _this.currentPrimaryKeys = event.queryParams.keys; // update
             _this.tableName = event.queryParams.entry.name;
             if (event.queryParams.entry.type === 'table') {
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
                 _this.tableType = 'table';
+                _this.currentDescription = 'Tabella ' + _this.tableName;
             } else if (event.queryParams.entry.type === 'form') { // handled later on
                 newIndex = event.queryParams.index;
                 newTotal = event.queryParams.total;
+                _this.currentDescription = 'Dettaglio ' + _this.tableName;
             }
 
         } else if (event.eventType === 'first') {
@@ -145,9 +128,13 @@ export class MainTableComponent implements OnInit, AfterContentInit {
                 newIndex = (Number(_this.formParams.index) + 1);
             }
         } else if (event.eventType === 'tabData'){
-            // fill the bottom tabs
-            this.tabs = event.queryParams.tabs;
-            this.showTabs = true;
+            if (event.queryParams.tabs != null) {
+                // fill the bottom tabs
+                this.tabs = event.queryParams.tabs;
+                this.showTabs = true;
+            } else {
+                this.showTabs = false;
+            }
         } else if (event.eventType === 'fullScreen') {
             this.fullScreenTab = event.queryParams.value;
         } else if (event.eventType === 'currentTableKeys') {  // table in subtable view providing its current keys
@@ -160,7 +147,7 @@ export class MainTableComponent implements OnInit, AfterContentInit {
             _this.formParams = { 
                 entryName: _this.tableName, 
                 index: newIndex, 
-                keys: _this.currentKeys[newIndex - 1], 
+                keys: _this.currentPrimaryKeys[newIndex - 1], 
                 total: newTotal, 
                 isNew: false, 
                 showNavBar: _this.formParams.showNavBar};
@@ -172,6 +159,25 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
     fullView(): void {
         // toggle full view
+    }
+
+    historyPop(item: any) {
+        const _this = this;
+        _this.fullScreenTab = false; // reset in case of fullScreen Tab view
+        _this.navigationHistory.length = item.level; // remove itself and following history elements 
+        _this.level = item.level;
+        _this.currentTableKeys = item.tableKeys;
+        _this.tableName = item.tableName;
+        _this.currentPrimaryKeys = item.primaryKeys;
+        if (item.type === 'table') {
+            _this.tableParams = item.params;
+            _this.currentDescription = 'Tabella ' + _this.tableName;
+            _this.tableType = 'table';  
+        } else {
+            _this.formParams = item.params;
+            _this.currentDescription = 'Dettaglio ' + _this.tableName;
+            _this.tableType = 'form';
+        }
     }
 
 }
