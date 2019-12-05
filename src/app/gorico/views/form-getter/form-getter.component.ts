@@ -188,7 +188,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 console.log(results);
                 if (_this.formParams.isNew) {  // handle newly set primary keys
                     const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
-                    _this.currentKeys = _this.getCurrentKeys(primaryKeys, results);
+                    _this.currentKeys = _this.getCurrentKeys(primaryKeys, results[0]);  // TBC why do we receive an array with one element here?
                     _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
                 } 
                 _this.numRows = results.length;

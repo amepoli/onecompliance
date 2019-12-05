@@ -1,11 +1,8 @@
-import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
-import { FieldConfig, Item } from '../../dynamic-forms/field.interface';
+import { FieldConfig } from '../../dynamic-forms/field.interface';
 import { formViewParams } from '../form/form-view.component';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
-import { Subscription } from 'rxjs';
-import {HttpClient} from '@angular/common/http';
 
 export interface tableViewParams {
     entryName: string;
@@ -34,15 +31,15 @@ export interface searchViewKey { // as per API specification
     label: string;		// displayed key name
     queryCond: string; 	// postgres query condition (after WHERE clause), mandatory to link w/ a Postgres column
     format: {		//  DataFormat type
-		viewType: string; 		// form view type, one among “input” | “combobox” | “checkbox” | “radiobutton” 
-		dataType?: string; 				//  only if viewtype=”input”
-		value?: any;  		// default value
+        viewType: string; 		// form view type, one among “input” | “combobox” | “checkbox” | “radiobutton” 
+        dataType?: string; 				//  only if viewtype=”input”
+        value?: any;  		// default value
         options?: [					// in caseof combobox | radiobutton
-			{				
-			  id: number,			// combobox entry ID
- 			  name: string			// displayed entry value
-		}];
-		comboQuery?: string,		// combobox query, returns an array of [{“id”: Number, “name”: String}]
+            {
+                id: number,			// combobox entry ID
+                name: string			// displayed entry value
+            }];
+        comboQuery?: string,		// combobox query, returns an array of [{“id”: Number, “name”: String}]
     }
 } 
 
@@ -54,7 +51,7 @@ export interface searchViewKey { // as per API specification
 
 
 
-export class TableViewComponent implements OnChanges, OnInit, OnDestroy {
+export class TableViewComponent implements OnChanges {
 
     @Input() tableData: tableViewParams;
     @Output() sendEvent = new EventEmitter<any>();
@@ -95,50 +92,10 @@ export class TableViewComponent implements OnChanges, OnInit, OnDestroy {
 
     keysArray: any[];  // list of primary keys values, one entry for each table row
 
-    subscriptions: Subscription[] = [];
-
-    // toolbar pub/sub topics
-    subMsgPrintTopic = '/toolbar/out/print';
-    pubMsgPrintTopic = '/toolbar/in/print';
-
     constructor(
-        private backendService: BackendService,
-        private pubSubService: NgxPubSubService,
-        private httpClient: HttpClient) {
-    }
-
-    ngOnInit() {
-        const _this = this;
-        // subscribe to print topic requests
-        _this.subscriptions.push(_this.pubSubService.subscribe(_this.subMsgPrintTopic,
-            msg => {
-                if (msg.type === 'list') {
-                    _this.backendService.getReportList(_this.tableData.entryName, _this.currentKeys).subscribe(
-                        response => {
-                            if (response.result === 'OK') {
-                                // now give results back to the requester
-                                _this.pubSubService.publishEvent(_this.pubMsgPrintTopic, {type: 'list', value: response.list});
-                            }
-                        });
-                } else if (msg.type === 'item') {
-                    _this.backendService.getReport(_this.tableData.entryName, _this.currentKeys, msg.value).subscribe(
-                        response => {
-                            if (response.result === 'OK') {
-                               const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
-                                _this.httpClient.get(url, { responseType: 'blob' }).subscribe(
-                                    fileData => {
-                                        saveAs(fileData, 'report.pdf');
-                                    });
-                            }
-                    });
-                }
-            })
-        );
-    }
-
-    ngOnDestroy() {
-        this.subscriptions.forEach( subscription => { subscription.unsubscribe(); } );
-    }
+        private backendService: BackendService) 
+        {
+        }
 
     ngOnChanges(changes: SimpleChanges): void {
         let _this = this;

@@ -37,8 +37,8 @@ export class ToolbarComponent implements OnInit, OnDestroy
 
     reportList: string[] = [];
 
-    pubMsgPrintTopic = '/toolbar/out/print';
-    subMsgPrintTopic = '/toolbar/in/print';
+    pubMsgCmdTopic = '/toolbar/out/cmd';
+    subMsgCmdTopic = '/toolbar/in/cmd';
 
     codice_part =  'DEMO'; // TODO: make this parametric
     codice_azienda =  'DEMO'; // TODO: make this parametric
@@ -144,9 +144,9 @@ export class ToolbarComponent implements OnInit, OnDestroy
             }
           });
 
-          this._pubSubService.subscribe(this.subMsgPrintTopic, 
+          this._pubSubService.subscribe(this.subMsgCmdTopic, 
             msg => {
-                if (msg.type === 'list') {
+                if (msg.type === 'print_list') {
                     this.reportList = msg.value;
                 }
             });
@@ -215,20 +215,20 @@ export class ToolbarComponent implements OnInit, OnDestroy
 
     addElement(): void
     {
-        //this.router.navigate(['/gorico/main-table/' + this._backendService.currentTableName], { queryParams: {new: 1 }});
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, {type: 'add'});
     }
 
     gotoList(): void 
     {
-        //this.router.navigate(['/gorico/main-table/' + this._backendService.currentTableName]);
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, {type: 'list'});
     }
 
     getReportList(): void {
-        this._pubSubService.publishEvent(this.pubMsgPrintTopic, {type: 'list'});
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, {type: 'print_list'});
     }
 
     getReport(item: string) :void {
-        this._pubSubService.publishEvent(this.pubMsgPrintTopic, {type: 'item', value: item});
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, {type: 'print_item', value: item});
     }
 
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -7,8 +7,10 @@ import { BackendService } from 'app/gorico/views/backend/backend.service'
 import { tableViewParams } from 'app/gorico/views/table/table-view.component';
 import { formViewParams } from '../views/form/form-view.component';
 import { TabType } from '../bottom-tabs/bottom-tabs.component';
-
+import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { Location } from '@angular/common';
+import { Subscription } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'main-table',
@@ -18,7 +20,7 @@ import { Location } from '@angular/common';
 
 
 
-export class MainTableComponent implements OnInit, AfterContentInit {
+export class MainTableComponent implements OnInit, OnDestroy {
 
     loadTable = false;
 
@@ -58,13 +60,21 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
     private currentPrimaryKeys: any[]; // current list of primary keys provided by the table-view
 
+    private subscriptions: Subscription[] = [];
+
+    // toolbar pub/sub topics
+    subMsgCmdTopic = '/toolbar/out/cmd';
+    pubMsgCmdTopic = '/toolbar/in/cmd';
+
     @ViewChild('List') private List: ElementRef;
 
     constructor(
         protected route: ActivatedRoute,
         protected router: Router,
         protected backendService: BackendService,
-        protected location: Location) {
+        private pubSubService: NgxPubSubService,
+        protected location: Location,
+        private httpClient: HttpClient) {
     }
 
     ngOnInit(): void {
@@ -81,10 +91,51 @@ export class MainTableComponent implements OnInit, AfterContentInit {
                 _this.currentTableKeys = _this.backendService.globalTableKeys;
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
             });
+
+        // subscribe to toolbar requests
+        _this.subscriptions.push(_this.pubSubService.subscribe(_this.subMsgCmdTopic,
+            msg => {
+                if (msg.type === 'print_list') {   // toolbar asking for the list of possible reports in current view
+                    _this.backendService.getReportList(_this.tableName, _this.currentTableKeys).subscribe(
+                        response => {
+                            if (response.result === 'OK') {
+                                // now give results back to the requester
+                                _this.pubSubService.publishEvent(_this.pubMsgCmdTopic, {type: 'print_list', value: response.list});
+                            }
+                        });
+                } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
+                    _this.backendService.getReport(_this.tableName, _this.currentTableKeys, msg.value).subscribe(
+                        response => {
+                            if (response.result === 'OK') {
+                               const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
+                                _this.httpClient.get(url, { responseType: 'blob' }).subscribe(
+                                    fileData => {
+                                        saveAs(fileData, 'report.pdf');
+                                    });
+                            }
+                    });
+                } else if (msg.type === 'add') { // toolbar sking for adding a new element
+                    _this.historyPush();
+                    _this.currentDescription = 'Nuovo elemento tabella ' + _this.tableName;
+                    _this.formParams = { 
+                        entryName: _this.tableName, 
+                        index: 1, 
+                        keys: _this.currentTableKeys, 
+                        total: 1, 
+                        isNew: true, 
+                        showNavBar: false};
+                    _this.tableType = 'form';  // push the visualization only at this point, needed if moving from table to form view
+                } else if (msg.type === 'list') { // toolbar asking to go back to list
+                    if (_this.navigationHistory.length) {
+                        _this.historyPop(_this.navigationHistory[0]); // go back to the root element
+                    }
+                }
+            })
+        );
     }
 
-    ngAfterContentInit() {
-        // this.backendService.currentTableName = this.tableParams.entryName;
+    ngOnDestroy() {
+        this.subscriptions.forEach( subscription => { subscription.unsubscribe(); } );
     }
 
     onEvent(event: any) {
@@ -95,16 +146,7 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         let newTotal = _this.formParams.total; 
         if (event.eventType === 'navigate') {
             _this.fullScreenTab = false; // reset in case of fullScreen Tab view
-            const currentNavigation = {
-                level: _this.level, 
-                tableName: _this.tableName, 
-                type: _this.tableType, 
-                tableKeys: _this.currentTableKeys, 
-                primaryKeys: _this.currentPrimaryKeys,
-                params: _this.tableType === 'table' ? _this.tableParams : _this.formParams,
-                description: _this.currentDescription};
-            _this.navigationHistory.push(currentNavigation);
-            _this.level = _this.level + 1; // going in depth
+            _this.historyPush();  // save current status
             _this.currentPrimaryKeys = event.queryParams.keys; // update
             _this.tableName = event.queryParams.entry.name;
             if (event.queryParams.entry.type === 'table') {
@@ -163,7 +205,8 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         // toggle full view
     }
 
-    historyPop(item: any) {
+    // retrieve an element from history and handle the history list consequently
+    historyPop(item: any): void {  
         const _this = this;
         _this.fullScreenTab = false; // reset in case of fullScreen Tab view
         _this.navigationHistory.length = item.level; // remove itself and following history elements 
@@ -180,6 +223,21 @@ export class MainTableComponent implements OnInit, AfterContentInit {
             _this.currentDescription = 'Dettaglio ' + _this.tableName;
             _this.tableType = 'form';
         }
+    }
+
+    // push current state on history list stack and move forward by one level
+    historyPush(): void {
+        const _this = this;
+        const currentNavigation = {
+            level: _this.level, 
+            tableName: _this.tableName, 
+            type: _this.tableType, 
+            tableKeys: _this.currentTableKeys, 
+            primaryKeys: _this.currentPrimaryKeys,
+            params: _this.tableType === 'table' ? _this.tableParams : _this.formParams,
+            description: _this.currentDescription};
+        _this.navigationHistory.push(currentNavigation);
+        _this.level = _this.level + 1; // going in depth
     }
 
 }

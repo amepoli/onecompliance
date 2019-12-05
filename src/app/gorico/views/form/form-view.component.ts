@@ -75,7 +75,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                         // send the tabs parameter to the main view 
                         tabs = _this.getTabs(_this.tabKeys, _this.tableData.keys);
                         _this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
-                    } else if (_this.tabKeys == null) {
+                    } else {
                         _this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: null } });
                     }
                 } else if (event.eventType === 'updateKeys') {
