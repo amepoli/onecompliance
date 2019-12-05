@@ -73,7 +73,10 @@ export class MainTableComponent implements OnInit, AfterContentInit {
 
         _this.route.params
             .subscribe(params => {
+                _this.navigationHistory.length = 0;       // flush navigation history
+                _this.level = 0; 
                 _this.tableName = params.table_name;
+                _this.currentDescription = 'Tabella ' + _this.tableName;
                 _this.tableType = 'table';           // only table views from left navigation bar 
                 _this.currentTableKeys = _this.backendService.globalTableKeys;
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
@@ -92,7 +95,6 @@ export class MainTableComponent implements OnInit, AfterContentInit {
         let newTotal = _this.formParams.total; 
         if (event.eventType === 'navigate') {
             _this.fullScreenTab = false; // reset in case of fullScreen Tab view
-            const description = (_this.currentDescription != null) ? _this.currentDescription : (_this.tableType === 'table' ? 'Tabella ' : 'Dettaglio ') + _this.tableName;
             const currentNavigation = {
                 level: _this.level, 
                 tableName: _this.tableName, 
@@ -100,7 +102,7 @@ export class MainTableComponent implements OnInit, AfterContentInit {
                 tableKeys: _this.currentTableKeys, 
                 primaryKeys: _this.currentPrimaryKeys,
                 params: _this.tableType === 'table' ? _this.tableParams : _this.formParams,
-                description: description};
+                description: _this.currentDescription};
             _this.navigationHistory.push(currentNavigation);
             _this.level = _this.level + 1; // going in depth
             _this.currentPrimaryKeys = event.queryParams.keys; // update

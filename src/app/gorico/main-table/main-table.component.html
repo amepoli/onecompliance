@@ -1,19 +1,19 @@
 <div class="full-width" #List>
 
-    <div class="navi-bar">
-        <ng-container *ngFor='let item of navigationHistory'>
-            <mat-icon>arrow_forward</mat-icon>
-            <a href="javascript: void(0)" (click)='historyPop(item)'>{{item.description}}</a>
-        </ng-container>
-        <ng-container *ngIf='navigationHistory.length > 0'>
-             <mat-icon>arrow_forward</mat-icon>
-             <p>{{currentDescription}}</p>
-        </ng-container>
-    </div>
-
-    <table-view *ngIf="tableType=='table'" [tableData]="tableParams" (sendEvent)='onEvent($event)'></table-view>
-
     <div class="sticky-element">
+        <div class="navi-bar">
+            <ng-container *ngFor='let item of navigationHistory'>
+                <mat-icon>arrow_forward</mat-icon>
+                <a href="javascript: void(0)" (click)='historyPop(item)'>{{item.description}}</a>
+            </ng-container>
+            <ng-container *ngIf='navigationHistory.length > 0'>
+                <mat-icon>arrow_forward</mat-icon>
+                <p>{{currentDescription}}</p>
+            </ng-container>
+        </div>
+
+        <table-view *ngIf="tableType=='table'" [tableData]="tableParams" (sendEvent)='onEvent($event)'></table-view>
+
         <form-view *ngIf="tableType=='form' && !fullScreenTab" [tableData]="formParams" (sendEvent)='onEvent($event)'>
         </form-view>
         <br>
