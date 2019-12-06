@@ -119,7 +119,11 @@ export class FormViewComponent implements OnChanges, OnInit {
     }
 
     onSave() {
-        let values = this.formGetter.formArray.first.form.value; // get the form data, assuming there is only one form
+
+        // notify parent, which will take care of propagating to siblings if needed 
+        this.sendEvent.emit({ eventType: 'gotSave' });
+        // get the form data, assuming there is only one form
+        let values = this.formGetter.formArray.first.form.value; 
         // process the booleans (1/0 instead of true/false)
         for (const value in values) {
             if (values.hasOwnProperty(value)) {

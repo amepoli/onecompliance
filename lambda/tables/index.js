@@ -68,6 +68,18 @@ function replaceKeys(queryString, keys, keyTypes) {
     return queryString;
 }
 
+function replaceKeysArray(queryString, keysArray, keyTypes) {
+    if (keysArray == null || !keysArray.length) {
+        return [];
+    } else {
+        let returnArray = [];
+        keysArray.forEach(keys => {
+            returnArray.push(replaceKeys(queryString,keys, keyTypes);
+        });
+        return returnArray;
+    }
+}
+
 function getKeyTypes(entry_keys) {
     let keyTypes = entry_keys.map(k => {
         let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');

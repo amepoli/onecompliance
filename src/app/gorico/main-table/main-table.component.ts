@@ -6,7 +6,7 @@ import { BackendService } from 'app/gorico/views/backend/backend.service'
 
 import { tableViewParams } from 'app/gorico/views/table/table-view.component';
 import { formViewParams } from '../views/form/form-view.component';
-import { TabType } from '../bottom-tabs/bottom-tabs.component';
+import { TabType, BottomTabsComponent } from '../bottom-tabs/bottom-tabs.component';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -62,11 +62,14 @@ export class MainTableComponent implements OnInit, OnDestroy {
 
     private subscriptions: Subscription[] = [];
 
+    public tabsSaveData = false;
+
     // toolbar pub/sub topics
     subMsgCmdTopic = '/toolbar/out/cmd';
     pubMsgCmdTopic = '/toolbar/in/cmd';
 
     @ViewChild('List') private List: ElementRef;
+    @ViewChild('Tabs') private Tabs: BottomTabsComponent;
 
     constructor(
         protected route: ActivatedRoute,
@@ -152,7 +155,6 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 parentElement.scrollTop = 0;
                 parentElement = parentElement.parentElement;
             }
-            _this.List.nativeElement.parentElement.parentElement.parentElement.scrollTop = 0; 
             _this.fullScreenTab = false; // reset in case of fullScreen Tab view
             _this.historyPush();  // save current status
             _this.currentPrimaryKeys = event.queryParams.keys; // update
@@ -193,6 +195,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
             this.currentTableKeys = event.queryParams.keys;
         } else if (event.eventType === 'deletedForm') {
             _this.historyPop(_this.navigationHistory[_this.level - 1]); // go back
+        } else if (event.eventType === 'gotSave') { // user pressed save button on form-view
+            _this.tabsSaveData = !_this.tabsSaveData;  // forward it to the tabs view toggling the variable
         } else {
             return; // not handled
         }
