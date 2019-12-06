@@ -4,7 +4,6 @@ import 'rxjs/add/operator/filter';
 import { BackendService } from '../backend/backend.service';
 import { MatDialog } from '@angular/material';
 import { TabType } from '../../bottom-tabs/bottom-tabs.component';
-import {Location} from '@angular/common';
 import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 
@@ -58,8 +57,7 @@ export class FormViewComponent implements OnChanges, OnInit {
     savingState: savingStateType = 'save';
     
     constructor(public attachDialog: MatDialog, 
-        private backendService: BackendService,
-        private location: Location) { 
+        private backendService: BackendService) { 
         
         }
 
@@ -161,7 +159,7 @@ export class FormViewComponent implements OnChanges, OnInit {
             result => {
                 console.log(result);
                 // navigate backward
-                this.location.back();
+                this.sendEvent.emit({ eventType: 'deletedForm' }); // notify parent
             }
         )
     }

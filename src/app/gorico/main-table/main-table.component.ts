@@ -85,6 +85,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
             .subscribe(params => {
                 _this.navigationHistory.length = 0;       // flush navigation history
                 _this.level = 0; 
+                _this.resetFormParams();    
                 _this.tableName = params.table_name;
                 _this.currentDescription = 'Tabella ' + _this.tableName;
                 _this.tableType = 'table';           // only table views from left navigation bar 
@@ -141,10 +142,17 @@ export class MainTableComponent implements OnInit, OnDestroy {
     onEvent(event: any) {
 
         const _this = this;
-
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
         let newTotal = _this.formParams.total; 
         if (event.eventType === 'navigate') {
+            // scroll to top within all parent list of elements
+            _this.List.nativeElement.scrollTop = 0;
+            let parentElement = _this.List.nativeElement.parentElement;
+            while (parentElement != null) {
+                parentElement.scrollTop = 0;
+                parentElement = parentElement.parentElement;
+            }
+            _this.List.nativeElement.parentElement.parentElement.parentElement.scrollTop = 0; 
             _this.fullScreenTab = false; // reset in case of fullScreen Tab view
             _this.historyPush();  // save current status
             _this.currentPrimaryKeys = event.queryParams.keys; // update
@@ -183,6 +191,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
             this.fullScreenTab = event.queryParams.value;
         } else if (event.eventType === 'currentTableKeys') {  // table in subtable view providing its current keys
             this.currentTableKeys = event.queryParams.keys;
+        } else if (event.eventType === 'deletedForm') {
+            _this.historyPop(_this.navigationHistory[_this.level - 1]); // go back
         } else {
             return; // not handled
         }
@@ -211,6 +221,9 @@ export class MainTableComponent implements OnInit, OnDestroy {
         _this.fullScreenTab = false; // reset in case of fullScreen Tab view
         _this.navigationHistory.length = item.level; // remove itself and following history elements 
         _this.level = item.level;
+        if (!_this.level) { // if root (i.e. table) reset form params
+            _this.resetFormParams();
+        }
         _this.currentTableKeys = item.tableKeys;
         _this.tableName = item.tableName;
         _this.currentPrimaryKeys = item.primaryKeys;
@@ -238,6 +251,18 @@ export class MainTableComponent implements OnInit, OnDestroy {
             description: _this.currentDescription};
         _this.navigationHistory.push(currentNavigation);
         _this.level = _this.level + 1; // going in depth
+    }
+
+    resetFormParams() {
+        const _this = this;
+        _this.formParams = {
+            entryName: '',
+            keys: {},
+            index: 0,
+            total: 0,
+            isNew: false,
+            showNavBar: true
+        };
     }
 
 }
