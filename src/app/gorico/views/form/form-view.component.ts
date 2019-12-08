@@ -146,7 +146,7 @@ export class FormViewComponent implements OnChanges, OnInit {
         }
 
         this.savingState = 'saving';
-        this.backendService.updateData(this.tableData.entryName, this.currentKeys, values).subscribe(
+        this.backendService.updateData(this.tableData.entryName, this.currentKeys, [values]).subscribe(   // backend expects an array of data
             result => {
                 console.log(result);
                 this.savingState = 'done';

@@ -1,6 +1,7 @@
 import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { BackendService } from '../backend/backend.service';
+import { from } from 'zen-observable';
 
 
 
@@ -24,8 +25,6 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   @Input() SaveData: boolean;
   @Output() sendEvent = new EventEmitter<any>();
 
-  currentKeys: any; // relevant keys passed by the parent component 
-
   getterParams: formGetterParams; // params for the child formGetter form view
 
   processView = false;   // handle the form-getter child view
@@ -39,7 +38,8 @@ export class FormTableViewComponent implements OnChanges, OnInit {
     _this.formGetter.sendEvent.subscribe(
         event => {
           if (event.eventType === 'updateData') {   // child downloaded data
-          }  else { // just forward the event to parent
+
+          } else { // just forward the event to parent
               _this.sendEvent.emit(event);
           }
         });
@@ -55,9 +55,39 @@ export class FormTableViewComponent implements OnChanges, OnInit {
                 isVisible: true  // hide the child view and handle it from parent
             };
         } else if (changes.SaveData) {
-            console.log('received save command');
+            const values = _this.formGetter.formArray.map(form => form.form.value);
+            // process the booleans (1/0 instead of true/false)
+            values.forEach( entry => 
+                {
+                    for (const value in entry) {
+                        if (entry.hasOwnProperty(value)) {
+                            const element = entry[value];
+                            if (element == null) {
+                                continue; // skip null entries
+                            }
+                            // decode combos
+                            if (element['id'] != null) {
+                                entry[value] = element['id'];
+                            }
+                            // encode boolean
+                            else if (element === true) {
+                                entry[value] = '1';
+                            } 
+                            else if (element === false) {
+                                entry[value] = '0';
+                            }
+                        }
+                    }
+                });
+            _this.backendService.updateData(_this.tableData.entryName, _this.tableData.keys, values).subscribe(   // backend expects an array of data
+                result => {
+                    console.log(result);
+                    setTimeout(() => {
+                        _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+                    }, 1000);
+                });
         }
-    
+        
   }
 
 }

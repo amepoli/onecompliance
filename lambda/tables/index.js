@@ -15,7 +15,7 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
-function replaceLocalKeys(queryString, keys){
+function replaceLocalKeys(queryString, keys) {
     let delimiter = '£';
     for (var key in keys) {
         let toReplace = delimiter + key + delimiter;
@@ -74,7 +74,7 @@ function replaceKeysArray(queryString, keysArray, keyTypes) {
     } else {
         let returnArray = [];
         keysArray.forEach(keys => {
-            returnArray.push(replaceKeys(queryString,keys, keyTypes);
+            returnArray.push(replaceKeys(queryString, keys, keyTypes));
         });
         return returnArray;
     }
@@ -83,7 +83,7 @@ function replaceKeysArray(queryString, keysArray, keyTypes) {
 function getKeyTypes(entry_keys) {
     let keyTypes = entry_keys.map(k => {
         let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
-        return {key: k.key, dataType: dataType, isPrimary: k.isPrimary}; 
+        return { key: k.key, dataType: dataType, isPrimary: k.isPrimary };
     });
     return keyTypes;
 }
@@ -92,9 +92,9 @@ function getKeyTypes(entry_keys) {
 function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
     let comboQueries = [];
-    
+
     let preProcessQueries = [];
-    
+
     let postProcessQueries = [];
 
     let entry_keys;
@@ -103,36 +103,36 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     } else {
         entry_keys = entry_params.table_keys;
     }
-        
+
     if (!entry_keys) return '';
-    
+
     let keyTypes = getKeyTypes(entry_keys);
-    
+
     // process pre-defined queries for table/form view, if any
 
-    if (entry_params.predefinedQueries) {  
+    if (entry_params.predefinedQueries) {
         let mainQuery;
         entry_params.predefinedQueries.forEach(query => {
             if ((isForm && query.operation === "selectForm") || (!isForm && query.operation === "selectTable")) {
-                if (query.type === "main" && search_keys == null) { 
+                if (query.type === "main" && search_keys == null) {
                     mainQuery = replaceKeys(query.queryString, table_keys, keyTypes); // only one main query allowed
-                } else if (query.type === "search" && search_keys != null) { 
+                } else if (query.type === "search" && search_keys != null) {
                     mainQuery = replaceKeys(query.queryString, table_keys, keyTypes); // only one main query allowed
-                } else if (query.type === "preProcessing") { 
+                } else if (query.type === "preProcessing") {
                     preProcessQueries.push(replaceKeys(query.queryString, table_keys, keyTypes));
-                } else if (query.type === "postProcessing") { 
+                } else if (query.type === "postProcessing") {
                     postProcessQueries.push(replaceKeys(query.queryString, table_keys, keyTypes));
                 }
             }
         });
         if (mainQuery) { // no need to further build main query, stop here
-            return { mainQuery: mainQuery , comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries};
-        
+            return { mainQuery: mainQuery, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+
         }
     }
 
     // automatic build of main query
-    
+
     let queryString = 'SELECT ';
     let comma = ''; // first entry has no comma 
 
@@ -152,20 +152,20 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
         if (!element.key || (element.sameOrigin != null && !element.sameOrigin)) {  // no table key or the key is from another table
             return;
         }
-        
+
         let fieldString = comma + element.key;
         if (element.hasOwnProperty('queryFunct')) { // overridden by funct
             fieldString = comma + '(' + replaceKeys(element.queryFunct, table_keys, keyTypes) + ') AS ' + element.key;
         }
         comma = ','; // needed only the first time
         queryString = queryString + fieldString;
-        
+
     });
 
     if (entry_params.origin) {
         queryString = queryString + ' FROM ' + entry_params.origin;
     } else {  // no underlying table, skip building of main query, still there might be some combos
-        return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries}; 
+        return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
     }
 
     comma = ' WHERE ';
@@ -180,15 +180,15 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
             comma = ' AND '; // needed only the first time
         }
     }
-    
+
     if (search_keys) {
-        
+
         let search_params = entry_params.search_keys;
         let search_types = search_params.map(k => {
-                let dataType = k.format.dataType ? k.format.dataType : '';
-                return {key: k.fieldName, dataType: dataType}; 
-            });
-    
+            let dataType = k.format.dataType ? k.format.dataType : '';
+            return { key: k.fieldName, dataType: dataType };
+        });
+
         for (const key in search_keys) {
             if (search_keys.hasOwnProperty(key)) {
                 let search_param = search_params.find(s => (s.fieldName === key));
@@ -200,9 +200,9 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
             }
         }
     }
-    
+
     queryString = queryString + ';';
-    
+
     if (!isForm && entry_params.search_keys) { // in case of full table -> fill comboboxes of search form, if any
         let search_params = entry_params.search_keys;
         search_params.forEach(element => {
@@ -224,50 +224,50 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
 
 function getEventQuery(entry_params, body, eventInfo) {
-   
-   let entry_keys = entry_params.form_keys;
-   
-   let eventQueries = [];  // exploit preprocess queries to run the event queries
-   
-   let table_keys = body;  // keys provided with body
-   
-   let keyTypes = getKeyTypes(entry_keys);
-   
-   let field_key = entry_keys.find(entry => entry.key === eventInfo.field);
 
-   
-   if (field_key != null) {
+    let entry_keys = entry_params.form_keys;
+
+    let eventQueries = [];  // exploit preprocess queries to run the event queries
+
+    let table_keys = body;  // keys provided with body
+
+    let keyTypes = getKeyTypes(entry_keys);
+
+    let field_key = entry_keys.find(entry => entry.key === eventInfo.field);
+
+
+    if (field_key != null) {
         if (field_key.inputEvents != null) {
             field_key.inputEvents.forEach(
                 event => {
-                   if (event.queryString != null && event.eventName === eventInfo.name) {
-                       const queryString = replaceKeys(event.queryString, table_keys, keyTypes);
-                       eventQueries.push(queryString);
-                   } 
+                    if (event.queryString != null && event.eventName === eventInfo.name) {
+                        const queryString = replaceKeys(event.queryString, table_keys, keyTypes);
+                        eventQueries.push(queryString);
+                    }
                 });
-        }       
-   }
-   
-   return { mainQuery:'', preProcessQueries:[], postProcessQueries:[], comboQueries:[], eventQueries: eventQueries };
-    
+        }
+    }
+
+    return { mainQuery: '', preProcessQueries: [], postProcessQueries: [], comboQueries: [], eventQueries: eventQueries };
+
 }
 
 function getNewQuery(entry_params, table_keys) {
-    
-   let entry_keys = entry_params.form_keys;
-   
-   let mqString = '';
-   
-   let defaultValues = {};
-   
-   let comboQueries = [];
-   
-   let keyTypes = getKeyTypes(entry_keys);
-   
-   entry_keys.forEach(element => {
+
+    let entry_keys = entry_params.form_keys;
+
+    let mqString = '';
+
+    let defaultValues = {};
+
+    let comboQueries = [];
+
+    let keyTypes = getKeyTypes(entry_keys);
+
+    entry_keys.forEach(element => {
         if (element.autoGenerate && element.autoGenerate === true && element.format.dataType === 'number') {  // there should be only one entry, otherwise last one dominates 
             mqString = 'SELECT (MAX(' + element.key + ')+1) AS ' + element.key + ' FROM ' + entry_params.origin;
-            let  comma = ' WHERE ';
+            let comma = ' WHERE ';
             for (const key in table_keys) {
                 if (table_keys.hasOwnProperty(key)) {
                     let keyType = keyTypes.find(e => (e.key === key));
@@ -277,9 +277,9 @@ function getNewQuery(entry_params, table_keys) {
                     let fieldString = comma + key + '=' + delimiter + element + delimiter;
                     mqString = mqString + fieldString;
                     comma = ' AND '; // needed only the first time
-                }   
+                }
             }
-        }  else { // set other keys' values and check for combobox queries
+        } else { // set other keys' values and check for combobox queries
             let obj = new Object;
             if (table_keys[element.key]) {
                 obj[element.key] = table_keys[element.key];
@@ -295,150 +295,156 @@ function getNewQuery(entry_params, table_keys) {
                 comboQueries.push({ key: element.key, comboQuery: comboQuery });
             }
         }
-        
-   });
- 
+
+    });
+
     return { mainQuery: mqString, comboQueries: comboQueries, preProcessQueries: [], postProcessQueries: [], defaultValues: defaultValues };
 }
 
-function getInsertUpdateQuery(entry_params, table_keys, body, newRecord) {
-    
+function getInsertUpdateQuery(entry_params, body, newRecord) {
+
     let entry_keys = entry_params.form_keys;
-    
-    if (!entry_keys) return '';
-    
+
+    if (entry_keys == null) return '';
+
     let preProcessQueries = [];
-    
+
     let postProcessQueries = [];
 
     let keyTypes = getKeyTypes(entry_keys);
-    
-    // process pre-defined queries for table/form view, if any
 
-    if (entry_params.predefinedQueries) {  
-        let mainQuery;
-        entry_params.predefinedQueries.forEach(query => {
-            if ((newRecord && query.operation === "insert") || (!newRecord && query.operation === "update")) {
-                if (query.type === "main") { 
-                    mainQuery = replaceKeys(query.queryString, body, keyTypes); // only one main query allowed, last one wins
-                } else if (query.type === "preProcessing") { 
-                    preProcessQueries.push(replaceKeys(query.queryString, body, keyTypes));
-                } else if (query.type === "postProcessing") { 
-                    postProcessQueries.push(replaceKeys(query.queryString, body, keyTypes));
+    let primaryKeys = entry_keys.filter(key => key.isPrimary === true);
+
+    let queryStrings = [];
+
+    // well, there might be more than one entry within body 
+    body.forEach(keys => {
+
+        // process pre-defined queries for table/form view, if any
+        if (entry_params.predefinedQueries) {
+            let mainQuery;
+            entry_params.predefinedQueries.forEach(query => {
+                if ((newRecord && query.operation === "insert") || (!newRecord && query.operation === "update")) {
+                    if (query.type === "main") {
+                        mainQuery = replaceKeys(query.queryString, keys, keyTypes); // only one main query allowed, last one wins
+                    } else if (query.type === "preProcessing") {
+                        preProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
+                    } else if (query.type === "postProcessing") {
+                        postProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
+                    }
                 }
+            });
+            if (mainQuery) { // no need to further build main query, stop here
+                queryStrings.push({ mainQuery: mainQuery, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries });
+                return;
             }
-        });
-        if (mainQuery) { // no need to further build main query, stop here
-            return { mainQuery: mainQuery , comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries};
         }
-    }
 
-    // automatic build of main query
-    
-    let queryString = newRecord ? 'INSERT INTO ' + entry_params.origin + ' (' : 'UPDATE ' + entry_params.origin + ' SET ';
-    
-    let comma = ''; // first entry has no comma 
-    
-    let values = {};
-    
-    entry_keys.forEach(element => {
-        
-        if (element.key == null || element.sameOrigin || element.queryFunct != null) { // skip foreing columns
-            return;
-        } 
-        
-        let value;
-        
-        if (!body[element.key]) {  // no value passed for the key
-            if (element.format.value) {
-                value = element.format.value; // use default value 
+        // automatic build of main query
+
+        let queryString = newRecord ? 'INSERT INTO ' + entry_params.origin + ' (' : 'UPDATE ' + entry_params.origin + ' SET ';
+
+        let comma = ''; // first entry has no comma 
+
+        let values = {};
+
+        entry_keys.forEach(element => {
+
+            if (element.key == null || (element.sameOrigin != null && !element.sameOrigin) || element.queryFunct != null) { // skip foreing columns
+                return;
+            }
+
+            let value;
+
+            if (!keys[element.key]) {  // no value passed for the key
+                if (element.format.value) {
+                    value = element.format.value; // use default value 
+                } else {
+                    return;   // no value passed and no default, skip the key
+                }
             } else {
-                return;   // no value passed and no default, skip the key
+                value = keys[element.key];
             }
-        } else {
-            value = body[element.key];
-        }
-        
-        queryString = queryString + comma + element.key;
-        values[element.key] = value;
-        if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
-            let keyType = keyTypes.find(e => (e.key === element.key));
-            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
-            if (value.id) { // combobox 
-                value = value.id;
+
+            queryString = queryString + comma + element.key;
+            values[element.key] = value;
+            if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
+                let keyType = keyTypes.find(e => (e.key === element.key));
+                let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+                if (value.id) { // combobox 
+                    value = value.id;
+                }
+                queryString = queryString + '=' + delimiter + value + delimiter;
             }
-            queryString = queryString + '=' + delimiter + value + delimiter;
-        }
-        comma = ', ';
-    });
-    
-    if (newRecord) { // complete the INSERT query
-        comma = ') VALUES (';
-        for (const key in values) {
-            let keyType = keyTypes.find(e => (e.key === key));
-            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
-            let value = values[key];
-            if (value.id) { // combobox 
-                value = value.id;
-            }
-            let fieldString = comma + delimiter + value + delimiter;
-            queryString = queryString + fieldString;
-            comma = ', '; // needed only the first time
-        }
-    } else { // add WHERE conditions to UPDATE query
-         comma = ' WHERE ';
-         for (const key in table_keys) {
-            if (table_keys.hasOwnProperty(key)) {
+            comma = ', ';
+        });
+
+        if (newRecord) { // complete the INSERT query
+            comma = ') VALUES (';
+            for (const key in values) {
                 let keyType = keyTypes.find(e => (e.key === key));
                 let delimiter = (keyType.dataType === 'text') ? '\'' : '';
-                let element = table_keys[key];
-                let fieldString = comma + key + '=' + delimiter + element + delimiter;
+                let value = values[key];
+                if (value.id) { // combobox 
+                    value = value.id;
+                }
+                let fieldString = comma + delimiter + value + delimiter;
                 queryString = queryString + fieldString;
-                comma = ' AND '; // needed only the first time
+                comma = ', '; // needed only the first time
             }
+        } else { // add WHERE conditions to UPDATE query
+            comma = ' WHERE ';
+            primaryKeys.forEach(primaryKey => {
+                    let keyType = keyTypes.find(e => (e.key === primaryKey.key));
+                    let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+                    let element = keys[primaryKey.key];
+                    let fieldString = comma + primaryKey.key + '=' + delimiter + element + delimiter;
+                    queryString = queryString + fieldString;
+                    comma = ' AND '; // needed only the first time
+                });
         }
-    }
 
-    
-    queryString = newRecord ? queryString + ');' : queryString + ';';
-    
-   return { mainQuery: queryString, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries};
-    
+        queryString = newRecord ? queryString + ');' : queryString + ';';
+
+        queryStrings.push({ mainQuery: queryString, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries });
+    });
+
+    return queryStrings;
 }
 
 function getDeleteQuery(entry_params, table_keys) {
-    
+
     let preProcessQueries = [];
-    
+
     let postProcessQueries = [];
-        
+
     let entry_keys = entry_params.form_keys;
-    
+
     let keyTypes = getKeyTypes(entry_keys);
-    
-    
+
+
     // process pre-defined queries for table/form view, if any
 
-    if (entry_params.predefinedQueries) {  
+    if (entry_params.predefinedQueries) {
         let mainQuery;
         entry_params.predefinedQueries.forEach(query => {
             if (query.operation === "delete") {
-                if (query.type === "main") { 
+                if (query.type === "main") {
                     mainQuery = replaceKeys(query.queryString, table_keys, keyTypes); // only one main query allowed
-                } else if (query.type === "preProcessing") { 
+                } else if (query.type === "preProcessing") {
                     preProcessQueries.push(replaceKeys(query.queryString, table_keys, keyTypes));
-                } else if (query.type === "postProcessing") { 
+                } else if (query.type === "postProcessing") {
                     postProcessQueries.push(replaceKeys(query.queryString, table_keys, keyTypes));
                 }
             }
         });
         if (mainQuery) { // no need to further build main query, stop here
-            return { mainQuery: mainQuery , preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries};
+            return { mainQuery: mainQuery, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
         }
     }
 
     // automatic build of main query
-    
+
     let queryString = 'DELETE FROM ' + entry_params.origin;
 
     let comma = ' WHERE ';
@@ -453,57 +459,57 @@ function getDeleteQuery(entry_params, table_keys) {
             comma = ' AND '; // needed only the first time
         }
     }
-    
+
     return { mainQuery: queryString, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
-    
+
 }
 
 async function processPreMainPost(queryString, client, notFullTable) {
-    
-        let local_keys = {}; // additional keys generated with pre-main-post processing  
-        let queryData = [{}];
-        
-        console.log('queryString : ', queryString);
-        
-        // pre-processing
-        if (queryString.preProcessQueries.length) { 
-            for (let index = 0; index < queryString.preProcessQueries.length; index++) {
-                let query = queryString.preProcessQueries[index];
-                query = replaceLocalKeys(query, local_keys);
-                let result = await client.query(query);
-                result = notFullTable ? result.rows[0] : result.rows;
-                if (result !== null) { // add resulting keys to the list of local keys if any
-                    local_keys = Object.assign(local_keys, result);
-                }
-                console.log('Pre query : ', query, ' result : ', result);
+
+    let local_keys = {}; // additional keys generated with pre-main-post processing  
+    let queryData = [{}];
+
+    console.log('queryString : ', queryString);
+
+    // pre-processing
+    if (queryString.preProcessQueries.length) {
+        for (let index = 0; index < queryString.preProcessQueries.length; index++) {
+            let query = queryString.preProcessQueries[index];
+            query = replaceLocalKeys(query, local_keys);
+            let result = await client.query(query);
+            result = notFullTable ? result.rows[0] : result.rows;
+            if (result !== null) { // add resulting keys to the list of local keys if any
+                local_keys = Object.assign(local_keys, result);
             }
-        } 
-        
-        // main query
-        if (queryString.mainQuery != null && queryString.mainQuery !== '') {
-            let query = replaceLocalKeys(queryString.mainQuery, local_keys);
-            queryData = await client.query(query);
-            queryData = queryData.rows;
-            console.log('Main query : ', query, ' result : ', queryData);
+            console.log('Pre query : ', query, ' result : ', result);
         }
-        
-        
-        // post-processing
-        if (queryString.postProcessQueries.length) { // post-processing 
-            for (let index = 0; index < queryString.postProcessQueries.length; index++) {
-                let query = queryString.postProcessQueries[index];
-                query = replaceLocalKeys(query, local_keys);
-                let result = await client.query(query);
-                result = notFullTable ? result.rows[0] : result.rows;
-                if (result !== null) { // add resulting keys to the list of local keys if any
-                    local_keys = Object.assign(local_keys, result);
-                }
-                console.log('Post query : ', query, ' result : ', result);
+    }
+
+    // main query
+    if (queryString.mainQuery != null && queryString.mainQuery !== '') {
+        let query = replaceLocalKeys(queryString.mainQuery, local_keys);
+        queryData = await client.query(query);
+        queryData = queryData.rows;
+        console.log('Main query : ', query, ' result : ', queryData);
+    }
+
+
+    // post-processing
+    if (queryString.postProcessQueries.length) { // post-processing 
+        for (let index = 0; index < queryString.postProcessQueries.length; index++) {
+            let query = queryString.postProcessQueries[index];
+            query = replaceLocalKeys(query, local_keys);
+            let result = await client.query(query);
+            result = notFullTable ? result.rows[0] : result.rows;
+            if (result !== null) { // add resulting keys to the list of local keys if any
+                local_keys = Object.assign(local_keys, result);
             }
+            console.log('Post query : ', query, ' result : ', result);
         }
-        
-        
-        return queryData;
+    }
+
+
+    return queryData;
 }
 
 // main function starts here
@@ -511,9 +517,9 @@ async function processPreMainPost(queryString, client, notFullTable) {
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
-    
+
     const method = event.httpMethod;
-    
+
     console.log('queryParams : ', queryParams);
 
     const DynamoParams = {
@@ -522,31 +528,31 @@ exports.handler = async (event, context) => {
             entryKey: queryParams['entry_name']
         }
     };
-    
-    var search_keys = queryParams['search_keys'];  
+
+    var search_keys = queryParams['search_keys'];
     if (search_keys) {
         search_keys = JSON.parse(search_keys); // production scenario only
     }
-    
+
     var isSearchRequest = search_keys ? true : false;
 
     var isNewRecord = (queryParams['new'] === '1');
 
     var isFormRecord = (queryParams['form'] === '1');
-    
+
     var isEventUpdate = (queryParams['event'] != null);
 
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
 
     var queryData = {};
-    
+
     var queryString = {};
 
     try {
         // read the entry params from DynamoDB
         let entry_params = await dynamo.get(DynamoParams).promise();
-        
+
         entry_params = entry_params.Item;
 
         if (method === 'GET') {
@@ -560,7 +566,7 @@ exports.handler = async (event, context) => {
                 queryString = getTableQuery(entry_params, table_keys, false, null);
             }
         } else if (method === 'POST') {
-            if (isEventUpdate){
+            if (isEventUpdate) {
                 queryString = getEventQuery(entry_params, JSON.parse(event.body), JSON.parse(queryParams['event']));
             } else {
                 // have to check if the record exists (update) or is new (insert), so try to recover it
@@ -571,19 +577,19 @@ exports.handler = async (event, context) => {
         }
 
         var client = await pool.connect();
-        
+
         // process query string(s) - just check if new insertion in case of POST
-        queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE')); 
-        
+        queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'));
+
         // process comboboxes and/or event queries 
         if (method === 'GET' || isEventUpdate) {
-            
+
             if (queryData != null && isNewRecord && queryString.defaultValues) { // only for new records, merge default values
                 queryData.forEach(item => {
                     Object.assign(item, queryString.defaultValues);
                 });
             }
-            
+
             if (queryString.eventQueries != null) {
                 queryData = [];
                 for (let index = 0; index < queryString.eventQueries.length; index++) {
@@ -592,7 +598,7 @@ exports.handler = async (event, context) => {
                 }
             }
 
-            let searchOptions = []; 
+            let searchOptions = [];
             if (queryData != null && queryString.comboQueries != null && queryString.comboQueries.length) {
                 for (let qd_index = 0; qd_index < queryData.length; qd_index++) {
                     for (let index = 0; index < queryString.comboQueries.length; index++) {
@@ -617,18 +623,22 @@ exports.handler = async (event, context) => {
                 queryData = { table_data: queryData[0], search_options: searchOptions };
             }
         }
-        
-        
-        if (method === 'POST' && !isEventUpdate) { 
+
+
+        if (method === 'POST' && !isEventUpdate) {
             // perform insert or update depending on previous query
             let newRecord = queryData.length ? false : true;
             let body = JSON.parse(event.body); // production scenario 
             //let body = event.body; // test scenario
-            queryString = getInsertUpdateQuery(entry_params, table_keys, body, newRecord);
+            let queryStrings = getInsertUpdateQuery(entry_params, body, newRecord); //body is an array of form rows
             // process query string(s)
-            queryData = await processPreMainPost(queryString, client, true);
+            queryData = [];
+            for (let index=0; index < queryStrings.length; index++) { 
+                let data = await processPreMainPost(queryStrings[index], client, true);
+                queryData.push(data);
+            }
         }
-        
+
         // disconnect from DB
         await client.release();
 
@@ -643,7 +653,7 @@ exports.handler = async (event, context) => {
             "query": queryString
         };
     }
-    
+
     console.log(queryData);
 
     return {

@@ -258,7 +258,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         }
-        this.backendService.updateData(this.newTypeParams.entryName, this.currentKeys, values).subscribe(
+        this.backendService.updateData(this.newTypeParams.entryName, this.currentKeys, [values]).subscribe(  // backend expects an array of data
             result => {
                 this.newTypeParams.isVisible = false; // hide the view 
                 setTimeout(() => {
