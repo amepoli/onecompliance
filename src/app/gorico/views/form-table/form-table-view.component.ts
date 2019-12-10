@@ -1,9 +1,6 @@
 import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { BackendService } from '../backend/backend.service';
-import { from } from 'zen-observable';
-
-
 
 
 export interface formTableViewParams {

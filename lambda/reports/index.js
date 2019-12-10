@@ -126,6 +126,8 @@ exports.handler = async (event, context) => {
 
     const entryName = queryParams['entry_name'];
     const list = queryParams['list'];
+
+    const isFullTable = (queryParams['full_table'] === '1');
     
     const method = event.httpMethod;
 
@@ -181,14 +183,14 @@ exports.handler = async (event, context) => {
                 const reportsArray = reports.split(',');
                 DynamoParams.Key.name = reportsArray.shift();
                 var data = await dynamo.get(DynamoParams).promise();
-                const mainQuery = { name: DynamoParams.Key.name, query: data.Item.queryString };
+                const mainQuery = { name: DynamoParams.Key.name, query: isFullTable ? data.Item.queryString : data.Item.recordString };
                 var subQueries = [];
                 for (let i = 0; i < reportsArray.length; i++) {
                     let report = reportsArray[i];
                     if (report !== 'headerGRC') continue;  //HACK TO REMOVE!!!
                     DynamoParams.Key.name = report;
                     data = await dynamo.get(DynamoParams).promise();
-                    subQueries.push({name: report, query: data.Item.queryString});
+                    subQueries.push({name: report, query: isFullTable ? data.Item.queryString : data.Item.recordString });
                 }
                 const url = await getURLFromServer(mainQuery, subQueries , keys); // also replaces parametric keys
                 if (url != null && url !== '') {

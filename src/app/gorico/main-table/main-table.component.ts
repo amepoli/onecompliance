@@ -108,7 +108,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                             }
                         });
                 } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
-                    _this.backendService.getReport(_this.tableName, _this.currentTableKeys, msg.value).subscribe(
+                    _this.backendService.getReport(_this.tableName, (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'table')).subscribe(
                         response => {
                             if (response.result === 'OK') {
                                const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
