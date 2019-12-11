@@ -26,6 +26,8 @@ export class FormTableViewComponent implements OnChanges, OnInit {
 
   processView = false;   // handle the form-getter child view
 
+  isFullScreen = false;
+
   constructor(
     private backendService: BackendService
   ) { }
@@ -85,6 +87,15 @@ export class FormTableViewComponent implements OnChanges, OnInit {
                 });
         }
         
+  }
+
+  fullScreen(): void {
+    this.isFullScreen = !this.isFullScreen;
+    this.sendEvent.emit({ eventType: 'fullScreen', queryParams: {value: this.isFullScreen} });
+  }
+
+  addNew(): void {
+    this.formGetter.addRow();
   }
 
 }

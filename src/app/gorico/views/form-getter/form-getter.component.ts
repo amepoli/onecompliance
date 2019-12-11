@@ -95,13 +95,19 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     private firstRefresh = true;
 
+    private addingNew = false;   // avoid to trigger a refresh (with related events) when adding a row  
+
     constructor(
         private backendService: BackendService,
         private pubsubService: NgxPubSubService) 
         { }
 
     ngOnChanges() {
-        this.refreshView();
+        if (!this.addingNew) {
+            this.refreshView();
+        } else {
+            this.addingNew = false;
+        }
     }
 
     ngAfterViewInit() {
@@ -202,7 +208,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             });
     }
 
-    private getFormData(formKeys: formViewKey[], values: any): FieldConfig[][] {
+    addRow(): void {
+        const _this = this;
+        _this.backendService.getData(_this.formParams.entryName, _this.currentKeys, null, true, true).subscribe(
+            result => {
+                // update the status to prevent the whole table refresh
+                _this.addingNew = true;
+                // process the new row
+                const formData = _this.getFormData(_this.viewKeys, result, _this.formData.length);
+                _this.process_form(formData);
+                // add it to the list
+                _this.formData.push(formData[0]); 
+            });
+    }
+
+    private getFormData(formKeys: formViewKey[], values: any, startingIndex = 0): FieldConfig[][] {
 
         const fieldValues: FieldConfig[][] = [[]];
 
@@ -217,7 +237,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             label: field.label,
                             name: field.key,
                             type: field.format.viewType,
-                            index: index,
+                            index: index + startingIndex,
                             value: (element != null) ? ((element.value != null) ? element.value : element) : null,
                             inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
                             readonly: (field.readOnly != null) ? field.readOnly : false,

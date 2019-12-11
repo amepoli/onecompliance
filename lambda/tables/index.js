@@ -301,7 +301,7 @@ function getNewQuery(entry_params, table_keys) {
     return { mainQuery: mqString, comboQueries: comboQueries, preProcessQueries: [], postProcessQueries: [], defaultValues: defaultValues };
 }
 
-function getInsertUpdateQuery(entry_params, body, newRecord) {
+function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
     let entry_keys = entry_params.form_keys;
 
@@ -315,101 +315,93 @@ function getInsertUpdateQuery(entry_params, body, newRecord) {
 
     let primaryKeys = entry_keys.filter(key => key.isPrimary === true);
 
-    let queryStrings = [];
-
-    // well, there might be more than one entry within body 
-    body.forEach(keys => {
-
-        // process pre-defined queries for table/form view, if any
-        if (entry_params.predefinedQueries) {
-            let mainQuery;
-            entry_params.predefinedQueries.forEach(query => {
-                if ((newRecord && query.operation === "insert") || (!newRecord && query.operation === "update")) {
-                    if (query.type === "main") {
-                        mainQuery = replaceKeys(query.queryString, keys, keyTypes); // only one main query allowed, last one wins
-                    } else if (query.type === "preProcessing") {
-                        preProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
-                    } else if (query.type === "postProcessing") {
-                        postProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
-                    }
+    // process pre-defined queries for table/form view, if any
+    if (entry_params.predefinedQueries) {
+        let mainQuery;
+        entry_params.predefinedQueries.forEach(query => {
+            if ((newRecord && query.operation === "insert") || (!newRecord && query.operation === "update")) {
+                if (query.type === "main") {
+                    mainQuery = replaceKeys(query.queryString, keys, keyTypes); // only one main query allowed, last one wins
+                } else if (query.type === "preProcessing") {
+                    preProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
+                } else if (query.type === "postProcessing") {
+                    postProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
                 }
-            });
-            if (mainQuery) { // no need to further build main query, stop here
-                queryStrings.push({ mainQuery: mainQuery, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries });
-                return;
             }
-        }
-
-        // automatic build of main query
-
-        let queryString = newRecord ? 'INSERT INTO ' + entry_params.origin + ' (' : 'UPDATE ' + entry_params.origin + ' SET ';
-
-        let comma = ''; // first entry has no comma 
-
-        let values = {};
-
-        entry_keys.forEach(element => {
-
-            if (element.key == null || (element.sameOrigin != null && !element.sameOrigin) || element.queryFunct != null) { // skip foreing columns
-                return;
-            }
-
-            let value;
-
-            if (!keys[element.key]) {  // no value passed for the key
-                if (element.format.value) {
-                    value = element.format.value; // use default value 
-                } else {
-                    return;   // no value passed and no default, skip the key
-                }
-            } else {
-                value = keys[element.key];
-            }
-
-            queryString = queryString + comma + element.key;
-            values[element.key] = value;
-            if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
-                let keyType = keyTypes.find(e => (e.key === element.key));
-                let delimiter = (keyType.dataType === 'text') ? '\'' : '';
-                if (value.id) { // combobox 
-                    value = value.id;
-                }
-                queryString = queryString + '=' + delimiter + value + delimiter;
-            }
-            comma = ', ';
         });
+        if (mainQuery) { // no need to further build main query, stop here
+            return { mainQuery: mainQuery, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+        }
+    }
 
-        if (newRecord) { // complete the INSERT query
-            comma = ') VALUES (';
-            for (const key in values) {
-                let keyType = keyTypes.find(e => (e.key === key));
-                let delimiter = (keyType.dataType === 'text') ? '\'' : '';
-                let value = values[key];
-                if (value.id) { // combobox 
-                    value = value.id;
-                }
-                let fieldString = comma + delimiter + value + delimiter;
-                queryString = queryString + fieldString;
-                comma = ', '; // needed only the first time
-            }
-        } else { // add WHERE conditions to UPDATE query
-            comma = ' WHERE ';
-            primaryKeys.forEach(primaryKey => {
-                    let keyType = keyTypes.find(e => (e.key === primaryKey.key));
-                    let delimiter = (keyType.dataType === 'text') ? '\'' : '';
-                    let element = keys[primaryKey.key];
-                    let fieldString = comma + primaryKey.key + '=' + delimiter + element + delimiter;
-                    queryString = queryString + fieldString;
-                    comma = ' AND '; // needed only the first time
-                });
+    // automatic build of main query
+
+    let queryString = newRecord ? 'INSERT INTO ' + entry_params.origin + ' (' : 'UPDATE ' + entry_params.origin + ' SET ';
+
+    let comma = ''; // first entry has no comma 
+
+    let values = {};
+
+    entry_keys.forEach(element => {
+
+        if (element.key == null || (element.sameOrigin != null && !element.sameOrigin) || element.queryFunct != null) { // skip foreing columns
+            return;
         }
 
-        queryString = newRecord ? queryString + ');' : queryString + ';';
+        let value;
 
-        queryStrings.push({ mainQuery: queryString, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries });
+        if (!keys[element.key]) {  // no value passed for the key
+            if (element.format.value) {
+                value = element.format.value; // use default value 
+            } else {
+                return;   // no value passed and no default, skip the key
+            }
+        } else {
+            value = keys[element.key];
+        }
+
+        queryString = queryString + comma + element.key;
+        values[element.key] = value;
+        if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
+            let keyType = keyTypes.find(e => (e.key === element.key));
+            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            if (value.id) { // combobox 
+                value = value.id;
+            }
+            queryString = queryString + '=' + delimiter + value + delimiter;
+        }
+        comma = ', ';
     });
 
-    return queryStrings;
+    if (newRecord) { // complete the INSERT query
+        comma = ') VALUES (';
+        for (const key in values) {
+            let keyType = keyTypes.find(e => (e.key === key));
+            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            let value = values[key];
+            if (value.id) { // combobox 
+                value = value.id;
+            }
+            let fieldString = comma + delimiter + value + delimiter;
+            queryString = queryString + fieldString;
+            comma = ', '; // needed only the first time
+        }
+    } else { // add WHERE conditions to UPDATE query
+        comma = ' WHERE ';
+        primaryKeys.forEach(primaryKey => {
+            let keyType = keyTypes.find(e => (e.key === primaryKey.key));
+            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            let element = keys[primaryKey.key];
+            let fieldString = comma + primaryKey.key + '=' + delimiter + element + delimiter;
+            queryString = queryString + fieldString;
+            comma = ' AND '; // needed only the first time
+        });
+    }
+
+    queryString = newRecord ? queryString + ');' : queryString + ';';
+
+    return { mainQuery: queryString, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+
 }
 
 function getDeleteQuery(entry_params, table_keys) {
@@ -472,7 +464,7 @@ async function processPreMainPost(queryString, client, notFullTable) {
     console.log('queryString : ', queryString);
 
     // pre-processing
-    if (queryString.preProcessQueries.length) {
+    if (queryString.preProcessQueries != null && queryString.preProcessQueries.length) {
         for (let index = 0; index < queryString.preProcessQueries.length; index++) {
             let query = queryString.preProcessQueries[index];
             query = replaceLocalKeys(query, local_keys);
@@ -495,7 +487,7 @@ async function processPreMainPost(queryString, client, notFullTable) {
 
 
     // post-processing
-    if (queryString.postProcessQueries.length) { // post-processing 
+    if (queryString.postProcessQueries != null && queryString.postProcessQueries.length) { // post-processing 
         for (let index = 0; index < queryString.postProcessQueries.length; index++) {
             let query = queryString.postProcessQueries[index];
             query = replaceLocalKeys(query, local_keys);
@@ -569,8 +561,7 @@ exports.handler = async (event, context) => {
             if (isEventUpdate) {
                 queryString = getEventQuery(entry_params, JSON.parse(event.body), JSON.parse(queryParams['event']));
             } else {
-                // have to check if the record exists (update) or is new (insert), so try to recover it
-                queryString = getTableQuery(entry_params, table_keys, true, null);
+                // process later
             }
         } else if (method === 'DELETE') {
             queryString = getDeleteQuery(entry_params, table_keys);
@@ -626,14 +617,29 @@ exports.handler = async (event, context) => {
 
 
         if (method === 'POST' && !isEventUpdate) {
-            // perform insert or update depending on previous query
-            let newRecord = queryData.length ? false : true;
             let body = JSON.parse(event.body); // production scenario 
             //let body = event.body; // test scenario
-            let queryStrings = getInsertUpdateQuery(entry_params, body, newRecord); //body is an array of form rows
-            // process query string(s)
+            let queryStrings = [];
+            for(let index = 0; index < body.length; index++) { // process all body rows
+                let keys = body[index];  
+                // filter out the primary keys from the row
+                let primaryKeys = {};
+                 entry_params.form_keys.forEach( key => {
+                    if (key.isPrimary && keys[key.key] != null) {
+                        primaryKeys[key.key] = keys[key.key];
+                    }
+                 }); 
+                 // have to check if the record exists (update) or is new (insert), so try to recover it
+                queryString = getTableQuery(entry_params, primaryKeys, true, null);
+                queryData = await processPreMainPost(queryString, client, true);
+                // perform insert or update depending on previous query
+                let newRecord = queryData.length ? false : true;
+                queryString = getInsertUpdateQuery(entry_params, keys, newRecord); 
+                queryStrings.push(queryString);
+            }
+            // process insert/update query string(s)
             queryData = [];
-            for (let index=0; index < queryStrings.length; index++) { 
+            for (let index = 0; index < queryStrings.length; index++) {
                 let data = await processPreMainPost(queryStrings[index], client, true);
                 queryData.push(data);
             }
