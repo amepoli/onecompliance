@@ -91,6 +91,8 @@ export class TableViewComponent implements OnChanges {
     currentKeys: any; // relevant keys passed by the parent component 
 
     keysArray: any[];  // list of primary keys values, one entry for each table row
+    
+    targetEntryName: string; // target form view table, might be different from 'self'
 
     constructor(
         private backendService: BackendService) 
@@ -107,6 +109,7 @@ export class TableViewComponent implements OnChanges {
                     if (params.table_keys != null) {
                         _this.viewKeys = params.table_keys;
                         _this.searchKeys = params.search_keys;
+                        _this.targetEntryName = (params.targetNavigation != null) ? params.targetNavigation : _this.tableData.entryName;  // self or new form table?
                         _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                         _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
                         _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: {keys: _this.currentKeys} }); // pass current keys to parent view 
@@ -227,7 +230,7 @@ export class TableViewComponent implements OnChanges {
 
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
-        const mergedParams = { entry: {name: this.tableData.entryName, type: 'form'}, keys: this.keysArray, index: index + 1, total: this.keysArray.length};
+        const mergedParams = { entry: {name: this.targetEntryName, type: 'form'}, keys: this.keysArray, index: index + 1, total: this.keysArray.length};
         setTimeout(() => { this.sendEvent.emit({ eventType: 'navigate', queryParams: mergedParams }); }, 50);
     }
 
