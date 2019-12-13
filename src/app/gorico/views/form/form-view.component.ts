@@ -9,6 +9,8 @@ import { FormGetterComponent, formGetterParams } from '../form-getter/form-gette
 
 type tabViewType = 'table' | 'tableForm';
 
+type tabEventActionType = 'show' | 'notShow';
+
 export interface tabViewKey { // as per API specification
     label: string;
     entryKey: string;
@@ -19,6 +21,13 @@ export interface tabViewKey { // as per API specification
             son: string
         }
     ];
+    inputEvents?: [
+        {
+            eventName: string,
+            actionType: tabEventActionType
+        }
+    ];
+    isHidden?: boolean;
 }
 
 export interface formViewParams {
@@ -106,7 +115,9 @@ export class FormViewComponent implements OnChanges, OnInit {
                 table: tabKey.entryKey, 
                 label: tabKey.label,
                 type: (tabKey.type != null && tabKey.type === 'tableForm') ? 'tableForm' : 'table',  // if not defined is a table 
-                keys: {}
+                keys: {},
+                inputEvents: tabKey.inputEvents,
+                hidden: (tabKey.isHidden != null) ? tabKey.isHidden : false
             };
             tabKey.keys.forEach(key => {
                 if (keys[key.parent]) {

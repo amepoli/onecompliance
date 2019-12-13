@@ -1,11 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { FieldConfig } from "../../field.interface";
+import { NgxPubSubService } from "@pscoped/ngx-pub-sub";
+
 @Component({
   selector: "app-checkbox",
   template: `
 <div [ngStyle]="{'margin-right': '5%', 'margin-left': '5%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group" >
-<mat-checkbox [ngModel]="field.value" [formControlName]="field.name">{{field.label}}</mat-checkbox>
+<mat-checkbox [ngModel]="field.value" [formControlName]="field.name" (change)="onCheck($event)">{{field.label}}</mat-checkbox>
 </div>
 `,
   styles: []
@@ -13,10 +15,22 @@ import { FieldConfig } from "../../field.interface";
 export class CheckboxComponent implements OnInit {
   field: FieldConfig;
   group: FormGroup;
-  constructor() {}
+  constructor(private pubsubService: NgxPubSubService) {}
   ngOnInit() {
-      if (typeof this.field.value === 'string') {
-          this.field.value = parseInt( this.field.value, 10);
+      const _this = this;
+      if (typeof _this.field.value === 'string') {
+          _this.field.value = parseInt(_this.field.value, 10);
+      }
+      if (_this.field.eventName !== null) {
+        // wait a while before triggering the event
+        setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: 'checkbox', index: _this.field.index, data: _this.field.value}); }, 50);
       }
     }
+
+  onCheck(event: any) {
+    const _this = this;
+    if (_this.field.eventName !== null) {
+        _this.pubsubService.publishEvent(_this.field.eventName, {origin: 'checkbox', index: _this.field.index, data: event.checked});
+    }
+  }
 }
