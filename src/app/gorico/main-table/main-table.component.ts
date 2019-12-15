@@ -64,6 +64,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
 
     public tabsSaveData = false;
 
+    private searchKeys: any;
+
     // toolbar pub/sub topics
     subMsgCmdTopic = '/toolbar/out/cmd';
     pubMsgCmdTopic = '/toolbar/in/cmd';
@@ -108,7 +110,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                             }
                         });
                 } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
-                    _this.backendService.getReport(_this.tableName, (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'table')).subscribe(
+                    _this.backendService.getReport(_this.tableName, (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'form'), _this.searchKeys).subscribe(
                         response => {
                             if (response.result === 'OK') {
                                const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
@@ -197,6 +199,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
             _this.historyPop(_this.navigationHistory[_this.level - 1]); // go back
         } else if (event.eventType === 'gotSave') { // user pressed save button on form-view
             _this.tabsSaveData = !_this.tabsSaveData;  // forward it to the tabs view toggling the variable
+        } else if (event.eventType === 'searchKeys') { // used to filter out printed report
+            _this.searchKeys = event.queryParams.keys;
         } else {
             return; // not handled
         }

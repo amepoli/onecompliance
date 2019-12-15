@@ -100,9 +100,12 @@ constructor(private amplifyService: AmplifyService) {
     return from(this.amplifyService.api().get(this.apiName, '/report', this.myGetInit));
   }
 
-  getReport(entryName: string, keys: any, reportName: string, isFullTable: boolean): Observable<any> {
+  getReport(entryName: string, keys: any, reportName: string, isFormView: boolean, search_keys: any): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), full_table: isFullTable ? 1 : 0 };
+    this.myPutPostInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), form: isFormView ? 1 : 0 };
+    if (search_keys != null) {
+        this.myPutPostInit.queryStringParameters['search_keys'] = search_keys; 
+    }
     this.myPutPostInit.body = reportName;
     return from(this.amplifyService.api().post(this.apiName, '/report', this.myPutPostInit));
   }

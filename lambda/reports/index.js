@@ -41,17 +41,21 @@ function tableName2BusinessObject (table_name) {
     
 }
 
-function replaceKeys(queryString, keys) {
+function replaceKeys(queryString, keys, keyTypes) {
 
     console.log(keys);
-    var delimiter = '€';
+    var delimiters = ['$', '€'];
     if (queryString) {
         for (var key in keys) {
+            delimiters.forEach(delimiter => {
+                let keyType = keyTypes.find(e => (e.key === key));
                 if (typeof keys[key] === 'object') { // key with multiple subkeys
                     // tslint:disable-next-line:forin
                     for (var subkey in keys[key]) {
+                        let subKeyType = keyType.dataType.find(e => (e.key === subkey));
+                        let bracket = (delimiter === '$' && subKeyType && subKeyType.dataType === 'text') ? '\'' : '';
                         let toReplace = delimiter + key + '.' + subkey + delimiter;
-                        let replacement = keys[key][subkey];
+                        let replacement = bracket + keys[key][subkey] + bracket;
                         let newString = queryString.replace(toReplace, replacement);
                         while (newString !== queryString) { // handle multiple occurences
                             queryString = newString;
@@ -59,28 +63,29 @@ function replaceKeys(queryString, keys) {
                         }
                     }
                 } else {
+                    let bracket = (delimiter === '$' && keyType && keyType.dataType === 'text') ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
-                    let replacement = keys[key];
+                    // TO BE CHECKED
+                    //let replacement = keys[key].value ? keys[key].value : keys[key]; // handle subtables
+                    let replacement = bracket + keys[key] + bracket;
                     let newString = queryString.replace(toReplace, replacement);
                     while (newString !== queryString) { // handle multiple occurences
                         queryString = newString;
                         newString = queryString.replace(toReplace, replacement);
                     }
                 }
+            });
         }
     }
-    
     return queryString;
 }
 
-function getURLFromServer(mainQuery, subQueries, keys) {
-    
-    console.log(keys);
+function getURLFromServer(mainQuery, subQueries) {
 
     let jsonParams = {
         mainReport: { 
             name: mainQuery.name,
-            query: replaceKeys(mainQuery.query, keys)
+            query: mainQuery.query
         },
         subReports: [],
         params: [  // to modify
@@ -95,7 +100,7 @@ function getURLFromServer(mainQuery, subQueries, keys) {
     subQueries.forEach(subQuery => {
         jsonParams.subReports.push({
             name: subQuery.name,
-            query: replaceKeys(subQuery.query, keys)
+            query: subQuery.query
         });
     });
     
@@ -107,6 +112,64 @@ function getURLFromServer(mainQuery, subQueries, keys) {
     
     return res.getBody('utf8');
 
+}
+
+async function getQuery(entry_name, queryString, keys, search_keys, isForm) {
+    let query = queryString;
+
+    if (query == null || query === '') {
+        return null;
+    }
+
+    const DynamoParams = {
+        TableName: 'views',
+        Key: {
+            entryKey: entry_name
+        }
+    };
+
+    let entry_params = await dynamo.get(DynamoParams).promise();
+
+    let entry_keys = isForm ? entry_params.form_keys : entry_params.table_keys;
+
+    let keyTypes = entry_keys.map(k => {
+        let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
+        return { key: k.key, dataType: dataType, isPrimary: k.isPrimary };
+    });
+
+    let comma = ' WHERE ';
+
+    if (keys != null) {
+        for (const key in keys) {
+            if (keys.hasOwnProperty(key)) {
+                let keyType = keyTypes.find(e => (e.key === key));
+                let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+                let element = keys[key];
+                let fieldString = comma + key + '=' + delimiter + element + delimiter;
+                query = query + fieldString;
+                comma = ' AND '; // needed only the first time 
+            }
+        }
+    }
+
+    if (search_keys != null) {
+        let search_params = entry_params.search_keys;
+        let search_types = search_params.map(k => {
+            let dataType = k.format.dataType ? k.format.dataType : '';
+            return { key: k.fieldName, dataType: dataType };
+        });
+
+        for (const key in search_keys) {
+            if (search_keys.hasOwnProperty(key)) {
+                let search_param = search_params.find(s => (s.fieldName === key));
+                if (search_param != null && search_param.queryCond != null) {
+                    let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
+                    query = query + comma + fieldString;
+                    comma = ' AND '; // needed only the first time if no table_keys
+                }
+            }
+        }
+    }
 }
 
 
@@ -124,10 +187,16 @@ exports.handler = async (event, context) => {
        keys = JSON.parse(keys);  // comment out in case of test
     }
 
+    let search_keys = queryParams['search_keys'];
+
+    if (search_keys != null) {
+        search_keys = JSON.parse(search_keys);  // comment out in case of test
+     }
+
     const entryName = queryParams['entry_name'];
     const list = queryParams['list'];
 
-    const isFullTable = (queryParams['full_table'] === '1');
+    var isFormRecord = (queryParams['form'] === '1');
     
     const method = event.httpMethod;
 
@@ -183,16 +252,14 @@ exports.handler = async (event, context) => {
                 const reportsArray = reports.split(',');
                 DynamoParams.Key.name = reportsArray.shift();
                 var data = await dynamo.get(DynamoParams).promise();
-                const mainQuery = { name: DynamoParams.Key.name, query: isFullTable ? data.Item.queryString : data.Item.recordString };
+                const queryString = await getQuery(entryName, data.Item.queryString, keys, search_keys, isFormRecord);
+                const mainQuery = { name: DynamoParams.Key.name, query: queryString };
                 var subQueries = [];
                 for (let i = 0; i < reportsArray.length; i++) {
                     let report = reportsArray[i];
-                    if (report !== 'headerGRC') continue;  //HACK TO REMOVE!!!
-                    DynamoParams.Key.name = report;
-                    data = await dynamo.get(DynamoParams).promise();
-                    subQueries.push({name: report, query: isFullTable ? data.Item.queryString : data.Item.recordString });
+                    subQueries.push({name: report, query: '' });
                 }
-                const url = await getURLFromServer(mainQuery, subQueries , keys); // also replaces parametric keys
+                const url = await getURLFromServer(mainQuery, subQueries); 
                 if (url != null && url !== '') {
                     body = {result: 'OK', url: url }; 
                 } else {

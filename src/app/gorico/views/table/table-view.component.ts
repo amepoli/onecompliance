@@ -208,11 +208,13 @@ export class TableViewComponent implements OnChanges {
             }
         }
         this.loadTable(cleanedValues);
+        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: {keys: cleanedValues} }); // pass search keys to parent view 
     }
 
     cancel_search() {
         this.showAdvSearch = false;
         this.loadTable(null);
+        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: {keys: null} }); // pass search keys to parent view 
     }
 
     cancel(): void {
