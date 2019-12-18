@@ -88,22 +88,9 @@ function getURLFromServer(mainQuery, subQueries) {
             query: mainQuery.query
         },
         subReports: [],
-        params: [  // to modify
-            {
-                key: "LOGO",
-                value: "2pay.png"
-            }
-        ]
+        params: []
     };
-    
-
-    subQueries.forEach(subQuery => {
-        jsonParams.subReports.push({
-            name: subQuery.name,
-            query: subQuery.query
-        });
-    });
-    
+   
     console.log(jsonParams);
 
     var res = request('POST', 'http://172.31.47.204:8080/json', {
@@ -114,7 +101,7 @@ function getURLFromServer(mainQuery, subQueries) {
 
 }
 
-async function getQuery(entry_name, queryString, keys, search_keys, isForm) {
+async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, isForm) {
     let query = queryString;
 
     if (query == null || query === '') {
@@ -130,14 +117,14 @@ async function getQuery(entry_name, queryString, keys, search_keys, isForm) {
 
     let entry_params = await dynamo.get(DynamoParams).promise();
 
-    let entry_keys = isForm ? entry_params.form_keys : entry_params.table_keys;
+    let entry_keys = isForm ? entry_params.Item.form_keys : entry_params.Item.table_keys;
 
     let keyTypes = entry_keys.map(k => {
         let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
         return { key: k.key, dataType: dataType, isPrimary: k.isPrimary };
     });
 
-    let comma = ' WHERE ';
+    let comma = ((query.indexOf('WHERE') === -1) && (query.indexOf('where') === -1))? ' WHERE ' :  ' AND '; // check if there is already a where condition
 
     if (keys != null) {
         for (const key in keys) {
@@ -145,9 +132,9 @@ async function getQuery(entry_name, queryString, keys, search_keys, isForm) {
                 let keyType = keyTypes.find(e => (e.key === key));
                 let delimiter = (keyType.dataType === 'text') ? '\'' : '';
                 let element = keys[key];
-                let fieldString = comma + key + '=' + delimiter + element + delimiter;
+                let fieldString = comma + keyPrefix + key + '=' + delimiter + element + delimiter;
                 query = query + fieldString;
-                comma = ' AND '; // needed only the first time 
+                comma = ' AND '; // needed only the first time if where statement was added
             }
         }
     }
@@ -164,12 +151,15 @@ async function getQuery(entry_name, queryString, keys, search_keys, isForm) {
                 let search_param = search_params.find(s => (s.fieldName === key));
                 if (search_param != null && search_param.queryCond != null) {
                     let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
-                    query = query + comma + fieldString;
+                    query = query + comma + keyPrefix + fieldString;
                     comma = ' AND '; // needed only the first time if no table_keys
                 }
             }
         }
     }
+
+    query = query + ';';
+    return query;
 }
 
 
@@ -252,7 +242,8 @@ exports.handler = async (event, context) => {
                 const reportsArray = reports.split(',');
                 DynamoParams.Key.name = reportsArray.shift();
                 var data = await dynamo.get(DynamoParams).promise();
-                const queryString = await getQuery(entryName, data.Item.queryString, keys, search_keys, isFormRecord);
+                const keyPrefix = data.Item.tableNickname != null ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
+                const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, keys, search_keys, isFormRecord);
                 const mainQuery = { name: DynamoParams.Key.name, query: queryString };
                 var subQueries = [];
                 for (let i = 0; i < reportsArray.length; i++) {
