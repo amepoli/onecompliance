@@ -31,4 +31,5 @@ export interface FieldConfig {
   validations?: Validator[];
   keys?: Key[];
   eventName?: string;
+  eventTrigger?: string;
 }

@@ -13,6 +13,8 @@ export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'rad
 
 export type eventActionType = 'show' | 'update' | 'query';
 
+export type eventTriggerType = 'change' | 'focus' | 'blur';
+
 export interface formViewKey { // as per API specification
     isHidden: boolean;
     autoGenerate?: boolean;
@@ -30,7 +32,7 @@ export interface formViewKey { // as per API specification
     ];
     outputEvent?: {
         eventName: string,
-        eventTrigger: string
+        eventTrigger?: eventTriggerType
     };
     inputEvents?: [
         {
@@ -246,7 +248,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             width: (field.size != null) ? (field.size * 10) - 10 : null, // leave a 5% margin left and right   
                             options: (element != null && element.options != null) ? element.options : [],
                             validations: (field.format.validations != null) ? field.format.validations : [],
-                            eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null  // output events are directly handled by the target field component
+                            eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null,  // output events are directly handled by the target field component
+                            eventTrigger: (field.outputEvent != null) ?  field.outputEvent.eventTrigger : null // at the moment only implemented by input element for focus/blur
                         };
                         fieldValues[index].push(fieldValue);
                     }
@@ -301,9 +304,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         return (100 - 10 - sumWidths); // considering 10% margins
     }
 
+    private replaceLocalKeys(functString: string, keys: any) {
+        const delimiter = '£';
+        // tslint:disable-next-line: forin
+        for (const key in keys) {
+            const toReplace = delimiter + key + delimiter;
+            const replacement = keys[key];
+            let newString = functString.replace(toReplace, replacement);
+            while (newString !== functString) { // handle multiple occurences
+                functString = newString;
+                newString = functString.replace(toReplace, replacement);
+            }
+        }
+        return functString;
+    }
+
 
     // callback for pubSub events, value has form of {origin, index, data}
-    private eventCallback(event: any, value: any, keyListener: string) {
+    private eventCallback(event: any, value: any, keyListener: string): void {
         const _this = this;
         console.log('Received event: ' + event + ' with value: ' + value);
 
@@ -342,7 +360,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 const current_index = (target_index != null) ? target_index : index;
                 chiavi = childrenArray[current_index].form.value;
                 // process values
-                for (const key in chiavi) {
+                for (const key in chiavi) { 
                     if (chiavi.hasOwnProperty(key)) {
                         const element = chiavi[key];
                         if (element == null) {
@@ -374,7 +392,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     });
             }
         } else if (event.actionType === 'update') {
-            // TODO
+            if (event.updateFunct != null && keyListener != null) {
+                const childrenArray = _this.formArray.toArray();
+                const keys = childrenArray[value.index].form.value;
+                const resolvedFunct = _this.replaceLocalKeys(event.updateFunct, keys);
+                // tslint:disable-next-line: no-eval
+                childrenArray[value.index].form.patchValue({ [keyListener]: eval(resolvedFunct) });
+            }
         }
     }
 

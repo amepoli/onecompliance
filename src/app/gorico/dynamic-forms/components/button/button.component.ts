@@ -20,7 +20,7 @@ export class ButtonComponent implements OnInit {
 
   onClickButton() {
     if (this.field.eventName !== null) {
-        this.pubsubService.publishEvent(this.field.eventName, {origin: 'button', index: this.field.index, data: ''}); // provide index in case of multiple instances of the button
+        this.pubsubService.publishEvent(this.field.eventName, {origin: this.field.name, index: this.field.index, data: ''}); // provide index in case of multiple instances of the button
     }
   }
 

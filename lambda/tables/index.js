@@ -88,6 +88,31 @@ function getKeyTypes(entry_keys) {
     return keyTypes;
 }
 
+function getCalculatedParams(entry_params, keys, isForm) {
+    
+    let entry_keys;
+
+    if (isForm) {
+        entry_keys = entry_params.form_keys;
+    } else {
+        entry_keys = entry_params.table_keys;
+    }
+
+    if (!entry_keys) return keys;
+
+    entry_keys.forEach(entry => {
+        if (entry.hasOwnProperty('evalFunct')) {
+            keys.forEach(keys_row => {
+                const evalString = replaceLocalKeys(entry.evalFunct, keys_row);
+                const evalValue = eval(evalString);
+                keys_row[entry.key] = evalValue;
+            });
+        } 
+    });
+
+    return keys;
+}
+
 // build the Postgresql query from parameters
 function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
@@ -647,6 +672,12 @@ exports.handler = async (event, context) => {
 
         // disconnect from DB
         await client.release();
+
+        // last chance to calculate the keys with an evalFunct
+    
+        if (method === 'GET') {
+            queryData = getCalculatedParams(entry_params, queryData, isFormRecord);
+        }
 
     } catch (e) {
         console.log(e);
