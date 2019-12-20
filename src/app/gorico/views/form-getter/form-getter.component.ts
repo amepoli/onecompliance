@@ -11,7 +11,7 @@ export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
 export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'radiobutton' | 'button';
 
-export type eventActionType = 'show' | 'update' | 'query';
+export type eventActionType = 'show' | 'update' | 'query' | 'update_style' | 'query_style';
 
 export type eventTriggerType = 'change' | 'focus' | 'blur';
 
@@ -22,6 +22,10 @@ export interface formViewKey { // as per API specification
     isPrimary: boolean;
     newLine: boolean;
     size?: number;
+    style?: {
+        background_color?: string,
+        font_color?: string
+    };
     key: string;
     label: string;
     subKeys?: [
@@ -119,7 +123,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             c => { // publish when last element has been shown
                 if (!_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length) {
                         // tslint:disable-next-line: max-line-length
-                        _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: -1, data: _this.formData }); // -1 as index indicates the full page as event origin
+                        _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: 0, data: _this.formData, type: 'page' }); 
                 }
             }
         );
@@ -245,7 +249,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             readonly: (field.readOnly != null) ? field.readOnly : false,
                             isVisible: (field.isHidden != null) ? !field.isHidden : true,
                             newLine: (field.newLine != null) ? field.newLine : true,
-                            width: (field.size != null) ? (field.size * 10) - 10 : null, // leave a 5% margin left and right   
+                            style: (field.style != null) ? field.style : null,
+                            width: (field.size != null) ? (field.size * 10) - 4 : null, // leave a 5% margin left and right   
                             options: (element != null && element.options != null) ? element.options : [],
                             validations: (field.format.validations != null) ? field.format.validations : [],
                             eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null,  // output events are directly handled by the target field component
@@ -297,11 +302,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             // process the elements with defined 1/10 size first
             const singleWidth = Math.floor(100 / numElements);
             for (const element of elements) {
-                element.width = singleWidth - 10; // considering 10% margins;
+                element.width = singleWidth - 4; // considering 4% margins;
                 sumWidths += singleWidth;
             }
         }
-        return (100 - 10 - sumWidths); // considering 10% margins
+        return (100 - 4 - sumWidths); // considering 4% margins
     }
 
     private replaceLocalKeys(functString: string, keys: any) {
@@ -328,7 +333,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         if (event.actionType === 'show') {
             // get the listener element if not full table
             let listener: FieldConfig = null;
-            if (keyListener != null && value.index >= 0) {
+            if (keyListener != null && value.type !== 'page') {
                 const targetLine = _this.formData[value.index];  // recover the form "line"
                 if (targetLine != null) {
                     listener = targetLine.find(field => field.name === keyListener);
@@ -348,9 +353,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
             const filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
             _this.sendEvent.emit({eventType: 'navigate', queryParams: {entry: event.actionTarget, keys: [filteredKeys], index: 1, total: 1}});
-        } else if (event.actionType === 'query') {
+        } else if (event.actionType === 'query' || event.actionType === 'query_style') {
             let chiavi = {};
-            const target_index = (value.index >= 0) ? value.index : null;  // null means the event comes from the full table
+            const target_index = (value.type !== 'page') ? value.index : null;  // null means the event comes from the full table
             let index = (target_index == null) ? _this.formArray.length : 1;
             const targetViewField = _this.viewKeys.find(viewKey => viewKey.key === keyListener);
             const childrenArray = _this.formArray.toArray();
@@ -359,6 +364,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 index--;
                 const current_index = (target_index != null) ? target_index : index;
                 chiavi = childrenArray[current_index].form.value;
+                // fix problem with changed value that might be not updated yet by getting it directly from event
+                if (value.type === 'change') {
+                    chiavi[value.origin] = value.data;
+                }
                 // process values
                 for (const key in chiavi) { 
                     if (chiavi.hasOwnProperty(key)) {
@@ -379,15 +388,25 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
                 }
-                _this.backendService.postEvent(_this.formParams.entryName, keyListener, chiavi, event.eventName).subscribe(
+                _this.backendService.postEvent(_this.formParams.entryName, keyListener, chiavi, event.eventName, event.actionType).subscribe(
                     result => {
                         console.log(keyListener, result);
-                        if (targetViewField.format.viewType === 'combobox') {   // got combobox options
-                            // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
-                            const combobox = <ComboboxComponent>childrenArray[current_index].dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
-                            combobox.setOptions(result);
-                        } else {                                                // got field value
-                            childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
+                        if (event.actionType === 'query') {
+                            if (targetViewField.format.viewType === 'combobox') {   // got combobox options
+                                // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
+                                const combobox = <ComboboxComponent>childrenArray[current_index].dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
+                                combobox.setOptions(result);
+                            } else {                                                // got field value
+                                childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
+                            }
+                        } else {  // query_style
+                            let element = _this.formData[current_index].find(field => field.name === keyListener);
+                            if (element != null && event.styleAttribute != null) {
+                                if (element.style == null) {
+                                    element.style = {};
+                                }
+                                element.style[event.styleAttribute] = result[0][keyListener + '_' + event.styleAttribute]; // as per specs the returned key is of type '<key>_<styleAttribute>'
+                            }
                         }
                     });
             }

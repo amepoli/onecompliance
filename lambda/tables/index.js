@@ -265,8 +265,8 @@ function getEventQuery(entry_params, body, eventInfo) {
         if (field_key.inputEvents != null) {
             field_key.inputEvents.forEach(
                 event => {
-                    if (event.queryString != null && event.eventName === eventInfo.name) {
-                        const queryString = replaceKeys(event.queryString, table_keys, keyTypes);
+                    if (event.queryFunct != null && event.eventName === eventInfo.name && event.actionType === eventInfo.type) {
+                        const queryString = replaceKeys(event.queryFunct, table_keys, keyTypes);
                         eventQueries.push(queryString);
                     }
                 });

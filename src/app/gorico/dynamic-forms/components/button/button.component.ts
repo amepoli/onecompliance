@@ -5,7 +5,7 @@ import { NgxPubSubService } from "@pscoped/ngx-pub-sub";
 @Component({
   selector: "app-button",
   template: `
-<div [ngStyle]="{'display': 'inline-block', 'margin-right': '5%', 'margin-left': '5%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
+<div [ngStyle]="{'display': 'inline-block', 'margin-right': '2%', 'margin-left': '2%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
 <button mat-raised-button color="primary" (click)="onClickButton()">{{field.label}}</button>
 </div>
 `,
@@ -20,7 +20,7 @@ export class ButtonComponent implements OnInit {
 
   onClickButton() {
     if (this.field.eventName !== null) {
-        this.pubsubService.publishEvent(this.field.eventName, {origin: this.field.name, index: this.field.index, data: ''}); // provide index in case of multiple instances of the button
+        this.pubsubService.publishEvent(this.field.eventName, {origin: this.field.name, index: this.field.index, data: '', type: 'button_click'}); // provide index in case of multiple instances of the button
     }
   }
 

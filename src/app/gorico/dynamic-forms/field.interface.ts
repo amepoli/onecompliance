@@ -24,6 +24,7 @@ export interface FieldConfig {
   isVisible?: boolean;
   newLine?: boolean;
   width?: number;
+  style?: { background_color?: string, font_color?: string }; 
   options?: Item[];
   collections?: any;
   type: string;

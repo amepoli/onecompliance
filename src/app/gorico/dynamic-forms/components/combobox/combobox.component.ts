@@ -7,7 +7,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 @Component({
   selector: 'combobox',
   template: `
-<mat-form-field [ngStyle]="{'margin-right': '5%', 'margin-left': '5%','width': field.width+'%'}" *ngIf="field.isVisible != false" appearance="outline" [formGroup]="group">
+<mat-form-field [ngStyle]="{'margin-right': '2%', 'margin-left': '2%','width': field.width+'%'}" *ngIf="field.isVisible != false" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
 <mat-select [ngModel]="field.value" [formControlName]="field.name" [placeholder]="field.label" (selectionChange)="onSelection($event)">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
@@ -66,7 +66,7 @@ export class ComboboxComponent implements OnInit, OnDestroy {
 
   onSelection(event: any) {
     if (event.value != null && this.field.eventName != null) {
-        this.pubsubService.publishEvent(this.field.eventName, {origin: 'combobox', index: this.field.index, data: event.value.id}); 
+        this.pubsubService.publishEvent(this.field.eventName, {origin: this.field.name, index: this.field.index, data: event.value.id, type: 'combobox'}); 
     }
   }
 
