@@ -7,6 +7,14 @@ export const navigation: FuseNavigation[] = [
         type     : 'group',
         children : [
             {
+                id       : 'dashboards',
+                title    : 'Dashboards',
+                translate: 'NAV.DASHBOARDS',
+                type     : 'item',
+                icon     : 'dashboard',
+                url      : '/gorico/dashboard'
+            },
+            {
                 id       : 'organization',
                 title    : 'Organization',
                 translate: 'NAV.ORGANIZATION',
