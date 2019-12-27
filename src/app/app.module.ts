@@ -26,7 +26,7 @@ import { MailConfirmModule } from 'app/login-page/mail-confirm.module';
 import { MainTableModule } from 'app/gorico/main-table/main-table.module';
 import {AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
 import { NgxPubSubModule } from '@pscoped/ngx-pub-sub';
-import { DashboardModule } from'app/gorico/views/dashboard/dashboard.module';
+import { MainDashboardsModule } from'app/gorico/main-dashboards/main-dashboards.module';
 
 const appRoutes: Routes = [
     {
@@ -93,7 +93,7 @@ const appRoutes: Routes = [
         MainTableModule,
         AmplifyAngularModule,
         NgxPubSubModule,
-        DashboardModule
+        MainDashboardsModule
 
     ],
     providers: [

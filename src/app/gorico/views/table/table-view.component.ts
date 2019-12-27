@@ -122,7 +122,7 @@ export class TableViewComponent implements OnChanges {
     }
 
     loadTable(search_keys: any): void {
-        let _this = this;
+        const _this = this;
         _this.backendService.getData(_this.tableData.entryName, _this.currentKeys, search_keys, false, false).subscribe(
             results => {
                 console.log(results);
