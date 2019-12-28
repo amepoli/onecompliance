@@ -26,6 +26,11 @@ export class DashboardComponent {
     @Input() viewHeader = false;
     @Input() tableParams: DashboardParams;
 
+    private labels = [
+        ['probabilita', 'Rare', 'Unfrequent', 'Common', 'Sistematic'],
+        ['impatto', 'Immaterial', 'Low', 'Medium', 'High', 'Catastrofic']
+    ];
+
     onPivotReady(pivot: WebDataRocks.Pivot): void {
         console.log('pivot table ready');
     }
@@ -51,9 +56,11 @@ export class DashboardComponent {
                     _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false).subscribe(
                         results => {
                             console.log(results);
+                            results = _this.setOrder(results);
                             _this.child.webDataRocks.setReport({
                                 dataSource: {
-                                    filename: 'https://cdn.webdatarocks.com/data/data.json'
+                                    //filename: 'https://cdn.webdatarocks.com/data/data.json'
+                                    data: results
                                 },
                                 options: {
                                     drillThrough: false,
@@ -119,6 +126,30 @@ export class DashboardComponent {
 
     onCellDoubleClick(cell: WebDataRocks.CellData): void {
         alert('Cella - riga:' + cell.rowIndex + ' colonna:' + cell.columnIndex + ' valore:' + cell.value);
+    }
+
+    setOrder(data: any): any {
+        const _this = this;
+        data.forEach(element => {
+            _this.labels.forEach(entry => {
+                let key = entry[0];
+                if (element[key] != null) {
+                    let value = element[entry[0]];
+                    // add leading number to entry value to get proper order in dashboard
+                    for (let index = 1; index < entry.length; index++) {
+                        if (value === entry[index]) {
+                            value = index + '. ' + value;
+                            break;
+                        }
+                    }
+                    // rename the entry using capital letter
+                    let newKey = key.charAt(0).toUpperCase() + key.substring(1);
+                    element[newKey] = value;
+                    delete element[key];
+                }
+            });
+        });
+        return data;
     }
 
 }
