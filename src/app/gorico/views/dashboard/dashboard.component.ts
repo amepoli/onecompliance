@@ -37,9 +37,9 @@ export class DashboardComponent {
 
     onCustomizeCell(cell: WebDataRocks.CellBuilder, data: WebDataRocks.CellData): void {
         //console.log("[customizeCell] WebDataRocksPivot");
-        if (data.isClassicTotalRow) cell.addClass("fm-total-classic-r");
-        if (data.isGrandTotalRow) cell.addClass("fm-grand-total-r");
-        if (data.isGrandTotalColumn) cell.addClass("fm-grand-total-c");
+        if (data.isClassicTotalRow) cell.addClass('fm-total-classic-r');
+        if (data.isGrandTotalRow) cell.addClass('fm-grand-total-r');
+        if (data.isGrandTotalColumn) cell.addClass('fm-grand-total-c');
     }
 
     onReportComplete(): void {
@@ -57,53 +57,8 @@ export class DashboardComponent {
                         results => {
                             console.log(results);
                             results = _this.setOrder(results);
-                            _this.child.webDataRocks.setReport({
-                                dataSource: {
-                                    //filename: 'https://cdn.webdatarocks.com/data/data.json'
-                                    data: results
-                                },
-                                options: {
-                                    drillThrough: false,
-                                    grid: {
-                                        showHeaders: false
-                                    }
-                                },
-                                localization: lang,
-                                conditions: [
-                                    {
-                                        formula: '!isNaN(#value)',
-                                        format: {
-                                            backgroundColor: '#FF9800',
-                                            color: '#000000',
-                                            fontFamily: 'Arial',
-                                            fontSize: '12px'
-                                        },
-                                        row: 2,
-                                        column: 1
-                                    }
-                                ],
-                                slice: {
-                                    rows: [
-                                        {
-                                            uniqueName: 'Category'
-                                        }
-                                    ],
-                                    columns: [
-                                        {
-                                            uniqueName: 'Measures'
-                                        },
-                                        {
-                                            uniqueName: 'Country'
-                                        }
-                                    ],
-                                    measures: [
-                                        {
-                                            uniqueName: 'Price',
-                                            aggregation: 'sum'
-                                        }
-                                    ]
-                                }
-                            });
+                            const report = _this.setReport(viewResults, results, lang);
+                            _this.child.webDataRocks.setReport(report);
                         });
                 }
             });
@@ -150,6 +105,45 @@ export class DashboardComponent {
             });
         });
         return data;
+    }
+
+    setReport(data: any, source: any, language: any): any {
+
+        const LUTColors = {
+            white:  '#FFFFFF',
+            black:  '#000000',
+            red:    '#FF0000',
+            green:  '#008000',
+            yellow: '#FFD700',
+            orange: '#FF8C00'
+        }
+        const report = data.dashboard;
+
+        if (report == null) {
+            return null;
+        }
+
+        report.dataSource.data = source; // set the data source
+
+        report.localization = language; // set the language
+
+        // now replace colors labels with hex values
+        if (report.conditions != null) {
+            report.conditions.forEach(element => {
+                if (element.format != null) {
+                    if (element.format.backgroundColor != null) {
+                        const colorString = element.format.backgroundColor;
+                        element.format.backgroundColor = LUTColors[colorString];
+                    }
+                    if (element.format.color != null) {
+                        const colorString = element.format.color;
+                        element.format.color = LUTColors[colorString];
+                    }
+                }
+            });
+        }
+
+        return report;
     }
 
 }
