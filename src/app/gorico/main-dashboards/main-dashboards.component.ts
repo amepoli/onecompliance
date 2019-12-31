@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BackendService } from '../views/backend/backend.service';
 import { DashboardCellEvent } from '../views/dashboard/dashboard.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-dashboards',
@@ -11,7 +12,9 @@ export class MainDashboardsComponent implements OnInit {
 
   keys: any;
 
-  constructor(private backendService: BackendService) { }
+  constructor(
+      private backendService: BackendService,
+      private router: Router) { }
 
   ngOnInit(): void {
     const _this = this;
@@ -19,12 +22,15 @@ export class MainDashboardsComponent implements OnInit {
   }
 
   onCellClick(event: DashboardCellEvent): void{
+    const _this = this;
     console.log(event);
     // set target table keys
     const keys = {};
     keys[event.columnLabel] = event.columnValue;
     keys[event.rowLabel] = event.rowValue;
-    
+    _this.backendService.dashboardKeys = Object.assign(keys, _this.backendService.globalTableKeys);
+    const url = '/gorico/main-table/' + event.entryName;
+    _this.router.navigate([url]);
   }
 
 }

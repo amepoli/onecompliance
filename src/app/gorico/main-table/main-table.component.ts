@@ -93,8 +93,11 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 _this.resetFormParams();    
                 _this.tableName = params.table_name;
                 _this.currentDescription = 'Tabella ' + _this.tableName;
-                _this.tableType = 'table';           // only table views from left navigation bar 
-                _this.currentTableKeys = _this.backendService.globalTableKeys;
+                _this.tableType = 'table';           // only table views from left navigation bar
+                // check if we are coming from dashboard 
+                _this.currentTableKeys = (_this.backendService.dashboardKeys != null) ?     
+                    _this.backendService.dashboardKeys : _this.backendService.globalTableKeys;
+                _this.backendService.dashboardKeys = null; // reset dashboard path
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
             });
 

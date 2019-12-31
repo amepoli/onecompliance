@@ -83,7 +83,7 @@ function replaceKeysArray(queryString, keysArray, keyTypes) {
 function getKeyTypes(entry_keys) {
     let keyTypes = entry_keys.map(k => {
         let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
-        return { key: k.key, dataType: dataType, isPrimary: k.isPrimary };
+        return { key: k.key, dataType: dataType, isPrimary: k.isPrimary, isCalculated: k.queryFunct != null };
     });
     return keyTypes;
 }
@@ -160,7 +160,9 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
     let queryString = 'SELECT ';
     let comma = ''; // first entry has no comma 
-
+    // keep track of calculated where conditions, query becomes subqueries. 
+    // See https://stackoverflow.com/questions/47455962/using-function-result-in-where-clause-in-postgresql
+    let calculatedWhereCond = []; 
 
     entry_keys.forEach(element => {
 
@@ -200,9 +202,13 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
             let keyType = keyTypes.find(e => (e.key === key));
             let delimiter = (keyType.dataType === 'text') ? '\'' : '';
             let element = table_keys[key];
-            let fieldString = comma + key + '=' + delimiter + element + delimiter;
-            queryString = queryString + fieldString;
-            comma = ' AND '; // needed only the first time
+            if (keyType.isCalculated) { // delay and make it part of the query above
+                calculatedWhereCond.push({key: key, value: element, delimiter: delimiter})
+            } else {
+                let fieldString = comma + key + '=' + delimiter + element + delimiter;
+                queryString = queryString + fieldString;
+                comma = ' AND '; // needed only the first time
+            }
         }
     }
 
@@ -225,6 +231,17 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
             }
         }
     }
+
+    if (calculatedWhereCond.length) { // make query above
+        queryString = 'SELECT * FROM (' + queryString + ') AS sub_query ';
+        let comma = ' WHERE ';
+        calculatedWhereCond.forEach(
+            element => {
+                queryString += comma + element.key + '=' + element.delimiter + element.value + element.delimiter;
+                comma = ' AND ';
+            });
+    }
+    
 
     queryString = queryString + ';';
 

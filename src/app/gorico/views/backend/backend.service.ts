@@ -27,6 +27,8 @@ export class BackendService {
   };
 
   globalTableKeys = {}; // global to all tables
+
+  dashboardKeys = null; // bridge keys between dashboard view and main table view
  
 constructor(private amplifyService: AmplifyService) { 
 }
