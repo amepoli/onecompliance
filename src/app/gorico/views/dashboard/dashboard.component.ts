@@ -1,13 +1,27 @@
-import { Component, ViewChild, Input } from '@angular/core';
+import { Component, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import * as italiano from './it.json';
 import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4.js';
 import { BackendService } from '../backend/backend.service';
 import { tableViewKey } from '../table/table-view.component';
+import { _MatChipListMixinBase } from '@angular/material';
 
 
 export interface DashboardParams {
     entryName: string;
     keys: any;
+    rows: number;
+    columns: number;
+}
+
+export interface DashboardCellEvent {
+    entryName: string;
+    row: number;
+    column: number;
+    rowLabel: string;
+    rowValue: any;
+    columnLabel: string;
+    columnValue: any;
+    cellValue: any;
 }
 @Component({
     selector: 'dashboard',
@@ -25,6 +39,8 @@ export class DashboardComponent {
     @Input() height = 500;
     @Input() viewHeader = false;
     @Input() tableParams: DashboardParams;
+
+    @Output() cellClick = new EventEmitter<DashboardCellEvent>();
 
     private labels = [
         ['probabilita', 'Rare', 'Unfrequent', 'Common', 'Sistematic'],
@@ -53,12 +69,18 @@ export class DashboardComponent {
                 if (viewResults.table_keys != null) {
                     // keep only relevant global keys
                     _this.tableParams.keys = _this.getCurrentKeys(viewResults.table_keys, _this.tableParams.keys);
-                    _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false).subscribe(
-                        results => {
-                            console.log(results);
-                            results = _this.setOrder(results);
-                            const report = _this.setReport(viewResults, results, lang);
-                            _this.child.webDataRocks.setReport(report);
+                    // recover the dashboard color codes
+                    _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, true).subscribe(
+                        colors => {
+                            console.log(colors);
+                            // now recover the dashboard data
+                            _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, false).subscribe(
+                                results => {
+                                    console.log(results);
+                                    results = _this.setOrder(results);
+                                    const report = _this.setReport(viewResults, results, lang, colors);
+                                    _this.child.webDataRocks.setReport(report);
+                                });
                         });
                 }
             });
@@ -80,14 +102,34 @@ export class DashboardComponent {
     }
 
     onCellDoubleClick(cell: WebDataRocks.CellData): void {
-        alert('Cella - riga:' + cell.rowIndex + ' colonna:' + cell.columnIndex + ' valore:' + cell.value);
+        const _this = this;
+
+        // reverse labels and values to get original fields and values
+        let rowLabel = cell.rows[0].hierarchyUniqueName;
+        rowLabel = rowLabel.charAt(0).toLowerCase() + rowLabel.substring(1);
+        let columnLabel = cell.columns[0].hierarchyUniqueName;
+        columnLabel = columnLabel.charAt(0).toLowerCase() + columnLabel.substring(1);
+        const rowValue = cell.rows[0].caption.split('. ')[1];
+        const columnValue = cell.columns[0].caption.split('. ')[1];
+        // set event
+        const eventData: DashboardCellEvent = {
+            entryName: _this.tableParams.entryName,
+            row: cell.rowIndex,
+            column: cell.columnIndex,
+            cellValue: cell.value,
+            rowLabel: rowLabel,
+            columnLabel: columnLabel,
+            rowValue: rowValue,
+            columnValue: columnValue
+        }
+        _this.cellClick.emit(eventData);
     }
 
     setOrder(data: any): any {
         const _this = this;
         data.forEach(element => {
             _this.labels.forEach(entry => {
-                let key = entry[0];
+                const key = entry[0];
                 if (element[key] != null) {
                     let value = element[entry[0]];
                     // add leading number to entry value to get proper order in dashboard
@@ -98,7 +140,7 @@ export class DashboardComponent {
                         }
                     }
                     // rename the entry using capital letter
-                    let newKey = key.charAt(0).toUpperCase() + key.substring(1);
+                    const newKey = key.charAt(0).toUpperCase() + key.substring(1);
                     element[newKey] = value;
                     delete element[key];
                 }
@@ -107,13 +149,15 @@ export class DashboardComponent {
         return data;
     }
 
-    setReport(data: any, source: any, language: any): any {
+    setReport(data: any, source: any, language: any, colors: any[]): any {
+
+        const _this = this;
 
         const LUTColors = {
-            white:  '#FFFFFF',
-            black:  '#000000',
-            red:    '#FF0000',
-            green:  '#008000',
+            white: '#FFFFFF',
+            black: '#000000',
+            red: '#FF0000',
+            green: '#008000',
             yellow: '#FFD700',
             orange: '#FF8C00'
         }
@@ -127,20 +171,25 @@ export class DashboardComponent {
 
         report.localization = language; // set the language
 
-        // now replace colors labels with hex values
+        // now set color of all cells
         if (report.conditions != null) {
-            report.conditions.forEach(element => {
-                if (element.format != null) {
-                    if (element.format.backgroundColor != null) {
-                        const colorString = element.format.backgroundColor;
-                        element.format.backgroundColor = LUTColors[colorString];
+            const model = report.conditions[0]; 
+            // remove the sample condition
+            report.conditions = [];
+            let index = 0;
+            for (let i = 2; i < _this.tableParams.rows + 2; i++) {
+                for (let j = 1; j < _this.tableParams.columns + 1; j++) {
+                    let color = colors[index++].color;
+                    const item = JSON.parse(JSON.stringify(model)); // copy the object
+                    if (color.charAt(0) !== '#') {  // remove capital leading char if not already as hex
+                        color = color.charAt(0).toLowerCase() + color.substring(1);
                     }
-                    if (element.format.color != null) {
-                        const colorString = element.format.color;
-                        element.format.color = LUTColors[colorString];
-                    }
+                    item['row'] = i;
+                    item['column'] = j;
+                    item.format.backgroundColor = color.charAt(0) === '#' ? color : LUTColors[color];
+                    report.conditions.push(item);
                 }
-            });
+            }
         }
 
         return report;

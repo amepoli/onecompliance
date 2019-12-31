@@ -277,6 +277,20 @@ function getEventQuery(entry_params, body, eventInfo) {
 
 }
 
+function getDashboardQuery(entry_params, table_keys) {
+
+    let entry_keys = entry_params.table_keys;
+
+    let mainQuery = entry_params.dashboard.colorsQuery;  
+
+    let keyTypes = getKeyTypes(entry_keys);
+
+    mainQuery = replaceKeys(mainQuery, table_keys, keyTypes);
+
+    return { mainQuery: mainQuery, preProcessQueries: [], postProcessQueries: [], comboQueries: [], eventQueries: [] };
+
+}
+
 function getNewQuery(entry_params, table_keys) {
 
     let entry_keys = entry_params.form_keys;
@@ -559,6 +573,8 @@ exports.handler = async (event, context) => {
 
     var isEventUpdate = (queryParams['event'] != null);
 
+    var isDashboard = (queryParams['dashboard'] === '1');
+
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
 
@@ -573,7 +589,9 @@ exports.handler = async (event, context) => {
         entry_params = entry_params.Item;
 
         if (method === 'GET') {
-            if (isSearchRequest) {
+            if (isDashboard) {
+                queryString = getDashboardQuery(entry_params, table_keys);
+            } else if (isSearchRequest) {
                 queryString = getTableQuery(entry_params, table_keys, false, search_keys);
             } else if (isNewRecord) {
                 queryString = getNewQuery(entry_params, table_keys);
@@ -598,7 +616,7 @@ exports.handler = async (event, context) => {
         queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'));
 
         // process comboboxes and/or event queries 
-        if (method === 'GET' || isEventUpdate) {
+        if (method === 'GET' && !isDashboard || isEventUpdate) {
 
             if (queryData != null && isNewRecord && queryString.defaultValues) { // only for new records, merge default values
                 queryData.forEach(item => {
@@ -675,7 +693,7 @@ exports.handler = async (event, context) => {
 
         // last chance to calculate the keys with an evalFunct
     
-        if (method === 'GET') {
+        if (method === 'GET' && !isDashboard) {
             queryData = getCalculatedParams(entry_params, queryData, isFormRecord);
         }
 

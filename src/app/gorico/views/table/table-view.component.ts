@@ -123,7 +123,7 @@ export class TableViewComponent implements OnChanges {
 
     loadTable(search_keys: any): void {
         const _this = this;
-        _this.backendService.getData(_this.tableData.entryName, _this.currentKeys, search_keys, false, false).subscribe(
+        _this.backendService.getData(_this.tableData.entryName, _this.currentKeys, search_keys, false, false, false).subscribe(
             results => {
                 console.log(results);
                 if (results.search_options) { // got some search combobox options
