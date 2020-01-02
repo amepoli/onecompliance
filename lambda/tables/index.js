@@ -294,11 +294,11 @@ function getEventQuery(entry_params, body, eventInfo) {
 
 }
 
-function getDashboardQuery(entry_params, table_keys) {
+function getDashboardQuery(entry_params, table_keys, dashboard_index) {
 
     let entry_keys = entry_params.table_keys;
 
-    let mainQuery = entry_params.dashboard.colorsQuery;  
+    let mainQuery = entry_params.dashboards[dashboard_index].colorsQuery;
 
     let keyTypes = getKeyTypes(entry_keys);
 
@@ -590,7 +590,7 @@ exports.handler = async (event, context) => {
 
     var isEventUpdate = (queryParams['event'] != null);
 
-    var isDashboard = (queryParams['dashboard'] === '1');
+    var dashboardIndex = queryParams['dashboard_index'];
 
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
@@ -606,8 +606,8 @@ exports.handler = async (event, context) => {
         entry_params = entry_params.Item;
 
         if (method === 'GET') {
-            if (isDashboard) {
-                queryString = getDashboardQuery(entry_params, table_keys);
+            if (dashboardIndex != null) {
+                queryString = getDashboardQuery(entry_params, table_keys, dashboardIndex);
             } else if (isSearchRequest) {
                 queryString = getTableQuery(entry_params, table_keys, false, search_keys);
             } else if (isNewRecord) {
@@ -633,7 +633,7 @@ exports.handler = async (event, context) => {
         queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'));
 
         // process comboboxes and/or event queries 
-        if (method === 'GET' && !isDashboard || isEventUpdate) {
+        if (method === 'GET' && dashboardIndex == null || isEventUpdate) {
 
             if (queryData != null && isNewRecord && queryString.defaultValues) { // only for new records, merge default values
                 queryData.forEach(item => {
@@ -710,7 +710,7 @@ exports.handler = async (event, context) => {
 
         // last chance to calculate the keys with an evalFunct
     
-        if (method === 'GET' && !isDashboard) {
+        if (method === 'GET' && dashboardIndex == null) {
             queryData = getCalculatedParams(entry_params, queryData, isFormRecord);
         }
 

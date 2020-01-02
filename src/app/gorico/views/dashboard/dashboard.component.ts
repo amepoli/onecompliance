@@ -8,6 +8,7 @@ import { _MatChipListMixinBase } from '@angular/material';
 
 export interface DashboardParams {
     entryName: string;
+    entryIndex: number; // in case of multiple dashboards for the same entry
     keys: any;
     rows: number;
     columns: number;
@@ -70,15 +71,15 @@ export class DashboardComponent {
                     // keep only relevant global keys
                     _this.tableParams.keys = _this.getCurrentKeys(viewResults.table_keys, _this.tableParams.keys);
                     // recover the dashboard color codes
-                    _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, true).subscribe(
+                    _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex).subscribe(
                         colors => {
                             console.log(colors);
                             // now recover the dashboard data
-                            _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, false).subscribe(
+                            _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, null).subscribe(
                                 results => {
                                     console.log(results);
                                     results = _this.setOrder(results);
-                                    const report = _this.setReport(viewResults, results, lang, colors);
+                                    const report = _this.setReport(viewResults, _this.tableParams.entryIndex, results, lang, colors);
                                     _this.child.webDataRocks.setReport(report);
                                 });
                         });
@@ -149,7 +150,7 @@ export class DashboardComponent {
         return data;
     }
 
-    setReport(data: any, source: any, language: any, colors: any[]): any {
+    setReport(data: any, data_index: number, source: any, language: any, colors: any[]): any {
 
         const _this = this;
 
@@ -161,7 +162,7 @@ export class DashboardComponent {
             yellow: '#FFD700',
             orange: '#FF8C00'
         }
-        const report = data.dashboard;
+        const report = data.dashboards[data_index];
 
         if (report == null) {
             return null;
