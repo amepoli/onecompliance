@@ -714,6 +714,14 @@ exports.handler = async (event, context) => {
             queryData = getCalculatedParams(entry_params, queryData, isFormRecord);
         }
 
+        // return colors if dashboard and colors array is defined
+
+        if (method === 'GET' && dashboardIndex != null) {
+            if (entry_params.dashboards[dashboardIndex].colors != null) {
+                queryData = entry_params.dashboards[dashboardIndex].colors;
+            }
+        }
+
     } catch (e) {
         console.log(e);
         await client.release();

@@ -45,7 +45,9 @@ export class DashboardComponent {
 
     private labels = [
         ['probabilita', 'Rare', 'Unfrequent', 'Common', 'Sistematic'],
-        ['impatto', 'Immaterial', 'Low', 'Medium', 'High', 'Catastrofic']
+        ['impatto', 'Immaterial', 'Low', 'Medium', 'High', 'Catastrofic'],
+        ['rischio_residuo', 'Non relevant', 'Low', 'Medium', 'High'],
+        ['rischio_inerente', 'Low', 'Medium low ', 'Medium high', 'High']
     ];
 
     onPivotReady(pivot: WebDataRocks.Pivot): void {
@@ -104,14 +106,20 @@ export class DashboardComponent {
 
     onCellDoubleClick(cell: WebDataRocks.CellData): void {
         const _this = this;
-
+        let rowValue, columnValue;
         // reverse labels and values to get original fields and values
-        let rowLabel = cell.rows[0].hierarchyUniqueName;
-        rowLabel = rowLabel.charAt(0).toLowerCase() + rowLabel.substring(1);
-        let columnLabel = cell.columns[0].hierarchyUniqueName;
-        columnLabel = columnLabel.charAt(0).toLowerCase() + columnLabel.substring(1);
-        const rowValue = cell.rows[0].caption.split('. ')[1];
-        const columnValue = cell.columns[0].caption.split('. ')[1];
+        let rowLabel = cell.rows[0];
+        if (rowLabel != null) {
+            rowLabel = rowLabel.hierarchyUniqueName;
+            rowLabel = rowLabel.charAt(0).toLowerCase() + rowLabel.substring(1);
+            rowValue = cell.rows[0].caption.split('. ')[1];
+        }
+        let columnLabel = cell.columns[0];
+        if (columnLabel != null) {
+            columnLabel = columnLabel.hierarchyUniqueName;
+            columnLabel = columnLabel.charAt(0).toLowerCase() + columnLabel.substring(1);
+            columnValue = cell.columns[0].caption.split('. ')[1];
+        }
         // set event
         const eventData: DashboardCellEvent = {
             entryName: _this.tableParams.entryName,
@@ -177,17 +185,24 @@ export class DashboardComponent {
             const model = report.conditions[0]; 
             // remove the sample condition
             report.conditions = [];
+            const col_offset = (_this.tableParams.rows > 1) ? 1 : 0;
             let index = 0;
             for (let i = 2; i < _this.tableParams.rows + 2; i++) {
-                for (let j = 1; j < _this.tableParams.columns + 1; j++) {
-                    let color = colors[index++].color;
+                for (let j = col_offset; j < _this.tableParams.columns + col_offset; j++) {
+                    // distinguish between query retrieved and predefined colors
+                    let color = colors[index].color != null ? colors[index].color : colors[index];
+                    index++;
                     const item = JSON.parse(JSON.stringify(model)); // copy the object
                     if (color.charAt(0) !== '#') {  // remove capital leading char if not already as hex
                         color = color.charAt(0).toLowerCase() + color.substring(1);
                     }
                     item['row'] = i;
                     item['column'] = j;
+                    const dualColor = (color === 'yellow' ) 
+                        ? '#000000' // black
+                        : '#FFFFFF'; // white
                     item.format.backgroundColor = color.charAt(0) === '#' ? color : LUTColors[color];
+                    item.format.color = dualColor;
                     report.conditions.push(item);
                 }
             }

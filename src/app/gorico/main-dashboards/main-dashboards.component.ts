@@ -26,8 +26,12 @@ export class MainDashboardsComponent implements OnInit {
     console.log(event);
     // set target table keys
     const keys = {};
-    keys[event.columnLabel] = event.columnValue;
-    keys[event.rowLabel] = event.rowValue;
+    if (event.columnLabel != null) {
+        keys[event.columnLabel] = event.columnValue;
+    }
+    if (event.rowLabel != null) {
+        keys[event.rowLabel] = event.rowValue;
+    }
     _this.backendService.dashboardKeys = Object.assign(keys, _this.backendService.globalTableKeys);
     const url = '/gorico/main-table/' + event.entryName;
     _this.router.navigate([url]);
