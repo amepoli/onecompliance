@@ -50,6 +50,10 @@ export class AuthService {
     public getCode(): string {
         return this.code;
     }
+
+    public getEmail(): string {
+        return this.email;
+    }
     
 
   /** signin */

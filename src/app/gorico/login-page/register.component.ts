@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/internal/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
 
-import { AuthService } from 'app/login-page/auth.service';
+import { AuthService } from './auth.service';
 
 import { Router } from '@angular/router';
 
@@ -76,6 +76,7 @@ export class RegisterComponent implements OnInit, OnDestroy
         .subscribe(authState => {
           if (authState.state ==='confirmSignUp')
           {
+             this.authService.setEmail(this.registerForm.get('email').value); 
              this.router.navigate(['/mail-confirm']);
           }
         });
@@ -83,7 +84,6 @@ export class RegisterComponent implements OnInit, OnDestroy
         // Update the validity of the 'passwordConfirm' field
         // when the 'password' field changes
 
-        // TODO: generating an error - TBC
         this.registerForm.get('password').valueChanges
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(() => {

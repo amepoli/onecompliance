@@ -12,7 +12,7 @@ import { navigation } from 'app/navigation/navigation';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material';
 
-import { AuthService } from 'app/login-page/auth.service';
+import { AuthService } from 'app/gorico/login-page/auth.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';
 
 import { Router, ActivatedRoute } from '@angular/router';

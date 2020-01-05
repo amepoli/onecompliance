@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material';
 
 import { FuseSharedModule } from '@fuse/shared.module';
 
-import { MailConfirmComponent } from 'app/login-page/mail-confirm.component';
+import { MailConfirmComponent } from './mail-confirm.component';
 
 const routes = [
     {

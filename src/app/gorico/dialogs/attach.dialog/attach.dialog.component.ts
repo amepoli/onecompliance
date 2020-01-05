@@ -9,7 +9,7 @@ import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-u
 import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
                                         // and https://stackoverflow.com/a/54645398 and then 'npm run build'
 import { formGetterParams, FormGetterComponent } from 'app/gorico/views/form-getter/form-getter.component';
-import { AuthService } from 'app/login-page/auth.service';
+import { AuthService } from 'app/gorico/login-page/auth.service';
 import { Subscription } from 'rxjs';
                                         
 

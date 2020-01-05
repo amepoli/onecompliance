@@ -4,7 +4,7 @@ import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatInputModule 
 
 import { FuseSharedModule } from '@fuse/shared.module';
 
-import { LoginPageComponent } from 'app/login-page/login-page.component';
+import { LoginPageComponent } from './login-page.component';
 
 import { AmplifyAngularModule} from 'aws-amplify-angular';
 

@@ -80,14 +80,13 @@ export class LoginPageComponent implements OnInit
             
             if (this.signedIn)
             {
-               this.router.navigate(['/']);
+               this.router.navigate(['/gorico/dashboard']);
             }
         });
     }
 
     onSubmit(): void 
     {
-        console.log(this.loginForm);
         this.authService.setUsername(this.loginForm.value.username);
         this.authService.setPassword(this.loginForm.value.password);
         this.authService.signIn();

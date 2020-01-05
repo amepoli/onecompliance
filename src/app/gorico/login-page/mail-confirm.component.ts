@@ -1,28 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
 
+import { AuthService } from './auth.service';
+
 @Component({
-    selector   : 'forgot-password',
-    templateUrl: './forgot-password.component.html',
-    styleUrls  : ['./forgot-password.component.scss'],
+    selector   : 'mail-confirm',
+    templateUrl: './mail-confirm.component.html',
+    styleUrls  : ['./mail-confirm.component.scss'],
     animations : fuseAnimations
 })
-export class ForgotPasswordComponent implements OnInit
+export class MailConfirmComponent implements OnInit
 {
-    forgotPasswordForm: FormGroup;
-
+    email = 'user@example.com';
     /**
      * Constructor
      *
      * @param {FuseConfigService} _fuseConfigService
-     * @param {FormBuilder} _formBuilder
      */
     constructor(
         private _fuseConfigService: FuseConfigService,
-        private _formBuilder: FormBuilder
+        private _authService: AuthService
     )
     {
         // Configure the layout
@@ -43,18 +42,12 @@ export class ForgotPasswordComponent implements OnInit
             }
         };
     }
+    ngOnInit(): void {
+        this.email = this._authService.getEmail();
+    }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * On init
-     */
-    ngOnInit(): void
+    setEmail(email: string) : void
     {
-        this.forgotPasswordForm = this._formBuilder.group({
-            email: ['', [Validators.required, Validators.email]]
-        });
+        this.email = email;
     }
 }
