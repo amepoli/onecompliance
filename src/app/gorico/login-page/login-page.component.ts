@@ -26,7 +26,7 @@ export class LoginPageComponent implements OnInit
      * @param {FormBuilder} _formBuilder
      */
     constructor(
-        public authService: AuthService,
+        private authService: AuthService,
         private _fuseConfigService: FuseConfigService,
         private _formBuilder: FormBuilder,
         private router: Router
@@ -77,10 +77,13 @@ export class LoginPageComponent implements OnInit
             } else {
                 this.user = authState.user;
             }
-            
-            if (this.signedIn)
-            {
-               this.router.navigate(['/gorico/dashboard']);
+        });
+
+        // subscribe to backend retrieval of user info
+        this.authService.userinfo.subscribe(info => {
+            if (info.username != null ) {
+                // got info from backend, now we can proceed
+                this.router.navigate(['/gorico/dashboard']);
             }
         });
     }

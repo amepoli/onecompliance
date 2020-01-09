@@ -2,7 +2,16 @@ import { Injectable } from '@angular/core';
 import { AmplifyService } from 'aws-amplify-angular';
 import { Observable } from 'rxjs/Observable';
 import { AuthState } from 'aws-amplify-angular/dist/src/providers/auth.state';
+import { BackendService } from '../views/backend/backend.service';
+import { BehaviorSubject } from 'rxjs';
 
+export interface UserInfo {
+    name: string;
+    lastname: string;
+    username: string;
+    picture: string;
+    companies: string[];
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -16,8 +25,12 @@ export class AuthService {
   authStateChange$: Observable<AuthState>;
   isSignedIn = false;
 
+  // backend user data
+  public userinfo = new BehaviorSubject<UserInfo> ({ name: null, lastname: null, username: null, picture: null, companies: []});
+
   constructor(
-      public amplifyService: AmplifyService) 
+      public amplifyService: AmplifyService,
+      private backendService: BackendService) 
       { 
           this.amplifyService = amplifyService;
 
@@ -69,6 +82,8 @@ export class AuthService {
       } else {
         this.amplifyService.setAuthState({ state: 'signedIn', user: user });
         this.isSignedIn = true; 
+        // now get user info from backend
+        this.retrieveUserInfo();
       }
     })
     .catch((err) => {
@@ -80,6 +95,7 @@ export class AuthService {
   {
     this.isSignedIn = false;
     this.amplifyService.auth().signOut();
+    this.userinfo.next({ name: null, lastname: null, username: null, picture: null, companies: []}); // user data nulled
   }
 
   public signUp(): void 
@@ -100,4 +116,15 @@ export class AuthService {
 
     this.errorMessage = err.message || err;
   }
+
+  private retrieveUserInfo(): void {
+    const _this = this;
+    _this.backendService.getUserData().subscribe(
+        ud => {
+            if (ud != null && ud.result === 'OK') {
+                _this.userinfo.next(ud.userdata); // signal a value change to subscribers
+                console.log(ud.userdata);
+            }
+        });
+    }
 }

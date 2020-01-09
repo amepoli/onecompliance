@@ -56,6 +56,10 @@ exports.handler = async (event, context, callback) => {
                 'username': {S: event.userName},
                 'email': {S: event.request.userAttributes.email},
                 'createdAt': {S: date.toISOString()},
+                'anagrafica_id': { NULL: true },
+                'name': {S: 'Mario'},
+                'lastname': {S: 'Rossi'},
+                'profiles': {L: []}
             },
             TableName: tableName
         };

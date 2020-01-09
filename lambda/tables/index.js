@@ -567,8 +567,14 @@ exports.handler = async (event, context) => {
     const queryParams = event.queryStringParameters;
 
     const method = event.httpMethod;
+    
+    // quite a tricky method to retrieve the Cognito sub ID , would be maybe better to map it in API GW template
+    // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
+    const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
 
-    console.log('queryParams : ', queryParams);
+    console.log('userid: ', userid);
+
+    console.log('queryParams: ', queryParams);
 
     const DynamoParams = {
         TableName: 'views',

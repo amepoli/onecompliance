@@ -9,24 +9,24 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 
 import { navigation } from 'app/navigation/navigation';
 
-import {DomSanitizer} from '@angular/platform-browser';
-import {MatIconRegistry} from '@angular/material';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material';
 
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';
 
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 
+
 @Component({
-    selector   : 'toolbar',
+    selector: 'toolbar',
     templateUrl: './toolbar.component.html',
-    styleUrls  : ['./toolbar.component.scss']
+    styleUrls: ['./toolbar.component.scss']
 })
 
-export class ToolbarComponent implements OnInit, OnDestroy
-{
+export class ToolbarComponent implements OnInit, OnDestroy {
     horizontalNavbar: boolean;
     rightNavbar: boolean;
     hiddenNavbar: boolean;
@@ -40,8 +40,16 @@ export class ToolbarComponent implements OnInit, OnDestroy
     pubMsgCmdTopic = '/toolbar/out/cmd';
     subMsgCmdTopic = '/toolbar/in/cmd';
 
-    codice_part =  'DEMO'; // TODO: make this parametric
-    codice_azienda =  'DEMO'; // TODO: make this parametric
+    codice_part = 'DEMO';
+    codice_azienda = 'DEMO';
+
+    userdata: {
+        name: string;
+        lastname: string;
+        username: string;
+        picture: string;
+        companies: string[];
+    };
 
     // Private
     private _unsubscribeAll: Subject<any>;
@@ -63,47 +71,46 @@ export class ToolbarComponent implements OnInit, OnDestroy
         private _backendService: BackendService,
         private _pubSubService: NgxPubSubService,
         private router: Router
-    )
-    {
+    ) {
         // Set the defaults
         this.userStatusOptions = [
             {
                 'title': 'Online',
-                'icon' : 'icon-checkbox-marked-circle',
+                'icon': 'icon-checkbox-marked-circle',
                 'color': '#4CAF50'
             },
             {
                 'title': 'Away',
-                'icon' : 'icon-clock',
+                'icon': 'icon-clock',
                 'color': '#FFC107'
             },
             {
                 'title': 'Do not Disturb',
-                'icon' : 'icon-minus-circle',
+                'icon': 'icon-minus-circle',
                 'color': '#F44336'
             },
             {
                 'title': 'Invisible',
-                'icon' : 'icon-checkbox-blank-circle-outline',
+                'icon': 'icon-checkbox-blank-circle-outline',
                 'color': '#BDBDBD'
             },
             {
                 'title': 'Offline',
-                'icon' : 'icon-checkbox-blank-circle-outline',
+                'icon': 'icon-checkbox-blank-circle-outline',
                 'color': '#616161'
             }
         ];
 
         this.languages = [
             {
-                id   : 'it',
+                id: 'it',
                 title: 'Italiano',
-                flag : 'it'
+                flag: 'it'
             },
             {
-                id   : 'en',
+                id: 'en',
                 title: 'English',
-                flag : 'us'
+                flag: 'us'
             }
         ];
 
@@ -124,48 +131,43 @@ export class ToolbarComponent implements OnInit, OnDestroy
     /**
      * On init
      */
-    ngOnInit(): void
-    {
+    ngOnInit(): void {
+
+        const _this = this;
 
         // Subscribe to the config changes
-        this._fuseConfigService.config
-            .pipe(takeUntil(this._unsubscribeAll))
+        _this._fuseConfigService.config
+            .pipe(takeUntil(_this._unsubscribeAll))
             .subscribe((settings) => {
-                this.horizontalNavbar = settings.layout.navbar.position === 'top';
-                this.rightNavbar = settings.layout.navbar.position === 'right';
-                this.hiddenNavbar = settings.layout.navbar.hidden === true;
+                _this.horizontalNavbar = settings.layout.navbar.position === 'top';
+                _this.rightNavbar = settings.layout.navbar.position === 'right';
+                _this.hiddenNavbar = settings.layout.navbar.hidden === true;
             });
 
-         this._authService.authStateChange$
-          .subscribe(authState => {
-            if (authState.state !== 'signedIn') 
-            {
-                this.router.navigate(['/login']);
-            }
-          });
-
-          this._pubSubService.subscribe(this.subMsgCmdTopic, 
+        _this._pubSubService.subscribe(_this.subMsgCmdTopic,
             msg => {
                 if (msg.type === 'print_list') {
-                    this.reportList = msg.value;
+                    _this.reportList = msg.value;
                 }
             });
 
+        // get user data after login
+        _this.userdata = _this._authService.userinfo.getValue();
 
-        this._backendService.globalTableKeys = { codice_part: this.codice_part, codice_azienda: this.codice_azienda };
+        _this._backendService.globalTableKeys = { codice_part: _this.codice_part, codice_azienda: _this.codice_azienda };
 
         // Set the selected language from default languages
-        this.selectedLanguage = _.find(this.languages, {'id': this._translateService.currentLang});
+        _this.selectedLanguage = _.find(_this.languages, { 'id': _this._translateService.currentLang });
     }
 
     /**
      * On destroy
      */
-    ngOnDestroy(): void
-    {
+    ngOnDestroy(): void {
+        const _this = this;
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
-        this._unsubscribeAll.complete();
+        _this._unsubscribeAll.next();
+        _this._unsubscribeAll.complete();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -177,8 +179,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
      *
      * @param key
      */
-    toggleSidebarOpen(key): void
-    {
+    toggleSidebarOpen(key): void {
         this._fuseSidebarService.getSidebar(key).toggleOpen();
     }
 
@@ -187,8 +188,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
      *
      * @param value
      */
-    search(value): void
-    {
+    search(value): void {
         // Do your search here...
         console.log(value);
     }
@@ -198,8 +198,7 @@ export class ToolbarComponent implements OnInit, OnDestroy
      *
      * @param lang
      */
-    setLanguage(lang): void
-    {
+    setLanguage(lang): void {
         // Set the selected language for the toolbar
         this.selectedLanguage = lang;
 
@@ -207,28 +206,27 @@ export class ToolbarComponent implements OnInit, OnDestroy
         this._translateService.use(lang.id);
     }
 
-    logout(): void 
-    {
-       console.log('Signing out');
-       this._authService.signOut();
+    logout(): void {
+        const _this = this;
+        console.log('Signing out');
+        _this._authService.signOut();
+        _this.router.navigate(['/login']);
     }
 
-    addElement(): void
-    {
-        this._pubSubService.publishEvent(this.pubMsgCmdTopic, {type: 'add'});
+    addElement(): void {
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'add' });
     }
 
-    gotoList(): void 
-    {
-        this._pubSubService.publishEvent(this.pubMsgCmdTopic, {type: 'list'});
+    gotoList(): void {
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'list' });
     }
 
     getReportList(): void {
-        this._pubSubService.publishEvent(this.pubMsgCmdTopic, {type: 'print_list'});
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_list' });
     }
 
-    getReport(item: string) :void {
-        this._pubSubService.publishEvent(this.pubMsgCmdTopic, {type: 'print_item', value: item});
+    getReport(item: string): void {
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item });
     }
 
 

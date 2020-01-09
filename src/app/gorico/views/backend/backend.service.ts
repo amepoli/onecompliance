@@ -115,4 +115,10 @@ constructor(private amplifyService: AmplifyService) {
     this.myPutPostInit.body = reportName;
     return from(this.amplifyService.api().post(this.apiName, '/report', this.myPutPostInit));
   }
+
+  getUserData(): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = {};
+    return from(this.amplifyService.api().get(this.apiName, '/user', this.myGetInit));
+  }
 }
