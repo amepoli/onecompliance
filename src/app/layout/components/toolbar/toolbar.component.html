@@ -43,7 +43,17 @@
 
         <div class="toolbar-separator"></div>
 
-        <fuse-search-bar (input)="search($event)"></fuse-search-bar>
+        <button mat-button [matMenuTriggerFor]="companyMenu"
+                    class="user-button">Azienda: {{currentCompany}}
+        </button>
+
+        <mat-menu #companyMenu="matMenu">
+            <ng-container *ngFor="let item of userCompanies">
+                <button mat-menu-item (click)="setCompany(item)">{{item}}</button> 
+            </ng-container>
+        </mat-menu>
+
+        <div class="toolbar-separator"></div>
 
         <button mat-button [matMenuTriggerFor]="report_menu">
             <mat-icon (click)="getReportList()">print</mat-icon>

@@ -37,6 +37,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     reportList: string[] = [];
 
+    userCompanies: string[] = [];
+
+    currentCompany: string;
+
     pubMsgCmdTopic = '/toolbar/out/cmd';
     subMsgCmdTopic = '/toolbar/in/cmd';
 
@@ -145,11 +149,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // get user data after login
         _this.userdata = _this._authService.userinfo.getValue();
 
-        const defaultCompany = _this.userdata.companies.length ? _this.userdata.companies[0] : 'DEMO';
+        // set the company set
+        _this.userCompanies = _this.userdata.companies;
 
-        // set the company
-
-        _this._backendService.globalTableKeys = { codice_part: defaultCompany, codice_azienda: defaultCompany };
+        _this.setCompany(_this.userdata.companies[0]);
 
         _this._translateService.use(_this.userdata.language);
 
@@ -173,6 +176,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
+
+    setCompany(company: string): void {
+        this.currentCompany = company;
+        this._backendService.globalTableKeys = { codice_part: company, codice_azienda: company };
+    }
     /**
      * Toggle sidebar open
      *

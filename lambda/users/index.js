@@ -19,7 +19,7 @@ async function getCompanies(data) {
     var companies = [];
 
     data.profiles.forEach(profile => {
-        companies.concat(profile.companies);
+        companies = companies.concat(profile.companies);
         companies = [...new Set(companies)]; // remove duplicates
     });
     return companies;
