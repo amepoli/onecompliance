@@ -15,6 +15,8 @@ export const locale = {
             'FORMS'       : 'Forms',
             'SURVEYS'     : 'Surveys',
             'DASHBOARDS'  : 'Dashboards',
+            'WORKFLOW'    : 'Workflow',
+            'CHECKLIST'   : 'Checklist',
             'LAWS'        : 'Laws',
             'LAW'         : 'Law',
             'ARTICLES'    : 'Articles',

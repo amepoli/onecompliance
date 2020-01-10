@@ -59,7 +59,8 @@ exports.handler = async (event, context, callback) => {
                 'anagrafica_id': { NULL: true },
                 'name': {S: 'Mario'},
                 'lastname': {S: 'Rossi'},
-                'profiles': {L: []}
+                'profiles': {L: []},
+                'language': {S: 'it'}
             },
             TableName: tableName
         };

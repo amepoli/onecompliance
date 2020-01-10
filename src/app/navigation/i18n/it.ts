@@ -15,6 +15,8 @@ export const locale = {
             'FORMS'       : 'Modulistica',
             'SURVEYS'     : 'Sondaggi',
             'DASHBOARDS'  : 'Dashboards',
+            'WORKFLOW'    : 'Workflow',
+            'CHECKLIST'   : 'Checklist',
             'LAWS'        : 'Normativa',
             'LAW'         : 'Testi normativi',
             'ARTICLES'    : 'Articoli normativi',

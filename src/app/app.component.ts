@@ -56,16 +56,6 @@ export class AppComponent implements OnInit, OnDestroy
         private _authService: AuthService
     )
     {
-
-        // Get default navigation
-        this.navigation = navigation;
-
-        // Register the navigation to the service
-        this._fuseNavigationService.register('main', this.navigation);
-
-        // Set the main navigation as our current navigation
-        this._fuseNavigationService.setCurrentNavigation('main');
-
         // Add languages
         this._translateService.addLangs(['it', 'en']);
 
@@ -77,6 +67,15 @@ export class AppComponent implements OnInit, OnDestroy
 
         // Use a language
         this._translateService.use('it');
+
+        // Get default navigation
+        this.navigation = navigation;
+
+        // Register the navigation to the service
+        this._fuseNavigationService.register('main', this.navigation);
+
+        // Set the main navigation as our current navigation
+        this._fuseNavigationService.setCurrentNavigation('main');
 
         // Add is-mobile class to the body if the platform is mobile
         if ( this._platform.ANDROID || this._platform.IOS )

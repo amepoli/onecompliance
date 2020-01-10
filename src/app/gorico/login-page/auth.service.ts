@@ -4,12 +4,14 @@ import { Observable } from 'rxjs/Observable';
 import { AuthState } from 'aws-amplify-angular/dist/src/providers/auth.state';
 import { BackendService } from '../views/backend/backend.service';
 import { BehaviorSubject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface UserInfo {
     name: string;
     lastname: string;
     username: string;
     picture: string;
+    language: string;
     companies: string[];
 }
 @Injectable({
@@ -26,11 +28,12 @@ export class AuthService {
   isSignedIn = false;
 
   // backend user data
-  public userinfo = new BehaviorSubject<UserInfo> ({ name: null, lastname: null, username: null, picture: null, companies: []});
+  public userinfo = new BehaviorSubject<UserInfo> ({ name: null, lastname: null, username: null, picture: null, language: 'it', companies: []});
 
   constructor(
-      public amplifyService: AmplifyService,
-      private backendService: BackendService) 
+      private amplifyService: AmplifyService,
+      private backendService: BackendService,
+      private langService: TranslateService) 
       { 
           this.amplifyService = amplifyService;
 
@@ -95,7 +98,7 @@ export class AuthService {
   {
     this.isSignedIn = false;
     this.amplifyService.auth().signOut();
-    this.userinfo.next({ name: null, lastname: null, username: null, picture: null, companies: []}); // user data nulled
+    this.userinfo.next({ name: null, lastname: null, username: null, picture: null, language: 'it', companies: []}); // user data nulled
   }
 
   public signUp(): void 
@@ -122,6 +125,9 @@ export class AuthService {
     _this.backendService.getUserData().subscribe(
         ud => {
             if (ud != null && ud.result === 'OK') {
+                if (ud.userdata.language === null) {
+                    ud.userdata.language = 'it';  // defaults to italian
+                }
                 _this.userinfo.next(ud.userdata); // signal a value change to subscribers
                 console.log(ud.userdata);
             }

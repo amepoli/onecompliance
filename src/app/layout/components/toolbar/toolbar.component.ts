@@ -12,7 +12,7 @@ import { navigation } from 'app/navigation/navigation';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
 
-import { AuthService } from 'app/gorico/login-page/auth.service';
+import { AuthService, UserInfo } from 'app/gorico/login-page/auth.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';
 
 import { Router } from '@angular/router';
@@ -40,16 +40,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     pubMsgCmdTopic = '/toolbar/out/cmd';
     subMsgCmdTopic = '/toolbar/in/cmd';
 
-    codice_part = 'DEMO';
-    codice_azienda = 'DEMO';
-
-    userdata: {
-        name: string;
-        lastname: string;
-        username: string;
-        picture: string;
-        companies: string[];
-    };
+    userdata: UserInfo;
 
     // Private
     private _unsubscribeAll: Subject<any>;
@@ -154,10 +145,18 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // get user data after login
         _this.userdata = _this._authService.userinfo.getValue();
 
-        _this._backendService.globalTableKeys = { codice_part: _this.codice_part, codice_azienda: _this.codice_azienda };
+        const defaultCompany = _this.userdata.companies.length ? _this.userdata.companies[0] : 'DEMO';
+
+        // set the company
+
+        _this._backendService.globalTableKeys = { codice_part: defaultCompany, codice_azienda: defaultCompany };
+
+        _this._translateService.use(_this.userdata.language);
 
         // Set the selected language from default languages
         _this.selectedLanguage = _.find(_this.languages, { 'id': _this._translateService.currentLang });
+
+
     }
 
     /**

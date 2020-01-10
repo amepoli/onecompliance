@@ -48,6 +48,7 @@ export const navigation: FuseNavigation[] = [
             {
                 id       : 'workflow',
                 title    : 'Workflow',
+                translate: 'NAV.WORKFLOW',
                 icon: 'settings_input_component',
                 type : 'item',
                 url  : '/login'
@@ -100,6 +101,7 @@ export const navigation: FuseNavigation[] = [
                     {
                         id   : 'checklist',
                         title: 'Checklist',
+                        translate: 'NAV.CHECKLIST',
                         type : 'item',
                         url  : '/login'
                     },
@@ -136,6 +138,7 @@ export const navigation: FuseNavigation[] = [
                     {
                         id   : 'checklist',
                         title: 'Checklist',
+                        translate: 'NAV.CHECKLIST',
                         type : 'item',
                         url  : '/login'
                     },

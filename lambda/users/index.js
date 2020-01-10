@@ -18,14 +18,6 @@ const pool = new Pool({
 async function getCompanies(data) {
     var companies = [];
 
-    // superadmin has access to all companies
-    if (data.profiles.find(d => d.profile === 'superadmin') != null) {
-        const client = await pool.connect();
-        const query = 'select codice_azienda from entrasp.aziende';
-        companies = await client.query(query);
-        return companies;
-    }
-    // else 
     data.profiles.forEach(profile => {
         companies.concat(profile.companies);
         companies = [...new Set(companies)]; // remove duplicates
@@ -55,15 +47,16 @@ exports.handler = async (event, context) => {
     let body;
 
     try {
-        var data = await dynamo.get(DynamoParams).promise().Item;
+        var data = await dynamo.get(DynamoParams).promise();
         if (data != null) {
+            data = data.Item;
             const companies = await getCompanies(data); 
             const s3ParamsGetList = { 
                 Bucket: 'gorico2.pictures',
                 Key: data.picture
             };
             var url = s3.getSignedUrl('getObject', s3ParamsGetList);
-            data = {username: data.username, name: data.name, lastname: data.lastname, picture: url, companies: companies };
+            data = {username: data.username, name: data.name, lastname: data.lastname, picture: url, language: data.language, companies: companies };
             body = {result: 'OK', userdata: data}; 
         } else {
             body = {result: 'KO', reason:'Cannot find the user'};
