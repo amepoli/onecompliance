@@ -44,6 +44,34 @@ export const locale = {
             'CONTACTS'    : 'Contatti',
             'TODO'        : 'To-Do',
             'SCRUMBOARD'  : 'Scrumboard'
+        },
+        'DASHBOARDS': {
+            'Rare': 'Raro',
+            'Raro': 'Raro',
+            'Unfrequent': 'Infrequente',
+            'Infrequente': 'Infrequente',
+            'Common': 'Comune',
+            'Comune': 'Comune',
+            'Sistematic': 'Sistematico',
+            'Sistematico': 'Sistematico',
+            'Immaterial': 'Immateriale',
+            'Immateriale': 'Immateriale',
+            'Low': 'Basso',
+            'Basso': 'Basso',
+            'Medium': 'Medio',
+            'Medio': 'Medio',
+            'Medium low ': 'Medio basso',
+            'Medium low': 'Medio basso',
+            'Medio basso': 'Medio basso',
+            'Medium high': 'Medio alto',
+            'Medio alto': 'Medio alto',
+            'High': 'Alto',
+            'Alto': 'Alto',
+            'Catastrofic': 'Catastrofico',
+            'Catastrofico': 'Catastrofico',
+            'Castastrofico': 'Catastrofico',
+            'Catastofico': 'Catastrofico',
+            'Non relevant': 'Immateriale'
         }
     }
 };

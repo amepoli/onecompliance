@@ -39,12 +39,12 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     userCompanies: string[] = [];
 
-    currentCompany: string;
-
     pubMsgCmdTopic = '/toolbar/out/cmd';
     subMsgCmdTopic = '/toolbar/in/cmd';
 
     userdata: UserInfo;
+
+    currentCompany: string;
 
     // Private
     private _unsubscribeAll: Subject<any>;
@@ -152,7 +152,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // set the company set
         _this.userCompanies = _this.userdata.companies;
 
-        _this.setCompany(_this.userdata.companies[0]);
+        _this.setCompany(_this._authService.currentCompany, false);
 
         _this._translateService.use(_this.userdata.language);
 
@@ -177,10 +177,21 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     // -----------------------------------------------------------------------------------------------------
 
 
-    setCompany(company: string): void {
+    setCompany(company: string, fromInterface: boolean): void {
+        
         this.currentCompany = company;
+        // authService current company also keeps the storage if fromInterface reloading (see below)
+        this._authService.currentCompany = company;
         this._backendService.globalTableKeys = { codice_part: company, codice_azienda: company };
+        if (fromInterface) {  
+            // reload the main page 
+            this.router.navigate(['/login']);
+        }
+            
+            
+
     }
+
     /**
      * Toggle sidebar open
      *
@@ -211,6 +222,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
         // Use the selected language for translations
         this._translateService.use(lang.id);
+        // set it into the service for the reload
+        this._authService.userinfo.value.language = lang.id;
+        // reload the main page 
+        this.router.navigate(['/login']);
     }
 
     logout(): void {

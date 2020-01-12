@@ -4,6 +4,7 @@ import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4.js';
 import { BackendService } from '../backend/backend.service';
 import { tableViewKey } from '../table/table-view.component';
 import { _MatChipListMixinBase } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
 
 
 export interface DashboardParams {
@@ -33,7 +34,8 @@ export interface DashboardCellEvent {
 
 export class DashboardComponent {
 
-    constructor(private backendService: BackendService) { }
+    constructor(private backendService: BackendService,
+                private traslateService: TranslateService) { }
 
     @ViewChild('pivot1') child: WebDataRocksPivot;
 
@@ -43,12 +45,20 @@ export class DashboardComponent {
 
     @Output() cellClick = new EventEmitter<DashboardCellEvent>();
 
-    private labels = [
+    private labels = {
+        'en': [ 
         ['probabilita', 'Rare', 'Unfrequent', 'Common', 'Sistematic'],
-        ['impatto', 'Immaterial', 'Low', 'Medium', 'High', 'Catastrofic'],
-        ['rischio_residuo', 'Non relevant', 'Low', 'Medium', 'High'],
-        ['rischio_inerente', 'Low', 'Medium low ', 'Medium high', 'High']
-    ];
+                ['impatto', 'Not relevant', 'Low', 'Medium', 'High', 'Catastrofic'],
+                ['rischio_residuo', 'Not relevant', 'Low', 'Medium', 'High', 'Catastrofic'],
+                ['rischio_inerente', 'Not relevant', 'Low', 'Medium low', 'Medium', 'Medium high', 'High', 'Catastrofic']
+        ],
+        'it': [ 
+            ['probabilita', 'Raro', 'Infrequente', 'Comune', 'Sistematico'],
+            ['impatto', 'Immateriale', 'Basso', 'Medio', 'Alto', 'Catastrofico'],
+            ['rischio_residuo', 'Immateriale', 'Basso', 'Medio', 'Alto', 'Catastrofico'],
+            ['rischio_inerente', 'Immateriale', 'Basso', 'Medio basso', 'Medio', 'Medio alto', 'Alto', 'Catastrofico']
+        ]
+    };
 
     onPivotReady(pivot: WebDataRocks.Pivot): void {
         console.log('pivot table ready');
@@ -137,10 +147,13 @@ export class DashboardComponent {
     setOrder(data: any): any {
         const _this = this;
         data.forEach(element => {
-            _this.labels.forEach(entry => {
-                const key = entry[0];
+
+            _this.labels[_this.traslateService.currentLang].forEach(entry => {
+                const key = entry[0];  // get first entry (key)
                 if (element[key] != null) {
-                    let value = element[entry[0]];
+                    let value = element[key];
+                    value = _this.traslateService.get('DASHBOARDS.' + value);
+                    value = value.value;  // WARNING: misusing the async observable, anyway it works!!!
                     // add leading number to entry value to get proper order in dashboard
                     for (let index = 1; index < entry.length; index++) {
                         if (value === entry[index]) {
@@ -168,7 +181,8 @@ export class DashboardComponent {
             red: '#FF0000',
             green: '#008000',
             yellow: '#FFD700',
-            orange: '#FF8C00'
+            orange: '#FF8C00',
+            blue: '#0000FF'
         }
         const report = data.dashboards[data_index];
 
@@ -187,10 +201,10 @@ export class DashboardComponent {
             report.conditions = [];
             const col_offset = (_this.tableParams.rows > 1) ? 1 : 0;
             let index = 0;
-            for (let i = 2; i < _this.tableParams.rows + 2; i++) {
-                for (let j = col_offset; j < _this.tableParams.columns + col_offset; j++) {
+            for (let j = col_offset; j < _this.tableParams.columns + col_offset; j++) {
+                for (let i = 2; i < _this.tableParams.rows + 2; i++) {
                     // distinguish between query retrieved and predefined colors
-                    let color = colors[index].color != null ? colors[index].color : colors[index];
+                    let color = colors[index] == null ? 'white' : colors[index].color != null ? colors[index].color : colors[index];
                     index++;
                     const item = JSON.parse(JSON.stringify(model)); // copy the object
                     if (color.charAt(0) !== '#') {  // remove capital leading char if not already as hex
@@ -198,7 +212,7 @@ export class DashboardComponent {
                     }
                     item['row'] = i;
                     item['column'] = j;
-                    const dualColor = (color === 'yellow' ) 
+                    const dualColor = (color === 'yellow' || color === 'white' || color === 'orange') 
                         ? '#000000' // black
                         : '#FFFFFF'; // white
                     item.format.backgroundColor = color.charAt(0) === '#' ? color : LUTColors[color];

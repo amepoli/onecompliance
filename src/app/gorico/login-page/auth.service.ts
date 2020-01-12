@@ -30,10 +30,11 @@ export class AuthService {
   // backend user data
   public userinfo = new BehaviorSubject<UserInfo> ({ name: null, lastname: null, username: null, picture: null, language: 'it', companies: []});
 
+  currentCompany: string;
+
   constructor(
       private amplifyService: AmplifyService,
-      private backendService: BackendService,
-      private langService: TranslateService) 
+      private backendService: BackendService) 
       { 
           this.amplifyService = amplifyService;
 
@@ -129,6 +130,7 @@ export class AuthService {
                     ud.userdata.language = 'it';  // defaults to italian
                 }
                 _this.userinfo.next(ud.userdata); // signal a value change to subscribers
+                _this.currentCompany = ud.userdata.companies[0];
                 console.log(ud.userdata);
             }
         });
