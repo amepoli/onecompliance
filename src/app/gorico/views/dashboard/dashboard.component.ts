@@ -129,14 +129,20 @@ export class DashboardComponent {
 
     setOrder(data: any, labels: any): any {
         const _this = this;
+        const columnArray = labels.columns != null ? labels.columns.data.map(c => c.label) : [];
+        const rowArray = labels.rows != null ? labels.rows.data.map(c => c.label) : [];
+        // filter out not codified elements
+        data = data.filter(d => 
+            (labels.columns != null && d[labels.columns.key] != null && columnArray.indexOf(d[labels.columns.key]) !== -1) 
+            || (labels.rows != null && d[labels.rows.key] != null && rowArray.indexOf(d[labels.rows.key]) !== -1));
         data.forEach(element => {
             if (labels.columns != null && element[labels.columns.key] != null) {
                 const key = labels.columns.key;
-                let value = element[key];
+                let value = element[key];     
                 // add leading number to entry value to get proper order in dashboard
-                for (let index = 0; index < labels.columns.length; index++) {
-                    if (value === labels.columns.data[index]) {
-                        value = index + '. ' + value;
+                for (let index = 0; index < columnArray.length; index++) {
+                    if (value === columnArray[index]) {
+                        value = index + 1 + '. ' + value;
                         break;
                     }
                 }
@@ -144,19 +150,21 @@ export class DashboardComponent {
                 const newKey = key.charAt(0).toUpperCase() + key.substring(1);
                 element[newKey] = value;
                 delete element[key];
-            } else if (labels.rows != null && element[labels.rows.key] != null) {
+            }
+            if (labels.rows != null && element[labels.rows.key] != null) {
                 const key = labels.rows.key;
                 let value = element[key];
                 // add leading number to entry value to get proper order in dashboard
-                for (let index = 0; index < labels.rows.length; index++) {
-                    if (value === labels.rows.data[index]) {
-                        value = index + '. ' + value;
+                for (let index = 0; index < rowArray.length; index++) {
+                    if (value === rowArray[index]) {
+                        value = index + 1 + '. ' + value;
                         break;
                     }
                 }
                 // rename the entry using capital letter
                 const newKey = key.charAt(0).toUpperCase() + key.substring(1);
                 element[newKey] = value;
+                // note that is is just deleted if not codified
                 delete element[key];
             }
         });
@@ -205,12 +213,12 @@ export class DashboardComponent {
                     // get the right color, depending on type
                     let color = 'white';
                     if (colorsType === 'full') {
-                        color = colors[index] == null ? 'white' : colors[index];
+                        color = colors[index] == null ? 'white' : colors[index].color;
                         index++;
                     } else if (colorsType === 'column') {
-                        color = colors[j - col_offset] == null ? 'white' : colors[j - col_offset];
+                        color = colors[j - col_offset] == null ? 'white' : colors[j - col_offset].color;
                     } else if (colorsType === 'row') {
-                        color = colors[i - 2] == null ? 'white' : colors[i - 2];
+                        color = colors[i - 2] == null ? 'white' : colors[i - 2].color;
                     }
                     const item = JSON.parse(JSON.stringify(model)); // copy the object
                     if (color.charAt(0) !== '#') {  // remove capital leading char if not already as hex

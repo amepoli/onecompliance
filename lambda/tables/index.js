@@ -298,11 +298,11 @@ function getDashboardQuery(entry_params, table_keys, dashboard_index) {
 
     let entry_keys = entry_params.table_keys;
 
-    let colorsQuery = entry_params.dashboards[dashboard_index].colorsQuery;
+    let colorsQuery = entry_params.dashboards[dashboard_index].labels.colorsQuery;
 
-    let rowsQuery = entry_params.dashboards[dashboard_index].rowsQuery;
+    let rowsQuery = entry_params.dashboards[dashboard_index].labels.rowsQuery;
 
-    let columnsQuery = entry_params.dashboards[dashboard_index].columnsQuery;
+    let columnsQuery = entry_params.dashboards[dashboard_index].labels.columnsQuery;
 
     let keyTypes = getKeyTypes(entry_keys);
 
@@ -578,6 +578,8 @@ async function processDashboard (queryString, client) {
     let queryData = {};
 
     let colors, rows, columns;
+
+    console.log('dashboardString : ', queryString);
 
     if (queryString.colorsQuery != null) {
         colors = await client.query(queryString.colorsQuery.query);
