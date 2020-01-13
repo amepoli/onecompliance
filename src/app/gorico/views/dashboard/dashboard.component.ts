@@ -11,8 +11,6 @@ export interface DashboardParams {
     entryName: string;
     entryIndex: number; // in case of multiple dashboards for the same entry
     keys: any;
-    rows: number;
-    columns: number;
 }
 
 export interface DashboardCellEvent {
@@ -45,21 +43,6 @@ export class DashboardComponent {
 
     @Output() cellClick = new EventEmitter<DashboardCellEvent>();
 
-    private labels = {
-        'en': [ 
-        ['probabilita', 'Rare', 'Unfrequent', 'Common', 'Sistematic'],
-                ['impatto', 'Not relevant', 'Low', 'Medium', 'High', 'Catastrofic'],
-                ['rischio_residuo', 'Not relevant', 'Low', 'Medium', 'High', 'Catastrofic'],
-                ['rischio_inerente', 'Not relevant', 'Low', 'Medium low', 'Medium', 'Medium high', 'High', 'Catastrofic']
-        ],
-        'it': [ 
-            ['probabilita', 'Raro', 'Infrequente', 'Comune', 'Sistematico'],
-            ['impatto', 'Immateriale', 'Basso', 'Medio', 'Alto', 'Catastrofico'],
-            ['rischio_residuo', 'Immateriale', 'Basso', 'Medio', 'Alto', 'Catastrofico'],
-            ['rischio_inerente', 'Immateriale', 'Basso', 'Medio basso', 'Medio', 'Medio alto', 'Alto', 'Catastrofico']
-        ]
-    };
-
     onPivotReady(pivot: WebDataRocks.Pivot): void {
         console.log('pivot table ready');
     }
@@ -82,16 +65,16 @@ export class DashboardComponent {
                 if (viewResults.table_keys != null) {
                     // keep only relevant global keys
                     _this.tableParams.keys = _this.getCurrentKeys(viewResults.table_keys, _this.tableParams.keys);
-                    // recover the dashboard color codes
+                    // recover the dashboard labels
                     _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex).subscribe(
-                        colors => {
-                            console.log(colors);
+                        labels => {
+                            console.log(labels);
                             // now recover the dashboard data
                             _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, null).subscribe(
                                 results => {
                                     console.log(results);
-                                    results = _this.setOrder(results);
-                                    const report = _this.setReport(viewResults, _this.tableParams.entryIndex, results, lang, colors);
+                                    results = _this.setOrder(results, labels);
+                                    const report = _this.setReport(viewResults, _this.tableParams.entryIndex, results, lang, labels);
                                     _this.child.webDataRocks.setReport(report);
                                 });
                         });
@@ -144,34 +127,43 @@ export class DashboardComponent {
         _this.cellClick.emit(eventData);
     }
 
-    setOrder(data: any): any {
+    setOrder(data: any, labels: any): any {
         const _this = this;
         data.forEach(element => {
-
-            _this.labels[_this.traslateService.currentLang].forEach(entry => {
-                const key = entry[0];  // get first entry (key)
-                if (element[key] != null) {
-                    let value = element[key];
-                    value = _this.traslateService.get('DASHBOARDS.' + value);
-                    value = value.value;  // WARNING: misusing the async observable, anyway it works!!!
-                    // add leading number to entry value to get proper order in dashboard
-                    for (let index = 1; index < entry.length; index++) {
-                        if (value === entry[index]) {
-                            value = index + '. ' + value;
-                            break;
-                        }
+            if (labels.columns != null && element[labels.columns.key] != null) {
+                const key = labels.columns.key;
+                let value = element[key];
+                // add leading number to entry value to get proper order in dashboard
+                for (let index = 0; index < labels.columns.length; index++) {
+                    if (value === labels.columns.data[index]) {
+                        value = index + '. ' + value;
+                        break;
                     }
-                    // rename the entry using capital letter
-                    const newKey = key.charAt(0).toUpperCase() + key.substring(1);
-                    element[newKey] = value;
-                    delete element[key];
                 }
-            });
+                // rename the entry using capital letter
+                const newKey = key.charAt(0).toUpperCase() + key.substring(1);
+                element[newKey] = value;
+                delete element[key];
+            } else if (labels.rows != null && element[labels.rows.key] != null) {
+                const key = labels.rows.key;
+                let value = element[key];
+                // add leading number to entry value to get proper order in dashboard
+                for (let index = 0; index < labels.rows.length; index++) {
+                    if (value === labels.rows.data[index]) {
+                        value = index + '. ' + value;
+                        break;
+                    }
+                }
+                // rename the entry using capital letter
+                const newKey = key.charAt(0).toUpperCase() + key.substring(1);
+                element[newKey] = value;
+                delete element[key];
+            }
         });
         return data;
     }
 
-    setReport(data: any, data_index: number, source: any, language: any, colors: any[]): any {
+    setReport(data: any, data_index: number, source: any, language: any, labels: any): any {
 
         const _this = this;
 
@@ -190,22 +182,36 @@ export class DashboardComponent {
             return null;
         }
 
+        const numColumns = labels.columns == null ? 1 : labels.columns.data.length;
+        const numRows = labels.rows == null ? 1 : labels.rows.data.length;
+
         report.dataSource.data = source; // set the data source
 
         report.localization = language; // set the language
 
         // now set color of all cells
+
+        const colors = labels.colors.colors;
+        const colorsType = labels.colors.type;
+
         if (report.conditions != null) {
             const model = report.conditions[0]; 
             // remove the sample condition
             report.conditions = [];
-            const col_offset = (_this.tableParams.rows > 1) ? 1 : 0;
+            const col_offset = (numRows > 1) ? 1 : 0;
             let index = 0;
-            for (let j = col_offset; j < _this.tableParams.columns + col_offset; j++) {
-                for (let i = 2; i < _this.tableParams.rows + 2; i++) {
-                    // distinguish between query retrieved and predefined colors
-                    let color = colors[index] == null ? 'white' : colors[index].color != null ? colors[index].color : colors[index];
-                    index++;
+            for (let j = col_offset; j < numColumns + col_offset; j++) {
+                for (let i = 2; i < numRows + 2; i++) {
+                    // get the right color, depending on type
+                    let color = 'white';
+                    if (colorsType === 'full') {
+                        color = colors[index] == null ? 'white' : colors[index];
+                        index++;
+                    } else if (colorsType === 'column') {
+                        color = colors[j - col_offset] == null ? 'white' : colors[j - col_offset];
+                    } else if (colorsType === 'row') {
+                        color = colors[i - 2] == null ? 'white' : colors[i - 2];
+                    }
                     const item = JSON.parse(JSON.stringify(model)); // copy the object
                     if (color.charAt(0) !== '#') {  // remove capital leading char if not already as hex
                         color = color.charAt(0).toLowerCase() + color.substring(1);

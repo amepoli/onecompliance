@@ -89,7 +89,7 @@ function getKeyTypes(entry_keys) {
 }
 
 function getCalculatedParams(entry_params, keys, isForm) {
-    
+
     let entry_keys;
 
     if (isForm) {
@@ -107,7 +107,7 @@ function getCalculatedParams(entry_params, keys, isForm) {
                 const evalValue = eval(evalString);
                 keys_row[entry.key] = evalValue;
             });
-        } 
+        }
     });
 
     return keys;
@@ -162,7 +162,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     let comma = ''; // first entry has no comma 
     // keep track of calculated where conditions, query becomes subqueries. 
     // See https://stackoverflow.com/questions/47455962/using-function-result-in-where-clause-in-postgresql
-    let calculatedWhereCond = []; 
+    let calculatedWhereCond = [];
 
     entry_keys.forEach(element => {
 
@@ -203,7 +203,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
             let delimiter = (keyType.dataType === 'text') ? '\'' : '';
             let element = table_keys[key];
             if (keyType.isCalculated) { // delay and make it part of the query above
-                calculatedWhereCond.push({key: key, value: element, delimiter: delimiter})
+                calculatedWhereCond.push({ key: key, value: element, delimiter: delimiter })
             } else {
                 let fieldString = comma + key + '=' + delimiter + element + delimiter;
                 queryString = queryString + fieldString;
@@ -241,7 +241,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
                 comma = ' AND ';
             });
     }
-    
+
 
     queryString = queryString + ';';
 
@@ -298,13 +298,27 @@ function getDashboardQuery(entry_params, table_keys, dashboard_index) {
 
     let entry_keys = entry_params.table_keys;
 
-    let mainQuery = entry_params.dashboards[dashboard_index].colorsQuery;
+    let colorsQuery = entry_params.dashboards[dashboard_index].colorsQuery;
+
+    let rowsQuery = entry_params.dashboards[dashboard_index].rowsQuery;
+
+    let columnsQuery = entry_params.dashboards[dashboard_index].columnsQuery;
 
     let keyTypes = getKeyTypes(entry_keys);
 
-    mainQuery = replaceKeys(mainQuery, table_keys, keyTypes);
+    if (colorsQuery != null) {
+        colorsQuery.query = replaceKeys(colorsQuery.query, table_keys, keyTypes);
+    }
 
-    return { mainQuery: mainQuery, preProcessQueries: [], postProcessQueries: [], comboQueries: [], eventQueries: [] };
+    if (rowsQuery != null) {
+        rowsQuery.query = replaceKeys(rowsQuery.query, table_keys, keyTypes);
+    }
+
+    if (columnsQuery != null) {
+        columnsQuery.query = replaceKeys(columnsQuery.query, table_keys, keyTypes);
+    }
+
+    return { colorsQuery: colorsQuery, rowsQuery: rowsQuery, columnsQuery: columnsQuery };
 
 }
 
@@ -560,6 +574,29 @@ async function processPreMainPost(queryString, client, notFullTable) {
     return queryData;
 }
 
+async function processDashboard (queryString, client) {
+    let queryData = {};
+
+    let colors, rows, columns;
+
+    if (queryString.colorsQuery != null) {
+        colors = await client.query(queryString.colorsQuery.query);
+        queryData['colors'] = { colors: colors.rows, type: queryString.colorsQuery.type };
+    }
+
+    if (queryString.rowsQuery != null) {
+        rows = await client.query(queryString.rowsQuery.query);
+        queryData['rows'] = { data: rows.rows, key: queryString.rowsQuery.key} ;
+    }
+
+    if (queryString.columnsQuery != null) {
+        columns = await client.query(queryString.columnsQuery.query);
+        queryData['columns'] = { data: columns.rows, key: queryString.columnsQuery.key };
+    }
+
+    return queryData;
+}
+
 // main function starts here
 
 exports.handler = async (event, context) => {
@@ -567,7 +604,7 @@ exports.handler = async (event, context) => {
     const queryParams = event.queryStringParameters;
 
     const method = event.httpMethod;
-    
+
     // quite a tricky method to retrieve the Cognito sub ID , would be maybe better to map it in API GW template
     // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
     const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
@@ -635,8 +672,13 @@ exports.handler = async (event, context) => {
 
         var client = await pool.connect();
 
-        // process query string(s) - just check if new insertion in case of POST
-        queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'));
+        if (dashboardIndex != null) {
+            // process dashboard queries
+            queryData = await processDashboard(queryString, client);
+        } else {
+            // process query string(s) - just check if new insertion in case of POST
+            queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'));
+        }
 
         // process comboboxes and/or event queries 
         if (method === 'GET' && dashboardIndex == null || isEventUpdate) {
@@ -686,21 +728,21 @@ exports.handler = async (event, context) => {
             let body = JSON.parse(event.body); // production scenario 
             //let body = event.body; // test scenario
             let queryStrings = [];
-            for(let index = 0; index < body.length; index++) { // process all body rows
-                let keys = body[index];  
+            for (let index = 0; index < body.length; index++) { // process all body rows
+                let keys = body[index];
                 // filter out the primary keys from the row
                 let primaryKeys = {};
-                 entry_params.form_keys.forEach( key => {
+                entry_params.form_keys.forEach(key => {
                     if (key.isPrimary && keys[key.key] != null) {
                         primaryKeys[key.key] = keys[key.key];
                     }
-                 }); 
-                 // have to check if the record exists (update) or is new (insert), so try to recover it
+                });
+                // have to check if the record exists (update) or is new (insert), so try to recover it
                 queryString = getTableQuery(entry_params, primaryKeys, true, null);
                 queryData = await processPreMainPost(queryString, client, true);
                 // perform insert or update depending on previous query
                 let newRecord = queryData.length ? false : true;
-                queryString = getInsertUpdateQuery(entry_params, keys, newRecord); 
+                queryString = getInsertUpdateQuery(entry_params, keys, newRecord);
                 queryStrings.push(queryString);
             }
             // process insert/update query string(s)
@@ -715,7 +757,7 @@ exports.handler = async (event, context) => {
         await client.release();
 
         // last chance to calculate the keys with an evalFunct
-    
+
         if (method === 'GET' && dashboardIndex == null) {
             queryData = getCalculatedParams(entry_params, queryData, isFormRecord);
         }
