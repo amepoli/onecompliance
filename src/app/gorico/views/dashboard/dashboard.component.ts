@@ -123,18 +123,53 @@ export class DashboardComponent {
             columnLabel: columnLabel,
             rowValue: rowValue,
             columnValue: columnValue
-        }
+        };
         _this.cellClick.emit(eventData);
     }
 
     setOrder(data: any, labels: any): any {
         const _this = this;
+
         const columnArray = labels.columns != null ? labels.columns.data.map(c => c.label) : [];
         const rowArray = labels.rows != null ? labels.rows.data.map(c => c.label) : [];
         // filter out not codified elements
         data = data.filter(d => 
-            (labels.columns != null && d[labels.columns.key] != null && columnArray.indexOf(d[labels.columns.key]) !== -1) 
-            || (labels.rows != null && d[labels.rows.key] != null && rowArray.indexOf(d[labels.rows.key]) !== -1));
+            (labels.columns == null || (labels.columns != null && d[labels.columns.key] != null && columnArray.indexOf(d[labels.columns.key]) !== -1)) 
+            && (labels.rows == null || (labels.rows != null && d[labels.rows.key] != null && rowArray.indexOf(d[labels.rows.key]) !== -1)));
+        const rowLabels = [];
+        const columnLabels = [];
+        data.forEach(element => 
+            {
+                if (labels.columns != null) {
+                    if (columnLabels.indexOf(element[labels.columns.key]) === -1) {
+                        columnLabels.push(element[labels.columns.key]);
+                    }
+                }
+                if (labels.rows != null) {
+                    if (rowLabels.indexOf(element[labels.rows.key]) === -1) {
+                        rowLabels.push(element[labels.rows.key]);
+                    }
+                }
+        });
+        if (labels.columns != null && columnLabels.length !== columnArray.length && labels.colors.type === 'column') { // missing column labels in dataset
+            columnArray.forEach(label => {
+                if (columnLabels.indexOf(label) === -1) { // missing column
+                    // remove related color to keep the right colorset
+                    const index = columnArray.indexOf(label);
+                    labels.colors.colors.splice(index, 1);
+                }
+            });
+        }
+        if (labels.rows != null && rowLabels.length !== rowArray.length && labels.colors.type === 'row') {
+            rowArray.forEach(label => {
+                if (rowLabels.indexOf(label) === -1) { // missing row
+                    // remove related color to keep the right colorset
+                    const index = columnArray.indexOf(label);
+                    labels.colors.colors.splice(index, 1);
+                }
+            });
+        }
+        // finally set the order
         data.forEach(element => {
             if (labels.columns != null && element[labels.columns.key] != null) {
                 const key = labels.columns.key;
