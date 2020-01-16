@@ -32,8 +32,7 @@ export interface DashboardCellEvent {
 
 export class DashboardComponent {
 
-    constructor(private backendService: BackendService,
-                private traslateService: TranslateService) { }
+    constructor(private backendService: BackendService) { }
 
     @ViewChild('pivot1') child: WebDataRocksPivot;
 
