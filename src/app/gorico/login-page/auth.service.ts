@@ -5,6 +5,7 @@ import { AuthState } from 'aws-amplify-angular/dist/src/providers/auth.state';
 import { BackendService } from '../views/backend/backend.service';
 import { BehaviorSubject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 
 export interface UserInfo {
     name: string;
@@ -34,7 +35,8 @@ export class AuthService {
 
   constructor(
       private amplifyService: AmplifyService,
-      private backendService: BackendService) 
+      private backendService: BackendService,
+      private navigationService: FuseNavigationService) 
       { 
           this.amplifyService = amplifyService;
 
@@ -86,7 +88,7 @@ export class AuthService {
       } else {
         this.amplifyService.setAuthState({ state: 'signedIn', user: user });
         this.isSignedIn = true; 
-        // now get user info from backend
+        // now get user and related menu info from backend
         this.retrieveUserInfo();
       }
     })
@@ -100,6 +102,9 @@ export class AuthService {
     this.isSignedIn = false;
     this.amplifyService.auth().signOut();
     this.userinfo.next({ name: null, lastname: null, username: null, picture: null, language: 'it', companies: []}); // user data nulled
+    // reset the left menu
+    this.navigationService.setCurrentNavigation('main');
+    this.navigationService.unregister('usermenu');
   }
 
   public signUp(): void 
@@ -109,6 +114,20 @@ export class AuthService {
       this.email)
     .then(user => this.amplifyService.setAuthState({ state: 'confirmSignUp', user: { 'username': this.username } }))
     .catch(err => this._setError(err));
+  }
+
+  public updateUserInfo(company: string): void {
+        const _this = this;
+        if (company == null || company === _this.currentCompany) {
+            return;
+        }
+        _this.currentCompany = company;
+        // reset the left menu
+        _this.navigationService.setCurrentNavigation('main');
+        _this.navigationService.unregister('usermenu');
+        // get new menu
+        _this.retrieveMenu();
+
   }
 
   _setError(err): void 
@@ -132,7 +151,20 @@ export class AuthService {
                 _this.userinfo.next(ud.userdata); // signal a value change to subscribers
                 _this.currentCompany = ud.userdata.companies[0];
                 console.log(ud.userdata);
+                // get new menu
+                _this.retrieveMenu();
             }
+        });
+    }
+
+    private retrieveMenu(): void {
+        const _this = this;
+        _this.backendService.getMenu({codice_azienda: _this.currentCompany}).subscribe (
+            menu => {
+                if (menu != null && menu.result === 'OK') {
+                    _this.navigationService.register('usermenu', [menu.menu]);
+                    _this.navigationService.setCurrentNavigation('usermenu');
+                }
         });
     }
 }

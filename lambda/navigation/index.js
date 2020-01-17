@@ -102,7 +102,6 @@ exports.handler = async (event, context) => {
         var data = await dynamo.get(userParams).promise();
         data = data.Item;
         if (data != null) {
-            data = data.Item;
             let profiles = data.profiles;
             if (codice_azienda != null) {
                 profiles.forEach(p => {

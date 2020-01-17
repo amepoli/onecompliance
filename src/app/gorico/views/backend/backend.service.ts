@@ -121,4 +121,10 @@ constructor(private amplifyService: AmplifyService) {
     this.myGetInit.queryStringParameters = {};
     return from(this.amplifyService.api().get(this.apiName, '/user', this.myGetInit));
   }
+
+  getMenu(keys: any): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { keys: JSON.stringify(keys)};
+    return from(this.amplifyService.api().get(this.apiName, '/menu', this.myGetInit));
+  }
 }

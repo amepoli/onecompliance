@@ -180,8 +180,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     setCompany(company: string, fromInterface: boolean): void {
         
         this.currentCompany = company;
-        // authService current company also keeps the storage if fromInterface reloading (see below)
-        this._authService.currentCompany = company;
+        // update the user infos and left menu 
+        this._authService.updateUserInfo(company);
         this._backendService.globalTableKeys = { codice_part: company, codice_azienda: company };
         if (fromInterface) {  
             // reload the main page 
