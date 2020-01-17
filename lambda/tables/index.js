@@ -599,6 +599,77 @@ async function processDashboard (queryString, client) {
     return queryData;
 }
 
+async function getProfile(userid, company) {
+
+    var userParams = {
+        TableName: 'users',
+        Key: {
+            userid: userid
+        }
+    };
+
+    var profile;
+
+    var data = await dynamo.get(userParams).promise();
+    data = data.Item;
+    if (data != null) {
+        let profiles = data.profiles;
+        if (company != null) {
+            profiles.forEach(p => {
+                if (p.companies.indexOf(company) !== -1) { // found user's profile
+                    profile = p.entry;
+                }
+            });
+        }
+    } 
+    return profile;
+}
+
+async function checkEntry(entry_name, profile) {
+
+    var profileParams = {
+        TableName: 'profiles',
+        Key: {
+            name: profile
+        }
+    };
+    let allowed = false;
+    let permissions = await dynamo.get(profileParams).promise();
+    permissions = permissions.Item;
+    console.log('Permissions: ', permissions, ' Entry: ', entry_name);
+    if (permissions != null && permissions.tables != null) { 
+        permissions = permissions.tables;
+        if (permissions.allow.indexOf(entry_name) !== -1) { // allowed 
+            allowed = true;
+        } else if (permissions.allow[0] === '*') { // check denied 
+            allowed = (permissions.deny.indexOf(entry_name) === -1 && permissions.deny[0] !== '*');
+        } else {
+            allowed = false;
+        }
+    }
+    return allowed;
+}
+
+async function isAuthorized(entry_name, keys, userid) {
+    
+    if (keys == null) {
+        console.log('Error: No keys provided!');
+        return false;
+    }
+    const company = keys.codice_azienda != null ? keys.codice_azienda : keys.codice_part;
+
+    if (company == null) {
+        console.log('Error: No company provided!');
+        return false;
+    }
+
+    // we have a company, now check if user has authorization for the table
+    const profile = await getProfile(userid, company); 
+    const response = await checkEntry(entry_name, profile);
+    return response;
+
+}
+
 // main function starts here
 
 exports.handler = async (event, context) => {
@@ -639,6 +710,20 @@ exports.handler = async (event, context) => {
 
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
+
+    var authorized = await isAuthorized(queryParams.entry_name, table_keys, userid);
+
+    if (!authorized) {
+        console.log(queryParams.entry_name, ' Not Authorized!');
+        return {
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "statusCode": 403,
+            "error": "Not Authorized"
+        };
+    } else {
+        console.log(queryParams.entry_name, ' Authorized!');
+    }
 
     var queryData = {};
 

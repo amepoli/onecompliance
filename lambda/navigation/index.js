@@ -22,7 +22,7 @@ function getMenuWithPermissions(menu, permissions) {
     if (permissions.allow.indexOf(id) !== -1) { // allowed 
         allowed = true;
     } else if (permissions.allow[0] === '*') { // check denied 
-        allowed = (permissions.deny.indexOf(id) === -1);
+        allowed = (permissions.deny.indexOf(id) === -1 && permissions.deny[0] !== '*');
     } else {
         allowed = false;
     }
@@ -33,7 +33,7 @@ function getMenuWithPermissions(menu, permissions) {
             filteredMenu['children'] = [];
             menu.children.forEach(child => { // add them recursively
                 let submenu = getMenuWithPermissions(child, permissions);
-                 if (submenu !== null) {
+                 if (submenu != null) {
                     filteredMenu.children.push(submenu);
                  }
             });
@@ -62,7 +62,7 @@ exports.handler = async (event, context) => {
     
     const queryParams = event.queryStringParameters;
 
-    const codice_azienda = queryParams.keys.codice_azienda;
+    const codice_azienda = JSON.parse(queryParams['keys']).codice_azienda;
 
     const method = event.httpMethod;
     
@@ -71,7 +71,7 @@ exports.handler = async (event, context) => {
     const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
     // const userid = '4e7e947c-7810-4e30-b6ca-a1579f9ccfd6';  // test only 
     
-    console.log(userid);
+    console.log('queryParams: ', queryParams, ' userid: ', userid, ' codice_azienda: ', codice_azienda);
 
     var userParams = {
         TableName: 'users',
@@ -122,6 +122,8 @@ exports.handler = async (event, context) => {
                 menu = getMenuWithPermissions(menu.Item.menu, permissions.menu);
                 body = {result: 'OK', menu: menu };
             }
+        } else {
+            body = {result: 'KO', reason:'Cannot find user\'s profile'};
         }
     } catch (e) {
        console.log(e);
