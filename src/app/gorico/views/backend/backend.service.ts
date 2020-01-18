@@ -55,9 +55,9 @@ constructor(private amplifyService: AmplifyService) {
     return from(this.amplifyService.api().get(this.apiName, '/data', this.myGetInit));
   }
 
-  postEvent(entryName: string, field: string, data: any, event: string, actionType: string): Observable<any> {
+  postEvent(entryName: string, keys: any, field: string, data: any, event: string, actionType: string): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = {entry_name: entryName, event: JSON.stringify({name: event, type: actionType, field: field})};
+    this.myPutPostInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), event: JSON.stringify({name: event, type: actionType, field: field})};
     this.myPutPostInit.body = data; 
     return from(this.amplifyService.api().post(this.apiName, '/data', this.myPutPostInit));
   }

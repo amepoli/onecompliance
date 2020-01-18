@@ -309,7 +309,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         return (100 - 4 - sumWidths); // considering 4% margins
     }
 
-    private replaceLocalKeys(functString: string, keys: any) {
+    private replaceLocalKeys(functString: string, keys: any): string {
         const delimiter = '£';
         // tslint:disable-next-line: forin
         for (const key in keys) {
@@ -388,7 +388,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
                 }
-                _this.backendService.postEvent(_this.formParams.entryName, keyListener, chiavi, event.eventName, event.actionType).subscribe(
+                _this.backendService.postEvent(_this.formParams.entryName, _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
                     result => {
                         console.log(keyListener, result);
                         if (event.actionType === 'query') {
