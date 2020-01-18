@@ -127,4 +127,10 @@ constructor(private amplifyService: AmplifyService) {
     this.myGetInit.queryStringParameters = { keys: JSON.stringify(keys)};
     return from(this.amplifyService.api().get(this.apiName, '/menu', this.myGetInit));
   }
+
+  getLanguage(lang: string): Observable<any>  {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { lang: lang };
+    return from(this.amplifyService.api().get(this.apiName, '/lang', this.myGetInit));
+  }
 }

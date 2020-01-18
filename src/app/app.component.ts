@@ -13,10 +13,9 @@ import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.
 import { AuthService } from 'app/gorico/login-page/auth.service';
 
 import { navigation } from 'app/navigation/navigation';
-import { locale as navigationEnglish } from 'app/navigation/i18n/en';
-import { locale as navigationItalian } from 'app/navigation/i18n/it';
 
 import { Router } from '@angular/router';
+import { BackendService } from './gorico/views/backend/backend.service';
 
 @Component({
     selector   : 'app',
@@ -53,7 +52,8 @@ export class AppComponent implements OnInit, OnDestroy
         private _translateService: TranslateService,
         private _platform: Platform,
         private router: Router,
-        private _authService: AuthService
+        private _authService: AuthService,
+        private _backendService: BackendService
     )
     {
         // Add languages
@@ -63,10 +63,18 @@ export class AppComponent implements OnInit, OnDestroy
         this._translateService.setDefaultLang('it');
 
         // Set the navigation translations
-        this._fuseTranslationLoaderService.loadTranslations(navigationItalian, navigationEnglish);
-
-        // Use a language
-        this._translateService.use('it');
+        // this._fuseTranslationLoaderService.loadTranslations(navigationItalian, navigationEnglish);
+        this._backendService.getLanguage('it').subscribe(
+            italian => {
+                this._fuseTranslationLoaderService.loadTranslations(italian);
+                this._backendService.getLanguage('en').subscribe(
+                    english => {
+                        this._fuseTranslationLoaderService.loadTranslations(english);
+                         // Use a language
+                        this._translateService.use('it'); 
+                });
+        });
+       
 
         // Get default navigation
         this.navigation = navigation;
