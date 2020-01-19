@@ -68,32 +68,32 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     private httpClient: HttpClient,
     private authService: AuthService) {
 
-        const questo = this; 
+        const _this = this; 
 
-        questo.fileService.onFileAdd.subscribe(result => {
+        _this.fileService.onFileAdd.subscribe(result => {
             
             // recover attachment types
-            for (const key in questo.data.keys) { 
-                if (questo.data.keys.hasOwnProperty(key)) {
-                    const element = questo.data.keys[key];
-                    questo.newTypeParams.keys[key] = element;
+            for (const key in _this.data.keys) { 
+                if (_this.data.keys.hasOwnProperty(key)) {
+                    const element = _this.data.keys[key];
+                    _this.newTypeParams.keys[key] = element;
                 }
             }
-            if (questo.newTypeParams.keys.codice_azienda == null ) { // hack, tipi_allegati requires this field
-                questo.newTypeParams.keys.codice_azienda = questo.newTypeParams.keys.codice_part;
+            if (_this.newTypeParams.keys.codice_azienda == null ) { // hack, tipi_allegati requires this field
+                _this.newTypeParams.keys.codice_azienda = _this.newTypeParams.keys.codice_part;
             }
-            questo.attach = true;
+            _this.attach = true;
         });
 
 
-        questo.fileService.onFileDownload.subscribe(selected => {
-            if (questo.listFiles != null) {
-                const fileDesc = questo.listFiles.find(e => e.client_file_name === selected.name);
+        _this.fileService.onFileDownload.subscribe(selected => {
+            if (_this.listFiles != null) {
+                const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
-                    questo.backendService.getFileURL(questo.data.entryName, questo.data.keys, fileDesc.file_id).subscribe(
+                    _this.backendService.getFileURL(_this.data.entryName, _this.data.keys, fileDesc.file_id).subscribe(
                         url => {
                             if (url != null) {
-                                questo.httpClient.get(url.url, {responseType: 'blob'}).subscribe(
+                                _this.httpClient.get(url.url, {responseType: 'blob'}).subscribe(
                                     fileData => {
                                         saveAs(fileData, selected.name);
                                     });
@@ -104,74 +104,76 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         // prepare the key for the attachment form
-        for (const key in questo.data.keys) {
-            if (questo.data.keys.hasOwnProperty(key)) {
-                const element = questo.data.keys[key];
+        for (const key in _this.data.keys) {
+            if (_this.data.keys.hasOwnProperty(key)) {
+                const element = _this.data.keys[key];
                 // hack, fe_attachment_form needs this field
                 if (key === 'codice_part') {
-                    questo.formParams.keys['codice_azienda'] = element;
+                    _this.formParams.keys['codice_azienda'] = element;
                 } else {
-                    questo.formParams.keys[key] = element;
+                    _this.formParams.keys[key] = element;
                 }
             }
         }
-        questo.attach = false;
+        _this.attach = false;
     }
 
     ngOnInit() {
 
         this.backendService.getAttachList(this.data.entryName, this.data.keys).subscribe(
-            results => {
-                console.log(results);
-                this.listFiles = results.list;
-                let files = [];
-                if (this.listFiles) {
-                    this.listFiles.forEach(element => {
-                        let file = {
-                            'name'     : element.client_file_name,
-                            'type'     : 'document',
-                            'owner'    : element.autore,
-                            'size'     : this.getFileSize(element.dimensione),
-                            'modified' : new Date(element.data_upd).toString(),
-                            'opened'   : new Date(element.data_ins).toString(),
-                            'created'  : new Date(element.data_creazione).toString(),
-                            'extention': '',
-                            'location' : '',
-                            'offline'  : true
-                        }
-                        files.push(file);
-                    });
+            result => {
+                console.log(result);
+                if (result.result === 'OK') {
+                    this.listFiles = result.data.list;
+                    let files = [];
+                    if (this.listFiles) {
+                        this.listFiles.forEach(element => {
+                            let file = {
+                                'name'     : element.client_file_name,
+                                'type'     : 'document',
+                                'owner'    : element.autore,
+                                'size'     : this.getFileSize(element.dimensione),
+                                'modified' : new Date(element.data_upd).toString(),
+                                'opened'   : new Date(element.data_ins).toString(),
+                                'created'  : new Date(element.data_creazione).toString(),
+                                'extention': '',
+                                'location' : '',
+                                'offline'  : true
+                            };
+                            files.push(file);
+                        });
+                    }
+                    this.fileService.files = files;
+                    this.fileService.getFiles();
                 }
-                this.fileService.files = files;
-                this.fileService.getFiles();
             });
 
         this.progress = 0;
     }
 
     ngAfterViewInit() {
-        var questo = this;
-        if (questo.fileUploader != null) {
-            questo.fileUploader.registerOnChange(function (file: File): void {
-                questo.file = file;
-                questo.form = questo.formRef.formArray.first.form; // getting the FormGroup
-                questo.form.patchValue({ fileName: file.name, dimension: file.size });
+        var _this = this;
+        if (_this.fileUploader != null) {
+            _this.fileUploader.registerOnChange(function (file: File): void {
+                _this.file = file;
+                _this.form = _this.formRef.formArray.first.form; // getting the FormGroup
+                _this.form.patchValue({ fileName: file.name, dimension: file.size });
             });
         }
-        let ext_subscription = questo.newTypeRef.changes.subscribe(
+        let ext_subscription = _this.newTypeRef.changes.subscribe(
             (comps: QueryList<FormGetterComponent>) => {
-                if (questo.newTypeSubscription == null) {  // subscribe only first time 
-                    questo.newTypeSubscription = comps.first.sendEvent.subscribe(
+                if (_this.newTypeSubscription == null) {  // subscribe only first time 
+                    _this.newTypeSubscription = comps.first.sendEvent.subscribe(
                         event => {
                             if (event.eventType === 'formData' || event.eventType === 'updateKeys') {
-                                questo.currentKeys = event.viewKeys;
+                                _this.currentKeys = event.viewKeys;
                             }
                         }
                     );
-                    questo.subscriptions.push(questo.newTypeSubscription);
+                    _this.subscriptions.push(_this.newTypeSubscription);
                 }
             });
-        questo.subscriptions.push(ext_subscription);
+        _this.subscriptions.push(ext_subscription);
     };
 
     ngOnDestroy() {
@@ -181,18 +183,19 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onSave(): void {
-        const questo = this;
+        const _this = this;
         console.log(event);
-        questo.attach = false;
-        if (questo.file != null) {
+        _this.attach = false;
+        if (_this.file != null) {
             // get the S3 URL 
-            questo.backendService.createFileURL(questo.data.entryName, questo.data.keys).subscribe(
+            _this.backendService.createFileURL(_this.data.entryName, _this.data.keys).subscribe(
                 responseURL => {
                     console.log(responseURL);
-                    if (responseURL != null) {
-                        const blob = new Blob([questo.file]);
+                    if (responseURL != null  && responseURL.response === 'OK') {
+                        responseURL = responseURL.data;
+                        const blob = new Blob([_this.file]);
                         // upload the file using obtained url
-                        questo.httpClient.put(responseURL.url, blob).subscribe (
+                        _this.httpClient.put(responseURL.url, blob).subscribe (
                         responsePut => {
                             console.log('File uploaded with filename: ', responseURL.filename);
                             // retrieve file content
@@ -211,21 +214,21 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                 // check that the file has been correctly uploaded and pass file params to the backend
                                 var mime = require('mime-types');
                                 const fileParams = {
-                                    nickname: questo.form.value.fileName,
-                                    descrizione: questo.form.value.description,
-                                    url: questo.form.value.docURL,
-                                    descrizione_breve: questo.form.value.shortDesc,
-                                    content_type: mime.lookup(questo.form.value.fileName),
-                                    // id_tipo_allegato: questo.form.value.type.value,
+                                    nickname: _this.form.value.fileName,
+                                    descrizione: _this.form.value.description,
+                                    url: _this.form.value.docURL,
+                                    descrizione_breve: _this.form.value.shortDesc,
+                                    content_type: mime.lookup(_this.form.value.fileName),
+                                    // id_tipo_allegato: _this.form.value.type.value,
                                     id_tipo_allegato: 2,
-                                    dimensione: questo.form.value.dimension,
-                                    autore: questo.authService.getUsername
+                                    dimensione: _this.form.value.dimension,
+                                    autore: _this.authService.getUsername
                                 };
-                                questo.backendService.checkFile(questo.data.entryName, questo.data.keys, hash, responseURL.filename, fileParams).subscribe(
+                                _this.backendService.checkFile(_this.data.entryName, _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
                                     responseCheck => {
                                         console.log(responseCheck);
                                     }
-                                )
+                                );
 
                             };
                             reader.readAsArrayBuffer(blob);

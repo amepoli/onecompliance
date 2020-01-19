@@ -89,6 +89,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     formData: FieldConfig[][] = [[]];
     isLoading = true;
 
+    isReadOnly = false;
+
     numRows = 1;
 
     viewKeys: formViewKey[]; // view form fields as specified by the backend
@@ -138,40 +140,42 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     refreshView() {
         const _this = this;
         _this.backendService.getView(_this.formParams.entryName).subscribe(
-            params => {
-                _this.viewKeys = params.form_keys;
-                _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
-                _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables });
-                // handle input events
-                if (_this.firstRefresh) {
-                    _this.firstRefresh = false;     // avoid to subscribe to events again when refreshed
-                    if (params.inputEvents != null) {  // subscribe to global table events
-                        params.inputEvents.forEach(event => {
-                            const subcription = _this.pubsubService.subscribe(event.eventName,
-                                value => {
-                                    _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
-                                });
-                            _this.subscriptions.push(subcription);
-                        });
-                    }
-                    _this.viewKeys.forEach(key => {    // subscribe to single field events
-                        if (key.inputEvents != null) {
-                            key.inputEvents.forEach(event => {
-                                const subscription = _this.pubsubService.subscribe(event.eventName, value => {
-                                    _this.eventCallback(event, value, key.key);
-                                });
-                                _this.subscriptions.push(subscription);
+            results => {
+                if (results.result === 'OK') {
+                    const params = results.data;
+                    _this.viewKeys = params.form_keys;
+                    _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
+                    _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables });
+                    // handle input events
+                    if (_this.firstRefresh) {
+                        _this.firstRefresh = false;     // avoid to subscribe to events again when refreshed
+                        if (params.inputEvents != null) {  // subscribe to global table events
+                            params.inputEvents.forEach(event => {
+                                const subcription = _this.pubsubService.subscribe(event.eventName,
+                                    value => {
+                                        _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
+                                    });
+                                _this.subscriptions.push(subcription);
                             });
                         }
-                    });
-
+                        _this.viewKeys.forEach(key => {    // subscribe to single field events
+                            if (key.inputEvents != null) {
+                                key.inputEvents.forEach(event => {
+                                    const subscription = _this.pubsubService.subscribe(event.eventName, value => {
+                                        _this.eventCallback(event, value, key.key);
+                                    });
+                                    _this.subscriptions.push(subscription);
+                                });
+                            }
+                        });
+                    }
+                    // take note of global table output event if any
+                    if (params.outputEvent != null) {
+                        _this.outputEvent = params.outputEvent.eventName;
+                    }
+                    // load the form 
+                    _this.loadTableData();
                 }
-                // take note of global table output event if any
-                if (params.outputEvent != null) {
-                    _this.outputEvent = params.outputEvent.eventName;
-                }
-                // load the form 
-                _this.loadTableData();
             });
 
     }
@@ -196,18 +200,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this; // useful to debug
         _this.backendService.getData(_this.formParams.entryName, _this.currentKeys, null, true, _this.formParams.isNew, null).subscribe(
             results => {
-                _this.isLoading = false;
                 console.log(results);
-                if (_this.formParams.isNew) {  // handle newly set primary keys
-                    const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
-                    _this.currentKeys = _this.getCurrentKeys(primaryKeys, results[0]);  // TBC why do we receive an array with one element here?
-                    _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
-                } 
-                _this.numRows = results.length;
-                // prepare the form
-                _this.formData = _this.getFormData(_this.viewKeys, results);
-                _this.process_form(_this.formData); 
-                _this.sendEvent.emit({ eventType: 'updateData', data: _this.formData}); // emit event for the parent
+                if (results.result === 'OK') {
+                    _this.isReadOnly = results.flags.readOnly;
+                    results = results.data;
+                    _this.isLoading = false;
+                    // signal parent to show/hide "save" icon
+                    _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly});
+                    if (_this.formParams.isNew) {  // handle newly set primary keys
+                        const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
+                        _this.currentKeys = _this.getCurrentKeys(primaryKeys, results[0]);  // TBC why do we receive an array with one element here?
+                        _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
+                    } 
+                    _this.numRows = results.length;
+                    // prepare the form
+                    _this.formData = _this.getFormData(_this.viewKeys, results);
+                    _this.process_form(_this.formData); 
+                    _this.sendEvent.emit({ eventType: 'updateData', data: _this.formData}); // emit event for the parent
+                }
             },
             error => {
                 _this.isLoading = false;
@@ -218,18 +228,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this;
         _this.backendService.getData(_this.formParams.entryName, _this.currentKeys, null, true, true, null).subscribe(
             result => {
-                // update the status to prevent the whole table refresh
-                _this.addingNew = true;
-                // process the new row
-                const formData = _this.getFormData(_this.viewKeys, result, _this.formData.length);
-                _this.process_form(formData);
-                // add it to the list
-                _this.formData.push(formData[0]); 
+                if (result.result === 'OK') {
+                    result = result.data;
+                    // update the status to prevent the whole table refresh
+                    _this.addingNew = true;
+                    // process the new row
+                    const formData = _this.getFormData(_this.viewKeys, result, _this.formData.length);
+                    _this.process_form(formData);
+                    // add it to the list
+                    _this.formData.push(formData[0]); 
+                }
             });
     }
 
     private getFormData(formKeys: formViewKey[], values: any, startingIndex = 0): FieldConfig[][] {
 
+        const _this = this;
         const fieldValues: FieldConfig[][] = [[]];
 
         for (let index = 0; index < values.length; index++) {
@@ -246,7 +260,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             index: index + startingIndex,
                             value: (element != null) ? ((element.value != null) ? element.value : element) : null,
                             inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
-                            readonly: (field.readOnly != null) ? field.readOnly : false,
+                            readonly: _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
                             isVisible: (field.isHidden != null) ? !field.isHidden : true,
                             newLine: (field.newLine != null) ? field.newLine : true,
                             style: (field.style != null) ? field.style : null,
@@ -390,22 +404,25 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 _this.backendService.postEvent(_this.formParams.entryName, _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
                     result => {
-                        console.log(keyListener, result);
-                        if (event.actionType === 'query') {
-                            if (targetViewField.format.viewType === 'combobox') {   // got combobox options
-                                // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
-                                const combobox = <ComboboxComponent>childrenArray[current_index].dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
-                                combobox.setOptions(result);
-                            } else {                                                // got field value
-                                childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
-                            }
-                        } else {  // query_style
-                            let element = _this.formData[current_index].find(field => field.name === keyListener);
-                            if (element != null && event.styleAttribute != null) {
-                                if (element.style == null) {
-                                    element.style = {};
+                        if (result.result === 'OK') {
+                            result = result.data;
+                            console.log(keyListener, result);
+                            if (event.actionType === 'query') {
+                                if (targetViewField.format.viewType === 'combobox') {   // got combobox options
+                                    // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
+                                    const combobox = <ComboboxComponent>childrenArray[current_index].dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
+                                    combobox.setOptions(result);
+                                } else {                                                // got field value
+                                    childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
                                 }
-                                element.style[event.styleAttribute] = result[0][keyListener + '_' + event.styleAttribute]; // as per specs the returned key is of type '<key>_<styleAttribute>'
+                            } else {  // query_style
+                                let element = _this.formData[current_index].find(field => field.name === keyListener);
+                                if (element != null && event.styleAttribute != null) {
+                                    if (element.style == null) {
+                                        element.style = {};
+                                    }
+                                    element.style[event.styleAttribute] = result[0][keyListener + '_' + event.styleAttribute]; // as per specs the returned key is of type '<key>_<styleAttribute>'
+                                }
                             }
                         }
                     });

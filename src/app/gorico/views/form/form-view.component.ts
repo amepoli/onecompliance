@@ -56,6 +56,7 @@ export class FormViewComponent implements OnChanges, OnInit {
     n = 0;
     tot = 0;
 
+    readOnly = false;
 
     tabKeys: tabViewKey[]; // view tab fields as specified by the backend
 
@@ -87,6 +88,8 @@ export class FormViewComponent implements OnChanges, OnInit {
                     }
                 } else if (event.eventType === 'updateKeys') {
                     _this.currentKeys = event.viewKeys;
+                } else if (event.eventType === 'readOnly') {
+                    _this.readOnly = event.value;
                 } else { // just forward the event to parent
                     _this.sendEvent.emit(event);
                 }
@@ -160,11 +163,13 @@ export class FormViewComponent implements OnChanges, OnInit {
         this.backendService.updateData(this.tableData.entryName, this.currentKeys, [values]).subscribe(   // backend expects an array of data
             result => {
                 console.log(result);
-                this.savingState = 'done';
-                setTimeout(() => {
-                    this.savingState = 'save';
-                    this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
-                }, 1000);
+                if (result.result === 'OK') {
+                    this.savingState = 'done';
+                    setTimeout(() => {
+                        this.savingState = 'save';
+                        this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+                    }, 1000);
+                }
             }
         );
     }
@@ -173,8 +178,10 @@ export class FormViewComponent implements OnChanges, OnInit {
         this.backendService.deleteData(this.tableData.entryName, this.currentKeys).subscribe(
             result => {
                 console.log(result);
-                // navigate backward
-                this.sendEvent.emit({ eventType: 'deletedForm' }); // notify parent
+                if (result.result === 'OK') {
+                    // navigate backward
+                    this.sendEvent.emit({ eventType: 'deletedForm' }); // notify parent
+                }
             }
         )
     }

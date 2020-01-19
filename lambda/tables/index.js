@@ -650,6 +650,27 @@ async function checkEntry(entry_name, profile) {
     return allowed;
 }
 
+async function checkReadOnly(entry_name, profile) {
+
+    var profileParams = {
+        TableName: 'profiles',
+        Key: {
+            name: profile
+        }
+    };
+    let readonly = false;
+    let permissions = await dynamo.get(profileParams).promise();
+    permissions = permissions.Item;
+
+    if (permissions != null && permissions.tables != null && permissions.tables.readOnly != null) { 
+        permissions = permissions.tables.readOnly;
+        if (permissions.indexOf(entry_name) !== -1) { // readOnly 
+            readonly = true;
+        } 
+    }
+    return readonly;
+}
+
 async function isAuthorized(entry_name, keys, userid) {
     
     if (keys == null) {
@@ -668,6 +689,13 @@ async function isAuthorized(entry_name, keys, userid) {
     const response = await checkEntry(entry_name, profile);
     return response;
 
+}
+
+async function isReadOnly(entry_name, keys, userid) {
+    const company = keys.codice_azienda != null ? keys.codice_azienda : keys.codice_part;
+    const profile = await getProfile(userid, company); 
+    const response = await checkReadOnly(entry_name, profile);
+    return response;
 }
 
 // main function starts here
@@ -724,6 +752,21 @@ exports.handler = async (event, context) => {
     } else {
         console.log(queryParams.entry_name, ' Authorized!');
     }
+
+    var readOnly = await isReadOnly(queryParams.entry_name, table_keys, userid);
+
+    // avoid update, insert or delete if read only
+    if (readOnly && (method === 'DELETE' || (method === 'POST' && !isEventUpdate))) {   
+        console.log(queryParams.entry_name, ' Not Authorized!');
+        return {
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "statusCode": 403,
+            "error": "Not Authorized"
+        };
+    }
+
+    var flags = {readOnly: readOnly}; // if this is a get signal to frontend this is a readonly table
 
     var queryData = {};
 
@@ -863,9 +906,8 @@ exports.handler = async (event, context) => {
         return {
             "isBase64Encoded": false,
             "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            "statusCode": 500,
-            "error": e,
-            "query": queryString
+            "statusCode": 200,
+            "body": JSON.stringify({result: 'KO', error: e, queryString: queryString})
         };
     }
 
@@ -875,7 +917,7 @@ exports.handler = async (event, context) => {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
-        "body": JSON.stringify(queryData)
+        "body": JSON.stringify({result: 'OK', flags: flags, data: queryData})
 
     };
 };

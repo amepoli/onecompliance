@@ -61,21 +61,27 @@ export class DashboardComponent {
 
         _this.backendService.getView(_this.tableParams.entryName).subscribe(
             viewResults => {
-                if (viewResults.table_keys != null) {
+                if (viewResults.result === 'OK' && viewResults.data.table_keys != null) {
+                    viewResults = viewResults.data;
                     // keep only relevant global keys
                     _this.tableParams.keys = _this.getCurrentKeys(viewResults.table_keys, _this.tableParams.keys);
                     // recover the dashboard labels
                     _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex).subscribe(
-                        labels => {
-                            console.log(labels);
-                            // now recover the dashboard data
-                            _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, null).subscribe(
-                                results => {
-                                    console.log(results);
-                                    results = _this.setOrder(results, labels);
-                                    const report = _this.setReport(viewResults, _this.tableParams.entryIndex, results, lang, labels);
-                                    _this.child.webDataRocks.setReport(report);
+                        response => {
+                            console.log(response);
+                            if (response.result === 'OK') {
+                                const labels = response.data;
+                                // now recover the dashboard data
+                                _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, null).subscribe(
+                                    results => {
+                                        console.log(results);
+                                        if (results.result === 'OK') {
+                                            results = _this.setOrder(results.data, labels);
+                                            const report = _this.setReport(viewResults, _this.tableParams.entryIndex, results, lang, labels);
+                                            _this.child.webDataRocks.setReport(report);
+                                        }
                                 });
+                            }
                         });
                 }
             });

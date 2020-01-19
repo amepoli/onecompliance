@@ -29,7 +29,7 @@ exports.handler = async (event, context) => {
 
     try {
         var data = await dynamo.get(langParams).promise();
-        body = data.Item;
+        body = {result: 'OK', data: data.Item};
     } catch (e) {
        console.log(e);
        body = { result: 'KO', reason: 'Database error'};

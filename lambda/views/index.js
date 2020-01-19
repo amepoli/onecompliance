@@ -22,7 +22,10 @@ exports.handler = async (event, context) => {
     } catch (e) {
         console.log(e);
         return {
-            "statusCode": 500
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "statusCode": 200,
+            "body": JSON.stringify({result: 'KO', message: 'Error with the DB'})
         };
     }
 
@@ -31,6 +34,6 @@ exports.handler = async (event, context) => {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
-        "body": JSON.stringify(data.Item)
+        "body": JSON.stringify({result: 'OK', data: data.Item})
     };
 };

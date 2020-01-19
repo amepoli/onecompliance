@@ -81,9 +81,11 @@ export class FormTableViewComponent implements OnChanges, OnInit {
             _this.backendService.updateData(_this.tableData.entryName, _this.tableData.keys, values).subscribe(   // backend expects an array of data
                 result => {
                     console.log(result);
-                    setTimeout(() => {
-                        _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
-                    }, 1000);
+                    if (result.result === 'OK') {
+                        setTimeout(() => {
+                            _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+                        }, 1000);
+                    }
                 });
         }
         

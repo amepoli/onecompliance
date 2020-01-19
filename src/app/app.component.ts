@@ -65,17 +65,20 @@ export class AppComponent implements OnInit, OnDestroy
         // Set the navigation translations
         // this._fuseTranslationLoaderService.loadTranslations(navigationItalian, navigationEnglish);
         this._backendService.getLanguage('it').subscribe(
-            italian => {
-                this._fuseTranslationLoaderService.loadTranslations(italian);
-                this._backendService.getLanguage('en').subscribe(
-                    english => {
-                        this._fuseTranslationLoaderService.loadTranslations(english);
-                         // Use a language
-                        this._translateService.use('it'); 
-                });
+            result_it => {
+                if (result_it.result === 'OK') {
+                    this._fuseTranslationLoaderService.loadTranslations(result_it.data);
+                    this._backendService.getLanguage('en').subscribe(
+                        result_en => {
+                            if (result_en.result === 'OK') {
+                                this._fuseTranslationLoaderService.loadTranslations(result_en.data);
+                                // Use a language
+                                this._translateService.use('it'); 
+                            }
+                        });
+                }
         });
        
-
         // Get default navigation
         this.navigation = navigation;
 

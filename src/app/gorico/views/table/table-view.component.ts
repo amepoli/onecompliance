@@ -105,8 +105,9 @@ export class TableViewComponent implements OnChanges {
             _this.quickAddFormParams.entryName = _this.tableData.entryName;
             _this.quickAddFormParams.keys = _this.tableData.keys;
             _this.backendService.getView(_this.tableData.entryName).subscribe(
-                params => {
-                    if (params.table_keys != null) {
+                result => {
+                    if (result.result === 'OK' && result.data.table_keys != null) {
+                        const params = result.data;
                         _this.viewKeys = params.table_keys;
                         _this.searchKeys = params.search_keys;
                         _this.targetEntryName = (params.targetNavigation != null) ? params.targetNavigation : _this.tableData.entryName;  // self or new form table?
@@ -126,28 +127,31 @@ export class TableViewComponent implements OnChanges {
         _this.backendService.getData(_this.tableData.entryName, _this.currentKeys, search_keys, false, false, null).subscribe(
             results => {
                 console.log(results);
-                if (results.search_options) { // got some search combobox options
-                    _this.searchOptions = results.search_options; // store them
-                    results = results.table_data; // and get the table data
-                }
-                _this.searchData = _this.getSearchData(_this.searchKeys);
-                _this.dataSource = new MatTableDataSource(results);
-                _this.dataSource.sort = _this.sort;
-                _this.dataSource.paginator = _this.paginator;
-                // triggers any change in displayed datasource, setting the array of primary keys
-                _this.dataSource.connect().subscribe(source => {
-                    _this.keysArray = source.map(row => {
-                        const key_values = {};
-                        const primaryKeys = _this.viewKeys.filter(entry => {
-                            return entry.isPrimary;
+                if (results.result === 'OK') {
+                    results = results.data;
+                    if (results.search_options) { // got some search combobox options
+                        _this.searchOptions = results.search_options; // store them
+                        results = results.table_data; // and get the table data
+                    }
+                    _this.searchData = _this.getSearchData(_this.searchKeys);
+                    _this.dataSource = new MatTableDataSource(results);
+                    _this.dataSource.sort = _this.sort;
+                    _this.dataSource.paginator = _this.paginator;
+                    // triggers any change in displayed datasource, setting the array of primary keys
+                    _this.dataSource.connect().subscribe(source => {
+                        _this.keysArray = source.map(row => {
+                            const key_values = {};
+                            const primaryKeys = _this.viewKeys.filter(entry => {
+                                return entry.isPrimary;
+                            });
+                            for (const primaryKey of primaryKeys) {
+                                key_values[primaryKey.key] = row[primaryKey.key];
+                            }
+                            return key_values;
                         });
-                        for (const primaryKey of primaryKeys) {
-                            key_values[primaryKey.key] = row[primaryKey.key];
-                        }
-                        return key_values;
                     });
-                });
-                _this.isLoading = false;
+                    _this.isLoading = false;
+                }
             },
             error => {
                 _this.isLoading = false;
