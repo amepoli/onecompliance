@@ -104,7 +104,7 @@ export class TableViewComponent implements OnChanges {
         if (changes.tableData) {
             _this.quickAddFormParams.entryName = _this.tableData.entryName;
             _this.quickAddFormParams.keys = _this.tableData.keys;
-            _this.backendService.getView(_this.tableData.entryName).subscribe(
+            _this.backendService.getView(_this.tableData.entryName, _this.tableData.keys).subscribe(
                 result => {
                     if (result.result === 'OK' && result.data.table_keys != null) {
                         const params = result.data;

@@ -139,7 +139,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     refreshView() {
         const _this = this;
-        _this.backendService.getView(_this.formParams.entryName).subscribe(
+        _this.backendService.getView(_this.formParams.entryName, _this.formParams.keys).subscribe(
             results => {
                 if (results.result === 'OK') {
                     const params = results.data;

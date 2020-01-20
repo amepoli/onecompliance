@@ -59,7 +59,7 @@ export class DashboardComponent {
         const lang = italiano;
         _this.child.webDataRocks.off('reportcomplete');
 
-        _this.backendService.getView(_this.tableParams.entryName).subscribe(
+        _this.backendService.getView(_this.tableParams.entryName, _this.tableParams.keys).subscribe(
             viewResults => {
                 if (viewResults.result === 'OK' && viewResults.data.table_keys != null) {
                     viewResults = viewResults.data;

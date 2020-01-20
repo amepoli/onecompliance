@@ -33,9 +33,9 @@ export class BackendService {
 constructor(private amplifyService: AmplifyService) { 
 }
 
-  getView(entryName: string):  Observable<any> {
+  getView(entryName: string, keys: any):  Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {entry_name: entryName};
+    this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys)};
     return from(this.amplifyService.api().get(this.apiName, '/view', this.myGetInit));
   }
 
