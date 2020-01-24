@@ -15,6 +15,9 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
+const excel = require('node-excel-export');
+const readXlsxFile = require('read-excel-file/node');
+
 function replaceLocalKeys(queryString, keys) {
     let delimiter = '£';
     for (var key in keys) {
@@ -696,6 +699,88 @@ async function isReadOnly(entry_name, keys, userid) {
     const profile = await getProfile(userid, company); 
     const response = await checkReadOnly(entry_name, profile);
     return response;
+}
+
+function data2xls(data, title, viewKeys) {
+    const styles = {
+        headerDark: {
+          fill: {
+            fgColor: {
+              rgb: 'FF008000'
+            }
+          },
+          font: {
+            color: {
+              rgb: 'FFFFFFFF'
+            },
+            sz: 18,
+            bold: true
+          }
+        },
+        title: {
+          fill: {
+            fgColor: {
+              rgb: 'FFE0E0E0'
+            },
+          },
+          font: {
+            color: {
+              rgb: 'FF0080C4'
+            },
+            sz: 34
+          }
+        },
+        data: {
+          font: {
+            sz: 16
+          }
+        }
+      };
+
+      //Array of objects representing heading rows (very top)
+      const heading = [
+        [{ value: title, style: styles.title }] // <-- It can be only values
+      ];
+
+      const specification = {};
+
+      // filter visible and map the columns
+
+      const validKeys = viewKeys.filter(key => !key.isHidden);
+
+      const specification = {};
+
+      validKeys.forEach(key => {
+        specification[key.key] = {displayName: key.label, headerStyle: styles.data, width: 120}
+      });
+
+      const dataset = [];
+
+      data.data.forEach(entry => {
+        const value = {};
+        validKeys.forEach(key => {
+            value[key] = entry[key];
+        });
+        dataset.push(value);
+      });
+
+      const merges = [
+        { start: { row: 1, column: 1 }, end: { row: 1, column: validKeys.length } }
+      ];
+
+      const report = excel.buildExport(
+        [ // <- Notice that this is an array. Pass multiple sheets to create multi sheet report
+            {
+                name: 'Report', // <- Specify sheet name (optional)
+                heading: heading, // <- Raw heading array (optional)
+                merges: merges, // <- Merge cell ranges
+                specification: specification, // <- Report specification
+                data: dataset //consts.dataset // <-- Report data
+            }
+        ]
+    );
+
+    return report;
 }
 
 // main function starts here
