@@ -14,6 +14,7 @@ const pool = new Pool({
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
+const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 
 const excel = require('node-excel-export');
 const readXlsxFile = require('read-excel-file/node');
@@ -748,18 +749,16 @@ function data2xls(data, title, viewKeys) {
 
       const validKeys = viewKeys.filter(key => !key.isHidden);
 
-      const specification = {};
-
       validKeys.forEach(key => {
         specification[key.key] = {displayName: key.label, headerStyle: styles.data, width: 120}
       });
 
       const dataset = [];
 
-      data.data.forEach(entry => {
-        const value = {};
+      data.forEach(entry => {
+        var value = {};
         validKeys.forEach(key => {
-            value[key] = entry[key];
+            value[key.key] = entry[key.key];
         });
         dataset.push(value);
       });
@@ -820,6 +819,8 @@ exports.handler = async (event, context) => {
     var isEventUpdate = (queryParams['event'] != null);
 
     var dashboardIndex = queryParams['dashboard_index'];
+
+    var isExcel = (queryParams['excel'] === '1');
 
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
@@ -982,6 +983,29 @@ exports.handler = async (event, context) => {
         if (method === 'GET' && dashboardIndex != null) {
             if (entry_params.dashboards[dashboardIndex].colors != null) {
                 queryData = entry_params.dashboards[dashboardIndex].colors;
+            }
+        }
+
+        if (isExcel && method=== 'GET') {  // returning the Excel
+
+            var viewKeys = isFormRecord ? entry_params.form_keys : entry_params.table_keys;
+            var excelData = data2xls(queryData, queryParams.entry_name, viewKeys);
+            var s3Params = { 
+                Bucket: 'gorico2.reports',
+                Key: 'Excel/' + queryParams.entry_name + '.xlsx',
+                Body: excelData
+            };
+            // upload to S3
+            await s3.putObject(s3Params, function(err, data) {
+                if(err) { console.log('S3 Error: ', err)
+                } else { console.log('S3 Success with XLSX upload!')}
+              });
+
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 200,
+                "body": JSON.stringify({result: 'OK'})
             }
         }
 

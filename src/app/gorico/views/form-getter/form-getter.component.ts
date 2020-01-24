@@ -198,7 +198,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     loadTableData(): void {
 
         const _this = this; // useful to debug
-        _this.backendService.getData(_this.formParams.entryName, _this.currentKeys, null, true, _this.formParams.isNew, null).subscribe(
+        _this.backendService.getData(_this.formParams.entryName, _this.currentKeys, null, true, _this.formParams.isNew, null, false).subscribe(
             results => {
                 console.log(results);
                 if (results.result === 'OK') {
@@ -226,7 +226,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     addRow(): void {
         const _this = this;
-        _this.backendService.getData(_this.formParams.entryName, _this.currentKeys, null, true, true, null).subscribe(
+        _this.backendService.getData(_this.formParams.entryName, _this.currentKeys, null, true, true, null, false).subscribe(
             result => {
                 if (result.result === 'OK') {
                     result = result.data;

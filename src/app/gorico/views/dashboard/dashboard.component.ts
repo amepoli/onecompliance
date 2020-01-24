@@ -66,13 +66,13 @@ export class DashboardComponent {
                     // keep only relevant global keys
                     _this.tableParams.keys = _this.getCurrentKeys(viewResults.table_keys, _this.tableParams.keys);
                     // recover the dashboard labels
-                    _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex).subscribe(
+                    _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex, false).subscribe(
                         response => {
                             console.log(response);
                             if (response.result === 'OK') {
                                 const labels = response.data;
                                 // now recover the dashboard data
-                                _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, null).subscribe(
+                                _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, null, false).subscribe(
                                     results => {
                                         console.log(results);
                                         if (results.result === 'OK') {

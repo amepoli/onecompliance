@@ -124,7 +124,7 @@ export class TableViewComponent implements OnChanges {
 
     loadTable(search_keys: any): void {
         const _this = this;
-        _this.backendService.getData(_this.tableData.entryName, _this.currentKeys, search_keys, false, false, null).subscribe(
+        _this.backendService.getData(_this.tableData.entryName, _this.currentKeys, search_keys, false, false, null, false).subscribe(
             results => {
                 console.log(results);
                 if (results.result === 'OK') {

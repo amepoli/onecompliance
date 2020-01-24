@@ -251,5 +251,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item });
     }
 
+    getExcel(): void {
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'get_excel' });
+    }
+
 
 }
