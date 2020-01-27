@@ -19,6 +19,8 @@ const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 const excel = require('node-excel-export');
 const readXlsxFile = require('read-excel-file/node');
 
+const uuidv4 = require('uuid/v4');
+
 function replaceLocalKeys(queryString, keys) {
     let delimiter = '£';
     for (var key in keys) {
@@ -990,22 +992,28 @@ exports.handler = async (event, context) => {
 
             var viewKeys = isFormRecord ? entry_params.form_keys : entry_params.table_keys;
             var excelData = data2xls(queryData, queryParams.entry_name, viewKeys);
-            var s3Params = { 
+            var uuid = uuidv4(); // generate a 'unique' UUID as filename
+            var filename =  'Excel/' + uuid + '.xlsx'
+            var s3ParamsInsert = { 
                 Bucket: 'gorico2.reports',
-                Key: 'Excel/' + queryParams.entry_name + '.xlsx',
+                Key: filename,
                 Body: excelData
             };
+            var s3ParamsUrl = { 
+                Bucket: 'gorico2.reports',
+                Key: filename
+            };
+
             // upload to S3
-            await s3.putObject(s3Params, function(err, data) {
-                if(err) { console.log('S3 Error: ', err)
-                } else { console.log('S3 Success with XLSX upload!')}
-              });
+            await s3.putObject(s3ParamsInsert).promise();
+
+            var url = s3.getSignedUrl('getObject', s3ParamsUrl);
 
             return {
                 "isBase64Encoded": false,
                 "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
                 "statusCode": 200,
-                "body": JSON.stringify({result: 'OK'})
+                "body": JSON.stringify({result: 'OK', url: url})
             }
         }
 
