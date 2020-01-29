@@ -6,7 +6,7 @@ import { NgxPubSubService } from "@pscoped/ngx-pub-sub";
   selector: "app-button",
   template: `
 <div [ngStyle]="{'display': 'inline-block', 'margin-right': '2%', 'margin-left': '2%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
-<button mat-raised-button color="primary" (click)="onClickButton()">{{field.label}}</button>
+<button mat-raised-button color="primary" [disabled]="field.readonly" (click)="onClickButton()">{{field.label}}</button>
 </div>
 `,
   styles: []
