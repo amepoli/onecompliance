@@ -15,6 +15,7 @@ import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.com
 import { ComboboxComponent } from './components/combobox/combobox.component';
 import { TextAreaComponent } from './components/textarea/textarea.component';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { MAT_DATE_LOCALE } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,6 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
     ComboboxComponent,
     TextAreaComponent
   ],
-  providers: []
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'it-IT' }]
 })
 export class DynamicFormsModule {}
