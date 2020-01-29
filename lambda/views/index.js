@@ -84,7 +84,7 @@ exports.handler = async (event, context) => {
 
     const entry_name = queryParams['entry_name'];
 
-    const company = keys.codice_azienda != null ? keys.codice_azienda : keys.codice_part;
+    const company = queryParams['company'];
 
     // quite a tricky method to retrieve the Cognito sub ID , would be maybe better to map it in API GW template
     // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 

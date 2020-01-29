@@ -4,7 +4,7 @@ import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4.js';
 import { BackendService } from '../backend/backend.service';
 import { tableViewKey } from '../table/table-view.component';
 import { _MatChipListMixinBase } from '@angular/material';
-import { TranslateService } from '@ngx-translate/core';
+import { AuthService } from 'app/gorico/login-page/auth.service';
 
 
 export interface DashboardParams {
@@ -32,7 +32,8 @@ export interface DashboardCellEvent {
 
 export class DashboardComponent {
 
-    constructor(private backendService: BackendService) { }
+    constructor(private backendService: BackendService,
+                private authService: AuthService) { }
 
     @ViewChild('pivot1') child: WebDataRocksPivot;
 
@@ -57,22 +58,23 @@ export class DashboardComponent {
 
         const _this = this;
         const lang = italiano;
+        const company = _this.authService.getCurrentCompany();
         _this.child.webDataRocks.off('reportcomplete');
 
-        _this.backendService.getView(_this.tableParams.entryName, _this.tableParams.keys).subscribe(
+        _this.backendService.getView(_this.tableParams.entryName, company , _this.tableParams.keys).subscribe(
             viewResults => {
                 if (viewResults.result === 'OK' && viewResults.data.table_keys != null) {
                     viewResults = viewResults.data;
                     // keep only relevant global keys
                     _this.tableParams.keys = _this.getCurrentKeys(viewResults.table_keys, _this.tableParams.keys);
                     // recover the dashboard labels
-                    _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex, false).subscribe(
+                    _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex, false).subscribe(
                         response => {
                             console.log(response);
                             if (response.result === 'OK') {
                                 const labels = response.data;
                                 // now recover the dashboard data
-                                _this.backendService.getData(_this.tableParams.entryName, _this.tableParams.keys, null, false, false, null, false).subscribe(
+                                _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, null, false).subscribe(
                                     results => {
                                         console.log(results);
                                         if (results.result === 'OK') {

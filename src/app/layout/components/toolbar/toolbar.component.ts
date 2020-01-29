@@ -152,7 +152,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // set the company set
         _this.userCompanies = _this.userdata.companies;
 
-        _this.setCompany(_this._authService.currentCompany, false);
+        _this.setCompany(_this._authService.getCurrentCompany(), false);
 
         _this._translateService.use(_this.userdata.language);
 

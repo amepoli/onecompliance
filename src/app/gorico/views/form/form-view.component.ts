@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material';
 import { TabType } from '../../bottom-tabs/bottom-tabs.component';
 import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
+import { AuthService } from 'app/gorico/login-page/auth.service';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -67,7 +68,8 @@ export class FormViewComponent implements OnChanges, OnInit {
     savingState: savingStateType = 'save';
     
     constructor(public attachDialog: MatDialog, 
-        private backendService: BackendService) { 
+        private backendService: BackendService,
+        private authService: AuthService) { 
         
         }
 
@@ -160,7 +162,7 @@ export class FormViewComponent implements OnChanges, OnInit {
         }
 
         this.savingState = 'saving';
-        this.backendService.updateData(this.tableData.entryName, this.currentKeys, [values]).subscribe(   // backend expects an array of data
+        this.backendService.updateData(this.tableData.entryName, this.authService.getCurrentCompany(), this.currentKeys, [values]).subscribe(   // backend expects an array of data
             result => {
                 console.log(result);
                 if (result.result === 'OK') {
@@ -175,7 +177,7 @@ export class FormViewComponent implements OnChanges, OnInit {
     }
 
     delElement() {
-        this.backendService.deleteData(this.tableData.entryName, this.currentKeys).subscribe(
+        this.backendService.deleteData(this.tableData.entryName, this.authService.getCurrentCompany(), this.currentKeys).subscribe(
             result => {
                 console.log(result);
                 if (result.result === 'OK') {

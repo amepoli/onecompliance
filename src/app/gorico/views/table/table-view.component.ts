@@ -3,6 +3,7 @@ import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 import { FieldConfig } from '../../dynamic-forms/field.interface';
 import { formViewParams } from '../form/form-view.component';
+import { AuthService } from 'app/gorico/login-page/auth.service';
 
 export interface tableViewParams {
     entryName: string;
@@ -95,7 +96,8 @@ export class TableViewComponent implements OnChanges {
     targetEntryName: string; // target form view table, might be different from 'self'
 
     constructor(
-        private backendService: BackendService) 
+        private backendService: BackendService,
+        private authService: AuthService) 
         {
         }
 
@@ -104,7 +106,7 @@ export class TableViewComponent implements OnChanges {
         if (changes.tableData) {
             _this.quickAddFormParams.entryName = _this.tableData.entryName;
             _this.quickAddFormParams.keys = _this.tableData.keys;
-            _this.backendService.getView(_this.tableData.entryName, _this.tableData.keys).subscribe(
+            _this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys).subscribe(
                 result => {
                     if (result.result === 'OK' && result.data.table_keys != null) {
                         const params = result.data;
@@ -124,7 +126,7 @@ export class TableViewComponent implements OnChanges {
 
     loadTable(search_keys: any): void {
         const _this = this;
-        _this.backendService.getData(_this.tableData.entryName, _this.currentKeys, search_keys, false, false, null, false).subscribe(
+        _this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, search_keys, false, false, null, false).subscribe(
             results => {
                 console.log(results);
                 if (results.result === 'OK') {

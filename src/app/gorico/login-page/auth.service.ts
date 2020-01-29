@@ -26,12 +26,12 @@ export class AuthService {
   private code: string;
   errorMessage: string;
   authStateChange$: Observable<AuthState>;
-  isSignedIn = false;
+  public isSignedIn = false;
 
   // backend user data
   public userinfo = new BehaviorSubject<UserInfo> ({ name: null, lastname: null, username: null, picture: null, language: 'it', companies: []});
 
-  currentCompany: string;
+  private currentCompany: string;
 
   constructor(
       private amplifyService: AmplifyService,
@@ -128,6 +128,11 @@ export class AuthService {
         // get new menu
         _this.retrieveMenu();
 
+  }
+
+  public getCurrentCompany(): string {
+      const _this = this;
+      return _this.currentCompany;
   }
 
   _setError(err): void 

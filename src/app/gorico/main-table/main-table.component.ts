@@ -11,6 +11,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../login-page/auth.service';
 
 @Component({
     selector: 'main-table',
@@ -78,6 +79,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         protected router: Router,
         protected backendService: BackendService,
         private pubSubService: NgxPubSubService,
+        private authService: AuthService,
         protected location: Location,
         private httpClient: HttpClient) {
     }
@@ -139,7 +141,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                         _this.historyPop(_this.navigationHistory[0]); // go back to the root element
                     }
                 } else if (msg.type === 'get_excel') {  // get the excel sheet
-                    _this.backendService.getData(_this.tableName, (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys,  _this.searchKeys, 
+                    _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys,  _this.searchKeys, 
                         (_this.tableType === 'form'), false, null, true).subscribe(
                         response => {
                             console.log(response);

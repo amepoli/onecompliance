@@ -1,6 +1,7 @@
 import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { BackendService } from '../backend/backend.service';
+import { AuthService } from 'app/gorico/login-page/auth.service';
 
 
 export interface formTableViewParams {
@@ -29,7 +30,8 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   isFullScreen = false;
 
   constructor(
-    private backendService: BackendService
+    private backendService: BackendService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -78,7 +80,7 @@ export class FormTableViewComponent implements OnChanges, OnInit {
                         }
                     }
                 });
-            _this.backendService.updateData(_this.tableData.entryName, _this.tableData.keys, values).subscribe(   // backend expects an array of data
+            _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys, values).subscribe(   // backend expects an array of data
                 result => {
                     console.log(result);
                     if (result.result === 'OK') {

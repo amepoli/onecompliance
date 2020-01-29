@@ -677,14 +677,8 @@ async function checkReadOnly(entry_name, profile) {
     return readonly;
 }
 
-async function isAuthorized(entry_name, keys, userid) {
+async function isAuthorized(entry_name, company, userid) {
     
-    if (keys == null) {
-        console.log('Error: No keys provided!');
-        return false;
-    }
-    const company = keys.codice_azienda != null ? keys.codice_azienda : keys.codice_part;
-
     if (company == null) {
         console.log('Error: No company provided!');
         return false;
@@ -697,8 +691,7 @@ async function isAuthorized(entry_name, keys, userid) {
 
 }
 
-async function isReadOnly(entry_name, keys, userid) {
-    const company = keys.codice_azienda != null ? keys.codice_azienda : keys.codice_part;
+async function isReadOnly(entry_name, company, userid) {
     const profile = await getProfile(userid, company); 
     const response = await checkReadOnly(entry_name, profile);
     return response;
@@ -827,7 +820,9 @@ exports.handler = async (event, context) => {
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
 
-    var authorized = await isAuthorized(queryParams.entry_name, table_keys, userid);
+    var company = queryParams['company'];
+
+    var authorized = await isAuthorized(queryParams.entry_name, company, userid);
 
     if (!authorized) {
         console.log(queryParams.entry_name, ' Not Authorized!');
@@ -841,7 +836,7 @@ exports.handler = async (event, context) => {
         console.log(queryParams.entry_name, ' Authorized!');
     }
 
-    var readOnly = await isReadOnly(queryParams.entry_name, table_keys, userid);
+    var readOnly = await isReadOnly(queryParams.entry_name, company, userid);
 
     // avoid update, insert or delete if read only
     if (readOnly && (method === 'DELETE' || (method === 'POST' && !isEventUpdate))) {   

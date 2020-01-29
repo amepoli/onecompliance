@@ -6,6 +6,7 @@ import { Validators } from '@angular/forms';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ComboboxComponent } from 'app/gorico/dynamic-forms/components/combobox/combobox.component';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'app/gorico/login-page/auth.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -107,7 +108,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     constructor(
         private backendService: BackendService,
-        private pubsubService: NgxPubSubService) 
+        private pubsubService: NgxPubSubService,
+        private authService: AuthService) 
         { }
 
     ngOnChanges() {
@@ -139,7 +141,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     refreshView() {
         const _this = this;
-        _this.backendService.getView(_this.formParams.entryName, _this.formParams.keys).subscribe(
+        _this.backendService.getView(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.formParams.keys).subscribe(
             results => {
                 if (results.result === 'OK') {
                     const params = results.data;
@@ -198,7 +200,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     loadTableData(): void {
 
         const _this = this; // useful to debug
-        _this.backendService.getData(_this.formParams.entryName, _this.currentKeys, null, true, _this.formParams.isNew, null, false).subscribe(
+        _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, null, true, _this.formParams.isNew, null, false).subscribe(
             results => {
                 console.log(results);
                 if (results.result === 'OK') {
@@ -226,7 +228,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     addRow(): void {
         const _this = this;
-        _this.backendService.getData(_this.formParams.entryName, _this.currentKeys, null, true, true, null, false).subscribe(
+        _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, null, true, true, null, false).subscribe(
             result => {
                 if (result.result === 'OK') {
                     result = result.data;
@@ -402,7 +404,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
                 }
-                _this.backendService.postEvent(_this.formParams.entryName, _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
+                _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
                     result => {
                         if (result.result === 'OK') {
                             result = result.data;
