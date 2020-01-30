@@ -7,7 +7,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
   template: `
 <mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'margin-right': '2%', 'margin-left': '2%','width': field.width+'%'}" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
-<input matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [disabled]="field.readonly" 
+<input matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly" 
     (blur)="onBlur()" (focus)="onFocus()"
     [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
 <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">

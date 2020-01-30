@@ -61,7 +61,7 @@ export class FormViewComponent implements OnChanges, OnInit {
 
     tabKeys: tabViewKey[]; // view tab fields as specified by the backend
 
-    currentKeys: any; // relevant keys passed by the parent component 
+    currentKeys: any; // relevant keys passed by the child component 
 
     getterParams: formGetterParams; // params for the child formGetter form view
 
@@ -77,13 +77,18 @@ export class FormViewComponent implements OnChanges, OnInit {
         const _this = this; // useful to debug
         _this.formGetter.sendEvent.subscribe(
             event => {
-                if (event.eventType === 'formData') {
-                    let tabs: TabType[];
+                if (event.eventType === 'formData') {   // child received the view Info
                     _this.currentKeys = event.viewKeys;
                     _this.tabKeys = event.tabKeys;
+                } else if (event.eventType === 'updateData') {  // child received the actual data, now time to populate subtables
+                    let tabs: TabType[];
                     if (!_this.tableData.isNew && _this.tabKeys != null) {
                         // send the tabs parameter to the main view 
-                        tabs = _this.getTabs(_this.tabKeys, _this.tableData.keys);
+                        let keys = {};
+                        event.data[0].forEach(e => {
+                            keys[e.name] = e.value;
+                        });
+                        tabs = _this.getTabs(_this.tabKeys, keys);
                         _this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: tabs } });
                     } else {
                         _this.sendEvent.emit({ eventType: 'tabData', queryParams: { tabs: null } });
