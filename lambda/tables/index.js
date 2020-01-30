@@ -128,11 +128,14 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
     let postProcessQueries = [];
 
+    let orderBy = null;
+
     let entry_keys;
     if (isForm) {
         entry_keys = entry_params.form_keys;
     } else {
         entry_keys = entry_params.table_keys;
+        orderBy = entry_params.orderBy;
     }
 
     if (!entry_keys) return '';
@@ -248,6 +251,11 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
             });
     }
 
+    // add order by if present (for table view only)
+    if (orderBy != null && orderBy.key != null) {
+        let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
+        queryString = queryString + ' ORDER BY ' + orderBy.key + order; 
+    }
 
     queryString = queryString + ';';
 
