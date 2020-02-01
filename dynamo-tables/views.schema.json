@@ -1,0 +1,720 @@
+{
+    "title": "DynamoDB Views Entries",
+    "type": "object",
+    "required": [
+        "entryKey"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "entryKey": {
+            "type": "string",
+            "description": "M: DynamoDB primary key (entry)"
+        },
+        "origin": {
+            "type": "string",
+            "description": "?: Postgresql underlying table"
+        },
+        "businessObjectName": {
+            "type": "string",
+            "description": "?: Internal representation of the business object, e.g. used by attachments Postgres tables"
+        },
+        "predefinedQueries": {
+            "type": "array",
+            "description": "?: set of possible queries, overriding and/or complementing automatic ones  built from provided columns/fields",
+            "items": {
+                "type": "object",
+                "required": [
+                    "queryString",
+                    "operation",
+                    "type"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "queryString": {
+                        "type": "string",
+                        "description": "M: Postgres query string"
+                    },
+                    "operation": {
+                        "type": "string",
+                        "description": "M: operation",
+                        "enum": [
+                            "selectTable",
+                            "selectForm",
+                            "insert",
+                            "update",
+                            "search",
+                            "delete",
+                            "duplicate"
+                        ]
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "M: Attention! Only one main query allowed at most for each kinf of operation",
+                        "enum": [
+                            "main",
+                            "preProcessing",
+                            "postProcessing"
+                        ]
+                    }
+                }
+            }
+        },
+        "navigationTarget": {
+            "type": "string",
+            "description": "?: (table view only) target table form to retrieve when a record is selected (if not specified, defaults to self)"
+        },
+        "orderBy": {
+            "type": "object",
+            "description": "?: (table view only) ordering column field",
+            "required": [
+                "key",
+                "order"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "description": "M: field name"
+                },
+                "order": {
+                    "type": "string",
+                    "description": "M: ordering",
+                    "enum": [
+                        "ascending",
+                        "descending"
+                    ]
+                }
+            }
+        },
+        "outputEvent": {
+            "type": "object",
+            "description": "?: (form/formtable view only) global event triggered once data is (re)loaded",
+            "required": [
+                "eventName"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "eventName": {
+                    "type": "string",
+                    "description": "M: name of the event"
+                }
+            }
+        },
+        "inputEvents": {
+            "type": "array",
+            "description": "?: (form/formtable view only) input events associated with the table",
+            "items": {
+                "type": "object",
+                "required": [
+                    "eventName",
+                    "actionType"
+                ],
+                "additionalProperties": false,
+                "anyOf": [
+                    {
+                        "properties": {
+                            "actionType": {
+                                "enum": [
+                                    "show"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "actionType": {
+                                "enum": [
+                                    "navigate"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "actionTarget"
+                        ]
+                    }
+                ],
+                "properties": {
+                    "eventName": {
+                        "type": "string",
+                        "description": "M: event name to listen to"
+                    },
+                    "actionType": {
+                        "type": "string",
+                        "description": "M: triggered action, if 'navigate' also set actionTarget below",
+                        "enum": [
+                            "show",
+                            "navigate"
+                        ]
+                    },
+                    "actionTarget": {
+                        "type": "object",
+                        "description": "?: target info, mandatory in case of 'navigate'",
+                        "required": [
+                            "name",
+                            "type"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "M: business Object (table name)"
+                            },
+                            "type": {
+                                "type": "string",
+                                "description": "M: view type of navigation target",
+                                "enum": [
+                                    "table",
+                                    "form",
+                                    "tableform"
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "table_keys": {
+            "type": "array",
+            "description": "?: array of view fields to retrieve/display in table view",
+            "items": {
+                "type": "object",
+                "required": [
+                    "isHidden",
+                    "isPrimary",
+                    "key",
+                    "label",
+                    "format"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "isHidden": {
+                        "type": "boolean"
+                    },
+                    "isPrimary": {
+                        "type": "boolean"
+                    },
+                    "key": {
+                        "type": "string",
+                        "description": "M: postgresql table column name"
+                    },
+                    "queryFunct": {
+                        "type": "string",
+                        "description": "?: postgresql query format for the column, can be a function or a full query. $field$ means that field is replaced by actual value"
+                    },
+                    "label": {
+                        "type": "string",
+                        "description": "M: displayed field name"
+                    },
+                    "format": {
+                        "type": "object",
+                        "required": [
+                            "dataType"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "dataType": {
+                                "type": "string",
+                                "enum": [
+                                    "text",
+                                    "date",
+                                    "number",
+                                    "boolean"
+                                ]
+                            },
+                            "value": {
+                                "type": [
+                                    "string",
+                                    "number",
+                                    "boolean"
+                                ],
+                                "description": "?: default value"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "search_keys": {
+            "type": "array",
+            "description": "?: array of fields of the search form",
+            "items": {
+                "type": "object",
+                "required": [
+                    "fieldName",
+                    "label",
+                    "queryCond",
+                    "format"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "fieldName": {
+                        "type": "string",
+                        "description": "M: form field name, might or not correspond to a postgres column"
+                    },
+                    "newLine": {
+                        "type": "boolean",
+                        "description": "?: new line with the next field"
+                    },
+                    "size": {
+                        "type": "number",
+                        "description": "?: size in 1/10 of available space, only considered if sharing line with other keys. If not defined take all space left by the other keys"
+                    },
+                    "label": {
+                        "type": "string",
+                        "description": "M: displayed key name"
+                    },
+                    "queryCond": {
+                        "type": "string",
+                        "description": "M: postgres query condition (after WHERE clause)"
+                    },
+                    "format": {
+                        "$ref": "#/definitions/formDataFormat"
+                    }
+                }
+            }
+        },
+        "form_keys": {
+            "type": "array",
+            "description": "?: array of view fields to show into single/multiple records form view",
+            "items": {
+                "type": "object",
+                "required": [
+                    "isHidden",
+                    "readOnly",
+                    "isPrimary",
+                    "key",
+                    "label",
+                    "format"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "isHidden": {
+                        "type": "boolean"
+                    },
+                    "autoGenerate": {
+                        "type": "boolean",
+                        "description": "?: only if primary key, generated by backend for new entry-> typically table ID"
+                    },
+                    "readOnly": {
+                        "type": "boolean"
+                    },
+                    "newLine": {
+                        "type": "boolean",
+                        "description": "?: new line with the next field"
+                    },
+                    "size": {
+                        "type": "number",
+                        "description": "?: size in 1/10 of available space. If defined, must be defined for all keys on the same line. If not defined, space is split equally"
+                    },
+                    "style": {
+                        "type": "object",
+                        "description": "?: set of form cell style attributes",
+                        "additionalProperties": false,
+                        "properties": {
+                            "background_color": {
+                                "type": "string",
+                                "description": "?: as per specification @ https://www.w3schools.com/cssref/css_colors.asp - defaults to 'transparent'"
+                            },
+                            "font_color": {
+                                "type": "string",
+                                "description": "?: as per specification @ https://www.w3schools.com/cssref/css_colors.asp - defaults to black"
+                            }
+                        }
+                    },
+                    "isPrimary": {
+                        "type": "boolean",
+                        "description": "M: all primary keys must be always provided with the table query"
+                    },
+                    "key": {
+                        "type": "string",
+                        "description": "M: postgresql table column name, unless it is composed by sub keys (below)"
+                    },
+                    "subKeys": {
+                        "type": "array",
+                        "description": "?: possible multiple keys concurring to combobox ID field, representing the postgresql table column names)",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "key",
+                                "dataType"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "dataType": {
+                                    "type": "string",
+                                    "enum": [
+                                        "text",
+                                        "date",
+                                        "number",
+                                        "boolean"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "label": {
+                        "type": "string",
+                        "description": "M: displayed key name"
+                    },
+                    "sameOrigin": {
+                        "type": "boolean",
+                        "description": "?: when false indicates the key is not part of table columns, so it is not retrieved by automatic query. Default is true. Not to use together w/ queryFunct (below)"
+                    },
+                    "queryFunct": {
+                        "type": "string",
+                        "description": "?: postgresql query for the column, exclude the field from automatic query. Must NOT be used together with sameOrigin."
+                    },
+                    "evalFunct": {
+                        "type": "string",
+                        "description": "?: javascript expression to evaluate the value of the field, typically with £ contoured local parameters. Can or cannot have same origin."
+                    },
+                    "format": {
+                        "$ref": "#/definitions/formDataFormat"
+                    },
+                    "outputEvent": {
+                        "type": "object",
+                        "description": "?: event triggered by the field every time its value changes",
+                        "required": [
+                            "eventName"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "eventName": {
+                                "type": "string",
+                                "description": "M: event name pushed to other fields, must be unique"
+                            }
+                        }
+                    },
+                    "inputEvents": {
+                        "type": "array",
+                        "description": "?: input events associated with the field",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "eventName",
+                                "actionType"
+                            ],
+                            "anyOf": [
+                                {
+                                    "properties": {
+                                        "actionType": {
+                                            "enum": [
+                                                "show"
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "properties": {
+                                        "actionType": {
+                                            "enum": [
+                                                "update"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "updateFunct"
+                                    ]
+                                },
+                                {
+                                    "properties": {
+                                        "actionType": {
+                                            "enum": [
+                                                "update_style"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "updateFunct",
+                                        "styleAttribute"
+                                    ]
+                                },
+                                {
+                                    "properties": {
+                                        "actionType": {
+                                            "enum": [
+                                                "query"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "queryFunct"
+                                    ]
+                                },
+                                {
+                                    "properties": {
+                                        "actionType": {
+                                            "enum": [
+                                                "query_style"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "queryFunct",
+                                        "styleAttribute"
+                                    ]
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "eventName": {
+                                    "type": "string",
+                                    "description": "M: event to listen to"
+                                },
+                                "actionType": {
+                                    "type": "string",
+                                    "description": "M: action triggered, also specify styleAttribute if *_style and/or queryFunct if query* and/or updateFunct if update*",
+                                    "enum": [
+                                        "update",
+                                        "update_style",
+                                        "show",
+                                        "query",
+                                        "query_style"
+                                    ]
+                                },
+                                "styleAttribute": {
+                                    "type": "string",
+                                    "description": "?: style attibute affected, mandatory if actionType = *_style",
+                                    "enum": [
+                                        "background_color",
+                                        "font_color"
+                                    ]
+                                },
+                                "updateFunct": {
+                                    "type": "string",
+                                    "description": "?: expression to evaluate the value in case of actionType = update* event, typically with £ contoured local parameters"
+                                },
+                                "queryFunct": {
+                                    "type": "string",
+                                    "description": "?: query to perform in case of actionType = query* event. If it is query_style then the returned key must have name <key>_<styleAttribute>"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "subTables": {
+            "type": "array",
+            "description": "?: one entry for each subTable tab of the single form (record) view",
+            "items": {
+                "type": "object",
+                "required": [
+                    "label",
+                    "entryKey",
+                    "keys"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "label": {
+                        "type": "string",
+                        "description": "M: displayed tab name"
+                    },
+                    "entryKey": {
+                        "type": "string",
+                        "description": "M: DynamoDB primary key (entry) of subtable"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "?: if not defined, 'table' is assumed",
+                        "enum": [
+                            "table",
+                            "tableForm"
+                        ]
+                    },
+                    "isHidden": {
+                        "type": "boolean",
+                        "description": "?: if not defined defaults to false"
+                    },
+                    "keys": {
+                        "type": "array",
+                        "description": "M: set of key couples that put in relation the record view (parent) with subtable (son)",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "parent": {
+                                    "type": "string",
+                                    "description": "M: parent table key, condition on subtable is WHERE son_key = parent_key_value"
+                                },
+                                "son": {
+                                    "type": "string",
+                                    "description": "M: subtable key"
+                                }
+                            }
+                        }
+                    },
+                    "inputEvents": {
+                        "type": "array",
+                        "description": "?: input events associated with the tab",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "eventName",
+                                "actionType"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "eventName": {
+                                    "type": "string",
+                                    "description": "M: event name to listen to"
+                                },
+                                "actionType": {
+                                    "type": "string",
+                                    "description": "M: triggered action",
+                                    "enum": [
+                                        "show",
+                                        "notShow"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "formDataFormat": {
+            "type": "object",
+            "description": "M: data format type",
+            "required": [
+                "viewType"
+            ],
+            "additionalProperties": false,
+            "anyOf": [
+                {
+                    "properties": {
+                        "viewType": {
+                            "enum": [
+                                "checkbox",
+                                "textarea",
+                                "button"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "viewType": {
+                            "enum": [
+                                "input"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "dataType"
+                    ]
+                },
+                {
+                    "properties": {
+                        "viewType": {
+                            "enum": [
+                                "combobox",
+                                "radiobutton"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "options"
+                    ]
+                }
+            ],
+            "properties": {
+                "viewType": {
+                    "type": "string",
+                    "description": "M: form view type, if 'input' also set dataType below, if combobox or radiobutton also set (also empty) options below",
+                    "enum": [
+                        "input",
+                        "combobox",
+                        "checkbox",
+                        "radiobutton",
+                        "textarea",
+                        "button"
+                    ]
+                },
+                "dataType": {
+                    "type": "string",
+                    "description": "?: mandatory (and only used) if viewtype='input'",
+                    "enum": [
+                        "text",
+                        "date",
+                        "number",
+                        "boolean"
+                    ]
+                },
+                "value": {
+                    "type": [
+                        "string",
+                        "number",
+                        "boolean"
+                    ],
+                    "description": "?: default value"
+                },
+                "options": {
+                    "type": "array",
+                    "description": "?: only usable (mandatory at least empty) in case of combobox or radiobutton",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "id",
+                            "name"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "id": {
+                                "type": "number",
+                                "description": "M: combobox/radiobutton entry ID"
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "M: displayed entry value"
+                            }
+                        }
+                    }
+                },
+                "comboQuery": {
+                    "type": "string",
+                    "description": "?: combobox/radiobutton query, must return an array of [{“id”: Number, “name”: String}]"
+                },
+                "validations": {
+                    "type": "array",
+                    "description": "?: only for “input” viewType, check on entered data",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "message",
+                            "name",
+                            "validator"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "description": "M: message to display if condition not met"
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "M: type of validator",
+                                "enum": [
+                                    "required",
+                                    "pattern"
+                                ]
+                            },
+                            "validator": {
+                                "type": "string",
+                                "description": "M: e.g. Validators.required or (pattern) ^[a-zA-Z0-9&_ ]+$"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
