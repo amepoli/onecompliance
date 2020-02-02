@@ -1,0 +1,143 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "tipi_rischio",
+    "form_keys": [
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "id_tipo_rischio",
+        "label": "id_tipo_rischio",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "descrizione",
+        "label": "descrizione",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "comboQuery": "SELECT id_tipo_rischio AS id, entrasp.tipi_rischio_descrizione(id_tipo_rischio, codice_azienda) AS name  FROM entrasp.tipi_rischio WHERE codice_azienda=$codice_azienda$;",
+          "options": [
+  
+          ],
+          "viewType": "combobox"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "id_tipo_rischio_parent",
+        "label": "Rischio padre",
+        "newLine": true,
+        "readOnly": false
+      }
+    ],
+    "origin": "entrasp.tipi_rischio",
+    "search_keys": [
+      {
+        "fieldName": "id_tipo_rischio",
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "label": "id_tipo_rischio",
+        "newLine": true,
+        "queryCond": "id_tipo_rischio=$id_tipo_rischio$"
+      }
+    ],
+    "subTables": [
+      {
+        "entryKey": "rischi_tipi_rischio_sub",
+        "keys": [
+          {
+            "parent": "codice_azienda",
+            "son": "codice_azienda"
+          },
+          {
+            "parent": "id_tipo_rischio",
+            "son": "id_tipo_rischio"
+          }
+        ],
+        "label": "Rischi associati"
+      },
+      {
+        "entryKey": "tipi_rischio_sub",
+        "keys": [
+          {
+            "parent": "codice_azienda",
+            "son": "codice_azienda"
+          },
+          {
+            "parent": "id_tipo_rischio",
+            "son": "id_tipo_rischio_parent"
+          }
+        ],
+        "label": "Sotto tipi"
+      }
+    ],
+    "table_keys": [
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "id_tipo_rischio",
+        "label": "id_tipo_rischio"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "descrizione",
+        "label": "descrizione"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "id_tipo_rischio_parent",
+        "label": "Rischio padre",
+        "queryFunct": "entrasp.tipi_rischio_descrizione(id_tipo_rischio_parent, codice_azienda)"
+      }
+    ]
+  }
