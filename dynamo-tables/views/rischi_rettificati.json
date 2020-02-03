@@ -1,0 +1,708 @@
+{
+    "$schema": "../views.schema.json",
+    "dashboards": [
+      {
+        "conditions": [
+          {
+            "format": {
+              "backgroundColor": "white",
+              "color": "black",
+              "fontFamily": "Arial",
+              "fontSize": "14px"
+            },
+            "formula": "!isNaN(#value)"
+          }
+        ],
+        "dataSource": {
+          "data": [
+  
+          ]
+        },
+        "labels": {
+          "colorsQuery": {
+            "query": "select crr.codice_colore as color from entrasp.cpl_risk_response crr, entrasp.cpl_srr srr where srr.id_risk_response=crr.id_risk_response and srr.codice_azienda=crr.codice_azienda and crr.codice_azienda=$codice_azienda$ and srr.id_esercizio=crr.id_esercizio and crr.id_esercizio=(select max(id_esercizio) from entrasp.cpl_risk_response where codice_azienda=$codice_azienda$) order by srr.soglia_a_pk, srr.soglia_a_int;",
+            "type": "full"
+          },
+          "columnsQuery": {
+            "key": "probabilita",
+            "query": "select descrizione as label from entrasp.cpl_soglie where tipo_soglia='P' and codice_azienda=$codice_azienda$ and id_esercizio=(select max(id_esercizio) from entrasp.cpl_risk_response where codice_azienda=$codice_azienda$) order by soglia_a;"
+          },
+          "rowsQuery": {
+            "key": "impatto",
+            "query": "select descrizione as label from entrasp.cpl_soglie where tipo_soglia='I' and codice_azienda=$codice_azienda$ and id_esercizio=(select max(id_esercizio) from entrasp.cpl_risk_response where codice_azienda=$codice_azienda$) order by soglia_a;"
+          }
+        },
+        "localization": "it",
+        "options": {
+          "drillThrough": false,
+          "grid": {
+            "showHeaders": false
+          }
+        },
+        "slice": {
+          "columns": [
+            {
+              "uniqueName": "Measures"
+            },
+            {
+              "uniqueName": "Probabilita"
+            }
+          ],
+          "measures": [
+            {
+              "aggregation": "count",
+              "availableAggregations": [
+                "count",
+                "distinctcount"
+              ],
+              "uniqueName": "Impatto"
+            }
+          ],
+          "rows": [
+            {
+              "uniqueName": "Impatto"
+            }
+          ]
+        }
+      },
+      {
+        "conditions": [
+          {
+            "format": {
+              "backgroundColor": "white",
+              "color": "black",
+              "fontFamily": "Arial",
+              "fontSize": "14px"
+            },
+            "formula": "!isNaN(#value)"
+          }
+        ],
+        "dataSource": {
+          "data": [
+  
+          ]
+        },
+        "labels": {
+          "colorsQuery": {
+            "query": "select codice_colore as color from entrasp.cpl_soglie where tipo_soglia='T' and codice_azienda=$codice_azienda$ and id_esercizio=(select max(id_esercizio) from entrasp.cpl_risk_response where codice_azienda=$codice_azienda$) order by soglia_a;",
+            "type": "column"
+          },
+          "columnsQuery": {
+            "key": "rischio_residuo",
+            "query": "select descrizione_post as label from entrasp.cpl_soglie where tipo_soglia='T' and codice_azienda=$codice_azienda$ and id_esercizio=(select max(id_esercizio) from entrasp.cpl_risk_response where codice_azienda=$codice_azienda$) order by soglia_a;"
+          }
+        },
+        "localization": "it",
+        "options": {
+          "drillThrough": false,
+          "grid": {
+            "showHeaders": false
+          }
+        },
+        "slice": {
+          "columns": [
+            {
+              "uniqueName": "Measures"
+            },
+            {
+              "uniqueName": "Rischio_residuo"
+            }
+          ],
+          "measures": [
+            {
+              "aggregation": "count",
+              "availableAggregations": [
+                "count",
+                "distinctcount"
+              ],
+              "uniqueName": "Rischio_residuo"
+            }
+          ]
+        }
+      },
+      {
+        "conditions": [
+          {
+            "format": {
+              "backgroundColor": "white",
+              "color": "black",
+              "fontFamily": "Arial",
+              "fontSize": "14px"
+            },
+            "formula": "!isNaN(#value)"
+          }
+        ],
+        "dataSource": {
+          "data": [
+  
+          ]
+        },
+        "labels": {
+          "colorsQuery": {
+            "query": "select codice_colore as color from entrasp.cpl_soglie where tipo_soglia='T' and codice_azienda=$codice_azienda$ and id_esercizio=(select max(id_esercizio) from entrasp.cpl_risk_response where codice_azienda=$codice_azienda$) order by soglia_a;",
+            "type": "column"
+          },
+          "columnsQuery": {
+            "key": "rischio_residuo",
+            "query": "select descrizione_post as label from entrasp.cpl_soglie where tipo_soglia='T' and codice_azienda=$codice_azienda$ and id_esercizio=(select max(id_esercizio) from entrasp.cpl_risk_response where codice_azienda=$codice_azienda$) order by soglia_a;"
+          },
+          "rowsQuery": {
+            "key": "rischio_inerente",
+            "query": "select descrizione as label from entrasp.cpl_soglie where tipo_soglia='T' and codice_azienda=$codice_azienda$ and id_esercizio=(select max(id_esercizio) from entrasp.cpl_risk_response where codice_azienda=$codice_azienda$) order by soglia_a;"
+          }
+        },
+        "localization": "it",
+        "options": {
+          "drillThrough": false,
+          "grid": {
+            "showGrandTotals": "rows",
+            "showHeaders": false
+          }
+        },
+        "slice": {
+          "columns": [
+            {
+              "uniqueName": "Measures"
+            },
+            {
+              "uniqueName": "Rischio_residuo"
+            }
+          ],
+          "measures": [
+            {
+              "aggregation": "count",
+              "availableAggregations": [
+                "count",
+                "distinctcount"
+              ],
+              "uniqueName": "Rischio_residuo"
+            }
+          ],
+          "rows": [
+            {
+              "filter": {
+                "members": [
+                  "Rischio_inerente.Catastrofico"
+                ],
+                "negation": true
+              },
+              "uniqueName": "Rischio_inerente"
+            }
+          ]
+        }
+      }
+    ],
+    "entryKey": "rischi_rettificati",
+    "form_keys": [
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda",
+        "newLine": true,
+        "readOnly": true
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input",
+          "validations": [
+            {
+              "message": "Codice mancante",
+              "name": "required",
+              "validator": "Validators.required"
+            }
+          ]
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_rischio",
+        "label": "Codice Rischio",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "codice",
+        "label": "Codice",
+        "newLine": false,
+        "readOnly": false,
+        "size": 2
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "titolo",
+        "label": "Titolo",
+        "newLine": true,
+        "readOnly": false,
+        "size": 8
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "intensita_singola_pre_rilevata",
+        "label": "intensita_singola_pre_rilevata",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "intensita_totale_pre_rilevata",
+        "label": "intensita_totale_pre_rilevata",
+        "newLine": false,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "probabilita_post_rilevata",
+        "label": "probabilita_post_rilevata",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "intensita_singola_post_rilevata",
+        "label": "intensita_singola_post_rilevata",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "intensita_totale_post_rilevata",
+        "label": "intensita_totale_post_rilevata",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "checkbox"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "flag_modalita_valutazione_rischi_avanzata",
+        "label": "flag_modalita_valutazione_rischi_avanzata",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "vulnerabilita",
+        "label": "vulnerabilita",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "descrizione",
+        "label": "Descrizione",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$;",
+          "options": [
+  
+          ],
+          "viewType": "combobox"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "id_centro_gest",
+        "label": "Centro Gest. Resp.",
+        "newLine": true,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "probabilita_pre",
+        "label": "Probabilità Ante Presidi",
+        "newLine": false,
+        "outputEvent": {
+          "eventName": "input_probabilita_pre",
+          "eventTrigger": "blur"
+        },
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "inputEvents": [
+          {
+            "actionType": "query",
+            "eventName": "input_probabilita_pre",
+            "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'P', $probabilita_pre$) as probabilita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
+          }
+        ],
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "probabilita_pre_descrizione",
+        "label": "Probabilità Ante - Descrizione",
+        "newLine": false,
+        "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'P', probabilita_pre)",
+        "readOnly": true
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "intensita_singola_pre",
+        "label": "Impatto Ante Presidi",
+        "newLine": false,
+        "outputEvent": {
+          "eventName": "input_intensita_singola_pre",
+          "eventTrigger": "blur"
+        },
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "inputEvents": [
+          {
+            "actionType": "query",
+            "eventName": "input_intensita_singola_pre",
+            "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'I', $intensita_singola_pre$) as intensita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
+          }
+        ],
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "intensita_pre_descrizione",
+        "label": "Impatto Ante - Descrizione",
+        "newLine": false,
+        "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I', intensita_singola_pre)",
+        "readOnly": true
+      },
+      {
+        "autoGenerate": false,
+        "evalFunct": "(£probabilita_pre£/100*£intensita_singola_pre£).toFixed(2)",
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "inputEvents": [
+          {
+            "actionType": "update",
+            "eventName": "input_probabilita_pre",
+            "updateFunct": "(£probabilita_pre£/100*£intensita_singola_pre£).toFixed(2);"
+          },
+          {
+            "actionType": "update",
+            "eventName": "input_intensita_singola_pre",
+            "updateFunct": "(£probabilita_pre£/100*£intensita_singola_pre£).toFixed(2);"
+          }
+        ],
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "intensita_totale_pre",
+        "label": "Totale Ante Presidi",
+        "newLine": false,
+        "outputEvent": {
+          "eventName": "change_intensita_totale_pre",
+          "eventTrigger": "change"
+        },
+        "readOnly": true
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "inputEvents": [
+          {
+            "actionType": "query",
+            "eventName": "change_intensita_totale_pre",
+            "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'T', $intensita_totale_pre$) as intensita_totale_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
+          },
+          {
+            "actionType": "query_style",
+            "eventName": "change_intensita_totale_pre",
+            "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', $intensita_totale_pre$) as intensita_totale_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+            "styleAttribute": "background_color"
+          }
+        ],
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "intensita_totale_pre_descrizione",
+        "label": "Totale Ante - Descrizione",
+        "newLine": true,
+        "readOnly": true,
+        "sameOrigin": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "probabilita_post",
+        "label": "Probabilità Post Presidi",
+        "newLine": false,
+        "outputEvent": {
+          "eventName": "update_intensita_totale_post",
+          "eventTrigger": "blur"
+        },
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "intensita_singola_post",
+        "label": "Impatto Post Presidi",
+        "newLine": false,
+        "outputEvent": {
+          "eventName": "update_intensita_totale_post",
+          "eventTrigger": "blur"
+        },
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "evalFunct": "(£probabilita_post£/100*£intensita_singola_post£).toFixed(2)",
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "inputEvents": [
+          {
+            "actionType": "update",
+            "eventName": "update_intensita_totale_post",
+            "updateFunct": "(£probabilita_post£/100*£intensita_singola_post£).toFixed(2);"
+          }
+        ],
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "intensita_totale_post",
+        "label": "Totale Post Presidi",
+        "newLine": true,
+        "readOnly": false
+      }
+    ],
+    "origin": "entrasp.rischi",
+    "search_keys": [
+      {
+        "fieldName": "codice",
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "label": "Codice",
+        "newLine": true,
+        "queryCond": "codice=$codice$"
+      },
+      {
+        "fieldName": "codice_rischio",
+        "format": {
+          "dataType": "text",
+          "viewType": "input",
+          "validations": [
+            {
+              "message": "Codice mancante",
+              "name": "required",
+              "validator": "Validators.required"
+            }
+          ]
+        },
+        "label": "Codice Rischio",
+        "newLine": false,
+        "queryCond": "codice_rischio=$codice_rischio$"
+
+      },
+      {
+        "fieldName": "titolo",
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "label": "Titolo",
+        "newLine": true,
+        "queryCond": "titolo Like '%€titolo€%'"
+      }
+    ],
+    "subTables": [
+  
+    ],
+    "table_keys": [
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_rischio",
+        "label": "Codice Rischio"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "codice",
+        "label": "Codice"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "titolo",
+        "label": "Titolo"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "centro_gest",
+        "label": "Centro Gestionale",
+        "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "rischio_inerente",
+        "label": "Rischio Inerente",
+        "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_pre)"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "rischio_residuo",
+        "label": "Rischio Residuo",
+        "queryFunct": "entrasp.cpl_soglie_descrizione_post(codice_azienda,'T',intensita_totale_post)"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "rischio_residuo_rett",
+        "label": "Rischio Residuo Rettificato",
+        "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_post)"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "probabilita",
+        "label": "Probabilita",
+        "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'P',probabilita_post)"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "impatto",
+        "label": "Impatto",
+        "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I',intensita_singola_post)"
+      }
+    ]
+  }

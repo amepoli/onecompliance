@@ -112,7 +112,7 @@ export class TableViewComponent implements OnChanges {
                         const params = result.data;
                         _this.viewKeys = params.table_keys;
                         _this.searchKeys = params.search_keys;
-                        _this.targetEntryName = (params.targetNavigation != null) ? params.targetNavigation : _this.tableData.entryName;  // self or new form table?
+                        _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName;  // self or new form table?
                         _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                         _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
                         _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: {keys: _this.currentKeys} }); // pass current keys to parent view 

@@ -1,0 +1,186 @@
+{
+    "$schema": "../views.schema.json",
+    "businessObjectName": "domande",
+    "entryKey": "domande",
+    "form_keys": [
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda",
+        "newLine": true,
+        "readOnly": true
+      },
+      {
+        "autoGenerate": true,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_domanda",
+        "label": "ID",
+        "newLine": true,
+        "readOnly": true
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_modello_test",
+        "label": "ID modello di test",
+        "newLine": true,
+        "readOnly": true
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_modello_test_vr",
+        "label": "Versione",
+        "newLine": true,
+        "readOnly": true
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "ordinamento",
+        "label": "N.",
+        "newLine": false,
+        "readOnly": false,
+        "size": 2
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "punteggio",
+        "label": "Punteggio",
+        "newLine": true,
+        "readOnly": false,
+        "size": 8
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "button"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "dettaglio",
+        "label": "Dettaglio",
+        "newLine": false,
+        "outputEvent": {
+          "eventName": "button_dettaglio",
+          "eventTrigger": "press"
+        },
+        "readOnly": false,
+        "sameOrigin": false,
+        "size": 2
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "descrizione",
+        "label": "Domanda",
+        "newLine": true,
+        "readOnly": false,
+        "size": 8
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "options": [
+  
+          ],
+          "viewType": "combobox"
+        },
+        "inputEvents": [
+          {
+            "actionType": "query",
+            "eventName": "table_domande",
+            "queryFunct": "SELECT id_template_rp AS id,descrizione AS name from entrasp.template_risposte_previste WHERE codice_azienda=$codice_azienda$;"
+          }
+        ],
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "risposte",
+        "label": "Tipo risposte",
+        "newLine": false,
+        "outputEvent": {
+          "eventName": "combobox_risposte",
+          "eventTrigger": "select"
+        },
+        "readOnly": false,
+        "sameOrigin": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "value": " ",
+          "viewType": "textarea"
+        },
+        "inputEvents": [
+          {
+            "actionType": "query",
+            "eventName": "table_domande",
+            "queryFunct": "select string_agg(concat(ordinamento,') ',risposta,' (',peso,'%)'), E'\n')  as mostra_risposte from entrasp.risposte_previste where id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$  and codice_azienda=$codice_azienda$ and id_domanda=$id_domanda$;"
+          },
+          {
+            "actionType": "query",
+            "eventName": "combobox_risposte",
+            "queryFunct": "select  string_agg(concat(ordinamento,') ',risposta,' (',peso,'%)'), E'\n') as mostra_risposte from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$risposte$;"
+          }
+        ],
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "mostra_risposte",
+        "label": "Risposte possibili",
+        "newLine": true,
+        "readOnly": true,
+        "sameOrigin": false
+      }
+    ],
+    "inputEvents": [
+      {
+        "actionTarget": {
+          "name": "domande_dettaglio",
+          "type": "form"
+        },
+        "actionType": "navigate",
+        "eventName": "button_dettaglio"
+      }
+    ],
+    "origin": "entrasp.domande",
+    "outputEvent": {
+      "eventName": "table_domande"
+    }
+  }

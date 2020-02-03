@@ -1,0 +1,157 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "procedure_aziendali_sub_centri_gest",
+    "origin": "entrasp.procedure_aziendali",
+    "search_keys": [
+      {
+        "fieldName": "id_tipo_processo",
+        "format": {
+          "comboQuery": "SELECT id_tipo_processo AS id, entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda) AS name  FROM entrasp.tipi_processi WHERE codice_azienda=$codice_azienda$;",
+          "options": [
+  
+          ],
+          "viewType": "combobox"
+        },
+        "label": "id_tipo_processo",
+        "newLine": true,
+        "queryCond": "id_tipo_processo=$id_tipo_processo$"
+      },
+      {
+        "fieldName": "id_centro_gest",
+        "format": {
+          "comboQuery": "SELECT codice_part AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part=$codice_azienda$;",
+          "options": [
+  
+          ],
+          "viewType": "combobox"
+        },
+        "label": "id_centro_gest",
+        "newLine": true,
+        "queryCond": "id_centro_gest=$id_centro_gest$"
+      },
+      {
+        "fieldName": "id_procedura_parent",
+        "format": {
+          "comboQuery": "SELECT id_procedura AS id, entrasp.procedure_aziendali_descr(id_procedura,codice_azienda) AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$;",
+          "options": [
+  
+          ],
+          "viewType": "combobox"
+        },
+        "label": "id_procedura_parent",
+        "newLine": true,
+        "queryCond": "id_procedura_parent=$id_procedura_parent$"
+      },
+      {
+        "fieldName": "id_procedura",
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "label": "id_procedura",
+        "newLine": true,
+        "queryCond": "id_procedura=$id_procedura$"
+      },
+      {
+        "fieldName": "codice",
+        "format": {
+          "dataType": "text",
+          "viewType": "input",
+          "validations": [
+            {
+              "message": "Codice mancante",
+              "name": "required",
+              "validator": "Validators.required"
+            }
+          ]
+        },
+        "label": "codice",
+        "newLine": true,
+        "queryCond": "codice=$codice$"
+      },
+      {
+        "fieldName": "codice_azienda",
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "label": "codice_azienda",
+        "newLine": true,
+        "queryCond": "codice_azienda=$codice_azienda$"
+      }
+    ],
+    "table_keys": [
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "id_tipo_processo",
+        "label": "id_tipo_processo"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "id_centro_gest",
+        "label": "id_centro_gest"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "id_procedura_parent",
+        "label": "id_procedura_parent"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "id_procedura",
+        "label": "ID"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "codice",
+        "label": "Codice"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "descrizione",
+        "label": "Descizione Breve"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "stato_attuazione",
+        "label": "Stato Attuazione"
+      }
+    ]
+  }
