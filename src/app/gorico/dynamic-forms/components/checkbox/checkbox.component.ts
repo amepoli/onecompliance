@@ -1,10 +1,10 @@
-import { Component, OnInit } from "@angular/core";
-import { FormGroup } from "@angular/forms";
-import { FieldConfig } from "../../field.interface";
-import { NgxPubSubService } from "@pscoped/ngx-pub-sub";
+import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { FieldConfig } from '../../field.interface';
+import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 
 @Component({
-  selector: "app-checkbox",
+  selector: 'app-checkbox',
   template: `
 <div [ngStyle]="{'margin-right': '2%', 'margin-left': '2%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group" >
 <mat-checkbox [ngModel]="field.value" [formControlName]="field.name" [disabled]="field.readonly" (change)="onCheck($event)">{{field.label}}</mat-checkbox>

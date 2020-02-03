@@ -23,34 +23,38 @@ export class InputComponent implements OnInit, AfterViewInit{
 
   constructor(private pubsubService: NgxPubSubService) {}
   ngOnInit(): void {
-    this.field.style = this.field.style == null ? {background_color: 'transparent', font_color : 'black'} : this.field.style;
-    this.field.style.background_color = this.field.style.background_color != null  ? this.field.style.background_color : 'transparent';
-    this.field.style.font_color = this.field.style.font_color != null ? this.field.style.font_color : 'black';
-    if (this.field.eventName !== null && this.field.eventTrigger != null && this.field.eventTrigger === 'change') {
-        this.group.get(this.field.name).valueChanges.subscribe(value => {
-            this.pubsubService.publishEvent(this.field.eventName, {origin: this.field.name, index: this.field.index, data: value, type: 'change'});
+    const _this = this;
+    _this.field.style = _this.field.style == null ? {background_color: 'transparent', font_color : 'black'} : _this.field.style;
+    _this.field.style.background_color = _this.field.style.background_color != null  ? _this.field.style.background_color : 'transparent';
+    _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
+        _this.group.get(_this.field.name).valueChanges.subscribe(value => {
+            _this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, data: value, type: 'change'});
         });
     }
   }
 
   ngAfterViewInit(): void {
+    const _this = this;
     // publish a change event to start if expected
-    if (this.field.eventName !== null && this.field.eventTrigger != null && this.field.eventTrigger === 'change') {
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
         setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
-            this.pubsubService.publishEvent(this.field.eventName, {origin: this.field.name, index: this.field.index, data: this.field.value, type: 'change'});
+            _this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change'});
         }, 500);
     }
   }
 
   onBlur(): void {
-    if (this.field.eventName !== null && this.field.eventTrigger != null && this.field.eventTrigger === 'blur') {
-        this.pubsubService.publishEvent(this.field.eventName, {origin: this.field.name, index: this.field.index, data: this.field.value, type: 'blur'});
+    const _this = this;
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
+        _this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur'});
     }
   }
 
   onFocus(): void {
-    if (this.field.eventName !== null && this.field.eventTrigger != null && this.field.eventTrigger === 'focus') {
-        this.pubsubService.publishEvent(this.field.eventName, {origin: this.field.name, index: this.field.index, data: this.field.value, type: 'focus'});
+    const _this = this;
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'focus') {
+        _this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'focus'});
     }
   }
 

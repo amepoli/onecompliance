@@ -70,22 +70,61 @@
         "newLine": true,
         "readOnly": true,
         "size": 2
+      },
+      {
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "flag_sezioni",
+        "label": "flag_sezioni",
+        "outputEvent": {
+          "eventName": "sondaggi_flag_sezioni",
+          "eventTrigger": "change"
+        },
+        "queryFunct": "entrasp.sondaggi_flag_sezioni(codice_azienda, id_sondaggio)",
+        "readOnly": true
       }
     ],
     "origin": "entrasp.sondaggi",
     "subTables": [
       {
         "entryKey": "domande_risposte",
+        "inputEvents": [
+          {
+            "actionType": "notShow",
+            "eventName": "sondaggi_flag_sezioni"
+          }
+        ],
         "isHidden": true,
         "keys": [
-  
+          {
+            "parent": "codice_azienda",
+            "son": "codice_azienda"
+          },
+          {
+            "parent": "id_modello_test",
+            "son": "id_modello_test"
+          },
+          {
+            "parent": "id_modello_test_vr",
+            "son": "id_modello_test_vr"
+          }
         ],
         "label": "Domande e Risposte",
         "type": "tableForm"
       },
       {
         "entryKey": "domande_sezioni",
-        "isHidden": false,
+        "inputEvents": [
+          {
+            "actionType": "show",
+            "eventName": "sondaggi_flag_sezioni"
+          }
+        ],
+        "isHidden": true,
         "keys": [
           {
             "parent": "codice_azienda",
