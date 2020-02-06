@@ -12,6 +12,8 @@ type tabViewType = 'table' | 'tableForm';
 
 type tabEventActionType = 'show' | 'notShow';
 
+type tabConditionType = 'equalTo' | 'greaterThan' | 'lessThan';
+
 export interface tabViewKey { // as per API specification
     label: string;
     entryKey: string;
@@ -25,7 +27,9 @@ export interface tabViewKey { // as per API specification
     inputEvents?: [
         {
             eventName: string,
-            actionType: tabEventActionType
+            actionType: tabEventActionType,
+            condition: tabConditionType,
+            values: string[]
         }
     ];
     isHidden?: boolean;

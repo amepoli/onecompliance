@@ -11,7 +11,7 @@ export interface TabType {
     table: string;
     type: string;
     hidden: boolean;
-    inputEvents: {eventName: string, actionType: string }[];
+    inputEvents: {eventName: string, actionType: string, condition: string, values: string[]}[];
     keys: {};
 }
 
@@ -50,7 +50,18 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
                     tab.inputEvents.forEach(event => {
                         if (event.actionType === 'show' || event.actionType === 'notShow') {
                             _this.subscriptions.push(_this.pubsubService.subscribe(event.eventName,  msg => {
-                                tab.hidden = event.actionType === 'notShow' ? msg.data : !msg.data;
+                                // TODO: handle the other conditions
+                                if (event.condition === 'equalTo') {
+                                    // normalize if boolean conditions
+                                    let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v );
+                                    let msgData = Array.isArray(msg.data) ? msg.data : [msg.data];
+                                    msgData = msgData.map(m => m === true || m === 1 || m === 'true' ? '1' : m === false || m === 0 || m === 'false' ? '0' : m);
+                                    // handle jolly chars 
+                                    eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
+                                    // tricky way to compare two arrays
+                                    const conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
+                                    tab.hidden = event.actionType === 'notShow' ? conditionMet : !conditionMet;
+                                }
                                 _this.setFiltered();  // reset filteredTabs
                             }));
                         }
@@ -73,9 +84,11 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-        this.activeIndex = tabChangeEvent.index;
-        this.tableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys, showHeader: false, showFullScreenButton: true };
-        this.formTableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys };
+        this.activeIndex = tabChangeEvent.index >= 0 ? tabChangeEvent.index : 0;  // might get a -1
+        if (this.filteredTabs.length) {  // at least one tab visible
+            this.tableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys, showHeader: false, showFullScreenButton: true };
+            this.formTableParams = { entryName: this.Tabs[this.activeIndex].table, keys: this.Tabs[this.activeIndex].keys };
+        }
     }
 
     onEvent(event: any) {

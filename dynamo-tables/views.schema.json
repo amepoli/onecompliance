@@ -549,6 +549,7 @@
                         "description": "M: set of key couples that put in relation the record view (parent) with subtable (son)",
                         "items": {
                             "type": "object",
+                            "required": ["parent","son"],
                             "additionalProperties": false,
                             "properties": {
                                 "parent": {
@@ -569,7 +570,9 @@
                             "type": "object",
                             "required": [
                                 "eventName",
-                                "actionType"
+                                "actionType",
+                                "condition",
+                                "values"
                             ],
                             "additionalProperties": false,
                             "properties": {
@@ -584,6 +587,22 @@
                                         "show",
                                         "notShow"
                                     ]
+                                },
+                                "condition": {
+                                    "type":"string",
+                                    "description": "M: condition on received value, only equalTo implemented so far",
+                                    "enum": [
+                                        "equalTo",
+                                        "greaterThan",
+                                        "lessThan"
+                                    ]
+                                },
+                                "values": {
+                                    "type":"array",
+                                    "description": "M: set of values to compare with, condition must be verified for all of them but '*' jolly values",
+                                    "items": {
+                                        "type":"string"
+                                    }
                                 }
                             }
                         }

@@ -146,6 +146,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 if (results.result === 'OK') {
                     const params = results.data;
                     _this.viewKeys = params.form_keys;
+                    if (_this.viewKeys == null) {
+                        return;                         // no formKeys defined for the table, stop here
+                    }
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
                     _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables });
                     // handle input events
@@ -188,7 +191,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         for (const key in inputKeys) {
             if (inputKeys.hasOwnProperty(key)) {
                 const element = inputKeys[key];
-                if (validKeysArray.find(e => e.key === key)) {
+                if (validKeysArray != null && validKeysArray.find(e => e.key === key)) {
                     outputKeys[key] = element;
                 }   
             }

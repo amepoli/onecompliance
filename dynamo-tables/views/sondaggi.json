@@ -78,13 +78,13 @@
         },
         "isHidden": true,
         "isPrimary": false,
-        "key": "flag_sezioni",
-        "label": "flag_sezioni",
+        "key": "flags_sezioni_multi",
+        "label": "flags_sezioni_multi",
         "outputEvent": {
-          "eventName": "sondaggi_flag_sezioni",
+          "eventName": "sondaggi_flags_sezioni_singola",
           "eventTrigger": "change"
         },
-        "queryFunct": "entrasp.sondaggi_flag_sezioni(codice_azienda, id_sondaggio)",
+        "queryFunct": "entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio)",
         "readOnly": true
       }
     ],
@@ -94,8 +94,10 @@
         "entryKey": "domande_risposte",
         "inputEvents": [
           {
-            "actionType": "notShow",
-            "eventName": "sondaggi_flag_sezioni"
+            "actionType": "show",
+            "eventName": "sondaggi_flags_sezioni_singola",
+            "condition": "equalTo",
+            "values": ["0", "1"]
           }
         ],
         "isHidden": true,
@@ -121,7 +123,9 @@
         "inputEvents": [
           {
             "actionType": "show",
-            "eventName": "sondaggi_flag_sezioni"
+            "eventName": "sondaggi_flags_sezioni_singola",
+            "condition": "equalTo",
+            "values":["1", "1"]
           }
         ],
         "isHidden": true,
@@ -140,6 +144,30 @@
           }
         ],
         "label": "Domande e Risposte - Sezioni",
+        "type": "table"
+      },
+      {
+        "entryKey": "somministrazioni",
+        "inputEvents": [
+          {
+            "actionType": "show",
+            "eventName": "sondaggi_flags_sezioni_singola",
+            "condition": "equalTo",
+            "values":["*", "0"]
+          }
+        ],
+        "isHidden": true,
+        "keys": [
+          {
+            "parent": "codice_azienda",
+            "son": "codice_azienda"
+          },
+          {
+            "parent": "id_sondaggio",
+            "son": "id_sondaggio"
+          }
+        ],
+        "label": "Somministrazioni",
         "type": "table"
       }
     ],
