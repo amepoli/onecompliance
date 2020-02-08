@@ -92,6 +92,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     isReadOnly = false;
 
+    hiddenRows: boolean[] = [];
+
+    readonlyRows: boolean[] = [];
+
     numRows = 1;
 
     viewKeys: formViewKey[]; // view form fields as specified by the backend
@@ -208,6 +212,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 console.log(results);
                 if (results.result === 'OK') {
                     _this.isReadOnly = results.flags.readOnly;
+                    // hide/make read only relevant rows if any
+                    if (results.properties.hidden != null && results.properties.hidden.length) {
+                        _this.hiddenRows = results.properties.hidden.map(p => p.label);
+                    }
+                    if (results.properties.readOnly != null && results.properties.readOnly.length) {
+                        _this.readonlyRows = results.properties.readOnly.map(p => p.label);
+                    }
                     results = results.data;
                     _this.isLoading = false;
                     // signal parent to show/hide "save" icon

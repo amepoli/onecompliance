@@ -128,15 +128,16 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
     let postProcessQueries = [];
 
-    let orderBy = null;
+    let orderBy;
 
     let entry_keys;
     if (isForm) {
         entry_keys = entry_params.form_keys;
     } else {
-        entry_keys = entry_params.table_keys;
-        orderBy = entry_params.orderBy;
+    entry_keys = entry_params.table_keys;
     }
+
+    orderBy = entry_params.orderBy;
 
     if (!entry_keys) return '';
 
@@ -251,7 +252,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
             });
     }
 
-    // add order by if present (for table view only)
+    // add order by if present (for table view only
     if (orderBy != null && orderBy.key != null) {
         let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
         queryString = queryString + ' ORDER BY ' + orderBy.key + order; 
@@ -785,6 +786,37 @@ function data2xls(data, title, viewKeys) {
     return report;
 }
 
+async function process_properties(entry_params, table_keys, isFormRecord, client) {
+
+    var tableProperties= {};
+
+    if (entry_params.view_properties == null) {
+        return tableProperties;
+    }
+
+    var properties = entry_params.view_properties.filter(p => isFormRecord ? p.viewType === 'formView' : p.viewType === 'tableView');
+
+    var entry_keys = isFormRecord ? entry_params.form_keys : entry_params.table_keys;
+
+    var keyTypes = getKeyTypes(entry_keys);
+
+    for (let index = 0; index < properties.length; index++) {
+        let property = properties[index];
+        if (property.queryString != null) {
+            var values = await client.query(replaceKeys(property.queryString, table_keys, keyTypes));
+            if (values != null) {
+                if (property.propertyType === 'isHidden') {
+                    tableProperties['hidden'] = values.rows;
+                } else if (property.propertyType === 'readOnly') {
+                    tableProperties['readOnly'] = values.rows;
+                }
+            }
+        }
+    };
+
+    return tableProperties;
+}
+
 // main function starts here
 
 exports.handler = async (event, context) => {
@@ -862,6 +894,8 @@ exports.handler = async (event, context) => {
     var queryData = {};
 
     var queryString = {};
+
+    var tableProperties;
 
     try {
         // read the entry params from DynamoDB
@@ -942,6 +976,10 @@ exports.handler = async (event, context) => {
             if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
                 queryData = { table_data: queryData[0], search_options: searchOptions };
             }
+
+            // process properties query
+
+            tableProperties = await process_properties(entry_params, table_keys, isFormRecord, client);
         }
 
 
@@ -1037,7 +1075,7 @@ exports.handler = async (event, context) => {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
-        "body": JSON.stringify({result: 'OK', flags: flags, data: queryData})
+        "body": JSON.stringify({result: 'OK', flags: flags, data: queryData, properties: tableProperties})
 
     };
 };
