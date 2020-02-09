@@ -445,7 +445,9 @@
                             "type": "object",
                             "required": [
                                 "eventName",
-                                "actionType"
+                                "actionType",
+                                "condition",
+                                "values"
                             ],
                             "anyOf": [
                                 {
@@ -524,6 +526,23 @@
                                         "query",
                                         "query_style"
                                     ]
+                                },
+                                "condition": {
+                                    "type":"string",
+                                    "description": "M: condition on received value, only equalTo implemented so far",
+                                    "enum": [
+                                        "none",
+                                        "equalTo",
+                                        "greaterThan",
+                                        "lessThan"
+                                    ]
+                                },
+                                "values": {
+                                    "type":"array",
+                                    "description": "M: set of values to compare with, condition must be verified for all of them but '*' jolly values. Unused (empty) if condition = 'none'",
+                                    "items": {
+                                        "type":"string"
+                                    }
                                 },
                                 "styleAttribute": {
                                     "type": "string",

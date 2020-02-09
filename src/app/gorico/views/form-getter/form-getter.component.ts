@@ -360,6 +360,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this;
         console.log('Received event: ' + event + ' with value: ' + value);
 
+        if (event.condition === 'equalTo') {
+            // normalize if boolean conditions
+            let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v );
+            let msgData = Array.isArray(value.data) ? value.data : [value.data];
+            msgData = msgData.map(m => m === true || m === 1 || m === 'true' || m === 't' ? '1' : m === false || m === 0 || m === 'false' || m === 'f' ? '0' : m);
+            // handle jolly chars 
+            eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
+            // tricky way to compare two arrays
+            const conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
+            // if condition is not met, just return
+            if (!conditionMet) {
+                return;
+            }
+        }
+
         if (event.actionType === 'show') {
             // get the listener element if not full table
             let listener: FieldConfig = null;
