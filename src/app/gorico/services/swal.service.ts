@@ -60,11 +60,14 @@ export class SwalService {
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Set Snack Swal Theme
+     * Set Snackbar Swal Theme
      *
-     * @param title
-     * @param text
-     * @param icon
+     * @param position
+     * @param width
+     * @param background
+     * @param padding
+     * @param showConfirmButton
+     * @param toast
      */
     setSnackbarSwalTheme(
         position: SweetAlertPosition = 'top-end',
@@ -87,7 +90,7 @@ export class SwalService {
     //----------------------------- Dialog Swals -----------------------------------
 
     /**
-     * Show Icon Swal
+     * Show Icon Dialog Swal
      *
      * @param title
      * @param text
@@ -99,7 +102,7 @@ export class SwalService {
     }
 
     /**
-     * Show Info Swal
+     * Show Info Dialog Swal
      *
      * @param title
      * @param text
@@ -111,7 +114,7 @@ export class SwalService {
     }
 
     /**
-     * Show Success Swal
+     * Show Success Dialog Swal
      *
      * @param title
      * @param text
@@ -123,7 +126,7 @@ export class SwalService {
     }
 
     /**
-     * Show Error Swal
+     * Show Error Dialog Swal
      *
      * @param title
      * @param text
@@ -135,7 +138,7 @@ export class SwalService {
     }
 
     /**
-     * Show Question Swal
+     * Show Question Dialog Swal
      *
      * @param title
      * @param text
@@ -163,6 +166,7 @@ export class SwalService {
      *
      * @param text
      * @param time
+     * @param background
      */
     showSnackbarSwal(text: string, time: number = 1500, background: string = this._snackTheme.background) {
         Swal.fire({
@@ -183,6 +187,7 @@ export class SwalService {
      * @param text
      * @param icon
      * @param time
+     * @param background
      */
     showIconSnackbarSwal(text: string, icon: SweetAlertIcon, time: number = 1500, background: string = this._snackTheme.background) {
         Swal.fire({
