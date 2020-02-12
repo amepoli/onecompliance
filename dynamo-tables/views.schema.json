@@ -68,7 +68,7 @@
         },
         "orderBy": {
             "type": "object",
-            "description": "?: (table view only) ordering column field",
+            "description": "?: ordering column field",
             "required": [
                 "key",
                 "order"
@@ -172,6 +172,41 @@
                                 ]
                             }
                         }
+                    }
+                }
+            }
+        },
+        "view_properties": {
+            "type": "array",
+            "description": "?: array of view properties",
+            "items": {
+                "type":"object",
+                "required": ["viewType", "propertyType"],
+                "additionalProperties": false,
+                "properties": {
+                    "viewType": {
+                        "type": "string",
+                        "description": "M: affected view",
+                        "enum": [
+                            "tableView",
+                            "formView"
+                        ]
+                    },
+                    "propertyType": {
+                        "type": "string",
+                        "description": "M: affected property",
+                        "enum": [
+                            "isHidden",
+                            "readOnly"
+                        ]
+                    },
+                    "value": {
+                        "type": "array",
+                        "description": "?: array of values, one for each table row. One value in case of form view, multiple if table form or table views"
+                    },
+                    "queryString": {
+                        "type":"string",
+                        "description": "?: query on DB, must return a value NAMED AS 'label' for each row"
                     }
                 }
             }
@@ -410,7 +445,9 @@
                             "type": "object",
                             "required": [
                                 "eventName",
-                                "actionType"
+                                "actionType",
+                                "condition",
+                                "values"
                             ],
                             "anyOf": [
                                 {
@@ -489,6 +526,23 @@
                                         "query",
                                         "query_style"
                                     ]
+                                },
+                                "condition": {
+                                    "type":"string",
+                                    "description": "M: condition on received value, only equalTo implemented so far",
+                                    "enum": [
+                                        "none",
+                                        "equalTo",
+                                        "greaterThan",
+                                        "lessThan"
+                                    ]
+                                },
+                                "values": {
+                                    "type":"array",
+                                    "description": "M: set of values to compare with, condition must be verified for all of them but '*' jolly values. Unused (empty) if condition = 'none'",
+                                    "items": {
+                                        "type":"string"
+                                    }
                                 },
                                 "styleAttribute": {
                                     "type": "string",

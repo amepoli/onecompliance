@@ -55,7 +55,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
                                     // normalize if boolean conditions
                                     let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v );
                                     let msgData = Array.isArray(msg.data) ? msg.data : [msg.data];
-                                    msgData = msgData.map(m => m === true || m === 1 || m === 'true' ? '1' : m === false || m === 0 || m === 'false' ? '0' : m);
+                                    msgData = msgData.map(m => m === true || m === 1 || m === 'true' || m === 't' ? '1' : m === false || m === 0 || m === 'false' || m === 'f' ? '0' : m);
                                     // handle jolly chars 
                                     eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
                                     // tricky way to compare two arrays

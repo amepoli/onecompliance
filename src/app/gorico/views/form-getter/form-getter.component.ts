@@ -92,6 +92,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     isReadOnly = false;
 
+    hiddenRows: boolean[] = [];
+
+    readonlyRows: boolean[] = [];
+
     numRows = 1;
 
     viewKeys: formViewKey[]; // view form fields as specified by the backend
@@ -208,6 +212,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 console.log(results);
                 if (results.result === 'OK') {
                     _this.isReadOnly = results.flags.readOnly;
+                    // hide/make read only relevant rows if any
+                    if (results.properties.hidden != null && results.properties.hidden.length) {
+                        _this.hiddenRows = results.properties.hidden.map(p => p.label);
+                    }
+                    if (results.properties.readOnly != null && results.properties.readOnly.length) {
+                        _this.readonlyRows = results.properties.readOnly.map(p => p.label);
+                    }
                     results = results.data;
                     _this.isLoading = false;
                     // signal parent to show/hide "save" icon
@@ -348,6 +359,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     private eventCallback(event: any, value: any, keyListener: string): void {
         const _this = this;
         console.log('Received event: ' + event + ' with value: ' + value);
+
+        if (event.condition === 'equalTo') {
+            // normalize if boolean conditions
+            let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v );
+            let msgData = Array.isArray(value.data) ? value.data : [value.data];
+            msgData = msgData.map(m => m === true || m === 1 || m === 'true' || m === 't' ? '1' : m === false || m === 0 || m === 'false' || m === 'f' ? '0' : m);
+            // handle jolly chars 
+            eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
+            // tricky way to compare two arrays
+            const conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
+            // if condition is not met, just return
+            if (!conditionMet) {
+                return;
+            }
+        }
 
         if (event.actionType === 'show') {
             // get the listener element if not full table
