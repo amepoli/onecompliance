@@ -159,3 +159,144 @@ END; $BODY$;
 
 ALTER FUNCTION entrasp.grc_importa_tabelle(character varying)
     OWNER TO postgres;
+
+
+
+
+
+
+-- FUNCTION: entrasp.grc_listacampiditabella(text)
+
+-- DROP FUNCTION entrasp.grc_listacampiditabella(text);
+
+CREATE OR REPLACE FUNCTION entrasp.grc_listacampiditabella(
+	nometabella text)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+declare Rec RECORD;
+declare stringa character varying;
+begin
+for Rec in SELECT column_name from entrasp.grc_campi_tabelle where table_name=NomeTabella loop
+ stringa:=concat(stringa, ', ', rec.column_name);
+ 
+end loop;  
+stringa:=right(stringa,length(stringa)-2);
+return stringa;
+--raise notice '%', stringa;
+end;
+$BODY$;
+
+ALTER FUNCTION entrasp.grc_listacampiditabella(text)
+    OWNER TO postgres;
+
+
+
+-- FUNCTION: entrasp.grc_listacampiditabella_non_pk(text)
+
+-- DROP FUNCTION entrasp.grc_listacampiditabella_non_pk(text);
+
+CREATE OR REPLACE FUNCTION entrasp.grc_listacampiditabella_non_pk(
+	nometabella text)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+declare Rec RECORD;
+declare stringa character varying;
+begin
+for Rec in SELECT column_name from entrasp.grc_campi_tabelle_NON_pk where table_name=NomeTabella loop
+ stringa:=concat(stringa, ', ', rec.column_name);
+ 
+end loop;  
+stringa:=right(stringa,length(stringa)-2);
+return stringa;
+--raise notice '%', stringa;
+end;
+$BODY$;
+
+ALTER FUNCTION entrasp.grc_listacampiditabella_non_pk(text)
+    OWNER TO postgres;
+
+
+-- FUNCTION: entrasp.grc_listacampiditabella_pk(text)
+
+-- DROP FUNCTION entrasp.grc_listacampiditabella_pk(text);
+
+CREATE OR REPLACE FUNCTION entrasp.grc_listacampiditabella_pk(
+	nometabella text)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+declare Rec RECORD;
+declare stringa character varying;
+begin
+for Rec in SELECT column_name from entrasp.grc_campi_tabelle_pk where table_name=NomeTabella loop
+ stringa:=concat(stringa, ', ', rec.column_name);
+ 
+end loop;  
+stringa:=right(stringa,length(stringa)-2);
+return stringa;
+--raise notice '%', stringa;
+end;
+$BODY$;
+
+ALTER FUNCTION entrasp.grc_listacampiditabella_pk(text)
+    OWNER TO postgres;
+
+
+
+-- View: entrasp.grc_tabelle
+
+-- DROP VIEW entrasp.grc_tabelle;
+
+CREATE OR REPLACE VIEW entrasp.grc_tabelle
+ AS
+ SELECT tables.table_catalog,
+    tables.table_schema,
+    tables.table_name,
+    tables.table_type,
+    tables.self_referencing_column_name,
+    tables.reference_generation,
+    tables.user_defined_type_catalog,
+    tables.user_defined_type_schema,
+    tables.user_defined_type_name,
+    tables.is_insertable_into,
+    tables.is_typed,
+    tables.commit_action
+   FROM information_schema.tables
+  WHERE tables.table_schema::text = 'entrasp'::text AND tables.table_type::text = 'BASE TABLE'::text;
+
+ALTER TABLE entrasp.grc_tabelle
+    OWNER TO postgres;
+
+
+
+-- View: entrasp.grc_tabelle_ca_cp
+
+-- DROP VIEW entrasp.grc_tabelle_ca_cp;
+
+CREATE OR REPLACE VIEW entrasp.grc_tabelle_ca_cp
+ AS
+ SELECT grc_tabelle.table_name,
+    tabelle.ordinamento,
+    entrasp.grc_tabella_ca_cp_nulla(grc_tabelle.table_name::text) AS ca_cp,
+    entrasp.grc_listacampiditabella(grc_tabelle.table_name::text) AS elencocampi,
+    entrasp.grc_listacampiditabella_pk(grc_tabelle.table_name::text) AS elencocampi_pk,
+    entrasp.grc_listacampiditabella_non_pk(grc_tabelle.table_name::text) AS elencocampi_non_pk
+   FROM entrasp.grc_tabelle,
+    entrasp.tabelle
+  WHERE entrasp.grc_tabella_ca_cp_nulla(grc_tabelle.table_name::text)::text <> ''::text AND grc_tabelle.table_name::text = tabelle.nome_tabella::text
+  ORDER BY tabelle.ordinamento;
+
+ALTER TABLE entrasp.grc_tabelle_ca_cp
+    OWNER TO postgres;
+
