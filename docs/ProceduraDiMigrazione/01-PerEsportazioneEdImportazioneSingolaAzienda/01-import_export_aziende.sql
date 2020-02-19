@@ -115,3 +115,47 @@ END; $BODY$;
 
 ALTER FUNCTION entrasp.grc_esporta_tabelle(character varying, character varying)
     OWNER TO postgres;
+
+-- FUNCTION: entrasp.grc_importa_tabelle(character varying)
+
+-- DROP FUNCTION entrasp.grc_importa_tabelle(character varying);
+
+CREATE OR REPLACE FUNCTION entrasp.grc_importa_tabelle(
+	"NomeAzienda" character varying)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+AS $BODY$
+declare Rec RECORD; tabella varchar(50); ca_cp varchar(50); elencocampi character varying; stringaCancellazione character varying; stringaCopy character varying;
+BEGIN
+--UPDATE entrasp.anagrafiche_id SET codice_part= 'ELIMINAMI' WHERE codice_part=$1;
+--DELETE FROM entrasp.partizioni where codice_part=$1;
+for Rec in SELECT grc_tabelle_ca_cp.table_name, grc_tabelle_ca_cp.ca_cp, grc_tabelle_ca_cp.elencocampi from entrasp.grc_tabelle_ca_cp order by entrasp.grc_tabelle_ca_cp.ordinamento desc loop
+	tabella:= Rec.table_name;
+	ca_cp:=rec.ca_cp;
+	elencocampi:=rec.elencocampi;
+	
+	if tabella='procedure_aziendali' then
+		delete from entrasp.procedure_aziendali where codice_azienda=$1 or codice_part=$1;
+		stringaCancellazione:=concat(stringaCancellazione, format('DELETE FROM entrasp.procedure_aziendali WHERE codice_azienda=%L or codice_part=%L;', $1, $1));
+	else
+		EXECUTE format('DELETE FROM entrasp.%s WHERE %I=%L;', tabella, ca_cp, $1);
+		stringaCancellazione:=concat(stringaCancellazione, format('DELETE FROM entrasp.%s WHERE %I=%L;', tabella, ca_cp, $1));
+	end if;
+end loop;
+
+for Rec in SELECT grc_tabelle_ca_cp.table_name, grc_tabelle_ca_cp.ca_cp, grc_tabelle_ca_cp.elencocampi from entrasp.grc_tabelle_ca_cp order by entrasp.grc_tabelle_ca_cp.ordinamento asc loop
+	tabella:= Rec.table_name;
+	ca_cp:=rec.ca_cp;
+	elencocampi:=rec.elencocampi;
+	EXECUTE format('COPY entrasp.%s(%s) FROM ''C:\Users\Amedeo\OneDrive\MigrazioneGRC\DB\export\%s.csv'' delimiter'';'' csv header;', tabella, elencocampi, tabella);
+	stringaCopy:=concat(stringaCopy, format('COPY entrasp.%s(%s) FROM ''C:\Users\Amedeo\OneDrive\MigrazioneGRC\DB\export\%s.csv'' delimiter'';'' csv header;', tabella, elencocampi, tabella));
+end loop;
+
+return concat(stringaCancellazione, stringaCopy);
+END; $BODY$;
+
+ALTER FUNCTION entrasp.grc_importa_tabelle(character varying)
+    OWNER TO postgres;
