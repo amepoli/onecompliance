@@ -16,6 +16,7 @@ import { RadiobuttonComponent } from "../radiobutton/radiobutton.component";
 import { CheckboxComponent } from "../checkbox/checkbox.component";
 import { ComboboxComponent } from "../combobox/combobox.component";
 import { TextAreaComponent } from '../textarea/textarea.component';
+import { SubformComponent } from '../subform/subform.component';
 
 const componentMapper = {
   input: InputComponent,
@@ -25,7 +26,8 @@ const componentMapper = {
   radiobutton: RadiobuttonComponent,
   checkbox: CheckboxComponent,
   combobox: ComboboxComponent,
-  textarea: TextAreaComponent
+  textarea: TextAreaComponent,
+  subform: SubformComponent
 };
 @Directive({
   selector: "[dynamicField]"

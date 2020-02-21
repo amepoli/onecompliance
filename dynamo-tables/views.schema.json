@@ -312,6 +312,110 @@
             }
         },
         "form_keys": {
+            "$ref": "#/definitions/formKeysFormat"
+        },
+        "subTables": {
+            "type": "array",
+            "description": "?: one entry for each subTable tab of the single form (record) view",
+            "items": {
+                "type": "object",
+                "required": [
+                    "label",
+                    "entryKey",
+                    "keys"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "label": {
+                        "type": "string",
+                        "description": "M: displayed tab name"
+                    },
+                    "entryKey": {
+                        "type": "string",
+                        "description": "M: DynamoDB primary key (entry) of subtable"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "?: if not defined, 'table' is assumed",
+                        "enum": [
+                            "table",
+                            "tableForm"
+                        ]
+                    },
+                    "isHidden": {
+                        "type": "boolean",
+                        "description": "?: if not defined defaults to false"
+                    },
+                    "keys": {
+                        "type": "array",
+                        "description": "M: set of key couples that put in relation the record view (parent) with subtable (son)",
+                        "items": {
+                            "type": "object",
+                            "required": ["parent","son"],
+                            "additionalProperties": false,
+                            "properties": {
+                                "parent": {
+                                    "type": "string",
+                                    "description": "M: parent table key, condition on subtable is WHERE son_key = parent_key_value"
+                                },
+                                "son": {
+                                    "type": "string",
+                                    "description": "M: subtable key"
+                                }
+                            }
+                        }
+                    },
+                    "inputEvents": {
+                        "type": "array",
+                        "description": "?: input events associated with the tab",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "eventName",
+                                "actionType",
+                                "condition",
+                                "values"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                                "eventName": {
+                                    "type": "string",
+                                    "description": "M: event name to listen to"
+                                },
+                                "actionType": {
+                                    "type": "string",
+                                    "description": "M: triggered action, based on boolean received value",
+                                    "enum": [
+                                        "show",
+                                        "hide",
+                                        "toggle"
+                                    ]
+                                },
+                                "condition": {
+                                    "type":"string",
+                                    "description": "M: condition on received value, only equalTo implemented so far",
+                                    "enum": [
+                                        "equalTo",
+                                        "greaterThan",
+                                        "lessThan"
+                                    ]
+                                },
+                                "values": {
+                                    "type":"array",
+                                    "description": "M: set of values to compare with, condition must be verified for all of them but '*' jolly values",
+                                    "items": {
+                                        "type":"string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "formKeysFormat": {
             "type": "array",
             "description": "?: array of view fields to show into single/multiple records form view",
             "items": {
@@ -401,6 +505,10 @@
                         "type": "boolean",
                         "description": "?: when false indicates the key is not part of table columns, so it is not retrieved by automatic query. Default is true. Not to use together w/ queryFunct (below)"
                     },
+                    "saveWhenHidden": {
+                        "type": "boolean",
+                        "description": "?: when true indicates that the field is not taken in account if hidden while saving the form. Default is false."
+                    },
                     "queryFunct": {
                         "type": "string",
                         "description": "?: postgresql query for the column, exclude the field from automatic query. Must NOT be used together with sameOrigin."
@@ -454,7 +562,9 @@
                                     "properties": {
                                         "actionType": {
                                             "enum": [
-                                                "show"
+                                                "show",
+                                                "hide",
+                                                "toggle"
                                             ]
                                         }
                                     }
@@ -523,6 +633,8 @@
                                         "update",
                                         "update_style",
                                         "show",
+                                        "hide",
+                                        "toggle",
                                         "query",
                                         "query_style"
                                     ]
@@ -566,106 +678,6 @@
                 }
             }
         },
-        "subTables": {
-            "type": "array",
-            "description": "?: one entry for each subTable tab of the single form (record) view",
-            "items": {
-                "type": "object",
-                "required": [
-                    "label",
-                    "entryKey",
-                    "keys"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                    "label": {
-                        "type": "string",
-                        "description": "M: displayed tab name"
-                    },
-                    "entryKey": {
-                        "type": "string",
-                        "description": "M: DynamoDB primary key (entry) of subtable"
-                    },
-                    "type": {
-                        "type": "string",
-                        "description": "?: if not defined, 'table' is assumed",
-                        "enum": [
-                            "table",
-                            "tableForm"
-                        ]
-                    },
-                    "isHidden": {
-                        "type": "boolean",
-                        "description": "?: if not defined defaults to false"
-                    },
-                    "keys": {
-                        "type": "array",
-                        "description": "M: set of key couples that put in relation the record view (parent) with subtable (son)",
-                        "items": {
-                            "type": "object",
-                            "required": ["parent","son"],
-                            "additionalProperties": false,
-                            "properties": {
-                                "parent": {
-                                    "type": "string",
-                                    "description": "M: parent table key, condition on subtable is WHERE son_key = parent_key_value"
-                                },
-                                "son": {
-                                    "type": "string",
-                                    "description": "M: subtable key"
-                                }
-                            }
-                        }
-                    },
-                    "inputEvents": {
-                        "type": "array",
-                        "description": "?: input events associated with the tab",
-                        "items": {
-                            "type": "object",
-                            "required": [
-                                "eventName",
-                                "actionType",
-                                "condition",
-                                "values"
-                            ],
-                            "additionalProperties": false,
-                            "properties": {
-                                "eventName": {
-                                    "type": "string",
-                                    "description": "M: event name to listen to"
-                                },
-                                "actionType": {
-                                    "type": "string",
-                                    "description": "M: triggered action, based on boolean received value",
-                                    "enum": [
-                                        "show",
-                                        "notShow"
-                                    ]
-                                },
-                                "condition": {
-                                    "type":"string",
-                                    "description": "M: condition on received value, only equalTo implemented so far",
-                                    "enum": [
-                                        "equalTo",
-                                        "greaterThan",
-                                        "lessThan"
-                                    ]
-                                },
-                                "values": {
-                                    "type":"array",
-                                    "description": "M: set of values to compare with, condition must be verified for all of them but '*' jolly values",
-                                    "items": {
-                                        "type":"string"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
-    "definitions": {
         "formDataFormat": {
             "type": "object",
             "description": "M: data format type",
@@ -709,6 +721,14 @@
                     "required": [
                         "options"
                     ]
+                },
+                {
+                    "properties": {
+                        "viewType": {
+                            "enum": ["subform"]
+                        }
+                    },
+                    "required": ["subform_keys"]
                 }
             ],
             "properties": {
@@ -721,7 +741,8 @@
                         "checkbox",
                         "radiobutton",
                         "textarea",
-                        "button"
+                        "button",
+                        "subform"
                     ]
                 },
                 "dataType": {
@@ -741,6 +762,9 @@
                         "boolean"
                     ],
                     "description": "?: default value"
+                },
+                "subform_keys": {
+                    "$ref": "#/definitions/formKeysFormat"
                 },
                 "options": {
                     "type": "array",
@@ -766,7 +790,7 @@
                 },
                 "comboQuery": {
                     "type": "string",
-                    "description": "?: combobox/radiobutton query, must return an array of [{“id”: Number, “name”: String}]"
+                    "description": "?: combobox/radiobutton query, must return an array of [{“id”: Number, “name”: String}], can contain both passed $key$ and local £key£"
                 },
                 "validations": {
                     "type": "array",
