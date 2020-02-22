@@ -10,7 +10,7 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
-export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'radiobutton' | 'button';
+export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'radiobutton' | 'button' | 'subform';
 
 export type eventActionType = 'show' | 'update' | 'query' | 'update_style' | 'query_style';
 
@@ -64,7 +64,8 @@ export interface formViewKey { // as per API specification
                 name: string,
                 validator: string
             }
-        ]
+        ],
+        subform_keys?: formViewKey[];
     };
 }
 
@@ -109,6 +110,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     private firstRefresh = true;
 
     private addingNew = false;   // avoid to trigger a refresh (with related events) when adding a row  
+
+    private margins = 4; // % of margins, considering left and right
 
     constructor(
         private backendService: BackendService,
@@ -259,72 +262,95 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     private getFormData(formKeys: formViewKey[], values: any, startingIndex = 0): FieldConfig[][] {
 
-        const _this = this;
-        const fieldValues: FieldConfig[][] = [[]];
+        const fieldValuesArray: FieldConfig[][] = [[]];
 
         for (let index = 0; index < values.length; index++) {
-            fieldValues[index] = new Array();
-            formKeys.forEach(field => {
-                if (field != null) {
-                    const element = values[index][field.key];
-                    let fieldValue: FieldConfig;
-                    if (field != null) {
-                        fieldValue = {
-                            label: field.label,
-                            name: field.key,
-                            type: field.format.viewType,
-                            index: index + startingIndex,
-                            value: (element != null) ? ((element.value != null) ? element.value : element) : null,
-                            inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
-                            readonly: _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
-                            isVisible: (field.isHidden != null) ? !field.isHidden : true,
-                            newLine: (field.newLine != null) ? field.newLine : true,
-                            style: (field.style != null) ? field.style : null,
-                            width: (field.size != null) ? (field.size * 10) - 4 : null, // leave a 5% margin left and right   
-                            options: (element != null && element.options != null) ? element.options : [],
-                            validations: (field.format.validations != null) ? field.format.validations : [],
-                            eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null,  // output events are directly handled by the target field component
-                            eventTrigger: (field.outputEvent != null) ?  field.outputEvent.eventTrigger : null // at the moment only implemented by input element for focus/blur
-                        };
-                        fieldValues[index].push(fieldValue);
-                    }
-                }
-            }); 
+            fieldValuesArray[index] = this.getFieldValues(formKeys, values, index + startingIndex )
         }
-        return fieldValues;
+        return fieldValuesArray;
 
+    }
+
+    private getFieldValues(formKeys: formViewKey[], values: any, index: number): FieldConfig[] {
+        const _this = this;
+        const fieldValues = new Array();
+        formKeys.forEach(field => {
+            if (field != null) {
+                const element = values[index][field.key];
+                let fieldValue: FieldConfig;
+                if (field != null) {
+                    fieldValue = _this.getFieldValue(field, element, values, index);
+                    fieldValues.push(fieldValue);
+                }
+            }
+        }); 
+        return fieldValues;
+    }
+
+    private getFieldValue(field: formViewKey, element: any, values: any, index: number): FieldConfig {
+        const _this = this;
+        let fieldValue: FieldConfig;
+        if (field != null) {
+            fieldValue = {
+                label: field.label,
+                name: field.key,
+                type: field.format.viewType,
+                index: index,
+                value: (element != null) ? ((element.options != null) ? element.value : element) : null,
+                inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
+                readonly: _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
+                isVisible: (field.isHidden != null) ? !field.isHidden : true,
+                newLine: (field.newLine != null) ? field.newLine : true,
+                style: (field.style != null) ? field.style : null,
+                width: (field.size != null) ? (field.size * 10) - _this.margins : null, // leave a 5% margin left and right   
+                options: (element != null && element.options != null) ? element.options : [],
+                validations: (field.format.validations != null) ? field.format.validations : [],
+                eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null,  // output events are directly handled by the target field component
+                eventTrigger: (field.outputEvent != null) ? field.outputEvent.eventTrigger : null, // at the moment only implemented by input element for focus/blur
+                subform: (field.format.viewType === 'subform') ? _this.getFieldValues(field.format.subform_keys, values, index) : null
+            };
+        }
+        return fieldValue;
     }
 
     private process_form(input_form: FieldConfig[][]): void { // pre-process form got from back-end
 
         for (let index = 0; index < input_form.length; index++) {
-            let sameLineElements: FieldConfig[] = [];
-            for (const result of input_form[index]) {
-                if (result['validations']) {
-                    for (const validator of result['validations']) {
-                        if (validator['name'] === 'required') {
-                            validator['validator'] = Validators.required;
-                        }
-                        if (validator['name'] === 'pattern') {
-                            validator['validator'] = Validators.pattern(validator['validator']);
-                        }
-                    }
-                }
-                if (result.width == null) {     // if null, must be null for all elements on the same line, then split the width equally
-                    if (result['newLine'] === false) {
-                        sameLineElements.push(result);
-                    } else {
-                        result.width = this.processInlineElements(sameLineElements);
-                        sameLineElements = [];
-                    }
-                }
-            }
-            this.processInlineElements(sameLineElements); // handles inline elements of last line
+            this.process_form_row(input_form[index], this.margins);
         }
 
     }
 
-    private processInlineElements(elements: FieldConfig[]): number {
+    private process_form_row(input_form_row: FieldConfig[], margins: number): void {
+        let sameLineElements: FieldConfig[] = [];
+        for (const result of input_form_row) {
+            if (result['validations']) {
+                for (const validator of result['validations']) {
+                    if (validator['name'] === 'required') {
+                        validator['validator'] = Validators.required;
+                    }
+                    if (validator['name'] === 'pattern') {
+                        validator['validator'] = Validators.pattern(validator['validator']);
+                    }
+                }
+            }
+            if (result.width == null) {     // if null, must be null for all elements on the same line, then split the width equally
+                if (result['newLine'] === false) {
+                    sameLineElements.push(result);
+                } else {
+                    result.width = this.processInlineElements(sameLineElements, margins);
+                    sameLineElements = [];
+                }
+            }
+            // recursively process subform
+            if (result.subform != null) {
+                this.process_form_row(result.subform, margins + this.margins);
+            }
+        }
+        this.processInlineElements(sameLineElements, margins); // handles inline elements of last line
+    }
+
+    private processInlineElements(elements: FieldConfig[], margins: number): number {
 
         const numElements = 1 + elements.length; // current + previouses
         let sumWidths = 0;
@@ -332,11 +358,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             // process the elements with defined 1/10 size first
             const singleWidth = Math.floor(100 / numElements);
             for (const element of elements) {
-                element.width = singleWidth - 4; // considering 4% margins;
+                element.width = singleWidth - margins; // considering 4% margins;
                 sumWidths += singleWidth;
             }
         }
-        return (100 - 4 - sumWidths); // considering 4% margins
+        return (100 - margins - sumWidths); // considering 4% margins
     }
 
     private replaceLocalKeys(functString: string, keys: any): string {
@@ -375,7 +401,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
         }
 
-        if (event.actionType === 'show') {
+        if (event.actionType === 'show' || event.actionType === 'hide' || event.actionType === 'toggle') {
             // get the listener element if not full table
             let listener: FieldConfig = null;
             if (keyListener != null && value.type !== 'page') {
@@ -387,7 +413,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (keyListener == null) {   // act on the full table
                 this.formParams.isVisible = !this.formParams.isVisible;
             } else if (listener != null) {  // act on the listening element
-                listener.isVisible = !listener.isVisible;
+                listener.isVisible = event.actionType === 'show' ? true : event.actionType === 'hide' ? false : !listener.isVisible;
             }
         } else if (event.actionType === 'navigate') {
             const formLine = _this.formData[value.index];

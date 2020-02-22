@@ -33,4 +33,5 @@ export interface FieldConfig {
   keys?: Key[];
   eventName?: string;
   eventTrigger?: string;
+  subform?: FieldConfig[];
 }
