@@ -194,7 +194,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
             }
 
         }
-        if (!element.key || (element.sameOrigin != null && !element.sameOrigin) || element.format.viewType === 'subform') {  // no table key or the key is from another table
+        if (!element.key || (element.sameOrigin != null && !element.sameOrigin && element.queryFunct == null) || element.format.viewType === 'subform') {  // no table key or the key is from another table
             continue;
         }
 
