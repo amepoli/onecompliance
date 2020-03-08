@@ -10,7 +10,7 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 
 type tabViewType = 'table' | 'tableForm';
 
-type tabEventActionType = 'show' | 'notShow';
+type tabEventActionType = 'show' | 'hide';
 
 type tabConditionType = 'equalTo' | 'greaterThan' | 'lessThan';
 

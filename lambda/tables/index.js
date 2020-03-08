@@ -174,20 +174,28 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     // See https://stackoverflow.com/questions/47455962/using-function-result-in-where-clause-in-postgresql
     let calculatedWhereCond = [];
 
-    entry_keys.forEach(element => {
-
+    for (index = 0; index < entry_keys.length; index ++) {
+        let element = entry_keys[index];
         if (isForm) { // check if combobox, then save query fields for later processing
-            if (element.format.viewType === 'combobox') {
+            if (element.format.viewType === 'combobox' || element.format.viewType === 'radiobutton') {
                 let comboQuery = element.format.comboQuery;
                 if (comboQuery != null) {
                     comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
                     comboQueries.push({ key: element.key, comboQuery: comboQuery });
                 }
+            } else if (element.format.viewType === 'subform') {
+                // append the keys at the end of the array (avoiding recursion, they will be processed later in the loop)
+                element.format.subform_keys.forEach(subkey => {
+                    if (element.sameOrigin != null) {
+                        subkey['sameOrigin'] = element.sameOrigin;
+                    }
+                    entry_keys.push(subkey);
+                });
             }
 
         }
-        if (!element.key || (element.sameOrigin != null && !element.sameOrigin)) {  // no table key or the key is from another table
-            return;
+        if (!element.key || (element.sameOrigin != null && !element.sameOrigin && element.queryFunct == null) || element.format.viewType === 'subform') {  // no table key or the key is from another table
+            continue;
         }
 
         let fieldString = comma + element.key;
@@ -197,7 +205,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
         comma = ','; // needed only the first time
         queryString = queryString + fieldString;
 
-    });
+    };
 
     if (entry_params.origin) {
         queryString = queryString + ' FROM ' + entry_params.origin;
@@ -429,7 +437,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
     entry_keys.forEach(element => {
 
-        if (element.key == null || (element.sameOrigin != null && !element.sameOrigin) || element.queryFunct != null) { // skip foreing columns
+        if (element.key == null || (element.sameOrigin != null && !element.sameOrigin) || element.queryFunct != null || element.format.viewType === 'subform') { // skip foreing columns
             return;
         }
 
@@ -958,6 +966,8 @@ exports.handler = async (event, context) => {
                     for (let index = 0; index < queryString.comboQueries.length; index++) {
                         let element = queryString.comboQueries[index];
                         let query = element.comboQuery;
+                        // search for local keys
+                        query = replaceLocalKeys(query, queryData[qd_index]);
                         let comboData = await client.query(query);
                         if (isFormRecord || isNewRecord) { // form/new record, add combobox options to relevant field
                             let comboEntry = new Object;

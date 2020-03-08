@@ -48,7 +48,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
             _this.Tabs.forEach(tab => {  // re-suscribe
                 if (tab.inputEvents != null && tab.inputEvents.length) {
                     tab.inputEvents.forEach(event => {
-                        if (event.actionType === 'show' || event.actionType === 'notShow') {
+                        if (event.actionType === 'show' || event.actionType === 'hide') {
                             _this.subscriptions.push(_this.pubsubService.subscribe(event.eventName,  msg => {
                                 // TODO: handle the other conditions
                                 if (event.condition === 'equalTo') {
@@ -60,7 +60,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
                                     eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
                                     // tricky way to compare two arrays
                                     const conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
-                                    tab.hidden = event.actionType === 'notShow' ? conditionMet : !conditionMet;
+                                    tab.hidden = event.actionType === 'hide' ? conditionMet : !conditionMet;
                                 }
                                 _this.setFiltered();  // reset filteredTabs
                             }));

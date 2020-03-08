@@ -8,7 +8,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
   template: `
 <div [ngStyle]="{'margin-right': '2%', 'margin-left': '2%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
 <label class="radio-label-padding">{{field.label}}:</label>
-<mat-radio-group [formControlName]="field.name">
+<mat-radio-group [formControlName]="field.name" [ngStyle]="{'display': 'flex', 'flex-direction': 'column'}" [(ngModel)]="chosenItem">
 <mat-radio-button *ngFor="let item of field.options" [value]="item" [disabled]="field.readonly" (change)="onCheck($event)" >{{item.name}}</mat-radio-button>
 </mat-radio-group>
 </div>
@@ -18,8 +18,14 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 export class RadiobuttonComponent implements OnInit {
   field: FieldConfig;
   group: FormGroup;
+
+  chosenItem: any;
+
   constructor(private pubsubService: NgxPubSubService) {}
-  ngOnInit() {}
+  ngOnInit() {
+      console.log(this.field);
+      this.chosenItem = this.field.options.find(o => o.id === this.field.value);
+  }
 
   onCheck(event: any): void {
     const _this = this;
