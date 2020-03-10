@@ -6,15 +6,15 @@ import { fuseAnimations } from '@fuse/animations';
 import { AuthService } from './auth.service';
 
 import { Router } from '@angular/router';
+import { SwalService } from '../services/swal.service';
 
 @Component({
-    selector   : 'login-page',
+    selector: 'login-page',
     templateUrl: './login-page.component.html',
-    styleUrls  : ['./login-page.component.scss'],
-    animations : fuseAnimations
+    styleUrls: ['./login-page.component.scss'],
+    animations: fuseAnimations
 })
-export class LoginPageComponent implements OnInit
-{
+export class LoginPageComponent implements OnInit {
     loginForm: FormGroup;
     user: any;
     signedIn = false;
@@ -29,19 +29,19 @@ export class LoginPageComponent implements OnInit
         private authService: AuthService,
         private _fuseConfigService: FuseConfigService,
         private _formBuilder: FormBuilder,
-        private router: Router
-    )
-    {
+        private router: Router,
+        private _swalService: SwalService
+    ) {
         // Configure the layout
         this._fuseConfigService.config = {
             layout: {
-                navbar   : {
+                navbar: {
                     hidden: true
                 },
-                toolbar  : {
+                toolbar: {
                     hidden: true
                 },
-                footer   : {
+                footer: {
                     hidden: true
                 },
                 sidepanel: {
@@ -61,35 +61,40 @@ export class LoginPageComponent implements OnInit
     /**
      * On init
      */
-    ngOnInit(): void
-    {
+    ngOnInit(): void {
         this.loginForm = this._formBuilder.group({
             username: ['', Validators.required],
             password: ['', Validators.required]
         });
 
         this.authService.authStateChange$
-          .subscribe(authState => {
-            this.signedIn = authState.state === 'signedIn';
-            
-            if (!authState.user) {
-                this.user = null;
-            } else {
-                this.user = authState.user;
-            }
-        });
+            .subscribe(authState => {
+                this.signedIn = authState.state === 'signedIn';
+
+                if (!authState.user) {
+                    this.user = null;
+                } else {
+                    this.user = authState.user;
+                }
+            });
+
+        this.authService.errorInfo$
+            .subscribe(err => {
+                this._swalService.showErrorDialogSwal("Error", err.message ? err.message : "Incorrect username or password");
+                // console.log(`Login Error: ${err}`);
+            });
+
 
         // subscribe to backend retrieval of user info
         this.authService.userinfo.subscribe(info => {
-            if (info.username != null ) {
+            if (info.username != null) {
                 // got info from backend, now we can proceed
                 this.router.navigate(['/gorico/dashboard']);
             }
         });
     }
 
-    onSubmit(): void 
-    {
+    onSubmit(): void {
         this.authService.setUsername(this.loginForm.value.username);
         this.authService.setPassword(this.loginForm.value.password);
         this.authService.signIn();
