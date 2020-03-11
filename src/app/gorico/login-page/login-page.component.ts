@@ -69,6 +69,7 @@ export class LoginPageComponent implements OnInit {
 
         this.authService.authStateChange$
             .subscribe(authState => {
+                this._swalService.closeSwal();
                 this.signedIn = authState.state === 'signedIn';
 
                 if (!authState.user) {
@@ -97,6 +98,7 @@ export class LoginPageComponent implements OnInit {
     onSubmit(): void {
         this.authService.setUsername(this.loginForm.value.username);
         this.authService.setPassword(this.loginForm.value.password);
+        this._swalService.showLoadingSwal("Signing in", "Please wait...");
         this.authService.signIn();
     }
 }

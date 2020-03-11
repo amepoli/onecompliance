@@ -74,6 +74,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.authService.authStateChange$
             .subscribe(authState => {
                 if (authState.state === 'confirmSignUp') {
+                    this._swalService.closeSwal();
                     this.authService.setEmail(this.registerForm.get('email').value);
                     this.router.navigate(['/mail-confirm']);
                 }
@@ -112,6 +113,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.authService.setUsername(this.registerForm.value.name);
         this.authService.setPassword(this.registerForm.value.password);
         this.authService.setEmail(this.registerForm.value.email);
+        this._swalService.showLoadingSwal("Signing up", "Please wait...");
         this.authService.signUp();
     }
 }

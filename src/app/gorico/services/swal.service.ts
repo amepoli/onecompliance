@@ -87,6 +87,38 @@ export class SwalService {
         }
     }
 
+    //----------------------------- Generic Swals -----------------------------------
+
+    /**
+     * Close Swal
+     *
+     */
+    closeSwal(): void {
+        Swal.close();
+    }
+
+    //----------------------------- Loading Swals -----------------------------------
+
+    /**
+     * Show Loading Swal
+     *
+     * @param title
+     * @param text
+     */
+    showLoadingSwal(title, text): void {
+        Swal.fire({
+            title: title,
+            text: text,
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            timer: 2000,
+            // icon: 
+            onOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    }
+
     //----------------------------- Dialog Swals -----------------------------------
 
     /**
