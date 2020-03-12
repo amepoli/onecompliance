@@ -6,6 +6,7 @@ import { BackendService } from '../views/backend/backend.service';
 import { BehaviorSubject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
+import { SwalService } from '../services/swal.service';
 
 export interface UserInfo {
   name: string;
@@ -40,7 +41,8 @@ export class AuthService {
   constructor(
     private amplifyService: AmplifyService,
     private backendService: BackendService,
-    private navigationService: FuseNavigationService) {
+    private navigationService: FuseNavigationService,
+    private _swalService: SwalService) {
     this.amplifyService = amplifyService;
 
     this.amplifyService.auth();
@@ -162,6 +164,10 @@ export class AuthService {
           // get new menu
           _this.retrieveMenu();
         }
+        else {
+          // Show error snackbar
+          _this._swalService.showErrorSnackbarSwal(ud.reason);
+        }
       });
   }
 
@@ -172,6 +178,10 @@ export class AuthService {
         if (menu != null && menu.result === 'OK') {
           _this.navigationService.register('usermenu', [menu.menu]);
           _this.navigationService.setCurrentNavigation('usermenu');
+        }
+        else {
+          // Show error snackbar
+          _this._swalService.showErrorSnackbarSwal(menu.reason);
         }
       });
   }
