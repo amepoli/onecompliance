@@ -77,7 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
                             }
                             else {
                                 // Show error snackbar
-                                this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                                this._swalService.showErrorSnackbarSwal(result_en.reason);
                             }
                         });
                 }

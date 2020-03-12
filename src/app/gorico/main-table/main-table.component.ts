@@ -117,7 +117,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                             }
                             else {
                                 // Show error snackbar
-                                _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                                _this._swalService.showErrorSnackbarSwal(response.reason);
                             }
                         });
                 } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
@@ -132,7 +132,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                             }
                             else {
                                 // Show error snackbar
-                                _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                                _this._swalService.showErrorSnackbarSwal(response.reason);
                             }
                         });
                 } else if (msg.type === 'add') { // toolbar sking for adding a new element

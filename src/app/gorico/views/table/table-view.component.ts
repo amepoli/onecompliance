@@ -122,7 +122,7 @@ export class TableViewComponent implements OnChanges {
                     else {
                         _this.isLoading = false;
                         // Show error snackbar
-                        _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                        _this._swalService.showErrorSnackbarSwal(result.reason);
                     }
                 });
         }
@@ -160,7 +160,7 @@ export class TableViewComponent implements OnChanges {
                 }
                 else {
                     // Show error snackbar
-                    _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                    _this._swalService.showErrorSnackbarSwal(results.reason);
                 }
             },
             error => {

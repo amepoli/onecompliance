@@ -191,7 +191,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
                     // Show error snackbar
-                    _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                    _this._swalService.showErrorSnackbarSwal(results.reason);
                 }
             });
 
@@ -244,7 +244,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
                     // Show error snackbar
-                    _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                    _this._swalService.showErrorSnackbarSwal(results.reason);
                 }
             },
             error => {
@@ -268,7 +268,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
                     // Show error snackbar
-                    _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                    _this._swalService.showErrorSnackbarSwal(result.reason);
                 }
             });
     }
@@ -497,7 +497,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                         else {
                             // Show error snackbar
-                            _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                            _this._swalService.showErrorSnackbarSwal(result.reason);
                         }
                     });
             }

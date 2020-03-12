@@ -150,7 +150,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
                 else {
                     // Show error snackbar
-                    this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                    this._swalService.showErrorSnackbarSwal(result.reason);
                 }
             });
 
@@ -213,7 +213,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     for (var i = 0; i < content.byteLength; i++) {
                                          buffer[i] = content[i];
                                     };*/
-                                    var buffer = Buffer.from(content);
+                                    var buffer = Buffer.from(<string>content);
                                     // create file content hash
                                     const hash = createHash('sha1').update(buffer).digest("hex");
                                     console.log(hash);
@@ -242,7 +242,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     else {
                         // Show error snackbar
-                        _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                        _this._swalService.showErrorSnackbarSwal(responseURL.reason);
                     }
                 }
             )

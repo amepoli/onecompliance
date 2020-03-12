@@ -86,19 +86,19 @@ export class DashboardComponent {
                                         }
                                         else {
                                             // Show error snackbar
-                                            _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                                            _this._swalService.showErrorSnackbarSwal(results.reason);
                                         }
                                     });
                             }
                             else {
                                 // Show error snackbar
-                                this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                                _this._swalService.showErrorSnackbarSwal(response.reason);
                             }
                         });
                 }
                 else {
                     // Show error snackbar
-                    _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                    _this._swalService.showErrorSnackbarSwal(viewResults.reason);
                 }
             });
     }

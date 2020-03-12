@@ -91,7 +91,7 @@ export class FormTableViewComponent implements OnChanges, OnInit {
           }
           else {
             // Show error snackbar
-            _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+            _this._swalService.showErrorSnackbarSwal(result.reason);
           }
         });
     }

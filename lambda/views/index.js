@@ -24,7 +24,7 @@ async function getProfile(userid, company) {
                 }
             });
         }
-    } 
+    }
 
     if (profile != null) {
         var profileParams = {
@@ -41,29 +41,29 @@ async function getProfile(userid, company) {
 }
 
 function processPermissions(data, profile, entry_name) {
-    
+
     if (profile.tables != null && profile.tables.table_keys != null) {
         const permissions = profile.tables.table_keys.find(key => key.entry === entry_name);
-        if (permissions != null && permissions.hide != null ) {
+        if (permissions != null && permissions.hide != null) {
             permissions.hide.forEach(hiddenKey => {
                 const key = data.table_keys.find(key => key.key === hiddenKey);
                 if (key != null) {
                     key.isHidden = true;  // hide it!
                 }
             })
-        } 
+        }
     }
     if (profile.tables != null && profile.tables.form_keys != null) {
         const permissions = profile.tables.form_keys.find(key => key.entry === entry_name);
-        if (permissions != null && permissions.hide != null ) {
+        if (permissions != null && permissions.hide != null) {
             permissions.hide.forEach(hiddenKey => {
                 const key = data.form_keys.find(key => key.key === hiddenKey);
                 if (key != null) {
                     key.isHidden = true;  // hide it!
                 }
             });
-        } 
-        if (permissions != null && permissions.readOnly != null ) {
+        }
+        if (permissions != null && permissions.readOnly != null) {
             permissions.readOnly.forEach(roKey => {
                 const key = data.form_keys.find(key => key.key === roKey);
                 if (key != null) {
@@ -79,8 +79,8 @@ function processPermissions(data, profile, entry_name) {
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
-    
-    const keys = JSON.parse(queryParams['keys']); 
+
+    const keys = JSON.parse(queryParams['keys']);
 
     const entry_name = queryParams['entry_name'];
 
@@ -108,7 +108,7 @@ exports.handler = async (event, context) => {
                 "isBase64Encoded": false,
                 "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
                 "statusCode": 200,
-                "body": JSON.stringify({result: 'KO', message: 'Error, is user authorized?'})
+                "body": JSON.stringify({ result: 'KO', reason: 'Error, is user authorized?' })
             };
         }
 
@@ -122,7 +122,7 @@ exports.handler = async (event, context) => {
             "isBase64Encoded": false,
             "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
             "statusCode": 200,
-            "body": JSON.stringify({result: 'KO', message: 'Error with the DB', error: e})
+            "body": JSON.stringify({ result: 'KO', reason: 'Error with the DB', error: e })
         };
     }
 
@@ -131,6 +131,6 @@ exports.handler = async (event, context) => {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
-        "body": JSON.stringify({result: 'OK', data: data})
+        "body": JSON.stringify({ result: 'OK', data: data })
     };
 };

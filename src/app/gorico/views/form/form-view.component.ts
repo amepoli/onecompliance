@@ -185,7 +185,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                 }
                 else {
                     // Show error snackbar
-                    this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                    this._swalService.showErrorSnackbarSwal(result.reason);
                 }
             }
         );
@@ -201,7 +201,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                 }
                 else {
                     // Show error snackbar
-                    this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                    this._swalService.showErrorSnackbarSwal(result.reason);
                 }
             }
         )
