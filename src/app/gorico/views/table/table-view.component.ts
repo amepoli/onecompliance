@@ -4,6 +4,7 @@ import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/mate
 import { FieldConfig } from '../../dynamic-forms/field.interface';
 import { formViewParams } from '../form/form-view.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
+import { SwalService } from 'app/gorico/services/swal.service';
 
 export interface tableViewParams {
     entryName: string;
@@ -22,8 +23,8 @@ export interface tableViewKey { // as per API specification
     queryFunct?: string;
     format: {
         dataType: tableDataType,
-        value?: any 
-        };
+        value?: any
+    };
 }
 
 export interface searchViewKey { // as per API specification
@@ -42,7 +43,7 @@ export interface searchViewKey { // as per API specification
             }];
         comboQuery?: string,		// combobox query, returns an array of [{“id”: Number, “name”: String}]
     }
-} 
+}
 
 @Component({
     selector: 'table-view',
@@ -92,14 +93,14 @@ export class TableViewComponent implements OnChanges {
     currentKeys: any; // relevant keys passed by the parent component 
 
     keysArray: any[];  // list of primary keys values, one entry for each table row
-    
+
     targetEntryName: string; // target form view table, might be different from 'self'
 
     constructor(
         private backendService: BackendService,
-        private authService: AuthService) 
-        {
-        }
+        private authService: AuthService,
+        private _swalService: SwalService) {
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         let _this = this;
@@ -115,10 +116,13 @@ export class TableViewComponent implements OnChanges {
                         _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName;  // self or new form table?
                         _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                         _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
-                        _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: {keys: _this.currentKeys} }); // pass current keys to parent view 
+                        _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
                         _this.loadTable(null);
-                    } else {
+                    }
+                    else {
                         _this.isLoading = false;
+                        // Show error snackbar
+                        _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
                     }
                 });
         }
@@ -154,6 +158,10 @@ export class TableViewComponent implements OnChanges {
                     });
                     _this.isLoading = false;
                 }
+                else {
+                    // Show error snackbar
+                    _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                }
             },
             error => {
                 _this.isLoading = false;
@@ -188,7 +196,7 @@ export class TableViewComponent implements OnChanges {
             };
             fieldValues.push(fieldValue);
         });
-        
+
         return fieldValues;
 
     }
@@ -214,13 +222,13 @@ export class TableViewComponent implements OnChanges {
             }
         }
         this.loadTable(cleanedValues);
-        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: {keys: cleanedValues} }); // pass search keys to parent view 
+        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: cleanedValues } }); // pass search keys to parent view 
     }
 
     cancel_search() {
         this.showAdvSearch = false;
         this.loadTable(null);
-        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: {keys: null} }); // pass search keys to parent view 
+        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
     }
 
     cancel(): void {
@@ -238,7 +246,7 @@ export class TableViewComponent implements OnChanges {
 
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
-        const mergedParams = { entry: {name: this.targetEntryName, type: 'form'}, keys: this.keysArray, index: index + 1, total: this.keysArray.length};
+        const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: this.keysArray, index: index + 1, total: this.keysArray.length };
         setTimeout(() => { this.sendEvent.emit({ eventType: 'navigate', queryParams: mergedParams }); }, 50);
     }
 
@@ -258,7 +266,7 @@ export class TableViewComponent implements OnChanges {
                 if (validKeysArray.find(e => e.key === key)) {
                     outputKeys[key] = element;
                 }
-                
+
             }
         }
 
@@ -268,15 +276,15 @@ export class TableViewComponent implements OnChanges {
     fullScreen() {
 
         this.isFullScreen = !this.isFullScreen;
-        this.sendEvent.emit({ eventType: 'fullScreen', queryParams: {value: this.isFullScreen} });
-    
+        this.sendEvent.emit({ eventType: 'fullScreen', queryParams: { value: this.isFullScreen } });
+
     }
 
-    onEvent(event:any) {
+    onEvent(event: any) {
         if (event.eventType === 'savedForm') { // quick add form view submitted the new record
             this.showQuickAdd = false; // hide quick add
             this.loadTable(null); // reload the table to visualize the record
-        } else  { // forward to parent
+        } else { // forward to parent
             this.sendEvent.emit(event);
         }
     }

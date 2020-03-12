@@ -7,6 +7,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ComboboxComponent } from 'app/gorico/dynamic-forms/components/combobox/combobox.component';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'app/gorico/login-page/auth.service';
+import { SwalService } from 'app/gorico/services/swal.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -116,8 +117,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     constructor(
         private backendService: BackendService,
         private pubsubService: NgxPubSubService,
-        private authService: AuthService) 
-        { }
+        private authService: AuthService,
+        private _swalService: SwalService) { }
 
     ngOnChanges() {
         if (!this.addingNew) {
@@ -133,15 +134,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         _this.formArray.changes.subscribe(
             c => { // publish when last element has been shown
                 if (!_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length) {
-                        // tslint:disable-next-line: max-line-length
-                        _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: 0, data: _this.formData, type: 'page' }); 
+                    // tslint:disable-next-line: max-line-length
+                    _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: 0, data: _this.formData, type: 'page' });
                 }
             }
         );
     }
 
     ngOnDestroy() {
-        this.subscriptions.forEach( subscription => {
+        this.subscriptions.forEach(subscription => {
             subscription.unsubscribe();
         });
     }
@@ -188,6 +189,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     // load the form 
                     _this.loadTableData();
                 }
+                else {
+                    // Show error snackbar
+                    _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                }
             });
 
     }
@@ -200,7 +205,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 const element = inputKeys[key];
                 if (validKeysArray != null && validKeysArray.find(e => e.key === key)) {
                     outputKeys[key] = element;
-                }   
+                }
             }
         }
 
@@ -225,17 +230,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     results = results.data;
                     _this.isLoading = false;
                     // signal parent to show/hide "save" icon
-                    _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly});
+                    _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly });
                     if (_this.formParams.isNew) {  // handle newly set primary keys
                         const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
                         _this.currentKeys = _this.getCurrentKeys(primaryKeys, results[0]);  // TBC why do we receive an array with one element here?
                         _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
-                    } 
+                    }
                     _this.numRows = results.length;
                     // prepare the form
                     _this.formData = _this.getFormData(_this.viewKeys, results);
-                    _this.process_form(_this.formData); 
-                    _this.sendEvent.emit({ eventType: 'updateData', data: _this.formData}); // emit event for the parent
+                    _this.process_form(_this.formData);
+                    _this.sendEvent.emit({ eventType: 'updateData', data: _this.formData }); // emit event for the parent
+                }
+                else {
+                    // Show error snackbar
+                    _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
                 }
             },
             error => {
@@ -255,7 +264,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     const formData = _this.getFormData(_this.viewKeys, result, _this.formData.length);
                     _this.process_form(formData);
                     // add it to the list
-                    _this.formData.push(formData[0]); 
+                    _this.formData.push(formData[0]);
+                }
+                else {
+                    // Show error snackbar
+                    _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
                 }
             });
     }
@@ -265,7 +278,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const fieldValuesArray: FieldConfig[][] = [[]];
 
         for (let index = 0; index < values.length; index++) {
-            fieldValuesArray[index] = this.getFieldValues(formKeys, values, index + startingIndex )
+            fieldValuesArray[index] = this.getFieldValues(formKeys, values, index + startingIndex)
         }
         return fieldValuesArray;
 
@@ -283,7 +296,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     fieldValues.push(fieldValue);
                 }
             }
-        }); 
+        });
         return fieldValues;
     }
 
@@ -388,7 +401,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
         if (event.condition === 'equalTo') {
             // normalize if boolean conditions
-            let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v );
+            let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v);
             let msgData = Array.isArray(value.data) ? value.data : [value.data];
             msgData = msgData.map(m => m === true || m === 1 || m === 'true' || m === 't' ? '1' : m === false || m === 0 || m === 'false' || m === 'f' ? '0' : m);
             // handle jolly chars 
@@ -423,7 +436,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }, {});
             const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
             const filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
-            _this.sendEvent.emit({eventType: 'navigate', queryParams: {entry: event.actionTarget, keys: [filteredKeys], index: 1, total: 1}});
+            _this.sendEvent.emit({ eventType: 'navigate', queryParams: { entry: event.actionTarget, keys: [filteredKeys], index: 1, total: 1 } });
         } else if (event.actionType === 'query' || event.actionType === 'query_style') {
             let chiavi = {};
             const target_index = (value.type !== 'page') ? value.index : null;  // null means the event comes from the full table
@@ -440,7 +453,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     chiavi[value.origin] = value.data;
                 }
                 // process values
-                for (const key in chiavi) { 
+                for (const key in chiavi) {
                     if (chiavi.hasOwnProperty(key)) {
                         const element = chiavi[key];
                         if (element == null) {
@@ -453,7 +466,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         // encode boolean
                         else if (element === true) {
                             chiavi[key] = '1';
-                        } 
+                        }
                         else if (element === false) {
                             chiavi[key] = '0';
                         }
@@ -481,6 +494,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     element.style[event.styleAttribute] = result[0][keyListener + '_' + event.styleAttribute]; // as per specs the returned key is of type '<key>_<styleAttribute>'
                                 }
                             }
+                        }
+                        else {
+                            // Show error snackbar
+                            _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
                         }
                     });
             }

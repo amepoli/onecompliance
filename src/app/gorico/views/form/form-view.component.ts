@@ -7,6 +7,7 @@ import { TabType } from '../../bottom-tabs/bottom-tabs.component';
 import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
+import { SwalService } from 'app/gorico/services/swal.service';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -17,7 +18,7 @@ type tabConditionType = 'equalTo' | 'greaterThan' | 'lessThan';
 export interface tabViewKey { // as per API specification
     label: string;
     entryKey: string;
-    type: tabViewType; 
+    type: tabViewType;
     keys: [
         {
             parent: string,
@@ -70,12 +71,13 @@ export class FormViewComponent implements OnChanges, OnInit {
     getterParams: formGetterParams; // params for the child formGetter form view
 
     savingState: savingStateType = 'save';
-    
-    constructor(public attachDialog: MatDialog, 
+
+    constructor(public attachDialog: MatDialog,
         private backendService: BackendService,
-        private authService: AuthService) { 
-        
-        }
+        private authService: AuthService,
+        private _swalService: SwalService) {
+
+    }
 
     ngOnInit() {
         const _this = this; // useful to debug
@@ -119,14 +121,14 @@ export class FormViewComponent implements OnChanges, OnInit {
         };
         _this.n = _this.tableData.index;
         _this.tot = _this.tableData.total;
-        
+
     }
 
-    getTabs (tabKeys: tabViewKey[], keys: any): TabType[] {
+    getTabs(tabKeys: tabViewKey[], keys: any): TabType[] {
         const tabs: TabType[] = [];
         tabKeys.forEach(tabKey => {
-            const tab: TabType = { 
-                table: tabKey.entryKey, 
+            const tab: TabType = {
+                table: tabKey.entryKey,
                 label: tabKey.label,
                 type: (tabKey.type != null && tabKey.type === 'tableForm') ? 'tableForm' : 'table',  // if not defined is a table 
                 keys: {},
@@ -148,7 +150,7 @@ export class FormViewComponent implements OnChanges, OnInit {
         // notify parent, which will take care of propagating to siblings if needed 
         this.sendEvent.emit({ eventType: 'gotSave' });
         // get the form data, assuming there is only one form
-        let values = this.formGetter.formArray.first.form.value; 
+        let values = this.formGetter.formArray.first.form.value;
         // process the booleans (1/0 instead of true/false)
         for (const value in values) {
             if (values.hasOwnProperty(value)) {
@@ -163,7 +165,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                 // encode boolean
                 else if (element === true) {
                     values[value] = '1';
-                } 
+                }
                 else if (element === false) {
                     values[value] = '0';
                 }
@@ -181,6 +183,10 @@ export class FormViewComponent implements OnChanges, OnInit {
                         this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
                     }, 1000);
                 }
+                else {
+                    // Show error snackbar
+                    this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                }
             }
         );
     }
@@ -192,6 +198,10 @@ export class FormViewComponent implements OnChanges, OnInit {
                 if (result.result === 'OK') {
                     // navigate backward
                     this.sendEvent.emit({ eventType: 'deletedForm' }); // notify parent
+                }
+                else {
+                    // Show error snackbar
+                    this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
                 }
             }
         )
@@ -206,13 +216,13 @@ export class FormViewComponent implements OnChanges, OnInit {
         const dialogRef = this.attachDialog.open(AttachDialogComponent, {
             width: '1280px',
             data: { entryName: this.tableData.entryName, keys: this.currentKeys }
-          });
-      
-          dialogRef.afterClosed().subscribe(result => {
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                
+
             }
-          });
+        });
     }
 
 }

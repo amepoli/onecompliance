@@ -80,6 +80,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
                 }
             });
 
+        // Subscribe to Error EventEmitter in AuthService 
         this.authService.errorInfo$
             .subscribe(err => {
                 this._swalService.showErrorDialogSwal("Error", err.message ? err.message : "Invalid data");
@@ -113,6 +114,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.authService.setUsername(this.registerForm.value.name);
         this.authService.setPassword(this.registerForm.value.password);
         this.authService.setEmail(this.registerForm.value.email);
+        // Show loading Alert
         this._swalService.showLoadingSwal("Signing up", "Please wait...");
         this.authService.signUp();
     }

@@ -12,6 +12,7 @@ import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../login-page/auth.service';
+import { SwalService } from '../services/swal.service';
 
 @Component({
     selector: 'main-table',
@@ -31,14 +32,14 @@ export class MainTableComponent implements OnInit, OnDestroy {
 
     tabs: TabType[] = [];
 
-    public navigationHistory: {level: number, tableName: string, type: string, tableKeys: any, primaryKeys: any, params: any, description: string}[] = [];
+    public navigationHistory: { level: number, tableName: string, type: string, tableKeys: any, primaryKeys: any, params: any, description: string }[] = [];
 
     private tableParams: tableViewParams = {
         entryName: '',
         keys: {},
         showHeader: true,
         showFullScreenButton: false
-    }; 
+    };
 
     private formParams: formViewParams = {
         entryName: '',
@@ -81,7 +82,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
         private pubSubService: NgxPubSubService,
         private authService: AuthService,
         protected location: Location,
-        private httpClient: HttpClient) {
+        private httpClient: HttpClient,
+        private _swalService: SwalService) {
     }
 
     ngOnInit(): void {
@@ -91,13 +93,13 @@ export class MainTableComponent implements OnInit, OnDestroy {
         _this.route.params
             .subscribe(params => {
                 _this.navigationHistory.length = 0;       // flush navigation history
-                _this.level = 0; 
-                _this.resetFormParams();    
+                _this.level = 0;
+                _this.resetFormParams();
                 _this.tableName = params.table_name;
                 _this.currentDescription = 'Tabella ' + _this.tableName;
                 _this.tableType = 'table';           // only table views from left navigation bar
                 // check if we are coming from dashboard 
-                _this.currentTableKeys = (_this.backendService.dashboardKeys != null) ?     
+                _this.currentTableKeys = (_this.backendService.dashboardKeys != null) ?
                     _this.backendService.dashboardKeys : _this.backendService.globalTableKeys;
                 _this.backendService.dashboardKeys = null; // reset dashboard path
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
@@ -111,55 +113,64 @@ export class MainTableComponent implements OnInit, OnDestroy {
                         response => {
                             if (response.result === 'OK') {
                                 // now give results back to the requester
-                                _this.pubSubService.publishEvent(_this.pubMsgCmdTopic, {type: 'print_list', value: response.list});
+                                _this.pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list', value: response.list });
+                            }
+                            else {
+                                // Show error snackbar
+                                _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
                             }
                         });
                 } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
                     _this.backendService.getReport(_this.tableName, (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'form'), _this.searchKeys).subscribe(
                         response => {
                             if (response.result === 'OK') {
-                               const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
+                                const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
                                 _this.httpClient.get(url, { responseType: 'blob' }).subscribe(
                                     fileData => {
                                         saveAs(fileData, 'report.pdf');
                                     });
                             }
-                    });
+                            else {
+                                // Show error snackbar
+                                _this._swalService.showErrorSnackbarSwal("Error occured while performing action!");
+                            }
+                        });
                 } else if (msg.type === 'add') { // toolbar sking for adding a new element
                     _this.historyPush();
                     _this.currentDescription = 'Nuovo elemento tabella ' + _this.tableName;
-                    _this.formParams = { 
-                        entryName: _this.tableName, 
-                        index: 1, 
-                        keys: _this.currentTableKeys, 
-                        total: 1, 
-                        isNew: true, 
-                        showNavBar: false};
+                    _this.formParams = {
+                        entryName: _this.tableName,
+                        index: 1,
+                        keys: _this.currentTableKeys,
+                        total: 1,
+                        isNew: true,
+                        showNavBar: false
+                    };
                     _this.tableType = 'form';  // push the visualization only at this point, needed if moving from table to form view
                 } else if (msg.type === 'list') { // toolbar asking to go back to list
                     if (_this.navigationHistory.length) {
                         _this.historyPop(_this.navigationHistory[0]); // go back to the root element
                     }
                 } else if (msg.type === 'get_excel') {  // get the excel sheet
-                    _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys,  _this.searchKeys, 
+                    _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys,
                         (_this.tableType === 'form'), false, null, true).subscribe(
-                        response => {
-                            console.log(response);
-                        });
+                            response => {
+                                console.log(response);
+                            });
                 }
             })
         );
     }
 
     ngOnDestroy() {
-        this.subscriptions.forEach( subscription => { subscription.unsubscribe(); } );
+        this.subscriptions.forEach(subscription => { subscription.unsubscribe(); });
     }
 
     onEvent(event: any) {
 
         const _this = this;
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
-        let newTotal = _this.formParams.total; 
+        let newTotal = _this.formParams.total;
         if (event.eventType === 'navigate') {
             // scroll to top within all parent list of elements
             _this.List.nativeElement.scrollTop = 0;
@@ -187,14 +198,14 @@ export class MainTableComponent implements OnInit, OnDestroy {
         } else if (event.eventType === 'last') {
             newIndex = _this.formParams.total;
         } else if (event.eventType === 'prev') {
-            if (_this.formParams.index > 1) { 
-                newIndex =  _this.formParams.index - 1;
+            if (_this.formParams.index > 1) {
+                newIndex = _this.formParams.index - 1;
             }
         } else if (event.eventType === 'next') {
-            if (_this.formParams.index <  _this.formParams.total) {
+            if (_this.formParams.index < _this.formParams.total) {
                 newIndex = (Number(_this.formParams.index) + 1);
             }
-        } else if (event.eventType === 'tabData'){
+        } else if (event.eventType === 'tabData') {
             if (event.queryParams.tabs != null) {
                 // fill the bottom tabs
                 this.tabs = event.queryParams.tabs;
@@ -217,17 +228,18 @@ export class MainTableComponent implements OnInit, OnDestroy {
         }
 
         if (newIndex) { // 
-            _this.formParams = { 
-                entryName: _this.tableName, 
-                index: newIndex, 
-                keys: _this.currentPrimaryKeys[newIndex - 1], 
-                total: newTotal, 
-                isNew: false, 
-                showNavBar: _this.formParams.showNavBar};
+            _this.formParams = {
+                entryName: _this.tableName,
+                index: newIndex,
+                keys: _this.currentPrimaryKeys[newIndex - 1],
+                total: newTotal,
+                isNew: false,
+                showNavBar: _this.formParams.showNavBar
+            };
             _this.tableType = 'form';  // push the visualization only at this point, needed if moving from table to form view
         }
 
-       
+
     }
 
     fullView(): void {
@@ -235,7 +247,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
     }
 
     // retrieve an element from history and handle the history list consequently
-    historyPop(item: any): void {  
+    historyPop(item: any): void {
         const _this = this;
         _this.fullScreenTab = false; // reset in case of fullScreen Tab view
         _this.navigationHistory.length = item.level; // remove itself and following history elements 
@@ -249,7 +261,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         if (item.type === 'table') {
             _this.tableParams = item.params;
             _this.currentDescription = 'Tabella ' + _this.tableName;
-            _this.tableType = 'table';  
+            _this.tableType = 'table';
         } else {
             _this.formParams = item.params;
             _this.currentDescription = 'Dettaglio ' + _this.tableName;
@@ -261,13 +273,14 @@ export class MainTableComponent implements OnInit, OnDestroy {
     historyPush(): void {
         const _this = this;
         const currentNavigation = {
-            level: _this.level, 
-            tableName: _this.tableName, 
-            type: _this.tableType, 
-            tableKeys: _this.currentTableKeys, 
+            level: _this.level,
+            tableName: _this.tableName,
+            type: _this.tableType,
+            tableKeys: _this.currentTableKeys,
             primaryKeys: _this.currentPrimaryKeys,
             params: _this.tableType === 'table' ? _this.tableParams : _this.formParams,
-            description: _this.currentDescription};
+            description: _this.currentDescription
+        };
         _this.navigationHistory.push(currentNavigation);
         _this.level = _this.level + 1; // going in depth
     }

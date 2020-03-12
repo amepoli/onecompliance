@@ -79,6 +79,7 @@ export class LoginPageComponent implements OnInit {
                 }
             });
 
+        // Subscribe to Error EventEmitter in AuthService 
         this.authService.errorInfo$
             .subscribe(err => {
                 this._swalService.showErrorDialogSwal("Error", err.message ? err.message : "Incorrect username or password");
@@ -98,6 +99,7 @@ export class LoginPageComponent implements OnInit {
     onSubmit(): void {
         this.authService.setUsername(this.loginForm.value.username);
         this.authService.setPassword(this.loginForm.value.password);
+        // Show loading Alert
         this._swalService.showLoadingSwal("Signing in", "Please wait...");
         this.authService.signIn();
     }

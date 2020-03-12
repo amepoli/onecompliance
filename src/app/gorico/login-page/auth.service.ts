@@ -30,6 +30,9 @@ export class AuthService {
 
   // backend user data
   public userinfo = new BehaviorSubject<UserInfo>({ name: null, lastname: null, username: null, picture: null, language: 'it', companies: [] });
+
+  // Error Information Event Emitter for catching and emitting
+  // Login and Signup related errors.
   public errorInfo$ = new EventEmitter<any>();
 
   private currentCompany: string;
