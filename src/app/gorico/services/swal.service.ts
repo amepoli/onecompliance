@@ -206,7 +206,6 @@ export class SwalService {
             width: this._snackTheme.width,
             showConfirmButton: this._snackTheme.showConfirmButton,
             toast: this._snackTheme.toast,
-            heightAuto: true,
             background: background,
             title: text,
             timer: time
@@ -228,10 +227,9 @@ export class SwalService {
             padding: this._snackTheme.padding,
             showConfirmButton: this._snackTheme.showConfirmButton,
             toast: true,
-            heightAuto: this._snackTheme.heightAuto,
             background: background,
             icon: icon,
-            title: "Error occured!", //text,
+            title: "An error occured!", //text,
             timer: time
         });
     }
