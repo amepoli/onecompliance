@@ -39,8 +39,8 @@ export class SwalService {
         position: 'top-end',
         width: 240,
         heightAuto: false,
-        padding: '0em',
-        background: '#fff',
+        padding: '1em',
+        background: '#fff', //'#f7546b',
         showConfirmButton: false,
         toast: true,
     };
@@ -227,11 +227,11 @@ export class SwalService {
             width: this._snackTheme.width,
             padding: this._snackTheme.padding,
             showConfirmButton: this._snackTheme.showConfirmButton,
-            toast: this._snackTheme.toast,
-            heightAuto: true,
+            toast: true,
+            heightAuto: this._snackTheme.heightAuto,
             background: background,
             icon: icon,
-            title: text,
+            title: "Error occured!", //text,
             timer: time
         });
     }
