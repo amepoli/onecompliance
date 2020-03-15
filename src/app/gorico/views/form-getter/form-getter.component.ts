@@ -265,7 +265,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const fieldValuesArray: FieldConfig[][] = [[]];
 
         for (let index = 0; index < values.length; index++) {
-            fieldValuesArray[index] = this.getFieldValues(formKeys, values, index + startingIndex )
+            fieldValuesArray[index] = this.getFieldValues(formKeys, values, index + startingIndex);
         }
         return fieldValuesArray;
 
@@ -296,6 +296,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 name: field.key,
                 type: field.format.viewType,
                 index: index,
+                fullValueSet: values,
                 value: (element != null) ? ((element.options != null) ? element.value : element) : null,
                 inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
                 readonly: _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
@@ -381,7 +382,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
 
 
-    // callback for pubSub events, value has form of {origin, index, data}
+    // callback for pubSub events, value has form of {origin, index, valueSet, data}
     private eventCallback(event: any, value: any, keyListener: string): void {
         const _this = this;
         console.log('Received event: ' + event + ' with value: ' + value);
