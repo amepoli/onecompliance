@@ -16,14 +16,14 @@ import { navigation } from 'app/navigation/navigation';
 
 import { Router } from '@angular/router';
 import { BackendService } from './gorico/views/backend/backend.service';
+import { SwalService } from './gorico/services/swal.service';
 
 @Component({
-    selector   : 'app',
+    selector: 'app',
     templateUrl: './app.component.html',
-    styleUrls  : ['./app.component.scss']
+    styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit, OnDestroy
-{
+export class AppComponent implements OnInit, OnDestroy {
     fuseConfig: any;
     navigation: any;
 
@@ -53,9 +53,9 @@ export class AppComponent implements OnInit, OnDestroy
         private _platform: Platform,
         private router: Router,
         private _authService: AuthService,
-        private _backendService: BackendService
-    )
-    {
+        private _backendService: BackendService,
+        private _swalService: SwalService
+    ) {
         // Add languages
         this._translateService.addLangs(['it', 'en']);
 
@@ -66,19 +66,27 @@ export class AppComponent implements OnInit, OnDestroy
         // this._fuseTranslationLoaderService.loadTranslations(navigationItalian, navigationEnglish);
         this._backendService.getLanguage('it').subscribe(
             result_it => {
-                if (result_it.result === 'OK') {
+                if (result_it.result === 'KO') {
                     this._fuseTranslationLoaderService.loadTranslations(result_it.data);
                     this._backendService.getLanguage('en').subscribe(
                         result_en => {
                             if (result_en.result === 'OK') {
                                 this._fuseTranslationLoaderService.loadTranslations(result_en.data);
                                 // Use a language
-                                this._translateService.use('it'); 
+                                this._translateService.use('it');
+                            }
+                            else {
+                                // Show error snackbar
+                                this._swalService.showErrorSnackbarSwal(result_en.reason);
                             }
                         });
                 }
-        });
-       
+                else {
+                    // Show error snackbar
+                    this._swalService.showErrorSnackbarSwal(result_it.reason);
+                }
+            });
+
         // Get default navigation
         this.navigation = navigation;
 
@@ -89,8 +97,7 @@ export class AppComponent implements OnInit, OnDestroy
         this._fuseNavigationService.setCurrentNavigation('main');
 
         // Add is-mobile class to the body if the platform is mobile
-        if ( this._platform.ANDROID || this._platform.IOS )
-        {
+        if (this._platform.ANDROID || this._platform.IOS) {
             this.document.body.classList.add('is-mobile');
         }
 
@@ -105,13 +112,11 @@ export class AppComponent implements OnInit, OnDestroy
     /**
      * On init
      */
-    ngOnInit(): void
-    {
+    ngOnInit(): void {
 
-       if (!this._authService.isSignedIn) 
-        {
-           this.router.navigate(['/login']);
-           console.log('Redirecting to login page');
+        if (!this._authService.isSignedIn) {
+            this.router.navigate(['/login']);
+            console.log('Redirecting to login page');
         }
 
         // Subscribe to config changes
@@ -120,12 +125,10 @@ export class AppComponent implements OnInit, OnDestroy
             .subscribe((config) => {
                 this.fuseConfig = config;
 
-                if ( this.fuseConfig.layout.width === 'boxed' )
-                {
+                if (this.fuseConfig.layout.width === 'boxed') {
                     this.document.body.classList.add('boxed');
                 }
-                else
-                {
+                else {
                     this.document.body.classList.remove('boxed');
                 }
             });
@@ -134,8 +137,7 @@ export class AppComponent implements OnInit, OnDestroy
     /**
      * On destroy
      */
-    ngOnDestroy(): void
-    {
+    ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next();
         this._unsubscribeAll.complete();
@@ -150,8 +152,7 @@ export class AppComponent implements OnInit, OnDestroy
      *
      * @param key
      */
-    toggleSidebarOpen(key): void
-    {
+    toggleSidebarOpen(key): void {
         this._fuseSidebarService.getSidebar(key).toggleOpen();
     }
 }

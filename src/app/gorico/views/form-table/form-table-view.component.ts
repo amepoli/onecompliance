@@ -2,6 +2,7 @@ import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit } 
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { BackendService } from '../backend/backend.service';
 import { AuthService } from 'app/gorico/login-page/auth.service';
+import { SwalService } from 'app/gorico/services/swal.service';
 
 
 export interface formTableViewParams {
@@ -31,71 +32,75 @@ export class FormTableViewComponent implements OnChanges, OnInit {
 
   constructor(
     private backendService: BackendService,
-    private authService: AuthService
+    private authService: AuthService,
+    private _swalService: SwalService
   ) { }
 
   ngOnInit() {
-    const _this = this; 
+    const _this = this;
     _this.formGetter.sendEvent.subscribe(
-        event => {
-          if (event.eventType === 'updateData') {   // child downloaded data
+      event => {
+        if (event.eventType === 'updateData') {   // child downloaded data
 
-          } else { // just forward the event to parent
-              _this.sendEvent.emit(event);
-          }
-        });
+        } else { // just forward the event to parent
+          _this.sendEvent.emit(event);
+        }
+      });
   }
 
-    ngOnChanges(changes) {
-        const _this = this; // useful to debug
-        if (changes.tableData) {
-            _this.getterParams = {
-                entryName: _this.tableData.entryName,
-                keys: _this.tableData.keys,
-                isNew: false,
-                isVisible: true  // hide the child view and handle it from parent
-            };
-        } else if (changes.SaveData) {
-            const values = _this.formGetter.formArray.map(form => form.form.value);
-            // process the booleans (1/0 instead of true/false)
-            values.forEach( entry => 
-                {
-                    for (const value in entry) {
-                        if (entry.hasOwnProperty(value)) {
-                            const element = entry[value];
-                            if (element == null) {
-                                continue; // skip null entries
-                            }
-                            // decode combos
-                            if (element['id'] != null) {
-                                entry[value] = element['id'];
-                            }
-                            // encode boolean
-                            else if (element === true) {
-                                entry[value] = '1';
-                            } 
-                            else if (element === false) {
-                                entry[value] = '0';
-                            }
-                        }
-                    }
-                });
-            _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys, values).subscribe(   // backend expects an array of data
-                result => {
-                    console.log(result);
-                    if (result.result === 'OK') {
-                        setTimeout(() => {
-                            _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
-                        }, 1000);
-                    }
-                });
+  ngOnChanges(changes) {
+    const _this = this; // useful to debug
+    if (changes.tableData) {
+      _this.getterParams = {
+        entryName: _this.tableData.entryName,
+        keys: _this.tableData.keys,
+        isNew: false,
+        isVisible: true  // hide the child view and handle it from parent
+      };
+    } else if (changes.SaveData) {
+      const values = _this.formGetter.formArray.map(form => form.form.value);
+      // process the booleans (1/0 instead of true/false)
+      values.forEach(entry => {
+        for (const value in entry) {
+          if (entry.hasOwnProperty(value)) {
+            const element = entry[value];
+            if (element == null) {
+              continue; // skip null entries
+            }
+            // decode combos
+            if (element['id'] != null) {
+              entry[value] = element['id'];
+            }
+            // encode boolean
+            else if (element === true) {
+              entry[value] = '1';
+            }
+            else if (element === false) {
+              entry[value] = '0';
+            }
+          }
         }
-        
+      });
+      _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys, values).subscribe(   // backend expects an array of data
+        result => {
+          console.log(result);
+          if (result.result === 'OK') {
+            setTimeout(() => {
+              _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+            }, 1000);
+          }
+          else {
+            // Show error snackbar
+            _this._swalService.showErrorSnackbarSwal(result.reason);
+          }
+        });
+    }
+
   }
 
   fullScreen(): void {
     this.isFullScreen = !this.isFullScreen;
-    this.sendEvent.emit({ eventType: 'fullScreen', queryParams: {value: this.isFullScreen} });
+    this.sendEvent.emit({ eventType: 'fullScreen', queryParams: { value: this.isFullScreen } });
   }
 
   addNew(): void {

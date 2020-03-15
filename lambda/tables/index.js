@@ -14,7 +14,7 @@ const pool = new Pool({
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
-const s3 = new AWS.S3({apiVersion: '2006-03-01'});
+const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
 const excel = require('node-excel-export');
 const readXlsxFile = require('read-excel-file/node');
@@ -134,7 +134,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     if (isForm) {
         entry_keys = entry_params.form_keys;
     } else {
-    entry_keys = entry_params.table_keys;
+        entry_keys = entry_params.table_keys;
     }
 
     orderBy = entry_params.orderBy;
@@ -174,7 +174,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     // See https://stackoverflow.com/questions/47455962/using-function-result-in-where-clause-in-postgresql
     let calculatedWhereCond = [];
 
-    for (index = 0; index < entry_keys.length; index ++) {
+    for (index = 0; index < entry_keys.length; index++) {
         let element = entry_keys[index];
         if (isForm) { // check if combobox, then save query fields for later processing
             if (element.format.viewType === 'combobox' || element.format.viewType === 'radiobutton') {
@@ -263,7 +263,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     // add order by if present (for table view only
     if (orderBy != null && orderBy.key != null) {
         let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
-        queryString = queryString + ' ORDER BY ' + orderBy.key + order; 
+        queryString = queryString + ' ORDER BY ' + orderBy.key + order;
     }
 
     queryString = queryString + ';';
@@ -597,7 +597,7 @@ async function processPreMainPost(queryString, client, notFullTable) {
     return queryData;
 }
 
-async function processDashboard (queryString, client) {
+async function processDashboard(queryString, client) {
     let queryData = {};
 
     let colors, rows, columns;
@@ -611,7 +611,7 @@ async function processDashboard (queryString, client) {
 
     if (queryString.rowsQuery != null) {
         rows = await client.query(queryString.rowsQuery.query);
-        queryData['rows'] = { data: rows.rows, key: queryString.rowsQuery.key} ;
+        queryData['rows'] = { data: rows.rows, key: queryString.rowsQuery.key };
     }
 
     if (queryString.columnsQuery != null) {
@@ -644,7 +644,7 @@ async function getProfile(userid, company) {
                 }
             });
         }
-    } 
+    }
     return profile;
 }
 
@@ -660,7 +660,7 @@ async function checkEntry(entry_name, profile) {
     let permissions = await dynamo.get(profileParams).promise();
     permissions = permissions.Item;
     console.log('Permissions: ', permissions, ' Entry: ', entry_name);
-    if (permissions != null && permissions.tables != null) { 
+    if (permissions != null && permissions.tables != null) {
         permissions = permissions.tables;
         if (permissions.allow.indexOf(entry_name) !== -1) { // allowed 
             allowed = true;
@@ -685,31 +685,31 @@ async function checkReadOnly(entry_name, profile) {
     let permissions = await dynamo.get(profileParams).promise();
     permissions = permissions.Item;
 
-    if (permissions != null && permissions.tables != null && permissions.tables.readOnly != null) { 
+    if (permissions != null && permissions.tables != null && permissions.tables.readOnly != null) {
         permissions = permissions.tables.readOnly;
         if (permissions.indexOf(entry_name) !== -1) { // readOnly 
             readonly = true;
-        } 
+        }
     }
     return readonly;
 }
 
 async function isAuthorized(entry_name, company, userid) {
-    
+
     if (company == null) {
         console.log('Error: No company provided!');
         return false;
     }
 
     // we have a company, now check if user has authorization for the table
-    const profile = await getProfile(userid, company); 
+    const profile = await getProfile(userid, company);
     const response = await checkEntry(entry_name, profile);
     return response;
 
 }
 
 async function isReadOnly(entry_name, company, userid) {
-    const profile = await getProfile(userid, company); 
+    const profile = await getProfile(userid, company);
     const response = await checkReadOnly(entry_name, profile);
     return response;
 }
@@ -717,69 +717,69 @@ async function isReadOnly(entry_name, company, userid) {
 function data2xls(data, title, viewKeys) {
     const styles = {
         headerDark: {
-          fill: {
-            fgColor: {
-              rgb: 'FF008000'
-            }
-          },
-          font: {
-            color: {
-              rgb: 'FFFFFFFF'
+            fill: {
+                fgColor: {
+                    rgb: 'FF008000'
+                }
             },
-            sz: 18,
-            bold: true
-          }
+            font: {
+                color: {
+                    rgb: 'FFFFFFFF'
+                },
+                sz: 18,
+                bold: true
+            }
         },
         title: {
-          fill: {
-            fgColor: {
-              rgb: 'FFE0E0E0'
+            fill: {
+                fgColor: {
+                    rgb: 'FFE0E0E0'
+                },
             },
-          },
-          font: {
-            color: {
-              rgb: 'FF0080C4'
-            },
-            sz: 34
-          }
+            font: {
+                color: {
+                    rgb: 'FF0080C4'
+                },
+                sz: 34
+            }
         },
         data: {
-          font: {
-            sz: 16
-          }
+            font: {
+                sz: 16
+            }
         }
-      };
+    };
 
-      //Array of objects representing heading rows (very top)
-      const heading = [
+    //Array of objects representing heading rows (very top)
+    const heading = [
         [{ value: title, style: styles.title }] // <-- It can be only values
-      ];
+    ];
 
-      const specification = {};
+    const specification = {};
 
-      // filter visible and map the columns
+    // filter visible and map the columns
 
-      const validKeys = viewKeys.filter(key => !key.isHidden);
+    const validKeys = viewKeys.filter(key => !key.isHidden);
 
-      validKeys.forEach(key => {
-        specification[key.key] = {displayName: key.label, headerStyle: styles.data, width: 120}
-      });
+    validKeys.forEach(key => {
+        specification[key.key] = { displayName: key.label, headerStyle: styles.data, width: 120 }
+    });
 
-      const dataset = [];
+    const dataset = [];
 
-      data.forEach(entry => {
+    data.forEach(entry => {
         var value = {};
         validKeys.forEach(key => {
             value[key.key] = entry[key.key];
         });
         dataset.push(value);
-      });
+    });
 
-      const merges = [
+    const merges = [
         { start: { row: 1, column: 1 }, end: { row: 1, column: validKeys.length } }
-      ];
+    ];
 
-      const report = excel.buildExport(
+    const report = excel.buildExport(
         [ // <- Notice that this is an array. Pass multiple sheets to create multi sheet report
             {
                 name: 'Report', // <- Specify sheet name (optional)
@@ -796,7 +796,7 @@ function data2xls(data, title, viewKeys) {
 
 async function process_properties(entry_params, table_keys, isFormRecord, client) {
 
-    var tableProperties= {};
+    var tableProperties = {};
 
     if (entry_params.view_properties == null) {
         return tableProperties;
@@ -887,7 +887,7 @@ exports.handler = async (event, context) => {
     var readOnly = await isReadOnly(queryParams.entry_name, company, userid);
 
     // avoid update, insert or delete if read only
-    if (readOnly && (method === 'DELETE' || (method === 'POST' && !isEventUpdate))) {   
+    if (readOnly && (method === 'DELETE' || (method === 'POST' && !isEventUpdate))) {
         console.log(queryParams.entry_name, ' Not Authorized!');
         return {
             "isBase64Encoded": false,
@@ -897,7 +897,7 @@ exports.handler = async (event, context) => {
         };
     }
 
-    var flags = {readOnly: readOnly}; // if this is a get signal to frontend this is a readonly table
+    var flags = { readOnly: readOnly }; // if this is a get signal to frontend this is a readonly table
 
     var queryData = {};
 
@@ -1039,18 +1039,18 @@ exports.handler = async (event, context) => {
             }
         }
 
-        if (isExcel && method=== 'GET') {  // returning the Excel
+        if (isExcel && method === 'GET') {  // returning the Excel
 
             var viewKeys = isFormRecord ? entry_params.form_keys : entry_params.table_keys;
             var excelData = data2xls(queryData, queryParams.entry_name, viewKeys);
             var uuid = uuidv4(); // generate a 'unique' UUID as filename
-            var filename =  'Excel/' + uuid + '.xlsx'
-            var s3ParamsInsert = { 
+            var filename = 'Excel/' + uuid + '.xlsx'
+            var s3ParamsInsert = {
                 Bucket: 'gorico2.reports',
                 Key: filename,
                 Body: excelData
             };
-            var s3ParamsUrl = { 
+            var s3ParamsUrl = {
                 Bucket: 'gorico2.reports',
                 Key: filename
             };
@@ -1064,7 +1064,7 @@ exports.handler = async (event, context) => {
                 "isBase64Encoded": false,
                 "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
                 "statusCode": 200,
-                "body": JSON.stringify({result: 'OK', url: url})
+                "body": JSON.stringify({ result: 'OK', url: url })
             }
         }
 
@@ -1075,7 +1075,7 @@ exports.handler = async (event, context) => {
             "isBase64Encoded": false,
             "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
             "statusCode": 200,
-            "body": JSON.stringify({result: 'KO', error: e, queryString: queryString})
+            "body": JSON.stringify({ result: 'KO', reason: e, queryString: queryString })
         };
     }
 
@@ -1085,7 +1085,7 @@ exports.handler = async (event, context) => {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
-        "body": JSON.stringify({result: 'OK', flags: flags, data: queryData, properties: tableProperties})
+        "body": JSON.stringify({ result: 'OK', flags: flags, data: queryData, properties: tableProperties })
 
     };
 };

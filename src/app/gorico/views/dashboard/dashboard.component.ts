@@ -5,6 +5,7 @@ import { BackendService } from '../backend/backend.service';
 import { tableViewKey } from '../table/table-view.component';
 import { _MatChipListMixinBase } from '@angular/material';
 import { AuthService } from 'app/gorico/login-page/auth.service';
+import { SwalService } from 'app/gorico/services/swal.service.js';
 
 
 export interface DashboardParams {
@@ -33,7 +34,8 @@ export interface DashboardCellEvent {
 export class DashboardComponent {
 
     constructor(private backendService: BackendService,
-                private authService: AuthService) { }
+        private authService: AuthService,
+        private _swalService: SwalService) { }
 
     @ViewChild('pivot1') child: WebDataRocksPivot;
 
@@ -61,7 +63,7 @@ export class DashboardComponent {
         const company = _this.authService.getCurrentCompany();
         _this.child.webDataRocks.off('reportcomplete');
 
-        _this.backendService.getView(_this.tableParams.entryName, company , _this.tableParams.keys).subscribe(
+        _this.backendService.getView(_this.tableParams.entryName, company, _this.tableParams.keys).subscribe(
             viewResults => {
                 if (viewResults.result === 'OK' && viewResults.data.table_keys != null) {
                     viewResults = viewResults.data;
@@ -82,9 +84,21 @@ export class DashboardComponent {
                                             const report = _this.setReport(viewResults, _this.tableParams.entryIndex, results, lang, labels);
                                             _this.child.webDataRocks.setReport(report);
                                         }
-                                });
+                                        else {
+                                            // Show error snackbar
+                                            _this._swalService.showErrorSnackbarSwal(results.reason);
+                                        }
+                                    });
+                            }
+                            else {
+                                // Show error snackbar
+                                _this._swalService.showErrorSnackbarSwal(response.reason);
                             }
                         });
+                }
+                else {
+                    // Show error snackbar
+                    _this._swalService.showErrorSnackbarSwal(viewResults.reason);
                 }
             });
     }
@@ -140,23 +154,22 @@ export class DashboardComponent {
         const columnArray = labels.columns != null ? labels.columns.data.map(c => c.label) : [];
         const rowArray = labels.rows != null ? labels.rows.data.map(c => c.label) : [];
         // filter out not codified elements
-        data = data.filter(d => 
-            (labels.columns == null || (labels.columns != null && d[labels.columns.key] != null && columnArray.indexOf(d[labels.columns.key]) !== -1)) 
+        data = data.filter(d =>
+            (labels.columns == null || (labels.columns != null && d[labels.columns.key] != null && columnArray.indexOf(d[labels.columns.key]) !== -1))
             && (labels.rows == null || (labels.rows != null && d[labels.rows.key] != null && rowArray.indexOf(d[labels.rows.key]) !== -1)));
         const rowLabels = [];
         const columnLabels = [];
-        data.forEach(element => 
-            {
-                if (labels.columns != null) {
-                    if (columnLabels.indexOf(element[labels.columns.key]) === -1) {
-                        columnLabels.push(element[labels.columns.key]);
-                    }
+        data.forEach(element => {
+            if (labels.columns != null) {
+                if (columnLabels.indexOf(element[labels.columns.key]) === -1) {
+                    columnLabels.push(element[labels.columns.key]);
                 }
-                if (labels.rows != null) {
-                    if (rowLabels.indexOf(element[labels.rows.key]) === -1) {
-                        rowLabels.push(element[labels.rows.key]);
-                    }
+            }
+            if (labels.rows != null) {
+                if (rowLabels.indexOf(element[labels.rows.key]) === -1) {
+                    rowLabels.push(element[labels.rows.key]);
                 }
+            }
         });
         if (labels.columns != null && columnLabels.length !== columnArray.length && labels.colors.type === 'column') { // missing column labels in dataset
             columnArray.forEach(label => {
@@ -180,7 +193,7 @@ export class DashboardComponent {
         data.forEach(element => {
             if (labels.columns != null && element[labels.columns.key] != null) {
                 const key = labels.columns.key;
-                let value = element[key];     
+                let value = element[key];
                 // add leading number to entry value to get proper order in dashboard
                 for (let index = 0; index < columnArray.length; index++) {
                     if (value === columnArray[index]) {
@@ -245,7 +258,7 @@ export class DashboardComponent {
         const colorsType = labels.colors.type;
 
         if (report.conditions != null) {
-            const model = report.conditions[0]; 
+            const model = report.conditions[0];
             // remove the sample condition
             report.conditions = [];
             const col_offset = (numRows > 1) ? 1 : 0;
@@ -268,7 +281,7 @@ export class DashboardComponent {
                     }
                     item['row'] = i;
                     item['column'] = j;
-                    const dualColor = (color === 'yellow' || color === 'white' || color === 'orange') 
+                    const dualColor = (color === 'yellow' || color === 'white' || color === 'orange')
                         ? '#000000' // black
                         : '#FFFFFF'; // white
                     item.format.backgroundColor = color.charAt(0) === '#' ? color : LUTColors[color];
