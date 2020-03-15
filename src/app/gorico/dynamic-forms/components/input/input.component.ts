@@ -29,7 +29,7 @@ export class InputComponent implements OnInit, AfterViewInit{
     _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
         _this.group.get(_this.field.name).valueChanges.subscribe(value => {
-            _this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, data: value, type: 'change'});
+            _this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet:_this.field.fullValueSet, data: value, type: 'change'});
         });
     }
   }

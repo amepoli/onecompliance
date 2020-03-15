@@ -34,4 +34,5 @@ export interface FieldConfig {
   eventName?: string;
   eventTrigger?: string;
   subform?: FieldConfig[];
+  fullValueSet?: any;
 }
