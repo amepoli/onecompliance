@@ -48,7 +48,6 @@ export class AppComponent implements OnInit, OnDestroy {
         private _fuseNavigationService: FuseNavigationService,
         private _fuseSidebarService: FuseSidebarService,
         private _fuseSplashScreenService: FuseSplashScreenService,
-        private _fuseTranslationLoaderService: FuseTranslationLoaderService,
         private _translateService: TranslateService,
         private _platform: Platform,
         private router: Router,
@@ -60,32 +59,10 @@ export class AppComponent implements OnInit, OnDestroy {
         this._translateService.addLangs(['it', 'en']);
 
         // Set the default language
-        this._translateService.setDefaultLang('it');
+        // this._translateService.setDefaultLang('en');
 
         // Set the navigation translations
         // this._fuseTranslationLoaderService.loadTranslations(navigationItalian, navigationEnglish);
-        this._backendService.getLanguage('it').subscribe(
-            result_it => {
-                if (result_it.result === 'KO') {
-                    this._fuseTranslationLoaderService.loadTranslations(result_it.data);
-                    this._backendService.getLanguage('en').subscribe(
-                        result_en => {
-                            if (result_en.result === 'OK') {
-                                this._fuseTranslationLoaderService.loadTranslations(result_en.data);
-                                // Use a language
-                                this._translateService.use('it');
-                            }
-                            else {
-                                // Show error snackbar
-                                this._swalService.showErrorSnackbarSwal(result_en.reason);
-                            }
-                        });
-                }
-                else {
-                    // Show error snackbar
-                    this._swalService.showErrorSnackbarSwal(result_it.reason);
-                }
-            });
 
         // Get default navigation
         this.navigation = navigation;
