@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { SwalService } from '../services/swal.service';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 export interface UserInfo {
   name: string;
@@ -42,7 +43,10 @@ export class AuthService {
     private amplifyService: AmplifyService,
     private backendService: BackendService,
     private navigationService: FuseNavigationService,
-    private _swalService: SwalService) {
+    private _swalService: SwalService,
+    private _fuseTranslationLoaderService: FuseTranslationLoaderService,
+    private _translateService: TranslateService,
+  ) {
     this.amplifyService = amplifyService;
 
     this.amplifyService.auth();
@@ -131,6 +135,10 @@ export class AuthService {
     // reset the left menu
     _this.navigationService.setCurrentNavigation('main');
     _this.navigationService.unregister('usermenu');
+
+    //get languages
+    _this.retrieveLanguages();
+
     // get new menu
     _this.retrieveMenu();
 
@@ -161,6 +169,13 @@ export class AuthService {
           _this.userinfo.next(ud.userdata); // signal a value change to subscribers
           _this.currentCompany = ud.userdata.companies[0];
           console.log(ud.userdata);
+
+          //load default language for user
+          _this._translateService.setDefaultLang(ud.userdata.language);
+
+          //get languages
+          _this.retrieveLanguages();
+
           // get new menu
           _this.retrieveMenu();
         }
@@ -182,6 +197,33 @@ export class AuthService {
         else {
           // Show error snackbar
           _this._swalService.showErrorSnackbarSwal(menu.reason);
+        }
+      });
+  }
+
+  private retrieveLanguages(): void {
+    const _this = this;
+    _this.backendService.getLanguage('it').subscribe(
+      result_it => {
+        if (result_it.result === 'OK') {
+          _this._fuseTranslationLoaderService.loadTranslations(result_it.data);
+          _this.backendService.getLanguage('en').subscribe(
+            result_en => {
+              if (result_en.result === 'OK') {
+                _this._fuseTranslationLoaderService.loadTranslations(result_en.data);
+
+                // Use a language
+                _this._translateService.use(_this._translateService.getDefaultLang());
+              }
+              else {
+                // Show error snackbar
+                _this._swalService.showErrorSnackbarSwal(result_en.reason);
+              }
+            });
+        }
+        else {
+          // Show error snackbar
+          _this._swalService.showErrorSnackbarSwal(result_it.reason);
         }
       });
   }

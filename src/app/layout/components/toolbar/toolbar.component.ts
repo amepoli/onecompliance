@@ -178,17 +178,17 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
 
     setCompany(company: string, fromInterface: boolean): void {
-        
+
         this.currentCompany = company;
         // update the user infos and left menu 
         this._authService.updateUserInfo(company);
         this._backendService.globalTableKeys = { codice_part: company, codice_azienda: company };
-        if (fromInterface) {  
+        if (fromInterface) {
             // reload the main page 
             this.router.navigate(['/login']);
         }
-            
-            
+
+
 
     }
 
@@ -222,6 +222,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
         // Use the selected language for translations
         this._translateService.use(lang.id);
+        this._translateService.setDefaultLang(lang.id);
+
         // set it into the service for the reload
         this._authService.userinfo.value.language = lang.id;
         // reload the main page 
