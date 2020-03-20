@@ -24,6 +24,7 @@ import { MailConfirmModule } from 'app/gorico/login-page/mail-confirm.module';
 import { AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
 import { NgxPubSubModule } from '@pscoped/ngx-pub-sub';
 import { MainDashboardsModule } from 'app/gorico/main-dashboards/main-dashboards.module';
+import { ToastrModule } from 'ngx-toastr';
 
 const appRoutes: Routes = [];
 
@@ -53,6 +54,9 @@ const appRoutes: Routes = [];
         FuseSidebarModule,
         FuseThemeOptionsModule,
 
+        // ToastrModule
+        ToastrModule.forRoot(),
+
         // App modules
         LayoutModule,
         AppStoreModule,
@@ -64,7 +68,7 @@ const appRoutes: Routes = [];
         MainTableModule,
         AmplifyAngularModule,
         NgxPubSubModule,
-        MainDashboardsModule
+        MainDashboardsModule,
 
     ],
     providers: [

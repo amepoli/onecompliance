@@ -16,7 +16,6 @@ import { navigation } from 'app/navigation/navigation';
 
 import { Router } from '@angular/router';
 import { BackendService } from './gorico/views/backend/backend.service';
-import { SwalService } from './gorico/services/swal.service';
 
 @Component({
     selector: 'app',
@@ -52,8 +51,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private _platform: Platform,
         private router: Router,
         private _authService: AuthService,
-        private _backendService: BackendService,
-        private _swalService: SwalService
+        private _backendService: BackendService
     ) {
         // Add languages
         this._translateService.addLangs(['it', 'en']);

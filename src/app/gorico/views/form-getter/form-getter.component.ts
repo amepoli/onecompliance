@@ -7,7 +7,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ComboboxComponent } from 'app/gorico/dynamic-forms/components/combobox/combobox.component';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'app/gorico/login-page/auth.service';
-import { SwalService } from 'app/gorico/services/swal.service';
+import { ToastService } from 'app/gorico/services/toast.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -118,7 +118,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private backendService: BackendService,
         private pubsubService: NgxPubSubService,
         private authService: AuthService,
-        private _swalService: SwalService) { }
+        private _toastService: ToastService) { }
 
     ngOnChanges() {
         if (!this.addingNew) {
@@ -191,7 +191,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
                     // Show error snackbar
-                    _this._swalService.showErrorSnackbarSwal(results.reason);
+                    _this._toastService.showErrorToast(results.reason);
                 }
             });
 
@@ -244,7 +244,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
                     // Show error snackbar
-                    _this._swalService.showErrorSnackbarSwal(results.reason);
+                    _this._toastService.showErrorToast(results.reason);
                 }
             },
             error => {
@@ -268,7 +268,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
                     // Show error snackbar
-                    _this._swalService.showErrorSnackbarSwal(result.reason);
+                    _this._toastService.showErrorToast(result.reason);
                 }
             });
     }
@@ -498,7 +498,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                         else {
                             // Show error snackbar
-                            _this._swalService.showErrorSnackbarSwal(result.reason);
+                            _this._toastService.showErrorToast(result.reason);
                         }
                     });
             }

@@ -6,7 +6,8 @@ import { BackendService } from '../views/backend/backend.service';
 import { BehaviorSubject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
-import { SwalService } from '../services/swal.service';
+import { ToastService } from 'app/gorico/services/toast.service';
+
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 export interface UserInfo {
@@ -43,7 +44,7 @@ export class AuthService {
     private amplifyService: AmplifyService,
     private backendService: BackendService,
     private navigationService: FuseNavigationService,
-    private _swalService: SwalService,
+    private _toastService: ToastService,
     private _fuseTranslationLoaderService: FuseTranslationLoaderService,
     private _translateService: TranslateService,
   ) {
@@ -210,7 +211,7 @@ export class AuthService {
         }
         else {
           // Show error snackbar
-          _this._swalService.showErrorSnackbarSwal(ud.reason);
+          _this._toastService.showErrorToast(ud.reason);
         }
       });
   }
@@ -225,7 +226,7 @@ export class AuthService {
         }
         else {
           // Show error snackbar
-          _this._swalService.showErrorSnackbarSwal(menu.reason);
+          _this._toastService.showErrorToast(menu.reason);
         }
       });
   }
@@ -246,13 +247,13 @@ export class AuthService {
               }
               else {
                 // Show error snackbar
-                _this._swalService.showErrorSnackbarSwal(result_en.reason);
+                _this._toastService.showErrorToast(result_en.reason);
               }
             });
         }
         else {
           // Show error snackbar
-          _this._swalService.showErrorSnackbarSwal(result_it.reason);
+          _this._toastService.showErrorToast(result_it.reason);
         }
       });
   }

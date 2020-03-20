@@ -5,7 +5,7 @@ import { BackendService } from '../backend/backend.service';
 import { tableViewKey } from '../table/table-view.component';
 import { _MatChipListMixinBase } from '@angular/material';
 import { AuthService } from 'app/gorico/login-page/auth.service';
-import { SwalService } from 'app/gorico/services/swal.service.js';
+import { ToastService } from 'app/gorico/services/toast.service';
 
 
 export interface DashboardParams {
@@ -35,7 +35,7 @@ export class DashboardComponent {
 
     constructor(private backendService: BackendService,
         private authService: AuthService,
-        private _swalService: SwalService) { }
+        private _toastService: ToastService) { }
 
     @ViewChild('pivot1') child: WebDataRocksPivot;
 
@@ -86,19 +86,19 @@ export class DashboardComponent {
                                         }
                                         else {
                                             // Show error snackbar
-                                            _this._swalService.showErrorSnackbarSwal(results.reason);
+                                            _this._toastService.showErrorToast(results.reason);
                                         }
                                     });
                             }
                             else {
                                 // Show error snackbar
-                                _this._swalService.showErrorSnackbarSwal(response.reason);
+                                _this._toastService.showErrorToast(response.reason);
                             }
                         });
                 }
                 else {
                     // Show error snackbar
-                    _this._swalService.showErrorSnackbarSwal(viewResults.reason);
+                    _this._toastService.showErrorToast(viewResults.reason);
                 }
             });
     }

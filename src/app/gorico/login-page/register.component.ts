@@ -9,7 +9,8 @@ import { fuseAnimations } from '@fuse/animations';
 import { AuthService } from './auth.service';
 
 import { Router } from '@angular/router';
-import { SwalService } from '../services/swal.service';
+import { DialogService } from '../services/dialog.service';
+
 
 @Component({
     selector: 'register',
@@ -28,7 +29,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         private _formBuilder: FormBuilder,
         private router: Router,
         private authService: AuthService,
-        private _swalService: SwalService
+        private _dialogService: DialogService
     ) {
         // Configure the layout
         this._fuseConfigService.config = {
@@ -74,7 +75,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.authService.authStateChange$
             .subscribe(authState => {
                 if (authState.state === 'confirmSignUp') {
-                    this._swalService.closeSwal();
+                    this._dialogService.closeDialog();
                     this.authService.setEmail(this.registerForm.get('email').value);
                     this.router.navigate(['/mail-confirm']);
                 }
@@ -83,7 +84,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         // Subscribe to Error EventEmitter in AuthService 
         this.authService.errorInfo$
             .subscribe(err => {
-                this._swalService.showErrorDialogSwal("Error", err.message ? err.message : "Invalid data");
+                this._dialogService.showErrorDialog("Error", err.message ? err.message : "Invalid data");
                 // console.log(`Signup Error: ${err}`);
                 // console.table(err);
             });
@@ -115,7 +116,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.authService.setPassword(this.registerForm.value.password);
         this.authService.setEmail(this.registerForm.value.email);
         // Show loading Alert
-        this._swalService.showLoadingSwal("Signing up", "Please wait...");
+        this._dialogService.showLoadingDialog("Signing up", "Please wait...");
         this.authService.signUp();
     }
 }

@@ -7,7 +7,7 @@ import { TabType } from '../../bottom-tabs/bottom-tabs.component';
 import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
-import { SwalService } from 'app/gorico/services/swal.service';
+import { ToastService } from 'app/gorico/services/toast.service';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -75,7 +75,7 @@ export class FormViewComponent implements OnChanges, OnInit {
     constructor(public attachDialog: MatDialog,
         private backendService: BackendService,
         private authService: AuthService,
-        private _swalService: SwalService) {
+        private _toastService: ToastService) {
 
     }
 
@@ -185,7 +185,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                 }
                 else {
                     // Show error snackbar
-                    this._swalService.showErrorSnackbarSwal(result.reason);
+                    this._toastService.showErrorToast(result.reason);
                 }
             }
         );
@@ -201,7 +201,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                 }
                 else {
                     // Show error snackbar
-                    this._swalService.showErrorSnackbarSwal(result.reason);
+                    this._toastService.showErrorToast(result.reason);
                 }
             }
         )
