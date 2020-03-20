@@ -98,6 +98,35 @@ export class AuthService {
           this.isSignedIn = true;
           // now get user and related menu info from backend
           this.retrieveUserInfo();
+
+
+          /* 
+          // Testing auth token stuff
+          this.amplifyService.auth().currentCredentials()
+            .then(credentials => {
+              // let awsPersonalCreds = this.amplifyService.auth().essentialCredentials(credentials);
+              // console.table(awsPersonalCreds);
+              
+              // I get valid accessKeyId, sessionToken, secretAccessKey
+
+              // this.amplifyService.auth().currentSession()
+              //   .then(currentSession => console.table('currentSession= ' + currentSession))
+              //   .catch(error => console.error(error));
+              // // I get an error: no current user
+
+              // this.amplifyService.auth().currentUserPoolUser()
+              //   .then(currentUser => console.table('currentUserPoolUser= ' + currentUser))
+              //   .catch(error => console.error(error));
+              // // I get an error: No current user in userpool
+
+              // this.amplifyService.auth().currentAuthenticatedUser()
+              //   .then(currentAuthUser => console.table('currentAuthUser= ' + currentAuthUser))
+              //   .catch(error => console.error(error));
+              // // I get an error: not authenticated
+            })
+            .catch(error => console.error(error));
+          */
+
         }
       })
       .catch((err) => {
