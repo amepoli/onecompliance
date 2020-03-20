@@ -12,7 +12,8 @@ import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../login-page/auth.service';
-import { SwalService } from '../services/swal.service';
+import { ToastService } from 'app/gorico/services/toast.service';
+
 
 @Component({
     selector: 'main-table',
@@ -83,7 +84,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         private authService: AuthService,
         protected location: Location,
         private httpClient: HttpClient,
-        private _swalService: SwalService) {
+        private _toastService: ToastService) {
     }
 
     ngOnInit(): void {
@@ -117,7 +118,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                             }
                             else {
                                 // Show error snackbar
-                                _this._swalService.showErrorSnackbarSwal(response.reason);
+                                _this._toastService.showErrorToast(response.reason);
                             }
                         });
                 } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
@@ -132,7 +133,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                             }
                             else {
                                 // Show error snackbar
-                                _this._swalService.showErrorSnackbarSwal(response.reason);
+                                _this._toastService.showErrorToast(response.reason);
                             }
                         });
                 } else if (msg.type === 'add') { // toolbar sking for adding a new element

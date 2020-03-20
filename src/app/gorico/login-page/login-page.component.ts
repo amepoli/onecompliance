@@ -6,7 +6,8 @@ import { fuseAnimations } from '@fuse/animations';
 import { AuthService } from './auth.service';
 
 import { Router } from '@angular/router';
-import { SwalService } from '../services/swal.service';
+import { DialogService } from '../services/dialog.service';
+
 
 @Component({
     selector: 'login-page',
@@ -30,7 +31,7 @@ export class LoginPageComponent implements OnInit {
         private _fuseConfigService: FuseConfigService,
         private _formBuilder: FormBuilder,
         private router: Router,
-        private _swalService: SwalService
+        private _dialogService: DialogService
     ) {
         // Configure the layout
         this._fuseConfigService.config = {
@@ -69,7 +70,7 @@ export class LoginPageComponent implements OnInit {
 
         this.authService.authStateChange$
             .subscribe(authState => {
-                this._swalService.closeSwal();
+                this._dialogService.closeDialog();
                 this.signedIn = authState.state === 'signedIn';
 
                 if (!authState.user) {
@@ -82,7 +83,7 @@ export class LoginPageComponent implements OnInit {
         // Subscribe to Error EventEmitter in AuthService 
         this.authService.errorInfo$
             .subscribe(err => {
-                this._swalService.showErrorDialogSwal("Error", err.message ? err.message : "Incorrect username or password");
+                this._dialogService.showErrorDialog("Error", err.message ? err.message : "Incorrect username or password");
                 // console.log(`Login Error: ${err}`);
             });
 
@@ -100,7 +101,7 @@ export class LoginPageComponent implements OnInit {
         this.authService.setUsername(this.loginForm.value.username);
         this.authService.setPassword(this.loginForm.value.password);
         // Show loading Alert
-        this._swalService.showLoadingSwal("Signing in", "Please wait...");
+        this._dialogService.showLoadingDialog("Signing in", "Please wait...");
         this.authService.signIn();
     }
 }

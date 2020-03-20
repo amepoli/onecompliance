@@ -2,7 +2,7 @@ import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit } 
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { BackendService } from '../backend/backend.service';
 import { AuthService } from 'app/gorico/login-page/auth.service';
-import { SwalService } from 'app/gorico/services/swal.service';
+import { ToastService } from 'app/gorico/services/toast.service';
 
 
 export interface formTableViewParams {
@@ -33,7 +33,7 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   constructor(
     private backendService: BackendService,
     private authService: AuthService,
-    private _swalService: SwalService
+    private _toastService: ToastService
   ) { }
 
   ngOnInit() {
@@ -91,7 +91,7 @@ export class FormTableViewComponent implements OnChanges, OnInit {
           }
           else {
             // Show error snackbar
-            _this._swalService.showErrorSnackbarSwal(result.reason);
+            _this._toastService.showErrorToast(result.reason);
           }
         });
     }

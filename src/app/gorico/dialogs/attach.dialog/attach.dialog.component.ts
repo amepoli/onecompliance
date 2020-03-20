@@ -11,7 +11,7 @@ import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/q
 import { formGetterParams, FormGetterComponent } from 'app/gorico/views/form-getter/form-getter.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { Subscription } from 'rxjs';
-import { SwalService } from 'app/gorico/services/swal.service';
+import { ToastService } from 'app/gorico/services/toast.service';
 
 
 @Component({
@@ -68,7 +68,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         private backendService: BackendService,
         private httpClient: HttpClient,
         private authService: AuthService,
-        private _swalService: SwalService) {
+        private _toastService: ToastService) {
 
         const _this = this;
 
@@ -150,7 +150,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
                 else {
                     // Show error snackbar
-                    this._swalService.showErrorSnackbarSwal(result.reason);
+                    this._toastService.showErrorToast(result.reason);
                 }
             });
 
@@ -242,7 +242,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     else {
                         // Show error snackbar
-                        _this._swalService.showErrorSnackbarSwal(responseURL.reason);
+                        _this._toastService.showErrorToast(responseURL.reason);
                     }
                 }
             )

@@ -4,7 +4,7 @@ import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/mate
 import { FieldConfig } from '../../dynamic-forms/field.interface';
 import { formViewParams } from '../form/form-view.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
-import { SwalService } from 'app/gorico/services/swal.service';
+import { ToastService } from 'app/gorico/services/toast.service';
 
 export interface tableViewParams {
     entryName: string;
@@ -99,7 +99,7 @@ export class TableViewComponent implements OnChanges {
     constructor(
         private backendService: BackendService,
         private authService: AuthService,
-        private _swalService: SwalService) {
+        private _toastService: ToastService) {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -122,7 +122,7 @@ export class TableViewComponent implements OnChanges {
                     else {
                         _this.isLoading = false;
                         // Show error snackbar
-                        _this._swalService.showErrorSnackbarSwal(result.reason);
+                        _this._toastService.showErrorToast(result.reason);
                     }
                 });
         }
@@ -160,7 +160,7 @@ export class TableViewComponent implements OnChanges {
                 }
                 else {
                     // Show error snackbar
-                    _this._swalService.showErrorSnackbarSwal(results.reason);
+                    _this._toastService.showErrorToast(results.reason);
                 }
             },
             error => {
