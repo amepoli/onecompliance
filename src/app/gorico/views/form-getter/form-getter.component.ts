@@ -398,6 +398,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     // callback for pubSub events, value has form of {origin, index, valueSet, data}
     private eventCallback(event: any, value: any, keyListener: string): void {
         const _this = this;
+        console.table(event);
+        console.table(value);
+
         console.log('Received event: ' + event + ' with value: ' + value);
 
         if (event.condition === 'equalTo') {
@@ -498,6 +501,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                         else {
                             // Show error snackbar
+                            console.log(result);
                             _this._toastService.showErrorToast(result.reason);
                         }
                     });
