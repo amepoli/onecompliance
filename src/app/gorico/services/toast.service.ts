@@ -97,8 +97,8 @@ export class ToastService {
      */
     showSuccessToast(title: string, text: string = "", timeOut: number = this._toastrTheme.timeOut, tapToDismiss: boolean = this._toastrTheme.tapToDismiss) {
         this.toastr.success(
-            title,
             text,
+            title,
             {
                 timeOut: timeOut,
                 tapToDismiss: tapToDismiss
