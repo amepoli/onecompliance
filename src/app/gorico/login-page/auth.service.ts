@@ -99,35 +99,6 @@ export class AuthService {
           this.isSignedIn = true;
           // now get user and related menu info from backend
           this.retrieveUserInfo();
-
-
-          /* 
-          // Testing auth token stuff
-          this.amplifyService.auth().currentCredentials()
-            .then(credentials => {
-              // let awsPersonalCreds = this.amplifyService.auth().essentialCredentials(credentials);
-              // console.table(awsPersonalCreds);
-              
-              // I get valid accessKeyId, sessionToken, secretAccessKey
-
-              // this.amplifyService.auth().currentSession()
-              //   .then(currentSession => console.table('currentSession= ' + currentSession))
-              //   .catch(error => console.error(error));
-              // // I get an error: no current user
-
-              // this.amplifyService.auth().currentUserPoolUser()
-              //   .then(currentUser => console.table('currentUserPoolUser= ' + currentUser))
-              //   .catch(error => console.error(error));
-              // // I get an error: No current user in userpool
-
-              // this.amplifyService.auth().currentAuthenticatedUser()
-              //   .then(currentAuthUser => console.table('currentAuthUser= ' + currentAuthUser))
-              //   .catch(error => console.error(error));
-              // // I get an error: not authenticated
-            })
-            .catch(error => console.error(error));
-          */
-
         }
       })
       .catch((err) => {
@@ -257,4 +228,76 @@ export class AuthService {
         }
       });
   }
+
+  /** Check if local storage contains access token */
+  public doesAccessTokenExist(): boolean {
+    var result = false;
+    // Go through all the keys in local storage
+    // and check if there's any with accessToken in it
+    Array.from(Array(localStorage.length)).forEach((val, i) => {
+      if (localStorage.key(i).includes('accessToken')) {
+        // Found it!
+        result = true;
+      }
+      // console.log(localStorage.key(i), localStorage.getItem(localStorage.key(i)));
+    });
+    return result;
+  }
+
+  /** Load Session */
+  public loadSession() {
+    this.amplifyService.auth().currentUserInfo()
+      .then(user => {
+        // Check if user is valid
+        if (user && user.id) {
+          // User is valid
+          this.amplifyService.setAuthState({ state: 'signedIn', user: user });
+          this.isSignedIn = true;
+          // now get user and related menu info from backend
+          this.retrieveUserInfo();
+        }
+        else {
+          // User was invalid
+          this.errorInfo$.emit("Invalid session!");
+        }
+      })
+      .catch(error => {
+        console.error(error);
+
+        // Error occured which means the session was invalid or expired
+        // Emit the error so we can stop showing the loading dialog
+        this.errorInfo$.emit(error);
+      }
+      );
+
+
+    /* 
+    // Testing auth token stuff
+    this.amplifyService.auth().currentCredentials()
+      .then(credentials => {
+        // let awsPersonalCreds = this.amplifyService.auth().essentialCredentials(credentials);
+        // console.table(awsPersonalCreds);
+        
+        // I get valid accessKeyId, sessionToken, secretAccessKey
+
+        // this.amplifyService.auth().currentSession()
+        //   .then(currentSession => console.table('currentSession= ' + currentSession))
+        //   .catch(error => console.error(error));
+        // // I get an error: no current user
+
+        // this.amplifyService.auth().currentUserPoolUser()
+        //   .then(currentUser => console.table('currentUserPoolUser= ' + currentUser))
+        //   .catch(error => console.error(error));
+        // // I get an error: No current user in userpool
+
+        // this.amplifyService.auth().currentAuthenticatedUser()
+        //   .then(currentAuthUser => console.table('currentAuthUser= ' + currentAuthUser))
+        //   .catch(error => console.error(error));
+        // // I get an error: not authenticated
+      })
+      .catch(error => console.error(error));
+    */
+
+  }
+
 }
