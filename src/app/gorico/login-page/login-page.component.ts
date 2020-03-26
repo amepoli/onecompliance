@@ -19,6 +19,8 @@ export class LoginPageComponent implements OnInit {
     loginForm: FormGroup;
     user: any;
     signedIn = false;
+    signingIn: boolean = false;
+    loadingSession: boolean = false;
 
     /**
      * Constructor
@@ -53,6 +55,11 @@ export class LoginPageComponent implements OnInit {
 
         this.authService = authService;
 
+        this.loginForm = this._formBuilder.group({
+            username: ['', Validators.required],
+            password: ['', Validators.required]
+        });
+
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -63,10 +70,6 @@ export class LoginPageComponent implements OnInit {
      * On init
      */
     ngOnInit(): void {
-        this.loginForm = this._formBuilder.group({
-            username: ['', Validators.required],
-            password: ['', Validators.required]
-        });
 
         this.authService.authStateChange$
             .subscribe(authState => {
@@ -83,8 +86,17 @@ export class LoginPageComponent implements OnInit {
         // Subscribe to Error EventEmitter in AuthService 
         this.authService.errorInfo$
             .subscribe(err => {
-                this._dialogService.showErrorDialog("Error", err.message ? err.message : "Incorrect username or password");
-                // console.log(`Login Error: ${err}`);
+                // Check if we were actually signing in or just loading old session
+                if (this.signingIn) {
+                    this._dialogService.showErrorDialog("Error", err.message ? err.message : "Incorrect username or password");
+                    this.signingIn = false;
+                }
+                else {
+                    // We failed to load previous session
+                    this._dialogService.closeDialog();
+                    this.loadingSession = false;
+                }
+                // console.error(`Login Error: ${err}`);
             });
 
 
@@ -95,6 +107,15 @@ export class LoginPageComponent implements OnInit {
                 this.router.navigate(['/gorico/dashboard']);
             }
         });
+
+        // Check if local storage contains valid access token
+        if (this.authService.doesAccessTokenExist()) {
+            // Load session from local storage
+            this.loadingSession = true;
+            this._dialogService.showLoadingDialog("Loading", "Please wait...");
+            this.authService.loadSession();
+        }
+
     }
 
     onSubmit(): void {
@@ -102,6 +123,9 @@ export class LoginPageComponent implements OnInit {
         this.authService.setPassword(this.loginForm.value.password);
         // Show loading Alert
         this._dialogService.showLoadingDialog("Signing in", "Please wait...");
+
+        // Sign in
+        this.signingIn = true;
         this.authService.signIn();
     }
 }
