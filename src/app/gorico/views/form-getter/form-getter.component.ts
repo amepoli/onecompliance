@@ -480,14 +480,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     result => {
                         if (result.result === 'OK') {
                             result = result.data;
-                            console.log(keyListener, result);
+                            console.log(`keyListener: ${keyListener}`);
+                            console.table(result);
                             if (event.actionType === 'query') {
                                 if (targetViewField.format.viewType === 'combobox') {   // got combobox options
                                     // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
                                     const combobox = <ComboboxComponent>childrenArray[current_index].dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
                                     combobox.setOptions(result);
                                 } else {                                                // got field value
-                                    childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
+                                    //     childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
+                                    // Patch all the values we got from query
+                                    for (var k in result[0]) {
+                                        if (result[0].hasOwnProperty(k)) {
+                                            childrenArray[current_index].form.patchValue({ [k]: result[0][k] });
+                                        }
+                                    }
                                 }
                             } else {  // query_style
                                 let element = _this.formData[current_index].find(field => field.name === keyListener);
@@ -501,6 +508,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                         else {
                             // Show error snackbar
+                            console.log(`keyListener: ${keyListener}`);
+                            console.table(result);
+
                             console.log(result);
                             _this._toastService.showErrorToast(result.reason);
                         }
