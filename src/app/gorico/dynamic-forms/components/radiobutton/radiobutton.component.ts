@@ -21,20 +21,21 @@ export class RadiobuttonComponent implements OnInit {
 
   chosenItem: any;
 
-  constructor(private pubsubService: NgxPubSubService) {}
+  constructor(private pubsubService: NgxPubSubService) { }
   ngOnInit() {
-      console.log(this.field);
-      this.chosenItem = this.field.options.find(o => o.id === this.field.value);
+    console.log(this.field);
+    this.chosenItem = this.field.options.find(o => o.id === this.field.value);
   }
 
   onCheck(event: any): void {
     const _this = this;
 
     console.log(event);
+    console.log(_this.field.eventName);
 
     if (_this.field.eventName !== null) {
-        // wait a while before triggering the event
-        setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet:_this.field.fullValueSet, data: event.value, type:'radiobutton'}); }, 50);
-      }
+      // wait a while before triggering the event
+      setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: event.value.id, type: 'radiobutton' }); }, 50);
+    }
   }
 }
