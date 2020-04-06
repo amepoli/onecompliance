@@ -349,8 +349,6 @@ function getNewQuery(entry_params, table_keys) {
 
     let entry_keys = entry_params.form_keys;
 
-    let mqString = '';
-
     let defaultValues = {};
 
     let comboQueries = [];
@@ -358,21 +356,8 @@ function getNewQuery(entry_params, table_keys) {
     let keyTypes = getKeyTypes(entry_keys);
 
     entry_keys.forEach(element => {
-        if (element.autoGenerate && element.autoGenerate === true && element.format.dataType === 'number') {  // there should be only one entry, otherwise last one dominates 
-            mqString = 'SELECT (MAX(' + element.key + ')+1) AS ' + element.key + ' FROM ' + entry_params.origin;
-            let comma = ' WHERE ';
-            for (const key in table_keys) {
-                if (table_keys.hasOwnProperty(key)) {
-                    let keyType = keyTypes.find(e => (e.key === key));
-                    if (!keyType.isPrimary) continue; // avoid to add subtables foreing keys to the WHERE condition
-                    let delimiter = (keyType.dataType === 'text') ? '\'' : '';
-                    let element = table_keys[key];
-                    let fieldString = comma + key + '=' + delimiter + element + delimiter;
-                    mqString = mqString + fieldString;
-                    comma = ' AND '; // needed only the first time
-                }
-            }
-        } else { // set other keys' values and check for combobox queries
+
+        // set keys' default values and check for combobox queries
             let obj = new Object;
             if (table_keys[element.key]) {
                 obj[element.key] = table_keys[element.key];
@@ -387,11 +372,9 @@ function getNewQuery(entry_params, table_keys) {
                 comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
                 comboQueries.push({ key: element.key, comboQuery: comboQuery });
             }
-        }
-
     });
 
-    return { mainQuery: mqString, comboQueries: comboQueries, preProcessQueries: [], postProcessQueries: [], defaultValues: defaultValues };
+    return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: [], postProcessQueries: [], defaultValues: defaultValues };
 }
 
 function getInsertUpdateQuery(entry_params, keys, newRecord) {
@@ -407,6 +390,8 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
     let keyTypes = getKeyTypes(entry_keys);
 
     let primaryKeys = entry_keys.filter(key => key.isPrimary === true);
+
+    let autoGenKey = entry_keys.find(key => key.autoGenerate === true);
 
     // process pre-defined queries for table/form view, if any
     if (entry_params.predefinedQueries) {
@@ -431,7 +416,27 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
     let queryString = newRecord ? 'INSERT INTO ' + entry_params.origin + ' (' : 'UPDATE ' + entry_params.origin + ' SET ';
 
-    let comma = ''; // first entry has no comma 
+    let mqString;
+
+    let comma; 
+
+    if (autoGenKey != null && newRecord) {  // retrieve the new ID 
+        mqString = 'SELECT (MAX(' + autoGenKey + ')+1) FROM ' + entry_params.origin;
+        comma = ' WHERE ';
+        for (const key in keys) {
+            if (keys.hasOwnProperty(key)) {
+                let keyType = keyTypes.find(e => (e.key === key));
+                if (!keyType.isPrimary) continue; // avoid to add non primary keys to the WHERE condition
+                let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+                let element = keys[key];
+                let fieldString = comma + key + '=' + delimiter + element + delimiter;
+                mqString = mqString + fieldString;
+                comma = ' AND '; // needed only the first time
+            }
+        }
+    }
+    
+    comma = ''; // first entry has no comma 
 
     let values = {};
 
@@ -443,8 +448,10 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
         let value;
 
-        if (!keys[element.key]) {  // no value passed for the key
-            if (element.format.value) {
+        if (keys[element.key] == null) {  // no value passed for the key
+            if (element.autoGenerate && newRecord) {  // it is an autogenerate value
+                value = '(' + mqString + ')'; // pass the generation query string as value  
+            } else if (element.format.value) {
                 value = element.format.value; // use default value 
             } else {
                 return;   // no value passed and no default, skip the key
@@ -555,6 +562,10 @@ async function processPreMainPost(queryString, client, notFullTable) {
     let queryData = [{}];
 
     console.log('queryString : ', queryString);
+
+    if (queryString == null) {
+        return queryData;
+    }
 
     // pre-processing
     if (queryString.preProcessQueries != null && queryString.preProcessQueries.length) {
@@ -899,7 +910,7 @@ exports.handler = async (event, context) => {
 
     var flags = { readOnly: readOnly }; // if this is a get signal to frontend this is a readonly table
 
-    var queryData = {};
+    var queryData;
 
     var queryString = {};
 
@@ -946,7 +957,7 @@ exports.handler = async (event, context) => {
         // process comboboxes and/or event queries 
         if (method === 'GET' && dashboardIndex == null || isEventUpdate) {
 
-            if (queryData != null && isNewRecord && queryString.defaultValues) { // only for new records, merge default values
+            if (queryData != null && isNewRecord && queryString.defaultValues != null) { // only for new records, merge default values
                 queryData.forEach(item => {
                     Object.assign(item, queryString.defaultValues);
                 });

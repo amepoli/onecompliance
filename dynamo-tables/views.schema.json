@@ -212,77 +212,14 @@
                     },
                     "inputEvents": {
                         "type": "array",
-                        "description": "?: input events associated with the field",
+                        "description": "?: input events associated with the view, only working with form views",
                         "items": {
                             "type": "object",
                             "required": [
                                 "eventName",
                                 "actionType",
                                 "condition",
-                                "values"
-                            ],
-                            "anyOf": [
-                                {
-                                    "properties": {
-                                        "actionType": {
-                                            "enum": [
-                                                "showView",
-                                                "hideView",
-                                                "toggleView"
-                                            ]
-                                        }
-                                    }
-                                },
-                                {
-                                    "properties": {
-                                        "actionType": {
-                                            "enum": [
-                                                "update"
-                                            ]
-                                        }
-                                    },
-                                    "required": [
-                                        "updateFunct"
-                                    ]
-                                },
-                                {
-                                    "properties": {
-                                        "actionType": {
-                                            "enum": [
-                                                "update_style"
-                                            ]
-                                        }
-                                    },
-                                    "required": [
-                                        "updateFunct",
-                                        "styleAttribute"
-                                    ]
-                                },
-                                {
-                                    "properties": {
-                                        "actionType": {
-                                            "enum": [
-                                                "query"
-                                            ]
-                                        }
-                                    },
-                                    "required": [
-                                        "queryFunct"
-                                    ]
-                                },
-                                {
-                                    "properties": {
-                                        "actionType": {
-                                            "enum": [
-                                                "query_style"
-                                            ]
-                                        }
-                                    },
-                                    "required": [
-                                        "queryFunct",
-                                        "styleAttribute"
-                                    ]
-                                }
+                                "keys"
                             ],
                             "additionalProperties": false,
                             "properties": {
@@ -292,15 +229,9 @@
                                 },
                                 "actionType": {
                                     "type": "string",
-                                    "description": "M: action triggered, also specify styleAttribute if *_style and/or queryFunct if query* and/or updateFunct if update*",
+                                    "description": "M: action triggered",
                                     "enum": [
-                                        "update",
-                                        "update_style",
-                                        "showView",
-                                        "hideView",
-                                        "toggleView",
-                                        "query",
-                                        "query_style"
+                                        "showView"
                                     ]
                                 },
                                 "condition": {
@@ -313,16 +244,9 @@
                                         "lessThan"
                                     ]
                                 },
-                                "values": {
-                                    "type": "array",
-                                    "description": "M: set of values to compare with, condition must be verified for all of them but '*' jolly values. '£' contoured local variables also possible.  Unused (empty) if condition = 'none'",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                },
                                 "keys": {
                                     "type": "array",
-                                    "description": "M: set of keys to compare with.",
+                                    "description": "M: set of keys to compare",
                                     "items": {
                                         "type": "object",
                                         "description": "M: set of sender and receiver values to compare with",
@@ -333,31 +257,15 @@
                                             "properties": {
                                                 "sender": {
                                                     "type": "string",
-                                                    "description": "M: value coming from sender"
+                                                    "description": "M: sender key/value"
                                                 },
                                                 "receiver": {
                                                     "type": "string",
-                                                    "description": "M: value coming from receiver"
+                                                    "description": "M: receiver key to compare with"
                                                 }
                                             }
                                         }
                                     }
-                                },
-                                "styleAttribute": {
-                                    "type": "string",
-                                    "description": "?: style attibute affected, mandatory if actionType = *_style",
-                                    "enum": [
-                                        "background_color",
-                                        "font_color"
-                                    ]
-                                },
-                                "updateFunct": {
-                                    "type": "string",
-                                    "description": "?: expression to evaluate the value in case of actionType = update* event, typically with £ contoured local parameters"
-                                },
-                                "queryFunct": {
-                                    "type": "string",
-                                    "description": "?: query to perform in case of actionType = query* event. If it is query_style then the returned key must have name <key>_<styleAttribute>"
                                 }
                             }
                         }

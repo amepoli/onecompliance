@@ -424,50 +424,46 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // console.log(`keyListener: ${keyListener}`);
         console.log(event, value, keyListener);
 
-        if (event.actionType === 'showView' || event.actionType === 'hideView' || event.actionType === 'toggleView') {
-            console.log(`Action type: ${event.actionType}`);
+        // check first if this is a viewProperties event
+        if (event.actionType === 'showView' && event.condition === 'equalTo') {
 
             // Check if view_properties contains keys 
             if (event.keys != null) {
-                // Check each Form Data to see if the sender and receiver IDs are found
+                // Check each form table line to see if the condition is met
                 _this.formData.forEach((formKeys, i) => {
-                    let senderId = null;
-                    let senderValue = null;
-                    let receiverId = null;
-                    let receiverValue = null;
+
+                    let matchingKeys = true;
+                    let matchingValues = true;
 
                     // Run for each key
                     event.keys.forEach(key => {
-                        let receiverEntry: any = formKeys.find(x => x.label === key.receiver);
+
+                        let senderValue;
+                        const receiverEntry: any = formKeys.find(x => x.label === key.receiver);
+                        const receiverValue = receiverEntry ? receiverEntry.value : key.receiver;
 
                         // If it's %value%, put in values variables
                         if (key.sender.includes('%value%')) {
                             senderValue = value.data;
-                            receiverValue = receiverEntry ? receiverEntry.value : key.receiver;
+                            if (senderValue !== receiverValue) {
+                                matchingValues = false;
+                            } 
                         }
-
-                        // Otherwise, they must be IDs
-                        else {
-                            senderId = value.valueSet[key.sender] ? value.valueSet[key.sender] : key.sender;
-                            receiverId = receiverEntry ? receiverEntry.value : key.receiver;
+                        else {  // compare keys
+                            senderValue = value.valueSet[key.sender] ? value.valueSet[key.sender] : key.sender;
+                            if (senderValue !== receiverValue) {
+                                matchingKeys = false;
+                            } 
                         }
                     });
 
-                    // console.log(`SenderId: ${senderId} SenderValue: ${senderValue}`);
-                    // console.log(`ReceiverId: ${receiverId} ReceiverValue: ${receiverValue}`);
-
-                    // Check if IDs matched
-                    if (senderId === receiverId) {
-
-                        // If value matches, show the view
-                        if (senderValue === receiverValue) {
-                            _this.hiddenRows[i] = false;
-                        }
-                        // Hide it
-                        else {
-                            _this.hiddenRows[i] = true;
-                        }
+                    // Perform action based on conditions check above
+                    if (!matchingKeys) {
+                        return; // the message is not for this row
                     }
+
+                    _this.hiddenRows[i] = !matchingValues;
+            
                 });
             }
             return;
