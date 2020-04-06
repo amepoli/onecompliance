@@ -11,7 +11,25 @@
         {
             "viewType": "formView",
             "propertyType": "isHidden",
-            "queryString": "select id_domanda_rif IS NOT NULL as label from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$;"
+            "queryString": "select id_domanda_rif IS NOT NULL as label from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$;",
+            "inputEvents": [
+                {
+                    "eventName": "toggle_question",
+                    "actionType": "showView",
+                    "condition": "equalTo",
+                    "values": [],
+                    "keys": [
+                        {
+                            "sender": "id_domanda",
+                            "receiver": "id_domanda_rif"
+                        },
+                        {
+                            "sender": "%value%",
+                            "receiver": "id_risposta_prev_rif"
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "form_keys": [
@@ -24,6 +42,28 @@
             "format": {
                 "viewType": "input",
                 "dataType": "text"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "id_domanda_rif",
+            "label": "id_domanda_rif",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "id_risposta_prev_rif",
+            "label": "id_risposta_prev_rif",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
             }
         },
         {
@@ -146,6 +186,10 @@
                             "viewType": "radiobutton",
                             "options": [],
                             "comboQuery": "select id_risposta_prev as id, risposta as name from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£;"
+                        },
+                        "outputEvent": {
+                            "eventName": "toggle_question",
+                            "eventTrigger": "change"
                         }
                     }
                 ]

@@ -101,6 +101,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     numRows = 1;
 
     viewKeys: formViewKey[]; // view form fields as specified by the backend
+    viewProperties: any[];
 
     currentKeys: any; // relevant keys passed by the parent component 
 
@@ -157,6 +158,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if (_this.viewKeys == null) {
                         return;                         // no formKeys defined for the table, stop here
                     }
+
+                    // Get View properties if exist
+                    _this.viewProperties = params.view_properties;
+                    if (_this.viewProperties && _this.viewProperties.length) {
+                        _this.viewProperties.forEach(viewProperty => {
+                            // Subscribe to all the input Events
+                            if (viewProperty.inputEvents && viewProperty.inputEvents.length) {
+                                viewProperty.inputEvents.forEach(event => {
+                                    const subcription = _this.pubsubService.subscribe(event.eventName,
+                                        value => {
+                                            _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
+                                        });
+                                    _this.subscriptions.push(subcription);
+                                });
+                            }
+                        });
+                    }
+
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
                     _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables });
                     // handle input events
@@ -309,7 +328,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 name: field.key,
                 type: field.format.viewType,
                 index: index,
-                fullValueSet: values,
+                fullValueSet: values[index],
                 value: (element != null) ? ((element.options != null) ? element.value : element) : null,
                 inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
                 readonly: _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
@@ -324,6 +343,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 subform: (field.format.viewType === 'subform') ? _this.getFieldValues(field.format.subform_keys, values, index) : null
             };
         }
+        console.table(fieldValue);
         return fieldValue;
     }
 
@@ -398,10 +418,60 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     // callback for pubSub events, value has form of {origin, index, valueSet, data}
     private eventCallback(event: any, value: any, keyListener: string): void {
         const _this = this;
-        console.table(event);
-        console.table(value);
+        // console.table(event);
+        // console.table(value);
+        // console.table(_this.formData);
+        // console.log(`keyListener: ${keyListener}`);
+        console.log(event, value, keyListener);
 
-        console.log('Received event: ' + event + ' with value: ' + value);
+        if (event.actionType === 'showView' || event.actionType === 'hideView' || event.actionType === 'toggleView') {
+            console.log(`Action type: ${event.actionType}`);
+
+            // Check if view_properties contains keys 
+            if (event.keys != null) {
+                // Check each Form Data to see if the sender and receiver IDs are found
+                _this.formData.forEach((formKeys, i) => {
+                    let senderId = null;
+                    let senderValue = null;
+                    let receiverId = null;
+                    let receiverValue = null;
+
+                    // Run for each key
+                    event.keys.forEach(key => {
+                        let receiverEntry: any = formKeys.find(x => x.label === key.receiver);
+
+                        // If it's %value%, put in values variables
+                        if (key.sender.includes('%value%')) {
+                            senderValue = value.data;
+                            receiverValue = receiverEntry ? receiverEntry.value : key.receiver;
+                        }
+
+                        // Otherwise, they must be IDs
+                        else {
+                            senderId = value.valueSet[key.sender] ? value.valueSet[key.sender] : key.sender;
+                            receiverId = receiverEntry ? receiverEntry.value : key.receiver;
+                        }
+                    });
+
+                    // console.log(`SenderId: ${senderId} SenderValue: ${senderValue}`);
+                    // console.log(`ReceiverId: ${receiverId} ReceiverValue: ${receiverValue}`);
+
+                    // Check if IDs matched
+                    if (senderId === receiverId) {
+
+                        // If value matches, show the view
+                        if (senderValue === receiverValue) {
+                            _this.hiddenRows[i] = false;
+                        }
+                        // Hide it
+                        else {
+                            _this.hiddenRows[i] = true;
+                        }
+                    }
+                });
+            }
+            return;
+        }
 
         if (event.condition === 'equalTo') {
             // normalize if boolean conditions
@@ -525,6 +595,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 childrenArray[value.index].form.patchValue({ [keyListener]: eval(resolvedFunct) });
             }
         }
+
     }
 
 }
