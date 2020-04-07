@@ -391,7 +391,9 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
     let primaryKeys = entry_keys.filter(key => key.isPrimary === true);
 
-    let autoGenKey = entry_keys.find(key => key.autoGenerate === true);
+    let autoGenKeyEntry = entry_keys.find(key => key.autoGenerate === true);
+
+    let autoGenKey = autoGenKeyEntry != null && autoGenKeyEntry.key != null ? autoGenKeyEntry.key : null;
 
     // process pre-defined queries for table/form view, if any
     if (entry_params.predefinedQueries) {
@@ -416,26 +418,30 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
     let queryString = newRecord ? 'INSERT INTO ' + entry_params.origin + ' (' : 'UPDATE ' + entry_params.origin + ' SET ';
 
-    let mqString;
+    let genString;
 
     let comma; 
 
+    console.log ("atogen: ", autoGenKey, " newR: ", newRecord);
+
     if (autoGenKey != null && newRecord) {  // retrieve the new ID 
-        mqString = 'SELECT (MAX(' + autoGenKey + ')+1) FROM ' + entry_params.origin;
+        genString = 'SELECT (MAX(' + autoGenKey + ')+1) FROM ' + entry_params.origin;
         comma = ' WHERE ';
         for (const key in keys) {
             if (keys.hasOwnProperty(key)) {
                 let keyType = keyTypes.find(e => (e.key === key));
-                if (!keyType.isPrimary) continue; // avoid to add non primary keys to the WHERE condition
+                if (!keyType.isPrimary || keyType.key === autoGenKey) continue; // avoid to add non primary keys to the WHERE condition
                 let delimiter = (keyType.dataType === 'text') ? '\'' : '';
                 let element = keys[key];
                 let fieldString = comma + key + '=' + delimiter + element + delimiter;
-                mqString = mqString + fieldString;
+                genString = genString + fieldString;
                 comma = ' AND '; // needed only the first time
             }
         }
+
+        console.log ("genString: ", genString);
     }
-    
+
     comma = ''; // first entry has no comma 
 
     let values = {};
@@ -448,10 +454,10 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
         let value;
 
-        if (keys[element.key] == null) {  // no value passed for the key
-            if (element.autoGenerate && newRecord) {  // it is an autogenerate value
-                value = '(' + mqString + ')'; // pass the generation query string as value  
-            } else if (element.format.value) {
+        if (element.autoGenerate && newRecord && genString != null) {  // it is an autogenerate value
+            value = '(' + genString + ')'; // pass the generation query string as value 
+        } else if (keys[element.key] == null) {  // no value passed for the key
+            if (element.format.value) {
                 value = element.format.value; // use default value 
             } else {
                 return;   // no value passed and no default, skip the key
@@ -486,6 +492,11 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             queryString = queryString + fieldString;
             comma = ', '; // needed only the first time
         }
+        if (autoGenKey != null) {
+            queryString += ') RETURNING ' + autoGenKey;
+        } else {
+            queryString += ')';
+        }
     } else { // add WHERE conditions to UPDATE query
         comma = ' WHERE ';
         primaryKeys.forEach(primaryKey => {
@@ -498,7 +509,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         });
     }
 
-    queryString = newRecord ? queryString + ');' : queryString + ';';
+    queryString += ';';
 
     return { mainQuery: queryString, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
 
@@ -1012,16 +1023,21 @@ exports.handler = async (event, context) => {
                 let keys = body[index];
                 // filter out the primary keys from the row
                 let primaryKeys = {};
+                let newRecord = false;
                 entry_params.form_keys.forEach(key => {
-                    if (key.isPrimary && keys[key.key] != null) {
+                    if (key.isPrimary && keys[key.key] != null && keys[key.key] !== '') {
                         primaryKeys[key.key] = keys[key.key];
+                    } else if (key.isPrimary && (keys[key.key] == null || keys[key.key] === '')) {
+                        newRecord = true;   // found a null/empty primary key, we are pushing a new record!
                     }
                 });
-                // have to check if the record exists (update) or is new (insert), so try to recover it
-                queryString = getTableQuery(entry_params, primaryKeys, true, null);
-                queryData = await processPreMainPost(queryString, client, true);
-                // perform insert or update depending on previous query
-                let newRecord = queryData.length ? false : true;
+                if (!newRecord) {
+                    // have to check if the record exists (update) or is new (insert), so try to recover it
+                    queryString = getTableQuery(entry_params, primaryKeys, true, null);
+                    queryData = await processPreMainPost(queryString, client, true);
+                    // perform insert or update depending on previous query
+                    newRecord = queryData.length ? false : true;
+                }
                 queryString = getInsertUpdateQuery(entry_params, keys, newRecord);
                 queryStrings.push(queryString);
             }

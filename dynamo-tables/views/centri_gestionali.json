@@ -146,7 +146,12 @@
       },
       {
         "operation": "insert",
-        "queryString": "INSERT INTO entrasp.centri_gestionali (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro) VALUES ($codice_part$, $id_centro_gest$, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, £next_id_gruppo£);",
+        "queryString": "SELECT MAX(id_centro_gest)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part=$codice_part$;",
+        "type": "preProcessing"
+      },
+      {
+        "operation": "insert",
+        "queryString": "INSERT INTO entrasp.centri_gestionali (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro) VALUES ($codice_part$, £next_id£, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, £next_id_gruppo£);",
         "type": "main"
       },
       {
