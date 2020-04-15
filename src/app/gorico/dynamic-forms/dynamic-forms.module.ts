@@ -9,6 +9,7 @@ import { ButtonComponent } from './components/button/button.component';
 import { SelectComponent } from './components/select/select.component';
 import { DateComponent } from './components/date/date.component';
 import { RadiobuttonComponent } from './components/radiobutton/radiobutton.component';
+import { CheckboxGroupComponent } from './components/checkboxgroup/checkboxgroup.component';
 import { CheckboxComponent } from './components/checkbox/checkbox.component';
 import { DynamicFieldDirective } from './components/dynamic-field/dynamic-field.directive';
 import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.component';
@@ -26,6 +27,7 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     SelectComponent,
     DateComponent,
     RadiobuttonComponent,
+    CheckboxGroupComponent,
     CheckboxComponent,
     DynamicFieldDirective,
     DynamicFormComponent,
@@ -47,19 +49,21 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     SelectComponent,
     DateComponent,
     RadiobuttonComponent,
+    CheckboxGroupComponent,
     CheckboxComponent,
     DynamicFieldDirective,
     DynamicFormComponent,
     ComboboxComponent,
     TextAreaComponent,
     SubformComponent
-  ], 
+  ],
   entryComponents: [
     InputComponent,
     ButtonComponent,
     SelectComponent,
     DateComponent,
     RadiobuttonComponent,
+    CheckboxGroupComponent,
     CheckboxComponent,
     ComboboxComponent,
     TextAreaComponent,
@@ -67,4 +71,4 @@ import { MAT_DATE_LOCALE } from '@angular/material';
   ],
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'it-IT' }]
 })
-export class DynamicFormsModule {}
+export class DynamicFormsModule { }
