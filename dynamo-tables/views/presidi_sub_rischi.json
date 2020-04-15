@@ -1,37 +1,40 @@
 {"$schema": "../views.schema.json",
-"entryKey": "rischi_presidi", 
+"entryKey": "presidi_sub_rischi", 
 "form_keys": [
 		{"autoGenerate": false, 
 		"format": {
 			"viewType":"input",
 		"dataType":"number"}, 
-		"label": "id_presidio",
+		"label": "ID presidio",
 		"key": "id_presidio",
 		"readOnly": false,
 		"isHidden": true,
-		"isPrimary": false,
+		"isPrimary": true,
 		"newLine": false
 		}, 
-		{"autoGenerate": false, 
-		"format": {
-			"viewType":"input",
-		"dataType":"text"}, 
-		"label": "codice_rischio",
-		"key": "codice_rischio",
-		"readOnly": false,
-		"isHidden": false,
-		"isPrimary": false,
-		"newLine": false
-		}, 
-		{"autoGenerate": false, 
+		{
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT codice_rischio AS id, entrasp.rischi_cod_tit(codice_azienda, cod_rischio) AS name  FROM rischi WHERE codice_azienda=$codice_azienda$;",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "codice_rischio",
+            "label": "Cod.rischio",
+            "newLine": true,
+            "readOnly": false
+          }, 
+		{ 
 		"format": {
 			"viewType":"input",
 		"dataType":"text"}, 
 		"label": "codice_azienda",
 		"key": "codice_azienda",
 		"readOnly": false,
-		"isHidden": false,
-		"isPrimary": false,
+		"isHidden": true,
+		"isPrimary": true,
 		"newLine": true
 		}, 
 		{"autoGenerate": false, 
@@ -126,11 +129,11 @@
 		}, 
 		{
 		"format": {"dataType":"text"},
-		"isHidden": true, 
+		"isHidden": false, 
 		"isPrimary": false, 
 		"key": "codice_rischio",
 		"label": "codice_rischio",
-"queryFunct":	"entrasp.rischi_cod_tit(codice_azienda, cod_rischio text)"
+"queryFunct":	"entrasp.rischi_cod_tit(codice_azienda, cod_rischio)"
 }, 
 		{
 		"format": {"dataType":"text"},
@@ -162,7 +165,7 @@
 		}, 
 		{
 		"format": {"dataType":"number"},
-		"isHidden": true, 
+		"isHidden": false, 
 		"isPrimary": false, 
 		"key": "pct_mitigazione_probabilita_rettificata",
 		"label": "pct_mitigazione_probabilita_rettificata"
