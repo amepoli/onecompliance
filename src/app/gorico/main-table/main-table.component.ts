@@ -162,6 +162,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                         (_this.tableType === 'form'), false, null, true).subscribe(
                             response => {
                                 _this._dialogService.closeDialog();
+                                console.log(response);
                                 if (response.result === 'OK') {
                                     // File is okay.
                                     // Let's try to download it using simple window method first

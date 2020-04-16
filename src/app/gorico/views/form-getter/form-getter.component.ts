@@ -152,6 +152,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this;
         _this.backendService.getView(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.formParams.keys).subscribe(
             results => {
+                console.log(results);
                 if (results.result === 'OK') {
                     const params = results.data;
                     _this.viewKeys = params.form_keys;
@@ -275,6 +276,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this;
         _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, null, true, true, null, false).subscribe(
             result => {
+                console.log(result);
                 if (result.result === 'OK') {
                     result = result.data;
                     // update the status to prevent the whole table refresh
