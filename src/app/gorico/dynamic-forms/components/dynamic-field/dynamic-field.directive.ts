@@ -13,6 +13,7 @@ import { ButtonComponent } from "../button/button.component";
 import { SelectComponent } from "../select/select.component";
 import { DateComponent } from "../date/date.component";
 import { RadiobuttonComponent } from "../radiobutton/radiobutton.component";
+import { CheckboxGroupComponent } from "../checkboxgroup/checkboxgroup.component";
 import { CheckboxComponent } from "../checkbox/checkbox.component";
 import { ComboboxComponent } from "../combobox/combobox.component";
 import { TextAreaComponent } from '../textarea/textarea.component';
@@ -24,6 +25,7 @@ const componentMapper = {
   select: SelectComponent,
   date: DateComponent,
   radiobutton: RadiobuttonComponent,
+  checkboxgroup: CheckboxGroupComponent,
   checkbox: CheckboxComponent,
   combobox: ComboboxComponent,
   textarea: TextAreaComponent,
@@ -39,7 +41,7 @@ export class DynamicFieldDirective implements OnInit {
   constructor(
     private resolver: ComponentFactoryResolver,
     private container: ViewContainerRef
-  ) {}
+  ) { }
   ngOnInit() {
     const factory = this.resolver.resolveComponentFactory(
       componentMapper[this.field.type]

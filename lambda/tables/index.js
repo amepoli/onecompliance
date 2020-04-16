@@ -177,7 +177,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     for (index = 0; index < entry_keys.length; index++) {
         let element = entry_keys[index];
         if (isForm) { // check if combobox, then save query fields for later processing
-            if (element.format.viewType === 'combobox' || element.format.viewType === 'radiobutton') {
+            if (element.format.viewType === 'combobox' || element.format.viewType === 'radiobutton' || element.format.viewType === 'checkboxgroup') {
                 let comboQuery = element.format.comboQuery;
                 if (comboQuery != null) {
                     comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
@@ -358,20 +358,20 @@ function getNewQuery(entry_params, table_keys) {
     entry_keys.forEach(element => {
 
         // set keys' default values and check for combobox queries
-            let obj = new Object;
-            if (table_keys[element.key]) {
-                obj[element.key] = table_keys[element.key];
-            } else if (element.format.hasOwnProperty('value')) {
-                obj[element.key] = element.format.value;
-            } else {
-                obj[element.key] = '';
-            }
-            Object.assign(defaultValues, obj);
-            let comboQuery = element.format.comboQuery;
-            if (comboQuery) {
-                comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
-                comboQueries.push({ key: element.key, comboQuery: comboQuery });
-            }
+        let obj = new Object;
+        if (table_keys[element.key]) {
+            obj[element.key] = table_keys[element.key];
+        } else if (element.format.hasOwnProperty('value')) {
+            obj[element.key] = element.format.value;
+        } else {
+            obj[element.key] = '';
+        }
+        Object.assign(defaultValues, obj);
+        let comboQuery = element.format.comboQuery;
+        if (comboQuery) {
+            comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
+            comboQueries.push({ key: element.key, comboQuery: comboQuery });
+        }
     });
 
     return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: [], postProcessQueries: [], defaultValues: defaultValues };
@@ -420,9 +420,9 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
     let genString;
 
-    let comma; 
+    let comma;
 
-    console.log ("atogen: ", autoGenKey, " newR: ", newRecord);
+    console.log("atogen: ", autoGenKey, " newR: ", newRecord);
 
     if (autoGenKey != null && newRecord) {  // retrieve the new ID 
         genString = 'SELECT (MAX(' + autoGenKey + ')+1) FROM ' + entry_params.origin;
@@ -439,7 +439,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             }
         }
 
-        console.log ("genString: ", genString);
+        console.log("genString: ", genString);
     }
 
     comma = ''; // first entry has no comma 

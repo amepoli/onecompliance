@@ -11,7 +11,7 @@ import { ToastService } from 'app/gorico/services/toast.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
-export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'radiobutton' | 'button' | 'subform';
+export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'radiobutton' | 'checkboxgroup' | 'button' | 'subform';
 
 export type eventActionType = 'show' | 'update' | 'query' | 'update_style' | 'query_style';
 
@@ -447,13 +447,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             senderValue = value.data;
                             if (senderValue !== receiverValue) {
                                 matchingValues = false;
-                            } 
+                            }
                         }
                         else {  // compare keys
                             senderValue = value.valueSet[key.sender] ? value.valueSet[key.sender] : key.sender;
                             if (senderValue !== receiverValue) {
                                 matchingKeys = false;
-                            } 
+                            }
                         }
                     });
 
@@ -463,7 +463,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
 
                     _this.hiddenRows[i] = !matchingValues;
-            
+
                 });
             }
             return;
