@@ -26,7 +26,7 @@ export class RadiobuttonComponent implements OnInit {
     const _this = this;
     console.log(_this.field);
     _this.chosenItem = _this.field.options.find(o => o.id === _this.field.value);
-    // trigger an event the first time
+    // trigger an event the first time 
     setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'radiobutton' }); }, 50);
   }
 

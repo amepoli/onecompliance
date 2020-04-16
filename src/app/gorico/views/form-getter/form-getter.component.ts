@@ -343,7 +343,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 subform: (field.format.viewType === 'subform') ? _this.getFieldValues(field.format.subform_keys, values, index) : null
             };
         }
-        console.table(fieldValue);
+        //console.table(fieldValue);
         return fieldValue;
     }
 
@@ -547,7 +547,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         if (result.result === 'OK') {
                             result = result.data;
                             console.log(`keyListener: ${keyListener}`);
-                            console.table(result);
+                            //console.table(result);
                             if (event.actionType === 'query') {
                                 if (targetViewField.format.viewType === 'combobox') {   // got combobox options
                                     // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
@@ -575,7 +575,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         else {
                             // Show error snackbar
                             console.log(`keyListener: ${keyListener}`);
-                            console.table(result);
+                            //console.table(result);
 
                             console.log(result);
                             _this._toastService.showErrorToast(result.reason);

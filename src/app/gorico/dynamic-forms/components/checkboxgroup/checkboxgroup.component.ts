@@ -47,7 +47,7 @@ export class CheckboxGroupComponent implements OnInit {
     const _this = this;
 
     this.selection[id] = checked ? 1 : 0;
-    console.table(this.selection);
+    //console.table(this.selection);
     console.log(_this.field.eventName);
 
     if (_this.field.eventName !== null) {
