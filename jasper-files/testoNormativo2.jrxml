@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-04-10T15:29:56 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="testoNormativo" pageWidth="595" pageHeight="842" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" whenResourceMissingType="Empty" uuid="d26c6182-e27a-4f58-9157-55acab90753d">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="testiNormativi"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="it.interprise.core.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="PATH_IMG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new String ("http://localhost/core/images/SICC/")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="mainQuery" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select an.descrizione as an_descr, an.codice_articolo_normativo as an_cod_art_norm, an.rubrica as an_rub, an.rif_esterno_url as an_rifesturl, an.id_testo_normativo as an_id_test_norm, r.codice as r_cod, r.titolo as r_tit from entrasp.testi_normativi tn join entrasp.articoli_normativi an on  tn.id_testo_normativo = an.id_testo_normativo right join entrasp.rischi_articoli_normativi ran on an.id_testo_normativo = ran.id_testo_normativo and an.codice_articolo_normativo = ran.codice_articolo_normativo right join entrasp.rischi r on r.codice_azienda = ran.codice_azienda and r.codice_rischio = ran.codice_rischio where r.codice_azienda='FINAFARM'"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{mainQuery}]]>
+	</queryString>
+	<field name="an_descr" class="java.lang.String"/>
+	<field name="an_cod_art_norm" class="java.lang.String"/>
+	<field name="an_rub" class="java.lang.String"/>
+	<field name="an_rifesturl" class="java.lang.String"/>
+	<field name="an_id_test_norm" class="java.math.BigDecimal"/>
+	<field name="r_cod" class="java.lang.String"/>
+	<field name="r_tit" class="java.lang.String"/>
+	<group name="Gruppo1">
+		<groupExpression><![CDATA[$F{r_cod}]]></groupExpression>
+		<groupHeader>
+			<band height="31">
+				<textField>
+					<reportElement x="172" y="1" width="88" height="22" uuid="141d686b-11f9-4786-9e6e-dda705240b9e"/>
+					<textElement>
+						<font size="16" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{r_cod}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="170" height="23" uuid="f3bfe234-86dd-49fc-a209-ec1229c96bca"/>
+					<textElement>
+						<font size="16" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Codice Rischio]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="276" y="2" width="263" height="22" uuid="d398fac8-7b9a-43bc-9c64-bd5596019b1e"/>
+					<textElement>
+						<font size="16" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{r_tit}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="27" width="539" height="1" uuid="676559b4-943f-40da-9741-78194ea241ed"/>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Gruppo5">
+		<groupExpression><![CDATA[$F{an_id_test_norm}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField>
+					<reportElement x="40" y="0" width="100" height="20" uuid="85b7b966-5e01-459b-84bb-519c014eeabf"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{an_id_test_norm}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="144" y="0" width="373" height="20" uuid="2a0f247e-f987-446f-9aa5-a24f82f44796"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{an_rub}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="77" splitType="Stretch">
+			<line>
+				<reportElement x="40" y="-7" width="499" height="1" uuid="9843f223-ee5a-4fd5-b726-588985092915"/>
+			</line>
+			<textField>
+				<reportElement x="101" y="0" width="438" height="20" uuid="796af03f-a3cc-48d7-bd6e-af52a0c0f0bf"/>
+				<textFieldExpression><![CDATA[$F{an_cod_art_norm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="41" y="1" width="59" height="19" uuid="371687b4-158d-43b4-9508-422fd811bc88"/>
+				<text><![CDATA[Codice:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="41" y="20" width="59" height="19" uuid="c2c8998c-68c0-4044-96a7-5cd3d79e1e51"/>
+				<text><![CDATA[URL:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="101" y="20" width="438" height="20" uuid="d2d9492d-57bc-425c-93da-33aaa6360f62"/>
+				<textFieldExpression><![CDATA[$F{an_rifesturl}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement x="42" y="40" width="497" height="20" uuid="d9183043-99ee-4713-beac-09fd29c2a461"/>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="59" height="19" uuid="fe08c0ba-97ec-49aa-a7aa-01456b23d921"/>
+					<text><![CDATA[Descrizione:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="59" y="0" width="438" height="20" uuid="22330cdc-aefb-4637-9e57-d5c04ad86bdb"/>
+					<textFieldExpression><![CDATA[$F{an_descr}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="35">
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="0" y="15" width="100" height="20" uuid="ea0a3fd5-a4a2-4747-81b1-a4d756c2ad69"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="439" y="15" width="100" height="20" uuid="68042134-2810-4edf-a233-8f1a7675ae5e"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="5" width="535" height="1" uuid="2d10d479-d605-4af0-aa59-68d282b1b796"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

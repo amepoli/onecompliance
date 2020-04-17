@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rischi" pageWidth="500" pageHeight="842" columnWidth="496" leftMargin="2" rightMargin="2" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="42ba3d95-981f-49b1-a8b1-e093cfecf244">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="rischiArticoliNormativi"/>
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="it.interprise.core.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="PATH_IMG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new String ("http://localhost/core/images/SICC/")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<field name="codiceRischio" class="java.lang.String"/>
+	<field name="rischio.descrizione" class="java.lang.String"/>
+	<title>
+		<band height="25">
+			<staticText>
+				<reportElement uuid="9aa06b90-d7e8-4cc9-a5eb-28197ec94f2e" mode="Opaque" x="0" y="2" width="47" height="20" backcolor="#C0C0C0"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rischi]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="72" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement uuid="37b29754-1abf-4121-916c-cc35b6550b1b" positionType="Float" x="0" y="22" width="490" height="21"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{rischio.descrizione}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="72c5bfff-58fa-48e4-9c9f-257f58075b7b" positionType="Float" x="0" y="45" width="490" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="37f01fc4-b962-40b7-b23c-c7e0d8975218" x="0" y="2" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{codiceRischio}]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="true">
+				<reportElement uuid="83e5ae07-b3df-4bfa-8468-6c842af09468" key="subreport" positionType="Float" x="0" y="49" width="490" height="18" isRemoveLineWhenBlank="true"/>
+				<parametersMapExpression><![CDATA[new HashMap($P{REPORT_PARAMETERS_MAP})]]></parametersMapExpression>
+				<dataSourceExpression><![CDATA[((JRDataSourceExt)$P{REPORT_DATA_SOURCE}).getDataSource("rischio.rischiPresidi")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{REPORTS_MAP}.get("articoliNormativiPresidiRischi")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

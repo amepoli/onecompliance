@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-02-18T19:27:15 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="procedureAziendali" pageWidth="595" pageHeight="842" columnWidth="567" columnSpacing="567" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="376ede0d-23cd-4d7b-a1bf-664463cad42c">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="procedureAziendali"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="it.interprise.core.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="PATH_IMG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new String ("http://localhost/core/images/SICC/")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="mainQuery" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select descrizione_breve, descrizione,codice_azienda, id_procedura_parent, codice, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gestionale, entrasp.transcofiche_transcodifica(STATO_ATTUAZIONE, codice) as stato_attuazione, entrasp.transcofiche_transcodifica(TIPO_PROCEDURA, codice) as tipo_procedura, entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda) as tipo_processo from entrasp.procedure_aziendali where codice_azienda ='DEMO' and id_procedura=900"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{mainQuery}]]>
+	</queryString>
+	<field name="descrizione_breve" class="java.lang.String"/>
+	<field name="descrizione" class="java.lang.String"/>
+	<field name="codice_azienda" class="java.lang.String"/>
+	<field name="id_procedura_parent" class="java.math.BigDecimal"/>
+	<field name="codice" class="java.lang.String"/>
+	<field name="centro_gestionale" class="java.lang.String"/>
+	<field name="stato_attuazione" class="java.lang.String"/>
+	<field name="tipo_procedura" class="java.lang.String"/>
+	<field name="tipo_processo" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="19" splitType="Stretch"/>
+	</title>
+	<columnHeader>
+		<band height="17" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="82" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField>
+				<reportElement positionType="Float" mode="Opaque" x="77" y="9" width="350" height="20" backcolor="#CCCCCC" uuid="3814410c-1d66-4099-a2ba-d79944133bec"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descrizione_breve}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="Float" x="4" y="31" width="560" height="1" uuid="ce4c55ad-fab0-44ca-9b03-d9727f4c241a"/>
+			</line>
+			<line>
+				<reportElement x="4" y="2" width="560" height="1" uuid="899b4f1a-1db1-41d9-92be-cf46ad0234f3"/>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement mode="Opaque" x="4" y="9" width="68" height="20" backcolor="#CCCCCC" uuid="ab199573-2046-4387-80d5-4c1f637f806d"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codice}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="4" y="35" width="560" height="1" isRemoveLineWhenBlank="true" uuid="c3c8f34d-9dd9-4074-9221-8ca24023d12e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="4" y="39" width="560" height="1" uuid="a3969e21-d20a-4bc2-bafd-f81045c131cf"/>
+				<textFieldExpression><![CDATA[$F{centro_gestionale}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="4" y="44" width="560" height="1" uuid="de18ddf5-03fb-47ee-b675-0636a36b9ee6"/>
+				<textFieldExpression><![CDATA[$F{stato_attuazione}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="4" y="49" width="560" height="1" uuid="5e6818d1-ac92-4f63-8fff-3652efe6146c"/>
+				<textFieldExpression><![CDATA[$F{tipo_procedura}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="4" y="54" width="560" height="1" uuid="1d26e37d-73b5-4511-93d2-7d02a9a3513b"/>
+				<textFieldExpression><![CDATA[$F{tipo_processo}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="20" y="60" width="541" height="1" uuid="f30887ff-00ce-41b2-a326-9436a2c2b7a8"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["procedureAziendali_liv2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="33" splitType="Stretch">
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="29" y="8" width="100" height="20" uuid="de20263b-27a7-43c9-96b8-5894cefb7792"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="244" y="8" width="100" height="20" uuid="60ac1a9f-1ff5-420c-bbb2-3076fe4f7f41"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="3" y="3" width="564" height="1" uuid="54a13e49-05fd-451c-a3b5-f06dbc30cdea"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

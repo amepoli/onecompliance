@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-01-18T15:02:22 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="riepilogoSondaggiSintetico" pageWidth="595" pageHeight="800" columnWidth="567" columnSpacing="567" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="26711f9f-9b34-4f32-a14e-1664312366e6">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="sondaggi"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="80"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="909"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="it.interprise.core.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="PATH_IMG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new String ("http://localhost/core/images/SICC/")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="mainQuery" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select data_comp, data_prevista, mt.titolo, s.descrizione from entrasp.sondaggi s, entrasp.modelli_test mt where s.codice_azienda = mt.codice_azienda and s.id_modello_test = mt.id_modello_test]]>
+	</queryString>
+	<field name="data_comp" class="java.sql.Date"/>
+	<field name="data_prevista" class="java.sql.Date"/>
+	<field name="titolo" class="java.lang.String"/>
+	<field name="descrizione" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="19" splitType="Stretch">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport" x="-15" y="0" width="596" height="17" uuid="3f16312a-5e2b-4dec-a561-3d043b4ddc89"/>
+				<parametersMapExpression><![CDATA[new HashMap($P{REPORT_PARAMETERS_MAP})]]></parametersMapExpression>
+				<dataSourceExpression><![CDATA[((JRDataSourceExt)$P{REPORT_DATA_SOURCE}).getDataSource("azienda")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{REPORTS_MAP}.get("headerGRC")]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="124" splitType="Stretch">
+			<line>
+				<reportElement x="2" y="3" width="564" height="2" uuid="ae7280f1-6b22-42c3-a706-7d1575d7a641"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="9" width="100" height="20" uuid="505246db-83e3-4fd9-a1d5-1ba87650d0ea"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data prevista]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="9" width="100" height="20" uuid="25221ba7-f4eb-48b8-8b7a-13cb2e2f0897"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data competenza]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="29" width="100" height="20" uuid="dfcd171a-56ce-4725-97bd-daafcb9e94e6"/>
+				<textFieldExpression><![CDATA[$F{data_prevista}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2" y="69" width="562" height="20" uuid="b6be57a3-bd0a-4425-9929-acb7b418db2f"/>
+				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport" positionType="Float" x="0" y="103" width="567" height="18" isRemoveLineWhenBlank="true" uuid="4123cffa-8c40-4da9-a127-31a70cb6ec8b"/>
+				<parametersMapExpression><![CDATA[new HashMap($P{REPORT_PARAMETERS_MAP})]]></parametersMapExpression>
+				<dataSourceExpression><![CDATA[((JRDataSourceExt)$P{REPORT_DATA_SOURCE}).getDataSource("modelloTest.tipoModelloTest.rischiTipiTest")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{REPORTS_MAP}.get("sondaggiRischi")]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement positionType="Float" x="2" y="98" width="562" height="1" uuid="9a08fb66-74c8-49b0-9511-346eb2c9bc4d"/>
+			</line>
+			<textField>
+				<reportElement x="0" y="49" width="564" height="20" uuid="078ba3d7-10f9-4b5c-826b-c90c08858bbe"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titolo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="29" width="100" height="20" uuid="e57e282d-115a-45e3-91a0-a8af5b8bfad5"/>
+				<textFieldExpression><![CDATA[$F{data_comp}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="35">
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="26" y="11" width="100" height="20" uuid="fda90bce-eab2-469b-8a27-55b4aadf1dd8"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="241" y="11" width="100" height="20" uuid="ac431284-db98-4589-9565-1b8392f17193"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="6" width="564" height="1" uuid="1c908fee-2d58-4987-ae0c-7af5d63310f8"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
