@@ -114,6 +114,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 if (msg.type === 'print_list') {   // toolbar asking for the list of possible reports in current view
                     _this.backendService.getReportList(_this.tableName, _this.currentTableKeys).subscribe(
                         response => {
+                            console.log(response);
                             if (response.result === 'OK') {
                                 // now give results back to the requester
                                 _this.pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list', value: response.list });
@@ -126,6 +127,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
                     _this.backendService.getReport(_this.tableName, (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'form'), _this.searchKeys).subscribe(
                         response => {
+                            console.log(response) ;
                             if (response.result === 'OK') {
                                 const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
                                 _this.httpClient.get(url, { responseType: 'blob' }).subscribe(

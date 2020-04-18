@@ -14,10 +14,25 @@ const pool = new Pool({
 });
 const request = require('sync-request');
 
-function tableName2BusinessObject (table_name) {
+async function tableName2BusinessObject (table_name) {
     
     if (table_name == null) {
         return null;
+    }
+
+    const DynamoParams = {
+        TableName: 'views',
+        Key: {
+            entryKey: table_name
+        }
+    };
+
+    let entry_params = await dynamo.get(DynamoParams).promise();
+
+    let business_object = entry_params.Item.businessObjectName;
+
+    if (business_object != null) {
+        return business_object;
     }
     
     let lut = {};
@@ -28,7 +43,7 @@ function tableName2BusinessObject (table_name) {
         lut['_' + ch] =  ch.toUpperCase();
     });
     
-    let business_object = '';
+    business_object = '';
     
     while (business_object !== table_name) {
         business_object = table_name;
@@ -80,7 +95,7 @@ function replaceKeys(queryString, keys, keyTypes) {
     return queryString;
 }
 
-function getURLFromServer(mainQuery, subQueries) {
+function getURLFromServer(mainQuery) {
 
     let jsonParams = {
         mainReport: { 
@@ -125,6 +140,11 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
     });
 
     let comma = ((query.indexOf('WHERE') === -1) && (query.indexOf('where') === -1))? ' WHERE ' :  ' AND '; // check if there is already a where condition
+
+    // remove last semicolon if any
+    if (queryString[queryString.length - 1] === ';') {
+        queryString = queryString.slice(0,queryString.length - 1);
+    }
 
     if (keys != null) {
         for (const key in keys) {
@@ -216,7 +236,7 @@ exports.handler = async (event, context) => {
     var DynamoParams = {
     TableName: 'reports',
     Key: {
-        name: entryName
+        name: ''
       }
     };
 
@@ -225,40 +245,26 @@ exports.handler = async (event, context) => {
 
     try {
        
-       const business_object = tableName2BusinessObject(entryName);
-       
-       console.log(business_object);
+       const business_object = await tableName2BusinessObject(entryName);
        
        if (requestType === 'getList') {
            const query = `select * from entrasp.object_reports where context_object='${business_object}';`;
            const response = await client.query(query);
-           body = {result: 'OK', list: response.rows.map(row => row.descrizione)};
-       } else if (requestType === 'getReport') { 
-            const query = `select * from entrasp.object_reports where context_object='${business_object}' and descrizione='${reportName}';`;
-            console.log(query);
-            const response = await client.query(query);
-            const reports = response.rows[0].report_names;
-            if (reports != null) {
-                const reportsArray = reports.split(',');
-                DynamoParams.Key.name = reportsArray.shift();
-                var data = await dynamo.get(DynamoParams).promise();
-                const keyPrefix = data.Item.tableNickname != null ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
-                const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, keys, search_keys, isFormRecord);
-                const mainQuery = { name: DynamoParams.Key.name, query: queryString };
-                var subQueries = [];
-                for (let i = 0; i < reportsArray.length; i++) {
-                    let report = reportsArray[i];
-                    subQueries.push({name: report, query: '' });
-                }
-                const url = await getURLFromServer(mainQuery, subQueries); 
-                if (url != null && url !== '') {
-                    body = {result: 'OK', url: url }; 
-                } else {
-                    body = {result: 'KO', reason:'Something wrong with the server'};
-                }
-            } else {
-                body = {result: 'KO', reason:'Bad Request'};
-            }
+           body = {result: 'OK', list: response.rows.map(row => ({"alias": row.alias, "descrizione": row.descrizione}))};
+       } else if (requestType === 'getReport') {
+           DynamoParams.Key.name = reportName;
+           var data = await dynamo.get(DynamoParams).promise();
+           const keyPrefix = data.Item.tableNickname != null ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
+           const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, keys, search_keys, isFormRecord);
+           const mainQuery = { name: reportName, query: queryString };
+           const url = await getURLFromServer(mainQuery);
+           if (url != null && url !== '') {
+               body = { result: 'OK', url: url };
+           } else {
+               body = { result: 'KO', reason: 'Something wrong with the server' };
+           }
+       } else {
+           body = { result: 'KO', reason: 'Bad Request' };
        }
     } catch (e) {
        console.log(e);

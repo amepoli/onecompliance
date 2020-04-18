@@ -35,7 +35,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     selectedLanguage: any;
     userStatusOptions: any[];
 
-    reportList: string[] = [];
+    reportList: {'alias': string, 'descrizione': string}[] = [];
 
     userCompanies: string[] = [];
 
@@ -249,8 +249,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_list' });
     }
 
-    getReport(item: string): void {
-        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item });
+    getReport(item: {'alias': string, 'descrizione': string}): void {
+        console.log (item);
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
     }
 
     getExcel(): void {
