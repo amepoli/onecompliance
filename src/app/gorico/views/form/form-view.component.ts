@@ -8,6 +8,7 @@ import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.d
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
+import { DialogService } from 'app/gorico/services/dialog.service';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -75,6 +76,7 @@ export class FormViewComponent implements OnChanges, OnInit {
     constructor(public attachDialog: MatDialog,
         private backendService: BackendService,
         private authService: AuthService,
+        private _dialogService: DialogService,
         private _toastService: ToastService) {
 
     }
@@ -192,19 +194,30 @@ export class FormViewComponent implements OnChanges, OnInit {
     }
 
     delElement() {
-        this.backendService.deleteData(this.tableData.entryName, this.authService.getCurrentCompany(), this.currentKeys).subscribe(
-            result => {
-                console.log(result);
-                if (result.result === 'OK') {
-                    // navigate backward
-                    this.sendEvent.emit({ eventType: 'deletedForm' }); // notify parent
-                }
-                else {
-                    // Show error snackbar
-                    this._toastService.showErrorToast(result.reason);
-                }
+        var _this = this;
+
+        // Show confirmation dialog to make sure user wants to delete
+        _this._dialogService.showConfimationDialog("Delete form", "Are you sure you wanna delete form?", "Yes", "No", "warning").then((result) => {
+            if (result.value === true) {
+                // User said yes so let's delete form
+                _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys).subscribe(
+                    result => {
+                        console.log(result);
+                        if (result.result === 'OK') {
+                            // Show success toast
+                            _this._toastService.showSuccessToast("Form Deleted");
+
+                            // navigate backward
+                            _this.sendEvent.emit({ eventType: 'deletedForm' }); // notify parent
+                        }
+                        else {
+                            // Show error snackbar
+                            _this._toastService.showErrorToast(result.reason);
+                        }
+                    }
+                );
             }
-        )
+        });
     }
 
     toElement(target: string) {
