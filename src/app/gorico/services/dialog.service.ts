@@ -14,25 +14,19 @@ export class DialogService {
     // this.DialogService.showErrorDialog('Yesh! Done.', 2500);
 
     // this.DialogService.showErrorDialog('Oops...', 'Something went wrong!');
-    // this.DialogService.showCustomDialog({
-    //     title: 'Are you sure?',
-    //     text: 'You will not be able to recover this imaginary file!',
-    //     icon: 'info', //'warning',
-    //     showCancelButton: true,
-    //     confirmButtonText: 'Yes, delete it!',
-    //     cancelButtonText: 'No, keep it'
-    // }).then((result) => {
-    //     if (result.value) {
-    //         this.DialogService.showSuccessDialog('Deleted!',
+
+    // Confimation Dialog Example:
+    // this._dialogService.showConfimationDialog("Delete file", "Are you sure you wanna delete file?", "Yes, do it", "No, I changed my mind", "info").then((result) => {
+    //     if (result.value === true) {
+    //         this._dialogService.showSuccessDialog('Deleted!',
     //             'Your imaginary file has been deleted.');
-    //         // For more information about handling dismissals please visit
-    //         // https://sweetalert2.github.io/#handling-dismissals
-    //     } else if (result.dismiss === Swal.DismissReason.cancel) {
-    //         this.DialogService.showErrorDialog('Cancelled',
+    //     }
+    //     else {
+    //         this._dialogService.showErrorDialog('Cancelled',
     //             'Your imaginary file is safe :)',
     //         );
     //     }
-    // })
+    // });
 
     /**
      * Constructor
@@ -82,7 +76,7 @@ export class DialogService {
     //----------------------------- Dialogs -----------------------------------
 
     /**
-     * Show Icon Dialog Dialog
+     * Show Icon Dialog
      *
      * @param title
      * @param text
@@ -94,7 +88,7 @@ export class DialogService {
     }
 
     /**
-     * Show Info Dialog Dialog
+     * Show Info Dialog
      *
      * @param title
      * @param text
@@ -106,7 +100,7 @@ export class DialogService {
     }
 
     /**
-     * Show Success Dialog Dialog
+     * Show Success Dialog
      *
      * @param title
      * @param text
@@ -118,7 +112,7 @@ export class DialogService {
     }
 
     /**
-     * Show Error Dialog Dialog
+     * Show Error Dialog
      *
      * @param title
      * @param text
@@ -130,7 +124,7 @@ export class DialogService {
     }
 
     /**
-     * Show Question Dialog Dialog
+     * Show Question Dialog
      *
      * @param title
      * @param text
@@ -142,7 +136,7 @@ export class DialogService {
     }
 
     /**
-     * Show Custom Dialog Dialog
+     * Show Custom Dialog
      *
      * @param options
      * @returns Promise<SweetAlertResult>
@@ -151,6 +145,27 @@ export class DialogService {
         return Swal.fire(options);
     }
 
+    /**
+     * Show Confirmation Dialog
+     *
+     * @param title
+     * @param text
+     * @param yesBtnLabel
+     * @param noBtnLabel
+     * @param? icon
+     * @returns Promise<SweetAlertResult>
+     */
+    showConfimationDialog(title: string, text: string, yesBtnLabel: string, noBtnLabel: string, icon: SweetAlertIcon = "info"): Promise<SweetAlertResult> {
+        let options: SweetAlertOptions = {
+            title: title,
+            text: text,
+            icon: icon, //'info',
+            showCancelButton: true,
+            confirmButtonText: yesBtnLabel,
+            cancelButtonText: noBtnLabel,
+        };
 
+        return Swal.fire(options);
+    }
 }
 
