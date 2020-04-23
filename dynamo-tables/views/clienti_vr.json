@@ -5,17 +5,17 @@
   "predefinedQueries": [{
       "type": "main",
       "operation": "selectTable",
-      "queryString": "SELECT an.codice_part, an.id_anagrafica, an.nome,  an.cognome, avr.ragione_sociale, avr.denominazione, avr.prog_vr FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafice_vr avr ON an.codice_part=avr.codice_part AND an.anagrafica_id=avr.anagrafica_id WHERE at.codice_part=$codice_azienda$ and mtvr.id_modello_test_vr=entrasp.anagrafiche_vr_max($codice_azienda$, an.id_anagrafica);"
+      "queryString": "SELECT an.codice_part, an.id_anagrafica, an.nome,  an.cognome, avr.ragione_sociale, avr.denominazione, avr.prog_vr FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica);"
   },
    {
        "type": "main",
        "operation": "insert",
-       "queryString": "SELECT entrasp.anagrafica_id_insert(codiceazienda=>$codice_azienda$, anagraficaid=>$anagrafica_id$, codiceruolo=>'CLI', codiceanagrafica=>$codice$, name=>$nome$,surname=>$cognome$, ragionesociale=>$ragione_sociale$);"
+       "queryString": "SELECT entrasp.anagrafica_id_insert(codiceazienda=>$codice_azienda$, anagraficaid=>$id_anagrafica$, codiceruolo=>'CLI', codiceanagrafica=>$codice$, name=>$nome$,surname=>$cognome$, ragionesociale=>$ragione_sociale$);"
    },
    {
     "type": "main",
     "operation": "update",
-    "queryString": "SELECT entrasp.anagrafica_id_update(codiceazienda=>$codice_azienda$, anagraficaid=>$anagrafica_id$, codiceanagrafica=>$codice$,name=>$nome$, surname=>$cognome$,ragionesociale=>$ragione_sociale$);"
+    "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceanagrafica=>$codice$,name=>$nome$, surname=>$cognome$,ragionesociale=>$ragione_sociale$);"
    }
    ],
   "form_keys": [
@@ -33,44 +33,17 @@
       "readOnly": true
     },
     {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
+        "autoGenerate": true,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "id_anagrafica",
+        "label": "ID",
+        "readOnly": true
       },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_modello_test",
-      "label": "ID",
-      "newLine": false,
-      "readOnly": true,
-      "inputEvents": [
-        {
-          "eventName": "clienti_button_duplica",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select idnew as id_modello_test, cod as codice from entrasp.grc_accoda_singolo_modello_test($codice_azienda$, $codice_azienda$, $id_modello_test$);"
-        }
-      ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "duplica",
-      "label": "Duplica",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "clienti_button_duplica",
-        "eventTrigger": "press"
-      },
-      "readOnly": false,
-      "sameOrigin": false
-    },
     {
       "autoGenerate": false,
       "format": {
@@ -91,10 +64,10 @@
         "viewType": "input"
       },
       "isHidden": false,
-      "isPrimary": true,
+      "isPrimary": false,
       "key": "codice",
       "label": "Codice",
-      "queryFunct": "SELECT codice from entrasp.anagrafica_id WHERE codice_part=$codice_part$ AND anagrafica_id=$anagrafica_id$",
+      "queryFunct": "SELECT codice from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
       "newLine": false,
       "readOnly": false,
       "sameOrigin": false
@@ -118,7 +91,7 @@
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version($codice_azienda$,$anagrafica_id$, $prog_vr$)"
+          "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version($codice_azienda$,$id_anagrafica$, $prog_vr$)"
         }
       ]
     },
@@ -145,7 +118,7 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "queryFunct": "SELECT nome from entrasp.anagrafica_id WHERE codice_part=$codice_part$ AND anagrafica_id=$anagrafica_id$",
+      "queryFunct": "SELECT nome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
       "isHidden": false,
       "isPrimary": false,
       "key": "nome",
@@ -160,10 +133,10 @@
           "dataType": "text",
           "viewType": "input"
         },
-        "queryFunct": "SELECT cognome from entrasp.anagrafica_id WHERE codice_part=$codice_part$ AND anagrafica_id=$anagrafica_id$",
+        "queryFunct": "SELECT cognome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
         "isHidden": false,
         "isPrimary": false,
-        "key": "Cognome",
+        "key": "cognome",
         "label": "Cognome",
         "newLine": true,
         "readOnly": false,
@@ -211,7 +184,7 @@
       },
       "isHidden": false,
       "isPrimary": true,
-      "key": "anagrafica_id",
+      "key": "id_anagrafica",
       "label": "ID"
     },
     {
