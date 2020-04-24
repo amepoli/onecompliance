@@ -26,6 +26,8 @@ function replaceLocalKeys(queryString, keys) {
     for (var key in keys) {
         let toReplace = delimiter + key + delimiter;
         let replacement = keys[key];
+        replacement = (typeof replacement === 'string') ? '\'' + replacement.replace(/'/g, "''") + '\'' : replacement;
+        //console.log('toReplace: ', toReplace, ', replacement: ', replacement);
         let newString = queryString.replace(toReplace, replacement);
         while (newString !== queryString) { // handle multiple occurences
             queryString = newString;
@@ -49,7 +51,9 @@ function replaceKeys(queryString, keys, keyTypes) {
                         let subKeyType = keyType.dataType.find(e => (e.key === subkey));
                         let bracket = (delimiter === '$' && subKeyType && subKeyType.dataType === 'text') ? '\'' : '';
                         let toReplace = delimiter + key + '.' + subkey + delimiter;
-                        let replacement = bracket + keys[key][subkey] + bracket;
+                        // replace single quotes with double quotes within strings to avoid errors with queries
+                        let valueWithFixedQuotes = (subKeyType && subKeyType.dataType === 'text') ? keys[key][subkey].replace(/'/g, "''") : keys[key][subkey];
+                        let replacement = bracket + valueWithFixedQuotes + bracket;
                         let newString = queryString.replace(toReplace, replacement);
                         while (newString !== queryString) { // handle multiple occurences
                             queryString = newString;
@@ -61,7 +65,10 @@ function replaceKeys(queryString, keys, keyTypes) {
                     let toReplace = delimiter + key + delimiter;
                     // TO BE CHECKED
                     //let replacement = keys[key].value ? keys[key].value : keys[key]; // handle subtables
-                    let replacement = bracket + keys[key] + bracket;
+                    // replace single quotes with double quotes within strings to avoid errors with queries
+                    let valueWithFixedQuotes = (keyType && keyType.dataType === 'text') ? keys[key].replace(/'/g, "''") : keys[key];
+                    let replacement = bracket + valueWithFixedQuotes + bracket;
+                    //console.log ('toReplace: ', toReplace, ' replacement: ', replacement);
                     let newString = queryString.replace(toReplace, replacement);
                     while (newString !== queryString) { // handle multiple occurences
                         queryString = newString;
@@ -220,6 +227,8 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
             let keyType = keyTypes.find(e => (e.key === key));
             let delimiter = (keyType.dataType === 'text') ? '\'' : '';
             let element = table_keys[key];
+            // replace single quotes with double quotes in strings
+            element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
             if (keyType.isCalculated) { // delay and make it part of the query above
                 calculatedWhereCond.push({ key: key, value: element, delimiter: delimiter })
             } else {
@@ -433,6 +442,8 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                 if (!keyType.isPrimary || keyType.key === autoGenKey) continue; // avoid to add non primary keys to the WHERE condition
                 let delimiter = (keyType.dataType === 'text') ? '\'' : '';
                 let element = keys[key];
+                // replace single quotes with double quotes in strings
+                element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
                 let fieldString = comma + key + '=' + delimiter + element + delimiter;
                 genString = genString + fieldString;
                 comma = ' AND '; // needed only the first time
@@ -474,6 +485,8 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             if (value.id) { // combobox 
                 value = value.id;
             }
+            // replace single quotes with double quotes in strings
+            value = (keyType.dataType === 'text') ? value.replace(/'/g, "''") : value;
             queryString = queryString + '=' + delimiter + value + delimiter;
         }
         comma = ', ';
@@ -488,6 +501,8 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             if (value.id) { // combobox 
                 value = value.id;
             }
+            // replace single quotes with double quotes in strings
+            value = (keyType.dataType === 'text') ? value.replace(/'/g, "''") : value;
             let fieldString = comma + delimiter + value + delimiter;
             queryString = queryString + fieldString;
             comma = ', '; // needed only the first time
@@ -503,6 +518,8 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             let keyType = keyTypes.find(e => (e.key === primaryKey.key));
             let delimiter = (keyType.dataType === 'text') ? '\'' : '';
             let element = keys[primaryKey.key];
+            // replace single quotes with double quotes in strings
+            element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
             let fieldString = comma + primaryKey.key + '=' + delimiter + element + delimiter;
             queryString = queryString + fieldString;
             comma = ' AND '; // needed only the first time
@@ -557,6 +574,8 @@ function getDeleteQuery(entry_params, table_keys) {
             let keyType = keyTypes.find(e => (e.key === key));
             let delimiter = (keyType.dataType === 'text') ? '\'' : '';
             let element = table_keys[key];
+            // replace single quotes with double quotes in strings
+            element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
             let fieldString = comma + key + '=' + delimiter + element + delimiter;
             queryString = queryString + fieldString;
             comma = ' AND '; // needed only the first time

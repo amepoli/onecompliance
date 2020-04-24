@@ -100,10 +100,18 @@ function getURLFromServer(mainQuery) {
     let jsonParams = {
         mainReport: { 
             name: mainQuery.name,
-            query: mainQuery.query
+            query: mainQuery.query,
         },
         subReports: [],
-        params: []
+        params: [
+            {
+                "key": "LOGO", 
+                "value": "2pay.png"
+            },
+           {
+               "key": "codice_azienda",
+               "value": "TEST"
+           }]
     };
    
     console.log(jsonParams);
