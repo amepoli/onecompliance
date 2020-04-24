@@ -35,22 +35,24 @@ export class ComboboxComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     
+    const _this = this;
     // filter out null values
 
-    this.field.options = this.field.options.filter(x => x.name !== null); 
+    _this.field.options = _this.field.options.filter(x => x.name !== null); 
 
-    if (this.field.value) {
-        this.field.value = this.field.options.find(x => x.id === this.field.value);
+    if (_this.field.value != null) {
+        _this.field.value = _this.field.options.find(x => x.id === _this.field.value);
+        setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
     }
 
       // load the initial bank list
-    this.filteredItems.next(this.field.options.slice());
+    _this.filteredItems.next(_this.field.options.slice());
     
     // listen for search field value changes
-    this.itemFilterCtrl.valueChanges
-      .pipe(takeUntil(this._onDestroy))
+    _this.itemFilterCtrl.valueChanges
+      .pipe(takeUntil(_this._onDestroy))
       .subscribe(() => {
-        this.filterItems();
+        _this.filterItems();
       });
   }
 

@@ -29,6 +29,7 @@ function replaceLocalKeys(queryString, keys) {
         replacement = (typeof replacement === 'string') ? '\'' + replacement.replace(/'/g, "''") + '\'' : replacement;
         //console.log('toReplace: ', toReplace, ', replacement: ', replacement);
         let newString = queryString.replace(toReplace, replacement);
+        //console.log('queryString: ', queryString, ' newString: ', newString);
         while (newString !== queryString) { // handle multiple occurences
             queryString = newString;
             newString = queryString.replace(toReplace, replacement);
