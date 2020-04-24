@@ -145,54 +145,75 @@ public class Jasper {
 
     public String createReportUsingJasperData(JasperData data) {
         try {
-            
-            // String connectString = "jdbc:postgresql://goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com:5432/Gorico";
-            String connectString = "jdbc:postgresql://" + Constants.POSTGRES_SERVER + ":" + Constants.POSTGRES_PORT + "/" + Constants.POSTGRES_DATABASE;
-            Connection jdbcConnection = Database.getInstance().connectPgDB(connectString, Constants.POSTGRES_USERNAME, Constants.POSTGRES_PASSWORD);
-            
+
+            // String connectString =
+            // "jdbc:postgresql://goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com:5432/Gorico";
+            String connectString = "jdbc:postgresql://" + Constants.POSTGRES_SERVER + ":" + Constants.POSTGRES_PORT
+                    + "/" + Constants.POSTGRES_DATABASE;
+            Connection jdbcConnection = Database.getInstance().connectPgDB(connectString, Constants.POSTGRES_USERNAME,
+                    Constants.POSTGRES_PASSWORD);
+
             JasperDesign mainReportDesign = JRXmlLoader.load(Constants.REPORTS_DIR + data.mainReport.name + ".jrxml");
             JasperReport mainReport = JasperCompileManager.compileReport(mainReportDesign);
-            
+
             // ResultSet mainReportResultSet = jdbcConnection
-            //         .createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(data.mainReport.query);
-            
-            // JRResultSetDataSource mainReportDataSource = new JRResultSetDataSource(mainReportResultSet);
+            // .createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+            // ResultSet.CONCUR_READ_ONLY).executeQuery(data.mainReport.query);
 
-            
+            // JRResultSetDataSource mainReportDataSource = new
+            // JRResultSetDataSource(mainReportResultSet);
 
-            
             HashMap<String, Object> params = new HashMap<String, Object>();
             // params.put("username", "Report title 101");
             // params.put("LOGO", "Report title 101");
-            
+
             params.put("mainQuery", data.mainReport.query);
-            
+
             HashMap<String, Object> reportMap = new HashMap<String, Object>();
-            
-            
+
             for (ReportInfo subReport : data.subReports) {
                 JasperDesign reportDesign = JRXmlLoader.load(Constants.REPORTS_DIR + subReport.name + ".jrxml");
                 JasperReport report = JasperCompileManager.compileReport(reportDesign);
                 // ResultSet reportResultSet = jdbcConnection
-                //     .createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(subReport.query);
-            
-                // JRResultSetDataSource reportDataSource = new JRResultSetDataSource(reportResultSet);
+                // .createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                // ResultSet.CONCUR_READ_ONLY).executeQuery(subReport.query);
+
+                // JRResultSetDataSource reportDataSource = new
+                // JRResultSetDataSource(reportResultSet);
 
                 reportMap.put(subReport.name, report);
                 // params.put(subReport.name + "DataSource", reportDataSource);
-            
+
             }
+
+            String companyName = null;
+            boolean logoProvided = false;
 
             for (JasperParam param : data.params) {
                 params.put(param.key, param.value);
+                System.out.println("Key: " + param.key + ", value: " + param.value);
+
+                if (param.key.toLowerCase().equals("codice_azienda")) {
+                    companyName = param.value;
+                }
+                if (param.key.toLowerCase().equals("logo")) {
+                    logoProvided = true;
+                }
             }
-            
-            
-            params.put("PATH_IMG", Paths.get(Constants.LOGOS_DIR).toAbsolutePath().normalize().toString() + "/");
+
+            if (companyName != null && !logoProvided) {
+                params.put("LOGO", companyName + ".png");
+            }
+
+            String logos_path = Paths.get(Constants.LOGOS_DIR).toAbsolutePath().normalize().toString() + "/";
+            // String logos_path = Constants.LOGOS_DIR;
+            params.put("PATH_IMG", logos_path);
             params.put("REPORTS_MAP", reportMap);
-            
-            //params.put("modelloTestVr.domandeSezioni", "modelloTestVr.domandeSezioni");
-            //params.put("tipoModelloTest.descrizione", "tipoModelloTest.descrizione");
+
+            System.out.println("Logos Path: " + logos_path);
+
+            // params.put("modelloTestVr.domandeSezioni", "modelloTestVr.domandeSezioni");
+            // params.put("tipoModelloTest.descrizione", "tipoModelloTest.descrizione");
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(mainReport, params, jdbcConnection);
             jdbcConnection.close();
@@ -216,9 +237,9 @@ public class Jasper {
             File destFile = new File(Constants.REPORTS_DIR, mainReport.getName() + ".jrprint");
             JRSaver.saveObject(jasperPrint, destFile);
 
-            JasperExportManager.exportReportToPdfFile(Constants.REPORTS_DIR + mainReport.getName() + ".jrprint");    
+            JasperExportManager.exportReportToPdfFile(Constants.REPORTS_DIR + mainReport.getName() + ".jrprint");
             return mainReport.getName();
-            
+
         } catch (Exception ex) {
             String connectMsg = "Could not create the report " + ex.getMessage() + " " + ex.getLocalizedMessage();
             System.out.println(connectMsg);
