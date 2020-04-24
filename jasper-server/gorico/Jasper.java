@@ -194,7 +194,7 @@ public class Jasper {
                 System.out.println("Key: " + param.key + ", value: " + param.value);
 
                 if (param.key.toLowerCase().equals("codice_azienda")) {
-                    companyName = param.value;
+                    companyName = (String) param.value;
                 }
                 if (param.key.toLowerCase().equals("logo")) {
                     logoProvided = true;
