@@ -95,7 +95,7 @@ function replaceKeys(queryString, keys, keyTypes) {
     return queryString;
 }
 
-function getURLFromServer(mainQuery) {
+function getURLFromServer(mainQuery, codice_azienda) {
 
     let jsonParams = {
         mainReport: { 
@@ -104,13 +104,9 @@ function getURLFromServer(mainQuery) {
         },
         subReports: [],
         params: [
-            {
-                "key": "LOGO", 
-                "value": "2pay.png"
-            },
            {
                "key": "codice_azienda",
-               "value": "TEST"
+               "value": codice_azienda
            }]
     };
    
@@ -205,6 +201,8 @@ exports.handler = async (event, context) => {
        keys = JSON.parse(keys);  // comment out in case of test
     }
 
+    let codice_azienda = keys != null ? keys.codice_azienda != null ? keys.codice_azienda : keys.codice_part : null;
+
     let search_keys = queryParams['search_keys'];
 
     if (search_keys != null) {
@@ -265,7 +263,7 @@ exports.handler = async (event, context) => {
            const keyPrefix = data.Item.tableNickname != null ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
            const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, keys, search_keys, isFormRecord);
            const mainQuery = { name: reportName, query: queryString };
-           const url = await getURLFromServer(mainQuery);
+           const url = await getURLFromServer(mainQuery, codice_azienda);
            if (url != null && url !== '') {
                body = { result: 'OK', url: url };
            } else {
