@@ -22,17 +22,20 @@ const readXlsxFile = require('read-excel-file/node');
 const uuidv4 = require('uuid/v4');
 
 function replaceLocalKeys(queryString, keys) {
-    let delimiter = '£';
+    let delimiters = ['£', 'Â£'];
     for (var key in keys) {
-        let toReplace = delimiter + key + delimiter;
-        let replacement = keys[key];
-        replacement = (typeof replacement === 'string') ? '\'' + replacement.replace(/'/g, "''") + '\'' : replacement;
-        //console.log('toReplace: ', toReplace, ', replacement: ', replacement);
-        let newString = queryString.replace(toReplace, replacement);
-        while (newString !== queryString) { // handle multiple occurences
-            queryString = newString;
-            newString = queryString.replace(toReplace, replacement);
-        }
+        delimiters.forEach(delimiter => {
+            let toReplace = delimiter + key + delimiter;
+            let replacement = keys[key];
+            replacement = (typeof replacement === 'string') ? '\'' + replacement.replace(/'/g, "''") + '\'' : replacement;
+            //console.log('toReplace: ', toReplace, ', replacement: ', replacement);
+            let newString = queryString.replace(toReplace, replacement);
+            //console.log('queryString: ', queryString, ' newString: ', newString);
+            while (newString !== queryString) { // handle multiple occurences
+                queryString = newString;
+                newString = queryString.replace(toReplace, replacement);
+            }
+        });
     }
     return queryString;
 }

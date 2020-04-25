@@ -31,11 +31,11 @@ import gorico.GsonHelper;
 
 public class Constants {
 
-    // public static final String POSTGRES_SERVER = "goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com";
-    // public static final String POSTGRES_PORT = "5432";
+    public static final String POSTGRES_SERVER = "goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com";
+    public static final String POSTGRES_PORT = "5432";
 
-    public static final String POSTGRES_SERVER = "localhost";
-    public static final String POSTGRES_PORT = "5433";
+    // public static final String POSTGRES_SERVER = "localhost";
+    // public static final String POSTGRES_PORT = "5433";
 
     public static final String POSTGRES_DATABASE = "Gorico";
     public static final String POSTGRES_USERNAME = "postgres";

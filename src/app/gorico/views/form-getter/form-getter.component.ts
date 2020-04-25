@@ -282,10 +282,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     // update the status to prevent the whole table refresh
                     _this.addingNew = true;
                     // process the new row
-                    const formData = _this.getFormData(_this.viewKeys, result, _this.formData.length);
+                    const formData = _this.getFormData(_this.viewKeys, result);
                     _this.process_form(formData);
-                    // add it to the list
-                    _this.formData.push(formData[0]);
+                    // add it to the top of the list
+                    _this.formData.unshift(formData[0]);
                 }
                 else {
                     // Show error snackbar
@@ -426,7 +426,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // console.log(`keyListener: ${keyListener}`);
         console.log(event, value, keyListener);
 
-        // check first if this is a viewProperties event
+        // check  if this is a viewProperties event
         if (event.actionType === 'showView' && event.condition === 'equalTo') {
 
             // Check if view_properties contains keys 
@@ -471,6 +471,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             return;
         }
 
+        // not a ViewProperties event, check the condition if any -- TODO: support other conditions beyond equalTo 
+        let conditionMet = true;
+
         if (event.condition === 'equalTo') {
             // normalize if boolean conditions
             let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v);
@@ -479,11 +482,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             // handle jolly chars 
             eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
             // tricky way to compare two arrays
-            const conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
-            // if condition is not met, just return
-            if (!conditionMet) {
-                return;
-            }
+            conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
         }
 
         if (event.actionType === 'show' || event.actionType === 'hide' || event.actionType === 'toggle') {
@@ -496,11 +495,19 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             if (keyListener == null) {   // act on the full table
-                this.formParams.isVisible = !this.formParams.isVisible;
+                if (conditionMet) {
+                    this.formParams.isVisible = event.actionType === 'show' ? true : event.actionType === 'hide' ? false : !this.formParams.isVisible;
+                } else {
+                    this.formParams.isVisible = event.actionType === 'show' ? false : event.actionType === 'hide' ? true : this.formParams.isVisible;
+                }
             } else if (listener != null) {  // act on the listening element
-                listener.isVisible = event.actionType === 'show' ? true : event.actionType === 'hide' ? false : !listener.isVisible;
+                if (conditionMet) {
+                    listener.isVisible = event.actionType === 'show' ? true : event.actionType === 'hide' ? false : !listener.isVisible;
+                } else {
+                    listener.isVisible = event.actionType === 'show' ? false : event.actionType === 'hide' ? true : listener.isVisible;
+                }
             }
-        } else if (event.actionType === 'navigate') {
+        } else if (event.actionType === 'navigate' && conditionMet) {
             const formLine = _this.formData[value.index];
             const keys = formLine.reduce((outputKeys, key) => {
                 outputKeys[key.name] = key.value;
@@ -509,7 +516,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
             const filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
             _this.sendEvent.emit({ eventType: 'navigate', queryParams: { entry: event.actionTarget, keys: [filteredKeys], index: 1, total: 1 } });
-        } else if (event.actionType === 'query' || event.actionType === 'query_style') {
+        } else if ((event.actionType === 'query' || event.actionType === 'query_style') && conditionMet) {
             let chiavi = {};
             const target_index = (value.type !== 'page') ? value.index : null;  // null means the event comes from the full table
             let index = (target_index == null) ? _this.formArray.length : 1;
@@ -584,7 +591,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     });
             }
-        } else if (event.actionType === 'update') {
+        } else if (event.actionType === 'update' && conditionMet) {
             if (event.updateFunct != null && keyListener != null) {
                 const childrenArray = _this.formArray.toArray();
                 const keys = childrenArray[value.index].form.value;
