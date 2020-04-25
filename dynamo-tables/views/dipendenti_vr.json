@@ -1,17 +1,17 @@
 {
     "$schema": "../views.schema.json",
     "businessObjectName": "anagraficheId",
-    "entryKey": "clienti_vr",
+    "entryKey": "dipendenti_vr",
     "predefinedQueries": [
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT an.codice_part, an.id_anagrafica, an.nome,  an.cognome, avr.ragione_sociale, avr.denominazione, avr.prog_vr, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica JOIN entrasp.ruoli_anagrafiche ar ON an.codice_part=ar.codice_part AND an.id_anagrafica=ar.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and ar.codice_ruolo='CLI';"
+            "queryString": "SELECT an.codice_part, an.id_anagrafica, an.nome,  an.cognome, avr.ragione_sociale, avr.denominazione, avr.prog_vr, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica JOIN entrasp.ruoli_anagrafiche ar ON an.codice_part=ar.codice_part AND an.id_anagrafica=ar.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and ar.codice_ruolo='RIS';"
         },
         {
             "type": "main",
             "operation": "insert",
-            "queryString": "SELECT entrasp.anagrafica_id_insert(codiceazienda=>$codice_azienda$, anagraficaid=>$id_anagrafica$, codiceruolo=>'CLI', codiceanagrafica=>$codice$, name=>$nome$,surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$);"
+            "queryString": "SELECT entrasp.anagrafica_id_insert(codiceazienda=>$codice_azienda$, anagraficaid=>$id_anagrafica$, codiceruolo=>'RIS', codiceanagrafica=>$codice$, name=>$nome$,surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$);"
         },
         {
             "type": "main",
@@ -101,7 +101,7 @@
             "readOnly": true,
             "inputEvents": [
                 {
-                    "eventName": "clienti_button_nuova_versione",
+                    "eventName": "dipendenti_button_nuova_versione",
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
@@ -121,7 +121,7 @@
             "size": 3,
             "newLine": true,
             "outputEvent": {
-                "eventName": "clienti_button_nuova_versione",
+                "eventName": "dipendenti_button_nuova_versione",
                 "eventTrigger": "press"
             },
             "readOnly": false,
@@ -174,7 +174,6 @@
                     ]
                 }
             ],
-
             "format": {
                 "viewType": "subform",
                 "subform_keys": [
@@ -232,7 +231,7 @@
                         "E"
                     ]
                 }
-            ]    
+            ]
         },
         {
             "autoGenerate": false,
