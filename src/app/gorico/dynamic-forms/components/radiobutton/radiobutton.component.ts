@@ -6,7 +6,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 @Component({
   selector: "app-radiobutton",
   template: `
-<div [ngStyle]="{'margin-right': '2%', 'margin-left': '2%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
+<div [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
 <label class="radio-label-padding">{{field.label}}:</label>
 <mat-radio-group [formControlName]="field.name" [ngStyle]="{'display': 'flex', 'flex-direction': 'column'}" [(ngModel)]="chosenItem">
 <mat-radio-button *ngFor="let item of field.options" [value]="item" [disabled]="field.readonly" (change)="onCheck($event)" >{{item.name}}</mat-radio-button>

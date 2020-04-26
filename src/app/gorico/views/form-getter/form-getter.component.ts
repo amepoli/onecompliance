@@ -113,7 +113,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     private addingNew = false;   // avoid to trigger a refresh (with related events) when adding a row  
 
-    private margins = 4; // % of margins, considering left and right
+    private margins = 2; // % of margins, considering left and right
 
     constructor(
         private backendService: BackendService,
@@ -337,7 +337,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 isVisible: (field.isHidden != null) ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,
                 style: (field.style != null) ? field.style : null,
-                width: (field.size != null) ? (field.size * 10) - _this.margins : null, // leave a 5% margin left and right   
+                width: (field.size != null) ? (field.size * 10) - _this.margins : null, // leave a 1% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],
                 validations: (field.format.validations != null) ? field.format.validations : [],
                 eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null,  // output events are directly handled by the target field component
@@ -370,7 +370,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                 }
             }
-            if (result.width == null) {     // if null, must be null for all elements on the same line, then split the width equally
+            if (result.width == null && result.subform == null) {     // if null, must be null for all elements on the same line, then split the width equally
                 if (result['newLine'] === false) {
                     sameLineElements.push(result);
                 } else {
@@ -380,7 +380,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
             // recursively process subform
             if (result.subform != null) {
-                this.process_form_row(result.subform, margins + this.margins);
+                this.process_form_row(result.subform, margins);
             }
         }
         this.processInlineElements(sameLineElements, margins); // handles inline elements of last line

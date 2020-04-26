@@ -7,7 +7,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 @Component({
   selector: 'combobox',
   template: `
-<mat-form-field [ngStyle]="{'margin-right': '2%', 'margin-left': '2%','width': field.width+'%'}" *ngIf="field.isVisible != false" appearance="outline" [formGroup]="group">
+<mat-form-field [ngStyle]="{'margin-right': '1%', 'margin-left': '1%','width': field.width+'%'}" *ngIf="field.isVisible != false" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
 <mat-select [ngModel]="field.value" [formControlName]="field.name" [placeholder]="field.label" (selectionChange)="onSelection($event)">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>

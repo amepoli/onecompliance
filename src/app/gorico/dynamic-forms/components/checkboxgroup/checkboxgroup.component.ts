@@ -7,7 +7,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
   selector: "app-checkboxgroup",
   template: `
     <div *ngIf="field.isVisible != false">
-      <div [ngStyle]="{'margin-right': '2%', 'margin-left': '2%', 'width': field.width+'%'}" [formGroup]="group" *ngFor="let item of field.options; let i = index" >
+      <div [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" [formGroup]="group" *ngFor="let item of field.options; let i = index" >
         <mat-checkbox [disabled]="field.readonly" (change)="onCheck(item.id, $event.checked)"></mat-checkbox>
         <label class="checkboxgroup-label-padding">{{item.name}}</label>
       </div>

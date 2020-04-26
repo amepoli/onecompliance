@@ -6,7 +6,7 @@ import { FieldConfig } from '../../field.interface';
 @Component({
   selector: 'app-subform',
   template: `
-    <div [ngStyle]="{'margin-right': '2%', 'margin-left': '2%', 'width': field.width+'%'}" *ngIf="field.isVisible != false">
+    <div [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" *ngIf="field.isVisible != false">
         <ng-container *ngFor='let subfield of field.subform;' dynamicField [field]="subfield" [group]="group">
         </ng-container>
 </div>
