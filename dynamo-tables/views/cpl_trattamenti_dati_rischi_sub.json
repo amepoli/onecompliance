@@ -2,34 +2,60 @@
   "$schema": "../views.schema.json",
   "entryKey": "cpl_trattamenti_dati_rischi_sub",
   "origin": "entrasp.cpl_trattamenti_dati_rischi",
-  "table_keys": [
+  "form_keys": [
     {
+      "autoGenerate": false,
       "format": {
+        "viewType": "input",
         "dataType": "text"
-        
       },
       "isHidden": true,
       "isPrimary": true,
       "key": "codice_azienda",
-      "label": "codice_azienda"
+      "label": "codice_azienda",
+      "readOnly": false,
+      "newLine": false
     },
     {
+      "autoGenerate": false,
       "format": {
+        "viewType": "input",
         "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": true,
       "key": "id_trattamento_dati",
-      "label": "ID"
+      "label": "ID",
+      "readOnly": false,
+      "newLine": false
     }, 
     {
+      "autoGenerate": false,
       "format": {
+        "viewType": "input",
         "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_rischio",
+      "label": "codrisc",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT codice_rischio AS id, entrasp.rischi_cod_tit(codice_azienda, codice_rischio) AS name  FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": true,
       "key": "codice_rischio",
-      "label": "codrisc"
+      "label": "Rischio",
+      "readOnly": false,
+      "newLine": false
     }
   ]
 }
