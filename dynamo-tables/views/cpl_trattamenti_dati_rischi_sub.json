@@ -1,14 +1,13 @@
 {
   "$schema": "../views.schema.json",
-  "entryKey": "cpl_trattamenti_dati_categorie_destinatari_sub",
-  "origin": "entrasp.cpl_trattamenti_dati_categorie_destinatari",
+  "entryKey": "cpl_trattamenti_dati_rischi_sub",
+  "origin": "entrasp.cpl_trattamenti_dati_rischi",
   "form_keys": [
     {
       "autoGenerate": false,
       "format": {
         "viewType": "input",
         "dataType": "text"
-        
       },
       "isHidden": true,
       "isPrimary": true,
@@ -23,7 +22,7 @@
         "viewType": "input",
         "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
       "key": "id_trattamento_dati",
       "label": "ID",
@@ -38,21 +37,23 @@
       },
       "isHidden": true,
       "isPrimary": true,
-      "key": "id_trattamenti_dati_categorie_destinatari",
-      "label": "ID TR",
+      "key": "codice_rischio",
+      "label": "codrisc",
       "readOnly": false,
       "newLine": false
     },
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "input",
-        "dataType": "text"
+        "comboQuery": "SELECT codice_rischio AS id, entrasp.rischi_cod_tit(codice_azienda, codice_rischio) AS name  FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
       },
       "isHidden": false,
-      "isPrimary": false,
-      "key": "categorie_destinatari",
-      "label": "Categorie destinatari",
+      "isPrimary": true,
+      "key": "codice_rischio",
+      "label": "Rischio",
       "readOnly": false,
       "newLine": false
     }
