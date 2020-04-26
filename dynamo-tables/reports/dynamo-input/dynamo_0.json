@@ -4,13 +4,10 @@
       "PutRequest": {
         "Item": {
           "name": {
-            "S": "MT_Q&A"
+            "S": "articoliNormativi"
           },
           "queryString": {
-            "S": "select distinct m.id_modello_test, m_vr.id_modello_test_vr, m.descrizione, m.titolo, m.codice_azienda, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test, m.codice_azienda) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='1'"
-          },
-          "tableNickname": {
-            "S": "m"
+            "S": "select descrizione, rubrica, codice_articolo_normativo,rif_esterno_url, note, id_testo_normativo from entrasp.articoli_normativi where id_testo_normativo = $P{id_testo_normativo}"
           }
         }
       }
@@ -34,6 +31,18 @@
       "PutRequest": {
         "Item": {
           "name": {
+            "S": "modelliTest_noSez"
+          },
+          "queryString": {
+            "S": "select m.id_modello_test, m_vr.id_modello_test_vr, m.descrizione, m.titolo, m.codice_azienda,  entrasp.tipo_modello_test_descr(m.id_tipo_modello_test, m.codice_azienda) as tipoModelloTest_descrizione from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.codice_azienda='DEMO' and m.id_modello_test not in (select id_modello_test from entrasp.domande_sezioni)  order by m.id_modello_test;"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
             "S": "modelliTestPunti"
           },
           "queryString": {
@@ -46,10 +55,13 @@
       "PutRequest": {
         "Item": {
           "name": {
-            "S": "modelliTest_noSez"
+            "S": "MT_Q&A"
           },
           "queryString": {
-            "S": "select m.id_modello_test, m_vr.id_modello_test_vr, m.descrizione, m.titolo, m.codice_azienda,  entrasp.tipo_modello_test_descr(m.id_tipo_modello_test, m.codice_azienda) as tipoModelloTest_descrizione from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.codice_azienda='DEMO' and m.id_modello_test not in (select id_modello_test from entrasp.domande_sezioni)  order by m.id_modello_test;"
+            "S": "select distinct m.id_modello_test, m_vr.id_modello_test_vr, m.descrizione, m.titolo, m.codice_azienda, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test, m.codice_azienda) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='1'"
+          },
+          "tableNickname": {
+            "S": "m"
           }
         }
       }

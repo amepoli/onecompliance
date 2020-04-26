@@ -1,22 +1,22 @@
 {
     "$schema": "../views.schema.json",
     "businessObjectName": "anagraficheId",
-    "entryKey": "clienti_vr",
+    "entryKey": "dipendenti_vr",
     "predefinedQueries": [
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT an.codice_part, an.id_anagrafica, an.nome,  an.cognome, avr.ragione_sociale, avr.denominazione, avr.prog_vr, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica JOIN entrasp.ruoli_anagrafiche ar ON an.codice_part=ar.codice_part AND an.id_anagrafica=ar.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and ar.codice_ruolo='CLI';"
+            "queryString": "SELECT an.codice_part, an.id_anagrafica, an.nome,  an.cognome, avr.ragione_sociale, avr.denominazione, avr.prog_vr, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica JOIN entrasp.ruoli_anagrafiche ar ON an.codice_part=ar.codice_part AND an.id_anagrafica=ar.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and ar.codice_ruolo='RSRSA';"
         },
         {
             "type": "main",
             "operation": "insert",
-            "queryString": "SELECT entrasp.anagrafica_id_insert(codiceazienda=>$codice_azienda$, anagraficaid=>$id_anagrafica$, codiceruolo=>'CLI', codice=>$codice$, name=>$nome$,surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$);"
+            "queryString": "SELECT entrasp.anagrafica_id_insert(codiceazienda=>$codice_azienda$, anagraficaid=>$id_anagrafica$, codiceruolo=>'RSRSA', codiceanagrafica=>$codice$, name=>$nome$,surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$);"
         },
         {
             "type": "main",
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceanagrafica=>$codice$,name=>$nome$, surname=>$cognome$,ragionesociale=>$ragione_sociale$,codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$);"
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codice=>$codice$,name=>$nome$, surname=>$cognome$,ragionesociale=>$ragione_sociale$,codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$);"
         }
     ],
     "form_keys": [
@@ -30,7 +30,8 @@
             "isPrimary": true,
             "key": "codice_part",
             "label": "codice_part",
-            "newLine": true,
+            "newLine": false,
+            "size": 0,
             "readOnly": true
         },
         {
@@ -41,8 +42,8 @@
             "sameOrigin": false,
             "queryFunct": "SELECT tipo_soggetto from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
             "label": "Tipo soggetto",
-            "size": 5,
-            "newLine": false,
+            "newLine": true,
+            "size": 6,
             "format": {
                 "viewType": "combobox",
                 "value": "E",
@@ -80,23 +81,79 @@
             "label": "Codice",
             "queryFunct": "SELECT codice from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
             "newLine": false,
-            "size": 2,
+            "size": 1,
             "readOnly": false,
             "sameOrigin": false
         },
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "date",
+                "dataType": "number",
+                "viewType": "input",
+                "value": 1
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "prog_vr",
+            "label": "Versione",
+            "newLine": false,
+            "size": 1,
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "dipendenti_button_nuova_versione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version($codice_azienda$,$id_anagrafica$, $prog_vr$)"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "nuova_versione",
+            "label": "Nuova Versione",
+            "size": 3,
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "dipendenti_button_nuova_versione",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
                 "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "data_upd",
-            "label": "Data aggiunta",
-            "size": 2,
+            "key": "codice_fiscale",
+            "label": "Codice fiscale",
+            "size": 3,
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "partita_iva",
+            "label": "Partita IVA",
+            "size": 3,
             "newLine": true,
-            "readOnly": true
+            "readOnly": false
         },
         {
             "isHidden": true,
@@ -105,7 +162,7 @@
             "key": "nome_cognome",
             "sameOrigin": false,
             "label": "nome_cognome",
-            "newLine": true,
+            "size": 3,
             "saveWhenHidden": true,
             "inputEvents": [
                 {
@@ -131,7 +188,7 @@
                         "isPrimary": false,
                         "key": "nome",
                         "label": "Nome",
-                        "newLine": false,
+                        "newLine": true,
                         "readOnly": false,
                         "sameOrigin": false
                     },
@@ -164,7 +221,6 @@
             "key": "ragione_sociale",
             "label": "Ragione sociale",
             "newLine": true,
-            "size": 10,
             "readOnly": false,
             "inputEvents": [
                 {
@@ -175,77 +231,21 @@
                         "E"
                     ]
                 }
-            ]    
-        },
-        {
-            "autoGenerate": true,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_fiscale",
-            "label": "Codice fiscale",
-            "size": 5,
-            "newLine": false,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": true,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "partita_iva",
-            "label": "Partita IVA",
-            "size": 5,
-            "newLine": true,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input",
-                "value": 1
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "prog_vr",
-            "label": "Versione",
-            "newLine": false,
-            "size": 2,
-            "readOnly": true,
-            "inputEvents": [
-                {
-                    "eventName": "clienti_button_nuova_versione",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version($codice_azienda$,$id_anagrafica$, $prog_vr$)"
-                }
             ]
         },
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "button"
+                "dataType": "date",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "nuova_versione",
-            "label": "Nuova Versione",
-            "size": 8,
-            "newLine": true,
-            "outputEvent": {
-                "eventName": "clienti_button_nuova_versione",
-                "eventTrigger": "press"
-            },
-            "readOnly": false,
-            "sameOrigin": false
+            "key": "data_upd",
+            "label": "Data agg.",
+            "size": 2,
+            "newLine": false,
+            "readOnly": true
         }
     ],
     "origin": "entrasp.anagrafiche_vr",
