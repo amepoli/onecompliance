@@ -95,7 +95,7 @@ function replaceKeys(queryString, keys, keyTypes) {
     return queryString;
 }
 
-function getURLFromServer(mainQuery, codice_azienda) {
+function getURLFromServer(mainQuery, keys) {
 
     let jsonParams = {
         mainReport: { 
@@ -103,12 +103,18 @@ function getURLFromServer(mainQuery, codice_azienda) {
             query: mainQuery.query,
         },
         subReports: [],
-        params: [
-           {
-               "key": "codice_azienda",
-               "value": codice_azienda
-           }]
+        params: []
     };
+
+    for (const key in keys) {
+        if (keys.hasOwnProperty(key)) {
+            const element = keys[key];
+            if (key === 'codice_part') {
+                key = 'codice_azienda'
+            }
+            jsonParams.params.push({"key": key, "value": element});
+        }
+    }
    
     console.log(jsonParams);
 
@@ -201,7 +207,6 @@ exports.handler = async (event, context) => {
        keys = JSON.parse(keys);  // comment out in case of test
     }
 
-    let codice_azienda = keys != null ? keys.codice_azienda != null ? keys.codice_azienda : keys.codice_part : null;
 
     let search_keys = queryParams['search_keys'];
 
@@ -263,7 +268,7 @@ exports.handler = async (event, context) => {
            const keyPrefix = data.Item.tableNickname != null ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
            const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, keys, search_keys, isFormRecord);
            const mainQuery = { name: reportName, query: queryString };
-           const url = await getURLFromServer(mainQuery, codice_azienda);
+           const url = await getURLFromServer(mainQuery, keys);
            if (url != null && url !== '') {
                body = { result: 'OK', url: url };
            } else {
