@@ -1,17 +1,17 @@
 {
     "$schema": "../views.schema.json",
     "businessObjectName": "anagraficheId",
-    "entryKey": "clienti_vr",
+    "entryKey": "anagrafiche_vr",
     "predefinedQueries": [
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT an.codice_part, an.id_anagrafica, an.nome,  an.cognome, avr.ragione_sociale, avr.denominazione, avr.prog_vr, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica JOIN entrasp.ruoli_anagrafiche ar ON an.codice_part=ar.codice_part AND an.id_anagrafica=ar.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and ar.codice_ruolo='CLI';"
+            "queryString": "SELECT an.codice_part, an.id_anagrafica, an.nome,  an.cognome, avr.ragione_sociale, avr.denominazione, avr.prog_vr, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica);"
         },
         {
             "type": "main",
             "operation": "insert",
-            "queryString": "SELECT entrasp.anagrafica_id_insert(codiceazienda=>$codice_azienda$, anagraficaid=>$id_anagrafica$, codiceruolo=>'CLI', codice=>$codice$, name=>$nome$,surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>$flag_cliente$);"
+            "queryString": "SELECT entrasp.anagrafica_id_insert(codiceazienda=>$codice_azienda$, anagraficaid=>$id_anagrafica$, codiceruolo=>'CLI', codice=>$codice$, name=>$nome$,surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>$flag_cliente$, flagfornitore=>$flag_fornitore$, flagfornitore=>$flag_dipendente$);"
         },
         {
             "type": "main",
