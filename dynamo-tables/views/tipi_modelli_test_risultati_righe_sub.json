@@ -27,6 +27,7 @@
         "key": "id_tipo_risultato",
         "label": "ID tipo risultato",
         "readOnly": false,
+        "size": 1,
         "newLine": false
       }, 
       {
@@ -40,21 +41,9 @@
         "key": "prog_riga",
         "label": "Prog riga",
         "readOnly": false,
+        "size": 1,
         "newLine": false
       },
-      {
-        "autoGenerate": false,
-        "format": {
-          "viewType": "input",
-          "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "descrizione",
-        "label": "Descrizione",
-        "readOnly": false,
-        "newLine": false
-      }, 
       {
         "autoGenerate": false,
         "format": {
@@ -66,6 +55,7 @@
         "key": "pct_da",
         "label": "Percentuale da",
         "readOnly": false,
+        "size": 1,
         "newLine": false
       },
       {
@@ -77,6 +67,10 @@
         "style": {
           "background_color": "£codice_colore£"
         },
+        "outputEvent": {
+            "eventName": "change_codice_colore",
+            "eventTrigger": "change"
+          },
         "isHidden": false,
         "isPrimary": false,
         "key": "codice_colore",
@@ -88,14 +82,23 @@
       {
         "autoGenerate": false,
         "format": {
-          "viewType": "input", 
+          "viewType": "input",
           "dataType": "text"
         },
-        
+        "inputEvents": [
+            {
+              "actionType": "query_style",
+              "eventName": "change_codice_colore",
+              "condition": "none",
+              "values": [],
+              "queryFunct": "select entrasp.codice_colore from entrasp.tipi_modelli_test_risultati_righe where codice_azienda=$codice_azienda$ and id_tipo_risultato=$id_tipo_risultato$;",
+              "styleAttribute": "background_color"
+            }
+          ],
         "isHidden": false,
         "isPrimary": false,
-        "key": "flag_testo_chiaro",
-        "label": "Testo chiaro?",
+        "key": "descrizione",
+        "label": "Descrizione",
         "readOnly": false,
         "newLine": false
       }
