@@ -40,10 +40,11 @@
 entrasp.domande_ordinamento(r.codice_azienda, r.id_modello_test, r.id_modello_test_vr, r.id_domanda) as d_ordinamento , 
 entrasp.domande_sezione(r.codice_azienda, r.id_modello_test, r.id_modello_test_vr, r.id_domanda) as id_sezione,
 entrasp.domande_sezioni_ordinamento(r.codice_azienda, r.id_modello_test, r.id_modello_test_vr, entrasp.domande_sezione(r.codice_azienda, r.id_modello_test, r.id_modello_test_vr, r.id_domanda))as ds_ordinamento, 
-entrasp.tipi_modelli_test_risultati_righe_descr(id_risultato, s.codice_azienda) as giudizio, 
+gf.giudizio, 
 descrizione_sezione, descrizione_domanda,
 coalesce(entrasp.risposte_previste_risposta(s.codice_azienda, r.id_modello_test, r.id_modello_test_vr, r.id_domanda, r.id_risposta_prev), descrizione_risposta) as risposta
 from entrasp.sondaggi_somministrati s, entrasp.riepilogo_risposte r 
+join entrasp.grc_punteggi_giudizi_finali(r.codice_azienda, s.id_somministrazione) gf on s.id_somministrazione=gf.id_somministrazione and s.codice_azienda=gf.codiceazienda 
 where r.id_somministrazione = s.id_somministrazione and r.codice_azienda = s.codice_azienda and s.codice_azienda= $P{codice_azienda}  and s.id_sondaggio= $P{id_sondaggio}  
 order by object_description, ds_ordinamento, d_ordinamento]]>
 	</queryString>
