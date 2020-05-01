@@ -3,6 +3,19 @@
     "entryKey": "procedure_aziendali",
     "form_keys": [
         {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
             "autoGenerate": true,
             "format": {
                 "dataType": "number",
@@ -89,23 +102,28 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_procedura_parent",
-            "label": "id_procedura_parent",
-            "newLine": true,
+            "label": "id proc.liv.sup",
+            "newLine": false,
+            "size": 1,
             "readOnly": false
         },
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "text",
-                "viewType": "input"
+                "comboQuery": "SELECT id_procedura AS id, entrasp.procedure_aziendali_descr(id_procedura,codice_azienda) AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
             },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "label": "codice_azienda",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_procedura_parent_trans",
+            "label": "Procedura parent",
             "newLine": true,
-            "readOnly": true
+            "readOnly": false,
+            "size": 9,
+            "sameOrigin": false
         }
+  
     ],
     "origin": "entrasp.procedure_aziendali",
     "search_keys": [
