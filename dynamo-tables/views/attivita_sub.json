@@ -19,8 +19,28 @@
             "isPrimary": true,
             "key": "codice_attivita",
             "label": "Codice attivita",
-            "newLine": true,
+            "newLine": false,
             "readOnly": true
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input",
+              "validations": [
+                {
+                  "message": "Codice mancante",
+                  "name": "required",
+                  "validator": "Validators.required"
+                }
+              ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "newLine": true,
+            "readOnly": false
           },
       {
         "autoGenerate": false,
@@ -38,27 +58,7 @@
         "newLine": true,
         "readOnly": false
       },
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "text",
-          "viewType": "input",
-          "validations": [
             {
-              "message": "Codice mancante",
-              "name": "required",
-              "validator": "Validators.required"
-            }
-          ]
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "codice",
-        "label": "Codice",
-        "newLine": true,
-        "readOnly": false
-      },
-      {
         "autoGenerate": false,
         "format": {
           "dataType": "text",
@@ -97,7 +97,7 @@
           },
           {
             "parent": "codice_attivita",
-            "son": "codice_attivita_paretn"
+            "son": "codice_attivita_parent"
           }
         ],
         "label": "Sotto-attivita"
@@ -109,9 +109,9 @@
           "dataType": "text"
         },
         "isHidden": false,
-        "isPrimary": false,
-        "key": "codice_attivita_parent",
-        "label": "Att.liv.sup"
+        "isPrimary": true,
+        "key": "codice_attivita",
+        "label": "Cod.attività"
       },
       {
         "format": {
@@ -119,8 +119,18 @@
         },
         "isHidden": false,
         "isPrimary": true,
-        "key": "codice_attivita",
-        "label": "Cod.attività"
+        "key": "descrizione",
+        "label": "Descrizione"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "codice_attivita_parent",
+        "queryFunct": "select entrasp.attivita_descr($codice_attivita_parent$,$codice_azienda$)",
+        "label": "Att.liv.sup"
       },
       {
         "format": {
