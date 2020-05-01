@@ -12,8 +12,30 @@
             "isPrimary": true,
             "key": "id_procedura",
             "label": "id_procedura",
-            "newLine": true,
+            "newLine": false,
+            "size": 1,
             "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Codice mancante",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "codice",
+            "newLine": false,
+            "size": 1,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -25,7 +47,21 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_tipo_processo",
-            "label": "id_tipo_processo",
+            "label": "Tipo_processo",
+            "newLine": true,
+            "size": 8,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione_breve",
+            "label": "Descrizione Breve",
             "newLine": true,
             "readOnly": false
         },
@@ -61,26 +97,6 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
-                "viewType": "input",
-                "validations": [
-                    {
-                        "message": "Codice mancante",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice",
-            "label": "codice",
-            "newLine": true,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
                 "viewType": "input"
             },
             "isHidden": true,
@@ -89,19 +105,6 @@
             "label": "codice_azienda",
             "newLine": true,
             "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descrizione_breve",
-            "label": "Descrizione Breve",
-            "newLine": true,
-            "readOnly": false
         }
     ],
     "origin": "entrasp.procedure_aziendali",
@@ -179,6 +182,20 @@
     ],
     "subTables": [
         {
+            "entryKey": "procedure_aziendali",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": " id_procedura",
+                    "son": " id_procedura_parent"
+                }
+            ],
+            "label": "Sotto-procedure"
+        },
+        {
             "entryKey": "attivita_sub",
             "keys": [
                 {
@@ -205,20 +222,6 @@
                 }
             ],
             "label": "compiti_procedure"
-        },
-        {
-            "entryKey": "procedure_aziendali",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": " id_procedura",
-                    "son": " id_procedura_parent"
-                }
-            ],
-            "label": "procedure_aziendali"
         },
         {
             "entryKey": "presidi_sub",
