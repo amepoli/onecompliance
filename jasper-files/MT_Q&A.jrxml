@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2020-05-01T15:15:25 -->
+<!-- 2020-05-01T20:17:58 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MT_Q&amp;A" pageWidth="595" pageHeight="800" columnWidth="567" columnSpacing="567" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
@@ -25,6 +25,9 @@
 	<parameter name="mainQuery" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA["select distinct m.id_modello_test, m_vr.id_modello_test_vr, m.descrizione, m.titolo, m.codice_azienda, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test, m.codice_azienda) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='1' order by m.id_modello_test;"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["DEMO"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[$P!{mainQuery}]]>
@@ -53,17 +56,32 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="68" splitType="Stretch">
-			<subreport>
-				<reportElement x="0" y="5" width="557" height="57" uuid="6c6363c7-569e-402c-98bf-ef397cad8cc8">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		<band height="77" splitType="Stretch">
+			<image onErrorType="Blank">
+				<reportElement key="image" positionType="Float" x="83" y="10" width="337" height="50" uuid="0d65598c-265b-47e5-a41e-990b4c778571">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
-				<subreportParameter name="codice_azienda">
-					<subreportParameterExpression><![CDATA[$F{codice_azienda}]]></subreportParameterExpression>
-				</subreportParameter>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA["headerGRC.jasper"]]></subreportExpression>
-			</subreport>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA["logos\\"+ $P{codice_azienda} + ".png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="68" y="3" width="397" height="66" uuid="4082340c-5c3a-42d1-a60c-886d3df450d9">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>

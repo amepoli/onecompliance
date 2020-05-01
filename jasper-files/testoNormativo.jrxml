@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2020-04-29T20:01:21 -->
+<!-- 2020-05-01T20:11:27 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="testoNormativo" pageWidth="595" pageHeight="842" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" whenResourceMissingType="Empty" uuid="d26c6182-e27a-4f58-9157-55acab90753d">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
@@ -23,7 +23,9 @@
 	<parameter name="mainQuery" class="java.lang.String">
 		<defaultValueExpression><![CDATA["select an2.id_testo_normativo as an2_idtn, tn2.descrizione as tn2_descr, an2.codice_articolo_normativo as an2_codartnorm, an2.rubrica as an2_rub,  tn.id_testo_normativo as tn_idtn, tn.descrizione as tn_descr, an.codice_articolo_normativo as an_codartnorm, an.rubrica as an_rub, r.codice as r_cod, r.titolo as r_tit, r.descrizione as r_descr, entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_pre) as int_tot_ante, entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_post) as int_tot_post from entrasp.testi_normativi tn join entrasp.articoli_normativi an on  tn.id_testo_normativo = an.id_testo_normativo right join entrasp.articoli_normativi_rif anr on an.codice_articolo_normativo = anr.codice_articolo_normativo_rif and an.id_testo_normativo = anr.id_testo_normativo_rif right join entrasp.articoli_normativi an2 on anr.codice_articolo_normativo = an2.codice_articolo_normativo and anr.id_testo_normativo = an2.id_testo_normativo join entrasp.testi_normativi tn2 on tn2.id_testo_normativo = an2.id_testo_normativo right join entrasp.rischi_articoli_normativi ran on an.id_testo_normativo = ran.id_testo_normativo and an.codice_articolo_normativo = ran.codice_articolo_normativo right join entrasp.rischi r on r.codice_azienda = ran.codice_azienda and r.codice_rischio = ran.codice_rischio where r.codice_azienda='FINAFARM'"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="codice_azienda" class="java.lang.String"/>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["DEMO"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[$P!{mainQuery}]]>
 	</queryString>
@@ -127,6 +129,36 @@
 	<background>
 		<band splitType="Stretch"/>
 	</background>
+	<title>
+		<band height="73">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<image onErrorType="Blank">
+				<reportElement key="image" positionType="Float" x="83" y="10" width="337" height="50" uuid="f40c3536-fcf5-429b-9a81-23517b02adb9">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA["logos\"+ $P{codice_azienda} + ".png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="68" y="3" width="397" height="66" uuid="fa357327-440c-4706-a447-f876b6266ac2">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</title>
 	<detail>
 		<band height="108" splitType="Stretch">
 			<frame>
