@@ -127,7 +127,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
                     _this.backendService.getReport(_this.tableName, (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'form'), _this.searchKeys).subscribe(
                         response => {
-                            console.log(response) ;
+                            console.log(response);
                             if (response.result === 'OK') {
                                 const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
                                 _this.httpClient.get(url, { responseType: 'blob' }).subscribe(
@@ -214,6 +214,11 @@ export class MainTableComponent implements OnInit, OnDestroy {
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
         let newTotal = _this.formParams.total;
         if (event.eventType === 'navigate') {
+
+            // Clear tabs
+            this.tabs = [];
+            this.showTabs = false;
+
             // scroll to top within all parent list of elements
             _this.List.nativeElement.scrollTop = 0;
             let parentElement = _this.List.nativeElement.parentElement;
@@ -223,6 +228,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
             }
             _this.fullScreenTab = false; // reset in case of fullScreen Tab view
             _this.historyPush();  // save current status
+
             _this.currentPrimaryKeys = event.queryParams.keys; // update
             _this.tableName = event.queryParams.entry.name;
             if (event.queryParams.entry.type === 'table') {
