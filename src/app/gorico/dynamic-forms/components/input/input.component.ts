@@ -32,6 +32,9 @@ export class InputComponent implements OnInit, AfterViewInit{
             _this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet:_this.field.fullValueSet, data: value, type: 'change'});
         });
     }
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
+        setTimeout(() =>_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet:_this.field.fullValueSet, data: _this.field.value, type: 'blur'}), 50);
+    }
   }
 
   ngAfterViewInit(): void {

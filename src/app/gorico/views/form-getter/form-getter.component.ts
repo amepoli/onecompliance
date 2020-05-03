@@ -591,16 +591,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     });
             }
-        } else if (event.actionType === 'update' && conditionMet) {
+        } else if ((event.actionType === 'update' || event.actionType === 'update_style') && conditionMet) {
             if (event.updateFunct != null && keyListener != null) {
                 const childrenArray = _this.formArray.toArray();
                 const keys = childrenArray[value.index].form.value;
                 const resolvedFunct = _this.replaceLocalKeys(event.updateFunct, keys);
                 // tslint:disable-next-line: no-eval
-                childrenArray[value.index].form.patchValue({ [keyListener]: eval(resolvedFunct) });
+                if (event.actionType === 'update') {
+                    childrenArray[value.index].form.patchValue({ [keyListener]: eval(resolvedFunct) });
+                } else { // update_syle
+                    const element = _this.formData[value.index].find(field => field.name === keyListener);
+                    if (element != null && event.styleAttribute != null) {
+                        element.style[event.styleAttribute] = eval(resolvedFunct);
+                    }
+                }
             }
-        }
-
+        } 
     }
 
 }
