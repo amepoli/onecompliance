@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit, HostListener } from '@angular/core';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { BackendService } from '../backend/backend.service';
 import { AuthService } from 'app/gorico/login-page/auth.service';
@@ -30,6 +30,9 @@ export class FormTableViewComponent implements OnChanges, OnInit {
 
   isFullScreen = false;
 
+  // Height available for view
+  formHeight = 1000;
+
   constructor(
     private backendService: BackendService,
     private authService: AuthService,
@@ -46,6 +49,7 @@ export class FormTableViewComponent implements OnChanges, OnInit {
           _this.sendEvent.emit(event);
         }
       });
+    this.calculateFormHeight();
   }
 
   ngOnChanges(changes) {
@@ -101,10 +105,39 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   fullScreen(): void {
     this.isFullScreen = !this.isFullScreen;
     this.sendEvent.emit({ eventType: 'fullScreen', queryParams: { value: this.isFullScreen } });
+    // Update availalbe height 
+    this.calculateFormHeight();
   }
 
   addNew(): void {
     this.formGetter.addRow();
   }
 
+  // Get height on resize
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    // Update height available
+    this.calculateFormHeight();
+  }
+
+  calculateFormHeight() {
+    if (this.isFullScreen) {
+      this.formHeight = window.innerHeight
+        - 64 // Titlebar
+        - 47 // Navibar
+        - 28 // Separator
+        - 48 // Tabs
+        - 36 // Full screen button
+        - 36 // New button
+        - 2; // divider
+    }
+    else {
+      this.formHeight = ((window.innerHeight - 64) * 0.33)
+        - 28 // Separator
+        - 48 // Tabs
+        - 36 // Full screen button
+        - 36 // New button
+        - 2; // divider
+    }
+  }
 }

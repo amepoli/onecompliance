@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 import { FieldConfig } from '../../dynamic-forms/field.interface';
@@ -96,10 +96,15 @@ export class TableViewComponent implements OnChanges {
 
     targetEntryName: string; // target form view table, might be different from 'self'
 
+    // Height available for table
+    tableHeight = 1000;
+
     constructor(
         private backendService: BackendService,
         private authService: AuthService,
         private _toastService: ToastService) {
+
+        this.calculateTableHeight();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -125,6 +130,9 @@ export class TableViewComponent implements OnChanges {
                         _this._toastService.showErrorToast(result.reason);
                     }
                 });
+
+            // Calculate table height
+            this.calculateTableHeight();
         }
     }
 
@@ -167,6 +175,8 @@ export class TableViewComponent implements OnChanges {
                 _this.isLoading = false;
             });
 
+        // Calculate table height
+        this.calculateTableHeight();
     }
 
     private getSearchData(searchKeys: searchViewKey[]): FieldConfig[] {
@@ -278,6 +288,8 @@ export class TableViewComponent implements OnChanges {
         this.isFullScreen = !this.isFullScreen;
         this.sendEvent.emit({ eventType: 'fullScreen', queryParams: { value: this.isFullScreen } });
 
+        // Calculate table height
+        this.calculateTableHeight();
     }
 
     onEvent(event: any) {
@@ -286,6 +298,35 @@ export class TableViewComponent implements OnChanges {
             this.loadTable(null); // reload the table to visualize the record
         } else { // forward to parent
             this.sendEvent.emit(event);
+        }
+    }
+
+
+    // Get height on resize
+    @HostListener('window:resize', ['$event'])
+    onResize(event) {
+        // Update height available
+        this.calculateTableHeight();
+    }
+
+    calculateTableHeight() {
+        if (!this.tableData || !this.tableData.showFullScreenButton) {
+            this.tableHeight = window.innerHeight
+                - 64 // Titlebar
+                - 36; // Separator
+        }
+        else if (this.tableData && this.tableData.showFullScreenButton && !this.isFullScreen) {
+            this.tableHeight = ((window.innerHeight - 64) * 0.33)
+                - 36 // Separator
+                - 48; // Tabs
+        }
+        else {
+            this.tableHeight = window.innerHeight
+                - 64 // Titlebar
+                - 101 // Navibar
+                - 48 // Tabs
+                - 36 // Full screen button
+                - 36; // Quick add button
         }
     }
 }

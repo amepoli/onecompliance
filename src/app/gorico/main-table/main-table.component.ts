@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy, HostListener } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -76,6 +76,9 @@ export class MainTableComponent implements OnInit, OnDestroy {
 
     @ViewChild('List') private List: ElementRef;
     @ViewChild('Tabs') private Tabs: BottomTabsComponent;
+
+    // This is the height available for form
+    public formHeight = 1000;
 
     constructor(
         protected route: ActivatedRoute,
@@ -202,6 +205,9 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 }
             })
         );
+
+        // Get available height for form
+        this.calculateFormHeight();
     }
 
     ngOnDestroy() {
@@ -287,6 +293,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
             _this.tableType = 'form';  // push the visualization only at this point, needed if moving from table to form view
         }
 
+        // Calculate form height
+        this.calculateFormHeight();
 
     }
 
@@ -315,6 +323,10 @@ export class MainTableComponent implements OnInit, OnDestroy {
             _this.currentDescription = 'Dettaglio ' + _this.tableName;
             _this.tableType = 'form';
         }
+
+        // Calculate form height
+        this.calculateFormHeight();
+
     }
 
     // push current state on history list stack and move forward by one level
@@ -344,6 +356,25 @@ export class MainTableComponent implements OnInit, OnDestroy {
             showNavBar: true
         };
     }
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event) {
+        // Update form height
+        this.calculateFormHeight();
+    }
+
+    calculateFormHeight() {
+        if (this.showTabs) {
+            this.formHeight = ((window.innerHeight - 64) * 0.66)
+                - 47; // Navibar
+        }
+        else {
+            this.formHeight = window.innerHeight
+                - 64 // Titlebar
+                - 47; // Navibar
+        }
+    }
+
 
 }
 
