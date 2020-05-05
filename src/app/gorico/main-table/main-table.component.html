@@ -14,8 +14,8 @@
 
         <table-view *ngIf="tableType=='table'" [tableData]="tableParams" (sendEvent)='onEvent($event)'></table-view>
 
-        <form-view *ngIf="tableType=='form' && !fullScreenTab" class="split-mode" [tableData]="formParams"
-            (sendEvent)='onEvent($event)'>
+        <form-view *ngIf="tableType=='form' && !fullScreenTab" [tableData]="formParams" (sendEvent)='onEvent($event)'
+            class="main-table-content" [ngClass]="tabs != null && tabs.length > 0? 'split-mode': 'full-mode'">
         </form-view>
         <br>
         <hr>
@@ -23,7 +23,9 @@
     </div>
 
     <ng-container class="scrolling-element" *ngIf="tableType=='form' && showTabs">
-        <bottom-tabs [Tabs]='tabs' [SaveData]='tabsSaveData' (sendEvent)='onEvent($event)' #Tabs></bottom-tabs>
+        <bottom-tabs [Tabs]='tabs' [SaveData]='tabsSaveData' (sendEvent)='onEvent($event)' #Tabs
+            class="main-table-content">
+        </bottom-tabs>
     </ng-container>
 
 </div>
