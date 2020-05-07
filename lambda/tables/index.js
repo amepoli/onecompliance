@@ -869,6 +869,34 @@ async function process_properties(entry_params, table_keys, isFormRecord, client
     return tableProperties;
 }
 
+
+async function addCodiceAzienda (keys, company, view_keys, client, isForm) {
+    
+    const entry_keys = isForm ? view_keys.form_keys : view_keys.table_keys;
+
+    const entry_azienda = entry_keys.find(entry => entry.key === 'codice_azienda');
+    const entry_part = entry_keys.find(entry => entry.key === 'codice_part');
+    
+    if (entry_azienda != null) {
+        keys['codice_azienda'] = company;
+    }
+
+    if (entry_part != null) {
+
+        const queryString = "SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='" + company + "';";
+
+        const response = await client.query(queryString);
+
+
+        if (response != null ) {
+            keys['codice_part'] = response.rows[0].codice_part;
+        }
+    }
+
+    console.log('Keys: ', keys);
+    
+}
+
 // main function starts here
 
 exports.handler = async (event, context) => {
@@ -950,10 +978,18 @@ exports.handler = async (event, context) => {
     var tableProperties;
 
     try {
-        // read the entry params from DynamoDB
+
+
+        var client = await pool.connect();
+
+        // read the entry params from DynamoDB view table
         let entry_params = await dynamo.get(DynamoParams).promise();
 
         entry_params = entry_params.Item;
+
+        // retrieve codice_azienda and codice_part from company if needed
+
+        await addCodiceAzienda(table_keys, company, entry_params, client, isFormRecord);
 
         if (method === 'GET') {
             if (dashboardIndex != null) {
@@ -976,8 +1012,6 @@ exports.handler = async (event, context) => {
         } else if (method === 'DELETE') {
             queryString = getDeleteQuery(entry_params, table_keys);
         }
-
-        var client = await pool.connect();
 
         if (dashboardIndex != null) {
             // process dashboard queries

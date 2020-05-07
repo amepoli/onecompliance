@@ -109,6 +109,7 @@ export class AuthService {
 
   public signOut(): void {
     this.isSignedIn = false;
+    this.currentCompany = null; // force default company for next login
     this.amplifyService.auth().signOut();
     this.userinfo.next({ name: null, lastname: null, username: null, picture: null, language: 'it', companies: [] }); // user data nulled
     // reset the left menu
@@ -164,11 +165,13 @@ export class AuthService {
     _this.backendService.getUserData().subscribe(
       ud => {
         if (ud != null && ud.result === 'OK') {
-          if (ud.userdata.language === null) {
+          if (ud.userdata.language == null) {
             ud.userdata.language = 'it';  // defaults to italian
           }
           _this.userinfo.next(ud.userdata); // signal a value change to subscribers
-          _this.currentCompany = ud.userdata.companies[0];
+          if (_this.currentCompany == null) {  // do not get default company if reloading because of user chose a different company
+            _this.currentCompany = ud.userdata.companies[0];
+          }
           console.log(ud.userdata);
 
           //load default language for user

@@ -26,8 +26,6 @@ export class BackendService {
     }
   };
 
-  globalTableKeys = {}; // global to all tables
-
   dashboardKeys = null; // bridge keys between dashboard view and main table view
  
 constructor(private amplifyService: AmplifyService) { 
@@ -75,40 +73,40 @@ constructor(private amplifyService: AmplifyService) {
     return from(this.amplifyService.api().post(this.apiName, '/data', this.myPutPostInit));
   }
 
-  getAttachList(entryName: string, keys: any): Observable<any> {
+  getAttachList(entryName: string, company: string, keys: any): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys) }; 
+    this.myGetInit.queryStringParameters = {entry_name: entryName, company: company, keys: JSON.stringify(keys) }; 
     return from(this.amplifyService.api().get(this.apiName, '/attach', this.myGetInit));
   }
 
-  getFileURL(entryName: string, keys: any, filename: string): Observable<any> {
+  getFileURL(entryName: string, company: string, keys: any, filename: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), filename: filename}; 
+    this.myGetInit.queryStringParameters = {entry_name: entryName, company: company, keys: JSON.stringify(keys), filename: filename}; 
     return from(this.amplifyService.api().get(this.apiName, '/attach', this.myGetInit));
   }
 
-  createFileURL(entryName: string, keys: any): Observable<any> {
+  createFileURL(entryName: string, company: string, keys: any): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys)};
+    this.myPutPostInit.queryStringParameters = {entry_name: entryName, company: company, keys: JSON.stringify(keys)};
     return from(this.amplifyService.api().post(this.apiName, '/attach', this.myPutPostInit));
   }
 
-  checkFile(entryName: string, keys: any, checksum: string, filename: string, data: any): Observable<any> {
+  checkFile(entryName: string, company: string, keys: any, checksum: string, filename: string, data: any): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), filename: filename, checksum: checksum};
+    this.myPutPostInit.queryStringParameters = {entry_name: entryName, company: company, keys: JSON.stringify(keys), filename: filename, checksum: checksum};
     this.myPutPostInit.body = data;
     return from(this.amplifyService.api().post(this.apiName, '/attach', this.myPutPostInit));
   }
 
-  getReportList(entryName: string, keys: any): Observable<any> {
+  getReportList(entryName: string, company: string, keys: any): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), list: '1'};
+    this.myGetInit.queryStringParameters = {entry_name: entryName, company: company, keys: JSON.stringify(keys), list: '1'};
     return from(this.amplifyService.api().get(this.apiName, '/report', this.myGetInit));
   }
 
-  getReport(entryName: string, keys: any, reportName: string, isFormView: boolean, search_keys: any): Observable<any> {
+  getReport(entryName: string, company: string, keys: any, reportName: string, isFormView: boolean, search_keys: any): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = {entry_name: entryName, keys: JSON.stringify(keys), form: isFormView ? 1 : 0 };
+    this.myPutPostInit.queryStringParameters = {entry_name: entryName, company: company, keys: JSON.stringify(keys), form: isFormView ? 1 : 0 };
     if (search_keys != null) {
         this.myPutPostInit.queryStringParameters['search_keys'] = search_keys; 
     }

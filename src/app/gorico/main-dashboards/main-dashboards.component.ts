@@ -18,7 +18,7 @@ export class MainDashboardsComponent implements OnInit {
 
   ngOnInit(): void {
     const _this = this;
-    _this.keys = _this.backendService.globalTableKeys;
+    _this.keys = {};
   }
 
   onCellClick(event: DashboardCellEvent): void{
@@ -32,7 +32,7 @@ export class MainDashboardsComponent implements OnInit {
     if (event.rowLabel != null) {
         keys[event.rowLabel] = event.rowValue;
     }
-    _this.backendService.dashboardKeys = Object.assign(keys, _this.backendService.globalTableKeys);
+    _this.backendService.dashboardKeys = keys;
     const url = '/gorico/main-table/' + event.entryName;
     _this.router.navigate([url]);
   }
