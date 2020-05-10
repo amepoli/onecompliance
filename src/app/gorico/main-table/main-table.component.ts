@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy, HostListener } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -77,6 +77,9 @@ export class MainTableComponent implements OnInit, OnDestroy {
     @ViewChild('List') private List: ElementRef;
     @ViewChild('Tabs') private Tabs: BottomTabsComponent;
 
+    // This is the height available for form
+    public formHeight = 1000;
+
     constructor(
         protected route: ActivatedRoute,
         protected router: Router,
@@ -103,7 +106,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 _this.tableType = 'table';           // only table views from left navigation bar
                 // check if we are coming from dashboard 
                 _this.currentTableKeys = (_this.backendService.dashboardKeys != null) ?
-                    _this.backendService.dashboardKeys : _this.backendService.globalTableKeys;
+                    _this.backendService.dashboardKeys : {};
                 _this.backendService.dashboardKeys = null; // reset dashboard path
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
             });
@@ -112,7 +115,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         _this.subscriptions.push(_this.pubSubService.subscribe(_this.subMsgCmdTopic,
             msg => {
                 if (msg.type === 'print_list') {   // toolbar asking for the list of possible reports in current view
-                    _this.backendService.getReportList(_this.tableName, _this.currentTableKeys).subscribe(
+                    _this.backendService.getReportList(_this.tableName, _this.authService.getCurrentCompany(), _this.currentTableKeys).subscribe(
                         response => {
                             console.log(response);
                             if (response.result === 'OK') {
@@ -125,7 +128,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                             }
                         });
                 } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
-                    _this.backendService.getReport(_this.tableName, (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'form'), _this.searchKeys).subscribe(
+                    _this.backendService.getReport(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'form'), _this.searchKeys).subscribe(
                         response => {
                             console.log(response);
                             if (response.result === 'OK') {
@@ -202,6 +205,9 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 }
             })
         );
+
+        // Get available height for form
+        this.calculateFormHeight();
     }
 
     ngOnDestroy() {
@@ -287,6 +293,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
             _this.tableType = 'form';  // push the visualization only at this point, needed if moving from table to form view
         }
 
+        // Calculate form height
+        this.calculateFormHeight();
 
     }
 
@@ -315,6 +323,10 @@ export class MainTableComponent implements OnInit, OnDestroy {
             _this.currentDescription = 'Dettaglio ' + _this.tableName;
             _this.tableType = 'form';
         }
+
+        // Calculate form height
+        this.calculateFormHeight();
+
     }
 
     // push current state on history list stack and move forward by one level
@@ -344,6 +356,25 @@ export class MainTableComponent implements OnInit, OnDestroy {
             showNavBar: true
         };
     }
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event) {
+        // Update form height
+        this.calculateFormHeight();
+    }
+
+    calculateFormHeight() {
+        if (this.showTabs) {
+            this.formHeight = ((window.innerHeight - 64) * 0.66)
+                - 47; // Navibar
+        }
+        else {
+            this.formHeight = window.innerHeight
+                - 64 // Titlebar
+                - 47; // Navibar
+        }
+    }
+
 
 }
 

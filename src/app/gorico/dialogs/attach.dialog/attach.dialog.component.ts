@@ -92,7 +92,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             if (_this.listFiles != null) {
                 const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
-                    _this.backendService.getFileURL(_this.data.entryName, _this.data.keys, fileDesc.file_id).subscribe(
+                    _this.backendService.getFileURL(_this.data.entryName, _this.authService.getCurrentCompany(), _this.data.keys, fileDesc.file_id).subscribe(
                         url => {
                             if (url != null) {
                                 _this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
@@ -122,15 +122,15 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit() {
 
-        this.backendService.getAttachList(this.data.entryName, this.data.keys).subscribe(
+        this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(), this.data.keys).subscribe( 
             result => {
                 console.log(result);
                 if (result.result === 'OK') {
                     this.listFiles = result.data.list;
-                    let files = [];
+                    const files = [];
                     if (this.listFiles) {
                         this.listFiles.forEach(element => {
-                            let file = {
+                            const file = {
                                 'name': element.client_file_name,
                                 'type': 'document',
                                 'owner': element.autore,
@@ -194,7 +194,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.attach = false;
         if (_this.file != null) {
             // get the S3 URL 
-            _this.backendService.createFileURL(_this.data.entryName, _this.data.keys).subscribe(
+            _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(), _this.data.keys).subscribe(
                 responseURL => {
                     console.log(responseURL);
                     if (responseURL != null && responseURL.response === 'OK') {
@@ -230,7 +230,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                         dimensione: _this.form.value.dimension,
                                         autore: _this.authService.getUsername
                                     };
-                                    _this.backendService.checkFile(_this.data.entryName, _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
+                                    _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
                                         responseCheck => {
                                             console.log(responseCheck);
                                         }

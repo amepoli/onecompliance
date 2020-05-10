@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
-AWS.config.update({region: 'eu-central-1'});
-const s3 = new AWS.S3({apiVersion: '2006-03-01'});
+AWS.config.update({ region: 'eu-central-1' });
+const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
@@ -15,8 +15,6 @@ const pool = new Pool({
   connectionTimeoutMillis: 1000
 });
 
-const uuidv4 = require('uuid/v4');
-
 var crypto = require('crypto');
 
 
@@ -25,6 +23,7 @@ function getDateFormat() {
     var month = d.getMonth() + 1; 
     return d.getFullYear() + '-' + month.toString() + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 }
+
 
 exports.handler = async (event, context) => {
     
@@ -36,21 +35,19 @@ exports.handler = async (event, context) => {
     
     // const queryParams = event; / test
    
-    const keys = JSON.parse(queryParams['keys']);
+    let keys = JSON.parse(queryParams['keys']);
     const entryName = queryParams['entry_name'];
     const checksum = queryParams['checksum'];
+    const company = queryParams['company'];
     var filename = queryParams['filename'];
     var requestType = '';
-    var codice = '';
-    
-    
     
     if (filename == null) {
         if (event.httpMethod === 'GET') {
           requestType = 'getFileList';
         } else if (event.httpMethod === 'POST') { // POST and no file provided, create a new file
-          filename = uuidv4(); // generate a 'unique' UUID as filename
-          requestType = 'createNewFile'
+          filename = context.awsRequestId(); // generate a 'unique' UUID as filename
+          requestType = 'createNewFile';
         } else {  // DELETE and no filename, return an error
           requestType = 'badRequest';
         }
@@ -66,21 +63,12 @@ exports.handler = async (event, context) => {
         }
     }
     
-    if (entryName == null || keys == null) {
+    if (entryName == null || keys == null || company == null) {
         requestType = 'badRequest';
-    } else {
-        if (keys.codice_part != null) {
-            codice = keys.codice_part;
-        } else if (keys.codice_azienda != null) {
-            codice = keys.codice_azienda;
-        } else {
-            requestType = 'badRequest';
-        }
     }
     
         
-            
-    console.log('Lets start '+ requestType);
+    console.log('Lets start ' + requestType);
     
     if (requestType === 'badRequest') {
         return {
@@ -91,23 +79,23 @@ exports.handler = async (event, context) => {
         };
     }
     
+    const DynamoParams = {
+        TableName: 'views',
+        Key: {
+            entryKey: entryName
+        }
+    };
+
     const s3ParamsInsert = { 
         Bucket: 'gorico2.core',
-        Key: codice + '/' + filename
+        Key: company + '/' + filename
     };
     
     const s3ParamsGetList = { 
         Bucket: 'gorico2.core',
-        Key: codice + '/' + filename
+        Key: company + '/' + filename
     };
     
-    const DynamoParams = {
-    TableName: 'views',
-    Key: {
-        entryKey: entryName
-      }
-    };
-
     let client, body;
     let decnames = [];
     
@@ -135,6 +123,8 @@ exports.handler = async (event, context) => {
        let separator = '';
        
        let chiave = '';
+
+       keys = Object.assign({'codice_azienda': company}, keys);
        
        for (var key in keys) {
            chiave = chiave + separator + keys[key];
@@ -146,25 +136,25 @@ exports.handler = async (event, context) => {
        let query, response; 
        
        if (requestType === 'getFileList') {
-           query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${codice}' AND nome_business_object='${bus_object}' AND chiave='${chiave}';`;
+            query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' AND nome_business_object='${bus_object}' AND chiave='${chiave}';`;
            response = await client.query(query);
            console.log(query, response);
            let ids = response['rows'].map(f => f['id_risorsa']);
-           for (let i= 0; i< ids.length; i++) {
+            for (let i = 0; i < ids.length; i++) {
                 query = `select * from entrasp.cdms_risorse as a 
                 inner join entrasp.cdms_risorse_revisioni as b on a.codice_azienda = b.codice_azienda AND a.id_risorsa = b.id_risorsa 
-                where a.codice_azienda='${codice}' AND a.id_risorsa=${ids[i]};`;
+                where a.codice_azienda='${company}' AND a.id_risorsa=${ids[i]};`;
                 response = await client.query(query);
                 console.log(query, response);
                 decnames.push(response['rows'][0]);
             }
-            body = {result: 'OK', list: decnames};
+            body = { result: 'OK', list: decnames };
        } else if (requestType === 'getFileURL') {
             var url = s3.getSignedUrl('getObject', s3ParamsGetList);    
             if (url == null) {
-                body = {result: 'KO', reason: 'Something wrong with cloud storage'};
+                body = { result: 'KO', reason: 'Something wrong with cloud storage' };
             } else {
-                body = {result: 'OK', url: url};
+                body = { result: 'OK', url: url };
             }
        } else if (requestType === 'updateFile') {
            // fill postgresql tables
@@ -172,44 +162,44 @@ exports.handler = async (event, context) => {
            query = `update entrasp.cdms_risorse set 
                    nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
                    data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica=${date}
-                   where codice_azienda='${codice}' and id_risorsa=${requestBody.id_risorsa}`;
+                   where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa}`;
            response = await client.query(query);
            
-           body = { result: 'OK'};
+            body = { result: 'OK' };
            
-       }  else if (requestType === 'createNewFile') {
+        } else if (requestType === 'createNewFile') {
            // create a temporary signed URL for the object 
            const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
            body = { result: 'OK', url: signedUrl, filename: filename };
            
-       }  else if (requestType === 'fileCheck') {
+        } else if (requestType === 'fileCheck') {
            const object = await s3.getObject(s3ParamsGetList).promise();
            const actualChecksum = shasum.update(object.Body).digest('hex');
            const requestBody = JSON.parse(event.body); 
            console.log(checksum, actualChecksum);
            if (checksum === actualChecksum) { // file correctly uploaded
-               query = `SELECT (MAX(id_risorsa)+1) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${codice}';`;
+                query = `SELECT (MAX(id_risorsa)+1) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
                response = await client.query(query);
                const nextId = response['rows'][0]['id_risorsa'];
                
                query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, content_type, flag_indexed, id_tipo_allegato)
-                    values ('${codice}', ${nextId}, '${requestBody.nickname}',1, '${requestBody.descrizione}', '${requestBody.autore}', 
+                    values ('${company}', ${nextId}, '${requestBody.nickname}',1, '${requestBody.descrizione}', '${requestBody.autore}', 
                     '${date}', '${date}', '${requestBody.url}','${requestBody.descrizione_breve}', '${date}', '${requestBody.content_type}', 1, ${requestBody.id_tipo_allegato}) returning id_risorsa;`;
                response = await client.query(query);
                console.log(query);
                
-               query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) values ('${codice}', ${nextId}, '${bus_object}','${chiave}');`;
+                query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) values ('${company}', ${nextId}, '${bus_object}','${chiave}');`;
                response = await client.query(query);
                console.log(query);
                
                query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1) 
-                  values ('${codice}', ${nextId}, 1,'${date}', '${filename}', 
+                  values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
                           '${requestBody.autore}', '${requestBody.nickname}', '${requestBody.content_type}', ${requestBody.dimensione}, '${checksum}');`;
                response = await client.query(query);
                console.log(query);
-               body = { result: 'OK'};
+                body = { result: 'OK' };
            } else { // wrong checksum 
-               body = { result: 'KO', reason: 'Error with file checksum'};
+                body = { result: 'KO', reason: 'Error with file checksum' };
            }
            
        } else if (requestType === 'deleteFile') {
@@ -217,18 +207,18 @@ exports.handler = async (event, context) => {
            const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsInsert);
            
            const requestBody = JSON.parse(event.body);
-           query = `delete entrasp.cdms_risorse where codice_azienda='${codice}' and id_risorsa=${requestBody.id_risorsa};`;
+            query = `delete entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa};`;
            response = await client.query(query);
-           query = `delete entrasp.cdms_risorse_oggetti where codice_azienda='${codice}' and id_risorsa=${requestBody.id_risorsa};`;
+            query = `delete entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa};`;
            response = await client.query(query);
-           query = `delete entrasp.cdms_risorse_revisioni where codice_azienda='${codice}' and id_risorsa=${requestBody.id_risorsa};`;
+            query = `delete entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa};`;
            response = await client.query(query);
            
-           body = { result: 'OK', url: signedUrl};
+            body = { result: 'OK', url: signedUrl };
        }
     } catch (e) {
        console.log(e);
-       body = { result: 'KO', reason: 'Server error'};
+        body = { result: 'KO', reason: 'Server error' };
     }
     
            
