@@ -8,13 +8,14 @@ import { TableViewModule } from 'app/gorico/views/table/table-view.module';
 import { MatCardModule } from '@angular/material/card';
 import { RouterModule } from '@angular/router';
 import { FormViewModule } from '../views/form/form-view.module';
+import { FormViewToolbarModule } from '../views/form-view-toolbar/form-view-toolbar.module';
 import { BottomTabsModule } from 'app/gorico/bottom-tabs/bottom-tabs.module';
 
 const routes = [
-    {
-        path     : 'gorico/main-table/:table_name',
-        component: MainTableComponent
-    }
+  {
+    path: 'gorico/main-table/:table_name',
+    component: MainTableComponent
+  }
 ];
 
 @NgModule({
@@ -28,6 +29,7 @@ const routes = [
     MatCardModule,
     TableViewModule,
     FormViewModule,
+    FormViewToolbarModule,
     BottomTabsModule
   ],
   exports: [
@@ -39,6 +41,7 @@ const routes = [
     MatCardModule,
     TableViewModule,
     FormViewModule,
+    FormViewToolbarModule,
     MainTableComponent
   ]
 })

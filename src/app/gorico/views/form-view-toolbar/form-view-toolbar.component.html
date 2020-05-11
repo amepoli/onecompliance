@@ -1,0 +1,47 @@
+<div class="form-view-toolbar-container" *ngIf="formView">
+    <mat-toolbar *ngIf="formView.tableData.showNavBar" class="p-0 mat-elevation-z1 form-view-toolbar">
+
+        <div class="div1">
+            <button mat-button>
+                <mat-icon (click)="formView.toElement('first')">first_page</mat-icon>
+            </button>
+            <button mat-button>
+                <mat-icon (click)="formView.toElement('prev')">keyboard_arrow_left</mat-icon>
+            </button>
+            <p id="font_12"> Record {{formView.n}} di {{formView.tot}} </p>
+            <button mat-button>
+                <mat-icon (click)="formView.toElement('next')">keyboard_arrow_right</mat-icon>
+            </button>
+            <button mat-button>
+                <mat-icon (click)="formView.toElement('last')">last_page</mat-icon>
+            </button>
+        </div>
+
+        <div class="div2">
+            <button *ngIf="!formView.readOnly && formView.savingState === 'save'" mat-button (click)="formView.onSave()"
+                form="formView.element_form">
+                <mat-icon>save</mat-icon>
+            </button>
+
+            <button *ngIf="!formView.readOnly && formView.savingState === 'saving'" mat-button>
+                <mat-icon>cloud_upload</mat-icon>
+            </button>
+
+            <button *ngIf="!formView.readOnly && formView.savingState === 'done'" mat-button>
+                <mat-icon>cloud_done</mat-icon>
+            </button>
+
+            <button mat-button>
+                <mat-icon (click)="formView.delElement()">delete</mat-icon>
+            </button>
+            <button mat-button>
+                <mat-icon (click)="formView.showAttachments()">attach_file</mat-icon>
+            </button>
+            <p id="font_12"> {{formView.n_attach}} allegati </p>
+            <button mat-button>
+                <mat-icon>share</mat-icon>
+            </button>
+        </div>
+
+    </mat-toolbar>
+</div>
