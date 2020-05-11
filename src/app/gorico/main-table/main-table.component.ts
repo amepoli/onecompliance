@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { BackendService } from 'app/gorico/views/backend/backend.service'
 
 import { tableViewParams } from 'app/gorico/views/table/table-view.component';
-import { formViewParams } from '../views/form/form-view.component';
+import { formViewParams, FormViewComponent } from '../views/form/form-view.component';
 import { TabType, BottomTabsComponent } from '../bottom-tabs/bottom-tabs.component';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { Location } from '@angular/common';
@@ -76,6 +76,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
 
     @ViewChild('List') private List: ElementRef;
     @ViewChild('Tabs') private Tabs: BottomTabsComponent;
+    @ViewChild('formView') private formView: FormViewComponent;
 
     // This is the height available for form
     public formHeight = 1000;
@@ -364,15 +365,17 @@ export class MainTableComponent implements OnInit, OnDestroy {
     }
 
     calculateFormHeight() {
-        if (this.showTabs) {
-            this.formHeight = ((window.innerHeight - 64) * 0.66)
-                - 47; // Navibar
-        }
-        else {
-            this.formHeight = window.innerHeight
-                - 64 // Titlebar
-                - 47; // Navibar
-        }
+        // if (this.showTabs) {
+        //     this.formHeight = ((window.innerHeight - 64) * 0.66)
+        //         - 47; // Navibar
+        // }
+        // else {
+        //     this.formHeight = window.innerHeight
+        //         - 64 // Titlebar
+        //         - 47; // Navibar
+        // }
+
+        this.formHeight = window.innerHeight - 64;
     }
 
 
