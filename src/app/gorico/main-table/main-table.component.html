@@ -18,14 +18,13 @@
     </div>
 
     <div class="main-table-content"
-        [ngStyle]="{'margin-top': navigationHistory.length > 0? tableType=='form' && !fullScreenTab? '111px': '47px': '0px'}">
-        <table-view *ngIf="tableType=='table'" [tableData]="tableParams" (sendEvent)='onEvent($event)' class=""
-            [ngStyle]="{'margin-top': navigationHistory != null && navigationHistory.length > 0? '47px': '0px'}">
+        [ngStyle]="{'margin-top': navigationHistory.length > 0? tableType=='form' && !fullScreenTab? '111px': '47px': '0px',
+                    'height': navigationHistory.length > 0? tableType=='form' && !fullScreenTab? (formHeight-111) + 'px': (formHeight-47) +'px': '100%'}">
+        <table-view *ngIf="tableType=='table'" [tableData]="tableParams" (sendEvent)='onEvent($event)' class="">
         </table-view>
 
         <form-view #formView *ngIf="tableType=='form' && !fullScreenTab" [tableData]="formParams"
-            (sendEvent)='onEvent($event)'
-            [ngStyle]="{'margin-top': navigationHistory != null && navigationHistory.length > 0? '47px': '0px'}">
+            (sendEvent)='onEvent($event)'>
         </form-view>
 
         <bottom-tabs *ngIf="tableType=='form' && showTabs" [Tabs]='tabs' [SaveData]='tabsSaveData'
