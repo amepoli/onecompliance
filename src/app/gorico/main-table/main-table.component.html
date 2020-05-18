@@ -1,6 +1,6 @@
-<div class="full-width" #List>
+<div class="full-width" #List [ngStyle]="{height: (formHeight) + 'px'}">
 
-    <div class="sticky-element">
+    <div class="main-table-headers">
         <div class="navi-bar">
             <ng-container *ngFor='let item of navigationHistory'>
                 <mat-icon>arrow_forward</mat-icon>
@@ -12,21 +12,33 @@
             </ng-container>
         </div>
 
-        <table-view *ngIf="tableType=='table'" [tableData]="tableParams" (sendEvent)='onEvent($event)'
-            class="main-table-content"></table-view>
-
-        <form-view *ngIf="tableType=='form' && !fullScreenTab" [tableData]="formParams" (sendEvent)='onEvent($event)'
-            class="main-table-content" [ngStyle]="{'height': (formHeight) + 'px'}">
-        </form-view>
-        <br>
-        <hr>
-        <br>
+        <form-view-toolbar *ngIf="tableType=='form' && !fullScreenTab" class="form-view-toolbar" [formView]="formView">
+        </form-view-toolbar>
     </div>
 
-    <ng-container class="scrolling-element" *ngIf="tableType=='form' && showTabs">
-        <bottom-tabs [Tabs]='tabs' [SaveData]='tabsSaveData' (sendEvent)='onEvent($event)' #Tabs
-            class="main-table-content">
+    <div class="main-table-content"
+        [ngStyle]="{'margin-top': navigationHistory.length > 0? tableType=='form' && !fullScreenTab? '111px': '47px': '0px',
+                    'height': navigationHistory.length > 0? tableType=='form' && !fullScreenTab? (formHeight-111) + 'px': (formHeight-47) +'px': '100%'}">
+        <table-view *ngIf="tableType=='table'" [tableData]="tableParams" (sendEvent)='onEvent($event)' class="">
+        </table-view>
+
+        <form-view #formView *ngIf="tableType=='form' && !fullScreenTab" [tableData]="formParams"
+            (sendEvent)='onEvent($event)'>
+        </form-view>
+
+        <bottom-tabs *ngIf="tableType=='form' && showTabs" [Tabs]='tabs' [SaveData]='tabsSaveData'
+            (sendEvent)='onEvent($event)' #Tabs>
         </bottom-tabs>
-    </ng-container>
+
+    </div>
+
+
+    <br>
+    <hr>
+    <br>
+    <!-- 
+    <ng-container class="scrolling-element">
+
+    </ng-container> -->
 
 </div>
