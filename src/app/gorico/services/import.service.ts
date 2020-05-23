@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import Swal, { SweetAlertResult, SweetAlertIcon, SweetAlertOptions, SweetAlertPosition } from 'sweetalert2'
-import { AttachDialogComponent } from '../dialogs/attach.dialog/attach.dialog.component';
 import { MatDialog } from '@angular/material';
+import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
 
 
 @Injectable({
@@ -13,7 +13,7 @@ export class ImportService {
      * Constructor
      *
      */
-    constructor(public attachDialog: MatDialog) {
+    constructor(public importDialog: MatDialog) {
     }
 
 
@@ -30,7 +30,7 @@ export class ImportService {
      */
     showDialog(): void {
         // Pop-up example
-        const dialogRef = this.attachDialog.open(AttachDialogComponent, {
+        const dialogRef = this.importDialog.open(ImportDialogComponent, {
             width: '1280px',
             data: { entryName: "Import", keys: null }
         });

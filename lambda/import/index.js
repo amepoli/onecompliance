@@ -63,7 +63,7 @@ exports.handler = async (event, context) => {
         }
     }
 
-    if (entryName == null || keys == null || company == null) {
+    if (entryName == null || company == null) {
         requestType = 'badRequest';
     }
 
@@ -124,12 +124,12 @@ exports.handler = async (event, context) => {
 
         let chiave = '';
 
-        keys = Object.assign({ 'codice_azienda': company }, keys);
+        // keys = Object.assign({ 'codice_azienda': company }, keys);
 
-        for (var key in keys) {
-            chiave = chiave + separator + keys[key];
-            separator = '^';
-        }
+        // for (var key in keys) {
+        //     chiave = chiave + separator + keys[key];
+        //     separator = '^';
+        // }
 
         client = await pool.connect();
         //console.log(names);
@@ -168,6 +168,7 @@ exports.handler = async (event, context) => {
             body = { result: 'OK' };
 
         } else if (requestType === 'createNewFile') {
+            console.log("Creating new import file");
             // create a temporary signed URL for the object 
             const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
             body = { result: 'OK', url: signedUrl, filename: filename };

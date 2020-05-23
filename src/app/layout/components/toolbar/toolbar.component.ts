@@ -264,7 +264,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     import(): void {
         this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'import' });
-        console.log("Import");
     }
 
 }
