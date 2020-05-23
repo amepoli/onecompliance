@@ -308,6 +308,8 @@ function getEventQuery(entry_params, body, eventInfo) {
 
     let table_keys = body;  // keys provided with body
 
+    console.log("Event body: ", body);
+
     let keyTypes = getKeyTypes(entry_keys);
 
     let field_key = entry_keys.find(entry => entry.key === eventInfo.field);
@@ -989,7 +991,7 @@ exports.handler = async (event, context) => {
 
         // retrieve codice_azienda and codice_part from company if needed
 
-        await addCodiceAzienda(table_keys, company, entry_params, client, isFormRecord);
+        await addCodiceAzienda(table_keys, company, entry_params, client, isFormRecord || isNewRecord || isEventUpdate);
 
         if (method === 'GET') {
             if (dashboardIndex != null) {

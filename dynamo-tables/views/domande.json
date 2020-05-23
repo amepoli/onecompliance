@@ -153,19 +153,13 @@
         "inputEvents": [
           {
             "actionType": "query",
-            "eventName": "table_domande",
-            "condition": "none",
-            "values": [],
-            "queryFunct": "select string_agg(concat(ordinamento,') ',risposta,' (',peso,'%)'), E'\n')  as mostra_risposte from entrasp.risposte_previste where id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$  and codice_azienda=$codice_azienda$ and id_domanda=$id_domanda$;"
-          },
-          {
-            "actionType": "query",
             "eventName": "combobox_risposte",
             "condition": "none",
             "values": [],
             "queryFunct": "select  string_agg(concat(ordinamento,') ',risposta,' (',peso,'%)'), E'\n') as mostra_risposte from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$risposte$;"
           }
         ],
+        "queryFunct": "entrasp.risposte_previste_mostra(codice_azienda, id_modello_test, id_modello_test_vr,id_domanda)",
         "isHidden": false,
         "isPrimary": false,
         "key": "mostra_risposte",
@@ -185,8 +179,5 @@
         "eventName": "domande_button_dettaglio"
       }
     ],
-    "origin": "entrasp.domande",
-    "outputEvent": {
-      "eventName": "table_domande"
-    }
+    "origin": "entrasp.domande"
   }
