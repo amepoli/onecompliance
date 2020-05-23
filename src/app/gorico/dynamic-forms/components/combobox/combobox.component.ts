@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy} from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FieldConfig, Item } from '../../field.interface';
 import { ReplaySubject, Subject } from 'rxjs';
@@ -17,7 +17,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 `,
   styles: []
 })
-export class ComboboxComponent implements OnInit, OnDestroy {
+export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   field: FieldConfig;
   group: FormGroup;
 
@@ -42,7 +42,7 @@ export class ComboboxComponent implements OnInit, OnDestroy {
 
     if (_this.field.value != null) {
         _this.field.value = _this.field.options.find(x => x.id === _this.field.value);
-        setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
+       // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
     }
 
       // load the initial bank list
@@ -54,6 +54,13 @@ export class ComboboxComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         _this.filterItems();
       });
+  }
+
+  ngAfterViewInit() {
+    const _this = this;
+    if (_this.field.value != null && this.field.eventName != null) {
+        _this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'});
+    }
   }
 
   ngOnDestroy() {
