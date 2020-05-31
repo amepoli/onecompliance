@@ -6,11 +6,12 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
-LAMBDANAME="tables"
+LAMBDANAME="reports"
 
 DYN_USERSNAME="users"
 DYN_PROFILESNAME="profiles"
 DYN_VIEWSNAME="views"
+DYN_REPORTSNAME="reports"
 
 DBNAME=""
 HOSTNAME="goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com"
@@ -23,6 +24,7 @@ if [ $1 == "gorico_dev" ]
     DYN_USERSNAME="${DYN_USERSNAME}_$1"
     DYN_PROFILESNAME="${DYN_PROFILESNAME}_$1"
     DYN_VIEWSNAME="${DYN_VIEWSNAME}_$1"
+    DYN_REPORTSNAME="${DYN_REPORTSNAME}_$1"
 fi
 
 #replace Variables
@@ -33,6 +35,7 @@ sed -i -e "s/HOST_NAME/${HOSTNAME}/g" index.js
 sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
 sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
 sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
+sed -i -e "s/REPORTS_NAME/${DYN_REPORTSNAME}/g" index.js
 
 rm index.js-e
 
@@ -47,3 +50,4 @@ aws lambda update-function-code --function-name $LAMBDANAME --zip-file fileb://.
 #restore the original file
 
 mv index.js.ori index.js
+cd ..

@@ -6,7 +6,7 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
-LAMBDANAME="tables"
+LAMBDANAME="views"
 
 DYN_USERSNAME="users"
 DYN_PROFILESNAME="profiles"
@@ -40,7 +40,7 @@ rm index.js-e
 
 rm ./nodejs.zip
 
-zip -r nodejs.zip node_modules index.js package.json
+zip -r nodejs.zip index.js package.json
 
 aws lambda update-function-code --function-name $LAMBDANAME --zip-file fileb://./nodejs.zip
 

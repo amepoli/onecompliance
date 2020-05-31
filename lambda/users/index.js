@@ -4,8 +4,8 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 const Pool = require('pg-pool');
 const pool = new Pool({
-    host: 'goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-    database: 'Gorico',
+    host: 'HOST_NAME',
+    database: 'DB_NAME',
     user: 'postgres',
     password: 'et2themax',
     port: 5432,
@@ -21,6 +21,7 @@ async function getCompanies(data) {
     data.profiles.forEach(profile => {
         companies = companies.concat(profile.companies);
         companies = [...new Set(companies)]; // remove duplicates
+
     });
     return companies;
 }
@@ -38,7 +39,7 @@ exports.handler = async (event, context) => {
     console.log(userid);
 
     var DynamoParams = {
-    TableName: 'users',
+    TableName: 'USERS_NAME',
     Key: {
         userid: userid
       }

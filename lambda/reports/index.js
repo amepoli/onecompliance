@@ -2,8 +2,8 @@ const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
-  host: 'goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-  database: 'Gorico',
+  host: 'HOST_NAME',
+  database: 'DB_NAME',
   user: 'postgres',
   password: 'et2themax',
   port: 5432,
@@ -21,7 +21,7 @@ async function tableName2BusinessObject (table_name) {
     }
 
     const DynamoParams = {
-        TableName: 'views',
+        TableName: 'VIEWS_NAME',
         Key: {
             entryKey: table_name
         }
@@ -124,7 +124,7 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
     }
 
     const DynamoParams = {
-        TableName: 'views',
+        TableName: 'VIEWS_NAME',
         Key: {
             entryKey: entry_name
         }
@@ -263,14 +263,14 @@ exports.handler = async (event, context) => {
     }
 
     const reportDynamoParams = {
-    TableName: 'reports',
+    TableName: 'REPORTS_NAME',
     Key: {
         name: ''
       }
     };
 
     const viewDynamoParams =    {
-        TableName: 'views',
+        TableName: 'VIEWS_NAME',
         Key: {
             entryKey: entryName
         }

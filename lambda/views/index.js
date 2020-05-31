@@ -5,7 +5,7 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 async function getProfile(userid, company) {
 
     var userParams = {
-        TableName: 'users',
+        TableName: 'USERS_NAME',
         Key: {
             userid: userid
         }
@@ -28,7 +28,7 @@ async function getProfile(userid, company) {
 
     if (profile != null) {
         var profileParams = {
-            TableName: 'profiles',
+            TableName: 'PROFILES_NAME',
             Key: {
                 name: profile
             }
@@ -91,7 +91,7 @@ exports.handler = async (event, context) => {
     const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
 
     const DynamoParams = {
-        TableName: 'views',
+        TableName: 'VIEWS_NAME',
         Key: {
             entryKey: entry_name
         }
