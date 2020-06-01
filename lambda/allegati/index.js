@@ -4,8 +4,8 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
-  host: 'goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-  database: 'Gorico',
+  host: 'HOST_NAME',
+  database: 'DB_NAME',
   user: 'postgres',
   password: 'et2themax',
   port: 5432,
@@ -80,7 +80,7 @@ exports.handler = async (event, context) => {
     }
     
     const DynamoParams = {
-        TableName: 'views',
+        TableName: 'VIEWS_NAME',
         Key: {
             entryKey: entryName
         }
