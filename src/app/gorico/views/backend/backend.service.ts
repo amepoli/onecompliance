@@ -91,16 +91,6 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/attach', this.myPutPostInit));
   }
 
-  createImportFileURL(entryName: string, company: string, keys: any): Observable<any> {
-    this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys) };
-    console.log(entryName);
-    console.log(company);
-    console.table(keys);
-
-    return from(this.amplifyService.api().post(this.apiName, '/import', this.myPutPostInit));
-  }
-
   checkFile(entryName: string, company: string, keys: any, checksum: string, filename: string, data: any): Observable<any> {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), filename: filename, checksum: checksum };
@@ -141,4 +131,29 @@ export class BackendService {
     this.myGetInit.queryStringParameters = { lang: lang };
     return from(this.amplifyService.api().get(this.apiName, '/lang', this.myGetInit));
   }
+
+  /* Import Related functions */
+  createImportFileURL(): Observable<any> {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'createNewFile' };
+    return from(this.amplifyService.api().post(this.apiName, '/import', this.myPutPostInit));
+  }
+
+  importFileFromS3(company: string, fileName: string, table: string, columns: string): Observable<any> {
+    this.amplifyService.auth();
+
+    // Test data:
+    // this.myPutPostInit.queryStringParameters = { request_type: 'importFile', company: 'DEMO', filename: 's3test.csv', table: 'entrasp.s3_import', columns: null };
+
+    this.myPutPostInit.queryStringParameters = { request_type: 'importFile', company: company, filename: fileName, table: table, columns: columns };
+    return from(this.amplifyService.api().post(this.apiName, '/import', this.myPutPostInit));
+  }
+
+  deleteImportFileURL(fileName: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'deleteFile', filename: fileName };
+    return from(this.amplifyService.api().post(this.apiName, '/import', this.myPutPostInit));
+  }
+
+
 }

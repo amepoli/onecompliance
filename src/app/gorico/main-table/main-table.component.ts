@@ -206,7 +206,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                                 }
                             });
                 } else if (msg.type === 'import') {  // import the excel sheet or csv
-                    _this._importService.showDialog();
+                    _this._importService.showDialog(_this.tableName);
 
                     // // Show loading Dialog
                     // _this._dialogService.showLoadingDialog("Preparing Excel Sheet", "Please wait...");

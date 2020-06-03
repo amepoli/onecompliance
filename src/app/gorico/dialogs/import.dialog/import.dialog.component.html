@@ -44,16 +44,13 @@
 
                 <div class="breadcrumb text-truncate h1 pl-64 w-100-p" fxLayout="row"
                     fxLayoutAlign="space-between center">
-                    <span>File import</span>
+                    <span>Import CSV file in {{tableName}}</span>
                 </div>
-
-
 
                 <!-- ADD FILE BUTTON -->
                 <div class="file-uploader">
                     <input hidden type="file" #fileInput />
-                    <button mat-fab class="add-file-button mat-warn" (click)="addFiles()" aria-label="Add file"
-                        [@animate]="{value:'*', params:{delay:'300ms',scale:'0.2'}}">
+                    <button mat-fab class="add-file-button mat-warn" (click)="addFiles()" aria-label="Add file">
                         <mat-icon>add</mat-icon>
                     </button>
                 </div>
@@ -65,31 +62,27 @@
             <!-- CONTENT -->
             <div class="content mat-white-bg" fusePerfectScrollbar>
                 <div class="modal-body">
-                    <input #filesInput type="file" hidden (change)="fileChangeEvent($event)" multiple
-                        placeholder="Add file(s)..."
-                        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                    <input #singleFileInput type="file" hidden (change)="fileChangeEvent($event)"
+                        placeholder="Add file..." accept=".csv"
+                        notaccept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                    <input #multipleFilesInput type="file" hidden (change)="fileChangeEvent($event)" multiple
+                        placeholder="Add file(s)..." accept=".csv"
+                        notaccept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
                 </div>
 
                 <br><br><br>
-                <!-- <button mat-raised-button matTooltip="Add" (click)="addFiles()">
-                    <mat-icon>add</mat-icon> Add files
-                </button> -->
-
-                <!-- <ul *ngIf="files && files.length">
-                        <li *ngFor="let file of files">{{file.name}}</li>
-                    </ul> -->
 
                 <p *ngIf="!files || !files.length">No files selected. Click on + button to add files.</p>
 
                 <table class="import-dialog-table" *ngIf="files && files.length">
                     <tr>
                         <th>Name</th>
-                        <th>Size (KBs)</th>
+                        <th>Size</th>
                         <th>Remove</th>
                     </tr>
                     <tr *ngFor="let file of files; let i = index">
                         <td>{{file.name}}</td>
-                        <td>{{(file.size/1024) | number:'1.2-2'}}</td>
+                        <td>{{getFileSize(file.size)}}</td>
                         <td>
                             <button mat-icon-button matTooltip="Delete" (click)="removeFile(i)">
                                 <mat-icon>delete</mat-icon>
@@ -98,21 +91,8 @@
                     </tr>
                 </table>
             </div>
-            <!-- / CONTENT -->
-
         </div>
-        <!-- / CENTER -->
-
-        <!-- SIDEBAR ->
-        <fuse-sidebar class="sidebar details-sidebar" name="file-manager-details-sidebar" position="right"
-                      lockedOpen="gt-md">
-            <file-manager-details-sidebar></file-manager-details-sidebar>
-        </fuse-sidebar>
-        <!-- / SIDEBAR -->
-
     </div>
-
-
 </div>
 
 <div mat-dialog-actions>

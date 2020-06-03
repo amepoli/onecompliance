@@ -1,7 +1,13 @@
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
-const dynamo = new AWS.DynamoDB.DocumentClient();
+
+const bucket = 'gorico2.import';
+const region = 'eu-central-1';
+const accessKey = 'AKIAVH7FFOJ5BBH3AY4R';
+const secret = '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';
+
+// const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
     host: 'goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
@@ -15,9 +21,6 @@ const pool = new Pool({
     connectionTimeoutMillis: 1000
 });
 
-var crypto = require('crypto');
-
-
 function getDateFormat() {
     var d = new Date();
     var month = d.getMonth() + 1;
@@ -27,50 +30,15 @@ function getDateFormat() {
 
 exports.handler = async (event, context) => {
 
-    const shasum = crypto.createHash('sha1');
-
     const queryParams = event.queryStringParameters;
+    let body = null;
 
     console.log(queryParams);
 
-    // const queryParams = event; / test
+    const requestType = queryParams['request_type'];
 
-    let keys = JSON.parse(queryParams['keys']);
-    const entryName = queryParams['entry_name'];
-    const checksum = queryParams['checksum'];
-    const company = queryParams['company'];
-    var filename = queryParams['filename'];
-    var requestType = '';
-
-    if (filename == null) {
-        if (event.httpMethod === 'GET') {
-            requestType = 'getFileList';
-        } else if (event.httpMethod === 'POST') { // POST and no file provided, create a new file
-            filename = context.awsRequestId(); // generate a 'unique' UUID as filename
-            requestType = 'createNewFile';
-        } else {  // DELETE and no filename, return an error
-            requestType = 'badRequest';
-        }
-    } else { // filename not null
-        if (event.httpMethod === 'GET') {
-            requestType = 'getFileURL';
-        } else if (event.httpMethod === 'POST') {
-            requestType = (checksum == null) ? 'updateFile' : 'fileCheck';
-        } else if (event.httpMethod === 'DELETE') {
-            requestType = 'deleteFile';
-        } else {
-            requestType = 'badRequest';
-        }
-    }
-
-    if (entryName == null || company == null) {
-        requestType = 'badRequest';
-    }
-
-
-    console.log('Lets start ' + requestType);
-
-    if (requestType === 'badRequest') {
+    // If no Request type provided, exit with an error
+    if (!requestType) {
         return {
             "isBase64Encoded": false,
             "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -78,157 +46,130 @@ exports.handler = async (event, context) => {
             "error": "Bad URL"
         };
     }
+    else {
+        console.log('Lets start ' + requestType);
 
-    const DynamoParams = {
-        TableName: 'views',
-        Key: {
-            entryKey: entryName
-        }
-    };
+        try {
+            // const date = getDateFormat();
+            let client = await pool.connect();
 
-    const s3ParamsInsert = {
-        Bucket: 'gorico2.db',
-        Key: 'import/' + filename
-    };
+            if (requestType === 'createNewFile') {
+                const fileName = context.awsRequestId + ".csv"; // generate a 'unique' UUID as fileName
 
-    const s3ParamsGetList = {
-        Bucket: 'gorico2.db',
-        Key: 'import/' + filename
-    };
+                const s3ParamsInsert = {
+                    Bucket: bucket,
+                    Key: fileName
+                };
 
-    let client, body;
-    let decnames = [];
+                // create a temporary signed URL for the object 
+                const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
+                console.log(`Creating new import file: ${fileName} Url: ${signedUrl}`);
 
-    const date = getDateFormat();
-
-    try {
-
-        var data = await dynamo.get(DynamoParams).promise();
-
-        data = data.Item;
-
-        console.log(data);
-
-        let bus_object = data['businessObjectName'];
-
-        if (bus_object == null) {
-            return {
-                "isBase64Encoded": false,
-                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-                "statusCode": 500,
-                "error": "Cannot find an associated business object"
-            };
-        }
-
-        let separator = '';
-
-        let chiave = '';
-
-        // keys = Object.assign({ 'codice_azienda': company }, keys);
-
-        // for (var key in keys) {
-        //     chiave = chiave + separator + keys[key];
-        //     separator = '^';
-        // }
-
-        client = await pool.connect();
-        //console.log(names);
-        let query, response;
-
-        if (requestType === 'getFileList') {
-            query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' AND nome_business_object='${bus_object}' AND chiave='${chiave}';`;
-            response = await client.query(query);
-            console.log(query, response);
-            let ids = response['rows'].map(f => f['id_risorsa']);
-            for (let i = 0; i < ids.length; i++) {
-                query = `select * from entrasp.cdms_risorse as a 
-                inner join entrasp.cdms_risorse_revisioni as b on a.codice_azienda = b.codice_azienda AND a.id_risorsa = b.id_risorsa 
-                where a.codice_azienda='${company}' AND a.id_risorsa=${ids[i]};`;
-                response = await client.query(query);
-                console.log(query, response);
-                decnames.push(response['rows'][0]);
+                // Response Body
+                body = { result: 'OK', url: signedUrl, fileName: fileName };
             }
-            body = { result: 'OK', list: decnames };
-        } else if (requestType === 'getFileURL') {
-            var url = s3.getSignedUrl('getObject', s3ParamsGetList);
-            if (url == null) {
-                body = { result: 'KO', reason: 'Something wrong with cloud storage' };
-            } else {
-                body = { result: 'OK', url: url };
+            else if (requestType === 'importFile') {
+                // Load mandatory query params
+                const fileName = queryParams['filename'];
+                const table = queryParams['table'];
+
+                // Check if mandatory query params provided
+                if (!fileName || !table) {
+                    // Error Response Body
+                    body = { result: 'KO', reason: 'File and/or table not provided!' };
+                }
+                else {
+                    // Load file from S3
+                    const s3ParamsGetList = {
+                        Bucket: bucket,
+                        Key: fileName
+                    };
+
+                    const csvFile = await s3.getObject(s3ParamsGetList).promise();
+
+                    // Check if file exists
+                    if (!csvFile.ContentLength) {
+                        console.log("File does not exist!");
+                        body = { result: 'KO', reason: 'File does not exist!' };
+                    }
+                    else {
+                        console.log(`S3 File length: ${csvFile.ContentLength}`);
+
+                        // Try to load columns from query params
+                        let columns = queryParams['columns'];
+
+                        // Check if columns were not provided in the query params
+                        if (!columns) {
+                            // Let's search CSV header for columns
+                            // First line contains headers, replace all extra characters
+                            columns = csvFile.Body.toString().split('\n')[0].replace(/'/g, '');
+                        }
+
+                        // Data prepared:
+                        console.table({ "fileName": fileName, "table": table, "columns": columns });
+
+                        // Create extensions
+                        // query = `CREATE EXTENSION aws_s3 CASCADE;`
+                        // query = `CREATE EXTENSION aws_commons CASCADE;`
+
+                        // Import CSV from S3 to Postgres
+                        query = `SELECT aws_s3.table_import_from_s3(
+                            '${table}',
+                            '${columns}', 
+                            '(FORMAT CSV, DELIMITER E'','', HEADER true)',
+                            aws_commons.create_s3_uri('${bucket}', '${fileName}','${region}'), 
+                            aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
+                        );`;
+
+                        // Try to run query 5 times on failure
+                        let queryResponse = null;
+                        let tries = 0;
+                        while (!queryResponse && tries < 5) {
+                            console.log(`Trying to run query [${tries}]`);
+                            try {
+                                queryResponse = await client.query(query);
+                            }
+                            catch (e) {
+                                console.log(e);
+                                queryResponse = null;
+                                tries++;
+                            }
+                        }
+
+                        // Check if success or failure
+                        if (queryResponse) {
+                            console.table(queryResponse);
+                            body = { result: 'OK', response: queryResponse };
+                        }
+                        else {
+                            body = { result: 'KO', reason: 'CSV file is not valid for this table!' };
+                        }
+                    }
+                }
             }
-        } else if (requestType === 'updateFile') {
-            // fill postgresql tables
-            const requestBody = JSON.parse(event.body);
-            query = `update entrasp.cdms_risorse set 
-                   nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
-                   data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica=${date}
-                   where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa}`;
-            response = await client.query(query);
+            else if (requestType === 'deleteFile') {
+                const fileName = queryParams['filename'];
 
-            body = { result: 'OK' };
+                const s3ParamsDelete = {
+                    Bucket: bucket,
+                    Key: fileName
+                };
 
-        } else if (requestType === 'createNewFile') {
-            console.log("Creating new import file");
-            // create a temporary signed URL for the object 
-            const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
-            body = { result: 'OK', url: signedUrl, filename: filename };
+                const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsDelete);
 
-        } else if (requestType === 'fileCheck') {
-            const object = await s3.getObject(s3ParamsGetList).promise();
-            const actualChecksum = shasum.update(object.Body).digest('hex');
-            const requestBody = JSON.parse(event.body);
-            console.log(checksum, actualChecksum);
-            if (checksum === actualChecksum) { // file correctly uploaded
-                query = `SELECT (MAX(id_risorsa)+1) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
-                response = await client.query(query);
-                const nextId = response['rows'][0]['id_risorsa'];
-
-                query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, content_type, flag_indexed, id_tipo_allegato)
-                    values ('${company}', ${nextId}, '${requestBody.nickname}',1, '${requestBody.descrizione}', '${requestBody.autore}', 
-                    '${date}', '${date}', '${requestBody.url}','${requestBody.descrizione_breve}', '${date}', '${requestBody.content_type}', 1, ${requestBody.id_tipo_allegato}) returning id_risorsa;`;
-                response = await client.query(query);
-                console.log(query);
-
-                query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) values ('${company}', ${nextId}, '${bus_object}','${chiave}');`;
-                response = await client.query(query);
-                console.log(query);
-
-                query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1) 
-                  values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
-                          '${requestBody.autore}', '${requestBody.nickname}', '${requestBody.content_type}', ${requestBody.dimensione}, '${checksum}');`;
-                response = await client.query(query);
-                console.log(query);
-                body = { result: 'OK' };
-            } else { // wrong checksum 
-                body = { result: 'KO', reason: 'Error with file checksum' };
+                body = { result: 'OK', url: signedUrl };
             }
-
-        } else if (requestType === 'deleteFile') {
-            // create a temporary signed URL for the object 
-            const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsInsert);
-
-            const requestBody = JSON.parse(event.body);
-            query = `delete entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa};`;
-            response = await client.query(query);
-            query = `delete entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa};`;
-            response = await client.query(query);
-            query = `delete entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa};`;
-            response = await client.query(query);
-
-            body = { result: 'OK', url: signedUrl };
+            await client.release();
+        } catch (e) {
+            console.log(e);
+            body = { result: 'KO', reason: 'Server error' };
         }
-    } catch (e) {
-        console.log(e);
-        body = { result: 'KO', reason: 'Server error' };
+
+        return {
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "statusCode": 200,
+            "body": JSON.stringify(body)
+        };
     }
-
-
-    await client.release();
-
-    return {
-        "isBase64Encoded": false,
-        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-        "statusCode": 200,
-        "body": JSON.stringify(body)
-    };
 };
