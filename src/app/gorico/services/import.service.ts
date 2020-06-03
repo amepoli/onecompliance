@@ -109,18 +109,41 @@ export class ImportService {
                                                     }
                                                 }
                                             )
-
-
-
-
-
                                         }
                                         else {
                                             // Failure
                                             console.error(importFileFromS3Response.reason);
-                                            // Show error
-                                            this._dialogService.closeDialog();
-                                            this._dialogService.showErrorDialog("Error", importFileFromS3Response.reason);
+                                            this._toastService.showErrorToast("File import error!");
+                                            this._dialogService.showLoadingDialog("Finalizing", "Please wait...");
+
+                                            // Get the S3 Delete URL
+                                            this.backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
+                                                deleteURLResponse => {
+                                                    console.log(deleteURLResponse);
+                                                    if (deleteURLResponse != null && deleteURLResponse.result === 'OK') {
+                                                        // Delete file from S3
+                                                        this.httpClient.delete(deleteURLResponse.url).subscribe(
+                                                            responseDelete => {
+                                                                console.table(responseDelete);
+                                                                // Show error
+                                                                this._dialogService.closeDialog();
+                                                                this._dialogService.showErrorDialog("Error", importFileFromS3Response.reason);
+                                                            },
+                                                            error => {
+                                                                console.error(error);
+                                                                this._dialogService.closeDialog();
+                                                                this._dialogService.showErrorDialog("Error", "Error deleting file!");
+                                                            }
+                                                        );
+                                                    }
+                                                    else {
+                                                        this._dialogService.closeDialog();
+                                                        console.error(createURLResponse.reason);
+                                                        // Show error snackbar
+                                                        this._toastService.showErrorToast(createURLResponse.reason);
+                                                    }
+                                                }
+                                            )
                                         }
                                     }
                                 )
