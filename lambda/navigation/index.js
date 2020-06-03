@@ -3,8 +3,8 @@ AWS.config.update({region: 'eu-central-1'});
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
-    host: 'goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-    database: 'Gorico',
+    host: 'HOST_NAME',
+    database: 'DB_NAME',
     user: 'postgres',
     password: 'et2themax',
     port: 5432,
@@ -74,21 +74,21 @@ exports.handler = async (event, context) => {
     console.log('queryParams: ', queryParams, ' userid: ', userid, ' codice_azienda: ', codice_azienda);
 
     var userParams = {
-        TableName: 'users',
+        TableName: 'USERS_NAME',
         Key: {
             userid: userid
         }
     };
 
     var menuParams = {
-        TableName: 'navigation',
+        TableName: 'NAVIGATION_NAME',
         Key: {
             name: 'gorico'
         }
     };
 
     var profileParams = {
-        TableName: 'profiles',
+        TableName: 'PROFILES_NAME',
         Key: {
             name: 'dummy'
         }

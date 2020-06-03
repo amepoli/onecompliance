@@ -6,7 +6,7 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
-LAMBDANAME="tables"
+LAMBDANAME="users"
 
 DYN_USERSNAME="users"
 DYN_PROFILESNAME="profiles"
