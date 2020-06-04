@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { FormViewModule } from '../views/form/form-view.module';
 import { FormViewToolbarModule } from '../views/form-view-toolbar/form-view-toolbar.module';
 import { BottomTabsModule } from 'app/gorico/bottom-tabs/bottom-tabs.module';
+import { ImportDialogModule } from '../dialogs/import.dialog/import.dialog.module';
 
 const routes = [
   {
@@ -30,7 +31,8 @@ const routes = [
     TableViewModule,
     FormViewModule,
     FormViewToolbarModule,
-    BottomTabsModule
+    BottomTabsModule,
+    ImportDialogModule
   ],
   exports: [
     CommonModule,
@@ -42,8 +44,9 @@ const routes = [
     TableViewModule,
     FormViewModule,
     FormViewToolbarModule,
-    MainTableComponent
-  ]
+    MainTableComponent,
+  ],
+
 })
 
 export class MainTableModule { }
