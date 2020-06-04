@@ -7,6 +7,8 @@ const region = 'eu-central-1';
 const accessKey = 'AKIAVH7FFOJ5BBH3AY4R';
 const secret = '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';
 
+const schema = 'entrasp';
+
 // const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
@@ -70,8 +72,8 @@ exports.handler = async (event, context) => {
             }
             else if (requestType === 'importFile') {
                 // Load mandatory query params
-                const fileName = queryParams['filename'];
-                const table = queryParams['table'];
+                let fileName = queryParams['filename'];
+                let table = queryParams['table'];
 
                 // Check if mandatory query params provided
                 if (!fileName || !table) {
@@ -103,6 +105,11 @@ exports.handler = async (event, context) => {
                             // Let's search CSV header for columns
                             // First line contains headers, replace all extra characters
                             columns = csvFile.Body.toString().split('\n')[0].replace(/'/g, '');
+                        }
+
+                        // Added schema if table does not contain
+                        if (!table.includes('.')) {
+                            table = `${schema}.${table}`;
                         }
 
                         // Data prepared:
