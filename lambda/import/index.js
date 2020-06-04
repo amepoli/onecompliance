@@ -166,6 +166,43 @@ exports.handler = async (event, context) => {
 
                 body = { result: 'OK', url: signedUrl };
             }
+            else if (requestType === 'downloadTemplate') {
+                // Load mandatory query params
+                let table = queryParams['table'];
+
+                // Check if mandatory query params provided
+                if (!table) {
+                    // Error Response Body
+                    body = { result: 'KO', reason: 'Table not provided!' };
+                }
+                else {
+                    // Get columns for the table
+                    query = `select entrasp.grc_listacampiditabella_non_pk(
+                        '${table}'
+                    );`;
+
+                    // Run query
+                    let queryResponse = null;
+                    try {
+                        queryResponse = await client.query(query);
+                    }
+                    catch (e) {
+                        console.log(e);
+                        queryResponse = null;
+                    }
+
+                    // Check if success or failure
+                    if (queryResponse) {
+                        console.table(queryResponse);
+                        body = { result: 'OK', response: queryResponse };
+                    }
+                    else {
+                        body = { result: 'KO', reason: 'CSV file is not valid for this table!' };
+                    }
+
+                }
+            }
+
             await client.release();
         } catch (e) {
             console.log(e);
