@@ -15,6 +15,7 @@ import { DynamicFieldDirective } from './components/dynamic-field/dynamic-field.
 import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.component';
 import { ComboboxComponent } from './components/combobox/combobox.component';
 import { TextAreaComponent } from './components/textarea/textarea.component';
+import { LabelComponent } from './components/label/label.component';
 import { SubformComponent } from './components/subform/subform.component';
 
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -33,6 +34,7 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     DynamicFormComponent,
     ComboboxComponent,
     TextAreaComponent,
+    LabelComponent,
     SubformComponent
   ],
   imports: [
@@ -55,6 +57,7 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     DynamicFormComponent,
     ComboboxComponent,
     TextAreaComponent,
+    LabelComponent,
     SubformComponent
   ],
   entryComponents: [
@@ -67,6 +70,7 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     CheckboxComponent,
     ComboboxComponent,
     TextAreaComponent,
+    LabelComponent,
     SubformComponent
   ],
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'it-IT' }]

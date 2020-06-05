@@ -185,21 +185,14 @@ exports.handler = async (event, context) => {
                     let queryResponse = null;
                     try {
                         queryResponse = await client.query(query);
+                        console.table(queryResponse);
+                        body = { result: 'OK', response: queryResponse };
                     }
                     catch (e) {
                         console.log(e);
                         queryResponse = null;
-                    }
-
-                    // Check if success or failure
-                    if (queryResponse) {
-                        console.table(queryResponse);
-                        body = { result: 'OK', response: queryResponse };
-                    }
-                    else {
                         body = { result: 'KO', reason: 'CSV file is not valid for this table!' };
                     }
-
                 }
             }
 
