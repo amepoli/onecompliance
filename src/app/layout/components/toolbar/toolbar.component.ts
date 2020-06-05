@@ -116,7 +116,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
             this._sanitizer.bypassSecurityTrustResourceUrl('assets/images/examples/excel.svg'));
 
         this._iconRegistry.addSvgIcon(
-            'import',
+            'importCSV',
             this._sanitizer.bypassSecurityTrustResourceUrl('assets/images/icons/import.svg'));
 
 
@@ -264,6 +264,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     import(): void {
         this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'import' });
+    }
+
+    downloadTemplateFile(): void {
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'downloadTemplateFile' });
     }
 
 }

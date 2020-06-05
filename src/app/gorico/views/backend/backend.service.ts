@@ -155,5 +155,10 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/import', this.myPutPostInit));
   }
 
+  downloadTemplate(table: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'downloadTemplate', table: table };
+    return from(this.amplifyService.api().post(this.apiName, '/import', this.myPutPostInit));
+  }
 
 }

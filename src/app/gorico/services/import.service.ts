@@ -8,7 +8,6 @@ import { AuthService } from '../login-page/auth.service';
 import { ToastService } from './toast.service';
 import { DialogService } from './dialog.service';
 
-
 @Injectable({
     providedIn: 'root'
 })
@@ -50,12 +49,47 @@ export class ImportService {
     }
 
     /**
+     * Download Template file
+     * @param tableName table to import into
+     */
+    downloadTemplateFile(tableName: string) {
+
+        if (tableName) {
+            this._dialogService.showLoadingDialog("Downloading Template", "Please wait...");
+
+            this.backendService.downloadTemplate(tableName).subscribe(
+                downloadTemplateResponse => {
+                    console.log(downloadTemplateResponse);
+                    if (downloadTemplateResponse != null && downloadTemplateResponse.result === 'OK') {
+                        // Let's save it
+                        var blob = new Blob([downloadTemplateResponse.response], { type: "octet/stream" });
+                        saveAs(blob, `${tableName}_template.csv`);
+                        this._dialogService.closeDialog();
+                        this._toastService.showSuccessToast("Template downloaded successfully!");
+                        return;
+                    }
+                    else {
+                        this._dialogService.closeDialog();
+                        console.error(downloadTemplateResponse.reason);
+                        // Show error snackbar
+                        this._toastService.showErrorToast(downloadTemplateResponse.reason);
+                    }
+                }
+            );
+        }
+
+
+
+    }
+
+    /**
      * Show Import Dialog
      * @param tableName table to import into
      * @param files files to import, currently only one file supported
      * @param allowMultipleFiles should import single or multiple files
      */
     performImport(tableName: string, files: any[], allowMultipleFiles: boolean): void {
+
         if (files != null && files.length) {
             this._dialogService.showLoadingDialog("Uploading", "Please wait...");
             // Get the S3 Create URL 

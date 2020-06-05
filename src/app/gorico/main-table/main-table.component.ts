@@ -207,49 +207,9 @@ export class MainTableComponent implements OnInit, OnDestroy {
                             });
                 } else if (msg.type === 'import') {  // import the excel sheet or csv
                     _this._importService.showDialog(_this.tableName);
-
-                    // // Show loading Dialog
-                    // _this._dialogService.showLoadingDialog("Preparing Excel Sheet", "Please wait...");
-
-                    // _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys,
-                    //     (_this.tableType === 'form'), false, null, true).subscribe(
-                    //         response => {
-                    //             _this._dialogService.closeDialog();
-                    //             console.log(response);
-                    //             if (response.result === 'OK') {
-                    //                 // File is okay.
-                    //                 // Let's try to download it using simple window method first
-                    //                 let downloadWindow = window.open(response.url, "_blank");
-
-                    //                 // Check if the browser allowed window.open function
-                    //                 if (downloadWindow) {
-                    //                     // Window opened so must have downloaded
-                    //                     // Show success toast
-                    //                     _this._toastService.showSuccessToast("", "Excel sheet downloaded successfully!");
-                    //                 }
-                    //                 else {
-                    //                     // Window did not open so let's try the manual download methond
-                    //                     // Download the file as blob
-                    //                     _this.httpClient.get(response.url, { responseType: 'blob' }).subscribe(
-                    //                         fileData => {
-                    //                             // File downloaded
-                    //                             // Get file name
-                    //                             let parts = response.url.split('/');
-                    //                             let fileName = parts[parts.length - 1].split('?')[0];
-
-                    //                             // Let's save it
-                    //                             saveAs(fileData, fileName);
-
-                    //                             // Show success toast
-                    //                             _this._toastService.showSuccessToast("", "Excel sheet downloaded successfully!");
-                    //                         });
-                    //                 }
-                    //             }
-                    //             else {
-                    //                 // File did not succeed, show error message
-                    //                 _this._toastService.showErrorToast("An error occured!", "An error occured!")
-                    //             }
-                    //         });
+                }
+                else if (msg.type === 'downloadTemplateFile') {  // download Table columns Template File
+                    _this._importService.downloadTemplateFile(_this.tableName);
                 }
             })
         );

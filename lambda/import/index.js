@@ -170,6 +170,7 @@ exports.handler = async (event, context) => {
                 // Load mandatory query params
                 let table = queryParams['table'];
 
+                console.log("Table: " + table);
                 // Check if mandatory query params provided
                 if (!table) {
                     // Error Response Body
@@ -177,16 +178,21 @@ exports.handler = async (event, context) => {
                 }
                 else {
                     // Get columns for the table
-                    query = `select entrasp.grc_listacampiditabella_non_pk(
+                    query = `select entrasp.grc_listacampiditabella(
                         '${table}'
-                    );`;
+                    )  as columns;`;
 
                     // Run query
                     let queryResponse = null;
                     try {
                         queryResponse = await client.query(query);
                         console.table(queryResponse);
-                        body = { result: 'OK', response: queryResponse };
+                        if (queryResponse.rows && queryResponse.rows.length) {
+                            body = { result: 'OK', response: queryResponse.rows[0]["columns"] };
+                        }
+                        else {
+                            body = { result: 'OK', response: queryResponse };
+                        }
                     }
                     catch (e) {
                         console.log(e);
