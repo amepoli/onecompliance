@@ -18,6 +18,7 @@ import { CheckboxComponent } from "../checkbox/checkbox.component";
 import { ComboboxComponent } from "../combobox/combobox.component";
 import { TextAreaComponent } from '../textarea/textarea.component';
 import { SubformComponent } from '../subform/subform.component';
+import { LabelComponent } from "../label/label.component";
 
 const componentMapper = {
   input: InputComponent,
@@ -29,6 +30,7 @@ const componentMapper = {
   checkbox: CheckboxComponent,
   combobox: ComboboxComponent,
   textarea: TextAreaComponent,
+  label: LabelComponent,
   subform: SubformComponent
 };
 @Directive({
