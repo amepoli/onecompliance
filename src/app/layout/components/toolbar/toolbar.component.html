@@ -1,11 +1,11 @@
-<mat-toolbar class="p-0 mat-elevation-z1" >
+<mat-toolbar class="p-0 mat-elevation-z1">
 
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center">
 
         <div fxFlex="1 0 auto" fxLayout="row" fxLayoutAlign="start center">
 
-            <button mat-icon-button class="navbar-toggle-button"
-                    *ngIf="!hiddenNavbar && !rightNavbar" (click)="toggleSidebarOpen('navbar')" fxHide.gt-md>
+            <button mat-icon-button class="navbar-toggle-button" *ngIf="!hiddenNavbar && !rightNavbar"
+                (click)="toggleSidebarOpen('navbar')" fxHide.gt-md>
                 <mat-icon class="secondary-text">menu</mat-icon>
             </button>
 
@@ -43,13 +43,12 @@
 
         <div class="toolbar-separator"></div>
 
-        <button mat-button [matMenuTriggerFor]="companyMenu"
-                    class="user-button">Azienda: "{{currentCompany}}"
+        <button mat-button [matMenuTriggerFor]="companyMenu" class="user-button">Azienda: "{{currentCompany}}"
         </button>
 
         <mat-menu #companyMenu="matMenu">
             <ng-container *ngFor="let item of userCompanies">
-                <button mat-menu-item (click)="setCompany(item,true)">{{item}}</button> 
+                <button mat-menu-item (click)="setCompany(item,true)">{{item}}</button>
             </ng-container>
         </mat-menu>
 
@@ -61,7 +60,7 @@
 
         <mat-menu #report_menu="matMenu">
             <ng-container *ngFor="let item of reportList">
-                <button mat-menu-item (click)="getReport(item)">{{item.descrizione}}</button> 
+                <button mat-menu-item (click)="getReport(item)">{{item.descrizione}}</button>
             </ng-container>
         </mat-menu>
 
@@ -71,10 +70,32 @@
 
         <div class="toolbar-separator"></div>
 
+        <div>
+
+            <button mat-button [matMenuTriggerFor]="csvMenu">
+                <mat-icon>import_export</mat-icon>
+            </button>
+
+            <mat-menu #csvMenu="matMenu" [overlapTrigger]="false">
+
+                <button mat-menu-item (click)="downloadTemplateFile()">
+                    <mat-icon>cloud_download</mat-icon>
+                    <span>Download CSV Template</span>
+                </button>
+
+                <button mat-menu-item (click)="import()">
+                    <mat-icon>cloud_upload</mat-icon>
+                    <span>Import CSV</span>
+                </button>
+            </mat-menu>
+        </div>
+
+
+        <div class="toolbar-separator"></div>
+
         <div class="" fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="start center">
 
-            <button mat-button [matMenuTriggerFor]="userMenu"
-                    class="user-button">
+            <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
                 <div fxLayout="row" fxLayoutAlign="center center">
                     <img class="avatar mr-0 mr-sm-16" [src]="userdata.picture">
                     <span class="username mr-12" fxHide fxShow.gt-sm>{{userdata.name}} {{userdata.lastname}}</span>
@@ -98,9 +119,7 @@
 
             <div class="toolbar-separator"></div>
 
-            <button mat-button fxHide fxShow.gt-xs
-                    class="language-button"
-                    [matMenuTriggerFor]="languageMenu">
+            <button mat-button fxHide fxShow.gt-xs class="language-button" [matMenuTriggerFor]="languageMenu">
                 <div fxLayout="row" fxLayoutAlign="center center">
                     <img class="flag mr-8" [src]="'assets/images/flags/'+selectedLanguage.flag+'.png'">
                     <span class="iso text-uppercase">{{selectedLanguage.id}}</span>

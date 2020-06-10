@@ -35,7 +35,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     selectedLanguage: any;
     userStatusOptions: any[];
 
-    reportList: {'alias': string, 'descrizione': string}[] = [];
+    reportList: { 'alias': string, 'descrizione': string }[] = [];
 
     userCompanies: string[] = [];
 
@@ -114,6 +114,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this._iconRegistry.addSvgIcon(
             'excel',
             this._sanitizer.bypassSecurityTrustResourceUrl('assets/images/examples/excel.svg'));
+
+        this._iconRegistry.addSvgIcon(
+            'importCSV',
+            this._sanitizer.bypassSecurityTrustResourceUrl('assets/images/icons/import.svg'));
+
 
         // Set the private defaults
         this._unsubscribeAll = new Subject();
@@ -248,8 +253,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_list' });
     }
 
-    getReport(item: {'alias': string, 'descrizione': string}): void {
-        console.log (item);
+    getReport(item: { 'alias': string, 'descrizione': string }): void {
+        console.log(item);
         this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
     }
 
@@ -257,5 +262,12 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'get_excel' });
     }
 
+    import(): void {
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'import' });
+    }
+
+    downloadTemplateFile(): void {
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'downloadTemplateFile' });
+    }
 
 }

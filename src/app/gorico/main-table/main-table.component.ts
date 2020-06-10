@@ -14,6 +14,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from '../services/dialog.service';
+import { ImportService } from '../services/import.service';
 
 
 @Component({
@@ -90,7 +91,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
         protected location: Location,
         private httpClient: HttpClient,
         private _toastService: ToastService,
-        private _dialogService: DialogService) {
+        private _dialogService: DialogService,
+        private _importService: ImportService) {
     }
 
     ngOnInit(): void {
@@ -203,6 +205,11 @@ export class MainTableComponent implements OnInit, OnDestroy {
                                     _this._toastService.showErrorToast("An error occured!", "An error occured!")
                                 }
                             });
+                } else if (msg.type === 'import') {  // import the excel sheet or csv
+                    _this._importService.showDialog(_this.tableName);
+                }
+                else if (msg.type === 'downloadTemplateFile') {  // download Table columns Template File
+                    _this._importService.downloadTemplateFile(_this.tableName);
                 }
             })
         );

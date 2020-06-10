@@ -1,0 +1,101 @@
+<div mat-dialog-content>
+
+    <div id="input-file-manager" class="page-layout simple right-sidebar inner-scroll">
+
+        <!-- SIDEBAR ->
+        <fuse-sidebar class="sidebar main-sidebar" name="file-manager-main-sidebar" position="left">
+            <file-manager-main-sidebar></file-manager-main-sidebar>
+        </fuse-sidebar>
+        <!-- / SIDEBAR -->
+
+        <!-- CENTER -->
+        <div class="center" fxFlex>
+
+            <!-- HEADER -->
+            <div class="header mat-accent-bg p-24" fxLayout="column" fxLayoutAlign="space-between start">
+
+                <!-- TOOLBAR ->
+                <div class="toolbar w-100-p" fxFlex fxLayout="row" fxLayoutAlign="space-between start">
+    
+                    <div class="left-side" fxLayout="row">
+                        <button mat-icon-button class="sidebar-toggle"
+                                (click)="toggleSidebar('file-manager-main-sidebar')">
+                            <mat-icon>menu</mat-icon>
+                        </button>
+                    </div>
+    
+                    <div class="right-side" fxLayout="row">
+                        <button mat-icon-button aria-label="Search" matTooltip="Search">
+                            <mat-icon>search</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <!-- / TOOLBAR -->
+
+                <!-- BREADCRUMB ->
+                <div class="breadcrumb text-truncate h1 pl-72" fxLayout="row" fxLayoutAlign="start center"
+                     [@animate]="{value:'*',params:{x:'50px'}}">
+                    <div *ngFor="let path of pathArr; last  as isLast" fxLayout="row" fxLayoutAlign="start center">
+                        <span>{{path}}</span>
+                        <mat-icon *ngIf="!isLast" class="separator">chevron_right</mat-icon>
+                    </div>
+                </div>
+                <!-- / BREADCRUMB -->
+
+                <div class="breadcrumb text-truncate h1 pl-64 w-100-p" fxLayout="row"
+                    fxLayoutAlign="space-between center">
+                    <span>Import CSV file in {{tableName}}</span>
+                </div>
+
+                <!-- ADD FILE BUTTON -->
+                <div class="file-uploader">
+                    <input hidden type="file" #fileInput />
+                    <button mat-fab class="add-file-button mat-warn" (click)="addFiles()" aria-label="Add file">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </div>
+                <!-- / ADD FILE BUTTON -->
+
+            </div>
+            <!-- / HEADER -->
+
+            <!-- CONTENT -->
+            <div class="content mat-white-bg" fusePerfectScrollbar>
+                <div class="modal-body">
+                    <input #singleFileInput type="file" hidden (change)="fileChangeEvent($event)"
+                        placeholder="Add file..." accept=".csv"
+                        notaccept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                    <input #multipleFilesInput type="file" hidden (change)="fileChangeEvent($event)" multiple
+                        placeholder="Add file(s)..." accept=".csv"
+                        notaccept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                </div>
+
+                <br><br><br>
+
+                <p *ngIf="!files || !files.length">No files selected. Click on + button to add files.</p>
+
+                <table class="import-dialog-table" *ngIf="files && files.length">
+                    <tr>
+                        <th>Name</th>
+                        <th>Size</th>
+                        <th>Remove</th>
+                    </tr>
+                    <tr *ngFor="let file of files; let i = index">
+                        <td>{{file.name}}</td>
+                        <td>{{getFileSize(file.size)}}</td>
+                        <td>
+                            <button mat-icon-button matTooltip="Delete" (click)="removeFile(i)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div mat-dialog-actions>
+    <button mat-button (click)="onImport()">Import</button>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Chiudi</button>
+</div>
