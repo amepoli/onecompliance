@@ -4,7 +4,10 @@ import { FieldConfig } from "../../field.interface";
 @Component({
   selector: "app-label",
   template: `
-  <mat-label>{{field.label}}</mat-label>
+  <div *ngIf="field.isVisible != false" [ngStyle]="{'margin-bottom': '24px', 'margin-right': '0%', 'margin-left': '2%','width': field.width+'%'}" appearance="outline" [formGroup]="group">
+  
+    <mat-label [style.background-color]="field.style.background_color" [style.color]="field.style.font_color" >{{field.label}}</mat-label>
+</div>
   `,
   styles: []
 })
