@@ -6,14 +6,14 @@ export interface Validator {
   message: string;
 }
 
-export interface Item{
-    id: string;
-    name: string;
-} 
+export interface Item {
+  id: string;
+  name: string;
+}
 
 export interface Key {
-    name: string;
-    inputType: string;
+  name: string;
+  inputType: string;
 }
 export interface FieldConfig {
   label?: string;
@@ -24,7 +24,7 @@ export interface FieldConfig {
   isVisible?: boolean;
   newLine?: boolean;
   width?: number;
-  style?: { background_color?: string, font_color?: string }; 
+  style?: { background_color?: string, font_color?: string, font_size?: string, font_style?: 'italic' | 'normal', font_weight?: string };
   options?: Item[];
   collections?: any;
   type: string;
