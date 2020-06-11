@@ -79,18 +79,6 @@
       },
       {
         "format": {
-          "dataType": "number",
-          "viewType": "input"
-        },
-        "isHidden": true,
-        "isPrimary": false,
-        "key": "intensita_singola_post_rilevata",
-        "label": "intensita_singola_post_rilevata",
-        "newLine": true,
-        "readOnly": false
-      },
-      {
-        "format": {
           "viewType": "checkbox"
         },
         "isHidden": true,
@@ -148,7 +136,7 @@
         "label": "Probabilità Ante Presidi",
         "newLine": false,
         "outputEvent": {
-          "eventName": "input_probabilita_pre",
+          "eventName": "update_probabilita_pre",
           "eventTrigger": "blur"
         },
         "readOnly": false
@@ -161,7 +149,7 @@
         "inputEvents": [
           {
             "actionType": "query",
-            "eventName": "input_probabilita_pre",
+            "eventName": "update_probabilita_pre",
             "condition": "none",
             "values": [],
             "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'P', $probabilita_pre$) as probabilita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
@@ -186,7 +174,7 @@
         "label": "Impatto Ante Presidi",
         "newLine": false,
         "outputEvent": {
-          "eventName": "input_intensita_singola_pre",
+          "eventName": "update_intensita_singola_pre",
           "eventTrigger": "blur"
         },
         "readOnly": false
@@ -199,7 +187,7 @@
         "inputEvents": [
           {
             "actionType": "query",
-            "eventName": "input_intensita_singola_pre",
+            "eventName": "update_intensita_singola_pre",
             "condition": "none",
             "values": [],
             "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'I', $intensita_singola_pre$) as intensita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
@@ -222,14 +210,14 @@
         "inputEvents": [
           {
             "actionType": "update",
-            "eventName": "input_probabilita_pre",
+            "eventName": "update_probabilita_pre",
             "condition": "none",
             "values": [],
             "updateFunct": "(£probabilita_pre£/100*£intensita_singola_pre£).toFixed(2);"
           },
           {
             "actionType": "update",
-            "eventName": "input_intensita_singola_pre",
+            "eventName": "update_intensita_singola_pre",
             "condition": "none",
             "values": [],
             "updateFunct": "(£probabilita_pre£/100*£intensita_singola_pre£).toFixed(2);"
@@ -300,7 +288,7 @@
         "inputEvents": [
           {
             "actionType": "query",
-            "eventName": "input_probabilita_post",
+            "eventName": "update_probabilita_post",
             "condition": "none",
             "values": [],
             "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'P', $probabilita_post$) as probabilita_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
@@ -325,7 +313,7 @@
         "label": "Impatto Post Presidi",
         "newLine": false,
         "outputEvent": {
-          "eventName": "update_intensita_totale_post",
+          "eventName": "update_intensita_singola_post",
           "eventTrigger": "blur"
         },
         "readOnly": false
@@ -338,7 +326,7 @@
         "inputEvents": [
           {
             "actionType": "query",
-            "eventName": "input_intensita_singola_post",
+            "eventName": "update_intensita_post",
             "condition": "none",
             "values": [],
             "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'I', $intensita_singola_post$) as intensita_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
@@ -415,7 +403,7 @@
         "label": "Probabilità Rett. Presidi",
         "newLine": false,
         "outputEvent": {
-          "eventName": "input_probabilita_rett",
+          "eventName": "update_probabilita_rett",
           "eventTrigger": "blur"
         },
         "readOnly": false
@@ -428,7 +416,7 @@
         "inputEvents": [
           {
             "actionType": "query",
-            "eventName": "input_probabilita_rett",
+            "eventName": "update_probabilita_rett",
             "condition": "none",
             "values": [],
             "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'P', $probabilita_post_rilevata$) as probabilita_rett_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
@@ -453,7 +441,7 @@
         "label": "Impatto rettificato",
         "newLine": false,
         "outputEvent": {
-          "eventName": "input_intensita_singola_post_rett",
+          "eventName": "update_intensita_post_rett",
           "eventTrigger": "blur"
         },
         "readOnly": false
@@ -466,7 +454,7 @@
         "inputEvents": [
           {
             "actionType": "query",
-            "eventName": "input_intensita_singola_post_rett",
+            "eventName": "update_intensita_post_rett",
             "condition": "none",
             "values": [],
             "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'I', $intensita_singola_post_rilevata$) as intensita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
@@ -489,14 +477,14 @@
         "inputEvents": [
           {
             "actionType": "update",
-            "eventName": "input_probabilita_rett",
+            "eventName": "update_probabilita_rett",
             "condition": "none",
             "values": [],
             "updateFunct": "(£probabilita_post_rilevata£/100*£intensita_singola_post_rett_descrizione£).toFixed(2);"
           },
           {
             "actionType": "update",
-            "eventName": "input_intensita_singola_pre",
+            "eventName": "update_intensita_pre",
             "condition": "none",
             "values": [],
             "updateFunct": "(£probabilita_post_rilevata£/100*£intensita_singola_post_rett_descrizione£).toFixed(2);"
