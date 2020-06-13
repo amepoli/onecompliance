@@ -57,23 +57,15 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes) {
-
-
     const _this = this; // useful to debug
-
     if (changes.tableData) {
-      console.table({ change: "form-tableData", tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
-
       _this.getterParams = {
         entryName: _this.tableData.entryName,
         keys: _this.tableData.keys,
         isNew: false,
         isVisible: true  // hide the child view and handle it from parent
       };
-    }
-    else if (changes.SaveData) {
-      console.table({ change: "form-SaveData", tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
-
+    } else if (changes.SaveData) {
       const values = _this.formGetter.formArray.map(form => form.form.value);
       // process the booleans (1/0 instead of true/false)
       values.forEach(entry => {
@@ -128,6 +120,7 @@ export class FormTableViewComponent implements OnChanges, OnInit {
     // Update availalbe height 
     this.calculateFormHeight();
   }
+
 
   addNew(): void {
     this.formGetter.addRow();
