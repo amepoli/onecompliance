@@ -55,6 +55,10 @@ export interface searchViewKey { // as per API specification
 
 export class TableViewComponent implements OnChanges {
 
+    // is Current Tab
+    @Input() isTabMode: boolean = false;
+    @Input() isCurTab: boolean = false;
+
     @Input() tableData: tableViewParams;
     @Output() sendEvent = new EventEmitter<any>();
 
@@ -109,31 +113,50 @@ export class TableViewComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         let _this = this;
+        console.log(`isCurTab: ${_this.isCurTab}`);
+
         if (changes.tableData) {
             _this.quickAddFormParams.entryName = _this.tableData.entryName;
             _this.quickAddFormParams.keys = _this.tableData.keys;
-            _this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys).subscribe(
-                result => {
-                    if (result.result === 'OK' && result.data != null && result.data.table_keys != null) {
-                        const params = result.data;
-                        _this.viewKeys = params.table_keys;
-                        _this.searchKeys = params.search_keys;
-                        _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName;  // self or new form table?
-                        _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
-                        _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
-                        _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
-                        _this.loadTable(null);
-                    }
-                    else {
-                        _this.isLoading = false;
-                        // Show error snackbar
-                        _this._toastService.showErrorToast(result.reason);
-                    }
-                });
 
-            // Calculate table height
-            this.calculateTableHeight();
+            console.table({ change: 'tableData', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
+            if (!_this.isTabMode) {
+                this.loadData();
+            }
         }
+        else if (changes.isCurTab) {
+            console.log("inside table-view isCurTab changes!");
+
+            console.table({ change: 'isCurTab', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
+
+            if (_this.isTabMode && _this.isCurTab) {
+                this.loadData();
+            }
+
+        }
+    }
+
+    private loadData() {
+        let _this = this;
+        _this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys).subscribe(result => {
+            if (result.result === 'OK' && result.data != null && result.data.table_keys != null) {
+                const params = result.data;
+                _this.viewKeys = params.table_keys;
+                _this.searchKeys = params.search_keys;
+                _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
+                _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
+                _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
+                _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
+                _this.loadTable(null);
+            }
+            else {
+                _this.isLoading = false;
+                // Show error snackbar
+                _this._toastService.showErrorToast(result.reason);
+            }
+        });
+        // Calculate table height
+        this.calculateTableHeight();
     }
 
     loadTable(search_keys: any): void {

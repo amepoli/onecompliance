@@ -18,6 +18,10 @@ export interface formTableViewParams {
 
 export class FormTableViewComponent implements OnChanges, OnInit {
 
+  // is Current Tab
+  @Input() isTabMode: boolean = false;
+  @Input() isCurTab: boolean = false;
+
   @ViewChild(FormGetterComponent) formGetter: FormGetterComponent;
 
   @Input() tableData: formTableViewParams;
@@ -53,15 +57,23 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes) {
+
+
     const _this = this; // useful to debug
+
     if (changes.tableData) {
+      console.table({ change: "form-tableData", tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
+
       _this.getterParams = {
         entryName: _this.tableData.entryName,
         keys: _this.tableData.keys,
         isNew: false,
         isVisible: true  // hide the child view and handle it from parent
       };
-    } else if (changes.SaveData) {
+    }
+    else if (changes.SaveData) {
+      console.table({ change: "form-SaveData", tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
+
       const values = _this.formGetter.formArray.map(form => form.form.value);
       // process the booleans (1/0 instead of true/false)
       values.forEach(entry => {
@@ -98,6 +110,14 @@ export class FormTableViewComponent implements OnChanges, OnInit {
             _this._toastService.showErrorToast(result.reason);
           }
         });
+    }
+    else if (changes.isCurTab) {
+      console.table({ change: "form-isCurTab", tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
+      console.log("inside form-table-view isCurTab changes!");
+    }
+    else if (changes.isTabMode) {
+      console.table({ change: "form-isTabMode", tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
+      console.log("inside form-table-view isCurTab changes!");
     }
 
   }
