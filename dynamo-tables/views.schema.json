@@ -90,15 +90,24 @@
         },
         "outputEvent": {
             "type": "object",
-            "description": "?: (form/formtable view only) global event triggered once data is (re)loaded",
+            "description": "?: (form/formtable view only) global event triggered on eventType",
             "required": [
-                "eventName"
+                "eventName",
+                "eventTrigger"
             ],
             "additionalProperties": false,
             "properties": {
                 "eventName": {
                     "type": "string",
                     "description": "M: name of the event"
+                },
+                "eventTrigger": {
+                    "type": "string",
+                    "enum":[
+                        "onReload",
+                        "onSave"
+                    ],
+                    "description": "M: triggering condition event"
                 }
             }
         },
@@ -117,7 +126,8 @@
                         "properties": {
                             "actionType": {
                                 "enum": [
-                                    "show"
+                                    "show",
+                                    "reload"
                                 ]
                             }
                         }
@@ -145,7 +155,8 @@
                         "description": "M: triggered action, if 'navigate' also set actionTarget below",
                         "enum": [
                             "show",
-                            "navigate"
+                            "navigate",
+                            "reload"
                         ]
                     },
                     "actionTarget": {
