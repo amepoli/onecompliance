@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { BackendService } from 'app/gorico/views/backend/backend.service'
 
-import { tableViewParams } from 'app/gorico/views/table/table-view.component';
+import { tableViewParams, TableViewComponent } from 'app/gorico/views/table/table-view.component';
 import { formViewParams, FormViewComponent } from '../views/form/form-view.component';
 import { TabType, BottomTabsComponent } from '../bottom-tabs/bottom-tabs.component';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
@@ -78,6 +78,9 @@ export class MainTableComponent implements OnInit, OnDestroy {
     @ViewChild('List') private List: ElementRef;
     @ViewChild('Tabs') private Tabs: BottomTabsComponent;
     @ViewChild('formView') private formView: FormViewComponent;
+    @ViewChild('tableView') private tableView: TableViewComponent;
+
+
 
     // This is the height available for form
     public formHeight = 1000;
@@ -92,7 +95,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
         private httpClient: HttpClient,
         private _toastService: ToastService,
         private _dialogService: DialogService,
-        private _importService: ImportService) {
+        private _importService: ImportService,
+        private _cdr: ChangeDetectorRef) {
     }
 
     ngOnInit(): void {
@@ -227,6 +231,13 @@ export class MainTableComponent implements OnInit, OnDestroy {
         const _this = this;
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
         let newTotal = _this.formParams.total;
+        if (event.eventType === 'savedForm') { // quick add form view submitted the new record
+            if (_this.formView && _this.tableType == 'form' && !_this.fullScreenTab) {
+                _this.formView.loadData();
+            }
+            // _this._cdr.detectChanges();
+        }
+
         if (event.eventType === 'navigate') {
 
             // Clear tabs

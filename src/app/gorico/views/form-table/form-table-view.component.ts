@@ -66,42 +66,8 @@ export class FormTableViewComponent implements OnChanges, OnInit {
         isVisible: true  // hide the child view and handle it from parent
       };
     } else if (changes.SaveData) {
-      const values = _this.formGetter.formArray.map(form => form.form.value);
-      // process the booleans (1/0 instead of true/false)
-      values.forEach(entry => {
-        for (const value in entry) {
-          if (entry.hasOwnProperty(value)) {
-            const element = entry[value];
-            if (element == null) {
-              continue; // skip null entries
-            }
-            // decode combos
-            if (element['id'] != null) {
-              entry[value] = element['id'];
-            }
-            // encode boolean
-            else if (element === true) {
-              entry[value] = '1';
-            }
-            else if (element === false) {
-              entry[value] = '0';
-            }
-          }
-        }
-      });
-      _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys, values).subscribe(   // backend expects an array of data
-        result => {
-          console.log(result);
-          if (result.result === 'OK') {
-            setTimeout(() => {
-              _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
-            }, 1000);
-          }
-          else {
-            // Show error snackbar
-            _this._toastService.showErrorToast(result.reason);
-          }
-        });
+      // To save on global Save event
+      // _this.saveChanges();
     }
     else if (changes.isCurTab) {
       console.table({ change: "form-isCurTab", tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
@@ -124,6 +90,47 @@ export class FormTableViewComponent implements OnChanges, OnInit {
 
   addNew(): void {
     this.formGetter.addRow();
+  }
+
+  saveChanges(): void {
+    let _this = this;
+    const values = _this.formGetter.formArray.map(form => form.form.value);
+    // process the booleans (1/0 instead of true/false)
+    values.forEach(entry => {
+      for (const value in entry) {
+        if (entry.hasOwnProperty(value)) {
+          const element = entry[value];
+          if (element == null) {
+            continue; // skip null entries
+          }
+          // decode combos
+          if (element['id'] != null) {
+            entry[value] = element['id'];
+          }
+          // encode boolean
+          else if (element === true) {
+            entry[value] = '1';
+          }
+          else if (element === false) {
+            entry[value] = '0';
+          }
+        }
+      }
+    });
+    _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys, values).subscribe(   // backend expects an array of data
+      result => {
+        console.log(result);
+        if (result.result === 'OK') {
+          _this._toastService.showSuccessToast("Saved successfully!"); // show success toast
+          setTimeout(() => {
+            _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+          }, 1000);
+        }
+        else {
+          // Show error snackbar
+          _this._toastService.showErrorToast(result.reason);
+        }
+      });
   }
 
   // Get height on resize

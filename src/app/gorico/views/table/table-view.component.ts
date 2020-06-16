@@ -136,7 +136,7 @@ export class TableViewComponent implements OnChanges {
         }
     }
 
-    private loadData() {
+    public loadData() {
         let _this = this;
         _this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys).subscribe(result => {
             if (result.result === 'OK' && result.data != null && result.data.table_keys != null) {
@@ -318,6 +318,7 @@ export class TableViewComponent implements OnChanges {
     onEvent(event: any) {
         if (event.eventType === 'savedForm') { // quick add form view submitted the new record
             this.showQuickAdd = false; // hide quick add
+            this._toastService.showSuccessToast("Saved successfully!"); // show success toast
             this.loadTable(null); // reload the table to visualize the record
         } else { // forward to parent
             this.sendEvent.emit(event);

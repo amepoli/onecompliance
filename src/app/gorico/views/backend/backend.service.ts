@@ -68,7 +68,7 @@ export class BackendService {
 
   updateData(entryName: string, company: string, keys: any, data: any): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys) };
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, form: 1, keys: JSON.stringify(keys) };
     this.myPutPostInit.body = data;
     return from(this.amplifyService.api().post(this.apiName, '/data', this.myPutPostInit));
   }

@@ -114,6 +114,11 @@ export class FormViewComponent implements OnChanges, OnInit {
     }
 
     ngOnChanges() {
+        this.loadData();
+    }
+
+    public loadData() {
+        this.getterParams = null;
         const _this = this; // useful to debug
         _this.getterParams = {
             entryName: _this.tableData.entryName,
