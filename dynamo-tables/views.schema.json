@@ -103,7 +103,7 @@
                 },
                 "eventTrigger": {
                     "type": "string",
-                    "enum":[
+                    "enum": [
                         "onReload",
                         "onSave"
                     ],
@@ -537,20 +537,20 @@
                                 "type": "string",
                                 "description": "?: as per specification @ https://www.w3schools.com/cssref/css_colors.asp - defaults to black"
                             },
-                            "font_size":{
-                                "type":"string",
+                            "font_size": {
+                                "type": "string",
                                 "decription": "?: as per CSS specification"
                             },
-                            "font_style":{
-                                "type":"string",
+                            "font_style": {
+                                "type": "string",
                                 "enum": [
                                     "italic",
                                     "normal"
                                 ],
                                 "decription": "?: as per CSS specification"
                             },
-                            "font_weight":{
-                                "type":"string",
+                            "font_weight": {
+                                "type": "string",
                                 "decription": "?: as per CSS specification"
                             }
                         }
@@ -710,6 +710,18 @@
                                         "queryFunct",
                                         "styleAttribute"
                                     ]
+                                },
+                                {
+                                    "properties": {
+                                        "actionType": {
+                                            "enum": [
+                                                "show_message"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "message"
+                                    ]
                                 }
                             ],
                             "additionalProperties": false,
@@ -728,7 +740,8 @@
                                         "hide",
                                         "toggle",
                                         "query",
-                                        "query_style"
+                                        "query_style",
+                                        "show_message"
                                     ]
                                 },
                                 "condition": {
@@ -746,6 +759,112 @@
                                     "description": "M: set of values to compare with, condition must be verified for all of them but '*' jolly values. '£' contoured local variables also possible.  Unused (empty) if condition = 'none'",
                                     "items": {
                                         "type": "string"
+                                    }
+                                },
+                                "message": {
+                                    "type": "object",
+                                    "description": "?: message to pop-up when actionType = show_message",
+                                    "required": [
+                                        "messageText",
+                                        "actionOnYes",
+                                        "actionOnNo"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "messageText": {
+                                            "description": "M: message to display",
+                                            "type": "string"
+                                        },
+                                        "actionOnYes": {
+                                            "description": "M: action to perform when the user presses Yes",
+                                            "type": "object",
+                                            "required": [
+                                                "actionType"
+                                            ],
+                                            "additionalProperties": false,
+                                            "anyOf": [
+                                                {
+                                                    "properties": {
+                                                        "actionType": {
+                                                            "enum": [
+                                                                "reload"
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "properties": {
+                                                        "actionType": {
+                                                            "enum": [
+                                                                "query"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "queryFunct"
+                                                    ]
+                                                }
+                                            ],
+                                            "properties": {
+                                                "actionType": {
+                                                    "description": "M: type of action to perform",
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "reload",
+                                                        "query"
+                                                    ]
+                                                },
+                                                "queryFunct": {
+                                                    "description": "?: query to perform if actionType = query",
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "actionOnNo": {
+                                            "description": "M: action to perform when the user presses Yes",
+                                            "type": "object",
+                                            "required": [
+                                                "actionType"
+                                            ],
+                                            "additionalProperties": false,
+                                            "anyOf": [
+                                                {
+                                                    "properties": {
+                                                        "actionType": {
+                                                            "enum": [
+                                                                "reload"
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "properties": {
+                                                        "actionType": {
+                                                            "enum": [
+                                                                "query"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "queryFunct"
+                                                    ]
+                                                }
+                                            ],
+                                            "properties": {
+                                                "actionType": {
+                                                    "description": "M: type of action to perform",
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "reload",
+                                                        "query"
+                                                    ]
+                                                },
+                                                "queryFunct": {
+                                                    "description": "?: query to perform if actionType = query",
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
                                     }
                                 },
                                 "styleAttribute": {

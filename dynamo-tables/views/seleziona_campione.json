@@ -1,0 +1,91 @@
+{
+    "$schema": "../views.schema.json",
+    "businessObjectName": "selezionaCampione",
+    "entryKey": "seleziona_campione",
+    "origin": "sondaggi",
+    "predefinedQueries": [
+        {
+            "operation": "update",
+            "type": "main",
+            "queryString": "TO BE DEFINED ON sondaggi_somministrati" 
+        },
+        {
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "TO BE DEFINED with order by"
+        }
+    ],
+    "form_keys": [
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda",
+        "newLine": true,
+        "readOnly": true
+      },
+      {
+        "autoGenerate": true,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "id_sondaggio",
+        "label": "ID",
+        "newLine": true,
+        "readOnly": true
+      },
+      {
+          "autoGenerate": false,
+          "format": {
+              "viewType": "checkbox"
+          },
+          "label": "",
+          "key": "checked",
+          "isHidden": false,
+          "isPrimary": false,
+          "readOnly": false,
+          "outputEvent": {
+              "eventName": "seleziona_campione_checked",
+              "eventTrigger": "select"
+          },
+          "inputEvents": [
+              {
+                  "eventName": "seleziona_campione_checked",
+                  "actionType": "show_message",
+                  "condition": "none",
+                  "values": [],
+                  "message": {
+                      "messageText": "Potrebbero esserci risposte già fornite per questa somministrazione che verrebbero cancellate. Vuoi procedere comunque?",
+                      "actionOnNo": {
+                          "actionType": "reload"
+                      },
+                      "actionOnYes": {
+                          "actionType": "query",
+                          "queryFunct": "TO BE DEFINED"
+                      }
+                  }
+              }
+          ]
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+            "viewType": "input",
+            "dataType": "text"
+        },
+        "label": "",
+        "key": "description",
+        "isHidden": false,
+        "isPrimary": false,
+        "readOnly": true
+     }
+    ]
+}
