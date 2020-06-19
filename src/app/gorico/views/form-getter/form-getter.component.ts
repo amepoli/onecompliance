@@ -106,6 +106,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     currentKeys: any; // relevant keys passed by the parent component 
 
     outputEvent: string; // event to be published to PubSub after (re)loading the table values
+    eventTrigger: string = null;
 
     subscriptions: Subscription[] = [];
 
@@ -134,7 +135,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // check and in case publish a table event on PubSub
         _this.formArray.changes.subscribe(
             c => { // publish when last element has been shown
-                if (!_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length) {
+                if (!_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length && (!_this.eventTrigger || _this.eventTrigger == 'onReload')) {
                     // tslint:disable-next-line: max-line-length
                     _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: 0, data: _this.formData, type: 'page' });
                 }
@@ -155,6 +156,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 console.log(results);
                 if (results.result === 'OK') {
                     const params = results.data;
+
                     _this.viewKeys = params.form_keys;
                     if (_this.viewKeys == null) {
                         return;                         // no formKeys defined for the table, stop here
@@ -205,6 +207,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     // take note of global table output event if any
                     if (params.outputEvent != null) {
                         _this.outputEvent = params.outputEvent.eventName;
+
+                        // Check if there's any event Trigger
+                        if (params.outputEvent.eventTrigger) {
+                            console.log('Output Event:');
+                            console.table(params.outputEvent);
+                            _this.eventTrigger = params.outputEvent.eventTrigger;
+                        }
+                        else {
+                            _this.eventTrigger = null;
+                        }
                     }
                     // load the form 
                     _this.loadTableData();
@@ -606,7 +618,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                 }
             }
-        } 
+        }
     }
 
 }

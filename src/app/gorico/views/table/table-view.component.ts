@@ -11,6 +11,7 @@ export interface tableViewParams {
     keys: any;
     showHeader: boolean;
     showFullScreenButton: boolean;
+    outputEvent?: any;
 }
 
 export type tableDataType = 'text' | 'date' | 'number' | 'boolean';
@@ -119,7 +120,7 @@ export class TableViewComponent implements OnChanges {
             _this.quickAddFormParams.entryName = _this.tableData.entryName;
             _this.quickAddFormParams.keys = _this.tableData.keys;
 
-            console.table({ change: 'tableData', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
+            console.table({ data: _this.tableData, change: 'tableData', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
             if (!_this.isTabMode) {
                 this.loadData();
             }
@@ -141,6 +142,7 @@ export class TableViewComponent implements OnChanges {
         _this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys).subscribe(result => {
             if (result.result === 'OK' && result.data != null && result.data.table_keys != null) {
                 const params = result.data;
+                console.table(params);
                 _this.viewKeys = params.table_keys;
                 _this.searchKeys = params.search_keys;
                 _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
