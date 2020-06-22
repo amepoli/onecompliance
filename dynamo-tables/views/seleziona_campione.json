@@ -50,7 +50,7 @@
         },
         "isHidden": false,
         "isPrimary": false,
-        "key": "id_somministrazione",
+        "key": "idsomministrazione",
         "label": "ID",
         "newLine": true,
         "readOnly": true
@@ -67,14 +67,15 @@
           "readOnly": false,
           "outputEvent": {
               "eventName": "seleziona_campione_checked",
-              "eventTrigger": "select"
+              "eventTrigger": "select",
+              "conditionalQuery": "select idsomministrazione from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$) where objectkey=$objectkey$"
           },
           "inputEvents": [
               {
                   "eventName": "seleziona_campione_checked",
                   "actionType": "show_message",
-                  "condition": "none",
-                  "values": [],
+                  "condition": "equalTo",
+                  "values": ["0"],
                   "message": {
                       "messageText": "Potrebbero esserci risposte già fornite per questa somministrazione che verrebbero cancellate. Vuoi procedere comunque?",
                       "actionOnNo": {
@@ -82,7 +83,7 @@
                       },
                       "actionOnYes": {
                           "actionType": "query",
-                          "queryFunct": "select entrasp.sondaggio_somministrato_delete($codice_azienda$, $id_somministrazione$)"
+                          "queryFunct": "select entrasp.sondaggio_somministrato_delete($codice_azienda$, $idsomministrazione$)"
                       }
                   }
               }
