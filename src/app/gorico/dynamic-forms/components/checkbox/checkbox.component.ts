@@ -23,16 +23,16 @@ export class CheckboxComponent implements OnInit {
       if (typeof _this.field.value === 'string') {
           _this.field.value = parseInt(_this.field.value, 10);
       }
-      if (_this.field.eventName !== null) {
+      if (_this.field.eventName !== null && _this.field.eventTrigger === 'change') {
         // wait a while before triggering the event
-        setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet:_this.field.fullValueSet, data: _this.field.value, type:'checkbox'}); }, 50);
+        setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet:_this.field.fullValueSet, data: _this.field.value, type:'change'}); }, 50);
       }
     }
 
   onCheck(event: any) {
     const _this = this;
     if (_this.field.eventName !== null) {
-        _this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, data: event.checked, type: 'checkbox'});
+        _this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, data: event.checked, type: _this.field.eventTrigger});
     }
   }
 }

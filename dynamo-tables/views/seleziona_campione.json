@@ -7,12 +7,12 @@
         {
             "operation": "update",
             "type": "main",
-            "queryString": "TO BE DEFINED ON sondaggi_somministrati" 
+            "queryString": "select entrasp.sondaggio_somministrato_insert(azienda =>$codice_azienda$, idsondaggio=>$id_sondaggio$, tit=>$objectdescription$, objectname=>$objectname$, objectkey=>$objectkey$, objectdescription=>$objectdescription$);" 
         },
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "TO BE DEFINED with order by"
+            "queryString": "select * from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$);"
         }
     ],
     "form_keys": [
@@ -50,7 +50,7 @@
         },
         "isHidden": false,
         "isPrimary": false,
-        "key": "id_somministrazione",
+        "key": "idsomministrazione",
         "label": "ID",
         "newLine": true,
         "readOnly": true
@@ -67,14 +67,15 @@
           "readOnly": false,
           "outputEvent": {
               "eventName": "seleziona_campione_checked",
-              "eventTrigger": "select"
+              "eventTrigger": "select",
+              "conditionalQuery": "select idsomministrazione from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$) where objectkey=$objectkey$"
           },
           "inputEvents": [
               {
                   "eventName": "seleziona_campione_checked",
                   "actionType": "show_message",
-                  "condition": "none",
-                  "values": [],
+                  "condition": "equalTo",
+                  "values": ["0"],
                   "message": {
                       "messageText": "Potrebbero esserci risposte già fornite per questa somministrazione che verrebbero cancellate. Vuoi procedere comunque?",
                       "actionOnNo": {
@@ -82,7 +83,7 @@
                       },
                       "actionOnYes": {
                           "actionType": "query",
-                          "queryFunct": "select entrasp.sondaggio_somministrato_delete($codice_azienda$, $id_somministrazione$)"
+                          "queryFunct": "select entrasp.sondaggio_somministrato_delete($codice_azienda$, $idsomministrazione$)"
                       }
                   }
               }
@@ -95,7 +96,31 @@
             "dataType": "text"
         },
         "label": "",
-        "key": "description",
+        "key": "objectdescription",
+        "isHidden": false,
+        "isPrimary": false,
+        "readOnly": true
+     },
+     {
+        "autoGenerate": false,
+        "format": {
+            "viewType": "input",
+            "dataType": "text"
+        },
+        "label": "",
+        "key": "objectname",
+        "isHidden": false,
+        "isPrimary": false,
+        "readOnly": true
+     },
+     {
+        "autoGenerate": false,
+        "format": {
+            "viewType": "input",
+            "dataType": "text"
+        },
+        "label": "",
+        "key": "objectkey",
         "isHidden": false,
         "isPrimary": false,
         "readOnly": true
