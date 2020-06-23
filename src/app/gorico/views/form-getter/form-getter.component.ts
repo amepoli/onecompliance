@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy } from '@angular/core';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
-import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
+import { FieldConfig, FieldInputEvent } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
 import { Validators } from '@angular/forms';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
@@ -40,14 +40,7 @@ export interface formViewKey { // as per API specification
         eventName: string,
         eventTrigger?: eventTriggerType
     };
-    inputEvents?: [
-        {
-            eventName: string,
-            actionType: eventActionType,
-            updateValue?: string,
-            queryString?: string
-        }
-    ];
+    inputEvents?: FieldInputEvent[];
     format: {
         viewType: formViewType,
         dataType?: formDataType,
@@ -482,7 +475,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
             return;
         }
-
         // not a ViewProperties event, check the condition if any -- TODO: support other conditions beyond equalTo 
         let conditionMet = true;
 
