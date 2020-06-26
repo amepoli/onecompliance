@@ -8,6 +8,7 @@ import { ComboboxComponent } from 'app/gorico/dynamic-forms/components/combobox/
 import { Subscription } from 'rxjs';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
+import { DialogService } from 'app/gorico/services/dialog.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -38,7 +39,8 @@ export interface formViewKey { // as per API specification
     ];
     outputEvent?: {
         eventName: string,
-        eventTrigger?: eventTriggerType
+        eventTrigger?: eventTriggerType,
+        conditionalQuery?: string
     };
     inputEvents?: FieldInputEvent[];
     format: {
@@ -79,6 +81,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     @Input() formParams: formGetterParams;
     @Output() sendEvent = new EventEmitter<any>();
+    @Output() onReload = new EventEmitter<any>();
 
     @ViewChildren(DynamicFormComponent) formArray: QueryList<DynamicFormComponent>;
 
@@ -113,7 +116,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private backendService: BackendService,
         private pubsubService: NgxPubSubService,
         private authService: AuthService,
-        private _toastService: ToastService) { }
+        private _toastService: ToastService,
+        private _dialogService: DialogService) { }
 
     ngOnChanges() {
         if (!this.addingNew) {
@@ -347,6 +351,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 validations: (field.format.validations != null) ? field.format.validations : [],
                 eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null,  // output events are directly handled by the target field component
                 eventTrigger: (field.outputEvent != null) ? field.outputEvent.eventTrigger : null, // at the moment only implemented by input element for focus/blur
+                conditionalQuery: (field.outputEvent != null && field.outputEvent.conditionalQuery != null) ? field.outputEvent.conditionalQuery : null,
                 subform: (field.format.viewType === 'subform') ? _this.getFieldValues(field.format.subform_keys, values, index) : null
             };
         }
@@ -611,6 +616,82 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
         }
+        else if (event.actionType === 'show_message' && conditionMet && event.message) {
+            // Show confirmation dialog
+            _this._dialogService.showConfimationDialog("Confirm", event.message.messageText, "Yes", "No", "info").then((result) => {
+                // Initialize with No action info
+                var actionType = event.message.actionOnNo.actionType;
+                var queryFunct = event.message.actionOnNo.queryFunct;
+
+                // If user clicked yes, load yes action info 
+                if (result.value === true) {
+                    actionType = event.message.actionOnYes.actionType;
+                    queryFunct = event.message.actionOnYes.queryFunct;
+                }
+
+                // Let's perform Yes Action
+                if (actionType === 'reload') {
+                    _this.reload();
+                    // Reload screen
+                }
+                else {
+                    // Run query
+                    let chiavi = {};
+                    const target_index = (value.type !== 'page') ? value.index : null;  // null means the event comes from the full table
+                    let index = (target_index == null) ? _this.formArray.length : 1;
+                    const targetViewField = _this.viewKeys.find(viewKey => viewKey.key === keyListener);
+                    const childrenArray = _this.formArray.toArray();
+                    // iterate over all indexes when full table or instead affect the target index only
+                    while (index > 0) {
+                        index--;
+                        const current_index = (target_index != null) ? target_index : index;
+                        chiavi = childrenArray[current_index].form.value;
+                        // fix problem with changed value that might be not updated yet by getting it directly from event
+                        if (value.type === 'change') {
+                            chiavi[value.origin] = value.data;
+                        }
+                        // process values
+                        for (const key in chiavi) {
+                            if (chiavi.hasOwnProperty(key)) {
+                                const element = chiavi[key];
+                                if (element == null) {
+                                    continue; // skip null entries
+                                }
+                                // decode combos
+                                if (element['id'] != null) {
+                                    chiavi[key] = element['id'];
+                                }
+                                // encode boolean
+                                else if (element === true) {
+                                    chiavi[key] = '1';
+                                }
+                                else if (element === false) {
+                                    chiavi[key] = '0';
+                                }
+                            }
+                        }
+                        _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, keyListener, chiavi, event.eventName, result ? 'actionYes' : 'actionNo', true).subscribe(
+                            result => {
+                                if (result.result === 'OK') {
+                                    console.table(result);
+                                    _this._toastService.showSuccessToast("Success!");
+                                }
+                                else {
+                                    console.table(result);
+                                    _this._toastService.showErrorToast(result.reason);
+                                }
+                            });
+                    }
+                }
+            });
+
+
+        }
+    }
+
+    reload() {
+        console.log('onReload: form-getter');
+        this.onReload.emit();
     }
 
 }

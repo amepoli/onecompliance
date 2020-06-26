@@ -27,11 +27,11 @@ export interface FieldInputEvent {
   message?: {
     messageText: string,
     actionOnYes: {
-      actionType: string,
+      actionType: 'reload' | 'query',
       queryFunct?: string
     },
     actionOnNo: {
-      actionType: string,
+      actionType: 'reload' | 'query',
       queryFunct?: string
     }
   }
@@ -55,7 +55,9 @@ export interface FieldConfig {
   keys?: Key[];
   eventName?: string;
   eventTrigger?: string;
+  conditionalQuery?: string;
   subform?: FieldConfig[];
   fullValueSet?: any;
   inputEvents?: FieldInputEvent[];
+
 }

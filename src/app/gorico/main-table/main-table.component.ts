@@ -396,6 +396,10 @@ export class MainTableComponent implements OnInit, OnDestroy {
         this.formHeight = window.innerHeight - 64;
     }
 
+    reload() {
+        console.log('onReload: main-table');
+        this.formView.loadData();
+    }
 
 }
 

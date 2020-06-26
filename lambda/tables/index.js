@@ -1,7 +1,7 @@
 const Pool = require('pg-pool');
 const pool = new Pool({
-    host: 'HOST_NAME',
-    database: 'DB_NAME',
+    host: 'goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
+    database: 'Gorico',
     user: 'postgres',
     password: 'et2themax',
     port: 5432,
@@ -42,15 +42,18 @@ function replaceLocalKeys(queryString, keys) {
 
 function replaceKeys(queryString, keys, keyTypes) {
 
-    console.log(keys);
+    console.table(keys);
     var delimiters = ['$', '€'];
     if (queryString) {
         for (var key in keys) {
+            console.table(key);
             delimiters.forEach(delimiter => {
                 let keyType = keyTypes.find(e => (e.key === key));
+
                 if (typeof keys[key] === 'object') { // key with multiple subkeys
                     // tslint:disable-next-line:forin
                     for (var subkey in keys[key]) {
+                        console.log(subKey);
                         let subKeyType = keyType.dataType.find(e => (e.key === subkey));
                         let bracket = (delimiter === '$' && subKeyType && subKeyType.dataType === 'text') ? '\'' : '';
                         let toReplace = delimiter + key + '.' + subkey + delimiter;
@@ -62,6 +65,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                             queryString = newString;
                             newString = queryString.replace(toReplace, replacement);
                         }
+                        console.log(`newString Object: ${newString}`);
                     }
                 } else {
                     let bracket = (delimiter === '$' && keyType && keyType.dataType === 'text') ? '\'' : '';
@@ -77,6 +81,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                         queryString = newString;
                         newString = queryString.replace(toReplace, replacement);
                     }
+                    console.table({ newString: newString, toReplace: toReplace, replacement: replacement });
                 }
             });
         }
@@ -300,30 +305,61 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 }
 
 
-function getEventQuery(entry_params, body, eventInfo) {
+function getEventQuery(entry_params, body, eventInfo, queryParams) {
 
     let entry_keys = entry_params.form_keys;
-
     let eventQueries = [];  // exploit preprocess queries to run the event queries
-
     let table_keys = body;  // keys provided with body
-
     console.log("Event body: ", body);
-
     let keyTypes = getKeyTypes(entry_keys);
-
     let field_key = entry_keys.find(entry => entry.key === eventInfo.field);
-
 
     if (field_key != null) {
         if (field_key.inputEvents != null) {
-            field_key.inputEvents.forEach(
-                event => {
-                    if (event.queryFunct != null && event.eventName === eventInfo.name && event.actionType === eventInfo.type) {
-                        const queryString = replaceKeys(event.queryFunct, table_keys, keyTypes);
-                        eventQueries.push(queryString);
+            if (!eventInfo.isMessage) {
+                field_key.inputEvents.forEach(
+                    event => {
+                        if (event.queryFunct != null && event.eventName === eventInfo.name && event.actionType === eventInfo.type) {
+                            const queryString = replaceKeys(event.queryFunct, table_keys, keyTypes);
+                            eventQueries.push(queryString);
+                        }
+                    });
+            }
+            else {
+                // Message stuff
+                // Let's see if there's any show_message action
+                field_key.inputEvents.forEach(
+                    event => {
+                        if (event.actionType === 'show_message') {
+                            // This is the action we were looking for.
+                            if (eventInfo.type === 'actionYes') {
+                                // It's a Yes Action
+                                if (event.message.actionOnYes.actionType === 'query') {
+                                    // It's a query
+                                    const queryString = replaceKeys(event.message.actionOnYes.queryFunct, table_keys, keyTypes);
+                                    eventQueries.push(queryString);
+                                }
+                                else {
+                                    // It's something else
+                                    console.error('Non-query action found in show_message!');
+                                }
+                            }
+                            else {
+                                // It's a No Action
+                                if (event.message.actionOnNo.actionType === 'query') {
+                                    // It's a query
+                                    const queryString = replaceKeys(event.message.actionOnNo.queryFunct, table_keys, keyTypes);
+                                    eventQueries.push(queryString);
+                                }
+                                else {
+                                    // It's something else
+                                    console.error('Non-query action found in show_message!');
+                                }
+                            }
+                        }
                     }
-                });
+                );
+            }
         }
     }
 
@@ -671,7 +707,7 @@ async function processDashboard(queryString, client) {
 async function getProfile(userid, company) {
 
     var userParams = {
-        TableName: 'USERS_NAME',
+        TableName: 'users',
         Key: {
             userid: userid
         }
@@ -697,7 +733,7 @@ async function getProfile(userid, company) {
 async function checkEntry(entry_name, profile) {
 
     var profileParams = {
-        TableName: 'PROFILES_NAME',
+        TableName: 'profiles',
         Key: {
             name: profile
         }
@@ -722,7 +758,7 @@ async function checkEntry(entry_name, profile) {
 async function checkReadOnly(entry_name, profile) {
 
     var profileParams = {
-        TableName: 'PROFILES_NAME',
+        TableName: 'profiles',
         Key: {
             name: profile
         }
@@ -872,13 +908,13 @@ async function process_properties(entry_params, table_keys, isFormRecord, client
 }
 
 
-async function addCodiceAzienda (keys, company, view_keys, client, isForm) {
-    
+async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
+
     const entry_keys = isForm ? view_keys.form_keys : view_keys.table_keys;
 
     const entry_azienda = entry_keys.find(entry => entry.key === 'codice_azienda');
     const entry_part = entry_keys.find(entry => entry.key === 'codice_part');
-    
+
     if (entry_azienda != null) {
         keys['codice_azienda'] = company;
     }
@@ -890,13 +926,13 @@ async function addCodiceAzienda (keys, company, view_keys, client, isForm) {
         const response = await client.query(queryString);
 
 
-        if (response != null ) {
+        if (response != null) {
             keys['codice_part'] = response.rows[0].codice_part;
         }
     }
 
     console.log('Keys: ', keys);
-    
+
 }
 
 // main function starts here
@@ -916,7 +952,7 @@ exports.handler = async (event, context) => {
     console.log('queryParams: ', queryParams);
 
     const DynamoParams = {
-        TableName: 'VIEWS_NAME',
+        TableName: 'views',
         Key: {
             entryKey: queryParams['entry_name']
         }
@@ -1007,7 +1043,7 @@ exports.handler = async (event, context) => {
             }
         } else if (method === 'POST') {
             if (isEventUpdate) {
-                queryString = getEventQuery(entry_params, JSON.parse(event.body), JSON.parse(queryParams['event']));
+                queryString = getEventQuery(entry_params, JSON.parse(event.body), JSON.parse(queryParams['event']), queryParams);
             } else {
                 // process later
             }

@@ -62,6 +62,7 @@ export class TableViewComponent implements OnChanges {
 
     @Input() tableData: tableViewParams;
     @Output() sendEvent = new EventEmitter<any>();
+    @Output() onReload = new EventEmitter<any>();
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
@@ -354,6 +355,11 @@ export class TableViewComponent implements OnChanges {
                 - 36 // Full screen button
                 - 36; // Quick add button
         }
+    }
+
+    reload() {
+        console.log('onReload: table-view');
+        this.onReload.emit();
     }
 }
 

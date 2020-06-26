@@ -27,6 +27,7 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   @Input() tableData: formTableViewParams;
   @Input() SaveData: boolean;
   @Output() sendEvent = new EventEmitter<any>();
+  @Output() onReload = new EventEmitter<any>();
 
   getterParams: formGetterParams; // params for the child formGetter form view
 
@@ -162,4 +163,10 @@ export class FormTableViewComponent implements OnChanges, OnInit {
         - 2; // divider
     }
   }
+
+  reload() {
+    console.log('onReload: form-table-view');
+    this.onReload.emit();
+  }
+
 }
