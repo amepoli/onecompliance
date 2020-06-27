@@ -15,6 +15,28 @@ export interface Key {
   name: string;
   inputType: string;
 }
+
+export interface FieldInputEvent {
+  actionType: "hide" | "show" | "query" | "query_style" | "show_message" | "toggle" | "update" | "update_style",
+  eventName: string,
+  values: any[],
+  condition: "equalTo" | "greatorThan" | "lessThan" | "none",
+  queryFunct?: string,
+  styleAttribute?: "background_color" | "font_color",
+  updateFunct?: string,
+  message?: {
+    messageText: string,
+    actionOnYes: {
+      actionType: 'reload' | 'query',
+      queryFunct?: string
+    },
+    actionOnNo: {
+      actionType: 'reload' | 'query',
+      queryFunct?: string
+    }
+  }
+}
+
 export interface FieldConfig {
   label?: string;
   name?: string;
@@ -33,6 +55,9 @@ export interface FieldConfig {
   keys?: Key[];
   eventName?: string;
   eventTrigger?: string;
+  conditionalQuery?: string;
   subform?: FieldConfig[];
   fullValueSet?: any;
+  inputEvents?: FieldInputEvent[];
+
 }

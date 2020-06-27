@@ -53,9 +53,9 @@ export class BackendService {
     return from(this.amplifyService.api().get(this.apiName, '/data', this.myGetInit));
   }
 
-  postEvent(entryName: string, company: string, keys: any, field: string, data: any, event: string, actionType: string): Observable<any> {
+  postEvent(entryName: string, company: string, keys: any, field: string, data: any, event: string, actionType: string, isMessage: boolean = false): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), event: JSON.stringify({ name: event, type: actionType, field: field }) };
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), event: JSON.stringify({ name: event, type: actionType, field: field, isMessage: isMessage }) };
     this.myPutPostInit.body = data;
     return from(this.amplifyService.api().post(this.apiName, '/data', this.myPutPostInit));
   }
@@ -68,7 +68,7 @@ export class BackendService {
 
   updateData(entryName: string, company: string, keys: any, data: any): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys) };
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, form: 1, keys: JSON.stringify(keys) };
     this.myPutPostInit.body = data;
     return from(this.amplifyService.api().post(this.apiName, '/data', this.myPutPostInit));
   }

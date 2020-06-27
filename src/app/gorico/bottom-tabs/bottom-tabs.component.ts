@@ -25,6 +25,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
     @Input() Tabs: TabType[];
     @Input() SaveData: boolean;
     @Output() sendEvent = new EventEmitter<any>();
+    @Output() onReload = new EventEmitter<any>();
 
     @ViewChild("tabsGroup") tabsGroup: MatTabGroup;
 
@@ -113,4 +114,8 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
         return this.Tabs.filter(t => !t.hidden);
     }
 
+    reload() {
+        console.log('onReload: bottom-tabs');
+        this.onReload.emit();
+    }
 }

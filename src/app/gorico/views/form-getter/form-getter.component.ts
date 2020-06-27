@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy } from '@angular/core';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
-import { FieldConfig } from 'app/gorico/dynamic-forms/field.interface';
+import { FieldConfig, FieldInputEvent } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
 import { Validators } from '@angular/forms';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
@@ -8,6 +8,7 @@ import { ComboboxComponent } from 'app/gorico/dynamic-forms/components/combobox/
 import { Subscription } from 'rxjs';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
+import { DialogService } from 'app/gorico/services/dialog.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -38,16 +39,10 @@ export interface formViewKey { // as per API specification
     ];
     outputEvent?: {
         eventName: string,
-        eventTrigger?: eventTriggerType
+        eventTrigger?: eventTriggerType,
+        conditionalQuery?: string
     };
-    inputEvents?: [
-        {
-            eventName: string,
-            actionType: eventActionType,
-            updateValue?: string,
-            queryString?: string
-        }
-    ];
+    inputEvents?: FieldInputEvent[];
     format: {
         viewType: formViewType,
         dataType?: formDataType,
@@ -86,6 +81,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     @Input() formParams: formGetterParams;
     @Output() sendEvent = new EventEmitter<any>();
+    @Output() onReload = new EventEmitter<any>();
 
     @ViewChildren(DynamicFormComponent) formArray: QueryList<DynamicFormComponent>;
 
@@ -106,6 +102,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     currentKeys: any; // relevant keys passed by the parent component 
 
     outputEvent: string; // event to be published to PubSub after (re)loading the table values
+    eventTrigger: string = null;
 
     subscriptions: Subscription[] = [];
 
@@ -119,7 +116,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private backendService: BackendService,
         private pubsubService: NgxPubSubService,
         private authService: AuthService,
-        private _toastService: ToastService) { }
+        private _toastService: ToastService,
+        private _dialogService: DialogService) { }
 
     ngOnChanges() {
         if (!this.addingNew) {
@@ -134,7 +132,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // check and in case publish a table event on PubSub
         _this.formArray.changes.subscribe(
             c => { // publish when last element has been shown
-                if (!_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length) {
+                if (!_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length && (!_this.eventTrigger || _this.eventTrigger == 'onReload')) {
                     // tslint:disable-next-line: max-line-length
                     _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: 0, data: _this.formData, type: 'page' });
                 }
@@ -155,6 +153,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 console.log(results);
                 if (results.result === 'OK') {
                     const params = results.data;
+
                     _this.viewKeys = params.form_keys;
                     if (_this.viewKeys == null) {
                         return;                         // no formKeys defined for the table, stop here
@@ -205,6 +204,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     // take note of global table output event if any
                     if (params.outputEvent != null) {
                         _this.outputEvent = params.outputEvent.eventName;
+
+                        // Check if there's any event Trigger
+                        if (params.outputEvent.eventTrigger) {
+                            console.log('Output Event:');
+                            console.table(params.outputEvent);
+                            _this.eventTrigger = params.outputEvent.eventTrigger;
+                        }
+                        else {
+                            _this.eventTrigger = null;
+                        }
                     }
                     // load the form 
                     _this.loadTableData();
@@ -342,6 +351,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 validations: (field.format.validations != null) ? field.format.validations : [],
                 eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null,  // output events are directly handled by the target field component
                 eventTrigger: (field.outputEvent != null) ? field.outputEvent.eventTrigger : null, // at the moment only implemented by input element for focus/blur
+                conditionalQuery: (field.outputEvent != null && field.outputEvent.conditionalQuery != null) ? field.outputEvent.conditionalQuery : null,
                 subform: (field.format.viewType === 'subform') ? _this.getFieldValues(field.format.subform_keys, values, index) : null
             };
         }
@@ -470,7 +480,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
             return;
         }
-
         // not a ViewProperties event, check the condition if any -- TODO: support other conditions beyond equalTo 
         let conditionMet = true;
 
@@ -606,7 +615,83 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                 }
             }
-        } 
+        }
+        else if (event.actionType === 'show_message' && conditionMet && event.message) {
+            // Show confirmation dialog
+            _this._dialogService.showConfimationDialog("Confirm", event.message.messageText, "Yes", "No", "info").then((result) => {
+                // Initialize with No action info
+                var actionType = event.message.actionOnNo.actionType;
+                var queryFunct = event.message.actionOnNo.queryFunct;
+
+                // If user clicked yes, load yes action info 
+                if (result.value === true) {
+                    actionType = event.message.actionOnYes.actionType;
+                    queryFunct = event.message.actionOnYes.queryFunct;
+                }
+
+                // Let's perform Yes Action
+                if (actionType === 'reload') {
+                    _this.reload();
+                    // Reload screen
+                }
+                else {
+                    // Run query
+                    let chiavi = {};
+                    const target_index = (value.type !== 'page') ? value.index : null;  // null means the event comes from the full table
+                    let index = (target_index == null) ? _this.formArray.length : 1;
+                    const targetViewField = _this.viewKeys.find(viewKey => viewKey.key === keyListener);
+                    const childrenArray = _this.formArray.toArray();
+                    // iterate over all indexes when full table or instead affect the target index only
+                    while (index > 0) {
+                        index--;
+                        const current_index = (target_index != null) ? target_index : index;
+                        chiavi = childrenArray[current_index].form.value;
+                        // fix problem with changed value that might be not updated yet by getting it directly from event
+                        if (value.type === 'change') {
+                            chiavi[value.origin] = value.data;
+                        }
+                        // process values
+                        for (const key in chiavi) {
+                            if (chiavi.hasOwnProperty(key)) {
+                                const element = chiavi[key];
+                                if (element == null) {
+                                    continue; // skip null entries
+                                }
+                                // decode combos
+                                if (element['id'] != null) {
+                                    chiavi[key] = element['id'];
+                                }
+                                // encode boolean
+                                else if (element === true) {
+                                    chiavi[key] = '1';
+                                }
+                                else if (element === false) {
+                                    chiavi[key] = '0';
+                                }
+                            }
+                        }
+                        _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, keyListener, chiavi, event.eventName, result ? 'actionYes' : 'actionNo', true).subscribe(
+                            result => {
+                                if (result.result === 'OK') {
+                                    console.table(result);
+                                    _this._toastService.showSuccessToast("Success!");
+                                }
+                                else {
+                                    console.table(result);
+                                    _this._toastService.showErrorToast(result.reason);
+                                }
+                            });
+                    }
+                }
+            });
+
+
+        }
+    }
+
+    reload() {
+        console.log('onReload: form-getter');
+        this.onReload.emit();
     }
 
 }
