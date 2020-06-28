@@ -46,7 +46,7 @@ exports.handler = async (event, context) => {
         if (event.httpMethod === 'GET') {
           requestType = 'getFileList';
         } else if (event.httpMethod === 'POST') { // POST and no file provided, create a new file
-          filename = context.awsRequestId(); // generate a 'unique' UUID as filename
+          filename = context.awsRequestId; // generate a 'unique' UUID as filename
           requestType = 'createNewFile';
         } else {  // DELETE and no filename, return an error
           requestType = 'badRequest';

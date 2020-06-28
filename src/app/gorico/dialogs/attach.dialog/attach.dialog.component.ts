@@ -126,7 +126,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             result => {
                 console.log(result);
                 if (result.result === 'OK') {
-                    this.listFiles = result.data.list;
+                    this.listFiles = result.list;
                     const files = [];
                     if (this.listFiles) {
                         this.listFiles.forEach(element => {
@@ -197,8 +197,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(), _this.data.keys).subscribe(
                 responseURL => {
                     console.log(responseURL);
-                    if (responseURL != null && responseURL.response === 'OK') {
-                        responseURL = responseURL.data;
+                    if (responseURL != null && responseURL.result === 'OK') {
                         const blob = new Blob([_this.file]);
                         // upload the file using obtained url
                         _this.httpClient.put(responseURL.url, blob).subscribe(
