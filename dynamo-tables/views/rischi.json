@@ -184,7 +184,7 @@
           "eventName": "input_probabilita_pre",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'P', $probabilita_pre$) as probabilita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
+          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'P', probabilita_pre) as probabilita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
         }
       ],
       "isHidden": false,
@@ -277,14 +277,14 @@
           "eventName": "change_intensita_totale_pre",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'T', $intensita_totale_pre$) as intensita_totale_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
+          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'T', intensita_totale_pre) as intensita_totale_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
         },
         {
           "actionType": "query_style",
           "eventName": "change_intensita_totale_pre",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', $intensita_totale_pre$) as intensita_totale_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', intensita_totale_pre) as intensita_totale_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "background_color"
         }
       ],
@@ -297,6 +297,26 @@
       "sameOrigin": false
     },
     {
+        "format": {
+          "dataType": "text",
+          "viewType": "label"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "situazione_post_presidi",
+        "label": "Situazione Post Presidi",
+        "style": {
+          "background_color": "#03a9f4",
+          "font_color": "white",
+          "font_size": "1.3em",
+          "font_style": "italic",
+          "font_weight": "400"
+        },
+        "newLine": true,
+        "readOnly": true,
+        "sameOrigin": false
+      },
+    {
       "format": {
         "dataType": "number",
         "viewType": "input"
@@ -307,7 +327,7 @@
       "label": "Probabilità Post Presidi",
       "newLine": false,
       "outputEvent": {
-        "eventName": "update_intensita_totale_post",
+        "eventName": "change_probabilita_post",
         "eventTrigger": "blur"
       },
       "readOnly": false
@@ -345,7 +365,7 @@
       "label": "Impatto Post Presidi",
       "newLine": false,
       "outputEvent": {
-        "eventName": "update_intensita_totale_post",
+        "eventName": "change_intensita_post",
         "eventTrigger": "blur"
       },
       "readOnly": false
@@ -381,11 +401,18 @@
       "inputEvents": [
         {
           "actionType": "update",
-          "eventName": "update_intensita_totale_post",
+          "eventName": "change_probabilita_post",
           "condition": "none",
           "values": [],
           "updateFunct": "(£probabilita_post£/100*£intensita_singola_post£).toFixed(2);"
-        }
+        },
+        {
+            "actionType": "update",
+            "eventName": "change_intensita_post",
+            "condition": "none",
+            "values": [],
+            "updateFunct": "(£probabilita_post£/100*£intensita_singola_post£).toFixed(2);"
+          }
       ],
       "isHidden": false,
       "isPrimary": false,
@@ -412,7 +439,7 @@
           "eventName": "change_intensita_totale_post",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', $intensita_totale_post$) as intensita_totale_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', intensita_totale_post) as intensita_totale_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "background_color"
         }
       ],
@@ -424,6 +451,26 @@
       "readOnly": true,
       "sameOrigin": false
     },
+    {
+        "format": {
+          "dataType": "text",
+          "viewType": "label"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "situazione_rettificata",
+        "label": "Situazione Rettificata",
+        "style": {
+          "background_color": "#03a9f4",
+          "font_color": "white",
+          "font_size": "1.3em",
+          "font_style": "italic",
+          "font_weight": "400"
+        },
+        "newLine": true,
+        "readOnly": true,
+        "sameOrigin": false
+      },
     {
       "format": {
         "dataType": "number",
@@ -551,7 +598,7 @@
           "eventName": "change_intensita_totale_post_rett",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', $intensita_totale_pre$) as intensita_totale_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', intensita_totale_pre) as intensita_totale_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "background_color"
         }
       ],
@@ -606,35 +653,8 @@
   ],
   "subTables": [
     {
-      "entryKey": "compiti_rischi_sub",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "codice_rischio",
-          "son": "codice_rischio"
-        }
-      ],
-      "label": "compiti_rischi"
-    },
-    {
-      "entryKey": "cpl_modelli_test_sub",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "codice_rischio",
-          "son": "codice_rischio"
-        }
-      ],
-      "label": "cpl_modelli_test"
-    },
-    {
       "entryKey": "articoli_normativi_sub_rischi",
+      "type": "tableForm",
       "keys": [
         {
           "parent": "codice_azienda",
@@ -649,6 +669,7 @@
     },
     {
       "entryKey": "tipi_rischio_sub_rischi",
+      "type": "tableForm",
       "keys": [
         {
           "parent": "codice_azienda",
@@ -678,6 +699,7 @@
     },
     {
       "entryKey": "fonti_rischio_sub_rischi",
+      "type": "tableForm",
       "keys": [
         {
           "parent": "codice_azienda",
@@ -692,6 +714,7 @@
     },
     {
       "entryKey": "argomenti_previsti_sub_rischi",
+      "type": "tableForm",
       "keys": [
         {
           "parent": "codice_azienda",

@@ -2,44 +2,47 @@
     "$schema": "../views.schema.json",
     "entryKey": "tipi_rischio_sub_rischi",
     "origin": "entrasp.rischi_tipi",
-    "table_keys": [
-      {
-        "format": {
-          "dataType": "number"
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_tipo_rischio AS id, entrasp.tipi_rischio_descrizione(id_tipo_rischio, $codice_azienda$) AS name  FROM entrasp.tipi_rischio WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_tipo_rischio",
+            "label": "Tipo rischio",
+            "readOnly": false,
+            "newLine": false
         },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "id_tipo_rischio",
-        "label": "ID Rischio"
-      },
-      {
-        "format": {
-          "dataType": "text"
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_rischio",
+            "label": "Codice Rischio",
+            "readOnly": true,
+            "newLine": false
         },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "codice_rischio",
-        "label": "Codice Rischio"
-      },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "codice_azienda",
-        "label": "Codice Azienda"
-      },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "tipo_rischio",
-        "label": "Tipo rischio",
-        "queryFunct": "entrasp.tipi_rischio_descrizione(id_tipo_rischio, $codice_azienda$)"
-      }
-    ],
-    "navigationTarget": "tipi_rischio"
-  }
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "readOnly": true,
+            "newLine": false
+        }
+    ]
+}
