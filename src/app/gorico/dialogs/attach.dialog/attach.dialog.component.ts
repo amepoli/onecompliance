@@ -122,7 +122,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit() {
 
-        this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(), this.data.keys).subscribe( 
+        this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(), this.data.keys).subscribe(
             result => {
                 console.log(result);
                 if (result.result === 'OK') {
@@ -134,7 +134,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                 'name': element.client_file_name,
                                 'type': 'document',
                                 'owner': element.autore,
-                                'size': this.getFileSize(element.dimensione),
+                                'size': this.fileService.getFileSize(element.dimensione),
                                 'modified': new Date(element.data_upd).toString(),
                                 'opened': new Date(element.data_ins).toString(),
                                 'created': new Date(element.data_creazione).toString(),
@@ -281,26 +281,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         );
     }
 
-    getFileSize(size: string): string {
 
-        let fileSize = size;
-
-        if (fileSize == null) {
-            return '0';
-        }
-
-        let numSize = parseInt(size);
-        if (numSize >= 1024 && numSize < 1024 * 1024) {
-            numSize = numSize / 1024;
-            fileSize = numSize.toFixed(2) + ' KB';
-        } else if (numSize >= 1024 * 1024) {
-            numSize = numSize / (1024 * 1024);
-            fileSize = numSize.toFixed(2) + ' MB';
-        }
-
-        return fileSize;
-
-    }
 
 
 }

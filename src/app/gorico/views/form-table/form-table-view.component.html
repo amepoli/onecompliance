@@ -1,17 +1,24 @@
 <div class="full-width">
-    <button mat-button (click)="fullScreen()">
-        <mat-icon *ngIf="!isFullScreen">fullscreen</mat-icon>
-        <mat-icon *ngIf="isFullScreen">fullscreen_exit</mat-icon>
-        FullScreen
-    </button>
-    <button mat-button (click)="addNew()">
-        <mat-icon>add</mat-icon>
-        Nuovo
-    </button>
-    <button mat-button (click)="saveChanges()">
-        <mat-icon>save</mat-icon>
-        Save
-    </button>
-    <form-getter [formParams]='getterParams' (onReload)="reload()">
+    <div style="display: flex;">
+        <mat-form-field style="padding-left: 8px;">
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+        </mat-form-field>
+        <div style="flex-grow: 1"></div>
+        <button mat-button (click)="saveChanges()">
+            <mat-icon>save</mat-icon>
+            Save
+        </button>
+        <button mat-button (click)="addNew()">
+            <mat-icon>add</mat-icon>
+            Nuovo
+        </button>
+        <button mat-button (click)="fullScreen()">
+            <mat-icon *ngIf="!isFullScreen">fullscreen</mat-icon>
+            <mat-icon *ngIf="isFullScreen">fullscreen_exit</mat-icon>
+            FullScreen
+        </button>
+
+    </div>
+    <form-getter [filter]="filter" [formParams]='getterParams' (onReload)="reload()">
     </form-getter>
 </div>

@@ -9,6 +9,7 @@ import { FormGetterComponent, formGetterParams } from '../form-getter/form-gette
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
+import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -62,6 +63,7 @@ export class FormViewComponent implements OnChanges, OnInit {
 
     n = 0;
     tot = 0;
+    n_attach = 0;
 
     readOnly = false;
 
@@ -77,7 +79,8 @@ export class FormViewComponent implements OnChanges, OnInit {
         private backendService: BackendService,
         private authService: AuthService,
         private _dialogService: DialogService,
-        private _toastService: ToastService) {
+        private _toastService: ToastService,
+        private _fileService: FileManagerService) {
 
     }
 
@@ -88,6 +91,9 @@ export class FormViewComponent implements OnChanges, OnInit {
                 if (event.eventType === 'formData') {   // child received the view Info
                     _this.currentKeys = event.viewKeys;
                     _this.tabKeys = event.tabKeys;
+                    _this.n_attach = 0;
+                    _this.getAttachList();
+
                 } else if (event.eventType === 'updateData') {  // child received the actual data, now time to populate subtables
                     let tabs: TabType[];
                     if (!_this.tableData.isNew && _this.tabKeys != null) {
@@ -115,6 +121,7 @@ export class FormViewComponent implements OnChanges, OnInit {
 
     ngOnChanges() {
         this.loadData();
+
     }
 
     public loadData() {
@@ -128,7 +135,6 @@ export class FormViewComponent implements OnChanges, OnInit {
         };
         _this.n = _this.tableData.index;
         _this.tot = _this.tableData.total;
-
     }
 
     getTabs(tabKeys: tabViewKey[], keys: any): TabType[] {
@@ -241,6 +247,43 @@ export class FormViewComponent implements OnChanges, OnInit {
 
             }
         });
+    }
+
+    getAttachList() {
+        let _this = this;
+        console.table(_this.currentKeys);
+        _this.backendService.getAttachList(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys).subscribe(
+            result => {
+                console.log(result);
+                if (result.result === 'OK') {
+                    let listFiles = result.list;
+                    const files = [];
+                    if (listFiles) {
+                        _this.n_attach = listFiles.length;
+                        listFiles.forEach(element => {
+                            const file = {
+                                'name': element.client_file_name,
+                                'type': 'document',
+                                'owner': element.autore,
+                                'size': _this._fileService.getFileSize(element.dimensione),
+                                'modified': new Date(element.data_upd).toString(),
+                                'opened': new Date(element.data_ins).toString(),
+                                'created': new Date(element.data_creazione).toString(),
+                                'extention': '',
+                                'location': '',
+                                'offline': true
+                            };
+                            files.push(file);
+                        });
+                    }
+                    _this._fileService.files = files;
+                    _this._fileService.getFiles();
+                }
+                else {
+                    // Show error snackbar
+                    _this._toastService.showErrorToast(result.reason);
+                }
+            });
     }
 
 }

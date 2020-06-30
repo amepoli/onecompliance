@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy, SimpleChanges } from '@angular/core';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { FieldConfig, FieldInputEvent } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
@@ -79,6 +79,7 @@ export interface formGetterParams {
 })
 export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy {
 
+    @Input() filter: string;
     @Input() formParams: formGetterParams;
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
@@ -86,6 +87,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     @ViewChildren(DynamicFormComponent) formArray: QueryList<DynamicFormComponent>;
 
     formData: FieldConfig[][] = [[]];
+    filteredFormData: FieldConfig[][] = [[]];
+
     isLoading = true;
 
     isReadOnly = false;
@@ -119,9 +122,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private _toastService: ToastService,
         private _dialogService: DialogService) { }
 
-    ngOnChanges() {
-        if (!this.addingNew) {
-            this.refreshView();
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.filter && this.formData && this.formData.length) {
+            this.applyFilter();
+        }
+        // Make sure params are different before refreshing view
+        if (!this.addingNew && changes.formParams) {
+            if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) != JSON.stringify(changes.formParams.currentValue))) {
+                this.refreshView();
+            }
         } else {
             this.addingNew = false;
         }
@@ -134,7 +143,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             c => { // publish when last element has been shown
                 if (!_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length && (!_this.eventTrigger || _this.eventTrigger == 'onReload')) {
                     // tslint:disable-next-line: max-line-length
-                    _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: 0, data: _this.formData, type: 'page' });
+                    _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: 0, data: _this.filteredFormData, type: 'page' });
                 }
             }
         );
@@ -266,10 +275,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
                     }
                     _this.numRows = results.length;
+
                     // prepare the form
                     _this.formData = _this.getFormData(_this.viewKeys, results);
-                    _this.process_form(_this.formData);
-                    _this.sendEvent.emit({ eventType: 'updateData', data: _this.formData }); // emit event for the parent
+
+                    // Copy all to filtered form data
+                    _this.filteredFormData = JSON.parse(JSON.stringify(_this.formData));
+
+                    _this.process_form(_this.filteredFormData);
+                    _this.sendEvent.emit({ eventType: 'updateData', data: _this.filteredFormData }); // emit event for the parent
                 }
                 else {
                     // Show error snackbar
@@ -295,6 +309,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.process_form(formData);
                     // add it to the top of the list
                     _this.formData.unshift(formData[0]);
+
+                    // create new filtered form data
+                    _this.filteredFormData = JSON.parse(JSON.stringify(_this.formData));
+
                 }
                 else {
                     // Show error snackbar
@@ -432,7 +450,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this;
         // console.table(event);
         // console.table(value);
-        // console.table(_this.formData);
+        // console.table(_this.filteredFormData);
         // console.log(`keyListener: ${keyListener}`);
         console.log(event, value, keyListener);
 
@@ -442,7 +460,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             // Check if view_properties contains keys 
             if (event.keys != null) {
                 // Check each form table line to see if the condition is met
-                _this.formData.forEach((formKeys, i) => {
+                _this.filteredFormData.forEach((formKeys, i) => {
 
                     let matchingKeys = true;
                     let matchingValues = true;
@@ -498,7 +516,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             // get the listener element if not full table
             let listener: FieldConfig = null;
             if (keyListener != null && value.type !== 'page') {
-                const targetLine = _this.formData[value.index];  // recover the form "line"
+                const targetLine = _this.filteredFormData[value.index];  // recover the form "line"
                 if (targetLine != null) {
                     listener = targetLine.find(field => field.name === keyListener);
                 }
@@ -517,7 +535,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
         } else if (event.actionType === 'navigate' && conditionMet) {
-            const formLine = _this.formData[value.index];
+            const formLine = _this.filteredFormData[value.index];
             const keys = formLine.reduce((outputKeys, key) => {
                 outputKeys[key.name] = key.value;
                 return outputKeys;
@@ -581,7 +599,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     }
                                 }
                             } else {  // query_style
-                                let element = _this.formData[current_index].find(field => field.name === keyListener);
+                                let element = _this.filteredFormData[current_index].find(field => field.name === keyListener);
                                 if (element != null && event.styleAttribute != null) {
                                     if (element.style == null) {
                                         element.style = {};
@@ -609,7 +627,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 if (event.actionType === 'update') {
                     childrenArray[value.index].form.patchValue({ [keyListener]: eval(resolvedFunct) });
                 } else { // update_syle
-                    const element = _this.formData[value.index].find(field => field.name === keyListener);
+                    const element = _this.filteredFormData[value.index].find(field => field.name === keyListener);
                     if (element != null && event.styleAttribute != null) {
                         element.style[event.styleAttribute] = eval(resolvedFunct);
                     }
@@ -692,6 +710,47 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     reload() {
         console.log('onReload: form-getter');
         this.onReload.emit();
+    }
+
+    applyFilter() {
+        let _this = this;
+        if (_this.formData && _this.formData.length) {
+            if (_this.filter) {
+                _this.filteredFormData = _this.formData.filter((entry, i) => {
+                    var add = true;
+                    var done = false;
+
+                    if (entry && entry.length) {
+                        // Since we will use fullValueSet, we don't need to read all fields
+                        let field = entry[0];
+                        Object.entries(field.fullValueSet).forEach(([key, value]) => {
+                            // console.log(key, value);
+                            if (value && !done) {
+                                let dataType = typeof (value);
+                                if (dataType == 'string' || dataType == 'number') {
+                                    let data: string = '' + value;
+                                    if (data && data.toLowerCase().includes(_this.filter)) {
+                                        add = true;
+                                        done = true;
+                                    }
+                                    else {
+                                        add = false;
+                                        done = false;
+                                    }
+
+                                }
+                            }
+                        });
+
+                    }
+                    return add;
+                });
+            }
+            else {
+                _this.filteredFormData = JSON.parse(JSON.stringify(_this.formData));
+            }
+
+        }
     }
 
 }
