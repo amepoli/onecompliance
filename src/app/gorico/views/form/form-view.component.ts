@@ -86,6 +86,14 @@ export class FormViewComponent implements OnChanges, OnInit {
 
     ngOnInit() {
         const _this = this; // useful to debug
+
+        // Subscribe to Reload Request
+        _this._fileService.reloadNeeded.subscribe(entryName => {
+            if (entryName == _this.tableData.entryName) {
+                _this.getAttachList();
+            }
+        });
+
         _this.formGetter.sendEvent.subscribe(
             event => {
                 if (event.eventType === 'formData') {   // child received the view Info

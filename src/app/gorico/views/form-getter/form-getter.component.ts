@@ -109,6 +109,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     subscriptions: Subscription[] = [];
 
+    results: any[] = null;
+
     private firstRefresh = true;
 
     private addingNew = false;   // avoid to trigger a refresh (with related events) when adding a row  
@@ -266,7 +268,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.readonlyRows = results.properties.readOnly.map(p => p.label);
                     }
                     results = results.data;
-                    _this.isLoading = false;
                     // signal parent to show/hide "save" icon
                     _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly });
                     if (_this.formParams.isNew) {  // handle newly set primary keys
@@ -274,16 +275,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.currentKeys = _this.getCurrentKeys(primaryKeys, results[0]);  // TBC why do we receive an array with one element here?
                         _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
                     }
-                    _this.numRows = results.length;
 
-                    // prepare the form
-                    _this.formData = _this.getFormData(_this.viewKeys, results);
+                    _this.results = results;
+                    _this.processResults(_this.results);
+                    _this.isLoading = false;
 
-                    // Copy all to filtered form data
-                    _this.filteredFormData = JSON.parse(JSON.stringify(_this.formData));
-
-                    _this.process_form(_this.filteredFormData);
-                    _this.sendEvent.emit({ eventType: 'updateData', data: _this.filteredFormData }); // emit event for the parent
                 }
                 else {
                     // Show error snackbar
@@ -295,6 +291,20 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             });
     }
 
+    processResults(results) {
+        const _this = this;
+        _this.numRows = results.length;
+
+        // prepare the form
+        _this.formData = _this.getFormData(_this.viewKeys, results);
+
+        // Copy all to filtered form data
+        _this.filteredFormData = JSON.parse(JSON.stringify(_this.formData));
+
+        _this.process_form(_this.filteredFormData);
+        _this.sendEvent.emit({ eventType: 'updateData', data: _this.filteredFormData }); // emit event for the parent
+
+    }
     addRow(): void {
         const _this = this;
         _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, null, true, true, null, false).subscribe(
@@ -714,6 +724,50 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     applyFilter() {
         let _this = this;
+        if (_this.results && _this.results.length) {
+            if (_this.filter) {
+                var filteredResults = _this.results.filter(entry => {
+                    var add = true;
+                    var done = false;
+
+                    if (entry && Object.entries(entry).length) {
+                        // Since we will use fullValueSet, we don't need to read all fields
+                        Object.entries(entry).forEach(([key, value]) => {
+                            // console.log(key, value);
+                            if (value && !done) {
+                                let dataType = typeof (value);
+                                if (dataType == 'string' || dataType == 'number') {
+                                    let data: string = '' + value;
+                                    if (data && data.toLowerCase().includes(_this.filter)) {
+                                        add = true;
+                                        done = true;
+                                    }
+                                    else {
+                                        add = false;
+                                        done = false;
+                                    }
+
+                                }
+                            }
+                        });
+
+                    }
+                    return add;
+                });
+
+                _this.processResults(filteredResults);
+            }
+            else {
+                _this.processResults(_this.results);
+                // _this.filteredFormData = JSON.parse(JSON.stringify(_this.formData));
+            }
+            _this.process_form(_this.filteredFormData);
+        }
+
+    }
+
+    applyFilterUsingFormData() {
+        let _this = this;
         if (_this.formData && _this.formData.length) {
             if (_this.filter) {
                 _this.filteredFormData = _this.formData.filter((entry, i) => {
@@ -749,8 +803,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             else {
                 _this.filteredFormData = JSON.parse(JSON.stringify(_this.formData));
             }
-
+            _this.process_form(_this.filteredFormData);
         }
+
     }
+
 
 }

@@ -40,6 +40,7 @@ exports.handler = async (event, context) => {
     const checksum = queryParams['checksum'];
     const company = queryParams['company'];
     var filename = queryParams['filename'];
+    var id_risorsa = queryParams['id_risorsa'];
     var requestType = '';
 
     if (filename == null) {
@@ -219,11 +220,14 @@ exports.handler = async (event, context) => {
             const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsInsert);
 
             const requestBody = JSON.parse(event.body);
-            query = `delete entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa};`;
+
+            query = `delete from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
             response = await client.query(query);
-            query = `delete entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa};`;
+
+            query = `delete from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
             response = await client.query(query);
-            query = `delete entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa};`;
+
+            query = `delete from entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
             response = await client.query(query);
 
             body = { result: 'OK', url: signedUrl };

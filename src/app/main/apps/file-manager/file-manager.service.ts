@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 // import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -154,6 +154,9 @@ export class FileManagerService // implements Resolve<any>
     onFileSelected: BehaviorSubject<any>;
     onFileAdd: BehaviorSubject<any>;
     onFileDownload: BehaviorSubject<any>;
+    onFileDelete: BehaviorSubject<any>;
+
+    reloadNeeded: EventEmitter<string> = new EventEmitter();
 
     /**
      * Constructor
@@ -168,6 +171,8 @@ export class FileManagerService // implements Resolve<any>
         this.onFileSelected = new BehaviorSubject({});
         this.onFileAdd = new BehaviorSubject({});
         this.onFileDownload = new BehaviorSubject({});
+        this.onFileDelete = new BehaviorSubject({});
+
     }
 
     /**
@@ -223,6 +228,10 @@ export class FileManagerService // implements Resolve<any>
         this.onFileDownload.next(selected);
     }
 
+    delete(selected: any): void {
+        this.onFileDelete.next(selected);
+    }
+
     getFileSize(size: string): string {
 
         let fileSize = size;
@@ -242,5 +251,9 @@ export class FileManagerService // implements Resolve<any>
 
         return fileSize;
 
+    }
+
+    requestReload(entryName) {
+        this.reloadNeeded.emit(entryName);
     }
 }
