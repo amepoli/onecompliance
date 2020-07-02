@@ -222,12 +222,15 @@ exports.handler = async (event, context) => {
             const requestBody = JSON.parse(event.body);
 
             query = `delete from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+            console.log(query);
             response = await client.query(query);
 
             query = `delete from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+            console.log(query);
             response = await client.query(query);
 
             query = `delete from entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+            console.log(query);
             response = await client.query(query);
 
             body = { result: 'OK', url: signedUrl };

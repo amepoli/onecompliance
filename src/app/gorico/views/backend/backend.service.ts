@@ -98,6 +98,12 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/attach', this.myPutPostInit));
   }
 
+  deleteFile(entryName: string, company: string, id_risorsa: string, filename: string, keys: any): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, id_risorsa: id_risorsa, filename: filename, keys: JSON.stringify(keys) };
+    return from(this.amplifyService.api().del(this.apiName, '/attach', this.myGetInit));
+  }
+
   getReportList(entryName: string, company: string, keys: any): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), list: '1' };

@@ -105,6 +105,27 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         });
 
+        _this.fileService.onFileDelete.subscribe(selected => {
+            if (_this.listFiles != null) {
+                const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
+                if (fileDesc != null) {
+                    _this.backendService.deleteFile(_this.data.entryName, _this.authService.getCurrentCompany(), selected.id_risorsa, selected.file_id, _this.data.keys).subscribe(
+                        url => {
+                            if (url != null) {
+                                console.table(url);
+                                _this.httpClient.delete(url.url).subscribe(
+                                    fileData => {
+                                        _this.fileService.requestReload(_this.data.entryName);
+                                    });
+                            }
+                        },
+                        err => {
+                            console.error(err);
+                        });
+                }
+            }
+        });
+
         // prepare the key for the attachment form
         for (const key in _this.data.keys) {
             if (_this.data.keys.hasOwnProperty(key)) {
@@ -121,40 +142,15 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit() {
-
-        this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(), this.data.keys).subscribe( 
-            result => {
-                console.log(result);
-                if (result.result === 'OK') {
-                    this.listFiles = result.list;
-                    const files = [];
-                    if (this.listFiles) {
-                        this.listFiles.forEach(element => {
-                            const file = {
-                                'name': element.client_file_name,
-                                'type': 'document',
-                                'owner': element.autore,
-                                'size': this.getFileSize(element.dimensione),
-                                'modified': new Date(element.data_upd).toString(),
-                                'opened': new Date(element.data_ins).toString(),
-                                'created': new Date(element.data_creazione).toString(),
-                                'extention': '',
-                                'location': '',
-                                'offline': true
-                            };
-                            files.push(file);
-                        });
-                    }
-                    this.fileService.files = files;
-                    this.fileService.getFiles();
-                }
-                else {
-                    // Show error snackbar
-                    this._toastService.showErrorToast(result.reason);
-                }
-            });
-
-        this.progress = 0;
+        const _this = this;
+        // Subscribe to reload Request
+        _this.fileService.reloadNeeded.subscribe(entryName => {
+            if (entryName == _this.data.entryName) {
+                _this.getAttachList();
+            }
+        });
+        // Get Attach list
+        _this.getAttachList();
     }
 
     ngAfterViewInit() {
@@ -186,6 +182,44 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscriptions.forEach(subscription => {
             subscription.unsubscribe();
         });
+    }
+
+    getAttachList() {
+        this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(), this.data.keys).subscribe(
+            result => {
+                console.log(result);
+                if (result.result === 'OK') {
+                    this.listFiles = result.list;
+                    const files = [];
+                    if (this.listFiles) {
+                        this.listFiles.forEach(element => {
+                            const file = {
+                                'name': element.client_file_name,
+                                'file_id': element.file_id,
+                                'id_risorsa': element.id_risorsa,
+                                'type': 'document',
+                                'owner': element.autore,
+                                'size': this.fileService.getFileSize(element.dimensione),
+                                'modified': new Date(element.data_upd).toString(),
+                                'opened': new Date(element.data_ins).toString(),
+                                'created': new Date(element.data_creazione).toString(),
+                                'extention': '',
+                                'location': '',
+                                'offline': true
+                            };
+                            files.push(file);
+                        });
+                    }
+                    this.fileService.files = files;
+                    this.fileService.getFiles();
+                }
+                else {
+                    // Show error snackbar
+                    this._toastService.showErrorToast(result.reason);
+                }
+            });
+
+        this.progress = 0;
     }
 
     onSave(): void {
@@ -231,6 +265,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
                                         responseCheck => {
+                                            _this.fileService.requestReload(_this.data.entryName);
                                             console.log(responseCheck);
                                         }
                                     );
@@ -281,26 +316,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         );
     }
 
-    getFileSize(size: string): string {
 
-        let fileSize = size;
-
-        if (fileSize == null) {
-            return '0';
-        }
-
-        let numSize = parseInt(size);
-        if (numSize >= 1024 && numSize < 1024 * 1024) {
-            numSize = numSize / 1024;
-            fileSize = numSize.toFixed(2) + ' KB';
-        } else if (numSize >= 1024 * 1024) {
-            numSize = numSize / (1024 * 1024);
-            fileSize = numSize.toFixed(2) + ' MB';
-        }
-
-        return fileSize;
-
-    }
 
 
 }

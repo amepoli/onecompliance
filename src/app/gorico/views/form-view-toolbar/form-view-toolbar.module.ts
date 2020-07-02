@@ -6,7 +6,7 @@ import { FileUploadComponent } from '../../file-uploader/file-upload/file-upload
 import { ProgressComponent } from '../../file-uploader/progress/progress.component';
 import {
   MatMenuModule, MatToolbarModule, MatTabsModule, MatIconModule, MatButtonModule, MatFormFieldModule,
-  MatOptionModule, MatSelectModule, MatInputModule, MatCardModule, MatProgressSpinnerModule, MatDialogModule
+  MatOptionModule, MatSelectModule, MatInputModule, MatCardModule, MatProgressSpinnerModule, MatDialogModule, MatBadgeModule
 } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DynamicFormsModule } from '../../dynamic-forms/dynamic-forms.module';
@@ -30,6 +30,7 @@ import { FormGetterModule } from '../form-getter/form-getter.module';
     MatInputModule,
     MatCardModule,
     MatProgressSpinnerModule,
+    MatBadgeModule,
     FileManagerModule,
     MatDialogModule,
     FormGetterModule

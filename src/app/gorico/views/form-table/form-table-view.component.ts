@@ -35,6 +35,8 @@ export class FormTableViewComponent implements OnChanges, OnInit {
 
   isFullScreen = false;
 
+  filter: string = ""; // for filtering results
+
   // Height available for view
   formHeight = 1000;
 
@@ -162,6 +164,12 @@ export class FormTableViewComponent implements OnChanges, OnInit {
         - 36 // New button
         - 2; // divider
     }
+  }
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+    this.filter = filterValue;
   }
 
   reload() {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 // import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -9,144 +9,144 @@ export class FileManagerService // implements Resolve<any>
 
     files = [
         {
-            'name'     : 'Work Documents',
-            'type'     : 'folder',
-            'owner'    : 'me',
-            'size'     : '',
-            'modified' : 'July 8, 2017',
-            'opened'   : 'July 8, 2017',
-            'created'  : 'July 8, 2017',
+            'name': 'Work Documents',
+            'type': 'folder',
+            'owner': 'me',
+            'size': '',
+            'modified': 'July 8, 2017',
+            'opened': 'July 8, 2017',
+            'created': 'July 8, 2017',
             'extention': '',
-            'location' : 'My Files > Documents',
-            'offline'  : true
+            'location': 'My Files > Documents',
+            'offline': true
         },
         {
-            'name'     : 'Public Documents',
-            'type'     : 'folder',
-            'owner'    : 'public',
-            'size'     : '',
-            'modified' : 'July 8, 2017',
-            'opened'   : 'July 8, 2017',
-            'created'  : 'July 8, 2017',
+            'name': 'Public Documents',
+            'type': 'folder',
+            'owner': 'public',
+            'size': '',
+            'modified': 'July 8, 2017',
+            'opened': 'July 8, 2017',
+            'created': 'July 8, 2017',
             'extention': '',
-            'location' : 'My Files > Documents',
-            'offline'  : true
+            'location': 'My Files > Documents',
+            'offline': true
         },
         {
-            'name'     : 'Private Documents',
-            'type'     : 'folder',
-            'owner'    : 'me',
-            'size'     : '',
-            'modified' : 'July 8, 2017',
-            'opened'   : 'July 8, 2017',
-            'created'  : 'July 8, 2017',
+            'name': 'Private Documents',
+            'type': 'folder',
+            'owner': 'me',
+            'size': '',
+            'modified': 'July 8, 2017',
+            'opened': 'July 8, 2017',
+            'created': 'July 8, 2017',
             'extention': '',
-            'location' : 'My Files > Documents',
-            'offline'  : true
+            'location': 'My Files > Documents',
+            'offline': true
         },
         {
-            'name'     : 'Ongoing projects',
-            'type'     : 'document',
-            'owner'    : 'Emily Bennett',
-            'size'     : '1.2 Mb',
-            'modified' : 'July 8, 2017',
-            'opened'   : 'July 8, 2017',
-            'created'  : 'July 8, 2017',
+            'name': 'Ongoing projects',
+            'type': 'document',
+            'owner': 'Emily Bennett',
+            'size': '1.2 Mb',
+            'modified': 'July 8, 2017',
+            'opened': 'July 8, 2017',
+            'created': 'July 8, 2017',
             'extention': '',
-            'location' : 'My Files > Documents',
-            'offline'  : true,
-            'preview'  : 'assets/images/etc/sample-file-preview.jpg'
+            'location': 'My Files > Documents',
+            'offline': true,
+            'preview': 'assets/images/etc/sample-file-preview.jpg'
         },
         {
-            'name'     : 'Shopping list',
-            'type'     : 'document',
-            'owner'    : 'Emily Bennett',
-            'size'     : '980 Kb',
-            'modified' : 'July 8, 2017',
-            'opened'   : 'July 8, 2017',
-            'created'  : 'July 8, 2017',
+            'name': 'Shopping list',
+            'type': 'document',
+            'owner': 'Emily Bennett',
+            'size': '980 Kb',
+            'modified': 'July 8, 2017',
+            'opened': 'July 8, 2017',
+            'created': 'July 8, 2017',
             'extention': '',
-            'location' : 'My Files > Documents',
-            'offline'  : true,
-            'preview'  : 'assets/images/etc/sample-file-preview.jpg'
+            'location': 'My Files > Documents',
+            'offline': true,
+            'preview': 'assets/images/etc/sample-file-preview.jpg'
         },
         {
-            'name'     : 'Invoices',
-            'type'     : 'spreadsheet',
-            'owner'    : 'Emily Bennett',
-            'size'     : '750 Kb',
-            'modified' : 'July 8, 2017',
-            'opened'   : 'July 8, 2017',
-            'created'  : 'July 8, 2017',
+            'name': 'Invoices',
+            'type': 'spreadsheet',
+            'owner': 'Emily Bennett',
+            'size': '750 Kb',
+            'modified': 'July 8, 2017',
+            'opened': 'July 8, 2017',
+            'created': 'July 8, 2017',
             'extention': '',
-            'location' : 'My Files > Documents',
-            'offline'  : true,
-            'preview'  : 'assets/images/etc/sample-file-preview.jpg'
+            'location': 'My Files > Documents',
+            'offline': true,
+            'preview': 'assets/images/etc/sample-file-preview.jpg'
         },
         {
-            'name'     : 'Crash logs',
-            'type'     : 'document',
-            'owner'    : 'Emily Bennett',
-            'size'     : '980 Mb',
-            'modified' : 'July 8, 2017',
-            'opened'   : 'July 8, 2017',
-            'created'  : 'July 8, 2017',
+            'name': 'Crash logs',
+            'type': 'document',
+            'owner': 'Emily Bennett',
+            'size': '980 Mb',
+            'modified': 'July 8, 2017',
+            'opened': 'July 8, 2017',
+            'created': 'July 8, 2017',
             'extention': '',
-            'location' : 'My Files > Documents',
-            'offline'  : true,
-            'preview'  : 'assets/images/etc/sample-file-preview.jpg'
+            'location': 'My Files > Documents',
+            'offline': true,
+            'preview': 'assets/images/etc/sample-file-preview.jpg'
         },
         {
-            'name'     : 'System logs',
-            'type'     : 'document',
-            'owner'    : 'Emily Bennett',
-            'size'     : '52 Kb',
-            'modified' : 'July 8, 2017',
-            'opened'   : 'July 8, 2017',
-            'created'  : 'July 8, 2017',
+            'name': 'System logs',
+            'type': 'document',
+            'owner': 'Emily Bennett',
+            'size': '52 Kb',
+            'modified': 'July 8, 2017',
+            'opened': 'July 8, 2017',
+            'created': 'July 8, 2017',
             'extention': '',
-            'location' : 'My Files > Documents',
-            'offline'  : true,
-            'preview'  : 'assets/images/etc/sample-file-preview.jpg'
+            'location': 'My Files > Documents',
+            'offline': true,
+            'preview': 'assets/images/etc/sample-file-preview.jpg'
         },
         {
-            'name'     : 'Prices',
-            'type'     : 'spreadsheet',
-            'owner'    : 'Emily Bennett',
-            'size'     : '27 Mb',
-            'modified' : 'July 8, 2017',
-            'opened'   : 'July 8, 2017',
-            'created'  : 'July 8, 2017',
+            'name': 'Prices',
+            'type': 'spreadsheet',
+            'owner': 'Emily Bennett',
+            'size': '27 Mb',
+            'modified': 'July 8, 2017',
+            'opened': 'July 8, 2017',
+            'created': 'July 8, 2017',
             'extention': '',
-            'location' : 'My Files > Documents',
-            'offline'  : true,
-            'preview'  : 'assets/images/etc/sample-file-preview.jpg'
+            'location': 'My Files > Documents',
+            'offline': true,
+            'preview': 'assets/images/etc/sample-file-preview.jpg'
         },
         {
-            'name'     : 'Anabelle Manual',
-            'type'     : 'document',
-            'owner'    : 'Emily Bennett',
-            'size'     : '1.1 Kb',
-            'modified' : 'July 8, 2017',
-            'opened'   : 'July 8, 2017',
-            'created'  : 'July 8, 2017',
+            'name': 'Anabelle Manual',
+            'type': 'document',
+            'owner': 'Emily Bennett',
+            'size': '1.1 Kb',
+            'modified': 'July 8, 2017',
+            'opened': 'July 8, 2017',
+            'created': 'July 8, 2017',
             'extention': '',
-            'location' : 'My Files > Documents',
-            'offline'  : true,
-            'preview'  : 'assets/images/etc/sample-file-preview.jpg'
+            'location': 'My Files > Documents',
+            'offline': true,
+            'preview': 'assets/images/etc/sample-file-preview.jpg'
         },
         {
-            'name'     : 'Steam summer sale budget',
-            'type'     : 'spreadsheet',
-            'owner'    : 'Emily Bennett',
-            'size'     : '505 Kb',
-            'modified' : 'July 8, 2017',
-            'opened'   : 'July 8, 2017',
-            'created'  : 'July 8, 2017',
+            'name': 'Steam summer sale budget',
+            'type': 'spreadsheet',
+            'owner': 'Emily Bennett',
+            'size': '505 Kb',
+            'modified': 'July 8, 2017',
+            'opened': 'July 8, 2017',
+            'created': 'July 8, 2017',
             'extention': '',
-            'location' : 'My Files > Documents',
-            'offline'  : true,
-            'preview'  : 'assets/images/etc/sample-file-preview.jpg'
+            'location': 'My Files > Documents',
+            'offline': true,
+            'preview': 'assets/images/etc/sample-file-preview.jpg'
         }
     ];
 
@@ -154,6 +154,9 @@ export class FileManagerService // implements Resolve<any>
     onFileSelected: BehaviorSubject<any>;
     onFileAdd: BehaviorSubject<any>;
     onFileDownload: BehaviorSubject<any>;
+    onFileDelete: BehaviorSubject<any>;
+
+    reloadNeeded: EventEmitter<string> = new EventEmitter();
 
     /**
      * Constructor
@@ -162,13 +165,14 @@ export class FileManagerService // implements Resolve<any>
      */
     constructor(
         private _httpClient: HttpClient
-    )
-    {
+    ) {
         // Set the defaults
         this.onFilesChanged = new BehaviorSubject({});
         this.onFileSelected = new BehaviorSubject({});
         this.onFileAdd = new BehaviorSubject({});
         this.onFileDownload = new BehaviorSubject({});
+        this.onFileDelete = new BehaviorSubject({});
+
     }
 
     /**
@@ -211,9 +215,8 @@ export class FileManagerService // implements Resolve<any>
     }
     */
 
-    getFiles(): void
-    {
-        this.onFilesChanged.next(this.files); 
+    getFiles(): void {
+        this.onFilesChanged.next(this.files);
         this.onFileSelected.next(this.files[0]);
     }
 
@@ -223,5 +226,34 @@ export class FileManagerService // implements Resolve<any>
 
     download(selected: any): void {
         this.onFileDownload.next(selected);
+    }
+
+    delete(selected: any): void {
+        this.onFileDelete.next(selected);
+    }
+
+    getFileSize(size: string): string {
+
+        let fileSize = size;
+
+        if (fileSize == null) {
+            return '0';
+        }
+
+        let numSize = parseInt(size);
+        if (numSize >= 1024 && numSize < 1024 * 1024) {
+            numSize = numSize / 1024;
+            fileSize = numSize.toFixed(2) + ' KB';
+        } else if (numSize >= 1024 * 1024) {
+            numSize = numSize / (1024 * 1024);
+            fileSize = numSize.toFixed(2) + ' MB';
+        }
+
+        return fileSize;
+
+    }
+
+    requestReload(entryName) {
+        this.reloadNeeded.emit(entryName);
     }
 }
