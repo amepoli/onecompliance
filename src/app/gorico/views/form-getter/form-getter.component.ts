@@ -129,7 +129,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             this.applyFilter();
         }
         // Make sure params are different before refreshing view
-        if (!this.addingNew && changes.formParams) {
+        if (!this.addingNew && changes.formParams && this.formParams) {
             if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) != JSON.stringify(changes.formParams.currentValue))) {
                 this.refreshView();
             }

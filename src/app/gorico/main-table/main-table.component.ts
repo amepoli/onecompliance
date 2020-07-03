@@ -398,7 +398,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
 
     reload() {
         console.log('onReload: main-table');
-        this.formView.loadData();
+        this.formView.refreshView();
     }
 
 }

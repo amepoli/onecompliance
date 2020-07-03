@@ -145,6 +145,10 @@ export class FormViewComponent implements OnChanges, OnInit {
         _this.tot = _this.tableData.total;
     }
 
+    public refreshView() {
+        this.formGetter.refreshView();
+    }
+
     getTabs(tabKeys: tabViewKey[], keys: any): TabType[] {
         const tabs: TabType[] = [];
         tabKeys.forEach(tabKey => {
