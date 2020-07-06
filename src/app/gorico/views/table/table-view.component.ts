@@ -86,7 +86,7 @@ export class TableViewComponent implements OnChanges {
 
     displayedColumns: string[];
 
-    dataSource: MatTableDataSource<any>;
+    dataSource: MatTableDataSource<any> = null;
     selectedRow: MatRow = null;
     isLoading = true;
 
@@ -272,11 +272,13 @@ export class TableViewComponent implements OnChanges {
     }
 
     applyFilter(filterValue: string) {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-        this.dataSource.filter = filterValue;
-        if (this.dataSource.paginator) {
-            this.dataSource.paginator.firstPage();
+        if (this.dataSource && this.dataSource.data && this.dataSource.data.length) {
+            filterValue = filterValue.trim(); // Remove whitespace
+            filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+            this.dataSource.filter = filterValue;
+            if (this.dataSource.paginator) {
+                this.dataSource.paginator.firstPage();
+            }
         }
     }
 
