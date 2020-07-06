@@ -6,13 +6,17 @@ import { FuseSharedModule } from '@fuse/shared.module';
 
 import { LoginPageComponent } from './login-page.component';
 
-import { AmplifyAngularModule} from 'aws-amplify-angular';
+import { AmplifyAngularModule } from 'aws-amplify-angular';
 
 import { ReactiveFormsModule } from '@angular/forms';
 
 const routes = [
     {
-        path     : 'login',
+        path: 'login',
+        component: LoginPageComponent
+    },
+    {
+        path: 'login/:return_path',
         component: LoginPageComponent
     }
 ];
@@ -21,7 +25,7 @@ const routes = [
     declarations: [
         LoginPageComponent
     ],
-    imports     : [
+    imports: [
         RouterModule.forChild(routes),
 
         MatButtonModule,
@@ -32,10 +36,9 @@ const routes = [
         FuseSharedModule,
         ReactiveFormsModule
     ],
-    exports     : [
+    exports: [
         LoginPageComponent
     ]
 })
-export class LoginPageModule
-{
+export class LoginPageModule {
 }

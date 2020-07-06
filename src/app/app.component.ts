@@ -14,7 +14,7 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 
 import { navigation } from 'app/navigation/navigation';
 
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { BackendService } from './gorico/views/backend/backend.service';
 
 @Component({
@@ -89,10 +89,22 @@ export class AppComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
 
-        if (!this._authService.isSignedIn) {
-            this.router.navigate(['/login']);
-            console.log('Redirecting to login page');
-        }
+        this.router.events.subscribe((e) => {
+            if (e instanceof NavigationEnd) {
+                if (!this._authService.isSignedIn && !e.url.includes('login')) {
+                    console.log('Redirecting to login page');
+                    if (e.url.length > 3) {
+                        this.router.navigate([`/login/${encodeURIComponent(e.url)}`]);
+                    }
+                    else {
+                        this.router.navigate([`/login`]);
+                    }
+                }
+
+            }
+        });
+
+
 
         // Subscribe to config changes
         this._fuseConfigService.config
