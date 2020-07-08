@@ -21,6 +21,9 @@ import { DialogService } from '../services/dialog.service';
 export class RegisterComponent implements OnInit, OnDestroy {
     registerForm: FormGroup;
 
+    registering = false;
+    registerButtonText = 'CREATE AN ACCOUNT';
+
     // Private
     private _unsubscribeAll: Subject<any>;
 
@@ -84,6 +87,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
         // Subscribe to Error EventEmitter in AuthService 
         this.authService.errorInfo$
             .subscribe(err => {
+                this.registering = false;
+                this.registerButtonText = "CREATE AN ACCOUNT";
                 this._dialogService.showErrorDialog("Error", err.message ? err.message : "Invalid data");
                 // console.log(`Signup Error: ${err}`);
                 // console.table(err);
@@ -115,6 +120,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.authService.setUsername(this.registerForm.value.name);
         this.authService.setPassword(this.registerForm.value.password);
         this.authService.setEmail(this.registerForm.value.email);
+
+        this.registerButtonText = "PLEASE WAIT";
+        this.registering = true;
         // Show loading Alert
         this._dialogService.showLoadingDialog("Signing up", "Please wait...");
         this.authService.signUp();

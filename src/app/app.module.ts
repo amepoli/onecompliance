@@ -36,9 +36,15 @@ const appRoutes: Routes = [];
         BrowserModule,
         BrowserAnimationsModule,
         HttpClientModule,
-        RouterModule.forRoot(appRoutes),
+
+        // Without hash location strategy
+        // RouterModule.forRoot(appRoutes),
+
+        // With hash location strategy
+        RouterModule.forRoot(appRoutes, { useHash: true }),
 
         TranslateModule.forRoot(),
+
 
         // Material moment date module
         MatMomentDateModule,

@@ -5,7 +5,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
 import { AuthService } from './auth.service';
 
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DialogService } from '../services/dialog.service';
 
 
@@ -22,6 +22,12 @@ export class LoginPageComponent implements OnInit {
     signingIn: boolean = false;
     loadingSession: boolean = false;
 
+    // Text to show on Login button
+    loginButtonText = 'LOGIN';
+
+    // Url used to return to after successfully logging in
+    returnUrl = '/gorico/dashboard';
+
     /**
      * Constructor
      *
@@ -33,7 +39,8 @@ export class LoginPageComponent implements OnInit {
         private _fuseConfigService: FuseConfigService,
         private _formBuilder: FormBuilder,
         private router: Router,
-        private _dialogService: DialogService
+        private _dialogService: DialogService,
+        private _route: ActivatedRoute
     ) {
         // Configure the layout
         this._fuseConfigService.config = {
@@ -71,11 +78,15 @@ export class LoginPageComponent implements OnInit {
      */
     ngOnInit(): void {
 
+        // Check if we are supposed to redirect after logging in.
+        let returnPath = this._route.snapshot.paramMap.get("return_path");
+        if (returnPath) {
+            this.returnUrl = decodeURIComponent(returnPath)
+        }
+
         this.authService.authStateChange$
             .subscribe(authState => {
-                this._dialogService.closeDialog();
                 this.signedIn = authState.state === 'signedIn';
-
                 if (!authState.user) {
                     this.user = null;
                 } else {
@@ -90,11 +101,13 @@ export class LoginPageComponent implements OnInit {
                 if (this.signingIn) {
                     this._dialogService.showErrorDialog("Error", err.message ? err.message : "Incorrect username or password");
                     this.signingIn = false;
+                    this.loginButtonText = 'LOGIN';
                 }
                 else {
                     // We failed to load previous session
                     this._dialogService.closeDialog();
                     this.loadingSession = false;
+                    this.loginButtonText = 'LOGIN';
                 }
                 // console.error(`Login Error: ${err}`);
             });
@@ -104,7 +117,8 @@ export class LoginPageComponent implements OnInit {
         this.authService.userinfo.subscribe(info => {
             if (info.username != null) {
                 // got info from backend, now we can proceed
-                this.router.navigate(['/gorico/dashboard']);
+                this._dialogService.closeDialog();
+                this.router.navigate([this.returnUrl]);
             }
         });
 
@@ -112,6 +126,7 @@ export class LoginPageComponent implements OnInit {
         if (this.authService.doesAccessTokenExist()) {
             // Load session from local storage
             this.loadingSession = true;
+            this.loginButtonText = 'PLEASE WAIT';
             this._dialogService.showLoadingDialog("Loading", "Please wait...");
             this.authService.loadSession();
         }
@@ -121,6 +136,9 @@ export class LoginPageComponent implements OnInit {
     onSubmit(): void {
         this.authService.setUsername(this.loginForm.value.username);
         this.authService.setPassword(this.loginForm.value.password);
+
+        this.loginButtonText = 'PLEASE WAIT';
+
         // Show loading Alert
         this._dialogService.showLoadingDialog("Signing in", "Please wait...");
 

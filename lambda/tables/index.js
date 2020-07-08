@@ -42,18 +42,18 @@ function replaceLocalKeys(queryString, keys) {
 
 function replaceKeys(queryString, keys, keyTypes) {
 
-    console.table(keys);
+    console.log(keys);
     var delimiters = ['$', '€'];
     if (queryString) {
         for (var key in keys) {
-            console.table(key);
+            // console.table(key);
             delimiters.forEach(delimiter => {
                 let keyType = keyTypes.find(e => (e.key === key));
 
-                if (typeof keys[key] === 'object') { // key with multiple subkeys
+                if (typeof keys[key] === 'object' && keys[key] != null) { // key with multiple subkeys
                     // tslint:disable-next-line:forin
                     for (var subkey in keys[key]) {
-                        console.log(subKey);
+                        // console.log(subKey);
                         let subKeyType = keyType.dataType.find(e => (e.key === subkey));
                         let bracket = (delimiter === '$' && subKeyType && subKeyType.dataType === 'text') ? '\'' : '';
                         let toReplace = delimiter + key + '.' + subkey + delimiter;
@@ -73,8 +73,9 @@ function replaceKeys(queryString, keys, keyTypes) {
                     // TO BE CHECKED
                     //let replacement = keys[key].value ? keys[key].value : keys[key]; // handle subtables
                     // replace single quotes with double quotes within strings to avoid errors with queries
-                    let valueWithFixedQuotes = (keyType && keyType.dataType === 'text') ? keys[key].replace(/'/g, "''") : keys[key];
-                    let replacement = bracket + valueWithFixedQuotes + bracket;
+
+                    let valueWithFixedQuotes = (keys[key] != null && keyType && keyType.dataType === 'text') ? keys[key].replace(/'/g, "''") : keys[key];
+                    let replacement = keys[key] == null ? 'null' : bracket + valueWithFixedQuotes + bracket;
                     //console.log ('toReplace: ', toReplace, ' replacement: ', replacement);
                     let newString = queryString.replace(toReplace, replacement);
                     while (newString !== queryString) { // handle multiple occurences

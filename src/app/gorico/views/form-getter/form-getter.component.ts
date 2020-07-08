@@ -24,6 +24,7 @@ export interface formViewKey { // as per API specification
     readOnly: boolean;
     isPrimary: boolean;
     newLine: boolean;
+    buttonIcon?: string;
     size?: number;
     style?: {
         background_color?: string,
@@ -129,7 +130,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             this.applyFilter();
         }
         // Make sure params are different before refreshing view
-        if (!this.addingNew && changes.formParams) {
+        if (!this.addingNew && changes.formParams && this.formParams) {
             if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) != JSON.stringify(changes.formParams.currentValue))) {
                 this.refreshView();
             }
@@ -373,6 +374,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 readonly: _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
                 isVisible: (field.isHidden != null) ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,
+                buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
                 style: (field.style != null) ? field.style : null,
                 width: (field.size != null) ? (field.size * 10) - _this.margins : null, // leave a 1% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],
