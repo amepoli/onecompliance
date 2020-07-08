@@ -7,7 +7,11 @@ import { DialogService } from "app/gorico/services/dialog.service";
   selector: "app-button",
   template: `
 <div [ngStyle]="{'display': 'inline-block', 'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
-<button mat-raised-button color="primary" [disabled]="field.readonly" (click)="onClickButton()">{{field.label}}</button>
+<button *ngIf="field.buttonIcon" mat-icon-button [disabled]="field.readonly" (click)="onClickButton()">
+        <mat-icon>{{field.buttonIcon}}</mat-icon>
+      </button>
+
+<button *ngIf="!field.buttonIcon" mat-raised-button color="primary" [disabled]="field.readonly" (click)="onClickButton()">{{field.label}}</button>
 </div>
 `,
   styles: []
