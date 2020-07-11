@@ -21,6 +21,13 @@ const readXlsxFile = require('read-excel-file/node');
 
 const uuidv4 = require('uuid/v4');
 
+const global_variables = {
+    global_codice_azienda: '', 
+    global_codice_part: '', 
+    global_userid: 0
+};
+
+
 function replaceLocalKeys(queryString, keys) {
     let delimiters = ['£', 'Â£'];
     for (var key in keys) {
@@ -45,6 +52,17 @@ function replaceKeys(queryString, keys, keyTypes) {
     console.log(keys);
     var delimiters = ['$', '€'];
     if (queryString) {
+        // first replace the global variables, must be €-contoured
+        for (var key in global_variables) {
+            let toReplace = '€' + key + '€';
+            let replacement = global_variables[key];
+            let newString = queryString.replace(toReplace, replacement);
+            while (newString !== queryString) { // handle multiple occurrences
+                queryString = newString;
+                newString = queryString.replace(toReplace, replacement);
+            }
+        }
+
         for (var key in keys) {
             // console.table(key);
             delimiters.forEach(delimiter => {
@@ -82,7 +100,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                         queryString = newString;
                         newString = queryString.replace(toReplace, replacement);
                     }
-                    console.table({ newString: newString, toReplace: toReplace, replacement: replacement });
+                    //console.table({ newString: newString, toReplace: toReplace, replacement: replacement });
                 }
             });
         }
@@ -232,7 +250,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     comma = ' WHERE ';
 
     for (const key in table_keys) {
-        if (table_keys.hasOwnProperty(key)) {
+        if (table_keys.hasOwnProperty(key)) { 
             let keyType = keyTypes.find(e => (e.key === key));
             let delimiter = (keyType.dataType === 'text') ? '\'' : '';
             let element = table_keys[key];
@@ -936,6 +954,20 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 
 }
 
+async function setGlobalVariables(company, client) {
+
+    global_variables.global_codice_azienda = company;
+
+    const queryString = "SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='" + company + "';";
+    const response = await client.query(queryString);
+    if (response != null) {
+        global_variables.global_codice_part = response.rows[0].codice_part;
+    }
+
+    // TODO: get the user ID from User table
+
+}
+
 // main function starts here
 
 exports.handler = async (event, context) => {
@@ -1029,6 +1061,8 @@ exports.handler = async (event, context) => {
         // retrieve codice_azienda and codice_part from company if needed
 
         await addCodiceAzienda(table_keys, company, entry_params, client, isFormRecord || isNewRecord || isEventUpdate);
+
+        await setGlobalVariables(company, client);
 
         if (method === 'GET') {
             if (dashboardIndex != null) {
