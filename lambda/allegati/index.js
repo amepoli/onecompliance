@@ -4,8 +4,8 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
-    host: 'goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-    database: 'Gorico',
+    host: 'HOST_NAME',
+    database: 'DB_NAME',
     user: 'postgres',
     password: 'et2themax',
     port: 5432,
@@ -22,6 +22,48 @@ function getDateFormat() {
     var d = new Date();
     var month = d.getMonth() + 1;
     return d.getFullYear() + '-' + month.toString() + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+}
+
+async function tableName2BusinessObject (table_name) {
+    
+    if (table_name == null) {
+        return null;
+    }
+
+    const DynamoParams = {
+        TableName: 'VIEWS_NAME',
+        Key: {
+            entryKey: table_name
+        }
+    };
+
+    let entry_params = await dynamo.get(DynamoParams).promise();
+
+    let business_object = entry_params.Item.businessObjectName;
+
+    if (business_object != null) {
+        return business_object;
+    }
+    
+    let lut = {};
+    
+    let charArray = ['a','b','c','d','e','f','g','h','i','k','j','l','m','n','o','p','q','r','s','t','u','v','x','y','w','z','1','2','3','4','5','6','7','8','9','0'];
+    
+    charArray.forEach(ch => {
+        lut['_' + ch] =  ch.toUpperCase();
+    });
+    
+    business_object = '';
+    
+    while (business_object !== table_name) {
+        business_object = table_name;
+        for (var toReplace in lut) {
+            table_name = table_name.replace(toReplace, lut[toReplace]);
+        }
+    }
+    
+    return business_object;
+    
 }
 
 
@@ -80,13 +122,6 @@ exports.handler = async (event, context) => {
         };
     }
 
-    const DynamoParams = {
-        TableName: 'views',
-        Key: {
-            entryKey: entryName
-        }
-    };
-
     const s3ParamsInsert = {
         Bucket: 'gorico2.core',
         Key: company + '/' + filename
@@ -104,25 +139,10 @@ exports.handler = async (event, context) => {
 
     try {
 
-        var data = await dynamo.get(DynamoParams).promise();
-
-        data = data.Item;
-
-        console.log(data);
-
-        let bus_object = data['businessObjectName'];
-
-        if (bus_object == null) {
-            return {
-                "isBase64Encoded": false,
-                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-                "statusCode": 500,
-                "error": "Cannot find an associated business object"
-            };
-        }
+        const bus_object = await tableName2BusinessObject(entryName);
 
         client = await pool.connect();
-        //console.log(names);
+
         let query, response;
 
         let chiave = '';

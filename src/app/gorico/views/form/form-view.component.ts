@@ -89,7 +89,7 @@ export class FormViewComponent implements OnChanges, OnInit {
 
         // Subscribe to Reload Request
         _this._fileService.reloadNeeded.subscribe(entryName => {
-            if (entryName == _this.tableData.entryName) {
+            if (entryName === _this.tableData.entryName) {
                 _this.getAttachList();
             }
         });
@@ -263,7 +263,7 @@ export class FormViewComponent implements OnChanges, OnInit {
 
     getAttachList() {
         let _this = this;
-        console.table(_this.currentKeys);
+        //console.table(_this.currentKeys);
         _this.backendService.getAttachList(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys).subscribe(
             result => {
                 console.log(result);
