@@ -41,14 +41,14 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   get value() {
     return this.form.value;
   }
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
     //this.form = this.createControl();
   }
 
   ngOnChanges() {
-    this.form = this.createControl(); 
+    this.form = this.createControl();
   }
 
   onSubmit(event: Event) {
@@ -63,12 +63,24 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   createControl() {
     const group = this.fb.group({});
+
     this.fields.forEach(field => {
       if (field.type === 'button') return;
-      const control = this.fb.control(
-        field.value,
-        this.bindValidations(field.validations || [])
-      );
+      let control = null;
+      try {
+        // Try creating control with validation first
+        control = this.fb.control(
+          field.value,
+          this.bindValidations(field.validations || [])
+        );
+      }
+      catch (e) {
+        // Exception occured, this means validation is invalid, let's try without validation
+        control = this.fb.control(
+          field.value,
+          this.bindValidations([])
+        );
+      }
       group.addControl(field.name, control);
     });
     return group;
