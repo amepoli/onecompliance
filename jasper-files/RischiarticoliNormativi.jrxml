@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-07-16T11:07:15 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RischiarticoliNormativi" pageWidth="500" pageHeight="842" columnWidth="496" leftMargin="2" rightMargin="2" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="42ba3d95-981f-49b1-a8b1-e093cfecf244">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="rischiArticoliNormativi"/>
+	<property name="ireport.zoom" value="1.3310000000000004"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="PATH_IMG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new String ("http://localhost/core/images/SICC/")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="codice_azienda" class="java.lang.String"/>
+	<parameter name="codice_rischio" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select entrasp.articoli_normativi_descrizione(ran.codice_articolo_normativo, ran.id_testo_normativo),an.rubrica,ran.codice_articolo_normativo,ran.id_testo_normativo,ran.codice_rischio,ran.codice_azienda ,entrasp.testi_normativi_rif_descr(ran.id_testo_normativo) from entrasp.rischi_articoli_normativi ran, entrasp.articoli_normativi an where codice_azienda=$P{codice_azienda} and codice_rischio=$P{codice_rischio} and ran.codice_articolo_normativo = an.codice_articolo_normativo and ran.id_testo_normativo=an.id_testo_normativo]]>
+	</queryString>
+	<field name="articoli_normativi_descrizione" class="java.lang.String"/>
+	<field name="rubrica" class="java.lang.String"/>
+	<field name="codice_articolo_normativo" class="java.lang.String"/>
+	<field name="id_testo_normativo" class="java.math.BigDecimal"/>
+	<field name="codice_rischio" class="java.lang.String"/>
+	<field name="codice_azienda" class="java.lang.String"/>
+	<field name="testi_normativi_rif_descr" class="java.lang.String"/>
+	<title>
+		<band height="25">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="2" width="260" height="20" backcolor="#F5B6B5" uuid="9aa06b90-d7e8-4cc9-a5eb-28197ec94f2e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Articoli normativi associati]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="47" splitType="Stretch">
+			<line>
+				<reportElement positionType="Float" x="0" y="42" width="490" height="1" uuid="72c5bfff-58fa-48e4-9c9f-257f58075b7b"/>
+			</line>
+			<textField>
+				<reportElement x="2" y="21" width="88" height="17" uuid="8df32f6e-5639-4069-b187-5f683b860b70"/>
+				<textFieldExpression><![CDATA[$F{codice_articolo_normativo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="3" width="47" height="17" uuid="41c3e554-c9a6-4cac-b6e1-dd8ca11fff76"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CODICE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="3" width="78" height="17" uuid="2742e29d-cd16-4c69-ad84-05d395d18f49"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUBRICA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="320" y="3" width="78" height="17" uuid="23e84e24-2579-46c0-865a-de499f24d9e8"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TESTO NORMATIVO]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="100" y="21" width="200" height="17" uuid="1fb583a2-e36a-4e91-939a-b9fd1ed7a34b"/>
+				<textFieldExpression><![CDATA[$F{rubrica}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="320" y="21" width="170" height="17" uuid="eaad073a-5bfa-4869-9604-4112811a844e"/>
+				<textFieldExpression><![CDATA[$F{testi_normativi_rif_descr}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

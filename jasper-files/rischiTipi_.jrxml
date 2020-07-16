@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-07-16T12:45:18 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rischiTipi_" pageWidth="595" pageHeight="842" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="daecc55f-f2c5-42fa-84ff-a53385f8306f">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="rischiTipi"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="PATH_IMG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new String ("http://localhost/core/images/SICC/")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="codice_rischio" class="java.lang.String"/>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["DEMO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id_tipo_rischio" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select entrasp.rischi_descrizione(rt.codice_rischio, rt.codice_azienda)as descrizione,rt.codice_azienda,rt.id_tipo_rischio,rt.codice_rischio, entrasp.centri_gestionali_descr(r.codice_part, r.id_centro_gest) as centri_gestionali_descr,r.probabilita_pre,r.probabilita_post,r.intensita_singola_pre,r.intensita_singola_post, r.intensita_totale_pre, r.intensita_totale_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'T',r.intensita_totale_pre) as soglia_intensita_totale_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'P',r.probabilita_pre) as soglia_probabilita_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'I',r.intensita_singola_pre)as soglia_intensita_singola_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'T',r.intensita_totale_post) as soglia_intensita_totale_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'P',r.probabilita_post) as soglia_probabilita_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'I',r.intensita_singola_post) as soglia_intensita_singola_post from  entrasp.rischi_tipi rt , entrasp.rischi r where rt.codice_azienda=$P{codice_azienda} and rt.id_tipo_rischio=$P{id_tipo_rischio} and rt.codice_azienda=r.codice_azienda and rt.codice_rischio=r.codice_rischio
+]]>
+	</queryString>
+	<field name="codice_rischio" class="java.lang.String"/>
+	<field name="codice_azienda" class="java.lang.String"/>
+	<field name="descrizione" class="java.lang.String"/>
+	<field name="centri_gestionali_descr" class="java.lang.String"/>
+	<field name="probabilita_pre" class="java.math.BigDecimal"/>
+	<field name="intensita_singola_pre" class="java.math.BigDecimal"/>
+	<field name="intensita_totale_pre" class="java.math.BigDecimal"/>
+	<field name="probabilita_post" class="java.math.BigDecimal"/>
+	<field name="intensita_singola_post" class="java.math.BigDecimal"/>
+	<field name="intensita_totale_post" class="java.math.BigDecimal"/>
+	<field name="soglia_intensita_totale_pre" class="java.lang.String"/>
+	<field name="soglia_probabilita_pre" class="java.lang.String"/>
+	<field name="soglia_intensita_singola_pre" class="java.lang.String"/>
+	<field name="soglia_intensita_totale_post" class="java.lang.String"/>
+	<field name="soglia_probabilita_post" class="java.lang.String"/>
+	<field name="soglia_intensita_singola_post" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="20">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="159" height="20" backcolor="#C0C0C0" uuid="5754717d-2131-4fc9-b7bf-47d21c6674e5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rischi associati]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="209">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="59" y="28" width="493" height="20" uuid="0e191633-34d6-4ad7-857e-2b6c9cf27ed8"/>
+				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="4" y="28" width="37" height="20" uuid="45e2fd5c-0847-49c7-a76a-5a4daceb2da2"/>
+				<textFieldExpression><![CDATA[$F{codice_rischio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="155" y="48" width="215" height="20" uuid="71669f2e-4155-4c57-a0af-3fb88866b82d"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{centri_gestionali_descr}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="8" width="52" height="20" uuid="a8c9aeff-b4b6-49ed-9a27-0c4add39f7b8"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Codice]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="59" y="8" width="100" height="20" uuid="370a1fc6-2b7b-46f2-9993-50665469886f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrizione]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="85" y="98" width="86" height="20" backcolor="#C0C0C0" uuid="34e5bdcc-c499-4f57-bcbb-7e7c3ef7ff4e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Probabilità]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="72" y="118" width="49" height="20" uuid="dae491c4-c4d9-473f-8b31-edf4f3ad8393"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression><![CDATA[$F{probabilita_pre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="72" y="142" width="49" height="20" uuid="3d2be88d-03d4-43a2-b2c3-24b29c7df293"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{probabilita_post}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="119" width="69" height="20" backcolor="#C0C0C0" uuid="f4d57384-d8f2-4103-842a-0d47165ebe74"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ante presidi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="142" width="69" height="20" backcolor="#C0C0C0" uuid="2b7bab73-cebf-49a7-ab9c-c4ce37185b8b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Post presidi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="85" y="75" width="347" height="20" backcolor="#C0C0C0" uuid="74bca291-37db-4c7d-826a-62160deaa523"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valutazione rischio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="247" y="98" width="123" height="20" backcolor="#C0C0C0" uuid="8882b8d1-d147-4e32-8603-693d3d7c0f0e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Impatto potenziale]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="234" y="118" width="49" height="20" uuid="02cc8310-5064-428d-8ec2-24834c3a7366"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression><![CDATA[$F{intensita_singola_pre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="234" y="142" width="49" height="20" uuid="58c51231-c5fe-438f-b4cc-564ea58bea3f"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{intensita_singola_post}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="410" y="97" width="123" height="20" backcolor="#C0C0C0" uuid="853efb02-3e11-4d48-9c92-4fdf52b121dd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Impatto atteso (p*I)]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="397" y="118" width="49" height="20" uuid="e7221138-126f-4fd4-ad1a-88950ac5d856"/>
+				<textElement textAlignment="Right" markup="none"/>
+				<textFieldExpression><![CDATA[$F{intensita_totale_pre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="397" y="141" width="49" height="20" uuid="c1e14ee1-84ec-4654-8b72-50c52557df8b"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{intensita_totale_post}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="48" width="143" height="20" uuid="f76328fa-f904-448e-a241-5b0b6171e730"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Centro gestionale incaricato]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="127" y="118" width="100" height="20" uuid="732e1d4f-d900-4862-b2bb-e99154cb536f"/>
+				<textFieldExpression><![CDATA[$F{soglia_probabilita_pre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="127" y="141" width="100" height="20" uuid="733803fb-0387-44e8-8e46-d1d9c1b5f72f"/>
+				<textFieldExpression><![CDATA[$F{soglia_probabilita_post}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="289" y="118" width="100" height="20" uuid="b7f0067b-ef37-4ed9-bf6c-6f9528ccd96d"/>
+				<textFieldExpression><![CDATA[$F{soglia_intensita_singola_pre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="289" y="141" width="100" height="20" uuid="d017fc44-acf2-4bdc-b437-4c840daf47c1"/>
+				<textFieldExpression><![CDATA[$F{soglia_intensita_singola_post}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="452" y="119" width="100" height="20" uuid="7ab88e65-89ed-45dd-b3ff-fbcc98395dfd"/>
+				<textFieldExpression><![CDATA[$F{soglia_intensita_totale_pre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="452" y="142" width="100" height="20" uuid="57590f90-6ed7-4da8-8829-00ff898261cd"/>
+				<textFieldExpression><![CDATA[$F{soglia_intensita_totale_post}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="4" y="169" width="548" height="11" uuid="ec296c89-0b8e-4bc8-b51e-0db29cbfedde"/>
+				<subreportParameter name="codice_rischio">
+					<subreportParameterExpression><![CDATA[$F{codice_rischio}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="codice_azienda">
+					<subreportParameterExpression><![CDATA[$F{codice_azienda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["C:/Users/Amedeo/fuse-angular/jasper-files/RischiarticoliNormativi.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="4" y="185" width="548" height="5" uuid="1f4051ee-4f6b-4bd9-8db2-4b18a2a81802"/>
+				<subreportParameter name="codice_azienda">
+					<subreportParameterExpression><![CDATA[$F{codice_azienda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="codice_rischio">
+					<subreportParameterExpression><![CDATA[$F{codice_rischio}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["C:/Users/Amedeo/fuse-angular/jasper-files/Rischipresidi.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="4" y="194" width="548" height="10" uuid="3fdad78b-8936-469c-9e98-5e15d21e8427"/>
+				<subreportParameter name="codice_azienda">
+					<subreportParameterExpression><![CDATA[$F{codice_azienda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="codice_rischio">
+					<subreportParameterExpression><![CDATA[$F{codice_rischio}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["C:/Users/Amedeo/fuse-angular/jasper-files/Rischifontirischio.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
