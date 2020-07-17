@@ -41,7 +41,7 @@ async function runQuery(query) {
 
 async function getEntry(templateKey) {
     try {
-        const templateKey = templateKey || "test";
+        templateKey = templateKey || "test";
         console.log(`Using templateKey: ${templateKey}`);
 
         const DynamoParams = {
@@ -103,12 +103,12 @@ exports.handler = async (event, context, callback) => {
     console.log(event);
 
     // Let's get entry from DynammoDB using templateKey from event
-    const entry = getEntry(event.templateKey);
+    const entry = await getEntry(event.templateKey);
     if (entry) {
         console.log(entry);
 
         // Run query
-        let result = runQuery(entry.query);
+        let result = await runQuery(entry.query);
         if (result) {
             console.log(result[0]);
 
