@@ -24,7 +24,7 @@ var sender_address = 'amedeo.poli@alacritas.eu';
 async function runQuery(query) {
     try {
         const client = await pool.connect();
-        response = await client.query(query);
+        let response = await client.query(query);
         if (response && response.rows && response.rows.length) {
             return response.rows;
         }
