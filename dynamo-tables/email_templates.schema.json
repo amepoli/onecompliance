@@ -13,25 +13,63 @@
             "type": "string",
             "description": "M: DynamoDB primary key (entry)"
         },
-        "body": {
+        "subject": {
             "type": "string",
-            "description": "M: Body of the email"
+            "description": "M: Subject of the email"
+        },
+        "body": {
+            "type": "object",
+            "description": "M: Body of the email",
+            "properties": {
+                "header": {
+                    "type": "string",
+                    "description": "M: Body header of the email"
+                },
+                "query": {
+                    "type": "string",
+                    "description": "M: Query for getting the body of the email"
+                },
+                "footer": {
+                    "type": "string",
+                    "description": "M: Body footer of the email"
+                }
+            }
         },
         "company": {
             "type": "string",
             "description": "M: Company name"
         },
-        "frequency": {
+        "conditionQuery": {
             "type": "string",
-            "description": "M: Frequency to send email in days (currently doesn't work)"
-        },
-        "query": {
-            "type": "string",
-            "description": "?: Postgresql query"
+            "description": "M: Query to check whether to send email"
         },
         "to": {
-            "type": "string",
-            "description": "?: Comma (,) separated list of recipients"
+            "type": "object",
+            "description": "M: Comma (,) separated list of recipients",
+            "properties": {
+                "list": {
+                    "type": "string",
+                    "description": "?: constant list of receipients"
+                },
+                "query": {
+                    "type": "string",
+                    "description": "?: Query for getting list of receipients"
+                }
+            }
+        },
+        "cc": {
+            "type": "object",
+            "description": "M: Comma (,) separated list of CC recipients",
+            "properties": {
+                "list": {
+                    "type": "string",
+                    "description": "?: constant list of CC receipients"
+                },
+                "query": {
+                    "type": "string",
+                    "description": "?: Query for getting list of CC receipients"
+                }
+            }
         }
     }
 }

@@ -67,7 +67,9 @@ async function sendEmail(to, body, subject) {
     try {
         var eParams = {
             Destination: {
-                ToAddresses: to
+                ToAddresses: to,
+                CcAddresses: null,
+                BccAddresses: null
             },
             Message: {
                 Body: {
@@ -114,7 +116,7 @@ exports.handler = async (event, context, callback) => {
 
             // Send email
             let subject = "Gorico: Testing zee";
-            let emailSent = await sendEmail(entry.to.split(','), entry.body, subject);
+            let emailSent = await sendEmail(entry.to.split(','), "", entry.body, subject);
             if (emailSent) {
                 console.log({ 'Success': true, 'Error': null })
             }

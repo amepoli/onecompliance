@@ -122,7 +122,7 @@ export class TableViewComponent implements OnChanges {
             _this.quickAddFormParams.keys = _this.tableData.keys;
 
             console.table({ data: _this.tableData, change: 'tableData', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
-            if (!_this.isTabMode) {
+            if (!_this.isTabMode || _this.isCurTab) {
                 this.loadData();
             }
         }
