@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2020-07-22T16:34:50 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="regTDRischi" pageWidth="500" pageHeight="800" columnWidth="498" leftMargin="1" rightMargin="1" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+<!-- 2020-07-22T17:06:24 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="regTDTitolari" pageWidth="500" pageHeight="800" columnWidth="498" leftMargin="1" rightMargin="1" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
 	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
@@ -27,43 +27,58 @@
 		<defaultValueExpression><![CDATA[new BigDecimal(71.000)]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select codice_rischio, id_trattamento_dati,codice_azienda,entrasp.rischi_cod_tit(codice_azienda,codice_rischio) as titolo from entrasp.cpl_trattamenti_dati_rischi
+		<![CDATA[select id_titolare_esterno,codice_part, entrasp.anagrafiche_id_codcognnome(codice_part,id_titolare_esterno) as anagrafica, id_trattamento_dati,codice_azienda from entrasp.cpl_trattamenti_dati_titolari_esterni
 where id_trattamento_dati = $P{id_trattamento_dati}
 and codice_azienda = $P{codice_azienda}]]>
 	</queryString>
-	<field name="codice_rischio" class="java.lang.String"/>
+	<field name="id_titolare_esterno" class="java.math.BigDecimal"/>
+	<field name="codice_part" class="java.lang.String"/>
+	<field name="anagrafica" class="java.lang.String"/>
 	<field name="id_trattamento_dati" class="java.math.BigDecimal"/>
 	<field name="codice_azienda" class="java.lang.String"/>
-	<field name="titolo" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="25">
 			<staticText>
-				<reportElement mode="Opaque" x="6" y="3" width="321" height="21" backcolor="#B8D3E6" uuid="8923bf04-fbf0-417b-b118-e14cb94500bf"/>
+				<reportElement mode="Opaque" x="6" y="3" width="321" height="21" backcolor="#D79BE0" uuid="d5ceb58b-6014-4fc0-962a-c91df34bf8fc"/>
 				<textElement>
 					<font size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Rischi associati]]></text>
+				<text><![CDATA[Titolari esterni]]></text>
 			</staticText>
 		</band>
 	</title>
 	<detail>
-		<band height="39" splitType="Stretch">
+		<band height="53" splitType="Stretch">
 			<line>
 				<reportElement x="3" y="9" width="480" height="1" uuid="6c9cd948-ac7c-4456-b5f4-1cdbb0dc6502"/>
 			</line>
 			<line>
-				<reportElement positionType="Float" x="3" y="33" width="480" height="1" uuid="6c9cd948-ac7c-4456-b5f4-1cdbb0dc6502"/>
+				<reportElement positionType="Float" x="3" y="52" width="480" height="1" uuid="6c9cd948-ac7c-4456-b5f4-1cdbb0dc6502"/>
 			</line>
 			<textField>
-				<reportElement x="6" y="10" width="94" height="23" uuid="fc11f875-474d-441a-97f2-fe149004443a"/>
-				<textFieldExpression><![CDATA[$F{codice_rischio}]]></textFieldExpression>
+				<reportElement x="6" y="30" width="100" height="20" uuid="ef8e8c41-2c4f-4665-a977-2925a9648b50"/>
+				<textFieldExpression><![CDATA[$F{id_titolare_esterno}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="6" y="10" width="100" height="17" uuid="61146655-059b-49b5-a50a-2daee864c124"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="120" y="10" width="363" height="17" uuid="61d8eeb6-983c-4db6-8287-3f1c111d3087"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[anagrafica]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="108" y="10" width="372" height="22" uuid="7d705ea9-d856-4753-b4f0-87ea743363de"/>
-				<textFieldExpression><![CDATA[$F{titolo}]]></textFieldExpression>
+				<reportElement x="120" y="31" width="363" height="19" uuid="5b055fb3-f356-458d-ac21-a16fa274fe13"/>
+				<textFieldExpression><![CDATA[$F{anagrafica}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
