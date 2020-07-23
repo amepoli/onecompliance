@@ -3,8 +3,8 @@ aws.config.update({region: 'eu-central-1'});
 var ddb = new aws.DynamoDB({apiVersion: '2012-10-08'});
 var ses = new aws.SES({apiVersion: '2010-12-01'});
 
-var sender_address = 'nicola.capovilla@gmail.com';
-var admin_address = 'nicola.capovilla@gmail.com';
+var sender_address = 'nicola.capovilla@alacritas.eu';
+var admin_address = 'amedeo.poli@alacritas.eu';
 
 async function sendEmail(to, body, subject) {
     var eParams = {
@@ -56,11 +56,25 @@ exports.handler = async (event, context, callback) => {
                 'username': {S: event.userName},
                 'email': {S: event.request.userAttributes.email},
                 'createdAt': {S: date.toISOString()},
-                'anagrafica_id': { NULL: true },
                 'name': {S: 'Mario'},
-                'lastname': {S: 'Rossi'},
-                'profiles': {L: []},
-                'language': {S: 'it'}
+                'lastname': { S: 'Rossi' },
+                "companies": {
+                    "L": [
+                        {
+                            "M": {
+                                "name": {
+                                    "S": "DEMO"
+                                },
+                                "profile": {
+                                    "S": "admin"
+                                },
+                                "id_anagrafica": {
+                                    "NULL": true
+                                }
+                            }
+                        }]
+                },
+                'language': { S: 'it' }
             },
             TableName: tableName
         };

@@ -18,8 +18,8 @@ const pool = new Pool({
 async function getCompanies(data) {
     var companies = [];
 
-    data.profiles.forEach(profile => {
-        companies = companies.concat(profile.companies);
+    data.companies.forEach(company => {
+        companies = companies.concat(company.name);
         companies = [...new Set(companies)]; // remove duplicates
 
     });

@@ -737,11 +737,11 @@ async function getProfile(userid, company) {
     var data = await dynamo.get(userParams).promise();
     data = data.Item;
     if (data != null) {
-        let profiles = data.profiles;
+        let companies = data.companies;
         if (company != null) {
-            profiles.forEach(p => {
-                if (p.companies.indexOf(company) !== -1) { // found user's profile
-                    profile = p.entry;
+            companies.forEach(c => {
+                if (c.name === company) { // found user's profile
+                    profile = c.profile;
                 }
             });
         }
@@ -954,7 +954,7 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 
 }
 
-async function setGlobalVariables(company, client) {
+async function setGlobalVariables(company, client,userid) {
 
     global_variables.global_codice_azienda = company;
 
@@ -964,7 +964,28 @@ async function setGlobalVariables(company, client) {
         global_variables.global_codice_part = response.rows[0].codice_part;
     }
 
-    // TODO: get the user ID from User table
+    var userParams = {
+        TableName: 'users',
+        Key: {
+            userid: userid
+        }
+    };
+
+    var data = await dynamo.get(userParams).promise();
+    data = data.Item;
+
+    if (data != null) {
+        let companies = data.companies;
+        if (company != null) {
+            companies.forEach(c => {
+                if (c.name === company) { // found user's profile
+                global_variables.global_userid = c.id_anagrafica;
+                }
+            });
+        }
+    }
+
+    console.log(global_variables);
 
 }
 
@@ -1062,7 +1083,7 @@ exports.handler = async (event, context) => {
 
         await addCodiceAzienda(table_keys, company, entry_params, client, isFormRecord || isNewRecord || isEventUpdate);
 
-        await setGlobalVariables(company, client);
+        await setGlobalVariables(company, client, userid);
 
         if (method === 'GET') {
             if (dashboardIndex != null) {

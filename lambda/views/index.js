@@ -16,11 +16,11 @@ async function getProfile(userid, company) {
     var data = await dynamo.get(userParams).promise();
     data = data.Item;
     if (data != null) {
-        let profiles = data.profiles;
+        let companies = data.companies;
         if (company != null) {
-            profiles.forEach(p => {
-                if (p.companies.indexOf(company) !== -1) { // found user's profile
-                    profile = p.entry;
+            companies.forEach(c => {
+                if (c.name === company) { // found user's profile
+                    profile = c.profile;
                 }
             });
         }

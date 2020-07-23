@@ -102,14 +102,14 @@ exports.handler = async (event, context) => {
         var data = await dynamo.get(userParams).promise();
         data = data.Item;
         if (data != null) {
-            let profiles = data.profiles;
+            let companies = data.companies;
             if (codice_azienda != null) {
-                profiles.forEach(p => {
-                    if (p.companies.indexOf(codice_azienda) !== -1) { // found user's profile
-                        profile = p.entry;
+                companies.forEach(c => {
+                    if (c.name === codice_azienda) { // found user's profile
+                        profile = c.profile;
                     }
                 });
-            }
+            }   
         } else {
             body = {result: 'KO', reason:'Cannot find the user'};
         }
