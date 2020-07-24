@@ -186,6 +186,8 @@ export class AuthService {
         else {
           // Show error snackbar
           _this._toastService.showErrorToast(ud.reason);
+          _this.userinfo.next(null);
+          console.error(ud);
         }
       });
   }

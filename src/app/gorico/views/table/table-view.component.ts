@@ -5,6 +5,8 @@ import { FieldConfig } from '../../dynamic-forms/field.interface';
 import { formViewParams } from '../form/form-view.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
+import { ReportService } from 'app/gorico/services/report.service';
+import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 
 export interface tableViewParams {
     entryName: string;
@@ -105,10 +107,17 @@ export class TableViewComponent implements OnChanges {
     // Height available for table
     tableHeight = 1000;
 
+    // toolbar pub/sub topics
+    subMsgCmdTopic = '/toolbar/out/cmd';
+    pubMsgCmdTopic = '/toolbar/in/cmd';
+
     constructor(
         private backendService: BackendService,
         private authService: AuthService,
-        private _toastService: ToastService) {
+        private _pubSubService: NgxPubSubService,
+        private _toastService: ToastService,
+        private _reportService: ReportService,
+    ) {
 
         this.calculateTableHeight();
     }
@@ -122,7 +131,18 @@ export class TableViewComponent implements OnChanges {
             _this.quickAddFormParams.keys = _this.tableData.keys;
 
             console.table({ data: _this.tableData, change: 'tableData', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
-            if (!_this.isTabMode || _this.isCurTab) {
+
+            // Check if it is main table
+            if (!_this.isTabMode) {
+                // Load main table data
+                this.loadData();
+
+                // Request to load reports
+                // _this._pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list' });
+                _this._reportService.requestReload(_this.tableData.entryName);
+            }
+
+            if (_this.isTabMode && _this.isCurTab) {
                 this.loadData();
             }
         }

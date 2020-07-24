@@ -277,17 +277,33 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
                     }
 
+                    // Process results
                     _this.results = results;
                     _this.processResults(_this.results);
-                    _this.isLoading = false;
 
+                    // Stop loading
+                    _this.isLoading = false;
                 }
                 else {
                     // Show error snackbar
                     _this._toastService.showErrorToast(results.reason);
+
+                    // Set results empty
+                    _this.results = [];
+                    _this.processResults(_this.results);
+
+                    // Stop loading
+                    _this.isLoading = false;
                 }
             },
             error => {
+                _this._toastService.showErrorToast(error);
+
+                // Set results empty
+                _this.results = [];
+                _this.processResults(_this.results);
+
+                // Stop loading
                 _this.isLoading = false;
             });
     }
@@ -812,3 +828,4 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
 
 }
+
