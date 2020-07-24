@@ -10,6 +10,8 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
+import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { ReportService } from 'app/gorico/services/report.service';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -61,6 +63,10 @@ export class FormViewComponent implements OnChanges, OnInit {
 
     @ViewChild(FormGetterComponent) formGetter: FormGetterComponent;
 
+    // toolbar pub/sub topics
+    subMsgCmdTopic = '/toolbar/out/cmd';
+    pubMsgCmdTopic = '/toolbar/in/cmd';
+
     n = 0;
     tot = 0;
     n_attach = 0;
@@ -80,7 +86,10 @@ export class FormViewComponent implements OnChanges, OnInit {
         private authService: AuthService,
         private _dialogService: DialogService,
         private _toastService: ToastService,
-        private _fileService: FileManagerService) {
+        private _fileService: FileManagerService,
+        private _pubSubService: NgxPubSubService,
+        private _reportService: ReportService
+    ) {
 
     }
 
@@ -101,6 +110,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                     _this.tabKeys = event.tabKeys;
                     _this.n_attach = 0;
                     _this.getAttachList();
+                    _this.getReportList();
 
                 } else if (event.eventType === 'updateData') {  // child received the actual data, now time to populate subtables
                     let tabs: TabType[];
@@ -298,4 +308,11 @@ export class FormViewComponent implements OnChanges, OnInit {
             });
     }
 
+    getReportList() {
+        // Request to load reports
+        // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_list' });
+        this._reportService.requestReload(this.tableData.entryName);
+    }
+
 }
+

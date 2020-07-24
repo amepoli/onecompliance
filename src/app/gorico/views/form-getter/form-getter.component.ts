@@ -87,7 +87,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     @ViewChildren(DynamicFormComponent) formArray: QueryList<DynamicFormComponent>;
 
-    formData: FieldConfig[][] = [[]];
+    // Contains form Data
     filteredFormData: FieldConfig[][] = [[]];
 
     isLoading = true;
@@ -126,7 +126,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private _dialogService: DialogService) { }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes.filter && this.formData && this.formData.length) {
+        if (changes.filter && this.results && this.results.length) {
             this.applyFilter();
         }
         // Make sure params are different before refreshing view
@@ -277,17 +277,33 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
                     }
 
+                    // Process results
                     _this.results = results;
                     _this.processResults(_this.results);
-                    _this.isLoading = false;
 
+                    // Stop loading
+                    _this.isLoading = false;
                 }
                 else {
                     // Show error snackbar
                     _this._toastService.showErrorToast(results.reason);
+
+                    // Set results empty
+                    _this.results = [];
+                    _this.processResults(_this.results);
+
+                    // Stop loading
+                    _this.isLoading = false;
                 }
             },
             error => {
+                _this._toastService.showErrorToast(error);
+
+                // Set results empty
+                _this.results = [];
+                _this.processResults(_this.results);
+
+                // Stop loading
                 _this.isLoading = false;
             });
     }
@@ -297,15 +313,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         _this.numRows = results.length;
 
         // prepare the form
-        _this.formData = _this.getFormData(_this.viewKeys, results);
+        _this.filteredFormData = JSON.parse(JSON.stringify(_this.getFormData(_this.viewKeys, results)));
 
-        // Copy all to filtered form data
-        _this.filteredFormData = JSON.parse(JSON.stringify(_this.formData));
-
+        // process the form
         _this.process_form(_this.filteredFormData);
-        _this.sendEvent.emit({ eventType: 'updateData', data: _this.filteredFormData }); // emit event for the parent
 
+        // emit event for the parent
+        _this.sendEvent.emit({ eventType: 'updateData', data: _this.filteredFormData });
     }
+
     addRow(): void {
         const _this = this;
         _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, null, true, true, null, false).subscribe(
@@ -315,14 +331,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     result = result.data;
                     // update the status to prevent the whole table refresh
                     _this.addingNew = true;
-                    // process the new row
-                    const formData = _this.getFormData(_this.viewKeys, result);
-                    _this.process_form(formData);
-                    // add it to the top of the list
-                    _this.formData.unshift(formData[0]);
 
-                    // create new filtered form data
-                    _this.filteredFormData = JSON.parse(JSON.stringify(_this.formData));
+                    // process the new row
+                    const filteredFormData = _this.getFormData(_this.viewKeys, result);
+                    _this.process_form(filteredFormData);
+
+                    // add it to the top of the list
+                    _this.filteredFormData.unshift(filteredFormData[0]);
+
 
                 }
                 else {
@@ -384,6 +400,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 conditionalQuery: (field.outputEvent != null && field.outputEvent.conditionalQuery != null) ? field.outputEvent.conditionalQuery : null,
                 subform: (field.format.viewType === 'subform') ? _this.getFieldValues(field.format.subform_keys, values, index) : null
             };
+        }
+        if (fieldValue.newLine) {
+            console.log(`Field: ${fieldValue.label} has new line.`);
         }
         //console.table(fieldValue);
         return fieldValue;
@@ -767,48 +786,5 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
 
     }
-
-    applyFilterUsingFormData() {
-        let _this = this;
-        if (_this.formData && _this.formData.length) {
-            if (_this.filter) {
-                _this.filteredFormData = _this.formData.filter((entry, i) => {
-                    var add = true;
-                    var done = false;
-
-                    if (entry && entry.length) {
-                        // Since we will use fullValueSet, we don't need to read all fields
-                        let field = entry[0];
-                        Object.entries(field.fullValueSet).forEach(([key, value]) => {
-                            // console.log(key, value);
-                            if (value && !done) {
-                                let dataType = typeof (value);
-                                if (dataType == 'string' || dataType == 'number') {
-                                    let data: string = '' + value;
-                                    if (data && data.toLowerCase().includes(_this.filter)) {
-                                        add = true;
-                                        done = true;
-                                    }
-                                    else {
-                                        add = false;
-                                        done = false;
-                                    }
-
-                                }
-                            }
-                        });
-
-                    }
-                    return add;
-                });
-            }
-            else {
-                _this.filteredFormData = JSON.parse(JSON.stringify(_this.formData));
-            }
-            _this.process_form(_this.filteredFormData);
-        }
-
-    }
-
-
 }
+

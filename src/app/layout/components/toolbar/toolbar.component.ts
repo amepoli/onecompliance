@@ -18,6 +18,7 @@ import { BackendService } from 'app/gorico/views/backend/backend.service';
 import { Router } from '@angular/router';
 
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { ReportService } from 'app/gorico/services/report.service';
 
 
 @Component({
@@ -65,7 +66,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         private _authService: AuthService,
         private _backendService: BackendService,
         private _pubSubService: NgxPubSubService,
-        private router: Router
+        private router: Router,
+        private _reportService: ReportService
     ) {
         // Set the defaults
         this.userStatusOptions = [
@@ -144,12 +146,25 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 _this.hiddenNavbar = settings.layout.navbar.hidden === true;
             });
 
-        _this._pubSubService.subscribe(_this.subMsgCmdTopic,
-            msg => {
-                if (msg.type === 'print_list') {
-                    _this.reportList = msg.value;
-                }
-            });
+
+        _this._reportService.onReportsLoaded.subscribe((data) => {
+            if (data.reports != null && data.reports.length > 0) {
+                console.log("Reports loaded!");
+            }
+            else {
+                console.log("Reports cleared!");
+            }
+            _this.reportList = data.reports;
+        });
+
+        // Old method using pubsubservice
+        // _this._pubSubService.subscribe(_this.subMsgCmdTopic,
+        //     msg => {
+        //         if (msg.type === 'print_list') {
+        //             _this.reportList = msg.value;
+        //             console.log("Loading reports!");
+        //         }
+        //     });
 
         // get user data after login
         _this.userdata = _this._authService.userinfo.getValue();
@@ -250,12 +265,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     }
 
     getReportList(): void {
-        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_list' });
+        // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_list' });
+        console.log("No need to getReportList in toolbar now. Report already loaded!");
     }
 
     getReport(item: { 'alias': string, 'descrizione': string }): void {
         console.log(item);
-        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
+        this._reportService.requestGetReport(item.alias);
+        // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
     }
 
     getExcel(): void {

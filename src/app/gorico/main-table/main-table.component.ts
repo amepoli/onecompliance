@@ -15,6 +15,7 @@ import { AuthService } from '../login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from '../services/dialog.service';
 import { ImportService } from '../services/import.service';
+import { ReportService } from '../services/report.service';
 
 
 @Component({
@@ -96,6 +97,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         private _toastService: ToastService,
         private _dialogService: DialogService,
         private _importService: ImportService,
+        private _reportService: ReportService,
         private _cdr: ChangeDetectorRef) {
     }
 
@@ -118,39 +120,50 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
             });
 
+        _this._reportService.reloadRequested.subscribe((entryName) => {
+            if (entryName === _this.tableName) {
+                _this._reportService.getReports(_this.tableName, _this.authService.getCurrentCompany(), _this.currentTableKeys);
+            }
+        });
+
+        _this._reportService.getReportRequested.subscribe((alias) => {
+            _this._reportService.getReport(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, alias, (_this.tableType === 'form'), _this.searchKeys);
+        });
+
         // subscribe to toolbar requests
         _this.subscriptions.push(_this.pubSubService.subscribe(_this.subMsgCmdTopic,
             msg => {
-                if (msg.type === 'print_list') {   // toolbar asking for the list of possible reports in current view
-                    _this.backendService.getReportList(_this.tableName, _this.authService.getCurrentCompany(), _this.currentTableKeys).subscribe(
-                        response => {
-                            console.log(response);
-                            if (response.result === 'OK') {
-                                // now give results back to the requester
-                                _this.pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list', value: response.list });
-                            }
-                            else {
-                                // Show error snackbar
-                                _this._toastService.showErrorToast(response.reason);
-                            }
-                        });
-                } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
-                    _this.backendService.getReport(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'form'), _this.searchKeys).subscribe(
-                        response => {
-                            console.log(response);
-                            if (response.result === 'OK') {
-                                const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
-                                _this.httpClient.get(url, { responseType: 'blob' }).subscribe(
-                                    fileData => {
-                                        saveAs(fileData, 'report.pdf');
-                                    });
-                            }
-                            else {
-                                // Show error snackbar
-                                _this._toastService.showErrorToast(response.reason);
-                            }
-                        });
-                } else if (msg.type === 'add') { // toolbar sking for adding a new element
+                // if (msg.type === 'print_list') {   // toolbar asking for the list of possible reports in current view
+                //     _this.backendService.getReportList(_this.tableName, _this.authService.getCurrentCompany(), _this.currentTableKeys).subscribe(
+                //         response => {
+                //             console.log(response);
+                //             if (response.result === 'OK') {
+                //                 // now give results back to the requester
+                //                 _this.pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list', value: response.list });
+                //             }
+                //             else {
+                //                 // Show error snackbar
+                //                 _this._toastService.showErrorToast(response.reason);
+                //             }
+                //         });
+                // } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
+                //     _this.backendService.getReport(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'form'), _this.searchKeys).subscribe(
+                //         response => {
+                //             console.log(response);
+                //             if (response.result === 'OK') {
+                //                 const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
+                //                 _this.httpClient.get(url, { responseType: 'blob' }).subscribe(
+                //                     fileData => {
+                //                         saveAs(fileData, 'report.pdf');
+                //                     });
+                //             }
+                //             else {
+                //                 // Show error snackbar
+                //                 _this._toastService.showErrorToast(response.reason);
+                //             }
+                //         });
+                // } else 
+                if (msg.type === 'add') { // toolbar sking for adding a new element
                     _this.historyPush();
                     _this.currentDescription = 'Nuovo elemento tabella ' + _this.tableName;
                     _this.formParams = {
