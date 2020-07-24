@@ -63,12 +63,48 @@ async function getEntry(templateKey) {
     }
 }
 
-async function sendEmail(to, body, subject) {
+async function getListOrQuery(input) {
+    if (input != null) {
+        if (input.list != null && input.list.length > 0) {
+            if (input.list.includes(',')) {
+                return input.list.split(',');
+            }
+            else {
+                return [input.list];
+            }
+        }
+        else if (input.query != null && input.query.length > 0) {
+            let result = await runQuery(input.query);
+            if (result != null) {
+                return result;
+            }
+        }
+    }
+}
+
+async function getBody(body) {
+    let result = "";
+
+    if (body != null) {
+        if (body.header != null && body.header.length > 0) {
+            result += body.header + '\n';
+        }
+        if (body.query != null && body.query.length > 0) {
+            let query_result = await runQuery(body.query);
+            result += query_result[0] + '\n';
+        }
+        if (body.footer != null && body.footer.length > 0) {
+            result += body.footer + '\n';
+        }
+    }
+}
+
+async function sendEmail(to, cc, body, subject) {
     try {
         var eParams = {
             Destination: {
                 ToAddresses: to,
-                CcAddresses: null,
+                CcAddresses: cc,
                 BccAddresses: null
             },
             Message: {
@@ -110,13 +146,23 @@ exports.handler = async (event, context, callback) => {
         console.log(entry);
 
         // Run query
-        let result = await runQuery(entry.query);
+        let result = await runQuery(entry.conditionalQuery);
         if (result) {
             console.log(result[0]);
 
+            // Get recipients
+            let to = await getListOrQuery(entry.to);
+            console.log(to);
+
+            // Get CC
+            let cc = await getListOrQuery(entry.cc);
+            console.log(cc);
+
+            // Get body
+            let body = await getBody(entry.body);
+
             // Send email
-            let subject = "Gorico: Testing zee";
-            let emailSent = await sendEmail(entry.to.split(','), "", entry.body, subject);
+            let emailSent = await sendEmail(to, cc, body, entry.subject);
             if (emailSent) {
                 console.log({ 'Success': true, 'Error': null })
             }
