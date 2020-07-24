@@ -271,8 +271,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     getReport(item: { 'alias': string, 'descrizione': string }): void {
         console.log(item);
-        // this._reportService.requestGetReport(item.alias);
-        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
+        this._reportService.requestGetReport(item.alias);
+        // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
     }
 
     getExcel(): void {
