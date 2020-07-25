@@ -231,8 +231,34 @@
                 "eventName": "flag_applicazione_singola",
                 "eventTrigger": "change"
             },
+            "newLine": false,
             "readOnly": false,
             "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_filtro_selezione AS id, descrizione AS name  FROM entrasp.filtri_selezione_oggetti order by descrizione;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "flag_applicazione_singola",
+                    "condition": "equalTo",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "queryFunct": "SELECT id_filtro_selezione from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_filtro_selezione",
+            "label": "Filtro selezione",
+            "newLine": true,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -408,6 +434,21 @@
             ],
             "label": "Argomenti",
             "type":"tableForm"
+          },
+          {
+            "entryKey": "sondaggi",    
+            "isHidden": false, 
+            "keys": [
+              {
+                "parent": "codice_azienda",
+                "son": "codice_azienda"
+              },
+              {
+                "parent": "id_modello_test",
+                "son": "id_modello_test"
+              }
+            ],
+            "label": "Sondaggi associati"
           }      
     ],
     "table_keys": [
