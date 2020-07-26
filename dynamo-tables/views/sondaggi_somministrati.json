@@ -1,7 +1,7 @@
 {
     "$schema": "../views.schema.json",
-    "businessObjectName": "sondaggi",
-    "entryKey": "sondaggi",
+    "businessObjectName": "sondaggi_somministrati",
+    "entryKey": "sondaggi_somministrati",
     "form_keys": [
       {
         "autoGenerate": false,
@@ -25,38 +25,37 @@
         "isHidden": false,
         "isPrimary": true,
         "key": "id_sondaggio",
-        "label": "ID",
+        "label": "ID_sondaggio",
+        "newLine": true,
+        "readOnly": true
+      },
+      {
+        "autoGenerate": true,
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "id_somministrazione",
+        "label": "ID_somministrazione",
         "newLine": true,
         "readOnly": true
       },
       {
         "autoGenerate": false,
         "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "descr_modello_test",
-        "label": "Modello Test",
-        "newLine": false,
-        "queryFunct": "entrasp.mdt_codtitolo(codice_azienda, id_modello_test)",
-        "readOnly": true,
-        "size": 8
-      },
-      {
-        "autoGenerate": false,
-        "format": {
           "dataType": "number",
           "viewType": "input"
         },
         "isHidden": false,
         "isPrimary": false,
+        "queryFunct": "select id_modello_test from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$",
         "key": "id_modello_test",
-        "label": "Id modello test",
+        "label": "ID Modello Test",
+        "sameOrigin": false,
         "newLine": false,
-        "readOnly": true,
-        "size": 2
+        "readOnly": true
       },
       {
         "autoGenerate": false,
@@ -66,11 +65,12 @@
         },
         "isHidden": false,
         "isPrimary": false,
+        "queryFunct": "select id_modello_test_vr from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$",
         "key": "id_modello_test_vr",
-        "label": "Versione Modello Test",
-        "newLine": true,
-        "readOnly": true,
-        "size": 2
+        "label": "Id mod test vr",
+        "sameOrigin": false,
+        "newLine": false,
+        "readOnly": true
       },
       {
         "autoGenerate": false,
@@ -79,35 +79,19 @@
         },
         "isHidden": false,
         "isPrimary": false,
-        "key": "modello_test_from_sondaggi",
+        "key": "modello_test_from_sondaggi_somministrati",
         "label": "Modello test",
         "newLine": true,
         "outputEvent": {
-          "eventName": "to_modello_test_from_sondaggi",
+          "eventName": "to_modello_test_from_sondaggi_somministrati",
           "eventTrigger": "press"
         },
         "readOnly": false,
         "sameOrigin": false,
         "size": 2
-      },
-      {
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "isHidden": true,
-        "isPrimary": false,
-        "key": "flags_sezioni_multi",
-        "label": "flags_sezioni_multi",
-        "outputEvent": {
-          "eventName": "sondaggi_flags_sezioni_singola",
-          "eventTrigger": "change"
-        },
-        "queryFunct": "entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio)",
-        "readOnly": true
       }
     ],
-    "origin": "entrasp.sondaggi",
+    "origin": "entrasp.sondaggi_somministrati",
     "subTables": [
       {
         "entryKey": "domande_risposte",
@@ -164,30 +148,6 @@
         ],
         "label": "Domande e Risposte - Sezioni",
         "type": "table"
-      },
-      {
-        "entryKey": "seleziona_campione",
-        "inputEvents": [
-          {
-            "actionType": "show",
-            "eventName": "sondaggi_flags_sezioni_singola",
-            "condition": "equalTo",
-            "values":["*", "0"]
-          }
-        ],
-        "isHidden": true,
-        "keys": [
-          {
-            "parent": "codice_azienda",
-            "son": "codice_azienda"
-          },
-          {
-            "parent": "id_sondaggio",
-            "son": "id_sondaggio"
-          }
-        ],
-        "label": "Seleziona Campione",
-        "type": "tableForm"
       }
     ],
     "table_keys": [
@@ -208,25 +168,16 @@
         "isHidden": false,
         "isPrimary": true,
         "key": "id_sondaggio",
-        "label": "ID"
+        "label": "ID sond. "
       },
       {
         "format": {
-          "dataType": "date"
+          "dataType": "number"
         },
         "isHidden": false,
-        "isPrimary": false,
-        "key": "data_comp",
-        "label": "Data Completamento"
-      },
-      {
-        "format": {
-          "dataType": "date"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "data_prevista",
-        "label": "Data Prevista"
+        "isPrimary": true,
+        "key": "id_somministrazione",
+        "label": "ID somm."
       },
       {
         "format": {
@@ -236,15 +187,6 @@
         "isPrimary": false,
         "key": "data_esecuzione",
         "label": "Data Esecuzione"
-      },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "titolo",
-        "label": "Titolo"
       },
       {
         "format": {
@@ -301,7 +243,7 @@
           "type": "form"
         },
         "actionType": "navigate",
-        "eventName": "to_modello_test_from_sondaggi"
+        "eventName": "to_modello_test_from_sondaggi_somministrati"
       }
     ]
   }
