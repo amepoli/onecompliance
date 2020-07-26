@@ -7,8 +7,8 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
-TABLENAME="reports"
-MAINKEY="name"
+TABLENAME="users"
+MAINKEY="userid"
 
 if [ $1 != "gorico_dev" ]
   then
@@ -30,7 +30,7 @@ echo "Pushing data ..."
 files=(*.json)
 n=25          	#only 25 files can be processed as batch
 for ((i=0; i < ${#files[@]}; i+=n)); do
-	(echo "["; for f in "${files[@]:i:n}"; do (cat "$f"; echo ","); done; echo "]") | json-dynamo-putrequest --beautify ${TABLENAME} > dynamo-input/dynamo_"$i".json
+	(echo "["; for f in "${files[@]:i:n}"; do (cat "$f"; echo ","); done; echo "]") | json-dynamo-putrequest --beautify $TABLENAME > dynamo-input/dynamo_"$i".json
 done
 dynamo_files=(dynamo-input/*.json)
 for d in "${dynamo_files[@]}"; do

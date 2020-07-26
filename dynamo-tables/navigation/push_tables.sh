@@ -7,7 +7,7 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
-TABLENAME="reports"
+TABLENAME="navigation"
 MAINKEY="name"
 
 if [ $1 != "gorico_dev" ]
