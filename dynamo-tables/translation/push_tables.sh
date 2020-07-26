@@ -7,8 +7,8 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
-TABLENAME="reports"
-MAINKEY="name"
+TABLENAME="translation"
+MAINKEY="lang"
 
 if [ $1 != "gorico_dev" ]
   then

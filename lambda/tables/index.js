@@ -1,7 +1,7 @@
 const Pool = require('pg-pool');
 const pool = new Pool({
-    host: 'goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-    database: 'Gorico',
+    host: HOSTNAME,
+    database: DBNAME,
     user: 'postgres',
     password: 'et2themax',
     port: 5432,
@@ -726,7 +726,7 @@ async function processDashboard(queryString, client) {
 async function getProfile(userid, company) {
 
     var userParams = {
-        TableName: 'users',
+        TableName: USERS_NAME,
         Key: {
             userid: userid
         }
@@ -752,7 +752,7 @@ async function getProfile(userid, company) {
 async function checkEntry(entry_name, profile) {
 
     var profileParams = {
-        TableName: 'profiles',
+        TableName: PROFILES_NAME,
         Key: {
             name: profile
         }
@@ -777,7 +777,7 @@ async function checkEntry(entry_name, profile) {
 async function checkReadOnly(entry_name, profile) {
 
     var profileParams = {
-        TableName: 'profiles',
+        TableName: PROFILES_NAME,
         Key: {
             name: profile
         }
@@ -965,7 +965,7 @@ async function setGlobalVariables(company, client,userid) {
     }
 
     var userParams = {
-        TableName: 'users',
+        TableName: USERS_NAME,
         Key: {
             userid: userid
         }
@@ -1006,7 +1006,7 @@ exports.handler = async (event, context) => {
     console.log('queryParams: ', queryParams);
 
     const DynamoParams = {
-        TableName: 'views',
+        TableName: VIEWS_NAME,
         Key: {
             entryKey: queryParams['entry_name']
         }
