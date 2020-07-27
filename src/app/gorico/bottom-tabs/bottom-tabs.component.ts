@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, OnChanges, OnDestroy, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnChanges, OnDestroy, OnInit, ViewChild, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { MatTabChangeEvent, MatTabGroup } from '@angular/material';
 import { tableViewParams } from 'app/gorico/views/table/table-view.component';
 import { formTableViewParams } from '../views/form-table/form-table-view.component';
@@ -18,7 +18,8 @@ export interface TabType {
 @Component({
     selector: 'bottom-tabs',
     templateUrl: './bottom-tabs.component.html',
-    styleUrls: ['./bottom-tabs.component.scss']
+    styleUrls: ['./bottom-tabs.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class BottomTabsComponent implements OnChanges, OnDestroy {
 
