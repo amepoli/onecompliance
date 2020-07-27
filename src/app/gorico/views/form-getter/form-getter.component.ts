@@ -25,6 +25,7 @@ export interface formViewKey { // as per API specification
     isPrimary: boolean;
     newLine: boolean;
     buttonIcon?: string;
+    confirmButtonAction?: boolean;
     size?: number;
     style?: {
         background_color?: string,
@@ -391,6 +392,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 isVisible: (field.isHidden != null) ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,
                 buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
+                confirmButtonAction: field.confirmButtonAction ? true : false,
                 style: (field.style != null) ? field.style : null,
                 width: (field.size != null) ? (field.size * 10) - _this.margins : null, // leave a 1% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],
