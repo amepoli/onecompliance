@@ -12,6 +12,7 @@ import { DialogService } from 'app/gorico/services/dialog.service';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ReportService } from 'app/gorico/services/report.service';
+import { ImportExportService } from 'app/gorico/services/import.service';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -88,7 +89,8 @@ export class FormViewComponent implements OnChanges, OnInit {
         private _toastService: ToastService,
         private _fileService: FileManagerService,
         private _pubSubService: NgxPubSubService,
-        private _reportService: ReportService
+        private _reportService: ReportService,
+        private _importExportService: ImportExportService
     ) {
 
     }
@@ -312,6 +314,11 @@ export class FormViewComponent implements OnChanges, OnInit {
         // Request to load reports
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_list' });
         this._reportService.requestReload(this.tableData.entryName);
+    }
+
+    getExportList() {
+        // Request to load advanced export list
+        this._importExportService.requestReload(this.tableData.entryName);
     }
 
 }

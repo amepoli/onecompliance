@@ -7,6 +7,7 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { ReportService } from 'app/gorico/services/report.service';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { ImportExportService } from 'app/gorico/services/import.service';
 
 export interface tableViewParams {
     entryName: string;
@@ -117,6 +118,7 @@ export class TableViewComponent implements OnChanges {
         private _pubSubService: NgxPubSubService,
         private _toastService: ToastService,
         private _reportService: ReportService,
+        private _importExportService: ImportExportService
     ) {
 
         this.calculateTableHeight();
@@ -140,6 +142,7 @@ export class TableViewComponent implements OnChanges {
                 // Request to load reports
                 // _this._pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list' });
                 _this._reportService.requestReload(_this.tableData.entryName);
+                _this._importExportService.requestReload(_this.tableData.entryName);
             }
 
             if (_this.isTabMode && _this.isCurTab) {

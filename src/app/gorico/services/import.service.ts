@@ -1,17 +1,57 @@
-import { Injectable } from '@angular/core';
-import Swal, { SweetAlertResult, SweetAlertIcon, SweetAlertOptions, SweetAlertPosition } from 'sweetalert2'
+import { Injectable, EventEmitter } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+// import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { ToastService } from './toast.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BackendService } from '../views/backend/backend.service';
+import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { AuthService } from '../login-page/auth.service';
+import { DialogService } from './dialog.service';
 import { MatDialog } from '@angular/material';
 import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
-import { BackendService } from '../views/backend/backend.service';
-import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../login-page/auth.service';
-import { ToastService } from './toast.service';
-import { DialogService } from './dialog.service';
+
+export interface ExportItem {
+    alias: string;
+    descrizione: string;
+}
+
+export interface ExportList {
+    entryName: string;
+    items: ExportItem[]
+};
 
 @Injectable({
     providedIn: 'root'
 })
-export class ImportService {
+export class ImportExportService {
+
+    // local data
+    private _currentData: ExportList = {
+        entryName: "",
+        items: []
+    };
+
+    // get current data
+    public getCurrentData() {
+        return this._currentData;
+    }
+
+    // Stream for loaded reports
+    public onExportListLoaded: BehaviorSubject<ExportList>;
+
+    // Event Emitter for reload requests
+    public reloadRequested: EventEmitter<string> = new EventEmitter();
+
+    // Event Emitter for getting report requests
+    public getExportItemRequested: EventEmitter<string> = new EventEmitter();
+
+    // Event Emitter for import requests
+    public importRequested: EventEmitter<string> = new EventEmitter();
+
+    // Event Emitter for getting template requests
+    public getTemplateRequested: EventEmitter<string> = new EventEmitter();
+
 
     /**
      * Constructor
@@ -24,13 +64,17 @@ export class ImportService {
         private _toastService: ToastService,
         private _dialogService: DialogService
     ) {
+
+        // Set the defaults
+        this.onExportListLoaded = new BehaviorSubject({ entryName: "", items: [] });
+
     }
 
     /**
      * Show Import Dialog
      * @param tableName table to import into
      */
-    showDialog(tableName: string): void {
+    importCSV(tableName: string): void {
         let _this = this;
 
         // Open dialog
@@ -52,7 +96,7 @@ export class ImportService {
      * Download Template file
      * @param tableName table to import into
      */
-    downloadTemplateFile(tableName: string) {
+    getTemplateFile(tableName: string) {
 
         if (tableName) {
             this._dialogService.showLoadingDialog("Downloading Template", "Please wait...");
@@ -199,5 +243,28 @@ export class ImportService {
             )
         }
     }
+
+    requestReload(entryName) {
+        // Request only if we already don't have the reports for this entryName
+        if (this._currentData.entryName !== entryName) {
+            this.reloadRequested.emit(entryName);
+        }
+    }
+
+    requestGetExportItem(alias) {
+        // Request if report with alias exists in current reports list
+        if (this._currentData.items.filter(x => x.alias === alias).length > 0) {
+            this.getExportItemRequested.emit(alias);
+        }
+    }
+
+    requestImport(entryName = "") {
+        this.importRequested.emit(entryName);
+    }
+
+    requestGetTemplate(entryName = "") {
+        this.getTemplateRequested.emit(entryName);
+    }
+
 }
 
