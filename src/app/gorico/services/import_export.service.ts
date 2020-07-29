@@ -66,8 +66,24 @@ export class ImportExportService {
     ) {
 
         // Set the defaults
-        this.onExportListLoaded = new BehaviorSubject({ entryName: "", items: [] });
-
+        this.onExportListLoaded = new BehaviorSubject(
+            {
+                entryName: "test", items: [
+                    {
+                        alias: 't1',
+                        descrizione: 'test 1'
+                    },
+                    {
+                        alias: 't2',
+                        descrizione: 'test 2'
+                    },
+                    {
+                        alias: 't3',
+                        descrizione: 'test 3'
+                    }
+                ]
+            }
+        );
     }
 
     /**

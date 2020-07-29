@@ -14,7 +14,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from '../services/dialog.service';
-import { ImportExportService } from '../services/import.service';
+import { ImportExportService } from '../services/import_export.service';
 import { ReportService } from '../services/report.service';
 
 

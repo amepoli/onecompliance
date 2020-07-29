@@ -13,7 +13,7 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
-import { ImportExportService } from 'app/gorico/services/import.service';
+import { ImportExportService } from 'app/gorico/services/import_export.service';
 
 
 @Component({

@@ -12,7 +12,7 @@ import { DialogService } from 'app/gorico/services/dialog.service';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ReportService } from 'app/gorico/services/report.service';
-import { ImportExportService } from 'app/gorico/services/import.service';
+import { ImportExportService } from 'app/gorico/services/import_export.service';
 
 type tabViewType = 'table' | 'tableForm';
 

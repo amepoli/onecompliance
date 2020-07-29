@@ -7,7 +7,7 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { ReportService } from 'app/gorico/services/report.service';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
-import { ImportExportService } from 'app/gorico/services/import.service';
+import { ImportExportService } from 'app/gorico/services/import_export.service';
 
 export interface tableViewParams {
     entryName: string;
