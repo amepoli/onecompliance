@@ -6,13 +6,16 @@
       {
         "autoGenerate": false,
         "format": {
-          "dataType": "text",
-          "viewType": "input"
+          "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni where codice_azienda = $codice_azienda$;",
+          "options": [
+  
+          ],
+          "viewType": "combobox"
         },
         "isHidden": false,
         "isPrimary": false,
-        "key": "note_interne",
-        "label": "Note Interne",
+        "key": "id_tipo_segnalazione",
+        "label": "Tipo Segnalazione",
         "newLine": false,
         "readOnly": false
       },
@@ -29,34 +32,8 @@
         "isPrimary": false,
         "key": "id_responsabile",
         "label": "ID Responsabile",
-        "newLine": false,
-        "readOnly": false
-      },
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "date",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "data_ins",
-        "label": "Data Inser.",
-        "newLine": false,
-        "readOnly": false
-      },
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "date",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "data_chiusura",
-        "label": "Data Chiusura",
-        "newLine": false,
-        "readOnly": false
+        "newLine": true,
+        "readOnly": false 
       },
       {
         "autoGenerate": false,
@@ -65,11 +42,12 @@
           "viewType": "input"
         },
         "isHidden": false,
-        "isPrimary": false,
-        "key": "ute_ins",
-        "label": "ute_ins",
+        "isPrimary": true,
+        "key": "codice_compito",
+        "label": "Codice Segnalazione",
         "newLine": false,
-        "readOnly": false
+        "readOnly": true,
+        "size": 3
       },
       {
         "autoGenerate": false,
@@ -82,7 +60,22 @@
         "key": "stato",
         "label": "Stato",
         "newLine": false,
-        "readOnly": false
+        "readOnly": false,
+        "size": 3
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "date",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "data_chiusura",
+        "label": "Data Chiusura",
+        "newLine": false,
+        "readOnly": false,
+        "size": 2
       },
       {
         "autoGenerate": false,
@@ -100,19 +93,6 @@
       {
         "autoGenerate": false,
         "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": true,
-        "key": "codice_compito",
-        "label": "Codice Compito",
-        "newLine": false,
-        "readOnly": true
-      },
-      {
-        "autoGenerate": false,
-        "format": {
           "dataType": "date",
           "viewType": "input"
         },
@@ -121,7 +101,8 @@
         "key": "data_segnalazione",
         "label": "Data Segnalazione",
         "newLine": true,
-        "readOnly": false
+        "readOnly": false,
+        "size": 2
       },
       {
         "autoGenerate": false,
@@ -133,8 +114,38 @@
         "isPrimary": false,
         "key": "titolo",
         "label": "Titolo",
+        "newLine": false,
+        "readOnly": false,
+        "size": 5
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+            "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+            "options": [],
+            "viewType": "combobox"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "id_centro_gest",
+        "label": "Centro Gestionale",
         "newLine": true,
-        "readOnly": false
+        "readOnly": false,
+        "size": 5
+    },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "descrizione",
+        "label": "Descrizione",
+        "newLine": true,
+        "readOnly": false,
+        "size": 10
       },
       {
         "autoGenerate": false,
@@ -147,7 +158,8 @@
         "key": "note",
         "label": "Note",
         "newLine": true,
-        "readOnly": false
+        "readOnly": false,
+        "size": 10
       }
     ],
     "origin": "entrasp.compiti",
