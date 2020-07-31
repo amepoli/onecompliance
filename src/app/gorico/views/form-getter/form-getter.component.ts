@@ -246,7 +246,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (inputKeys.hasOwnProperty(key)) {
                 const element = inputKeys[key];
                 if (validKeysArray != null && validKeysArray.find(e => e.key === key)) {
-                    outputKeys[key] = element;
+                    if (typeof element === 'string' || element === null) {
+                        outputKeys[key] = element;
+                    }
+                    else if (element.id) {
+                        outputKeys[key] = element.id;
+                    }
                 }
             }
         }
