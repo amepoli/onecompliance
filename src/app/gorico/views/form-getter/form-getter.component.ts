@@ -561,9 +561,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
             if (keyListener == null) {   // act on the full table
                 if (conditionMet) {
-                    this.formParams.isVisible = event.actionType === 'show' ? true : event.actionType === 'hide' ? false : !this.formParams.isVisible;
+                    _this.formParams.isVisible = event.actionType === 'show' ? true : event.actionType === 'hide' ? false : !_this.formParams.isVisible;
                 } else {
-                    this.formParams.isVisible = event.actionType === 'show' ? false : event.actionType === 'hide' ? true : this.formParams.isVisible;
+                    _this.formParams.isVisible = event.actionType === 'show' ? false : event.actionType === 'hide' ? true : _this.formParams.isVisible;
                 }
             } else if (listener != null) {  // act on the listening element
                 if (conditionMet) {
@@ -571,6 +571,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 } else {
                     listener.isVisible = event.actionType === 'show' ? false : event.actionType === 'hide' ? true : listener.isVisible;
                 }
+            }
+        } else if (event.actionType === 'readOnly') {
+            // get the listener element if not full table
+            let listener: FieldConfig = null;
+            if (keyListener != null && value.type !== 'page') {
+                const targetLine = _this.filteredFormData[value.index];  // recover the form "line"
+                if (targetLine != null) {
+                    listener = targetLine.find(field => field.name === keyListener);
+                }
+            }
+            if (keyListener == null) {   // act on the full table
+                _this.isReadOnly = conditionMet;
+                _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly }); // signal to the parent to show/hide save button
+            } else if (listener != null) {  // act on the listening element
+                listener.readonly = conditionMet;
             }
         } else if (event.actionType === 'navigate' && conditionMet) {
             const formLine = _this.filteredFormData[value.index];
