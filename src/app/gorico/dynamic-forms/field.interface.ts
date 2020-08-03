@@ -17,13 +17,23 @@ export interface Key {
 }
 
 export interface FieldInputEvent {
-  actionType: "hide" | "show" | "query" | "query_style" | "show_message" | "toggle" | "update" | "update_style",
-  eventName: string,
-  values: any[],
-  condition: "equalTo" | "greatorThan" | "lessThan" | "none",
-  queryFunct?: string,
-  styleAttribute?: "background_color" | "font_color",
-  updateFunct?: string,
+  actionType: 'hide' | 'show' | 'readOnly' | 'query' | 'query_style' | 'show_message' | 'toggle' | 'update' | 'update_style';
+  eventName: string;
+  values: any[];
+  condition: 'equalTo' | 'greatorThan' | 'lessThan' | 'none';
+  queryFunct?: string;
+  styleAttribute?: 'background_color' | 'font_color';
+  updateFunct?: string;
+  actionTarget?: {
+    name: string;
+    type: 'table' | ' form' | 'tableform';
+    keymap?: [
+        {
+            source: string;
+            destination: string
+        }
+    ]
+  };
   message?: {
     messageText: string,
     actionOnYes: {
@@ -34,7 +44,7 @@ export interface FieldInputEvent {
       actionType: 'reload' | 'query',
       queryFunct?: string
     }
-  }
+  };
 }
 
 export interface FieldConfig {
