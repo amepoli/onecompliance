@@ -593,8 +593,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 outputKeys[key.name] = key.value;
                 return outputKeys;
             }, {});
-            const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
-            const filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
+            // const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
+            const filteredKeys = _this.getCurrentKeys(_this.viewKeys, keys);
             _this.sendEvent.emit({ eventType: 'navigate', queryParams: { entry: event.actionTarget, keys: [filteredKeys], index: 1, total: 1 } });
         } else if ((event.actionType === 'query' || event.actionType === 'query_style') && conditionMet) {
             let chiavi = {};

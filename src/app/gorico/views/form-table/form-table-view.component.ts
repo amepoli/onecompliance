@@ -3,11 +3,13 @@ import { FormGetterComponent, formGetterParams } from '../form-getter/form-gette
 import { BackendService } from '../backend/backend.service';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
+import { formViewParams } from '../form/form-view.component';
 
 
 export interface formTableViewParams {
   entryName: string;
   keys: any;
+  showHeader: boolean;
 }
 
 @Component({
@@ -34,6 +36,17 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   processView = false;   // handle the form-getter child view
 
   isFullScreen = false;
+
+  showQuickAdd = false;
+
+  quickAddFormParams: formViewParams = {
+    entryName: '',
+    keys: {},
+    index: 1,
+    total: 1,
+    isNew: true,
+    showNavBar: false
+  };
 
   filter: string = ""; // for filtering results
 
@@ -62,6 +75,8 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   ngOnChanges(changes) {
     const _this = this; // useful to debug
     if (changes.tableData) {
+      _this.quickAddFormParams.entryName = _this.tableData.entryName;
+      _this.quickAddFormParams.keys = _this.tableData.keys;
       _this.getterParams = {
         entryName: _this.tableData.entryName,
         keys: _this.tableData.keys,
@@ -175,6 +190,20 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   reload() {
     console.log('onReload: form-table-view');
     this.onReload.emit();
+  }
+
+  quickAdd(): void {
+    this.showQuickAdd = !this.showQuickAdd;
+  }
+
+  onEvent(event: any) {
+    if (event.eventType === 'savedForm') { // quick add form view submitted the new record
+      this.showQuickAdd = false; // hide quick add
+      this._toastService.showSuccessToast("Saved successfully!"); // show success toast
+      this.reload(); // reload the table to visualize the record
+    } else { // forward to parent
+      this.sendEvent.emit(event);
+    }
   }
 
 }
