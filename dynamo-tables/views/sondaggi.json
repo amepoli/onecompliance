@@ -19,6 +19,23 @@
     {
       "autoGenerate": false,
       "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "sondaggi_close",
+      "label": "Chiudi",
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "sondaggio_close",
+        "eventTrigger": "press"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO';",
         "options": [],
         "viewType": "combobox"
@@ -82,9 +99,36 @@
       "isPrimary": false,
       "key": "titolo",
       "label": "Titolo",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false,
       "size": 8
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "stato",
+      "label": "Stato",
+      "newLine": true,
+      "readOnly": false,
+      "size": 2,
+      "outputEvent": {
+        "eventName": "sondaggi_change_stato",
+        "eventTrigger": "change"
+      },
+      "inputEvents": [
+        {
+          "eventName": "sondaggi_change_stato",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "update entrasp.sondaggi set stato='C'"
+        }
+      ]
     },
     {
       "autoGenerate": false,
@@ -381,6 +425,10 @@
       },
       "actionType": "navigate",
       "eventName": "to_modello_test_from_sondaggi"
+    },
+    {
+      "eventName": "sondaggio_close",
+      "actionType": "readOnly"
     }
   ]
 }
