@@ -408,9 +408,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 subform: (field.format.viewType === 'subform') ? _this.getFieldValues(field.format.subform_keys, values, index) : null
             };
         }
+        /*
         if (fieldValue.newLine) {
             console.log(`Field: ${fieldValue.label} has new line.`);
         }
+        */
         //console.table(fieldValue);
         return fieldValue;
     }
@@ -593,8 +595,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 outputKeys[key.name] = key.value;
                 return outputKeys;
             }, {});
-            // const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
-            const filteredKeys = _this.getCurrentKeys(_this.viewKeys, keys);
+            let filteredKeys = {};
+            if (event.actionTarget.keymap != null && event.actionTarget.keymap.length) { // explicit key map between tables
+                event.actionTarget.keymap.forEach(element => {
+                    if (element.source != null && element.destination != null) {
+                        filteredKeys[element.destination] = keys[element.source].id != null ? keys[element.source].id : keys[element.source];
+                    }
+                });
+            } else {
+                const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
+                filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
+            }
             _this.sendEvent.emit({ eventType: 'navigate', queryParams: { entry: event.actionTarget, keys: [filteredKeys], index: 1, total: 1 } });
         } else if ((event.actionType === 'query' || event.actionType === 'query_style') && conditionMet) {
             let chiavi = {};
