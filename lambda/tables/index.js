@@ -19,8 +19,6 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const excel = require('node-excel-export');
 const readXlsxFile = require('read-excel-file/node');
 
-const uuidv4 = require('uuid/v4');
-
 const global_variables = {
     global_codice_azienda: '', 
     global_codice_part: '', 
@@ -68,7 +66,8 @@ function replaceKeys(queryString, keys, keyTypes) {
             delimiters.forEach(delimiter => {
                 let keyType = keyTypes.find(e => (e.key === key));
 
-                if (typeof keys[key] === 'object' && keys[key] != null) { // key with multiple subkeys
+            if (typeof keys[key] === 'object' && Array.isArray(keyType.dataType) && keys[key] != null) { // key with multiple subkeys
+                    console.log(keys[key],keyType);
                     // tslint:disable-next-line:forin
                     for (var subkey in keys[key]) {
                         // console.log(subKey);
@@ -85,7 +84,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                         }
                         console.log(`newString Object: ${newString}`);
                     }
-                } else {
+                } else if (typeof keys[key] !== 'object') {  // avoid spourious values like arrays form events
                     let bracket = (delimiter === '$' && keyType && keyType.dataType === 'text') ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
                     // TO BE CHECKED
@@ -1220,7 +1219,7 @@ exports.handler = async (event, context) => {
 
             var viewKeys = isFormRecord ? entry_params.form_keys : entry_params.table_keys;
             var excelData = data2xls(queryData, queryParams.entry_name, viewKeys);
-            var uuid = uuidv4(); // generate a 'unique' UUID as filename
+            var uuid = context.awsRequestId; // generate a 'unique' UUID as filename
             var filename = 'Excel/' + uuid + '.xlsx'
             var s3ParamsInsert = {
                 Bucket: 'gorico2.reports',
