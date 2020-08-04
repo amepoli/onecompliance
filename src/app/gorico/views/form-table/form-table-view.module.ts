@@ -15,8 +15,7 @@ import { FormViewModule } from '../form/form-view.module';
     MatButtonModule,
     MatIconModule,
     MatInputModule,
-    MatFormFieldModule,
-    FormViewModule
+    MatFormFieldModule
   ],
   exports: [
     FormTableViewComponent
