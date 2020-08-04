@@ -4,6 +4,7 @@ import { FormTableViewComponent } from './form-table-view.component';
 import { FormGetterModule } from '../form-getter/form-getter.module';
 import { DynamicFormsModule } from 'app/gorico/dynamic-forms/dynamic-forms.module';
 import { MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule } from '@angular/material';
+import { FormViewModule } from '../form/form-view.module';
 
 @NgModule({
   declarations: [FormTableViewComponent],
@@ -14,7 +15,7 @@ import { MatIconModule, MatButtonModule, MatFormFieldModule, MatInputModule } fr
     MatButtonModule,
     MatIconModule,
     MatInputModule,
-    MatFormFieldModule,
+    MatFormFieldModule
   ],
   exports: [
     FormTableViewComponent

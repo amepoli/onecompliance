@@ -14,7 +14,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from '../services/dialog.service';
-import { ImportService } from '../services/import.service';
+import { ImportExportService } from '../services/import_export.service';
 import { ReportService } from '../services/report.service';
 
 
@@ -96,7 +96,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         private httpClient: HttpClient,
         private _toastService: ToastService,
         private _dialogService: DialogService,
-        private _importService: ImportService,
+        private _importExportService: ImportExportService,
         private _reportService: ReportService,
         private _cdr: ChangeDetectorRef) {
     }
@@ -120,6 +120,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
             });
 
+        // Report related subscriptions
         _this._reportService.reloadRequested.subscribe((entryName) => {
             if (entryName === _this.tableName) {
                 _this._reportService.getReports(_this.tableName, _this.authService.getCurrentCompany(), _this.currentTableKeys);
@@ -128,6 +129,15 @@ export class MainTableComponent implements OnInit, OnDestroy {
 
         _this._reportService.getReportRequested.subscribe((alias) => {
             _this._reportService.getReport(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, alias, (_this.tableType === 'form'), _this.searchKeys);
+        });
+
+        // Import Export related subscriptions
+        _this._importExportService.getTemplateRequested.subscribe((entryName) => {
+            _this._importExportService.getTemplateFile(_this.tableName);
+        });
+
+        _this._importExportService.importRequested.subscribe((entryName) => {
+            _this._importExportService.importCSV(_this.tableName);
         });
 
         // subscribe to toolbar requests
@@ -222,12 +232,13 @@ export class MainTableComponent implements OnInit, OnDestroy {
                                     _this._toastService.showErrorToast("An error occured!", "An error occured!")
                                 }
                             });
-                } else if (msg.type === 'import') {  // import the excel sheet or csv
-                    _this._importService.showDialog(_this.tableName);
                 }
-                else if (msg.type === 'downloadTemplateFile') {  // download Table columns Template File
-                    _this._importService.downloadTemplateFile(_this.tableName);
-                }
+                // else if (msg.type === 'import') {  // import the excel sheet or csv
+                //     _this._importExportService.importCSV(_this.tableName);
+                // }
+                // else if (msg.type === 'downloadTemplateFile') {  // download Table columns Template File
+                //     _this._importExportService.downloadTemplateFile(_this.tableName);
+                // }
             })
         );
 

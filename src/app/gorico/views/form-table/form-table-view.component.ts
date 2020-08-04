@@ -3,11 +3,13 @@ import { FormGetterComponent, formGetterParams } from '../form-getter/form-gette
 import { BackendService } from '../backend/backend.service';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
+import { formViewParams } from '../form/form-view.component';
 
 
 export interface formTableViewParams {
   entryName: string;
   keys: any;
+  showHeader: boolean;
 }
 
 @Component({
@@ -176,5 +178,4 @@ export class FormTableViewComponent implements OnChanges, OnInit {
     console.log('onReload: form-table-view');
     this.onReload.emit();
   }
-
 }

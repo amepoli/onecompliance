@@ -19,6 +19,7 @@ import { Router } from '@angular/router';
 
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ReportService } from 'app/gorico/services/report.service';
+import { ImportExportService } from 'app/gorico/services/import_export.service';
 
 
 @Component({
@@ -37,6 +38,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     userStatusOptions: any[];
 
     reportList: { 'alias': string, 'descrizione': string }[] = [];
+    exportList: { 'alias': string, 'descrizione': string }[] = [];
 
     userCompanies: string[] = [];
 
@@ -67,7 +69,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         private _backendService: BackendService,
         private _pubSubService: NgxPubSubService,
         private router: Router,
-        private _reportService: ReportService
+        private _reportService: ReportService,
+        private _importExportService: ImportExportService
     ) {
         // Set the defaults
         this.userStatusOptions = [
@@ -155,6 +158,16 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 console.log("Reports cleared!");
             }
             _this.reportList = data.reports;
+        });
+
+        _this._importExportService.onExportListLoaded.subscribe((data) => {
+            if (data.items != null && data.items.length > 0) {
+                console.log("Items loaded!");
+            }
+            else {
+                console.log("Items cleared!");
+            }
+            _this.exportList = data.items;
         });
 
         // Old method using pubsubservice
@@ -280,11 +293,19 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     }
 
     import(): void {
-        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'import' });
+        this._importExportService.requestImport();
+        // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'import' });
     }
 
     downloadTemplateFile(): void {
-        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'downloadTemplateFile' });
+        this._importExportService.requestGetTemplate();
+        // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'downloadTemplateFile' });
+    }
+
+    getExportItem(item: { 'alias': string, 'descrizione': string }): void {
+        console.log(item);
+        this._importExportService.requestGetExportItem(item.alias);
+        // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
     }
 
 }

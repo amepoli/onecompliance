@@ -25,6 +25,7 @@ export interface formViewKey { // as per API specification
     isPrimary: boolean;
     newLine: boolean;
     buttonIcon?: string;
+    confirmButtonAction?: boolean;
     size?: number;
     style?: {
         background_color?: string,
@@ -245,7 +246,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (inputKeys.hasOwnProperty(key)) {
                 const element = inputKeys[key];
                 if (validKeysArray != null && validKeysArray.find(e => e.key === key)) {
-                    outputKeys[key] = element;
+                    if (typeof element === 'string' || element === null) {
+                        outputKeys[key] = element;
+                    }
+                    else if (element.id) {
+                        outputKeys[key] = element.id;
+                    }
                 }
             }
         }
@@ -391,6 +397,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 isVisible: (field.isHidden != null) ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,
                 buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
+                confirmButtonAction: field.confirmButtonAction ? true : false,
                 style: (field.style != null) ? field.style : null,
                 width: (field.size != null) ? (field.size * 10) - _this.margins : null, // leave a 1% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],
@@ -592,7 +599,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (event.actionTarget.keymap != null && event.actionTarget.keymap.length) { // explicit key map between tables
                 event.actionTarget.keymap.forEach(element => {
                     if (element.source != null && element.destination != null) {
-                        filteredKeys[element.destination] = keys[element.source].id != null ? keys[element.source].id : keys[element.source]; 
+                        filteredKeys[element.destination] = keys[element.source].id != null ? keys[element.source].id : keys[element.source];
                     }
                 });
             } else {

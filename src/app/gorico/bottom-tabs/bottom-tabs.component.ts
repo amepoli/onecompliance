@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output, OnChanges, OnDestroy, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnChanges, OnDestroy, OnInit, ViewChild, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { MatTabChangeEvent, MatTabGroup } from '@angular/material';
 import { tableViewParams } from 'app/gorico/views/table/table-view.component';
 import { formTableViewParams } from '../views/form-table/form-table-view.component';
@@ -18,7 +18,8 @@ export interface TabType {
 @Component({
     selector: 'bottom-tabs',
     templateUrl: './bottom-tabs.component.html',
-    styleUrls: ['./bottom-tabs.component.scss']
+    styleUrls: ['./bottom-tabs.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class BottomTabsComponent implements OnChanges, OnDestroy {
 
@@ -88,8 +89,8 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
                 _this.cdRef.detectChanges();
             }
 
-            _this.tableParams = { entryName: _this.filteredTabs[_this.activeIndex].table, keys: _this.filteredTabs[_this.activeIndex].keys, showHeader: false, showFullScreenButton: true };
-            _this.formTableParams = { entryName: _this.filteredTabs[_this.activeIndex].table, keys: _this.filteredTabs[_this.activeIndex].keys };
+            _this.tableParams = { entryName: _this.filteredTabs[_this.activeIndex].table, keys: _this.filteredTabs[_this.activeIndex].keys, showHeader: true, showFullScreenButton: true };
+            _this.formTableParams = { entryName: _this.filteredTabs[_this.activeIndex].table, keys: _this.filteredTabs[_this.activeIndex].keys, showHeader: true };
         }
     }
 
@@ -97,8 +98,8 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
         this.activeIndex = tabChangeEvent.index >= 0 ? tabChangeEvent.index : 0;  // might get a -1
 
         if (this.filteredTabs.length) {  // at least one tab visible
-            this.tableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: false, showFullScreenButton: true };
-            this.formTableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys };
+            this.tableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true, showFullScreenButton: true };
+            this.formTableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true };
         }
     }
 
