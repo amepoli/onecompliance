@@ -303,25 +303,37 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
     queryString = queryString + ';';
 
-    if (!isForm && entry_params.search_keys) { // in case of full table -> fill comboboxes of search form, if any
-        let search_params = entry_params.search_keys;
-        search_params.forEach(element => {
-            // check if the search key is part of the table keys set
-            let found = entry_keys.find(e => e.key === element.key);
-            if (found == null) return;
-            // check if is combobox
-            let comboQuery = element.format.comboQuery;
-            if (comboQuery) {
-                comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
-                comboQueries.push({ key: element.fieldName, comboQuery: comboQuery });
-            }
-        });
-    }
-
     return { mainQuery: queryString, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
 
 }
 
+function getSearchCombos (entry_params, table_keys, isForm, comboQueries) {
+
+    let entry_keys;
+
+    if (isForm) {
+        entry_keys = entry_params.form_keys;
+    } else {
+        entry_keys = entry_params.table_keys;
+    }
+
+    let keyTypes = getKeyTypes(entry_keys);
+ 
+    let search_params = entry_params.search_keys;
+
+    if (search_params == null) {
+        return;
+    }
+
+    search_params.forEach(element => {
+        // check if is combobox
+        let comboQuery = element.format.comboQuery;
+        if (comboQuery != null) {
+            comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
+            comboQueries.push({ key: element.fieldName, comboQuery: comboQuery });
+            }
+        });
+}
 
 function getEventQuery(entry_params, body, eventInfo, queryParams) {
 
@@ -1095,6 +1107,8 @@ exports.handler = async (event, context) => {
                 queryString = getTableQuery(entry_params, table_keys, true, null);
             } else { // table query
                 queryString = getTableQuery(entry_params, table_keys, false, null);
+                // add the search combos if any
+                getSearchCombos(entry_params, table_keys, false, queryString.comboQueries);
             }
         } else if (method === 'POST') {
             if (isEventUpdate) {
@@ -1147,7 +1161,8 @@ exports.handler = async (event, context) => {
                             comboEntry[element.key]['options'] = comboData.rows;
                             Object.assign(queryData[qd_index], comboEntry);
                         }
-                        else { // table view, add search combobox to search_combos field's array
+                        else  { // table view, add search combobox to search_combos field's array
+                            qd_index = queryData.length;  // bad trick, make it exit from loop on rows
                             searchOptions.push({ fieldName: element.key, options: comboData.rows });
                         }
                     }
@@ -1155,7 +1170,7 @@ exports.handler = async (event, context) => {
             }
 
             if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
-                queryData = { table_data: queryData[0], search_options: searchOptions };
+                queryData = { table_data: queryData, search_options: searchOptions };
             }
 
             // process properties query
