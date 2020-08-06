@@ -167,4 +167,15 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/import', this.myPutPostInit));
   }
 
+  getCSV(entryName: string, company: string, keys: any, search_keys: any, isForm: boolean): Observable<any> {
+    this.amplifyService.auth();
+
+    this.myGetInit.queryStringParameters = { entry_name: entryName, request_type: 'getCSV', company: company, keys: JSON.stringify(keys), form: isForm ? 1 : 0 };
+
+    if (search_keys != null) {
+      this.myGetInit.queryStringParameters['search_keys'] = JSON.stringify(search_keys);
+    }
+
+    return from(this.amplifyService.api().get(this.apiName, '/import', this.myGetInit));
+  }
 }

@@ -193,8 +193,11 @@ export class MainTableComponent implements OnInit, OnDestroy {
                     // Show loading Dialog
                     _this._dialogService.showLoadingDialog("Preparing Excel Sheet", "Please wait...");
 
-                    _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys,
-                        (_this.tableType === 'form'), false, null, true).subscribe(
+                    // _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys,
+                    //     (_this.tableType === 'form'), false, null, true)
+
+                    _this.backendService.getCSV(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, (_this.tableType === 'form'))
+                        .subscribe(
                             response => {
                                 _this._dialogService.closeDialog();
                                 console.log(response);
