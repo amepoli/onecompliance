@@ -94,7 +94,7 @@ async function setGlobalVariables(company, client, userid) {
         }
     }
 
-    console.log(global_variables);
+    console.log('global_variables', global_variables);
 
 }
 
@@ -413,94 +413,112 @@ exports.handler = async (event, context) => {
                 }
             }
             else if (requestType === 'getCSV') {
+                const company = queryParams['company'];
+                const source = queryParams['source'];
+                const table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null;
+                const search_keys = queryParams['search_keys'] != null ? JSON.parse(queryParams['search_keys']) : null;
+                const custom_query = queryParams['custom_query'];
+                console.log('custom_query', custom_query);
+
+                const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+
                 const DynamoParams = {
                     TableName: 'VIEWS_NAME',
                     Key: {
                         entryKey: queryParams['entry_name']
                     }
                 };
-                const company = queryParams['company'];
-
-                const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
-
-                var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
 
                 let entry_params = await dynamo.get(DynamoParams).promise();
-                var isFormRecord = (queryParams['form'] === '1');
-
                 entry_params = entry_params.Item;
 
-                await addCodiceAzienda(table_keys, company, entry_params, client, isFormRecord);
-
+                await addCodiceAzienda(table_keys, company, entry_params, client, source === 'form');
                 await setGlobalVariables(company, client, userid);
 
                 let comboQueries = [];
-
                 let preProcessQueries = [];
-
                 let postProcessQueries = [];
 
                 let orderBy;
 
                 let entry_keys;
-                console.log(entry_params);
-                if (isFormRecord) {
+                console.log('entry_params', entry_params);
+
+                if (source === 'form') {
                     entry_keys = entry_params.form_keys;
                 } else {
                     entry_keys = entry_params.table_keys;
                 }
-                console.log(entry_keys);
+                console.log('entry_keys', entry_keys);
+
 
                 orderBy = entry_params.orderBy;
 
                 // if (!entry_keys) return '';
 
-                let keyTypes = getKeyTypes(entry_keys);
+                let queryString = '';
 
-                let queryString = 'SELECT ';
-                let comma = ''; // first entry has no comma 
-                // keep track of calculated where conditions, query becomes subqueries. 
-                // See https://stackoverflow.com/questions/47455962/using-function-result-in-where-clause-in-postgresql
+                // queryString = 'SELECT * FROM entrasp.grc_riepilogo_risposte';
+                let keyTypes = getKeyTypes(entry_keys);
                 let calculatedWhereCond = [];
 
-                for (index = 0; index < entry_keys.length; index++) {
-                    let element = entry_keys[index];
-                    if (isFormRecord) { // check if combobox, then save query fields for later processing
-                        if (element.format.viewType === 'combobox' || element.format.viewType === 'radiobutton' || element.format.viewType === 'checkboxgroup') {
-                            let comboQuery = element.format.comboQuery;
-                            if (comboQuery != null) {
-                                comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
-                                comboQueries.push({ key: element.key, comboQuery: comboQuery });
-                            }
-                        } else if (element.format.viewType === 'subform') {
-                            // append the keys at the end of the array (avoiding recursion, they will be processed later in the loop)
-                            element.format.subform_keys.forEach(subkey => {
-                                if (element.sameOrigin != null) {
-                                    subkey['sameOrigin'] = element.sameOrigin;
+                if (source === 'form' || source === 'table') {
+
+                    queryString = 'SELECT ';
+                    let comma = ''; // first entry has no comma 
+                    // keep track of calculated where conditions, query becomes subqueries. 
+                    // See https://stackoverflow.com/questions/47455962/using-function-result-in-where-clause-in-postgresql
+
+
+                    for (index = 0; index < entry_keys.length; index++) {
+                        let element = entry_keys[index];
+                        if (source === 'form') { // check if combobox, then save query fields for later processing
+                            if (element.format.viewType === 'combobox' || element.format.viewType === 'radiobutton' || element.format.viewType === 'checkboxgroup') {
+                                let comboQuery = element.format.comboQuery;
+                                if (comboQuery != null) {
+                                    comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
+                                    comboQueries.push({ key: element.key, comboQuery: comboQuery });
                                 }
-                                entry_keys.push(subkey);
-                            });
+                            } else if (element.format.viewType === 'subform') {
+                                // append the keys at the end of the array (avoiding recursion, they will be processed later in the loop)
+                                element.format.subform_keys.forEach(subkey => {
+                                    if (element.sameOrigin != null) {
+                                        subkey['sameOrigin'] = element.sameOrigin;
+                                    }
+                                    entry_keys.push(subkey);
+                                });
+                            }
+
+                        }
+                        if (!element.key || (element.sameOrigin != null && !element.sameOrigin && element.queryFunct == null) || element.format.viewType === 'subform') {  // no table key or the key is from another table
+                            continue;
                         }
 
-                    }
-                    if (!element.key || (element.sameOrigin != null && !element.sameOrigin && element.queryFunct == null) || element.format.viewType === 'subform') {  // no table key or the key is from another table
-                        continue;
+                        let fieldString = comma + element.key;
+                        if (element.hasOwnProperty('queryFunct')) { // overridden by funct
+                            fieldString = comma + '(' + replaceKeys(element.queryFunct, table_keys, keyTypes) + ') AS ' + element.key;
+                        }
+                        comma = ','; // needed only the first time
+                        queryString = queryString + fieldString;
+
+                    };
+                    console.log('queryString1', queryString);
+
+
+                    if (entry_params.origin) {
+                        queryString = queryString + ' FROM ' + entry_params.origin;
+                    } else {  // no underlying table, skip building of main query, still there might be some combos
+                        return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
                     }
 
-                    let fieldString = comma + element.key;
-                    if (element.hasOwnProperty('queryFunct')) { // overridden by funct
-                        fieldString = comma + '(' + replaceKeys(element.queryFunct, table_keys, keyTypes) + ') AS ' + element.key;
-                    }
-                    comma = ','; // needed only the first time
-                    queryString = queryString + fieldString;
+                    console.log('queryString2', queryString);
 
-                };
-
-                if (entry_params.origin) {
-                    queryString = queryString + ' FROM ' + entry_params.origin;
-                } else {  // no underlying table, skip building of main query, still there might be some combos
-                    return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
                 }
+                else {
+                    queryString = custom_query;
+                }
+
+                console.log('queryString2a', queryString);
 
                 comma = ' WHERE ';
 
@@ -521,9 +539,9 @@ exports.handler = async (event, context) => {
                     }
                 }
 
-                var search_keys = queryParams['search_keys'];
+                console.log('queryString3', queryString);
+
                 if (search_keys) {
-                    search_keys = JSON.parse(search_keys); // production scenario only
 
                     let search_params = entry_params.search_keys;
                     let search_types = search_params.map(k => {
@@ -542,8 +560,10 @@ exports.handler = async (event, context) => {
                         }
                     }
 
-                    console.log(search_params);
+                    console.log('search_params', search_params);
                 }
+
+                console.log('queryString4', queryString);
 
                 if (calculatedWhereCond.length) { // make query above
                     queryString = 'SELECT * FROM (' + queryString + ') AS sub_query ';
@@ -555,6 +575,8 @@ exports.handler = async (event, context) => {
                         });
                 }
 
+                console.log('queryString5', queryString);
+
                 // add order by if present (for table view only
                 if (orderBy != null && orderBy.key != null) {
                     let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
@@ -563,14 +585,16 @@ exports.handler = async (event, context) => {
 
                 queryString = queryString + ';';
 
-                queryData = await runQuery(queryString, client);
-                console.log(queryData);
+                console.log('queryString6', queryString);
 
-                var viewKeys = isFormRecord ? entry_params.form_keys : entry_params.table_keys;
-                console.log(viewKeys);
+                queryData = await runQuery(queryString, client);
+                console.log('queryData', queryData);
+
+                var viewKeys = source === 'form' ? entry_params.form_keys : entry_params.table_keys;
+                console.log('viewKeys', viewKeys);
 
                 const validKeys = viewKeys.filter(key => !key.isHidden);
-                console.log(validKeys);
+                console.log('validKeys', validKeys);
 
                 const dataset = [];
 
@@ -583,7 +607,7 @@ exports.handler = async (event, context) => {
                     });
                     dataset.push(value);
                 });
-                console.log(dataset);
+                console.log('dataset', dataset);
 
                 var uuid = context.awsRequestId; // generate a 'unique' UUID as filename
                 var filename = 'Excel/' + uuid + '.csv'

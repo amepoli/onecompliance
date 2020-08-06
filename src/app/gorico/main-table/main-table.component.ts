@@ -196,7 +196,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
                     // _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys,
                     //     (_this.tableType === 'form'), false, null, true)
 
-                    _this.backendService.getCSV(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, (_this.tableType === 'form'))
+                    _this.backendService.getCSV(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form' ? 'form' : 'table')
+                        // _this.backendService.getCSV(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, 'custom', 'SELECT * FROM entrasp.grc_riepilogo_risposte')
                         .subscribe(
                             response => {
                                 _this._dialogService.closeDialog();
