@@ -199,24 +199,22 @@ function getKeyTypes(entry_keys) {
     return keyTypes;
 }
 
-function data2csv(data, keys) {
+function data2csv(data, keys = null) {
     let result = "";
-    let columns = keys.map(x => x.key);
-    // result += columns.reduce(( acc, cur) => {
-    //     if(acc){
-    //         return acc + ',' + cur;
-    //     }
-    //     else{
-    //         return cur;
-    //     }
-    // });
-    result += columns.join(',');
-    result += '\n';
+
+    let columns = null;
+    if (keys !== null) {
+        columns = keys.map(x => x.key);
+        result += columns.join(',') + '\n';
+    }
 
     data.forEach(row => {
+        if (columns === null) {
+            columns = Object.keys(row);
+            result += columns.join(',') + '\n';
+        }
         result += columns.map(c => row[c]).join(',') + '\n';
     });
-
     return result;
 }
 
@@ -246,7 +244,7 @@ exports.handler = async (event, context) => {
     const queryParams = event.queryStringParameters;
     let body = null;
 
-    console.log(queryParams);
+    console.log('queryParams', queryParams);
 
     const requestType = queryParams['request_type'];
 
@@ -414,11 +412,11 @@ exports.handler = async (event, context) => {
             }
             else if (requestType === 'getCSV') {
                 const company = queryParams['company'];
-                const source = queryParams['source'];
                 const table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null;
                 const search_keys = queryParams['search_keys'] != null ? JSON.parse(queryParams['search_keys']) : null;
-                const custom_query = queryParams['custom_query'];
-                console.log('custom_query', custom_query);
+                const isForm = queryParams['is_form'] != null ? parseInt(queryParams['is_form']) : 0;
+                const isAdvanced = queryParams['is_advanced'] != null ? parseInt(queryParams['is_advanced']) : 0;
+                const advancedQueryLabel = queryParams['advanced_query_label'];
 
                 const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
 
@@ -432,7 +430,7 @@ exports.handler = async (event, context) => {
                 let entry_params = await dynamo.get(DynamoParams).promise();
                 entry_params = entry_params.Item;
 
-                await addCodiceAzienda(table_keys, company, entry_params, client, source === 'form');
+                await addCodiceAzienda(table_keys, company, entry_params, client, isForm);
                 await setGlobalVariables(company, client, userid);
 
                 let comboQueries = [];
@@ -444,7 +442,7 @@ exports.handler = async (event, context) => {
                 let entry_keys;
                 console.log('entry_params', entry_params);
 
-                if (source === 'form') {
+                if (isForm) {
                     entry_keys = entry_params.form_keys;
                 } else {
                     entry_keys = entry_params.table_keys;
@@ -456,13 +454,39 @@ exports.handler = async (event, context) => {
 
                 // if (!entry_keys) return '';
 
-                let queryString = '';
+                let queryString = null;
 
                 // queryString = 'SELECT * FROM entrasp.grc_riepilogo_risposte';
                 let keyTypes = getKeyTypes(entry_keys);
                 let calculatedWhereCond = [];
 
-                if (source === 'form' || source === 'table') {
+                if (isAdvanced) {
+                    if (entry_params.exportQueries) {
+                        console.log('entry_params.exportQueries', JSON.stringify(entry_params.exportQueries));
+
+                        let exportQueries = null;
+                        if (isForm) {
+                            exportQueries = entry_params.exportQueries.formQueries;
+                            console.log('entry_params.exportQueries.formQueries', entry_params.exportQueries.formQueries);
+                        }
+                        else {
+                            exportQueries = entry_params.exportQueries.tableQueries;
+                            console.log('entry_params.exportQueries.tableQueries', entry_params.exportQueries.tableQueries);
+
+                        }
+                        console.log('exportQueries', exportQueries);
+
+                        if (exportQueries) {
+                            advancedQuery = exportQueries.filter(x => x.label === advancedQueryLabel);
+                            if (advancedQuery.length > 0) {
+                                queryString = advancedQuery[0].queryString;
+                            }
+                        }
+                    }
+                    console.log('queryString1', queryString);
+
+                }
+                else {
 
                     queryString = 'SELECT ';
                     let comma = ''; // first entry has no comma 
@@ -472,7 +496,7 @@ exports.handler = async (event, context) => {
 
                     for (index = 0; index < entry_keys.length; index++) {
                         let element = entry_keys[index];
-                        if (source === 'form') { // check if combobox, then save query fields for later processing
+                        if (isForm) { // check if combobox, then save query fields for later processing
                             if (element.format.viewType === 'combobox' || element.format.viewType === 'radiobutton' || element.format.viewType === 'checkboxgroup') {
                                 let comboQuery = element.format.comboQuery;
                                 if (comboQuery != null) {
@@ -510,124 +534,127 @@ exports.handler = async (event, context) => {
                     } else {  // no underlying table, skip building of main query, still there might be some combos
                         return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
                     }
-
-                    console.log('queryString2', queryString);
-
-                }
-                else {
-                    queryString = custom_query;
                 }
 
-                console.log('queryString2a', queryString);
+                if (queryString) {
 
-                comma = ' WHERE ';
+                    comma = ' WHERE ';
 
-                for (const key in table_keys) {
-                    if (table_keys.hasOwnProperty(key)) {
-                        let keyType = keyTypes.find(e => (e.key === key));
-                        let delimiter = (keyType.dataType === 'text') ? '\'' : '';
-                        let element = table_keys[key];
-                        // replace single quotes with double quotes in strings
-                        element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
-                        if (keyType.isCalculated) { // delay and make it part of the query above
-                            calculatedWhereCond.push({ key: key, value: element, delimiter: delimiter })
-                        } else {
-                            let fieldString = comma + key + '=' + delimiter + element + delimiter;
-                            queryString = queryString + fieldString;
-                            comma = ' AND '; // needed only the first time
-                        }
-                    }
-                }
-
-                console.log('queryString3', queryString);
-
-                if (search_keys) {
-
-                    let search_params = entry_params.search_keys;
-                    let search_types = search_params.map(k => {
-                        let dataType = k.format.dataType ? k.format.dataType : '';
-                        return { key: k.fieldName, dataType: dataType };
-                    });
-
-                    for (const key in search_keys) {
-                        if (search_keys.hasOwnProperty(key)) {
-                            let search_param = search_params.find(s => (s.fieldName === key));
-                            if (search_param != null && search_param.queryCond != null) {
-                                let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
-                                queryString = queryString + comma + fieldString;
-                                comma = ' AND '; // needed only the first time if no table_
+                    for (const key in table_keys) {
+                        if (table_keys.hasOwnProperty(key)) {
+                            let keyType = keyTypes.find(e => (e.key === key));
+                            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+                            let element = table_keys[key];
+                            // replace single quotes with double quotes in strings
+                            element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
+                            if (keyType.isCalculated) { // delay and make it part of the query above
+                                calculatedWhereCond.push({ key: key, value: element, delimiter: delimiter })
+                            } else {
+                                let fieldString = comma + key + '=' + delimiter + element + delimiter;
+                                queryString = queryString + fieldString;
+                                comma = ' AND '; // needed only the first time
                             }
                         }
                     }
 
-                    console.log('search_params', search_params);
-                }
+                    console.log('queryString2', queryString);
 
-                console.log('queryString4', queryString);
+                    if (search_keys) {
 
-                if (calculatedWhereCond.length) { // make query above
-                    queryString = 'SELECT * FROM (' + queryString + ') AS sub_query ';
-                    let comma = ' WHERE ';
-                    calculatedWhereCond.forEach(
-                        element => {
-                            queryString += comma + element.key + '=' + element.delimiter + element.value + element.delimiter;
-                            comma = ' AND ';
+                        let search_params = entry_params.search_keys;
+                        let search_types = search_params.map(k => {
+                            let dataType = k.format.dataType ? k.format.dataType : '';
+                            return { key: k.fieldName, dataType: dataType };
                         });
+
+                        for (const key in search_keys) {
+                            if (search_keys.hasOwnProperty(key)) {
+                                let search_param = search_params.find(s => (s.fieldName === key));
+                                if (search_param != null && search_param.queryCond != null) {
+                                    let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
+                                    queryString = queryString + comma + fieldString;
+                                    comma = ' AND '; // needed only the first time if no table_
+                                }
+                            }
+                        }
+
+                        console.log('search_params', search_params);
+                    }
+
+                    console.log('queryString3', queryString);
+
+                    if (calculatedWhereCond.length) { // make query above
+                        queryString = 'SELECT * FROM (' + queryString + ') AS sub_query ';
+                        let comma = ' WHERE ';
+                        calculatedWhereCond.forEach(
+                            element => {
+                                queryString += comma + element.key + '=' + element.delimiter + element.value + element.delimiter;
+                                comma = ' AND ';
+                            });
+                    }
+
+                    console.log('queryString4', queryString);
+
+                    // add order by if present (for table view only
+                    if (orderBy != null && orderBy.key != null) {
+                        let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
+                        queryString = queryString + ' ORDER BY ' + orderBy.key + order;
+                    }
+
+                    queryString = queryString + ';';
+
+                    console.log('queryString5', queryString);
+
+                    queryData = await runQuery(queryString, client);
+                    console.log('queryData', queryData);
+
+                    let csvData = null;
+                    if (isAdvanced) {
+                        csvData = data2csv(queryData);
+                    }
+                    else {
+                        var viewKeys = isForm ? entry_params.form_keys : entry_params.table_keys;
+                        console.log('viewKeys', viewKeys);
+
+                        const validKeys = viewKeys.filter(key => !key.isHidden);
+                        console.log('validKeys', validKeys);
+                        csvData = data2csv(queryData, validKeys);
+                    }
+
+                    // const dataset = [];
+                    // 
+                    // queryData.forEach(entry => {
+                    //     var value = {};
+                    //     validKeys.forEach(key => {
+                    //         value[key.key] = entry[key.key];
+                    //     });
+                    //     dataset.push(value);
+                    // });
+                    // console.log('dataset', dataset);
+
+                    var uuid = context.awsRequestId; // generate a 'unique' UUID as filename
+                    var filename = 'Excel/' + uuid + '.csv'
+                    var s3ParamsInsert = {
+                        Bucket: 'gorico2.reports',
+                        Key: filename,
+                        Body: csvData
+                    };
+                    var s3ParamsUrl = {
+                        Bucket: 'gorico2.reports',
+                        Key: filename
+                    };
+
+                    // upload to S3
+                    await s3.putObject(s3ParamsInsert).promise();
+
+                    var url = s3.getSignedUrl('getObject', s3ParamsUrl);
+
+                    body = { result: 'OK', url: url };
+
                 }
-
-                console.log('queryString5', queryString);
-
-                // add order by if present (for table view only
-                if (orderBy != null && orderBy.key != null) {
-                    let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
-                    queryString = queryString + ' ORDER BY ' + orderBy.key + order;
+                else {
+                    body = { result: 'KO', reason: 'Query not found!' };
                 }
-
-                queryString = queryString + ';';
-
-                console.log('queryString6', queryString);
-
-                queryData = await runQuery(queryString, client);
-                console.log('queryData', queryData);
-
-                var viewKeys = source === 'form' ? entry_params.form_keys : entry_params.table_keys;
-                console.log('viewKeys', viewKeys);
-
-                const validKeys = viewKeys.filter(key => !key.isHidden);
-                console.log('validKeys', validKeys);
-
-                const dataset = [];
-
-                let csvData = data2csv(queryData, validKeys);
-
-                queryData.forEach(entry => {
-                    var value = {};
-                    validKeys.forEach(key => {
-                        value[key.key] = entry[key.key];
-                    });
-                    dataset.push(value);
-                });
-                console.log('dataset', dataset);
-
-                var uuid = context.awsRequestId; // generate a 'unique' UUID as filename
-                var filename = 'Excel/' + uuid + '.csv'
-                var s3ParamsInsert = {
-                    Bucket: 'gorico2.reports',
-                    Key: filename,
-                    Body: csvData
-                };
-                var s3ParamsUrl = {
-                    Bucket: 'gorico2.reports',
-                    Key: filename
-                };
-
-                // upload to S3
-                await s3.putObject(s3ParamsInsert).promise();
-
-                var url = s3.getSignedUrl('getObject', s3ParamsUrl);
-
-                body = { result: 'OK', url: url };
-
 
             }
 

@@ -142,7 +142,7 @@ export class TableViewComponent implements OnChanges {
                 // Request to load reports
                 // _this._pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list' });
                 _this._reportService.requestReload(_this.tableData.entryName);
-                _this._importExportService.requestReload(_this.tableData.entryName);
+                // _this._importExportService.requestReload(_this.tableData.entryName);
             }
 
             if (_this.isTabMode && _this.isCurTab) {
@@ -174,6 +174,15 @@ export class TableViewComponent implements OnChanges {
                 _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
                 _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
                 _this.loadTable(null);
+
+                // Load Export Queries list if available
+                if (params.exportQueries && params.exportQueries.tableQueries) {
+                    console.log('exportQueries', params.exportQueries);
+                    this._importExportService.updateExportList(_this.tableData.entryName, params.exportQueries.tableQueries);
+                }
+                else {
+                    this._importExportService.updateExportList(_this.tableData.entryName, []);
+                }
             }
             else {
                 _this.isLoading = false;

@@ -318,7 +318,7 @@ export class FormViewComponent implements OnChanges, OnInit {
 
     getExportList() {
         // Request to load advanced export list
-        this._importExportService.requestReload(this.tableData.entryName);
+        // this._importExportService.requestReload(this.tableData.entryName);
     }
 
 }
