@@ -219,7 +219,95 @@
             },
             "queryFunct": "entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio)",
             "readOnly": true
-        }
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_risultato",
+            "label": "id_risultato",
+            "queryFunct": "entrasp.id_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "newLine": true,
+            "readOnly": true
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "pct_da",
+            "label": "Giudizio",
+            "queryFunct": "select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "newLine": false,
+            "readOnly": true
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_colore",
+            "outputEvent": {
+              "eventName": "codice_colore_change",
+              "eventTrigger": "change"
+            },
+            "label": "codice_colore",
+            "queryFunct": "select codice_colore from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "sameOrigin": false,
+            "newLine": true,
+            "readOnly": true
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "criterio_analisi",
+            "label": "Criterio di analisi",
+            "sameOrigin": false,
+            "queryFunct": "entrasp.descrizione_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "newLine": false,
+            "readOnly": true,
+            "size": 5
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio",
+            "label": "Giudizio",
+            "queryFunct": "select giudizio from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "newLine": false,
+            "readOnly": true,
+            "inputEvents": [
+              {
+                "eventName": "codice_colore_change",
+                "condition": "none",
+                "values": [],
+                "actionType": "update_style",
+                "styleAttribute": "background_color",
+                "updateFunct": "'£codice_colore£'"
+              }
+            ],
+            "size": 2.5
+          }
     ],
     "search_keys": [
         {
@@ -460,6 +548,7 @@
             "key": "stato",
             "label": "Stato"
         }
+        
     ],
     "inputEvents": [
         {
