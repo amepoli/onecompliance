@@ -12,8 +12,8 @@ import { MatDialog } from '@angular/material';
 import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
 
 export interface ExportItem {
-    alias: string;
-    descrizione: string;
+    label: string;
+    queryString: string;
 }
 
 export interface ExportList {
@@ -40,27 +40,24 @@ export class ImportExportService {
     // Stream for loaded reports
     public onExportListLoaded: BehaviorSubject<ExportList>;
 
-    // Event Emitter for reload requests
-    public reloadRequested: EventEmitter<string> = new EventEmitter();
-
     // Event Emitter for getting report requests
-    public getExportItemRequested: EventEmitter<string> = new EventEmitter();
+    public onGetCSVRequested: EventEmitter<string> = new EventEmitter();
 
     // Event Emitter for import requests
-    public importRequested: EventEmitter<string> = new EventEmitter();
+    public onImportRequested: EventEmitter<string> = new EventEmitter();
 
     // Event Emitter for getting template requests
-    public getTemplateRequested: EventEmitter<string> = new EventEmitter();
+    public onGetTemplateRequested: EventEmitter<string> = new EventEmitter();
 
 
     /**
      * Constructor
      *
      */
-    constructor(public importDialog: MatDialog,
-        private backendService: BackendService,
-        private httpClient: HttpClient,
-        private authService: AuthService,
+    constructor(public _importDialog: MatDialog,
+        private _backendService: BackendService,
+        private _httpClient: HttpClient,
+        private _authService: AuthService,
         private _toastService: ToastService,
         private _dialogService: DialogService
     ) {
@@ -70,20 +67,30 @@ export class ImportExportService {
             {
                 entryName: "test", items: [
                     {
-                        alias: 't1',
-                        descrizione: 'test 1'
+                        label: 't1',
+                        queryString: 'test 1'
                     },
                     {
-                        alias: 't2',
-                        descrizione: 'test 2'
+                        label: 't2',
+                        queryString: 'test 2'
                     },
                     {
-                        alias: 't3',
-                        descrizione: 'test 3'
+                        label: 't3',
+                        queryString: 'test 3'
                     }
                 ]
             }
         );
+    }
+
+    /**
+     * Update export list
+     * @param tableName table to import into
+     * @param data table 
+     */
+    updateExportList(tableName: string, data: ExportItem[]) {
+        this._currentData = { entryName: tableName, items: data };
+        this.onExportListLoaded.next(this._currentData);
     }
 
     /**
@@ -94,7 +101,7 @@ export class ImportExportService {
         let _this = this;
 
         // Open dialog
-        const dialogRef = this.importDialog.open(ImportDialogComponent, {
+        const dialogRef = this._importDialog.open(ImportDialogComponent, {
             width: '1280px',
             data: { tableName: tableName }
         });
@@ -108,6 +115,56 @@ export class ImportExportService {
         });
     }
 
+    downloadCSV(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, advanced_query_label: string = null) {
+        let _this = this;
+
+        // Show loading Dialog
+        _this._dialogService.showLoadingDialog("Preparing CSV", "Please wait...");
+
+        _this._backendService.getCSV(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, advanced_query_label)
+            .subscribe(
+                response => {
+                    _this._dialogService.closeDialog();
+                    console.log(response);
+                    if (response.result === 'OK') {
+                        // File is okay.
+                        // Let's try to download it using simple window method first
+                        let downloadWindow = window.open(response.url, "_blank");
+
+                        // Check if the browser allowed window.open function
+                        if (downloadWindow) {
+                            // Window opened so must have downloaded
+                            // Show success toast
+                            _this._toastService.showSuccessToast("", "Excel sheet downloaded successfully!");
+                        }
+                        else {
+                            // Window did not open so let's try the manual download methond
+                            // Download the file as blob
+                            _this._httpClient.get(response.url, { responseType: 'blob' }).subscribe(
+                                fileData => {
+                                    // File downloaded
+                                    // Get file name
+                                    let parts = response.url.split('/');
+                                    let fileName = parts[parts.length - 1].split('?')[0];
+
+                                    // Let's save it
+                                    saveAs(fileData, fileName);
+
+                                    // Show success toast
+                                    _this._toastService.showSuccessToast("", "Excel sheet downloaded successfully!");
+                                });
+                        }
+                    }
+                    else {
+                        // File did not succeed, show error message
+                        _this._toastService.showErrorToast("An error occured!", "An error occured!")
+                    }
+                });
+
+
+    }
+
+
     /**
      * Download Template file
      * @param tableName table to import into
@@ -117,7 +174,7 @@ export class ImportExportService {
         if (tableName) {
             this._dialogService.showLoadingDialog("Downloading Template", "Please wait...");
 
-            this.backendService.downloadTemplate(tableName).subscribe(
+            this._backendService.downloadTemplate(tableName).subscribe(
                 downloadTemplateResponse => {
                     console.log(downloadTemplateResponse);
                     if (downloadTemplateResponse != null && downloadTemplateResponse.result === 'OK') {
@@ -153,20 +210,20 @@ export class ImportExportService {
         if (files != null && files.length) {
             this._dialogService.showLoadingDialog("Uploading", "Please wait...");
             // Get the S3 Create URL 
-            this.backendService.createImportFileURL().subscribe(
+            this._backendService.createImportFileURL().subscribe(
                 createURLResponse => {
                     console.log(createURLResponse);
                     if (createURLResponse != null && createURLResponse.result === 'OK') {
                         const blob = new Blob([files[0]]);
                         // Upload the file using obtained url
-                        this.httpClient.put(createURLResponse.url, blob).subscribe(
+                        this._httpClient.put(createURLResponse.url, blob).subscribe(
                             responsePut => {
                                 console.table(responsePut);
                                 this._toastService.showSuccessToast("File uploaded!");
                                 this._dialogService.showLoadingDialog("Importing", "Please wait...");
 
                                 // Import CSV in Postgres
-                                this.backendService.importFileFromS3(this.authService.getCurrentCompany(), createURLResponse.fileName, tableName, null).subscribe(
+                                this._backendService.importFileFromS3(this._authService.getCurrentCompany(), createURLResponse.fileName, tableName, null).subscribe(
                                     importFileFromS3Response => {
                                         console.log(importFileFromS3Response);
                                         if (importFileFromS3Response != null && importFileFromS3Response.result === 'OK') {
@@ -175,12 +232,12 @@ export class ImportExportService {
                                             this._dialogService.showLoadingDialog("Finalizing", "Please wait...");
 
                                             // Get the S3 Delete URL
-                                            this.backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
+                                            this._backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
                                                 deleteURLResponse => {
                                                     console.log(deleteURLResponse);
                                                     if (deleteURLResponse != null && deleteURLResponse.result === 'OK') {
                                                         // Delete file from S3
-                                                        this.httpClient.delete(deleteURLResponse.url).subscribe(
+                                                        this._httpClient.delete(deleteURLResponse.url).subscribe(
                                                             responseDelete => {
                                                                 console.table(responseDelete);
                                                                 // Success
@@ -211,12 +268,12 @@ export class ImportExportService {
                                             this._dialogService.showLoadingDialog("Finalizing", "Please wait...");
 
                                             // Get the S3 Delete URL
-                                            this.backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
+                                            this._backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
                                                 deleteURLResponse => {
                                                     console.log(deleteURLResponse);
                                                     if (deleteURLResponse != null && deleteURLResponse.result === 'OK') {
                                                         // Delete file from S3
-                                                        this.httpClient.delete(deleteURLResponse.url).subscribe(
+                                                        this._httpClient.delete(deleteURLResponse.url).subscribe(
                                                             responseDelete => {
                                                                 console.table(responseDelete);
                                                                 // Show error
@@ -260,26 +317,25 @@ export class ImportExportService {
         }
     }
 
-    requestReload(entryName) {
-        // Request only if we already don't have the reports for this entryName
-        if (this._currentData.entryName !== entryName) {
-            this.reloadRequested.emit(entryName);
+    requestGetCSV(label) {
+        // if label is null, this must be normal CSV
+        if (label === null) {
+            this.onGetCSVRequested.emit(null);
         }
-    }
-
-    requestGetExportItem(alias) {
-        // Request if report with alias exists in current reports list
-        if (this._currentData.items.filter(x => x.alias === alias).length > 0) {
-            this.getExportItemRequested.emit(alias);
+        else {
+            // label is not null, request if report with label exists in current reports list
+            if (this._currentData.items.filter(x => x.label === label).length > 0) {
+                this.onGetCSVRequested.emit(label);
+            }
         }
     }
 
     requestImport(entryName = "") {
-        this.importRequested.emit(entryName);
+        this.onImportRequested.emit(entryName);
     }
 
     requestGetTemplate(entryName = "") {
-        this.getTemplateRequested.emit(entryName);
+        this.onGetTemplateRequested.emit(entryName);
     }
 
 }

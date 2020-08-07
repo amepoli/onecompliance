@@ -38,7 +38,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     userStatusOptions: any[];
 
     reportList: { 'alias': string, 'descrizione': string }[] = [];
-    exportList: { 'alias': string, 'descrizione': string }[] = [];
+    exportList: { 'label': string, 'queryString': string }[] = [];
 
     userCompanies: string[] = [];
 
@@ -289,7 +289,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     }
 
     getExcel(): void {
-        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'get_excel' });
+        this._importExportService.requestGetCSV(null);
+        // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'get_excel' });
     }
 
     import(): void {
@@ -302,9 +303,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'downloadTemplateFile' });
     }
 
-    getExportItem(item: { 'alias': string, 'descrizione': string }): void {
+    downloadCSV() {
+        console.log('Downloading CSV');
+        this._importExportService.requestGetCSV(null);
+    }
+
+    downloadAdvancedCSV(item: { 'label': string, 'queryString': string }): void {
         console.log(item);
-        this._importExportService.requestGetExportItem(item.alias);
+        this._importExportService.requestGetCSV(item.label);
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
     }
 
