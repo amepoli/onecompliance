@@ -60,6 +60,34 @@
             "sameOrigin": false
         },
         {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "new_id_sondaggio",
+            "label": "new_id_sondaggio",
+            "newLine": true,
+            "queryFunct": "select max(id_sondaggio) from entrasp.sondaggi where codice_azienda=$codice_azienda$",
+            "outputEvent": {
+                "eventName": "to_sondaggio_navigate",
+                "eventTrigger": "change"
+            },
+             "inputEvents": [
+                {
+                    "eventName": "sondaggio_new",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select sondaggio_insert new_id_sondaggio from entrasp.sondaggio_insert($codice_azienda$, $titolo$, $id_modello_test$, $id_modello_test_vr$);"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
             "autoGenerate": true,
             "format": {
                 "dataType": "text",
@@ -570,5 +598,26 @@
             "key": "centro_gest",
             "label": "Centro Gestionale"
         }
+    ],
+    "inputEvents": [
+        {
+            "actionTarget": {
+                "name": "sondaggi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "new_id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_sondaggio_navigate"
+        }
     ]
+    
 }
