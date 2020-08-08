@@ -41,21 +41,12 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "sondaggio_new",
-            "label": "sondaggio_new",
+            "label": "Crea sondaggio",
             "newLine": true,
             "outputEvent": {
                 "eventName": "sondaggio_new",
                 "eventTrigger": "press"
             },
-            "inputEvents": [
-                {
-                    "eventName": "sondaggio_new",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select entrasp.sondaggio_insert($codice_azienda$, $titolo$, $id_modello_test$, $id_modello_test_vr$);"
-                }
-            ],
             "readOnly": false,
             "sameOrigin": false
         },
@@ -70,7 +61,6 @@
             "key": "new_id_sondaggio",
             "label": "new_id_sondaggio",
             "newLine": true,
-            "queryFunct": "select max(id_sondaggio) from entrasp.sondaggi where codice_azienda=$codice_azienda$",
             "outputEvent": {
                 "eventName": "to_sondaggio_navigate",
                 "eventTrigger": "change"
@@ -81,7 +71,7 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "select sondaggio_insert new_id_sondaggio from entrasp.sondaggio_insert($codice_azienda$, $titolo$, $id_modello_test$, $id_modello_test_vr$);"
+                    "queryFunct": "select sondaggio_insert as new_id_sondaggio from entrasp.sondaggio_insert($codice_azienda$, $titolo$, $id_modello_test$, $id_modello_test_vr$);"
                 }
             ],
             "readOnly": false,
@@ -616,7 +606,7 @@
                 ]
             },
             "actionType": "navigate",
-            "eventName": "to_sondaggio_navigate"
+            "eventName": "sondaggio_new"
         }
     ]
     
