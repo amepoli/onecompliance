@@ -289,8 +289,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     }
 
     getExcel(): void {
-        this._importExportService.requestGetCSV(null);
-        // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'get_excel' });
+        this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'get_excel' });
     }
 
     import(): void {
