@@ -132,12 +132,16 @@ export class MainTableComponent implements OnInit, OnDestroy {
         });
 
         // Import Export related subscriptions
-        _this._importExportService.getTemplateRequested.subscribe((entryName) => {
+        _this._importExportService.onGetTemplateRequested.subscribe((entryName) => {
             _this._importExportService.getTemplateFile(_this.tableName);
         });
 
-        _this._importExportService.importRequested.subscribe((entryName) => {
+        _this._importExportService.onImportRequested.subscribe((entryName) => {
             _this._importExportService.importCSV(_this.tableName);
+        });
+
+        _this._importExportService.onGetCSVRequested.subscribe(label => {
+            _this._importExportService.downloadCSV(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', label);
         });
 
         // subscribe to toolbar requests
@@ -190,6 +194,10 @@ export class MainTableComponent implements OnInit, OnDestroy {
                         _this.historyPop(_this.navigationHistory[0]); // go back to the root element
                     }
                 } else if (msg.type === 'get_excel') {  // get the excel sheet
+
+                    // _this._importExportService.downloadCSV(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form');
+
+                    /*
                     // Show loading Dialog
                     _this._dialogService.showLoadingDialog("Preparing Excel Sheet", "Please wait...");
 
@@ -232,6 +240,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
                                     _this._toastService.showErrorToast("An error occured!", "An error occured!")
                                 }
                             });
+
+                    */
                 }
                 // else if (msg.type === 'import') {  // import the excel sheet or csv
                 //     _this._importExportService.importCSV(_this.tableName);
