@@ -195,9 +195,6 @@ export class MainTableComponent implements OnInit, OnDestroy {
                     }
                 } else if (msg.type === 'get_excel') {  // get the excel sheet
 
-                    // _this._importExportService.downloadCSV(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form');
-
-                    /*
                     // Show loading Dialog
                     _this._dialogService.showLoadingDialog("Preparing Excel Sheet", "Please wait...");
 
@@ -240,8 +237,6 @@ export class MainTableComponent implements OnInit, OnDestroy {
                                     _this._toastService.showErrorToast("An error occured!", "An error occured!")
                                 }
                             });
-
-                    */
                 }
                 // else if (msg.type === 'import') {  // import the excel sheet or csv
                 //     _this._importExportService.importCSV(_this.tableName);
