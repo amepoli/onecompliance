@@ -574,6 +574,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     listener.isVisible = event.actionType === 'show' ? false : event.actionType === 'hide' ? true : listener.isVisible;
                 }
             }
+            if (event.outputEventWhenComplete != null) {
+                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+            }
         } else if (event.actionType === 'readOnly') {
             // get the listener element if not full table
             let listener: FieldConfig = null;
@@ -583,11 +586,19 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     listener = targetLine.find(field => field.name === keyListener);
                 }
             }
-            if (keyListener == null) {   // act on the full table
-                _this.isReadOnly = conditionMet;
-                _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly }); // signal to the parent to show/hide save button
+            if (keyListener == null) {   // act on the full table --> NO! view_properties must be used in this case!!!
+               // _this.isReadOnly = conditionMet;
+               // _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly }); // signal to the parent to show/hide save button
             } else if (listener != null) {  // act on the listening element
                 listener.readonly = conditionMet;
+            }
+            if (event.outputEventWhenComplete != null) {
+                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+            }
+        } else  if (event.actionType === 'reload' && conditionMet) {
+            _this.refreshView();
+            if (event.outputEventWhenComplete != null) {
+                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
             }
         } else if (event.actionType === 'navigate' && conditionMet) {
             const formLine = _this.filteredFormData[value.index];
@@ -607,6 +618,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
             }
             _this.sendEvent.emit({ eventType: 'navigate', queryParams: { entry: event.actionTarget, keys: [filteredKeys], index: 1, total: 1 } });
+            if (event.outputEventWhenComplete != null) {
+                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+            }
         } else if ((event.actionType === 'query' || event.actionType === 'query_style') && conditionMet) {
             let chiavi = {};
             const target_index = (value.type !== 'page') ? value.index : null;  // null means the event comes from the full table
@@ -671,6 +685,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     element.style[event.styleAttribute] = result[0][keyListener + '_' + event.styleAttribute]; // as per specs the returned key is of type '<key>_<styleAttribute>'
                                 }
                             }
+                            if (event.outputEventWhenComplete != null) {
+                                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                            }
                         }
                         else {
                             // Show error snackbar
@@ -697,6 +714,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                 }
             }
+            if (event.outputEventWhenComplete != null) {
+                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+            }
         }
         else if (event.actionType === 'show_message' && conditionMet && event.message) {
             // Show confirmation dialog
@@ -715,6 +735,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 if (actionType === 'reload') {
                     _this.reload();
                     // Reload screen
+                    if (event.outputEventWhenComplete != null) {
+                        _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                    }
                 }
                 else {
                     // Run query
@@ -757,6 +780,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 if (result.result === 'OK') {
                                     console.table(result);
                                     _this._toastService.showSuccessToast("Success!");
+                                    if (event.outputEventWhenComplete != null) {
+                                        _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                                    }
                                 }
                                 else {
                                     console.table(result);

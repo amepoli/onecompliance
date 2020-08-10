@@ -266,7 +266,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
         let newTotal = _this.formParams.total;
         if (event.eventType === 'savedForm') { // quick add form view submitted the new record
-            if (_this.formView && _this.tableType == 'form' && !_this.fullScreenTab) {
+            if (_this.formView && _this.tableType === 'form' && !_this.fullScreenTab) {
                 _this.formView.loadData();
             }
             // _this._cdr.detectChanges();

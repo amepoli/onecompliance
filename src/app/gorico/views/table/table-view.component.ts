@@ -178,10 +178,10 @@ export class TableViewComponent implements OnChanges {
                 // Load Export Queries list if available
                 if (params.exportQueries && params.exportQueries.tableQueries) {
                     console.log('exportQueries', params.exportQueries);
-                    this._importExportService.updateExportList(_this.tableData.entryName, params.exportQueries.tableQueries);
+                    _this._importExportService.updateExportList(_this.tableData.entryName, params.exportQueries.tableQueries);
                 }
                 else {
-                    this._importExportService.updateExportList(_this.tableData.entryName, []);
+                    _this._importExportService.updateExportList(_this.tableData.entryName, []);
                 }
             }
             else {
