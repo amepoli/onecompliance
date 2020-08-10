@@ -191,7 +191,7 @@ export class TableViewComponent implements OnChanges {
             }
         });
         // Calculate table height
-        this.calculateTableHeight();
+        _this.calculateTableHeight();
     }
 
     loadTable(search_keys: any): void {
