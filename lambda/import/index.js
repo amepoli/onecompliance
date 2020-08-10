@@ -205,15 +205,15 @@ function data2csv(data, keys = null) {
     let columns = null;
     if (keys !== null) {
         columns = keys.map(x => x.key);
-        result += columns.join(',') + '\n';
+        result += columns.join('CSV_SPLITTER') + '\n';
     }
 
     data.forEach(row => {
         if (columns === null) {
             columns = Object.keys(row);
-            result += columns.join(',') + '\n';
+            result += columns.join('CSV_SPLITTER') + '\n';
         }
-        result += columns.map(c => row[c]).join(',') + '\n';
+        result += columns.map(c => row[c]).join('CSV_SPLITTER') + '\n';
     });
     return result;
 }
