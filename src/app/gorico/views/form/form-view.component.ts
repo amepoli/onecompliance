@@ -59,6 +59,7 @@ type savingStateType = 'save' | 'saving' | 'done';
 })
 export class FormViewComponent implements OnChanges, OnInit {
 
+    @Input() isQuickAdd: boolean = false;
     @Input() tableData: formViewParams;
     @Output() sendEvent = new EventEmitter<any>();
 
@@ -114,7 +115,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                     _this.getAttachList();
                     _this.getReportList();
 
-                } else if (event.eventType === 'updateData') {  // child received the actual data, now time to populate subtables
+                } else if (event.eventType === 'updateData' && !_this.isQuickAdd) {  // child received the actual data, now time to populate subtables
                     let tabs: TabType[];
                     if (!_this.tableData.isNew && _this.tabKeys != null) {
                         // send the tabs parameter to the main view 
