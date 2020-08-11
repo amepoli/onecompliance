@@ -196,6 +196,11 @@ export class ImportExportService {
                         // Show error snackbar
                         this._toastService.showErrorToast(downloadTemplateResponse.reason);
                     }
+                }, error => {
+                    // Error occured!
+                    this._dialogService.closeDialog();
+                    this._toastService.showErrorToast("An error occured!", error);
+
                 }
             );
         }
@@ -263,6 +268,11 @@ export class ImportExportService {
                                                         // Show error snackbar
                                                         this._toastService.showErrorToast(createURLResponse.reason);
                                                     }
+                                                }, error => {
+                                                    // Error occured!
+                                                    this._dialogService.closeDialog();
+                                                    this._toastService.showErrorToast("An error occured!", error);
+
                                                 }
                                             )
                                         }
@@ -298,9 +308,19 @@ export class ImportExportService {
                                                         // Show error snackbar
                                                         this._toastService.showErrorToast(createURLResponse.reason);
                                                     }
+                                                }, error => {
+                                                    // Error occured!
+                                                    this._dialogService.closeDialog();
+                                                    this._toastService.showErrorToast("An error occured!", error);
+
                                                 }
                                             )
                                         }
+                                    }, error => {
+                                        // Error occured!
+                                        this._dialogService.closeDialog();
+                                        this._toastService.showErrorToast("An error occured!", error);
+
                                     }
                                 )
                             },
@@ -317,6 +337,11 @@ export class ImportExportService {
                         // Show error snackbar
                         this._toastService.showErrorToast(createURLResponse.reason);
                     }
+                }, error => {
+                    // Error occured!
+                    this._dialogService.closeDialog();
+                    this._toastService.showErrorToast("An error occured!", error);
+
                 }
             )
         }

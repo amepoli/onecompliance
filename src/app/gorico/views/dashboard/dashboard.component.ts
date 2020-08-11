@@ -94,6 +94,10 @@ export class DashboardComponent {
                                 // Show error snackbar
                                 _this._toastService.showErrorToast(response.reason);
                             }
+                        }, error => {
+                            // Error occured!
+                            _this._toastService.showErrorToast("An error occured!", error);
+
                         });
                 }
                 else {

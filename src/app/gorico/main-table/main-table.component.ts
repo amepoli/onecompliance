@@ -236,6 +236,11 @@ export class MainTableComponent implements OnInit, OnDestroy {
                                     // File did not succeed, show error message
                                     _this._toastService.showErrorToast("An error occured!", "An error occured!")
                                 }
+                            }, error => {
+                                // Error occured!
+                                _this._dialogService.closeDialog();
+                                _this._toastService.showErrorToast("An error occured!", error);
+
                             });
                 }
                 // else if (msg.type === 'import') {  // import the excel sheet or csv
