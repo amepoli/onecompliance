@@ -1,3 +1,5 @@
+const excel = require('node-excel-export');
+
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'REGION' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
@@ -218,6 +220,98 @@ function data2csv(data, keys = null) {
     return result;
 }
 
+function data2xls(data, title, keys = null) {
+    const styles = {
+        headerDark: {
+            fill: {
+                fgColor: {
+                    rgb: 'FF008000'
+                }
+            },
+            font: {
+                color: {
+                    rgb: 'FFFFFFFF'
+                },
+                sz: 18,
+                bold: true
+            }
+        },
+        title: {
+            fill: {
+                fgColor: {
+                    rgb: 'FFE0E0E0'
+                },
+            },
+            font: {
+                color: {
+                    rgb: 'FF0080C4'
+                },
+                sz: 34
+            }
+        },
+        data: {
+            font: {
+                sz: 16
+            }
+        }
+    };
+
+    //Array of objects representing heading rows (very top)
+    const heading = [
+        [{ value: title, style: styles.title }] // <-- It can be only values
+    ];
+
+    const specification = {};
+    let columns = null;
+
+    if (keys != null) {
+        columns = keys.map(x => x.key);
+        keys.forEach(key => {
+            specification[key.key] = { displayName: key.label, headerStyle: styles.data, width: 120 }
+        });
+
+        console.log('columns', columns);
+    }
+
+    const dataset = [];
+
+    data.forEach(row => {
+        if (columns === null) {
+            columns = Object.keys(row);
+            columns.forEach(c => {
+                specification[c] = { displayName: c, headerStyle: styles.data, width: 120 }
+            });
+            console.log('columns', columns);
+
+        }
+
+        var value = {};
+        columns.forEach(c => {
+            value[c] = row[c];
+        });
+        dataset.push(value);
+    });
+
+    console.log('dataset length: ', dataset.length);
+
+    const merges = [
+        { start: { row: 1, column: 1 }, end: { row: 1, column: columns.length } }
+    ];
+
+    const report = excel.buildExport(
+        [ // <- Notice that this is an array. Pass multiple sheets to create multi sheet report
+            {
+                name: 'Report', // <- Specify sheet name (optional)
+                heading: heading, // <- Raw heading array (optional)
+                merges: merges, // <- Merge cell ranges
+                specification: specification, // <- Report specification
+                data: dataset //consts.dataset // <-- Report data
+            }
+        ]
+    );
+
+    return report;
+}
 async function runQuery(queryString, client) {
 
     let local_keys = {}; // additional keys generated with pre-main-post processing  
@@ -606,20 +700,43 @@ exports.handler = async (event, context) => {
                     console.log('queryString5', queryString);
 
                     queryData = await runQuery(queryString, client);
-                    console.log('queryData', queryData);
+                    // console.log('queryData', queryData);
 
-                    let csvData = null;
-                    if (isAdvanced) {
-                        csvData = data2csv(queryData);
+                    let fileBody = null;
+                    let fileName = null;
+                    let isCSV = false;
+
+                    var uuid = context.awsRequestId; // generate a 'unique' UUID as fileName
+
+                    if (isCSV) {
+                        fileName = 'CSV/' + uuid + '.csv';
+                        if (isAdvanced) {
+                            fileBody = data2csv(queryData);
+                        }
+                        else {
+                            var viewKeys = isForm ? entry_params.form_keys : entry_params.table_keys;
+                            console.log('viewKeys', viewKeys);
+
+                            const validKeys = viewKeys.filter(key => !key.isHidden);
+                            console.log('validKeys', validKeys);
+                            fileBody = data2csv(queryData, validKeys);
+                        }
                     }
                     else {
-                        var viewKeys = isForm ? entry_params.form_keys : entry_params.table_keys;
-                        console.log('viewKeys', viewKeys);
+                        fileName = 'Excel/' + uuid + '.xlsx';
+                        if (isAdvanced) {
+                            fileBody = data2xls(queryData, queryParams.entry_name);
+                        }
+                        else {
+                            var viewKeys = isForm ? entry_params.form_keys : entry_params.table_keys;
+                            console.log('viewKeys', viewKeys);
 
-                        const validKeys = viewKeys.filter(key => !key.isHidden);
-                        console.log('validKeys', validKeys);
-                        csvData = data2csv(queryData, validKeys);
+                            const validKeys = viewKeys.filter(key => !key.isHidden);
+                            console.log('validKeys', validKeys);
+                            fileBody = data2xls(queryData, queryParams.entry_name, validKeys);
+                        }
                     }
+
 
                     // const dataset = [];
                     // 
@@ -632,16 +749,14 @@ exports.handler = async (event, context) => {
                     // });
                     // console.log('dataset', dataset);
 
-                    var uuid = context.awsRequestId; // generate a 'unique' UUID as filename
-                    var filename = 'Excel/' + uuid + '.csv'
                     var s3ParamsInsert = {
                         Bucket: 'gorico2.reports',
-                        Key: filename,
-                        Body: csvData
+                        Key: fileName,
+                        Body: fileBody
                     };
                     var s3ParamsUrl = {
                         Bucket: 'gorico2.reports',
-                        Key: filename
+                        Key: fileName
                     };
 
                     // upload to S3

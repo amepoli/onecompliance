@@ -65,7 +65,7 @@ export class DialogService {
             text: text,
             allowEscapeKey: false,
             allowOutsideClick: false,
-            timer: 2000,
+            // timer: 2000,
             // icon: 
             onOpen: () => {
                 Swal.showLoading();
