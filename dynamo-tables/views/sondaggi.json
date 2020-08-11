@@ -25,9 +25,26 @@
             "isPrimary": false,
             "key": "sondaggi_close",
             "label": "Chiudi",
-            "newLine": true,
+            "newLine": false,
             "outputEvent": {
                 "eventName": "sondaggio_close",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sondaggi_open",
+            "label": "Apri",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "sondaggio_open",
                 "eventTrigger": "press"
             },
             "readOnly": false,
@@ -116,17 +133,23 @@
             "newLine": true,
             "readOnly": false,
             "size": 2,
-            "outputEvent": {
-                "eventName": "sondaggi_change_stato",
-                "eventTrigger": "change"
-            },
             "inputEvents": [
                 {
-                    "eventName": "sondaggi_change_stato",
+                    "eventName": "sondaggio_close",
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "update entrasp.sondaggi set stato='C'"
+                    "queryFunct": "update entrasp.sondaggi set stato='C'",
+                    "outputEventWhenComplete": "sondaggio_after_status_change"
+                },
+                {
+                    "eventName": "sondaggio_open",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.sondaggi set stato='A'",
+                    "outputEventWhenComplete": "sondaggio_after_status_change"
+
                 }
             ]
         },
@@ -575,8 +598,18 @@
             "eventName": "to_modello_test_from_sondaggi"
         },
         {
-            "eventName": "sondaggio_close",
-            "actionType": "readOnly"
+            "eventName": "sondaggio_after_status_change",
+            "actionType": "reload"            
         }
-    ]
+
+    ],
+    "view_properties":[
+        {
+        "viewType": "formView",
+        "propertyType": "readOnly",
+        "queryString": "select stato as label from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+
+    }
+]
+    
 }
