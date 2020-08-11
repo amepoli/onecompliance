@@ -63,6 +63,25 @@
             "label": "Stato",
             "newLine": false,
             "readOnly": false,
+            "inputEvents": [
+                {
+                    "eventName": "sondaggio_close",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.sondaggi set stato='C' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
+                    "outputEventWhenComplete": "sondaggio_after_status_change_c"
+                },
+                {
+                    "eventName": "sondaggio_open",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.sondaggi set stato='A' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
+                    "outputEventWhenComplete": "sondaggio_after_status_change"
+
+                }
+            ],
             "size": 5
         },
         {
@@ -119,39 +138,6 @@
             "newLine": false,
             "readOnly": false,
             "size": 8
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "stato",
-            "label": "Stato",
-            "newLine": true,
-            "readOnly": false,
-            "size": 2,
-            "inputEvents": [
-                {
-                    "eventName": "sondaggio_close",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "update entrasp.sondaggi set stato='C'",
-                    "outputEventWhenComplete": "sondaggio_after_status_change"
-                },
-                {
-                    "eventName": "sondaggio_open",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "update entrasp.sondaggi set stato='A'",
-                    "outputEventWhenComplete": "sondaggio_after_status_change"
-
-                }
-            ]
         },
         {
             "autoGenerate": false,
@@ -598,7 +584,7 @@
             "eventName": "to_modello_test_from_sondaggi"
         },
         {
-            "eventName": "sondaggio_after_status_change",
+            "eventName": "sondaggio_after_status_change_c",
             "actionType": "reload"            
         }
 
@@ -607,7 +593,7 @@
         {
         "viewType": "formView",
         "propertyType": "readOnly",
-        "queryString": "select stato as label from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+        "queryString": "select case when stato='C' then 'true' end as label from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
 
     }
 ]
