@@ -510,6 +510,7 @@ exports.handler = async (event, context) => {
                 const search_keys = queryParams['search_keys'] != null ? JSON.parse(queryParams['search_keys']) : null;
                 const isForm = queryParams['is_form'] != null ? parseInt(queryParams['is_form']) : 0;
                 const isAdvanced = queryParams['is_advanced'] != null ? parseInt(queryParams['is_advanced']) : 0;
+                const isCSV = queryParams['is_csv'] != null ? parseInt(queryParams['is_csv']) : 0;
                 const advancedQueryLabel = queryParams['advanced_query_label'];
 
                 const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
@@ -704,7 +705,6 @@ exports.handler = async (event, context) => {
 
                     let fileBody = null;
                     let fileName = null;
-                    let isCSV = false;
 
                     var uuid = context.awsRequestId; // generate a 'unique' UUID as fileName
 
