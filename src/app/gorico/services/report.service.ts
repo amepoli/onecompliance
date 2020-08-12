@@ -131,6 +131,11 @@ export class ReportService // implements Resolve<any>
                     // Show error snackbar
                     _this._toastService.showErrorToast(response.reason);
                 }
+            }, error => {
+                // Error occured!
+                _this._dialogService.closeDialog();
+                _this._toastService.showErrorToast("An error occured!", error);
+
             });
     }
 

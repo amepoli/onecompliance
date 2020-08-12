@@ -121,7 +121,7 @@ export class ImportExportService {
         // Show loading Dialog
         _this._dialogService.showLoadingDialog("Preparing CSV", "Please wait...");
 
-        _this._backendService.getCSV(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, advanced_query_label)
+        _this._backendService.getExcel(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, advanced_query_label)
             .subscribe(
                 response => {
                     _this._dialogService.closeDialog();
@@ -159,6 +159,11 @@ export class ImportExportService {
                         // File did not succeed, show error message
                         _this._toastService.showErrorToast("An error occured!", "An error occured!")
                     }
+                }, error => {
+                    // Error occured!
+                    _this._dialogService.closeDialog();
+                    _this._toastService.showErrorToast("An error occured!", error);
+
                 });
 
 
@@ -191,6 +196,11 @@ export class ImportExportService {
                         // Show error snackbar
                         this._toastService.showErrorToast(downloadTemplateResponse.reason);
                     }
+                }, error => {
+                    // Error occured!
+                    this._dialogService.closeDialog();
+                    this._toastService.showErrorToast("An error occured!", error);
+
                 }
             );
         }
@@ -258,6 +268,11 @@ export class ImportExportService {
                                                         // Show error snackbar
                                                         this._toastService.showErrorToast(createURLResponse.reason);
                                                     }
+                                                }, error => {
+                                                    // Error occured!
+                                                    this._dialogService.closeDialog();
+                                                    this._toastService.showErrorToast("An error occured!", error);
+
                                                 }
                                             )
                                         }
@@ -293,9 +308,19 @@ export class ImportExportService {
                                                         // Show error snackbar
                                                         this._toastService.showErrorToast(createURLResponse.reason);
                                                     }
+                                                }, error => {
+                                                    // Error occured!
+                                                    this._dialogService.closeDialog();
+                                                    this._toastService.showErrorToast("An error occured!", error);
+
                                                 }
                                             )
                                         }
+                                    }, error => {
+                                        // Error occured!
+                                        this._dialogService.closeDialog();
+                                        this._toastService.showErrorToast("An error occured!", error);
+
                                     }
                                 )
                             },
@@ -312,6 +337,11 @@ export class ImportExportService {
                         // Show error snackbar
                         this._toastService.showErrorToast(createURLResponse.reason);
                     }
+                }, error => {
+                    // Error occured!
+                    this._dialogService.closeDialog();
+                    this._toastService.showErrorToast("An error occured!", error);
+
                 }
             )
         }

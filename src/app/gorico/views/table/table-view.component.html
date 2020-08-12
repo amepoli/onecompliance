@@ -42,14 +42,15 @@
         Quick Add
     </button>
 
-    <form-view *ngIf="showQuickAdd" class="adv-search" [tableData]="quickAddFormParams" (sendEvent)='onEvent($event)'>
+    <form-view [isQuickAdd]="true" *ngIf="showQuickAdd" class="quick-add" [tableData]="quickAddFormParams"
+        (sendEvent)='onEvent($event)'>
     </form-view>
 
     <div class="mat-elevation-z2 table-view-content">
 
-        <table mat-table *ngIf="!isLoading" [dataSource]="dataSource" matSort>
+        <table mat-table [hidden]="isLoading" [dataSource]="dataSource" matSort>
 
-            <ng-container [matColumnDef]="entry.label" *ngFor="let entry of viewKeys">
+            <ng-container [matColumnDef]="entry.key" *ngFor="let entry of viewKeys">
                 <mat-header-cell *matHeaderCellDef mat-sort-header [hidden]="entry.isHidden">
                     {{entry.label}} </mat-header-cell>
                 <mat-cell *matCellDef="let row" [hidden]="entry.isHidden">
