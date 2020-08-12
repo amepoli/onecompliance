@@ -121,7 +121,7 @@ export class ImportExportService {
         // Show loading Dialog
         _this._dialogService.showLoadingDialog("Preparing CSV", "Please wait...");
 
-        _this._backendService.getCSV(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, advanced_query_label)
+        _this._backendService.getExcel(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, advanced_query_label)
             .subscribe(
                 response => {
                     _this._dialogService.closeDialog();

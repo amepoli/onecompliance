@@ -295,7 +295,7 @@ function data2xls(data, title, keys = null) {
     console.log('dataset length: ', dataset.length);
 
     const merges = [
-        { start: { row: 1, column: 1 }, end: { row: 1, column: columns.length } }
+        { start: { row: 1, column: 1 }, end: { row: 1, column: columns !== null ? columns.length : 1 } }
     ];
 
     const report = excel.buildExport(

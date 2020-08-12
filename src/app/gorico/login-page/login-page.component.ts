@@ -92,6 +92,11 @@ export class LoginPageComponent implements OnInit {
                 } else {
                     this.user = authState.user;
                 }
+            }, error => {
+                // Error occured!
+                this._dialogService.closeDialog();
+                this.signingIn = false;
+                this.loginButtonText = 'LOGIN';
             });
 
         // Subscribe to Error EventEmitter in AuthService 
@@ -110,6 +115,11 @@ export class LoginPageComponent implements OnInit {
                     this.loginButtonText = 'LOGIN';
                 }
                 // console.error(`Login Error: ${err}`);
+            }, error => {
+                // Error occured!
+                this._dialogService.closeDialog();
+                this.signingIn = false;
+                this.loginButtonText = 'LOGIN';
             });
 
 
@@ -125,6 +135,11 @@ export class LoginPageComponent implements OnInit {
                 this.loadingSession = false;
                 this.loginButtonText = 'LOGIN';
             }
+        }, error => {
+            // Error occured!
+            this._dialogService.closeDialog();
+            this.signingIn = false;
+            this.loginButtonText = 'LOGIN';
         });
 
         // Check if local storage contains valid access token
