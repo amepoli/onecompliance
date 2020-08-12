@@ -37,11 +37,14 @@ export class ImportExportService {
         return this._currentData;
     }
 
-    // Stream for loaded reports
+    // Stream for loaded list
     public onExportListLoaded: BehaviorSubject<ExportList>;
 
-    // Event Emitter for getting report requests
+    // Event Emitter for getting csv requests
     public onGetCSVRequested: EventEmitter<string> = new EventEmitter();
+
+    // Event Emitter for getting excel requests
+    public onGetExcelRequested: EventEmitter<string> = new EventEmitter();
 
     // Event Emitter for import requests
     public onImportRequested: EventEmitter<string> = new EventEmitter();
@@ -121,6 +124,60 @@ export class ImportExportService {
         // Show loading Dialog
         _this._dialogService.showLoadingDialog("Preparing CSV", "Please wait...");
 
+        _this._backendService.getCSV(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, advanced_query_label)
+            .subscribe(
+                response => {
+                    _this._dialogService.closeDialog();
+                    console.log(response);
+                    if (response.result === 'OK') {
+                        // File is okay.
+                        // Let's try to download it using simple window method first
+                        let downloadWindow = window.open(response.url, "_blank");
+
+                        // Check if the browser allowed window.open function
+                        if (downloadWindow) {
+                            // Window opened so must have downloaded
+                            // Show success toast
+                            _this._toastService.showSuccessToast("", "CSV downloaded successfully!");
+                        }
+                        else {
+                            // Window did not open so let's try the manual download methond
+                            // Download the file as blob
+                            _this._httpClient.get(response.url, { responseType: 'blob' }).subscribe(
+                                fileData => {
+                                    // File downloaded
+                                    // Get file name
+                                    let parts = response.url.split('/');
+                                    let fileName = parts[parts.length - 1].split('?')[0];
+
+                                    // Let's save it
+                                    saveAs(fileData, fileName);
+
+                                    // Show success toast
+                                    _this._toastService.showSuccessToast("", "CSV downloaded successfully!");
+                                });
+                        }
+                    }
+                    else {
+                        // File did not succeed, show error message
+                        _this._toastService.showErrorToast("An error occured!", "An error occured!")
+                    }
+                }, error => {
+                    // Error occured!
+                    _this._dialogService.closeDialog();
+                    _this._toastService.showErrorToast("An error occured!", error);
+
+                });
+
+
+    }
+
+    downloadExcel(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, advanced_query_label: string = null) {
+        let _this = this;
+
+        // Show loading Dialog
+        _this._dialogService.showLoadingDialog("Preparing Excel sheet", "Please wait...");
+
         _this._backendService.getExcel(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, advanced_query_label)
             .subscribe(
                 response => {
@@ -168,7 +225,6 @@ export class ImportExportService {
 
 
     }
-
 
     /**
      * Download Template file
@@ -353,9 +409,22 @@ export class ImportExportService {
             this.onGetCSVRequested.emit(null);
         }
         else {
-            // label is not null, request if report with label exists in current reports list
+            // label is not null, request if item with label exists in current list
             if (this._currentData.items.filter(x => x.label === label).length > 0) {
                 this.onGetCSVRequested.emit(label);
+            }
+        }
+    }
+
+    requestGetExcel(label) {
+        // if label is null, this must be normal Excel
+        if (label === null) {
+            this.onGetExcelRequested.emit(null);
+        }
+        else {
+            // label is not null, request if item with label exists in current list
+            if (this._currentData.items.filter(x => x.label === label).length > 0) {
+                this.onGetExcelRequested.emit(label);
             }
         }
     }

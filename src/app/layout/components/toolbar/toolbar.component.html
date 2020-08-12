@@ -72,29 +72,73 @@
 
         <div>
 
-            <button mat-button [matMenuTriggerFor]="csvMenu">
+            <button mat-button [matMenuTriggerFor]="downloadUploadMenu">
                 <mat-icon>import_export</mat-icon>
             </button>
 
-            <mat-menu #csvMenu="matMenu" [overlapTrigger]="false">
+            <mat-menu #downloadUploadMenu="matMenu" [overlapTrigger]="false">
+
+                <button mat-menu-item [matMenuTriggerFor]="uploadMenu">
+                    <mat-icon>cloud_upload</mat-icon>
+                    <span>Upload</span>
+                </button>
+
+                <button mat-menu-item [matMenuTriggerFor]="downloadMenu">
+                    <mat-icon>cloud_download</mat-icon>
+                    <span>Download</span>
+                </button>
+            </mat-menu>
+
+            <mat-menu #uploadMenu="matMenu" [overlapTrigger]="false">
+
+                <button mat-menu-item (click)="import()">
+                    <mat-icon>cloud_upload</mat-icon>
+                    <span>Upload CSV</span>
+                </button>
+
+            </mat-menu>
+
+            <mat-menu #downloadMenu="matMenu" [overlapTrigger]="false">
+
+                <button mat-menu-item [matMenuTriggerFor]="downloadCSVMenu">
+                    <mat-icon>cloud_download</mat-icon>
+                    <span>CSV</span>
+                </button>
+
+                <button mat-menu-item [matMenuTriggerFor]="downloadExcelMenu">
+                    <mat-icon>cloud_download</mat-icon>
+                    <span>Excel</span>
+                </button>
+
+            </mat-menu>
+
+            <mat-menu #downloadCSVMenu="matMenu" [overlapTrigger]="false">
 
                 <button mat-menu-item (click)="downloadTemplateFile()">
                     <mat-icon>cloud_download</mat-icon>
-                    <span>Download CSV Template</span>
+                    <span>Download Template</span>
                 </button>
 
                 <button mat-menu-item (click)="downloadCSV()">
                     <mat-icon>cloud_download</mat-icon>
-                    <span>Download CSV</span>
+                    <span>Download</span>
                 </button>
 
-                <button mat-menu-item (click)="import()">
-                    <mat-icon>cloud_upload</mat-icon>
-                    <span>Import CSV</span>
+                <button *ngIf="exportList && exportList.length" mat-menu-item [matMenuTriggerFor]="advancedCsvMenu">
+                    <mat-icon>cloud_download</mat-icon>
+                    <span>Advanced</span>
+                </button>
+            </mat-menu>
+
+            <mat-menu #downloadExcelMenu="matMenu" [overlapTrigger]="false">
+
+                <button mat-menu-item (click)="downloadExcel()">
+                    <mat-icon>cloud_download</mat-icon>
+                    <span>Download</span>
                 </button>
 
-                <button mat-menu-item [matMenuTriggerFor]="advancedCsvMenu">
-                    <mat-icon>cloud_upload</mat-icon>
+                <button *ngIf="exportList && exportList.length" mat-menu-item [matMenuTriggerFor]="advancedExcelMenu">
+                    <mat-icon>cloud_download</mat-icon>
                     <span>Advanced</span>
                 </button>
             </mat-menu>
@@ -102,6 +146,14 @@
             <mat-menu #advancedCsvMenu="matMenu" [overlapTrigger]="false">
 
                 <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedCSV(item)">
+                    <mat-icon>cloud_download</mat-icon>
+                    <span>{{item.label}}</span>
+                </button>
+
+            </mat-menu>
+            <mat-menu #advancedExcelMenu="matMenu" [overlapTrigger]="false">
+
+                <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedExcel(item)">
                     <mat-icon>cloud_download</mat-icon>
                     <span>{{item.label}}</span>
                 </button>
