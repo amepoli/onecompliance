@@ -5,7 +5,7 @@ import { FieldConfig } from "../../field.interface";
   selector: "app-date",
   template: `
 <mat-form-field [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
-<input matInput [matDatepicker]="picker" [formControlName]="field.name" [placeholder]="field.label">
+<input matInput [matDatepicker]="picker" [formControlName]="field.name" [placeholder]="field.label" [readonly]="field.readonly || readOnly">
 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
 <mat-datepicker #picker></mat-datepicker>
 <mat-hint></mat-hint>
@@ -19,6 +19,7 @@ import { FieldConfig } from "../../field.interface";
 export class DateComponent implements OnInit {
   field: FieldConfig;
   group: FormGroup;
+  readOnly: boolean; // field.readonly overridden by page
   constructor() {}
   ngOnInit() {}
 }

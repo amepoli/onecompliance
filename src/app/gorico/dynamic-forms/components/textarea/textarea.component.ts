@@ -6,7 +6,7 @@ import { FieldConfig } from "../../field.interface";
   template: `
 <mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'margin-right': '1%', 'margin-left': '1%','width': field.width+'%'}" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
-<textarea matInput [formControlName]="field.name" [readonly]="field.readonly" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5"></textarea>
+<textarea matInput [formControlName]="field.name" [readonly]="field.readonly || readOnly" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5"></textarea>
 <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
 <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
 </ng-container>
@@ -17,6 +17,7 @@ import { FieldConfig } from "../../field.interface";
 export class TextAreaComponent implements OnInit {
   field: FieldConfig;
   group: FormGroup;
+  readOnly: boolean; // field.readonly overridden by page
   constructor() { }
   ngOnInit() { }
 }

@@ -7,7 +7,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
   template: `
 <mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'margin-right': '1%', 'margin-left': '1%','width': field.width+'%'}" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
-<input matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly" 
+<input matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnly" 
     (blur)="onBlur()" (focus)="onFocus()"
     [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
 <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
@@ -20,6 +20,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 export class InputComponent implements OnInit, AfterViewInit {
   field: FieldConfig;
   group: FormGroup;
+  readOnly: boolean; // field.readonly overridden by page
 
   constructor(private pubsubService: NgxPubSubService) { }
   ngOnInit(): void {

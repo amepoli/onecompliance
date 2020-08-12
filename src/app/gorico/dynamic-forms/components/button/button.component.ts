@@ -20,6 +20,7 @@ import { DialogService } from "app/gorico/services/dialog.service";
 export class ButtonComponent implements OnInit {
   field: FieldConfig;
   group: FormGroup;
+  readOnly: boolean;  // not used for button
 
   constructor(private pubsubService: NgxPubSubService,
     private _dialogService: DialogService) { }

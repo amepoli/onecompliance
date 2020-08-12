@@ -9,7 +9,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 <div [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
 <label class="radio-label-padding">{{field.label}}:</label>
 <mat-radio-group [formControlName]="field.name" [ngStyle]="{'display': 'flex', 'flex-direction': 'column'}" [(ngModel)]="chosenItem">
-<mat-radio-button *ngFor="let item of field.options" [value]="item" [disabled]="field.readonly" (change)="onCheck($event)" >{{item.name}}</mat-radio-button>
+<mat-radio-button *ngFor="let item of field.options" [value]="item" [disabled]="field.readonly || readOnly" (change)="onCheck($event)" >{{item.name}}</mat-radio-button>
 </mat-radio-group>
 </div>
 `,
@@ -18,6 +18,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 export class RadiobuttonComponent implements OnInit {
   field: FieldConfig;
   group: FormGroup;
+  readOnly: boolean; // field.readonly overridden by page
 
   chosenItem: any;
 
