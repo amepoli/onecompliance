@@ -322,7 +322,7 @@ export class TableViewComponent implements OnChanges {
 
 
     getColumnLabels(viewKeys: tableViewKey[]) {
-        let colLabels = viewKeys.map(c => c.label);
+        let colLabels = viewKeys.map(c => c.key);
         return colLabels;
 
     }
