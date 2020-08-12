@@ -7,14 +7,14 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
   selector: 'app-checkbox',
   template: `
 <span [formGroup]="group">
-  <mat-checkbox *ngIf="field.isVisible != false" [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" [ngModel]="field.value" [formControlName]="field.name" [disabled]="field.readonly || readOnly" (change)="onCheck($event)">{{field.label}}</mat-checkbox>
+  <mat-checkbox *ngIf="field.isVisible != false" [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" [ngModel]="field.value" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" (change)="onCheck($event)">{{field.label}}</mat-checkbox>
 </span>`,
   styles: []
 })
 export class CheckboxComponent implements OnInit {
   field: FieldConfig;
   group: FormGroup;
-  readOnly: boolean; // field.readonly overridden by page
+  readOnlyPage: boolean; // field.readonly overridden by page
 
   constructor(private pubsubService: NgxPubSubService) { }
   ngOnInit() {

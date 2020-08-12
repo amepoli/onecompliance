@@ -21,7 +21,7 @@ import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive'
   selector: 'dynamic-form',
   template: `
   <form class='dynamic-form' [id]='formName' [formGroup]='form' (submit)='onSubmit($event)'>
-  <ng-container *ngFor='let field of fields;' dynamicField [field]='field' [group]='form' [readOnly]='readOnly'>
+  <ng-container *ngFor='let field of fields;' dynamicField [field]='field' [group]='form' [readOnlyPage]='readOnlyPage'>
   </ng-container>
   </form>
   `,
@@ -32,7 +32,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   @Input() formName: string;
 
-  @Input() readOnly: boolean;
+  @Input() readOnlyPage: boolean;
 
   @Output() submit: EventEmitter<any> = new EventEmitter<any>();
 

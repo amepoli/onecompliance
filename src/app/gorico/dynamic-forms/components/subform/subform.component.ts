@@ -7,7 +7,7 @@ import { FieldConfig } from '../../field.interface';
   selector: 'app-subform',
   template: `
     <div [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" *ngIf="field.isVisible != false">
-        <ng-container *ngFor='let subfield of field.subform;' dynamicField [field]="subfield" [group]="group" [readOnly]="readOnly">
+        <ng-container *ngFor='let subfield of field.subform;' dynamicField [field]="subfield" [group]="group" [readOnlyPage]="readOnlyPage">
         </ng-container>
 </div>
 `,
@@ -17,7 +17,7 @@ export class SubformComponent implements OnInit {
 
   field: FieldConfig;
   group: FormGroup;
-  readOnly: boolean; // field.readonly overridden by page
+  readOnlyPage: boolean; // field.readonly overridden by page
 
   constructor() {}
   ngOnInit()  {

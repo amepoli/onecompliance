@@ -8,7 +8,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
   template: `
     <div *ngIf="field.isVisible != false">
       <div [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" [formGroup]="group" *ngFor="let item of field.options; let i = index" >
-        <mat-checkbox [disabled]="field.readonly || readOnly" (change)="onCheck(item.id, $event.checked)"></mat-checkbox>
+        <mat-checkbox [disabled]="field.readonly || readOnlyPage" (change)="onCheck(item.id, $event.checked)"></mat-checkbox>
         <label class="checkboxgroup-label-padding">{{item.name}}</label>
       </div>
     </div>
@@ -22,7 +22,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 export class CheckboxGroupComponent implements OnInit {
   field: FieldConfig;
   group: FormGroup;
-  readOnly: boolean; // field.readonly overridden by page
+  readOnlyPage: boolean; // field.readonly overridden by page
 
   selection = {};
 

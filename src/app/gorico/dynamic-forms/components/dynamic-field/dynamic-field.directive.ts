@@ -39,7 +39,7 @@ const componentMapper = {
 export class DynamicFieldDirective implements OnInit {
   @Input() field: FieldConfig;
   @Input() group: FormGroup;
-  @Input() readOnly: boolean;
+  @Input() readOnlyPage: boolean;
   componentRef: any;
   constructor(
     private resolver: ComponentFactoryResolver,
@@ -52,6 +52,6 @@ export class DynamicFieldDirective implements OnInit {
     this.componentRef = this.container.createComponent(factory);
     this.componentRef.instance.field = this.field;
     this.componentRef.instance.group = this.group;
-    this.componentRef.instance.readOnly = this.readOnly;
+    this.componentRef.instance.readOnlyPage = this.readOnlyPage;
   }
 }
