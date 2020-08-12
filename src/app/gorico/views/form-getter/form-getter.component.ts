@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
+import { ImportExportService } from 'app/gorico/services/import_export.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -124,7 +125,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private pubsubService: NgxPubSubService,
         private authService: AuthService,
         private _toastService: ToastService,
-        private _dialogService: DialogService) { }
+        private _dialogService: DialogService,
+        private _importExportService: ImportExportService) { }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.filter && this.results && this.results.length) {
@@ -170,6 +172,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.viewKeys = params.form_keys;
                     if (_this.viewKeys == null) {
                         return;                         // no formKeys defined for the table, stop here
+                    }
+                    // Load Export Queries list if available
+                    if (params.exportQueries && params.exportQueries.formQueries) {
+                        console.log('exportQueries', params.formQueries);
+                        _this._importExportService.updateExportList(_this.formParams.entryName, params.exportQueries.formQueries);
+                    }
+                    else {
+                        _this._importExportService.updateExportList(_this.formParams.entryName, []);
                     }
 
                     // Get View properties if exist
@@ -587,15 +597,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             if (keyListener == null) {   // act on the full table --> NO! view_properties must be used in this case!!!
-               // _this.isReadOnly = conditionMet;
-               // _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly }); // signal to the parent to show/hide save button
+                // _this.isReadOnly = conditionMet;
+                // _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly }); // signal to the parent to show/hide save button
             } else if (listener != null) {  // act on the listening element
                 listener.readonly = conditionMet;
             }
             if (event.outputEventWhenComplete != null) {
                 _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
             }
-        } else  if (event.actionType === 'reload' && conditionMet) {
+        } else if (event.actionType === 'reload' && conditionMet) {
             _this.refreshView();
             if (event.outputEventWhenComplete != null) {
                 _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);

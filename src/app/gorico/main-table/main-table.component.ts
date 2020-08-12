@@ -144,6 +144,10 @@ export class MainTableComponent implements OnInit, OnDestroy {
             _this._importExportService.downloadCSV(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', label);
         });
 
+        _this._importExportService.onGetExcelRequested.subscribe(label => {
+            _this._importExportService.downloadExcel(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', label);
+        });
+
         // subscribe to toolbar requests
         _this.subscriptions.push(_this.pubSubService.subscribe(_this.subMsgCmdTopic,
             msg => {

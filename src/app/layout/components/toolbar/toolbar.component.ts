@@ -313,4 +313,16 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
     }
 
+    downloadExcel() {
+        console.log('Downloading CSV');
+        this._importExportService.requestGetExcel(null);
+    }
+
+    downloadAdvancedExcel(item: { 'label': string, 'queryString': string }): void {
+        console.log(item);
+        this._importExportService.requestGetExcel(item.label);
+        // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
+    }
+
+
 }
