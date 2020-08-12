@@ -132,7 +132,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
         // Make sure params are different before refreshing view
         if (!this.addingNew && changes.formParams && this.formParams) {
-            if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) != JSON.stringify(changes.formParams.currentValue))) {
+            if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) !== JSON.stringify(changes.formParams.currentValue))) {
                 this.refreshView();
             }
         } else {
@@ -246,10 +246,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (inputKeys.hasOwnProperty(key)) {
                 const element = inputKeys[key];
                 if (validKeysArray != null && validKeysArray.find(e => e.key === key)) {
-                    if (typeof element === 'string' || element === null) {
+                    if (element == null || element.id == null) {
                         outputKeys[key] = element;
                     }
-                    else if (element.id) {
+                    else if (element.id != null) {
                         outputKeys[key] = element.id;
                     }
                 }
@@ -610,7 +610,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (event.actionTarget.keymap != null && event.actionTarget.keymap.length) { // explicit key map between tables
                 event.actionTarget.keymap.forEach(element => {
                     if (element.source != null && element.destination != null) {
-                        filteredKeys[element.destination] = keys[element.source].id != null ? keys[element.source].id : keys[element.source];
+                        filteredKeys[element.destination] = keys[element.source] != null ? keys[element.source].id != null ? keys[element.source].id : keys[element.source] : null;
                     }
                 });
             } else {
@@ -672,7 +672,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     // Patch all the values we got from query
                                     for (var k in result[0]) {
                                         if (result[0].hasOwnProperty(k)) {
+                                            // patch the form
                                             childrenArray[current_index].form.patchValue({ [k]: result[0][k] });
+                                            // patch the undelying data
+                                            const el = _this.filteredFormData[current_index].find(field => field.name === k);
+                                            el.value = result[0][k];
                                         }
                                     }
                                 }
