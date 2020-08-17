@@ -2,6 +2,12 @@
     "$schema": "../views.schema.json",
     "businessObjectName": "gruppiLavoroMembri",
     "entryKey": "gruppi_lavoro_membri",
+    "inputEvents": [
+        {
+            "eventName": "update_gruppi_lavoro_membri",
+            "actionType": "reload"
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -37,7 +43,8 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "delete from entrasp.gruppi_lavoro_membri where codice_part=$codice_part$ and id_gruppo_lavoro=$id_gruppo_lavoro$ and id_anagrafica=$id_anagrafica$"
+                    "queryFunct": "delete from entrasp.gruppi_lavoro_membri where codice_part=$codice_part$ and id_gruppo_lavoro=$id_gruppo_lavoro$ and id_anagrafica=$id_anagrafica$",
+                    "outputEventWhenComplete": "update_gruppi_lavoro_membri"
                 }
             ],
             "readOnly": false,
@@ -60,7 +67,7 @@
             "newLine": true
         },
         {
-            "autoGenerate": true,
+            "autoGenerate": false,
             "format": {
                 "dataType": "number",
                 "viewType": "input"
