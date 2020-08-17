@@ -147,7 +147,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // check and in case publish a table event on PubSub
         _this.formArray.changes.subscribe(
             c => { // publish when last element has been shown
-                if (!_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length && (!_this.eventTrigger || _this.eventTrigger == 'onReload')) {
+                if (!_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length && (!_this.eventTrigger || _this.eventTrigger === 'onReload')) {
                     // tslint:disable-next-line: max-line-length
                     _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: 0, data: _this.filteredFormData, type: 'page' });
                 }

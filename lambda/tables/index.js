@@ -443,12 +443,14 @@ function getNewQuery(entry_params, table_keys) {
 
         // set keys' default values and check for combobox queries
         let obj = new Object;
-        if (table_keys[element.key]) {
+        // add passed key value, unless it is autogenerate (must be null)
+        if (table_keys[element.key] && element.autoGenerate == null) {
             obj[element.key] = table_keys[element.key];
+        // add default value if any
         } else if (element.format.hasOwnProperty('value')) {
             obj[element.key] = element.format.value;
         } else {
-            obj[element.key] = '';
+            obj[element.key] = null;
         }
         Object.assign(defaultValues, obj);
         let comboQuery = element.format.comboQuery;
@@ -478,6 +480,9 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
     let autoGenKeyEntry = entry_keys.find(key => key.autoGenerate === true);
 
     let autoGenKey = autoGenKeyEntry != null && autoGenKeyEntry.key != null ? autoGenKeyEntry.key : null;
+
+    // further check if the value is passed from front-end, in such case skip the autogeneration
+    autoGenKey = keys[autoGenKey] != null ? null : autoGenKey;
 
     // process pre-defined queries for table/form view, if any
     if (entry_params.predefinedQueries) {
