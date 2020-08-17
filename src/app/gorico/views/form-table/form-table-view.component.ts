@@ -154,16 +154,14 @@ export class FormTableViewComponent implements OnChanges, OnInit {
         - 47 // Navibar
         - 28 // Separator
         - 48 // Tabs
-        - 36 // Full screen button
-        - 36 // New button
+        - 36 // Buttons
         - 2; // divider
     }
     else {
       this.formHeight = ((window.innerHeight - 64) * 0.33)
         - 28 // Separator
         - 48 // Tabs
-        - 36 // Full screen button
-        - 36 // New button
+        - 36 // Buttons
         - 2; // divider
     }
   }
