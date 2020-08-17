@@ -2,6 +2,12 @@
     "$schema": "../views.schema.json",
     "entryKey": "cpl_trattamenti_dati_sub_procedure_aziendali",
     "origin": "entrasp.cpl_trattamenti_dati_procedure_aziendali",
+    "inputEvents": [
+      {
+          "eventName": "update_procedure_aziendali",
+          "actionType": "reload"
+      }
+  ],
     "form_keys": [
       {
         "autoGenerate": false,
@@ -16,6 +22,34 @@
         "readOnly": false,
         "newLine": false
       },
+      {
+        "autoGenerate": false,
+        "format": {
+            "viewType": "button"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "cancella_procedure_aziendali",
+        "label": "delete",
+        "buttonIcon": "delete",
+        "newLine": false,
+        "outputEvent": {
+            "eventName": "procedure_aziendali_cancella",
+            "eventTrigger": "press"
+        },
+        "inputEvents": [
+            {
+                "eventName": "procedure_aziendali_cancella",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "delete from entrasp.cpl_trattamenti_dati_procedure_aziendali where codice_azienda=$codice_azienda$ and id_trattamento_dati=$id_trattamento_dati$ and id_procedura=$id_procedura$",
+                "outputEventWhenComplete": "update_procedure_aziendali"
+            }],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
       {
         "autoGenerate": false,
         "format": {
