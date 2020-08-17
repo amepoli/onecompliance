@@ -2,6 +2,12 @@
     "$schema": "../views.schema.json",
     "entryKey": "cpl_trattamenti_dati_categorie_dati_personali_sub",
     "origin": "entrasp.cpl_trattamenti_dati_categorie_dati_personali",
+    "inputEvents": [
+      {
+          "eventName": "update_categorie_dati",
+          "actionType": "reload"
+      }
+  ],
     "form_keys": [
       {
         "autoGenerate": false,
@@ -16,6 +22,34 @@
             "isPrimary": true,
             "newLine": false
       },
+      {
+        "autoGenerate": false,
+        "format": {
+            "viewType": "button"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "cancella_categorie_dati",
+        "label": "delete",
+        "buttonIcon": "delete",
+        "newLine": false,
+        "outputEvent": {
+            "eventName": "categorie_dati_cancella",
+            "eventTrigger": "press"
+        },
+        "inputEvents": [
+            {
+                "eventName": "categorie_dati_cancella",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "delete from entrasp.cpl_trattamenti_dati_categorie_dati_personali where codice_azienda=$codice_azienda$ and id_trattamento_dati=$id_trattamento_dati$ and id_trattamenti_dati_categorie_dati_personali=$id_trattamenti_dati_categorie_dati_personali$",
+                "outputEventWhenComplete": "update_categorie_dati"
+            }],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
       {
         "autoGenerate": false,
         "format": {

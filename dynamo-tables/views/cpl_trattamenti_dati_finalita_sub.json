@@ -2,6 +2,12 @@
     "$schema": "../views.schema.json",
     "entryKey": "cpl_trattamenti_dati_finalita_sub",
     "origin": "entrasp.cpl_trattamenti_dati_finalita",
+    "inputEvents": [
+      {
+          "eventName": "update_cpl_trattamenti_dati_finalita_sub",
+          "actionType": "reload"
+      }
+  ],
     "form_keys": [
       {
         "autoGenerate": false,
@@ -19,12 +25,54 @@
       {
         "autoGenerate": false,
         "format": {
+            "viewType": "button"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "cancella_finalita",
+        "label": "delete",
+        "buttonIcon": "delete",
+        "newLine": false,
+        "outputEvent": {
+            "eventName": "cancella_cpl_finalita",
+            "eventTrigger": "press"
+        },
+        "inputEvents": [
+            {
+                "eventName": "cancella_cpl_finalita",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "delete from entrasp.cpl_trattamenti_dati_finalita where codice_azienda=$codice_azienda$ and id_trattamento_dati=$id_trattamento_dati$ and id_trattamento_dati_finalita=$id_trattamento_dati_finalita$",
+                "outputEventWhenComplete": "update_cpl_trattamenti_dati_finalita_sub"
+            }
+        ],
+        "readOnly": false,
+        "sameOrigin": false,
+        "size": 0.5
+      },
+      {
+        "autoGenerate": false,
+        "format": {
           "viewType": "input",
           "dataType": "number"
         },
         "isHidden": true,
         "isPrimary": true,
         "key": "id_trattamento_dati",
+        "label": "ID",
+        "readOnly": false,
+        "newLine": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input",
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_trattamento_dati_finalita",
         "label": "ID",
         "readOnly": false,
         "newLine": false

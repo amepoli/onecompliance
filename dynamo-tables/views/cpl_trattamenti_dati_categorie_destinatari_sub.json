@@ -2,6 +2,12 @@
   "$schema": "../views.schema.json",
   "entryKey": "cpl_trattamenti_dati_categorie_destinatari_sub",
   "origin": "entrasp.cpl_trattamenti_dati_categorie_destinatari",
+  "inputEvents": [
+    {
+        "eventName": "update_categorie_destinatari",
+        "actionType": "reload"
+    }
+],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -17,6 +23,34 @@
       "readOnly": false,
       "newLine": false
     },
+    {
+      "autoGenerate": false,
+      "format": {
+          "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_categorie_destinatari",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+          "eventName": "categorie_destinatari_cancella",
+          "eventTrigger": "press"
+      },
+      "inputEvents": [
+          {
+              "eventName": "categorie_destinatari_cancella",
+              "actionType": "query",
+              "condition": "none",
+              "values": [],
+              "queryFunct": "delete from entrasp.cpl_trattamenti_dati_categorie_destinatari where codice_azienda=$codice_azienda$ and id_trattamento_dati=$id_trattamento_dati$ and id_trattamenti_dati_categorie_destinatari=$id_trattamenti_dati_categorie_destinatari$",
+              "outputEventWhenComplete": "update_categorie_destinatari"
+          }],
+          "readOnly": false,
+          "sameOrigin": false,
+          "size": 0.5
+      },
     {
       "autoGenerate": false,
       "format": {
