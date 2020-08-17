@@ -2,6 +2,12 @@
   "$schema": "../views.schema.json",
   "entryKey": "cpl_trattamenti_dati_rischi_sub",
   "origin": "entrasp.cpl_trattamenti_dati_rischi",
+  "inputEvents": [
+    {
+        "eventName": "update_categorie_rischi",
+        "actionType": "reload"
+    }
+],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -19,6 +25,34 @@
     {
       "autoGenerate": false,
       "format": {
+          "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_categorie_rischi",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+          "eventName": "categorie_rischi_cancella",
+          "eventTrigger": "press"
+      },
+      "inputEvents": [
+          {
+              "eventName": "categorie_rischi_cancella",
+              "actionType": "query",
+              "condition": "none",
+              "values": [],
+              "queryFunct": "delete from entrasp.cpl_trattamenti_dati_rischi where codice_azienda=$codice_azienda$ and id_trattamento_dati=$id_trattamento_dati$ and codice_rischio=$codice_rischio$",
+              "outputEventWhenComplete": "update_categorie_rischi"
+          }],
+          "readOnly": false,
+          "sameOrigin": false,
+          "size": 0.5
+      },
+    {
+      "autoGenerate": false,
+      "format": {
         "viewType": "input",
         "dataType": "number"
       },
@@ -33,7 +67,7 @@
       "autoGenerate": false,
       "format": {
         "viewType": "input",
-        "dataType": "number"
+        "dataType": "text"
       },
       "isHidden": true,
       "isPrimary": true,
