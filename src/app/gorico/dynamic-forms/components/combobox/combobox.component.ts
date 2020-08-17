@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FieldConfig, Item } from '../../field.interface';
 import { ReplaySubject, Subject } from 'rxjs';
@@ -28,27 +28,27 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   /** list of items filtered by search keyword */
   public filteredItems: ReplaySubject<Item[]> = new ReplaySubject<Item[]>(1);
 
-   /** Subject that emits when the component has been destroyed. */
-   private _onDestroy = new Subject<void>();
+  /** Subject that emits when the component has been destroyed. */
+  private _onDestroy = new Subject<void>();
 
 
-  constructor(private pubsubService: NgxPubSubService) {}
+  constructor(private pubsubService: NgxPubSubService) { }
 
   ngOnInit() {
-    
+
     const _this = this;
     // filter out null values
 
-    _this.field.options = _this.field.options.filter(x => x.name !== null); 
+    _this.field.options = _this.field.options.filter(x => x.name !== null);
 
     if (_this.field.value != null) {
-        _this.field.value = _this.field.options.find(x => x.id === _this.field.value);
-       // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
+      _this.field.value = _this.field.options.find(x => x.id === _this.field.value);
+      // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
     }
 
-      // load the initial bank list
+    // load the initial bank list
     _this.filteredItems.next(_this.field.options.slice());
-    
+
     // listen for search field value changes
     _this.itemFilterCtrl.valueChanges
       .pipe(takeUntil(_this._onDestroy))
@@ -60,7 +60,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     const _this = this;
     if (_this.field.value != null && this.field.eventName != null) {
-        _this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'});
+      _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.getFormattedId(_this.field.value.id), type: 'combobox' });
     }
   }
 
@@ -76,10 +76,9 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSelection(event: any) {
     if (event.value != null && this.field.eventName != null) {
-        this.pubsubService.publishEvent(this.field.eventName, {origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: event.value.id, type: 'combobox'}); 
+      this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
     }
   }
-
 
   private filterItems() {
     if (!this.field.options) {
@@ -97,5 +96,9 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     this.filteredItems.next(
       this.field.options.filter(item => item.name.toLowerCase().indexOf(search) > -1)
     );
+  }
+
+  private getFormattedId(id: any) {
+    this.field.inputType === 'text' ? `'${id}'` : id;
   }
 }
