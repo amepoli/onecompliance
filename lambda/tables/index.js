@@ -122,7 +122,7 @@ function replaceKeysArray(queryString, keysArray, keyTypes) {
 function getKeyTypes(entry_keys) {
     let keyTypes = entry_keys.map(k => {
         let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
-        return { key: k.key, dataType: dataType, isPrimary: k.isPrimary, isCalculated: k.queryFunct != null };
+        return { key: k.key, dataType: dataType, isPrimary: k.isPrimary, isCalculated: k.queryFunct != null, sameOrigin: k.sameOrigin};
     });
     return keyTypes;
 }
@@ -251,6 +251,10 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     for (const key in table_keys) {
         if (table_keys.hasOwnProperty(key)) { 
             let keyType = keyTypes.find(e => (e.key === key));
+            // it might happen with subtables that a key linked with parent table has not the same origin
+            if (keyType.sameOrigin != null && !keyType.sameOrigin) { 
+                continue;
+            }
             let delimiter = (keyType.dataType === 'text') ? '\'' : '';
             let element = table_keys[key];
             // replace single quotes with double quotes in strings
