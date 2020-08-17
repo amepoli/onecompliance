@@ -7,9 +7,16 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
   template: `
 <mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'margin-right': '1%', 'margin-left': '1%','width': field.width+'%'}" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
-<input matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
+<input *ngIf="field.inputType !== 'date'" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
     (blur)="onBlur()" (focus)="onFocus()"
     [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
+    
+<input *ngIf="field.inputType === 'date'" matInput [matDatepicker]="picker" [value]="field.value" [placeholder]="field.label" [formControlName]="field.name" [readonly]="field.readonly || readOnlyPage" 
+    (blur)="onBlur()" (focus)="onFocus()"
+    [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
+<mat-datepicker-toggle *ngIf="field.inputType === 'date'" matSuffix [for]="picker"></mat-datepicker-toggle>
+<mat-datepicker #picker></mat-datepicker>
+
 <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
 <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
 </ng-container>
