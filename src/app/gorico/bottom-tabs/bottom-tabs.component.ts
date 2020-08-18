@@ -73,7 +73,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
                 }
             });
 
-        } else if (changes.SaveData && (_this.filteredTabs[_this.activeIndex].type === 'tableForm')) {
+        } else if (changes.SaveData && (_this.filteredTabs[_this.activeIndex] != null && _this.filteredTabs[_this.activeIndex].type === 'tableForm')) {
             _this.tableFormSave = !_this.tableFormSave; // propagate to the child by toggling the parameter
         }
     }

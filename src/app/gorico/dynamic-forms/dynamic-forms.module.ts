@@ -73,6 +73,6 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     LabelComponent,
     SubformComponent
   ],
-  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'it-IT' }]
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'it' }]
 })
 export class DynamicFormsModule { }

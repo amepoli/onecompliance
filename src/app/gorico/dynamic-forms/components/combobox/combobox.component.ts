@@ -98,7 +98,8 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  private getFormattedId(id: any) {
-    this.field.inputType === 'text' ? `'${id}'` : id;
+  private getFormattedId(id: any): any {
+    //return this.field.inputType === 'text' ? `'${id}'` : id;
+    return id;
   }
 }
