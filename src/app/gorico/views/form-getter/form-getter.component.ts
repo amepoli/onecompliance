@@ -338,13 +338,19 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         _this.sendEvent.emit({ eventType: 'updateData', data: _this.filteredFormData });
     }
 
-    addRow(): void {
+    addRow(default_keys: any): void {
         const _this = this;
         _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, null, true, true, null, false).subscribe(
             result => {
                 console.log(result);
                 if (result.result === 'OK') {
                     result = result.data;
+                    // add passed keys, if any - useful to valorize father's keys in subtables
+                    if (default_keys != null) {
+                        result.forEach(element => {
+                            element = Object.assign(element, default_keys);
+                        }); 
+                    }
                     // update the status to prevent the whole table refresh
                     _this.addingNew = true;
 

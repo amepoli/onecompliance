@@ -94,7 +94,7 @@ export class FormTableViewComponent implements OnChanges, OnInit {
 
 
   addNew(): void {
-    this.formGetter.addRow();
+    this.formGetter.addRow(this.tableData.keys);
   }
 
   saveChanges(): void {
@@ -127,7 +127,7 @@ export class FormTableViewComponent implements OnChanges, OnInit {
         console.log(result);
         if (result.result === 'OK') {
           _this._toastService.showSuccessToast("Saved successfully!"); // show success toast
-          if (_this.formGetter.eventTrigger == 'onSave') {
+          if (_this.formGetter.eventTrigger === 'onSave') {
             setTimeout(() => {
               _this.sendEvent.emit({ eventType: _this.formGetter.outputEvent }); // notify parent
             }, 1000);
