@@ -131,22 +131,22 @@
   "predefinedQueries": [
     {
       "operation": "insert",
-      "queryString": "SELECT MAX(id_gruppo_lavoro)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part=$codice_part$;",
+      "queryString": "SELECT MAX(id_gruppo_lavoro)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
       "type": "preProcessing"
     },
     {
       "operation": "insert",
-      "queryString": "INSERT INTO entrasp.gruppi_lavoro(codice_part, id_gruppo_lavoro, descrizione, flag_ufficiale) values ($codice_part$,£next_id_gruppo£, $descrizione$, 0);",
+      "queryString": "INSERT INTO entrasp.gruppi_lavoro(codice_part, id_gruppo_lavoro, descrizione, flag_ufficiale) values ('€global_codice_part€',£next_id_gruppo£, $descrizione$, 0);",
       "type": "preProcessing"
     },
     {
       "operation": "insert",
-      "queryString": "SELECT MAX(id_centro_gest)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part=$codice_part$;",
+      "queryString": "SELECT MAX(id_centro_gest)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
       "type": "preProcessing"
     },
     {
       "operation": "insert",
-      "queryString": "INSERT INTO entrasp.centri_gestionali (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro) VALUES ($codice_part$, £next_id£, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, £next_id_gruppo£);",
+      "queryString": "INSERT INTO entrasp.centri_gestionali (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro) VALUES ('€global_codice_part€', £next_id£, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, £next_id_gruppo£);",
       "type": "main"
     },
     {
