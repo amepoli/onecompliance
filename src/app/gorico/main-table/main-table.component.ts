@@ -181,13 +181,13 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 //             }
                 //         });
                 // } else 
-                if (msg.type === 'add') { // toolbar sking for adding a new element
+                if (msg.type === 'add') { // toolbar asking for adding a new element
                     _this.historyPush();
                     _this.currentDescription = 'Nuovo elemento tabella ' + _this.tableName;
                     _this.formParams = {
                         entryName: _this.tableName,
                         index: 1,
-                        keys: _this.currentTableKeys,
+                        keys: _this.formParams.keys,
                         total: 1,
                         isNew: true,
                         showNavBar: false
@@ -279,8 +279,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
         if (event.eventType === 'navigate') {
 
             // Clear tabs
-            this.tabs = [];
-            this.showTabs = false;
+            _this.tabs = [];
+            _this.showTabs = false;
 
             // scroll to top within all parent list of elements
             _this.List.nativeElement.scrollTop = 0;
@@ -319,15 +319,15 @@ export class MainTableComponent implements OnInit, OnDestroy {
         } else if (event.eventType === 'tabData') {
             if (event.queryParams.tabs != null) {
                 // fill the bottom tabs
-                this.tabs = event.queryParams.tabs;
-                this.showTabs = true;
+                _this.tabs = event.queryParams.tabs;
+                _this.showTabs = true;
             } else {
-                this.showTabs = false;
+                _this.showTabs = false;
             }
         } else if (event.eventType === 'fullScreen') {
-            this.fullScreenTab = event.queryParams.value;
+            _this.fullScreenTab = event.queryParams.value;
         } else if (event.eventType === 'currentTableKeys') {  // table in subtable view providing its current keys
-            this.currentTableKeys = event.queryParams.keys;
+            _this.currentTableKeys = event.queryParams.keys;
         } else if (event.eventType === 'deletedForm') {
             _this.historyPop(_this.navigationHistory[_this.level - 1]); // go back
         } else if (event.eventType === 'gotSave') { // user pressed save button on form-view
@@ -351,7 +351,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         }
 
         // Calculate form height
-        this.calculateFormHeight();
+        _this.calculateFormHeight();
 
     }
 
