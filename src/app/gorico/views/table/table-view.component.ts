@@ -386,8 +386,7 @@ export class TableViewComponent implements OnChanges {
                 - 64 // Titlebar
                 - 101 // Navibar
                 - 48 // Tabs
-                - 36 // Full screen button
-                - 36; // Quick add button
+                - 36 // buttons
         }
     }
 

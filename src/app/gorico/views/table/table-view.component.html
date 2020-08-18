@@ -8,10 +8,25 @@
 
     </div>
 
-    <button *ngIf="tableData.showHeader" mat-button (click)="advSearch()">
-        <mat-icon>search</mat-icon>
-        Advanced Search
-    </button>
+
+    <div class="table-view-buttons">
+        <button *ngIf="tableData.showHeader" mat-button (click)="advSearch()">
+            <mat-icon>search</mat-icon>
+            Advanced Search
+        </button>
+
+        <div class="table-view-buttons-separator"></div>
+        <button *ngIf="tableData.showHeader || (!tableData.showHeader && isFullScreen)" mat-button (click)="quickAdd()">
+            <mat-icon>add</mat-icon>
+            Quick Add
+        </button>
+
+        <button *ngIf="tableData.showFullScreenButton" mat-button (click)="fullScreen()">
+            <mat-icon *ngIf="!isFullScreen">fullscreen</mat-icon>
+            <mat-icon *ngIf="isFullScreen">fullscreen_exit</mat-icon>
+            FullScreen
+        </button>
+    </div>
 
     <div *ngIf="showAdvSearch" class="adv-search">
         <dynamic-form class="form-container" [fields]='searchData' (submit)='search_submit($event)'
@@ -29,18 +44,6 @@
         </div>
         <br>
     </div>
-
-    <button *ngIf="tableData.showFullScreenButton" mat-button (click)="fullScreen()">
-        <mat-icon *ngIf="!isFullScreen">fullscreen</mat-icon>
-        <mat-icon *ngIf="isFullScreen">fullscreen_exit</mat-icon>
-        FullScreen
-    </button>
-
-
-    <button *ngIf="tableData.showHeader || (!tableData.showHeader && isFullScreen)" mat-button (click)="quickAdd()">
-        <mat-icon>add</mat-icon>
-        Quick Add
-    </button>
 
     <form-view [isQuickAdd]="true" *ngIf="showQuickAdd" class="quick-add" [tableData]="quickAddFormParams"
         (sendEvent)='onEvent($event)'>
