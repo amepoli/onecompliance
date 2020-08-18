@@ -188,7 +188,6 @@ export class MainTableComponent implements OnInit, OnDestroy {
                         entryName: _this.tableName,
                         index: 1,
                         keys: _this.formParams.keys,
-                        //keys: _this.currentTableKeys,
                         total: 1,
                         isNew: true,
                         showNavBar: false
