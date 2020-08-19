@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FieldConfig } from '../../field.interface';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { HelperService } from 'app/gorico/services/helper.service';
 @Component({
   selector: 'app-input',
   template: `
@@ -11,7 +12,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
     (blur)="onBlur()" (focus)="onFocus()"
     [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
     
-<input *ngIf="field.inputType === 'date'" matInput [matDatepicker]="picker" [value]="field.value" [placeholder]="field.label" [formControlName]="field.name" [readonly]="field.readonly || readOnlyPage" 
+<input *ngIf="field.inputType === 'date'" matInput [matDatepicker]="picker" [value]="field.value" [placeholder]="field.label" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" 
     (blur)="onBlur()" (focus)="onFocus()"
     [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
 <mat-datepicker-toggle *ngIf="field.inputType === 'date'" matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -32,6 +33,10 @@ export class InputComponent implements OnInit, AfterViewInit {
   constructor(private pubsubService: NgxPubSubService) { }
   ngOnInit(): void {
     const _this = this;
+
+
+
+
     _this.field.style = _this.field.style == null ? { background_color: 'transparent', font_color: 'black' } : _this.field.style;
     _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'transparent';
     _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
@@ -43,6 +48,9 @@ export class InputComponent implements OnInit, AfterViewInit {
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
       setTimeout(() => _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'blur' }), 50);
     }
+
+    // Format the field value if needed
+    _this.formatValue();
   }
 
   ngAfterViewInit(): void {
@@ -73,4 +81,21 @@ export class InputComponent implements OnInit, AfterViewInit {
     }
   }
 
+  formatValue() {
+    let _this = this;
+    if (_this.field.inputType === 'date') {
+      // Replace found all Constants
+      let newString = HelperService.getFormattedString(_this.field.value);
+
+      // If something was found, update values
+      if (newString !== _this.field.value) {
+        // Replace the field and form control value
+        _this.field.value = newString;
+        _this.group.get(_this.field.name).setValue(_this.field.value);
+
+        // If Event publish is required on startup
+        // _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'change' });
+      }
+    }
+  }
 }
