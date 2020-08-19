@@ -25,8 +25,8 @@ export class HelperService {
     // Constants
     public static CONSTANTS = {
         CURRENT_DATE: {
-            marker: 'CURRENT_DATE',
-            replace: (context: any, value: string) => { return context.replaceAll(value, 'CURRENT_DATE', context.getCurrentDate()); }
+            marker: '£CURRENT_DATE£',
+            replace: (context: any, value: string) => { return context.replaceAll(value, '£CURRENT_DATE£', context.getCurrentDate()); }
         }
     };
 
