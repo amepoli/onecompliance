@@ -1,19 +1,18 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-// import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { ToastService } from './toast.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { BackendService } from '../views/backend/backend.service';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
-import { AuthService } from '../login-page/auth.service';
-import { DialogService } from './dialog.service';
-import { MatDialog } from '@angular/material';
-import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
+import { Injectable } from '@angular/core';
 
 export interface MarkerReplacer {
+    /**
+     * Marker
+     */
     marker: string;
-    replace: Function
+    replace:
+    /**
+     * Replace marker with value
+     * @param context you should pass 'this' as context
+     * @param value value to replace with marker
+     * @returns replaced string 
+     */
+    (context: any, value: string) => string;
 };
 
 @Injectable({
