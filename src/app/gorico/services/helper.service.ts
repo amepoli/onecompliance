@@ -21,7 +21,9 @@ export interface MarkerReplacer {
 export class HelperService {
 
 
-    // Constants
+    /**
+     * Markers
+     */
     public static MARKERS = {
         CURRENT_DATE: {
             marker: '£CURRENT_DATE£',
