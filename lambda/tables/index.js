@@ -444,7 +444,7 @@ function getNewQuery(entry_params, table_keys) {
         // set keys' default values and check for combobox queries
         let obj = new Object;
         // add passed key value, unless it is autogenerate (must be null)
-        if (table_keys[element.key] && element.autoGenerate == null) {
+        if (table_keys[element.key] && (element.autoGenerate == null || element.autoGenerate === false)) {
             obj[element.key] = table_keys[element.key];
         // add default value if any
         } else if (element.format.hasOwnProperty('value')) {
@@ -523,7 +523,9 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                 let delimiter = (keyType.dataType === 'text') ? '\'' : '';
                 let element = keys[key];
                 // replace single quotes with double quotes in strings
-                element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
+                if (element != null) {
+                    element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
+                }
                 let fieldString = comma + key + '=' + delimiter + element + delimiter;
                 genString = genString + fieldString;
                 comma = ' AND '; // needed only the first time
