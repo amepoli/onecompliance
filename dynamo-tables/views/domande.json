@@ -2,6 +2,12 @@
     "$schema": "../views.schema.json",
     "businessObjectName": "domande",
     "entryKey": "domande",
+    "inputEvents": [
+      {
+          "eventName": "update_domande",
+          "actionType": "reload"
+      }
+  ],
     "form_keys": [
       {
         "autoGenerate": false,
@@ -16,6 +22,34 @@
         "newLine": true,
         "readOnly": true
       },
+      {
+        "autoGenerate": false,
+        "format": {
+            "viewType": "button"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "cancella_domande",
+        "label": "delete",
+        "buttonIcon": "delete",
+        "newLine": false,
+        "outputEvent": {
+            "eventName": "domande_cancella",
+            "eventTrigger": "press"
+        },
+        "inputEvents": [
+            {
+                "eventName": "domande_cancella",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "delete from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=$id_domanda$",
+                "outputEventWhenComplete": "update_domande"
+            }],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
       {
         "autoGenerate": true,
         "format": {
