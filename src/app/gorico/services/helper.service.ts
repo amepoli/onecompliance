@@ -22,7 +22,7 @@ export class HelperService {
 
 
     // Constants
-    public static CONSTANTS = {
+    public static MARKERS = {
         CURRENT_DATE: {
             marker: '£CURRENT_DATE£',
             replace: (context: any, value: string) => { return context.replaceAll(value, '£CURRENT_DATE£', context.getCurrentDate()); }
@@ -76,8 +76,8 @@ export class HelperService {
      */
     public static getFormattedString(input: string) {
         let result: string = input;
-        Object.keys(this.CONSTANTS).forEach(c => {
-            result = (this.CONSTANTS[c] as MarkerReplacer).replace(this, result);
+        Object.keys(this.MARKERS).forEach(c => {
+            result = (this.MARKERS[c] as MarkerReplacer).replace(this, result);
         });
         return result;
     }
