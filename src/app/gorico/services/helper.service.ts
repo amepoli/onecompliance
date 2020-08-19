@@ -72,7 +72,7 @@ export class HelperService {
     }
 
     /**
-     * Format the string by replacing all occurences of constants
+     * Format the string by replacing all occurences of markers
      * @param input
      * @returns Formatted string
      */
