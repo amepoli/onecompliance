@@ -33,10 +33,6 @@ export class InputComponent implements OnInit, AfterViewInit {
   constructor(private pubsubService: NgxPubSubService) { }
   ngOnInit(): void {
     const _this = this;
-
-
-
-
     _this.field.style = _this.field.style == null ? { background_color: 'transparent', font_color: 'black' } : _this.field.style;
     _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'transparent';
     _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
@@ -84,7 +80,7 @@ export class InputComponent implements OnInit, AfterViewInit {
   formatValue() {
     let _this = this;
     if (_this.field.inputType === 'date') {
-      // Replace found all Constants
+      // Replace all found markers
       let newString = HelperService.getFormattedString(_this.field.value);
 
       // If something was found, update values
