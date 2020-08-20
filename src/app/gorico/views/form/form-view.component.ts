@@ -13,6 +13,7 @@ import { FileManagerService } from 'app/main/apps/file-manager/file-manager.serv
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ReportService } from 'app/gorico/services/report.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
+import { HideAction, NavigationService } from 'app/gorico/services/navigation.service';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -84,6 +85,8 @@ export class FormViewComponent implements OnChanges, OnInit {
 
     savingState: savingStateType = 'save';
 
+    hideActions: string[] = []; // Hide actions
+
     constructor(public attachDialog: MatDialog,
         private backendService: BackendService,
         private authService: AuthService,
@@ -92,7 +95,8 @@ export class FormViewComponent implements OnChanges, OnInit {
         private _fileService: FileManagerService,
         private _pubSubService: NgxPubSubService,
         private _reportService: ReportService,
-        private _importExportService: ImportExportService
+        private _importExportService: ImportExportService,
+        private _navigationServce: NavigationService
     ) {
 
     }
@@ -325,5 +329,9 @@ export class FormViewComponent implements OnChanges, OnInit {
         // this._importExportService.requestReload(this.tableData.entryName);
     }
 
+    updateHideActions(hideActions) {
+        this.hideActions = this._navigationServce.getFormHideActions(hideActions);
+        console.log("updateHideActions", this.hideActions);
+    }
 }
 

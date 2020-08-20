@@ -10,7 +10,7 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
-import { NavigationService } from 'app/gorico/services/navigation.service';
+import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -103,6 +103,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     numRows = 1;
 
+    @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
+
     viewKeys: formViewKey[]; // view form fields as specified by the backend
     viewProperties: any[];
 
@@ -185,13 +187,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._importExportService.updateExportList(_this.formParams.entryName, []);
                     }
 
-                    // Load Navigation params if available
-                    if (params.navigationParams) {
-                        console.log('navigationParams', params.navigationParams);
-                        _this._navigationService.updateNavigationParams(params.navigationParams);
+                    // Load Hide actions if available
+                    if (params.hideActions) {
+                        _this.onHideActionsUpdated.emit(params.hideActions);
                     }
                     else {
-                        _this._navigationService.updateNavigationParams({ defaultBehavior: "showAll" });
+                        _this.onHideActionsUpdated.emit([]);
                     }
 
                     // Get View properties if exist

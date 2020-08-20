@@ -1,7 +1,8 @@
 <div class="form-view-toolbar-container" *ngIf="formView && formView.tableData">
     <mat-toolbar *ngIf="formView.tableData.showNavBar" class="p-0 mat-elevation-z1 form-view-toolbar">
 
-        <div class="div1" *ngIf="formView.tableData.navBarMode === 'detail'">
+        <div class="div1"
+            *ngIf="formView.tableData.navBarMode === 'detail' && !formView.hideActions.includes('navigate')">
             <button mat-button>
                 <mat-icon (click)="formView.toElement('first')">first_page</mat-icon>
             </button>
@@ -17,7 +18,7 @@
             </button>
         </div>
 
-        <div class="div2">
+        <div class="div2" *ngIf="!formView.hideActions.includes('save')">
             <button *ngIf="!formView.readOnly && formView.savingState === 'save'" mat-button (click)="formView.onSave()"
                 form="formView.element_form">
                 <mat-icon>save</mat-icon>
@@ -35,13 +36,13 @@
             </button>
         </div>
         <div class="div2" *ngIf="formView.tableData.navBarMode === 'detail'">
-            <button mat-button>
+            <button mat-button *ngIf="!formView.hideActions.includes('delete')">
                 <mat-icon (click)="formView.delElement()">delete</mat-icon>
             </button>
-            <button mat-button>
+            <button mat-button *ngIf="!formView.hideActions.includes('attachments')">
                 <mat-icon [matBadge]="formView.n_attach" (click)="formView.showAttachments()">attach_file</mat-icon>
             </button>
-            <button mat-button>
+            <button mat-button *ngIf="!formView.hideActions.includes('share')">
                 <mat-icon>share</mat-icon>
             </button>
         </div>

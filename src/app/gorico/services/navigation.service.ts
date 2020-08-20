@@ -1,59 +1,70 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-// import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { ToastService } from './toast.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { BackendService } from '../views/backend/backend.service';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
-import { AuthService } from '../login-page/auth.service';
-import { DialogService } from './dialog.service';
-import { MatDialog } from '@angular/material';
-import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
 
-
-export interface NavigationParams {
-    defaultBehavior: "showAll" | "hideAll";
-    addElement?: "show" | "hide";
-    deleteElement?: "show" | "hide";
-    saveElement?: "show" | "hide";
-    shareElement?: "show" | "hide";
-    attachments?: "show" | "hide";
-    navigateRecords?: "show" | "hide"
-};
+export interface HideAction {
+    viewType: "table" | "form";
+    tableActionType: "add" | "import_export";
+    formActionType: "add" | "delete" | "save" | "share" | "attachments" | "navigate" | "import_export";
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class NavigationService {
 
-    // local data
-    private _currentData: NavigationParams = {
-        defaultBehavior: "showAll"
-    };
-
-    // get current data
-    public getCurrentData() {
-        return this._currentData;
-    }
-
-    // Event Emitter for navigation params
-    public onNavigationParamsChanged: EventEmitter<NavigationParams> = new EventEmitter();
-
     /**
      * Constructor
-     *
      */
     constructor() {
     }
 
+    //#region Toolbar Hide actions
+
+    // Toolbar Hide actions data
+    private _toolbarHideActions: HideAction[] = [];
+
+    // get current data
+    public getToolbarHideActions() {
+        return this._toolbarHideActions;
+    }
+
+    // Event Emitter for hide actions
+    public onToolbarHideActionsChanged: EventEmitter<string[]> = new EventEmitter();
+
     /**
-     * Update Navigation Parameters
-     * @param navigationParams Navigation Parameters
+     * Update Tooblar Hide Actions
+     * @param hideActions Hide Actions
+     * @emits onToolbarHideActionsChanged Toolbar hide Actions as string[] 
      */
-    updateNavigationParams(navigationParams: NavigationParams) {
-        this._currentData = navigationParams;
-        this.onNavigationParamsChanged.next(this._currentData);
+    updateToolbarHideActions(hideActions: HideAction[]) {
+        // this._toolbarHideActions = hideActions;
+        this.onToolbarHideActionsChanged.emit(this.getTableHideActions(hideActions));
+    }
+
+    //#endregion
+
+    /**
+     * Get Form Hide Actions
+     * @param hideActions Hide Actions list
+     * @returns Form Hide Actions
+     */
+    getFormHideActions(hideActions: HideAction[]) {
+        if (!hideActions || !hideActions) {
+            return [];
+        }
+        console.log(hideActions.filter(a => a.viewType === "form"));
+        return hideActions.filter(a => a.viewType === "form").map(a => a.formActionType);
+    }
+
+    /**
+     * Get Table Hide Actions
+     * @param hideActions Hide Actions list
+     * @returns Table Hide Actions
+     */
+    getTableHideActions(hideActions: HideAction[]) {
+        if (!hideActions || !hideActions.length) {
+            return [];
+        }
+        return hideActions.filter(a => a.viewType === "table").map(a => a.tableActionType);
     }
 
 }

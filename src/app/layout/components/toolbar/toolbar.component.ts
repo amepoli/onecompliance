@@ -20,6 +20,7 @@ import { Router } from '@angular/router';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ReportService } from 'app/gorico/services/report.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
+import { NavigationService } from 'app/gorico/services/navigation.service';
 
 
 @Component({
@@ -49,6 +50,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     currentCompany: string;
 
+    hideActions: string[] = []; // Hide Actions
+
     // Private
     private _unsubscribeAll: Subject<any>;
 
@@ -70,7 +73,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         private _pubSubService: NgxPubSubService,
         private router: Router,
         private _reportService: ReportService,
-        private _importExportService: ImportExportService
+        private _importExportService: ImportExportService,
+        private _navigationService: NavigationService
     ) {
         // Set the defaults
         this.userStatusOptions = [
@@ -168,6 +172,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 console.log("Items cleared!");
             }
             _this.exportList = data.items;
+        });
+
+        _this._navigationService.onToolbarHideActionsChanged.subscribe(hideActions => {
+            _this.hideActions = hideActions;
         });
 
         // Old method using pubsubservice

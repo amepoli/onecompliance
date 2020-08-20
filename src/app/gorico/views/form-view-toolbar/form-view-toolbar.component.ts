@@ -1,7 +1,8 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges } from '@angular/core';
 
 import 'rxjs/add/operator/filter';
 import { FormViewComponent } from '../form/form-view.component';
+import { NavigationService } from 'app/gorico/services/navigation.service';
 
 @Component({
     selector: 'form-view-toolbar',
@@ -13,7 +14,10 @@ export class FormViewToolbarComponent implements DoCheck {
 
     @Input("formView") formView: FormViewComponent;
 
-    constructor(private cdr: ChangeDetectorRef) { }
+    hideActions: string[];
+    constructor(private cdr: ChangeDetectorRef,
+        private _navigationService: NavigationService) {
+    }
 
     ngDoCheck() {
         this.cdr.detectChanges();
