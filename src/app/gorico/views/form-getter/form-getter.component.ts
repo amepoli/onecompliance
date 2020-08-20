@@ -340,6 +340,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     processViewAttributes(attributes): void {
         const _this = this;
+        if (attributes == null) {
+            return;
+        }
         _this.viewKeys.forEach(viewKey => {
             if (attributes[viewKey.key] == null) {
                 return;
