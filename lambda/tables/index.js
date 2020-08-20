@@ -84,7 +84,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                         }
                         console.log(`newString Object: ${newString}`);
                     }
-                } else if (typeof keys[key] !== 'object') {  // avoid spourious values like arrays form events
+                } else if (typeof keys[key] !== 'object' || keys[key] == null) {  // avoid spourious values like arrays form events - n.b.: null is 'object'
                     let bracket = (delimiter === '$' && keyType && keyType.dataType === 'text') ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
                     // TO BE CHECKED

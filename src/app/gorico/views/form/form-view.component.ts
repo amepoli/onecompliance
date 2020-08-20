@@ -218,6 +218,8 @@ export class FormViewComponent implements OnChanges, OnInit {
                     this.savingState = 'done';
                     setTimeout(() => {
                         this.savingState = 'save';
+                        // Show success toast
+                        this._toastService.showSuccessToast('Saved');
                         this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
                     }, 1000);
                 }
