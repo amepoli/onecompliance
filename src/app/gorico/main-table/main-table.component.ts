@@ -16,15 +16,13 @@ import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from '../services/dialog.service';
 import { ImportExportService } from '../services/import_export.service';
 import { ReportService } from '../services/report.service';
-
+import { NavigationService, HideAction } from '../services/navigation.service';
 
 @Component({
     selector: 'main-table',
     templateUrl: './main-table.component.html',
     styleUrls: ['./main-table.component.scss']
 })
-
-
 
 export class MainTableComponent implements OnInit, OnDestroy {
 
@@ -51,7 +49,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
         index: 0,
         total: 0,
         isNew: false,
-        showNavBar: true
+        showNavBar: true,
+        navBarMode: 'detail'
     };
 
     private level = 0;  // current depth of navigation
@@ -98,6 +97,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         private _dialogService: DialogService,
         private _importExportService: ImportExportService,
         private _reportService: ReportService,
+        private _navigationService: NavigationService,
         private _cdr: ChangeDetectorRef) {
     }
 
@@ -190,7 +190,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
                         keys: _this.formParams.keys,
                         total: 1,
                         isNew: true,
-                        showNavBar: false
+                        showNavBar: true,
+                        navBarMode: 'add'
                     };
                     _this.tableType = 'form';  // push the visualization only at this point, needed if moving from table to form view
                 } else if (msg.type === 'list') { // toolbar asking to go back to list
@@ -345,7 +346,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 keys: _this.currentPrimaryKeys[newIndex - 1],
                 total: newTotal,
                 isNew: false,
-                showNavBar: _this.formParams.showNavBar
+                showNavBar: _this.formParams.showNavBar,
+                navBarMode: 'detail'
             };
             _this.tableType = 'form';  // push the visualization only at this point, needed if moving from table to form view
         }
@@ -410,7 +412,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
             index: 0,
             total: 0,
             isNew: false,
-            showNavBar: true
+            showNavBar: true,
+            navBarMode: 'detail'
         };
     }
 
@@ -439,8 +442,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         this.formView.refreshView();
     }
 
+    updateHideActions(hideActions: HideAction[]) {
+        this._navigationService.updateToolbarHideActions(hideActions);
+    }
 }
-
-
-
-
