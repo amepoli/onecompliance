@@ -10,6 +10,7 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
+import { NavigationService } from 'app/gorico/services/navigation.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -126,7 +127,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private authService: AuthService,
         private _toastService: ToastService,
         private _dialogService: DialogService,
-        private _importExportService: ImportExportService) { }
+        private _importExportService: ImportExportService,
+        private _navigationService: NavigationService,
+    ) { }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.filter && this.results && this.results.length) {
@@ -180,6 +183,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                     else {
                         _this._importExportService.updateExportList(_this.formParams.entryName, []);
+                    }
+
+                    // Load Navigation params if available
+                    if (params.navigationParams) {
+                        console.log('navigationParams', params.navigationParams);
+                        _this._navigationService.updateNavigationParams(params.navigationParams);
+                    }
+                    else {
+                        _this._navigationService.updateNavigationParams({ defaultBehavior: "showAll" });
                     }
 
                     // Get View properties if exist
@@ -349,7 +361,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if (default_keys != null) {
                         result.forEach(element => {
                             element = Object.assign(element, default_keys);
-                        }); 
+                        });
                     }
                     // update the status to prevent the whole table refresh
                     _this.addingNew = true;
