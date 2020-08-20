@@ -330,7 +330,7 @@ export class FormViewComponent implements OnChanges, OnInit {
         // this._importExportService.requestReload(this.tableData.entryName);
     }
 
-    updateHideActions(hideActions) {
+    updateHideActions(hideActions: HideAction[]) {
         this.hideActions = this._navigationServce.getFormHideActions(hideActions);
         this.onHideActionsUpdated.emit(hideActions);
     }
