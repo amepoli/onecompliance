@@ -14,9 +14,7 @@ export class FormViewToolbarComponent implements DoCheck {
 
     @Input("formView") formView: FormViewComponent;
 
-    hideActions: string[];
-    constructor(private cdr: ChangeDetectorRef,
-        private _navigationService: NavigationService) {
+    constructor(private cdr: ChangeDetectorRef) {
     }
 
     ngDoCheck() {

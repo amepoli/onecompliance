@@ -16,16 +16,13 @@ import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from '../services/dialog.service';
 import { ImportExportService } from '../services/import_export.service';
 import { ReportService } from '../services/report.service';
-import { NavigationService } from '../services/navigation.service';
-
+import { NavigationService, HideAction } from '../services/navigation.service';
 
 @Component({
     selector: 'main-table',
     templateUrl: './main-table.component.html',
     styleUrls: ['./main-table.component.scss']
 })
-
-
 
 export class MainTableComponent implements OnInit, OnDestroy {
 
@@ -445,11 +442,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         this.formView.refreshView();
     }
 
-    updateHideActions(hideActions) {
+    updateHideActions(hideActions: HideAction[]) {
         this._navigationService.updateToolbarHideActions(hideActions);
     }
 }
-
-
-
-
