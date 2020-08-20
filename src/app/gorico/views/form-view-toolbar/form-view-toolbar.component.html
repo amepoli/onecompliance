@@ -1,7 +1,7 @@
 <div class="form-view-toolbar-container" *ngIf="formView && formView.tableData">
     <mat-toolbar *ngIf="formView.tableData.showNavBar" class="p-0 mat-elevation-z1 form-view-toolbar">
 
-        <div class="div1">
+        <div class="div1" *ngIf="formView.tableData.navBarMode === 'detail'">
             <button mat-button>
                 <mat-icon (click)="formView.toElement('first')">first_page</mat-icon>
             </button>
@@ -21,16 +21,20 @@
             <button *ngIf="!formView.readOnly && formView.savingState === 'save'" mat-button (click)="formView.onSave()"
                 form="formView.element_form">
                 <mat-icon>save</mat-icon>
+                <span *ngIf="formView.tableData.navBarMode === 'add'">Save</span>
             </button>
 
             <button *ngIf="!formView.readOnly && formView.savingState === 'saving'" mat-button>
                 <mat-icon>cloud_upload</mat-icon>
+                <span *ngIf="formView.tableData.navBarMode === 'add'">Save</span>
             </button>
 
             <button *ngIf="!formView.readOnly && formView.savingState === 'done'" mat-button>
                 <mat-icon>cloud_done</mat-icon>
+                <span *ngIf="formView.tableData.navBarMode === 'add'">Save</span>
             </button>
-
+        </div>
+        <div class="div2" *ngIf="formView.tableData.navBarMode === 'detail'">
             <button mat-button>
                 <mat-icon (click)="formView.delElement()">delete</mat-icon>
             </button>

@@ -76,7 +76,8 @@ export class TableViewComponent implements OnChanges {
         index: 1,
         total: 1,
         isNew: true,
-        showNavBar: false
+        showNavBar: false,
+        navBarMode: 'detail'
     };
 
     showQuickAdd = false;

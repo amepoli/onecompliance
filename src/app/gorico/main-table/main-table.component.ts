@@ -51,7 +51,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
         index: 0,
         total: 0,
         isNew: false,
-        showNavBar: true
+        showNavBar: true,
+        navBarMode: 'detail'
     };
 
     private level = 0;  // current depth of navigation
@@ -190,7 +191,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
                         keys: _this.formParams.keys,
                         total: 1,
                         isNew: true,
-                        showNavBar: false
+                        showNavBar: true,
+                        navBarMode: 'add'
                     };
                     _this.tableType = 'form';  // push the visualization only at this point, needed if moving from table to form view
                 } else if (msg.type === 'list') { // toolbar asking to go back to list
@@ -345,7 +347,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
                 keys: _this.currentPrimaryKeys[newIndex - 1],
                 total: newTotal,
                 isNew: false,
-                showNavBar: _this.formParams.showNavBar
+                showNavBar: _this.formParams.showNavBar,
+                navBarMode: 'detail'
             };
             _this.tableType = 'form';  // push the visualization only at this point, needed if moving from table to form view
         }
@@ -410,7 +413,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
             index: 0,
             total: 0,
             isNew: false,
-            showNavBar: true
+            showNavBar: true,
+            navBarMode: 'detail'
         };
     }
 

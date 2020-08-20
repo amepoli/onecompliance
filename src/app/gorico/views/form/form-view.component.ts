@@ -48,6 +48,7 @@ export interface formViewParams {
     total: number;
     isNew: boolean;
     showNavBar: boolean;
+    navBarMode: string;
 }
 
 type savingStateType = 'save' | 'saving' | 'done';
