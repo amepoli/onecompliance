@@ -284,17 +284,18 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if (results.properties.readOnly != null && results.properties.readOnly.length) {
                         _this.readonlyRows = results.properties.readOnly.map(p => p.label);
                     }
-                    results = results.data;
+
                     // signal parent to show/hide "save" icon
                     _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly });
                     if (_this.formParams.isNew) {  // handle newly set primary keys
                         const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
-                        _this.currentKeys = _this.getCurrentKeys(primaryKeys, results[0]);  // TBC why do we receive an array with one element here?
+                        _this.currentKeys = _this.getCurrentKeys(primaryKeys, results.data[0]);  // TBC why do we receive an array with one element here?
                         _this.sendEvent.emit({ eventType: 'updateKeys', viewKeys: _this.currentKeys });
                     }
 
                     // Process results
-                    _this.results = results;
+                    _this.results = results.data;
+                    _this.processViewAttributes(results.attributes);
                     _this.processResults(_this.results);
 
                     // Stop loading
@@ -324,7 +325,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             });
     }
 
-    processResults(results) {
+    processViewAttributes(attributes): void {
+        const _this = this;
+        _this.viewKeys.forEach(viewKey => {
+            if (attributes[viewKey.key] == null) {
+                return;
+            }
+            for (const attribute in attributes[viewKey.key]) {
+                if (Object.prototype.hasOwnProperty.call(attributes[viewKey.key], attribute)) {
+                    const element = attributes[viewKey.key][attribute];
+                    viewKey[attribute] = element;
+                }
+            }
+        });
+    }
+
+    processResults(results): void {
         const _this = this;
         _this.numRows = results.length;
 

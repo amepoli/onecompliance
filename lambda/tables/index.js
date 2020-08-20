@@ -668,6 +668,40 @@ function getDeleteQuery(entry_params, table_keys) {
 
 }
 
+async function processAttributeQueries(entry_params, table_keys, client) {
+    
+    let entry_keys = entry_params.form_keys;
+
+    let keyTypes = getKeyTypes(entry_keys);
+
+    let attributes = {};
+
+    for (let i = 0; i < entry_keys.length; i++) {
+        const entry_key = entry_keys[i];
+        if (entry_key.key == null || entry_key.attributeFuncts == null || entry_key.attributeFuncts.length === 0) {
+            continue;
+        }
+        attributes[entry_key.key] = {};
+        for (let j = 0; j < entry_key.attributeFuncts.length; j++) {
+            const attribute = entry_key.attributeFuncts[j];
+            if (attribute.queryString == null || attribute.attributeType == null || (attribute.attributeType === 'style' && attribute.styleAttribute == null) ) {
+                continue;
+            }
+            const query = replaceKeys(attribute.queryString, table_keys, keyTypes);
+            let result = await client.query(query);
+            result = result.rows[0];
+            if (attribute.attributeType === 'style') {
+                let attr_style = {};
+                attr_style[attribute.styleAttribute] = result;
+                attributes[entry_key.key]['style'] = Object.assign(attributes[entry_key.key]['style'], attr_style);
+            } else {
+                attributes[entry_key.key][attribute.attributeType] = result;
+            }
+        }
+    };
+    return attributes;
+}
+
 async function processPreMainPost(queryString, client, notFullTable) {
 
     let local_keys = {}; // additional keys generated with pre-main-post processing  
@@ -1091,6 +1125,8 @@ exports.handler = async (event, context) => {
 
     var tableProperties;
 
+    var attributes = {};
+
     try {
 
 
@@ -1182,6 +1218,11 @@ exports.handler = async (event, context) => {
 
             if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
                 queryData = { table_data: queryData, search_options: searchOptions };
+            }
+
+            // process attributeFuncts
+            if (isFormRecord) {
+                attributes = processAttributeQueries(entry_params, table_keys, client);
             }
 
             // process properties query
@@ -1287,7 +1328,6 @@ exports.handler = async (event, context) => {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
-        "body": JSON.stringify({ result: 'OK', flags: flags, data: queryData, properties: tableProperties })
-
+        "body": JSON.stringify({ result: 'OK', flags: flags, data: queryData, attributes: attributes, properties: tableProperties })
     };
 };

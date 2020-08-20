@@ -102,17 +102,31 @@
                     "viewType": {
                         "type": "string",
                         "description": "M: type of view affected",
-                        "enum": ["table", "form"]
+                        "enum": [
+                            "table", 
+                            "form"
+                        ]
                     },
                     "tableActionType": {
                         "type": "string",
                         "description": "?: action affected (& field mandatory) when viewType='table'",
-                        "enum":["add", "import_export"]
+                        "enum":[
+                            "add", 
+                            "import_export"
+                        ]
                     },
                     "formActionType": {
                         "type": "string",
                         "description": "?: action affected (& field mandatory) when viewType='form'",
-                        "enum":["add", "delete", "save", "share", "attachments", "navigate", "import_export"]
+                        "enum":[
+                            "add", 
+                            "delete", 
+                            "save", 
+                            "share", 
+                            "attachments", 
+                            "navigate", 
+                            "import_export"
+                        ]
                     }
                 }
             }
@@ -737,11 +751,73 @@
                     },
                     "queryFunct": {
                         "type": "string",
-                        "description": "?: postgresql query for the column, exclude the field from automatic query. Must NOT be used together with sameOrigin."
+                        "description": "?: postgresql query for the key value, exclude the field from automatic query. Must NOT be used together with sameOrigin."
                     },
                     "evalFunct": {
                         "type": "string",
                         "description": "?: javascript expression to evaluate the value of the field, typically with £ contoured local parameters. Can or cannot have same origin."
+                    },
+                    "attributeFuncts": {
+                        "type": "array",
+                        "description": "?: list of postgresql queries to set various key properties",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "attributeType", 
+                                "queryString"
+                            ],
+                            "additionalProperties": false,
+                            "anyOf": [
+                                {
+                                    "properties": {
+                                        "attributeType": {
+                                            "enum": [
+                                                "isHidden", 
+                                                "readOnly"
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "properties": {
+                                        "attributeType": {
+                                            "enum": [
+                                                "style"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "styleAttribute"
+                                    ]
+                                }
+                            ],
+                            "properties": {
+                                "attributeType": {
+                                    "type": "string",
+                                    "description": "M: affected attribute",
+                                    "enum": [
+                                        "isHidden", 
+                                        "readOnly", 
+                                        "style"
+                                    ]
+                                },
+                                "queryString": {
+                                    "type": "string",
+                                    "description": "M: query string, must return a value of type coherent with the attribute (e.g. boolean for isHidden)"
+                                },
+                                "styleAttribute": {
+                                    "type": "string",
+                                    "description": "?: type of style attribute, mandatory and only applicable if 'attributeType' = 'style'",
+                                    "enum": [
+                                        "background_color",
+                                        "font_color",
+                                        "font_size",
+                                        "font_style",
+                                        "font_weight"
+                                    ]
+                                }
+                            }
+                        }
                     },
                     "format": {
                         "$ref": "#/definitions/formDataFormat"
