@@ -175,6 +175,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         });
 
         _this._navigationService.onToolbarHideActionsChanged.subscribe(hideActions => {
+            console.log("Toolbar hide actions", hideActions);
             _this.hideActions = hideActions;
         });
 

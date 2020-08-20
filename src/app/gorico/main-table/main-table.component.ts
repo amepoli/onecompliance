@@ -16,6 +16,7 @@ import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from '../services/dialog.service';
 import { ImportExportService } from '../services/import_export.service';
 import { ReportService } from '../services/report.service';
+import { NavigationService } from '../services/navigation.service';
 
 
 @Component({
@@ -99,6 +100,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         private _dialogService: DialogService,
         private _importExportService: ImportExportService,
         private _reportService: ReportService,
+        private _navigationService: NavigationService,
         private _cdr: ChangeDetectorRef) {
     }
 
@@ -443,6 +445,9 @@ export class MainTableComponent implements OnInit, OnDestroy {
         this.formView.refreshView();
     }
 
+    updateHideActions(hideActions) {
+        this._navigationService.updateToolbarHideActions(hideActions);
+    }
 }
 
 

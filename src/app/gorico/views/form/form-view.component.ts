@@ -86,6 +86,7 @@ export class FormViewComponent implements OnChanges, OnInit {
     savingState: savingStateType = 'save';
 
     hideActions: string[] = []; // Hide actions
+    @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
 
     constructor(public attachDialog: MatDialog,
         private backendService: BackendService,
@@ -331,7 +332,7 @@ export class FormViewComponent implements OnChanges, OnInit {
 
     updateHideActions(hideActions) {
         this.hideActions = this._navigationServce.getFormHideActions(hideActions);
-        console.log("updateHideActions", this.hideActions);
+        this.onHideActionsUpdated.emit(hideActions);
     }
 }
 

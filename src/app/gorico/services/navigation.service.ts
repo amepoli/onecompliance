@@ -51,7 +51,6 @@ export class NavigationService {
         if (!hideActions || !hideActions) {
             return [];
         }
-        console.log(hideActions.filter(a => a.viewType === "form"));
         return hideActions.filter(a => a.viewType === "form").map(a => a.formActionType);
     }
 
