@@ -1,23 +1,22 @@
 {
 	"$schema": "../views.schema.json",
 	"entryKey": "progetti",
-    "predefinedQueries": [
-        {
-            "type": "main",
-            "operation": "insert",
-            "queryString": "select entrasp.progetti_insert($codice_azienda$,$titolo$,$codice_progetto$,'€codice_attivita€');"
-        }
-    ],
-
+	"predefinedQueries": [
+		{
+			"type": "main",
+			"operation": "insert",
+			"queryString": "select entrasp.progetti_insert($codice_azienda$,$titolo$,$codice_progetto$,'€codice_attivita€');"
+		}
+	],
 	"form_keys": [
 		{
 			"autoGenerate": false,
 			"format": {
-                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO';",
-                "options": [],
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO';",
+				"options": [],
 				"viewType": "combobox",
 				"dataType": "text"
-            },
+			},
 			"label": "stato",
 			"key": "stato",
 			"readOnly": false,
@@ -28,12 +27,12 @@
 		{
 			"autoGenerate": false,
 			"format": {
-                "comboQuery": "SELECT codice_attivita AS id, descrizione AS name  FROM entrasp.attivita  WHERE codice_azienda=$codice_azienda$ and codice_attivita_parent is null;",
-                "options": [],
+				"comboQuery": "SELECT codice_attivita AS id, descrizione AS name  FROM entrasp.attivita  WHERE codice_azienda=$codice_azienda$ and codice_attivita_parent is null;",
+				"options": [],
 				"viewType": "combobox",
 				"dataType": "text"
-            },
-            "label": "Modello di progetto",
+			},
+			"label": "Modello di progetto",
 			"key": "codice_attivita",
 			"readOnly": false,
 			"isHidden": false,
@@ -125,7 +124,7 @@
 				"comboQuery": "SELECT an.id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE  ra.codice_ruolo='CLI' and an.codice_part=$codice_part$;",
 				"options": [],
 				"viewType": "combobox"
-			  },
+			},
 			"label": "id_cliente",
 			"key": "id_cliente",
 			"readOnly": false,
@@ -147,7 +146,6 @@
 			"isPrimary": false,
 			"newLine": true
 		}
-
 	],
 	"origin": "entrasp.progetti",
 	"search_keys": [
@@ -183,7 +181,7 @@
 		}
 	],
 	"subTables": [
-			{
+		{
 			"entryKey": "consuntivazioni_sub",
 			"keys": [
 				{
@@ -212,7 +210,6 @@
 			],
 			"label": "Fasi del progetto"
 		}
-		
 	],
 	"table_keys": [
 		{

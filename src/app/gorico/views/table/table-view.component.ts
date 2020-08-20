@@ -8,6 +8,7 @@ import { ToastService } from 'app/gorico/services/toast.service';
 import { ReportService } from 'app/gorico/services/report.service';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
+import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
 
 export interface tableViewParams {
     entryName: string;
@@ -76,7 +77,8 @@ export class TableViewComponent implements OnChanges {
         index: 1,
         total: 1,
         isNew: true,
-        showNavBar: false
+        showNavBar: false,
+        navBarMode: 'detail'
     };
 
     showQuickAdd = false;
@@ -94,6 +96,9 @@ export class TableViewComponent implements OnChanges {
     isLoading = true;
 
     isFullScreen = false;
+
+    hideActions: HideAction[]; // Hide actions
+    @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
 
     viewKeys: tableViewKey[];  // view fields as specified by the backend
 
@@ -118,7 +123,8 @@ export class TableViewComponent implements OnChanges {
         private _pubSubService: NgxPubSubService,
         private _toastService: ToastService,
         private _reportService: ReportService,
-        private _importExportService: ImportExportService
+        private _importExportService: ImportExportService,
+        private _navigationService: NavigationService
     ) {
 
         this.calculateTableHeight();
@@ -183,6 +189,16 @@ export class TableViewComponent implements OnChanges {
                 else {
                     _this._importExportService.updateExportList(_this.tableData.entryName, []);
                 }
+
+                // Load Hide Actions if available
+                if (params.hideActions) {
+                    _this.hideActions = params.hideActions;
+                }
+                else {
+                    _this.hideActions = [];
+                }
+                _this.onHideActionsUpdated.emit(_this.hideActions);
+
             }
             else {
                 _this.isLoading = false;
