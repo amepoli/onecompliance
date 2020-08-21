@@ -97,7 +97,7 @@ export class TableViewComponent implements OnChanges {
 
     isFullScreen = false;
 
-    hideActions: HideAction[]; // Hide actions
+    hideActions: string[]; // Hide actions
     @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
 
     viewKeys: tableViewKey[];  // view fields as specified by the backend
@@ -192,12 +192,12 @@ export class TableViewComponent implements OnChanges {
 
                 // Load Hide Actions if available
                 if (params.hideActions) {
-                    _this.hideActions = params.hideActions;
+                    _this.hideActions = _this._navigationService.getTableHideActions(params.hideActions);
                 }
                 else {
                     _this.hideActions = [];
                 }
-                _this.onHideActionsUpdated.emit(_this.hideActions);
+                _this.onHideActionsUpdated.emit(params.hideActions);
 
             }
             else {
