@@ -33,11 +33,13 @@ export class NavigationService {
     /**
      * Update Tooblar Hide Actions
      * @param hideActions Hide Actions
-     * @emits onToolbarHideActionsChanged Toolbar hide Actions as string[] 
+     * @param viewType The parent view containing hide actions
+     * @emits onToolbarHideActionsChanged Toolbar hide Actions as string[]
      */
-    updateToolbarHideActions(hideActions: HideAction[]) {
-        // this._toolbarHideActions = hideActions;
-        this.onToolbarHideActionsChanged.emit(this.getTableHideActions(hideActions));
+    updateToolbarHideActions(hideActions: HideAction[], viewType: string) {
+        viewType === 'table'
+            ? this.onToolbarHideActionsChanged.emit(this.getTableHideActions(hideActions))
+            : this.onToolbarHideActionsChanged.emit(this.getFormHideActions(hideActions));
     }
 
     //#endregion
@@ -48,10 +50,12 @@ export class NavigationService {
      * @returns Form Hide Actions
      */
     getFormHideActions(hideActions: HideAction[]) {
-        if (!hideActions || !hideActions) {
+        if (!hideActions || !hideActions.length) {
             return [];
         }
-        return hideActions.filter(a => a.viewType === "form").map(a => a.formActionType);
+        return hideActions
+            .filter(a => a.viewType === "form")
+            .map(a => a.formActionType);
     }
 
     /**
@@ -63,7 +67,9 @@ export class NavigationService {
         if (!hideActions || !hideActions.length) {
             return [];
         }
-        return hideActions.filter(a => a.viewType === "table").map(a => a.tableActionType);
+        return hideActions
+            .filter(a => a.viewType === "table")
+            .map(a => a.tableActionType);
     }
 
 }

@@ -442,7 +442,7 @@ export class MainTableComponent implements OnInit, OnDestroy {
         this.formView.refreshView();
     }
 
-    updateHideActions(hideActions: HideAction[]) {
-        this._navigationService.updateToolbarHideActions(hideActions);
+    updateHideActions(hideActions: HideAction[], viewType: string) {
+        this._navigationService.updateToolbarHideActions(hideActions, viewType);
     }
 }
