@@ -86,8 +86,7 @@
             "label": "Codice",
             "queryFunct": "SELECT codice from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
             "newLine": false,
-            "readOnly": false,
-            "sameOrigin": false
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -408,15 +407,28 @@
             "queryCond": "id_modello_test=$id_modello_test$"
         },
         {
+            "fieldName": "id_centro_gest",
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Centro Gestionale",
+            "newLine": true,
+            "queryCond": "(select id_centro_gest from entrasp.modello_test_fields(codice_azienda, id_modello_test))= $id_centro_gest$"
+        },
+        {
             "fieldName": "id_tipo_modello_test",
             "format": {
-                "dataType": "number",
-                "viewType": "input"
+                "comboQuery": "SELECT id_tipo_modello_test AS id,descrizione  AS name  FROM entrasp.tipi_modello_test WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
             },
-            "label": "Id tipo modello test",
+            "label": "Tipo modello test",
             "newLine": true,
-            "queryCond": "id_tipo_modello_test=$id_tipo_modello_test$"
+            "queryCond": "(select id_tipo_modello_test from entrasp.modello_test_fields(codice_azienda, id_modello_test))= $id_tipo_modello_test$"
         }
+
     ],
     "subTables": [
         {
@@ -547,7 +559,8 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "codice",
-            "label": "Codice"
+            "label": "Codice",
+            "queryFunct": "select codice from entrasp.modello_test_fields(codice_azienda, id_modello_test)"
         },
         {
             "format": {
@@ -556,7 +569,8 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
-            "label": "Titolo"
+            "label": "Titolo",
+            "queryFunct": "select titolo from entrasp.modello_test_fields(codice_azienda, id_modello_test)"
         },
         {
             "format": {
@@ -565,7 +579,18 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "centro_gest",
-            "label": "Centro Gestionale"
+            "label": "Centro Gestionale",
+            "queryFunct": "select entrasp.centri_gestionali_descr((select codice_part from entrasp.modello_test_fields(codice_azienda, id_modello_test)), (select id_centro_gest from entrasp.modello_test_fields(codice_azienda, id_modello_test)))"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo_modello_test",
+            "label": "Tipo",
+            "queryFunct": "select entrasp.tipo_modello_test_descr((select id_tipo_modello_test from entrasp.modello_test_fields(codice_azienda, id_modello_test)), codice_azienda)"
         }
     ],
     "inputEvents": [
