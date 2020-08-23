@@ -97,7 +97,7 @@ export class TableViewComponent implements OnChanges {
 
     isFullScreen = false;
 
-    hideActions: string[]; // Hide actions
+    hideActions: string[] = []; // Hide actions
     @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
 
     viewKeys: tableViewKey[];  // view fields as specified by the backend
