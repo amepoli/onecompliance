@@ -407,7 +407,7 @@ exports.handler = async (event, context) => {
                         if (!columns) {
                             // Let's search CSV header for columns
                             // First line contains headers, replace all extra characters
-                            columns = csvFile.Body.toString().split('\n')[0].replace(/'/g, '');
+                            columns = csvFile.Body.toString().split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/CSV_DELIMITER/g, ',');
                         }
 
                         // Added schema if table does not contain
@@ -491,7 +491,12 @@ exports.handler = async (event, context) => {
                         queryResponse = await client.query(query);
                         console.table(queryResponse);
                         if (queryResponse.rows && queryResponse.rows.length) {
-                            body = { result: 'OK', response: queryResponse.rows[0]["columns"] };
+                            body = {
+                                result: 'OK',
+                                response: queryResponse.rows[0]["columns"] ?
+                                    queryResponse.rows[0]["columns"].replace(/,/g, 'CSV_DELIMITER').replace(/ /g, '') :
+                                    ''
+                            };
                         }
                         else {
                             body = { result: 'OK', response: queryResponse };
