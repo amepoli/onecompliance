@@ -93,7 +93,6 @@
                     "values": [],
                     "queryFunct": "update entrasp.sondaggi set stato='A' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
                     "outputEventWhenComplete": "sondaggio_after_status_change"
-
                 }
             ],
             "size": 5
@@ -191,7 +190,7 @@
             "isPrimary": false,
             "key": "id_modello_test_vr",
             "label": "Versione Modello Test",
-            "newLine": true,
+            "newLine": false,
             "readOnly": true,
             "size": 4
         },
@@ -246,8 +245,8 @@
         {
             "autoGenerate": false,
             "format": {
-              "dataType": "number",
-              "viewType": "input"
+                "dataType": "number",
+                "viewType": "input"
             },
             "isHidden": true,
             "isPrimary": false,
@@ -256,12 +255,12 @@
             "queryFunct": "entrasp.id_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
             "newLine": true,
             "readOnly": true
-          },
-          {
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "dataType": "number",
-              "viewType": "input"
+                "dataType": "number",
+                "viewType": "input"
             },
             "isHidden": true,
             "isPrimary": false,
@@ -270,31 +269,31 @@
             "queryFunct": "select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
             "newLine": false,
             "readOnly": true
-          },
-          {
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "dataType": "text",
-              "viewType": "input"
+                "dataType": "text",
+                "viewType": "input"
             },
             "isHidden": true,
             "isPrimary": false,
             "key": "codice_colore",
             "outputEvent": {
-              "eventName": "codice_colore_change",
-              "eventTrigger": "change"
+                "eventName": "codice_colore_change",
+                "eventTrigger": "change"
             },
             "label": "codice_colore",
             "queryFunct": "select codice_colore from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
             "sameOrigin": false,
             "newLine": true,
             "readOnly": true
-          },
-          {
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "dataType": "text",
-              "viewType": "input"
+                "dataType": "text",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -305,12 +304,12 @@
             "newLine": false,
             "readOnly": true,
             "size": 5
-          },
-          {
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "dataType": "text",
-              "viewType": "input"
+                "dataType": "text",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -320,38 +319,38 @@
             "newLine": false,
             "readOnly": true,
             "inputEvents": [
-              {
-                "eventName": "codice_colore_change",
-                "condition": "none",
-                "values": [],
-                "actionType": "update_style",
-                "styleAttribute": "background_color",
-                "updateFunct": "'£codice_colore£'"
-              }
+                {
+                    "eventName": "codice_colore_change",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "update_style",
+                    "styleAttribute": "background_color",
+                    "updateFunct": "'£codice_colore£'"
+                }
             ],
             "size": 2.5
-          }
+        }
     ],
     "search_keys": [
         {
-          "fieldName": "id_modello_test",
-          "format": {
-            "dataType": "number",
-            "viewType": "input"
-          },
-          "label": "Id Modello di Test",
-          "newLine": true,
-          "queryCond": "id_modello_test=$id_modello_test$"
+            "fieldName": "id_modello_test",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Id Modello di Test",
+            "newLine": true,
+            "queryCond": "id_modello_test=$id_modello_test$"
         },
-           {
-          "fieldName": "id_sondaggio",
-          "format": {
-            "dataType": "number",
-            "viewType": "input"
-          },
-          "label": "id Sondaggio",
-          "newLine": true,
-          "queryCond": "id_sondaggio=$id_sondaggio$"
+        {
+            "fieldName": "id_sondaggio",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "id Sondaggio",
+            "newLine": true,
+            "queryCond": "id_sondaggio=$id_sondaggio$"
         },
         {
             "fieldName": "id_centro_gest",
@@ -363,10 +362,8 @@
             "label": "Centro Gestionale",
             "newLine": true,
             "queryCond": "id_centro_gest=$id_centro_gest$"
-          }
-  
-      ],
-
+        }
+    ],
     "origin": "entrasp.sondaggi",
     "subTables": [
         {
@@ -404,8 +401,6 @@
                     "parent": "id_somministrazione",
                     "son": "id_somministrazione"
                 }
-    
-    
             ],
             "label": "Domande e Risposte",
             "type": "tableForm"
@@ -582,7 +577,6 @@
             "key": "stato",
             "label": "Stato"
         }
-        
     ],
     "inputEvents": [
         {
@@ -609,26 +603,32 @@
         },
         {
             "eventName": "sondaggio_after_status_change_c",
-            "actionType": "reload"            
+            "actionType": "reload"
         }
-
     ],
     "exportQueries": {
         "tableQueries": [
-          {
-            "label": "Sondaggi_e_modelli_test",
-            "queryString": "select * from entrasp.temp"
-          }
+            {
+                "label": "Sondaggi_e_modelli_test",
+                "queryString": "select * from entrasp.temp"
+            }
         ]
-      },
-    "view_properties":[
+    },
+    "view_properties": [
         {
-        "viewType": "formView",
-        "propertyType": "readOnly",
-        "queryString": "select case when stato='C' then 'true' else 'false' end as label from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
-
-    }
-],
-"hideActions": [{"formActionType": "add", "viewType": "form"}, {"tableActionType":"add", "viewType": "table"}]
-    
+            "viewType": "formView",
+            "propertyType": "readOnly",
+            "queryString": "select case when stato='C' then 'true' else 'false' end as label from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
 }
