@@ -21,7 +21,7 @@ REGION="eu-central-1"
 ACCESSKEY="AKIAVH7FFOJ5BBH3AY4R"
 SECRETKEY="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"
 
-CSVSPLITTER=";"
+CSVDELIMITER="~"
 
 if [ $1 == "gorico_dev" ]
   then
@@ -48,7 +48,7 @@ sed -i -e "s/ACCESS_KEY/${ACCESSKEY}/g" index.js
 sed -i -e "s/SECRET_KEY/${SECRETKEY}/g" index.js
 sed -i -e "s/SCHEMA/${SCHEMA}/g" index.js
 
-sed -i -e "s/CSV_SPLITTER/${CSVSPLITTER}/g" index.js
+sed -i -e "s/CSV_DELIMITER/${CSVDELIMITER}/g" index.js
 
 
 rm index.js-e

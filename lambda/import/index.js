@@ -207,15 +207,15 @@ function data2csv(data, keys = null) {
     let columns = null;
     if (keys !== null) {
         columns = keys.map(x => x.key);
-        result += columns.join('CSV_SPLITTER') + '\n';
+        result += columns.join('CSV_DELIMITER') + '\n';
     }
 
     data.forEach(row => {
         if (columns === null) {
             columns = Object.keys(row);
-            result += columns.join('CSV_SPLITTER') + '\n';
+            result += columns.join('CSV_DELIMITER') + '\n';
         }
-        result += columns.map(c => row[c]).join('CSV_SPLITTER') + '\n';
+        result += columns.map(c => row[c]).join('CSV_DELIMITER') + '\n';
     });
     return result;
 }
@@ -426,7 +426,7 @@ exports.handler = async (event, context) => {
                         query = `SELECT aws_s3.table_import_from_s3(
                             '${table}',
                             '${columns}', 
-                            '(FORMAT CSV, DELIMITER E'','', HEADER true)',
+                            '(FORMAT CSV, DELIMITER E''CSV_DELIMITER'', HEADER true)',
                             aws_commons.create_s3_uri('${bucket}', '${fileName}','${region}'), 
                             aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
                         );`;

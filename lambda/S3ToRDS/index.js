@@ -129,9 +129,9 @@ async function importCSV(table, fileName, client) {
     };
 
     const csvFile = await s3.getObject(s3ParamsGetList).promise();
-
+    csvData = csvFile.Body.toString(); //.replace(/;/g, '||');
     // Try to load columns from query params
-    let columns = csvFile.Body.toString().split('\n')[0].replace(/'/g, '').replace(/;/g, ',');
+    let columns = csvData.split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/CSV_DELIMITER/g, ',');
 
 
     // Added schema if table does not contain
@@ -150,7 +150,7 @@ async function importCSV(table, fileName, client) {
     let query = `SELECT aws_s3.table_import_from_s3(
                             '${table}',
                             '${columns}', 
-                            '(FORMAT CSV, DELIMITER E'','', HEADER true)',
+                            '(FORMAT CSV, DELIMITER E''CSV_DELIMITER'', HEADER true)',
                             aws_commons.create_s3_uri('${bucket}', '${fileName}','${region}'), 
                             aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
                         );`;
@@ -204,7 +204,7 @@ exports.handler = async (event, context) => {
         try {
             try {
                 const date = getDateFormat();
-                // client = await pool.connect();
+                client = await pool.connect();
             }
             catch (e) {
                 console.log("Could not init client");
