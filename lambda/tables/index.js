@@ -27,6 +27,8 @@ const global_variables = {
 
 
 function replaceLocalKeys(queryString, keys) {
+
+    // Â£ to fix problems with Windows clients pushing the tables
     let delimiters = ['£', 'Â£'];
     for (var key in keys) {
         delimiters.forEach(delimiter => {
@@ -668,37 +670,45 @@ function getDeleteQuery(entry_params, table_keys) {
 
 }
 
-async function processAttributeQueries(entry_params, table_keys, client) {
+async function processAttributeQueries(entry_params, keys, client) {
     
     let entry_keys = entry_params.form_keys;
 
     let keyTypes = getKeyTypes(entry_keys);
 
-    let attributes = {};
+    let attributes = [];
 
     for (let i = 0; i < entry_keys.length; i++) {
         const entry_key = entry_keys[i];
         if (entry_key.key == null || entry_key.attributeFuncts == null || entry_key.attributeFuncts.length === 0) {
             continue;
         }
-        attributes[entry_key.key] = {};
+            
         for (let j = 0; j < entry_key.attributeFuncts.length; j++) {
-            const attribute = entry_key.attributeFuncts[j];
-            if (attribute.queryString == null || attribute.attributeType == null || (attribute.attributeType === 'style' && attribute.styleAttribute == null) ) {
+                const attributeFunct = entry_key.attributeFuncts[j];
+                if (attributeFunct.queryString == null || attributeFunct.attributeType == null || (attributeFunct.attributeType === 'style' && attributeFunct.styleAttribute == null)) {
                 continue;
             }
-            const query = replaceKeys(attribute.queryString, table_keys, keyTypes);
+                console.log('Attribute: ', attributeFunct.queryString, keys[0], keyTypes);
+                const query = replaceKeys(attributeFunct.queryString, keys[0], keyTypes);
+                console.log('Query attributes: ', query);
             let result = await client.query(query);
-            result = result.rows[0];
-            if (attribute.attributeType === 'style') {
+                result = result.rows;
+                console.log('Query attributes result: ', result);
+                for (let k = 0; k <result.length; k++) {
+                    let attribute = {};
+                    attribute[entry_key.key] = {};
+                    if (attributeFunct.attributeType === 'style') {
                 let attr_style = {};
-                attr_style[attribute.styleAttribute] = result;
-                attributes[entry_key.key]['style'] = Object.assign(attributes[entry_key.key]['style'], attr_style);
+                        attr_style[attributeFunct.styleAttribute] = result[k].label;  // query must return {label: value} 
+                        attribute[entry_key.key]['style'] = Object.assign(attribute[entry_key.key]['style'], attr_style);
             } else {
-                attributes[entry_key.key][attribute.attributeType] = result;
+                        attribute[entry_key.key][attributeFunct.attributeType] = result[k].label;
+                    }
+                    attributes.push(attribute);
+                }
             }
         }
-    };
     return attributes;
 }
 
@@ -1220,11 +1230,6 @@ exports.handler = async (event, context) => {
                 queryData = { table_data: queryData, search_options: searchOptions };
             }
 
-            // process attributeFuncts
-            if (isFormRecord) {
-                attributes = processAttributeQueries(entry_params, table_keys, client);
-            }
-
             // process properties query
 
             tableProperties = await process_properties(entry_params, table_keys, isFormRecord, client);
@@ -1268,10 +1273,15 @@ exports.handler = async (event, context) => {
         // disconnect from DB
         await client.release();
 
-        // last chance to calculate the keys with an evalFunct
+        // last chance to calculate the keys with an evalFunct and to process attributes
 
         if (method === 'GET' && dashboardIndex == null) {
             queryData = getCalculatedParams(entry_params, queryData, isFormRecord);
+            // process attributeFuncts
+            if (isFormRecord) {
+                attributes = await processAttributeQueries(entry_params, queryData, client);
+            }
+            
         }
 
         // return colors if dashboard and colors array is defined
