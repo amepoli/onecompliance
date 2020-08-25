@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2020-08-25T17:21:41 -->
+<!-- 2020-08-25T18:40:00 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resocontoSondaggi" pageWidth="595" pageHeight="800" columnWidth="567" columnSpacing="567" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
@@ -26,6 +26,7 @@
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="id_sondaggio" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[$P!{mainQuery}]]>
 	</queryString>
@@ -104,7 +105,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="246" splitType="Stretch">
+		<band height="408" splitType="Stretch">
 			<line>
 				<reportElement x="1" y="5" width="564" height="1" uuid="241e8abd-1d66-4d9f-ae61-cd4d4553cd0c"/>
 			</line>
@@ -152,6 +153,17 @@
 				<reportElement x="2" y="142" width="548" height="15" uuid="9ed66ca3-b67d-42ef-9252-581f167d90a8"/>
 				<textFieldExpression><![CDATA[$F{proposte_formulate}]]></textFieldExpression>
 			</textField>
+			<subreport>
+				<reportElement x="2" y="208" width="512" height="32" uuid="cbff3085-00c5-406a-9b2d-c25426ad57c9"/>
+				<subreportParameter name="codice_azienda">
+					<subreportParameterExpression><![CDATA[$F{codice_azienda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id_sondaggio">
+					<subreportParameterExpression><![CDATA[$F{id_sondaggio}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["Domande_risposte.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 	<columnFooter>
