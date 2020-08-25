@@ -117,6 +117,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     results: any[] = null;
 
+    attributes: any[] = null;
+
     private firstRefresh = true;
 
     private addingNew = false;   // avoid to trigger a refresh (with related events) when adding a row  
@@ -308,7 +310,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     // Process results
                     _this.results = results.data;
-                    _this.processViewAttributes(results.attributes);
+                    _this.attributes = results.attributes;
                     _this.processResults(_this.results);
 
                     // Stop loading
@@ -336,24 +338,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 // Stop loading
                 _this.isLoading = false;
             });
-    }
-
-    processViewAttributes(attributes): void {
-        const _this = this;
-        if (attributes == null) {
-            return;
-        }
-        _this.viewKeys.forEach(viewKey => {
-            if (attributes[viewKey.key] == null) {
-                return;
-            }
-            for (const attribute in attributes[viewKey.key]) {
-                if (Object.prototype.hasOwnProperty.call(attributes[viewKey.key], attribute)) {
-                    const element = attributes[viewKey.key][attribute];
-                    viewKey[attribute] = element;
-                }
-            }
-        });
     }
 
     processResults(results): void {
@@ -432,6 +416,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     private getFieldValue(field: formViewKey, element: any, values: any, index: number): FieldConfig {
         const _this = this;
         let fieldValue: FieldConfig;
+
+        const attribute = _this.attributes[index] != null ? _this.attributes[index][field.key] : null;
+
         if (field != null) {
             fieldValue = {
                 label: field.label,
@@ -441,12 +428,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 fullValueSet: values[index],
                 value: (element != null) ? ((element.options != null) ? element.value : element) : null,
                 inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
-                readonly: _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
-                isVisible: (field.isHidden != null) ? !field.isHidden : true,
+                readonly: (attribute != null && attribute.readOnly != null) ? attribute.readOnly : _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
+                isVisible: (attribute != null && attribute.isHidden != null) ? !attribute.isHidden : field.isHidden != null ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,
                 buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
                 confirmButtonAction: field.confirmButtonAction ? true : false,
-                style: (field.style != null) ? field.style : null,
+                style: (attribute != null && attribute.style != null) ? attribute.style : (field.style != null) ? field.style : null,
                 width: (field.size != null) ? (field.size * 10) - _this.margins : null, // leave a 1% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],
                 validations: (field.format.validations != null) ? field.format.validations : [],
