@@ -2,6 +2,11 @@
     "entryKey": "domande_risposte",
     "predefinedQueries": [
         {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select d.*, $id_somministrazione$ as id_somministrazione, $id_sondaggio$ as id_sondaggio from entrasp.risposte r right join entrasp.domande d on r.codice_azienda=d.codice_azienda and r.id_modello_test=d.id_modello_test and r.id_modello_test_vr=d.id_modello_test_vr and r.id_domanda=d.id_domanda where d.codice_azienda=$codice_azienda$ and (r.id_somministrazione is null or r.id_somministrazione=$id_somministrazione$) and d.id_modello_test=$id_modello_test$ and d.id_modello_test_vr=$id_modello_test_vr$;"
+        },
+        {
             "operation": "insert",
             "queryString": "SELECT entrasp.risposte_insert($codice_azienda$, $id_modello_test$, $risposta$, $id_domanda$, $id_risposta_prev$, $id_sondaggio$, $id_somministrazione$, $punteggio$, $peso$, $note$, $id_modello_test_vr$, $punteggio_risposta$, $object_name$, $object_key$,);",
             "type": "main"
@@ -79,7 +84,7 @@
         {
             "isHidden": true,
             "readOnly": true,
-            "isPrimary": false,
+            "isPrimary": true,
             "sameOrigin": false,
             "key": "id_sondaggio",
             "label": "id_sondaggio",
@@ -91,7 +96,7 @@
         {
             "isHidden": true,
             "readOnly": true,
-            "isPrimary": false,
+            "isPrimary": true,
             "sameOrigin": false,
             "key": "id_somministrazione",
             "label": "id_somministrazione",
