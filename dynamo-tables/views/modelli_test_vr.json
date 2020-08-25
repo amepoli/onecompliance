@@ -394,6 +394,46 @@
             "readOnly": false
         },
         {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_esterno",
+            "label": "Codice esterno",
+            "queryFunct": "SELECT codice_esterno from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "allinea_codici_esterni",
+            "label": "Allineamento esterno",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "allinea_codici_esterni",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "allinea_codici_esterni",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.modelli_test_new_version_same_codice_esterno($codice_azienda$,$id_modello_test$, $id_modello_test_vr$, $codice_esterno$);"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
             "autoGenerate": false,
             "format": {
                 "comboQuery": "SELECT id_risultato AS id, descrizione AS name  FROM entrasp.modelli_test_risultati WHERE codice_azienda=$codice_azienda$;",
