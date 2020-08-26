@@ -1,0 +1,633 @@
+{
+    "$schema": "../views.schema.json",
+    "businessObjectName": "sondaggi",
+    "entryKey": "sondaggi_my_office",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sondaggi_close",
+            "label": "Chiudi sondaggio",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "sondaggio_close",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sondaggi_open",
+            "label": "Riapri sondaggio",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "sondaggio_open",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "label": "Id Somministrazione",
+            "newLine": false,
+            "queryFunct": "select id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "newLine": false,
+            "readOnly": false,
+            "inputEvents": [
+                {
+                    "eventName": "sondaggio_close",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.sondaggi set stato='C' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
+                    "outputEventWhenComplete": "sondaggio_after_status_change_c"
+                },
+                {
+                    "eventName": "sondaggio_open",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.sondaggi set stato='A' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
+                    "outputEventWhenComplete": "sondaggio_after_status_change"
+                }
+            ],
+            "size": 5
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "label": "ID",
+            "newLine": false,
+            "readOnly": true,
+            "size": 3,
+            "inputEvents": [
+                {
+                    "eventName": "sondaggi_button_duplica",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "duplica_sondaggio",
+            "label": "Duplica",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "sondaggi_button_duplica",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Titolo sondaggio",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_modello_test",
+            "label": "Tit. Modello Test",
+            "newLine": true,
+            "queryFunct": "entrasp.mdt_codtitolo(codice_azienda, id_modello_test)",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "Id Modello Test",
+            "newLine": false,
+            "readOnly": true,
+            "size": 4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test_vr",
+            "label": "Versione Modello Test",
+            "newLine": false,
+            "readOnly": true,
+            "size": 4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "modello_test_from_sondaggi",
+            "label": "Modello test",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "to_modello_test_from_sondaggi",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "flags_sezioni_multi",
+            "label": "flags_sezioni_multi",
+            "outputEvent": {
+                "eventName": "sondaggi_flags_sezioni_singola",
+                "eventTrigger": "change"
+            },
+            "queryFunct": "entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio)",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_risultato",
+            "label": "id_risultato",
+            "queryFunct": "entrasp.id_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "pct_da",
+            "label": "Giudizio",
+            "queryFunct": "select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_colore",
+            "outputEvent": {
+                "eventName": "codice_colore_change",
+                "eventTrigger": "change"
+            },
+            "label": "codice_colore",
+            "queryFunct": "select codice_colore from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "sameOrigin": false,
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "criterio_analisi",
+            "label": "Criterio di analisi",
+            "sameOrigin": false,
+            "queryFunct": "entrasp.descrizione_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "newLine": false,
+            "readOnly": true,
+            "size": 5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio",
+            "label": "Giudizio",
+            "queryFunct": "select giudizio from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "newLine": false,
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "codice_colore_change",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "update_style",
+                    "styleAttribute": "background_color",
+                    "updateFunct": "'£codice_colore£'"
+                }
+            ],
+            "size": 2.5
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_modello_test",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Id Modello di Test",
+            "newLine": true,
+            "queryCond": "id_modello_test=$id_modello_test$"
+        },
+        {
+            "fieldName": "id_sondaggio",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "id Sondaggio",
+            "newLine": true,
+            "queryCond": "id_sondaggio=$id_sondaggio$"
+        },
+        {
+            "fieldName": "id_centro_gest",
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Centro Gestionale",
+            "newLine": true,
+            "queryCond": "id_centro_gest=$id_centro_gest$"
+        }
+    ],
+    "origin": "entrasp.sondaggi",
+    "subTables": [
+        {
+            "entryKey": "domande_risposte",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "sondaggi_flags_sezioni_singola",
+                    "condition": "equalTo",
+                    "values": [
+                        "0",
+                        "1"
+                    ]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                },
+                {
+                    "parent": "id_modello_test_vr",
+                    "son": "id_modello_test_vr"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                }
+            ],
+            "label": "Domande e Risposte",
+            "type": "tableForm"
+        },
+        {
+            "entryKey": "domande_sezioni",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "sondaggi_flags_sezioni_singola",
+                    "condition": "equalTo",
+                    "values": [
+                        "1",
+                        "1"
+                    ]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                },
+                {
+                    "parent": "id_modello_test_vr",
+                    "son": "id_modello_test_vr"
+                }
+            ],
+            "label": "Domande e Risposte - Sezioni",
+            "type": "table"
+        },
+        {
+            "entryKey": "seleziona_campione",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "sondaggi_flags_sezioni_singola",
+                    "condition": "equalTo",
+                    "values": [
+                        "*",
+                        "0"
+                    ]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
+            ],
+            "label": "Seleziona Campione",
+            "type": "tableForm"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text",
+                "value": "DEMO"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_comp",
+            "label": "Data Completamento"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_prevista",
+            "label": "Data Prevista"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_esecuzione",
+            "label": "Data Esecuzione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Titolo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "modello_test",
+            "label": "Modello di Test",
+            "queryFunct": "entrasp.sondaggi_modello_test(codice_azienda,id_sondaggio)"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "Id_modello_test"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test_vr",
+            "label": "Id_modello_test_vr"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "id Centro Gest."
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "label": "Centro Gestionale",
+            "queryFunct": "entrasp.sondaggi_centro_gest(codice_azienda,id_sondaggio)"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO', stato)",
+            "key": "stato",
+            "label": "Stato"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionTarget": {
+                "name": "modelli_test_vr",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "id_modello_test_vr",
+                        "destination": "id_modello_test_vr"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_modello_test_from_sondaggi"
+        },
+        {
+            "eventName": "sondaggio_after_status_change_c",
+            "actionType": "reload"
+        }
+    ],
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "label": "Sondaggi_e_modelli_test",
+                "queryString": "select * from entrasp.temp"
+            }
+        ]
+    },
+    "view_properties": [
+        {
+            "viewType": "formView",
+            "propertyType": "readOnly",
+            "queryString": "select case when stato='C' then 'true' else 'false' end as label from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+}
