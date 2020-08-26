@@ -107,8 +107,11 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   saveChanges(): void {
     let _this = this;
     if (!_this.formGetter.formArray.first.form.valid) {
-      _this._dialogService.showErrorDialog("Error", "The form is incomplete!");
-      console.error("Form is invalid!");
+      // Highlight all empty required fields
+      Object.keys(this.formGetter.formArray.first.form.controls).forEach(field => {
+        const control = this.formGetter.formArray.first.form.get(field);
+        control.markAsTouched({ onlySelf: true });
+      });
     }
     else {
       const values = _this.formGetter.formArray.map(form => form.form.value);

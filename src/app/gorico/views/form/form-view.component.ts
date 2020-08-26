@@ -191,8 +191,11 @@ export class FormViewComponent implements OnChanges, OnInit {
 
     onSave() {
         if (!this.formGetter.formArray.first.form.valid) {
-            this._dialogService.showErrorDialog("Error", "The form is incomplete!");
-            console.error("Form is invalid!");
+            // Highlight all empty required fields
+            Object.keys(this.formGetter.formArray.first.form.controls).forEach(field => {
+                const control = this.formGetter.formArray.first.form.get(field);
+                control.markAsTouched({ onlySelf: true });
+            });
         }
         else {
             // notify parent, which will take care of propagating to siblings if needed 
