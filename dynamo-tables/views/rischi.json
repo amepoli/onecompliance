@@ -651,7 +651,28 @@
       "label": "Titolo",
       "newLine": true,
       "queryCond": "titolo Like '%€titolo€%'"
-    }
+    },
+    {
+      "fieldName": "rischio_inerente",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+            },
+      "label": "Rischio Inerente",
+      "newLine": false,
+      "queryCond": "rischio_inerente=$rischio_inerente$"
+    },
+    {
+      "fieldName": "id_centro_gest",
+      "format": {
+          "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+          "options": [],
+          "viewType": "combobox"
+      },
+      "label": "Centro Gestionale",
+      "newLine": true,
+      "queryCond": "(select id_centro_gest from entrasp.rischi(codice_azienda, id_modello_test))= $id_centro_gest$"
+  }
   ],
   "subTables": [
     {
