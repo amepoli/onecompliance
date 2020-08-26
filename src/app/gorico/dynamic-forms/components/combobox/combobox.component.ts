@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FieldConfig, Item } from '../../field.interface';
 import { ReplaySubject, Subject } from 'rxjs';
@@ -9,8 +9,9 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
   template: `
 <mat-form-field [ngStyle]="{'margin-right': '1%', 'margin-left': '1%','width': field.width+'%'}" *ngIf="field.isVisible != false" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
-<mat-select [ngModel]="field.value" [formControlName]="field.name" [placeholder]="field.label" (selectionChange)="onSelection($event)">
+<mat-select [(ngModel)]="field.value" [formControlName]="field.name" [placeholder]="field.label" (selectionChange)="onSelection($event)">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
+<mat-option value="">Empty</mat-option>
 <mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly || readOnlyPage">{{item.name}}</mat-option>
 </mat-select>
 </mat-form-field>
@@ -32,7 +33,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   private _onDestroy = new Subject<void>();
 
 
-  constructor(private pubsubService: NgxPubSubService) { }
+  constructor(private pubsubService: NgxPubSubService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
 
@@ -45,6 +46,10 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       _this.field.value = _this.field.options.find(x => x.id === _this.field.value);
       // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
     }
+    else {
+      _this.field.value = "";
+      _this.group.get(_this.field.name).setValue(_this.field.value);
+    }
 
     // load the initial bank list
     _this.filteredItems.next(_this.field.options.slice());
@@ -55,6 +60,8 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(() => {
         _this.filterItems();
       });
+
+    console.log('value:', _this.field.value);
   }
 
   ngAfterViewInit() {
@@ -75,9 +82,24 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onSelection(event: any) {
-    if (event.value != null && this.field.eventName != null) {
-      this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
+    if (event.value) {
+      this.field.value = event.value;
+      this.group.get(this.field.name).setValue(this.field.value);
+      this.cdr.detectChanges();
+
+      if (this.field.eventName != null) {
+        this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
+      }
     }
+    else {
+      if (this.field.eventName != null) {
+        this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
+      }
+    }
+  }
+
+  resetSelection() {
+    // this.group.get(this.field.name).reset();
   }
 
   private filterItems() {
