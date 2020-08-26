@@ -220,9 +220,19 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "label": "id_trattamento_dati",
+      "label": "Id Trattamento Dati",
       "newLine": true,
       "queryCond": "id_trattamento_dati=$id_trattamento_dati$"
+    },
+    {
+      "fieldName": "desccrizione",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Descrizione",
+      "newLine": true,
+      "queryCond": "descrizione=$descrizione$"
     },
     {
       "fieldName": "flag_trattamento_conto_terzi",
@@ -233,7 +243,18 @@
       "label": "flag_trattamento_conto_terzi",
       "newLine": true,
       "queryCond": "flag_trattamento_conto_terzi=$flag_trattamento_conto_terzi$"
-    }
+    },
+    {
+      "fieldName": "id_centro_gest",
+      "format": {
+          "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+          "options": [],
+          "viewType": "combobox"
+      },
+      "label": "Centro Gestionale",
+      "newLine": true,
+      "queryCond": "(select id_centro_gest from entrasp.modello_test_fields(codice_azienda, id_modello_test))= $id_centro_gest$"
+  }
   ],
   "subTables": [
     {
