@@ -190,51 +190,60 @@ export class FormViewComponent implements OnChanges, OnInit {
     }
 
     onSave() {
+        if (!this.formGetter.formArray.first.form.valid) {
+            this._dialogService.showErrorDialog("Error", "The form is incomplete!");
+            console.error("Form is invalid!");
+        }
+        else {
+            // notify parent, which will take care of propagating to siblings if needed 
+            this.sendEvent.emit({ eventType: 'gotSave' });
+            // get the form data, assuming there is only one form
+            let values = this.formGetter.formArray.first.form.value;
 
-        // notify parent, which will take care of propagating to siblings if needed 
-        this.sendEvent.emit({ eventType: 'gotSave' });
-        // get the form data, assuming there is only one form
-        let values = this.formGetter.formArray.first.form.value;
-        // process the booleans (1/0 instead of true/false)
-        for (const value in values) {
-            if (values.hasOwnProperty(value)) {
-                const element = values[value];
-                if (element == null) {
-                    continue; // skip null entries
-                }
-                // decode combos
-                if (element['id'] != null) {
-                    values[value] = element['id'];
-                }
-                // encode boolean
-                else if (element === true) {
-                    values[value] = '1';
-                }
-                else if (element === false) {
-                    values[value] = '0';
+            // process the booleans (1/0 instead of true/false)
+            for (const value in values) {
+                if (values.hasOwnProperty(value)) {
+                    const element = values[value];
+                    console.log(element);
+                    if (element == null) {
+                        continue; // skip null entries
+                    }
+                    // decode combos
+                    if (element['id'] != null) {
+                        values[value] = element['id'];
+                    }
+                    // encode boolean
+                    else if (element === true) {
+                        values[value] = '1';
+                    }
+                    else if (element === false) {
+                        values[value] = '0';
+                    }
                 }
             }
-        }
 
-        this.savingState = 'saving';
-        this.backendService.updateData(this.tableData.entryName, this.authService.getCurrentCompany(), this.currentKeys, [values]).subscribe(   // backend expects an array of data
-            result => {
-                console.log(result);
-                if (result.result === 'OK') {
-                    this.savingState = 'done';
-                    setTimeout(() => {
-                        this.savingState = 'save';
+            this.savingState = 'saving';
+            this.backendService.updateData(this.tableData.entryName, this.authService.getCurrentCompany(), this.currentKeys, [values]).subscribe(   // backend expects an array of data
+                result => {
+                    console.log(result);
+                    if (result.result === 'OK') {
                         // Show success toast
                         this._toastService.showSuccessToast('Saved');
-                        this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
-                    }, 1000);
+                        this.savingState = 'done';
+                        setTimeout(() => {
+                            this.savingState = 'save';
+                            this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+                        }, 1000);
+                    }
+                    else {
+                        // Show error snackbar
+                        this._toastService.showErrorToast(result.reason);
+                        this.savingState = 'save';
+                    }
                 }
-                else {
-                    // Show error snackbar
-                    this._toastService.showErrorToast(result.reason);
-                }
-            }
-        );
+            );
+        }
+
     }
 
     delElement() {

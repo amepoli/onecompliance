@@ -20,8 +20,8 @@ const excel = require('node-excel-export');
 const readXlsxFile = require('read-excel-file/node');
 
 const global_variables = {
-    global_codice_azienda: '', 
-    global_codice_part: '', 
+    global_codice_azienda: '',
+    global_codice_part: '',
     global_userid: 0
 };
 
@@ -68,8 +68,8 @@ function replaceKeys(queryString, keys, keyTypes) {
             delimiters.forEach(delimiter => {
                 let keyType = keyTypes.find(e => (e.key === key));
 
-            if (typeof keys[key] === 'object' && Array.isArray(keyType.dataType) && keys[key] != null) { // key with multiple subkeys
-                    console.log(keys[key],keyType);
+                if (typeof keys[key] === 'object' && Array.isArray(keyType.dataType) && keys[key] != null) { // key with multiple subkeys
+                    console.log(keys[key], keyType);
                     // tslint:disable-next-line:forin
                     for (var subkey in keys[key]) {
                         // console.log(subKey);
@@ -124,7 +124,7 @@ function replaceKeysArray(queryString, keysArray, keyTypes) {
 function getKeyTypes(entry_keys) {
     let keyTypes = entry_keys.map(k => {
         let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
-        return { key: k.key, dataType: dataType, isPrimary: k.isPrimary, isCalculated: k.queryFunct != null, sameOrigin: k.sameOrigin};
+        return { key: k.key, dataType: dataType, isPrimary: k.isPrimary, isCalculated: k.queryFunct != null, sameOrigin: k.sameOrigin };
     });
     return keyTypes;
 }
@@ -251,13 +251,13 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     comma = ' WHERE ';
 
     for (const key in table_keys) {
-        if (table_keys.hasOwnProperty(key)) { 
+        if (table_keys.hasOwnProperty(key)) {
             let keyType = keyTypes.find(e => (e.key === key));
             // it might happen with subtables that a key linked with parent table has not the same origin
-            if (keyType.sameOrigin != null && !keyType.sameOrigin) { 
+            if (keyType.sameOrigin != null && !keyType.sameOrigin) {
                 continue;
             }
-            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
             let element = table_keys[key];
             // replace single quotes with double quotes in strings
             element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
@@ -313,7 +313,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
 }
 
-function getSearchCombos (entry_params, table_keys, isForm, comboQueries) {
+function getSearchCombos(entry_params, table_keys, isForm, comboQueries) {
 
     let entry_keys;
 
@@ -324,7 +324,7 @@ function getSearchCombos (entry_params, table_keys, isForm, comboQueries) {
     }
 
     let keyTypes = getKeyTypes(entry_keys);
- 
+
     let search_params = entry_params.search_keys;
 
     if (search_params == null) {
@@ -337,8 +337,8 @@ function getSearchCombos (entry_params, table_keys, isForm, comboQueries) {
         if (comboQuery != null) {
             comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
             comboQueries.push({ key: element.fieldName, comboQuery: comboQuery });
-            }
-        });
+        }
+    });
 }
 
 function getEventQuery(entry_params, body, eventInfo, queryParams) {
@@ -448,7 +448,7 @@ function getNewQuery(entry_params, table_keys) {
         // add passed key value, unless it is autogenerate (must be null)
         if (table_keys[element.key] && (element.autoGenerate == null || element.autoGenerate === false)) {
             obj[element.key] = table_keys[element.key];
-        // add default value if any
+            // add default value if any
         } else if (element.format.hasOwnProperty('value')) {
             obj[element.key] = element.format.value;
         } else {
@@ -522,7 +522,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             if (keys.hasOwnProperty(key)) {
                 let keyType = keyTypes.find(e => (e.key === key));
                 if (!keyType.isPrimary || keyType.key === autoGenKey) continue; // avoid to add non primary keys to the WHERE condition
-                let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+                let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
                 let element = keys[key];
                 // replace single quotes with double quotes in strings
                 if (element != null) {
@@ -565,7 +565,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         values[element.key] = value;
         if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
             let keyType = keyTypes.find(e => (e.key === element.key));
-            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
             if (value.id) { // combobox 
                 value = value.id;
             }
@@ -580,7 +580,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         comma = ') VALUES (';
         for (const key in values) {
             let keyType = keyTypes.find(e => (e.key === key));
-            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
             let value = values[key];
             if (value.id) { // combobox 
                 value = value.id;
@@ -600,7 +600,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         comma = ' WHERE ';
         primaryKeys.forEach(primaryKey => {
             let keyType = keyTypes.find(e => (e.key === primaryKey.key));
-            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
             let element = keys[primaryKey.key];
             // replace single quotes with double quotes in strings
             element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
@@ -656,7 +656,7 @@ function getDeleteQuery(entry_params, table_keys) {
     for (const key in table_keys) {
         if (table_keys.hasOwnProperty(key)) {
             let keyType = keyTypes.find(e => (e.key === key));
-            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+            let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
             let element = table_keys[key];
             // replace single quotes with double quotes in strings
             element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
@@ -671,7 +671,7 @@ function getDeleteQuery(entry_params, table_keys) {
 }
 
 async function processAttributeQueries(entry_params, keys, client) {
-    
+
     let entry_keys = entry_params.form_keys;
 
     let keyTypes = getKeyTypes(entry_keys);
@@ -683,32 +683,32 @@ async function processAttributeQueries(entry_params, keys, client) {
         if (entry_key.key == null || entry_key.attributeFuncts == null || entry_key.attributeFuncts.length === 0) {
             continue;
         }
-            
+
         for (let j = 0; j < entry_key.attributeFuncts.length; j++) {
-                const attributeFunct = entry_key.attributeFuncts[j];
-                if (attributeFunct.queryString == null || attributeFunct.attributeType == null || (attributeFunct.attributeType === 'style' && attributeFunct.styleAttribute == null)) {
+            const attributeFunct = entry_key.attributeFuncts[j];
+            if (attributeFunct.queryString == null || attributeFunct.attributeType == null || (attributeFunct.attributeType === 'style' && attributeFunct.styleAttribute == null)) {
                 continue;
             }
-                console.log('Attribute: ', attributeFunct.queryString, keys[0], keyTypes);
-                const query = replaceKeys(attributeFunct.queryString, keys[0], keyTypes);
-                console.log('Query attributes: ', query);
+            console.log('Attribute: ', attributeFunct.queryString, keys[0], keyTypes);
+            const query = replaceKeys(attributeFunct.queryString, keys[0], keyTypes);
+            console.log('Query attributes: ', query);
             let result = await client.query(query);
-                result = result.rows;
-                console.log('Query attributes result: ', result);
-                for (let k = 0; k <result.length; k++) {
-                    let attribute = {};
-                    attribute[entry_key.key] = {};
-                    if (attributeFunct.attributeType === 'style') {
-                let attr_style = {};
-                        attr_style[attributeFunct.styleAttribute] = result[k].label;  // query must return {label: value} 
-                        attribute[entry_key.key]['style'] = Object.assign(attribute[entry_key.key]['style'], attr_style);
-            } else {
-                        attribute[entry_key.key][attributeFunct.attributeType] = result[k].label;
-                    }
-                    attributes.push(attribute);
+            result = result.rows;
+            console.log('Query attributes result: ', result);
+            for (let k = 0; k < result.length; k++) {
+                let attribute = {};
+                attribute[entry_key.key] = {};
+                if (attributeFunct.attributeType === 'style') {
+                    let attr_style = {};
+                    attr_style[attributeFunct.styleAttribute] = result[k].label;  // query must return {label: value} 
+                    attribute[entry_key.key]['style'] = Object.assign(attribute[entry_key.key]['style'], attr_style);
+                } else {
+                    attribute[entry_key.key][attributeFunct.attributeType] = result[k].label;
                 }
+                attributes.push(attribute);
             }
         }
+    }
     return attributes;
 }
 
@@ -997,8 +997,8 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 
     const entry_keys = isForm ? view_keys.form_keys : view_keys.table_keys;
 
-    const entry_azienda = entry_keys.find(entry => entry.key === 'codice_azienda');
-    const entry_part = entry_keys.find(entry => entry.key === 'codice_part');
+    const entry_azienda = entry_keys.find(entry => (entry.key === 'codice_azienda' && entry.isPrimary));
+    const entry_part = entry_keys.find(entry => (entry.key === 'codice_part' && entry.isPrimary));
 
     if (entry_azienda != null) {
         keys['codice_azienda'] = company;
@@ -1020,7 +1020,7 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 
 }
 
-async function setGlobalVariables(company, client,userid) {
+async function setGlobalVariables(company, client, userid) {
 
     global_variables.global_codice_azienda = company;
 
@@ -1045,7 +1045,7 @@ async function setGlobalVariables(company, client,userid) {
         if (company != null) {
             companies.forEach(c => {
                 if (c.name === company) { // found user's profile
-                global_variables.global_userid = c.id_anagrafica;
+                    global_variables.global_userid = c.id_anagrafica;
                 }
             });
         }
@@ -1218,7 +1218,7 @@ exports.handler = async (event, context) => {
                             comboEntry[element.key]['options'] = comboData.rows;
                             Object.assign(queryData[qd_index], comboEntry);
                         }
-                        else  { // table view, add search combobox to search_combos field's array
+                        else { // table view, add search combobox to search_combos field's array
                             qd_index = queryData.length;  // bad trick, make it exit from loop on rows
                             searchOptions.push({ fieldName: element.key, options: comboData.rows });
                         }
@@ -1281,7 +1281,7 @@ exports.handler = async (event, context) => {
             if (isFormRecord) {
                 attributes = await processAttributeQueries(entry_params, queryData, client);
             }
-            
+
         }
 
         // return colors if dashboard and colors array is defined

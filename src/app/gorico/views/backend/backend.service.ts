@@ -186,4 +186,14 @@ export class BackendService {
     }
     return from(this.amplifyService.api().post(this.apiName, '/import', this.myPutPostInit));
   }
+
+  importS3ToRDS(table: string): Observable<any> {
+    this.amplifyService.auth();
+
+    // Test data:
+    // this.myPutPostInit.queryStringParameters = { request_type: 'importS3ToRDS', table: 'entrasp.s3_import' };
+
+    this.myPutPostInit.queryStringParameters = { request_type: 'importS3ToRDS', table: table };
+    return from(this.amplifyService.api().post(this.apiName, '/S3ToRDS', this.myPutPostInit));
+  }
 }

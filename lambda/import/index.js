@@ -207,15 +207,15 @@ function data2csv(data, keys = null) {
     let columns = null;
     if (keys !== null) {
         columns = keys.map(x => x.key);
-        result += columns.join('CSV_SPLITTER') + '\n';
+        result += columns.join('CSV_DELIMITER') + '\n';
     }
 
     data.forEach(row => {
         if (columns === null) {
             columns = Object.keys(row);
-            result += columns.join('CSV_SPLITTER') + '\n';
+            result += columns.join('CSV_DELIMITER') + '\n';
         }
-        result += columns.map(c => row[c]).join('CSV_SPLITTER') + '\n';
+        result += columns.map(c => row[c]).join('CSV_DELIMITER') + '\n';
     });
     return result;
 }
@@ -407,7 +407,7 @@ exports.handler = async (event, context) => {
                         if (!columns) {
                             // Let's search CSV header for columns
                             // First line contains headers, replace all extra characters
-                            columns = csvFile.Body.toString().split('\n')[0].replace(/'/g, '');
+                            columns = csvFile.Body.toString().split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/CSV_DELIMITER/g, ',');
                         }
 
                         // Added schema if table does not contain
@@ -426,7 +426,7 @@ exports.handler = async (event, context) => {
                         query = `SELECT aws_s3.table_import_from_s3(
                             '${table}',
                             '${columns}', 
-                            '(FORMAT CSV, DELIMITER E'','', HEADER true)',
+                            '(FORMAT CSV, DELIMITER E''CSV_DELIMITER'', HEADER true)',
                             aws_commons.create_s3_uri('${bucket}', '${fileName}','${region}'), 
                             aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
                         );`;
@@ -491,7 +491,12 @@ exports.handler = async (event, context) => {
                         queryResponse = await client.query(query);
                         console.table(queryResponse);
                         if (queryResponse.rows && queryResponse.rows.length) {
-                            body = { result: 'OK', response: queryResponse.rows[0]["columns"] };
+                            body = {
+                                result: 'OK',
+                                response: queryResponse.rows[0]["columns"] ?
+                                    queryResponse.rows[0]["columns"].replace(/,/g, 'CSV_DELIMITER').replace(/ /g, '') :
+                                    ''
+                            };
                         }
                         else {
                             body = { result: 'OK', response: queryResponse };
