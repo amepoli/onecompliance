@@ -8,11 +8,11 @@
             <mat-icon>refresh</mat-icon>
             Reload
         </button>
-        <button mat-button (click)="saveChanges()">
+        <button mat-button (click)="saveChanges()" *ngIf="!hideActions.includes('save')">
             <mat-icon>save</mat-icon>
             Save
         </button>
-        <button mat-button (click)="addNew()">
+        <button mat-button (click)="addNew()" *ngIf="!hideActions.includes('add')">
             <mat-icon>add</mat-icon>
             Quick Add
         </button>
@@ -28,6 +28,7 @@
 
     </div>
 
-    <form-getter [filter]="filter" [formParams]='getterParams' (onReload)="reload()">
+    <form-getter [filter]="filter" [formParams]='getterParams' (onReload)="reload()"
+        (onHideActionsUpdated)="updateHideActions($event)">
     </form-getter>
 </div>
