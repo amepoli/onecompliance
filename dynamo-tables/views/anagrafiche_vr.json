@@ -201,7 +201,7 @@
                     "actionType": "query",
                     "condition": "none",
                     "eventName": "clienti_button_nuova_versione",
-                    "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version($codice_azienda$,$id_anagrafica$, $prog_vr$)",
+                    "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version('€global_codice_azienda€',$id_anagrafica$, $prog_vr$)",
                     "values": []
                 }
             ],
@@ -285,12 +285,17 @@
         },
         {
             "operation": "insert",
-            "queryString": "SELECT entrasp.anagrafica_id_insert(codiceazienda=>$codice_azienda$, anagraficaid=>$id_anagrafica$, codiceruolo=>'CLI', codice=>$codice$, name=>$nome$,surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>$flag_cliente$, flagfornitore=>$flag_fornitore$, flagdipendente=>$flag_dipendente$);",
+            "queryString": "SELECT entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', anagraficaid=>$id_anagrafica$, codiceruolo=>'CLI', codice=>$codice$, name=>$nome$,surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>$flag_cliente$, flagfornitore=>$flag_fornitore$, flagdipendente=>$flag_dipendente$);",
             "type": "main"
         },
         {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€');",
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€');",
+            "type": "main"
+        },
+        {
+            "operation": "delete",
+            "queryString": "SELECT entrasp.anagrafica_id_delete($codice_part$, '€global_codice_azienda€', $id_anagrafica$);",
             "type": "main"
         }
     ],

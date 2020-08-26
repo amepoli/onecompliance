@@ -997,8 +997,8 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 
     const entry_keys = isForm ? view_keys.form_keys : view_keys.table_keys;
 
-    const entry_azienda = entry_keys.find(entry => entry.key === 'codice_azienda');
-    const entry_part = entry_keys.find(entry => entry.key === 'codice_part');
+    const entry_azienda = entry_keys.find(entry => (entry.key === 'codice_azienda' && entry.isPrimary));
+    const entry_part = entry_keys.find(entry => (entry.key === 'codice_part' && entry.isPrimary));
 
     if (entry_azienda != null) {
         keys['codice_azienda'] = company;
