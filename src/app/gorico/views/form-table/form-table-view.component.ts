@@ -4,6 +4,8 @@ import { BackendService } from '../backend/backend.service';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { formViewParams } from '../form/form-view.component';
+import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
+import { DialogService } from 'app/gorico/services/dialog.service';
 
 
 export interface formTableViewParams {
@@ -42,10 +44,15 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   // Height available for view
   formHeight = 1000;
 
+  hideActions: string[] = []; // Hide actions
+  @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
+
   constructor(
     private backendService: BackendService,
     private authService: AuthService,
-    private _toastService: ToastService
+    private _dialogService: DialogService,
+    private _toastService: ToastService,
+    private _navigationServce: NavigationService
   ) { }
 
   ngOnInit() {
@@ -99,45 +106,52 @@ export class FormTableViewComponent implements OnChanges, OnInit {
 
   saveChanges(): void {
     let _this = this;
-    const values = _this.formGetter.formArray.map(form => form.form.value);
-    // process the booleans (1/0 instead of true/false)
-    values.forEach(entry => {
-      for (const value in entry) {
-        if (entry.hasOwnProperty(value)) {
-          const element = entry[value];
-          if (element == null) {
-            continue; // skip null entries
+    if (!_this.formGetter.formArray.first.form.valid) {
+      _this._dialogService.showErrorDialog("Error", "The form is incomplete!");
+      console.error("Form is invalid!");
+    }
+    else {
+      const values = _this.formGetter.formArray.map(form => form.form.value);
+      // process the booleans (1/0 instead of true/false)
+      values.forEach(entry => {
+        for (const value in entry) {
+          if (entry.hasOwnProperty(value)) {
+            const element = entry[value];
+            if (element == null) {
+              continue; // skip null entries
+            }
+            // decode combos
+            if (element['id'] != null) {
+              entry[value] = element['id'];
+            }
+            // encode boolean
+            else if (element === true) {
+              entry[value] = '1';
+            }
+            else if (element === false) {
+              entry[value] = '0';
+            }
           }
-          // decode combos
-          if (element['id'] != null) {
-            entry[value] = element['id'];
-          }
-          // encode boolean
-          else if (element === true) {
-            entry[value] = '1';
-          }
-          else if (element === false) {
-            entry[value] = '0';
-          }
-        }
-      }
-    });
-    _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys, values).subscribe(   // backend expects an array of data
-      result => {
-        console.log(result);
-        if (result.result === 'OK') {
-          _this._toastService.showSuccessToast("Saved successfully!"); // show success toast
-          if (_this.formGetter.eventTrigger === 'onSave') {
-            setTimeout(() => {
-              _this.sendEvent.emit({ eventType: _this.formGetter.outputEvent }); // notify parent
-            }, 1000);
-          }
-        }
-        else {
-          // Show error snackbar
-          _this._toastService.showErrorToast(result.reason);
         }
       });
+      _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys, values).subscribe(   // backend expects an array of data
+        result => {
+          console.log(result);
+          if (result.result === 'OK') {
+            _this._toastService.showSuccessToast("Saved successfully!"); // show success toast
+            if (_this.formGetter.eventTrigger === 'onSave') {
+              setTimeout(() => {
+                _this.sendEvent.emit({ eventType: _this.formGetter.outputEvent }); // notify parent
+              }, 1000);
+            }
+          }
+          else {
+            // Show error snackbar
+            _this._toastService.showErrorToast(result.reason);
+          }
+        });
+    }
+
   }
 
   // Get height on resize
@@ -175,5 +189,10 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   reload() {
     console.log('onReload: form-table-view');
     this.onReload.emit();
+  }
+
+  updateHideActions(hideActions: HideAction[]) {
+    this.hideActions = this._navigationServce.getFormHideActions(hideActions);
+    this.onHideActionsUpdated.emit(hideActions);
   }
 }

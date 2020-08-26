@@ -6,7 +6,7 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
-LAMBDANAME="import"
+LAMBDANAME="S3ToRDS"
 SCHEMA="entrasp"
 
 DYN_USERSNAME="users"
@@ -16,7 +16,7 @@ DYN_VIEWSNAME="views"
 DBNAME=""
 HOSTNAME="goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com"
 
-BUCKETNAME="gorico2.import"
+BUCKETNAME="gorico2.migration"
 REGION="eu-central-1"
 ACCESSKEY="AKIAVH7FFOJ5BBH3AY4R"
 SECRETKEY="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"
@@ -47,7 +47,6 @@ sed -i -e "s/REGION/${REGION}/g" index.js
 sed -i -e "s/ACCESS_KEY/${ACCESSKEY}/g" index.js
 sed -i -e "s/SECRET_KEY/${SECRETKEY}/g" index.js
 sed -i -e "s/SCHEMA/${SCHEMA}/g" index.js
-
 sed -i -e "s/CSV_DELIMITER/${CSVDELIMITER}/g" index.js
 
 
