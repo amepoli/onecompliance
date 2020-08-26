@@ -108,8 +108,8 @@ export class FormTableViewComponent implements OnChanges, OnInit {
     let _this = this;
     if (!_this.formGetter.formArray.first.form.valid) {
       // Highlight all empty required fields
-      Object.keys(this.formGetter.formArray.first.form.controls).forEach(field => {
-        const control = this.formGetter.formArray.first.form.get(field);
+      Object.keys(_this.formGetter.formArray.first.form.controls).forEach(field => {
+        const control = _this.formGetter.formArray.first.form.get(field);
         control.markAsTouched({ onlySelf: true });
       });
     }
