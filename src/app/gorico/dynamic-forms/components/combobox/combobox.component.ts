@@ -103,7 +103,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  if (event.value === '' || event.velue == null) { // reset color style
+  if (event.value === '' || event.value == null) { // reset color style
     this.field.style = { background_color: 'transparent', font_color: 'black' };
   }
 }

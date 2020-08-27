@@ -721,7 +721,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     if (element.style == null) {
                                         element.style = {};
                                     }
-                                    element.style[event.styleAttribute] = result[0][keyListener + '_' + event.styleAttribute]; // as per specs the returned key is of type '<key>_<styleAttribute>'
+                                    // we can get multiple rows from backend, each one providing a different attribute, find the right one
+                                    const attrKey = keyListener + '_' + event.styleAttribute; // as per specs the returned key is of type '<key>_<styleAttribute>'
+                                    const actualResult = result.find(attr => attr[attrKey] != null);
+                                    element.style[event.styleAttribute] = actualResult[attrKey]; 
                                 }
                             }
                             if (event.outputEventWhenComplete != null) {
