@@ -11,7 +11,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 <mat-label>{{field.label}}</mat-label>
 <mat-select [(ngModel)]="field.value" [formControlName]="field.name" [placeholder]="field.label" (selectionChange)="onSelection($event)">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
-<mat-option value="">Empty</mat-option>
+<mat-option value="">Seleziona</mat-option>
 <mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly || readOnlyPage">{{item.name}}</mat-option>
 </mat-select>
 </mat-form-field>
