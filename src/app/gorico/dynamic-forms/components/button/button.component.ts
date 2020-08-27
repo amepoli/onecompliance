@@ -52,8 +52,8 @@ export class ButtonComponent implements OnInit {
 
   ngOnInit() { 
       const _this = this;
-    _this.field.style = _this.field.style == null ? { background_color: 'black', font_color: 'lightgrey' } : _this.field.style;
-    _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'black';
-    _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'lightgrey';
+    _this.field.style = _this.field.style == null ? { background_color: 'lightblue', font_color: 'black' } : _this.field.style;
+    _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'lightblue';
+    _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
   }
 }
