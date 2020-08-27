@@ -60,10 +60,6 @@ export class InputComponent implements OnInit, AfterViewInit {
     // publish a change event to start if expected
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
       setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
-        const id_domanda = _this.group.get('id_domanda');
-        if (id_domanda != null) {
-          console.log(id_domanda.value);
-        }
         _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
       }, 500);
     }
