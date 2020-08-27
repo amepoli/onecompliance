@@ -9,9 +9,10 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
   template: `
 <mat-form-field [ngStyle]="{'margin-right': '1%', 'margin-left': '1%','width': field.width+'%'}" *ngIf="field.isVisible != false" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
-<mat-select [(ngModel)]="field.value" [formControlName]="field.name" [placeholder]="field.label" (selectionChange)="onSelection($event)">
+<mat-select [(ngModel)]="field.value" [formControlName]="field.name" [placeholder]="field.label" (selectionChange)="onSelection($event)"
+[style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
-<mat-option value="">Seleziona</mat-option>
+<mat-option value="" [style.color]="'grey'">Seleziona</mat-option>
 <mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly || readOnlyPage">{{item.name}}</mat-option>
 </mat-select>
 </mat-form-field>
@@ -38,6 +39,9 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
 
     const _this = this;
+    _this.field.style = _this.field.style == null ? { background_color: 'transparent', font_color: 'black' } : _this.field.style;
+    _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'transparent';
+    _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
     // filter out null values
 
     _this.field.options = _this.field.options.filter(x => x.name !== null);
@@ -47,7 +51,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
     }
     else {
-      _this.field.value = "";
+      _this.field.value = '';
       _this.group.get(_this.field.name).setValue(_this.field.value);
     }
 
@@ -66,8 +70,10 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     const _this = this;
-    if (_this.field.value != null && this.field.eventName != null) {
-      _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.getFormattedId(_this.field.value.id), type: 'combobox' });
+    if (_this.field.value != null && this.field.eventName != null && this.field.eventTrigger != null && this.field.eventTrigger === 'select') {
+        setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
+            _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.getFormattedId(_this.field.value.id), type: 'combobox' });
+        }, 500);
     }
   }
 
@@ -82,21 +88,25 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onSelection(event: any) {
-    if (event.value) {
-      this.field.value = event.value;
-      this.group.get(this.field.name).setValue(this.field.value);
-      this.cdr.detectChanges();
-
-      if (this.field.eventName != null) {
-        this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
+    if (event.value != null && this.field.eventName != null && this.field.eventTrigger != null && this.field.eventTrigger === 'select') {
+        this.field.value = event.value;
+        this.group.get(this.field.name).setValue(this.field.value);
+        this.cdr.detectChanges();
+  
+        if (this.field.eventName != null) {
+          this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
+        }
       }
-    }
-    else {
-      if (this.field.eventName != null) {
-        this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
-      }
+      else {
+        if (this.field.eventName != null) {
+      this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
     }
   }
+
+  if (event.value === '' || event.velue == null) { // reset color style
+    this.field.style = { background_color: 'transparent', font_color: 'black' };
+  }
+}
 
   resetSelection() {
     // this.group.get(this.field.name).reset();
