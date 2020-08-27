@@ -47,7 +47,12 @@ export class HelperService {
      * @returns new string
      */
     public static replaceAll(str, find, replace) {
-        return str.replace(new RegExp(find, 'g'), replace);
+        if (str != null && str.length > 0) {
+            return str.replace(new RegExp(find, 'g'), replace);
+        }
+        else {
+            return str;
+        }
     }
 
     /**

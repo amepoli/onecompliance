@@ -25,6 +25,9 @@ const global_variables = {
     global_userid: 0
 };
 
+function isDataTypeString(dataType) {
+    return (dataType === 'text' || dataType === 'date')
+}
 
 function replaceLocalKeys(queryString, keys) {
 
@@ -74,7 +77,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                     for (var subkey in keys[key]) {
                         // console.log(subKey);
                         let subKeyType = keyType.dataType.find(e => (e.key === subkey));
-                        let bracket = (delimiter === '$' && subKeyType && subKeyType.dataType === 'text') ? '\'' : '';
+                        let bracket = (delimiter === '$' && subKeyType && isDataTypeString(subKeyType.dataType)) ? '\'' : '';
                         let toReplace = delimiter + key + '.' + subkey + delimiter;
                         // replace single quotes with double quotes within strings to avoid errors with queries
                         let valueWithFixedQuotes = (subKeyType && subKeyType.dataType === 'text') ? keys[key][subkey].replace(/'/g, "''") : keys[key][subkey];
@@ -87,7 +90,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                         console.log(`newString Object: ${newString}`);
                     }
                 } else if (typeof keys[key] !== 'object' || keys[key] == null) {  // avoid spourious values like arrays form events - n.b.: null is 'object'
-                    let bracket = (delimiter === '$' && keyType != null && keyType.dataType === 'text') ? '\'' : '';
+                    let bracket = (delimiter === '$' && keyType != null && isDataTypeString(keyType.dataType)) ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
                     // TO BE CHECKED
                     //let replacement = keys[key].value ? keys[key].value : keys[key]; // handle subtables
@@ -257,7 +260,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
             if (keyType.sameOrigin != null && !keyType.sameOrigin) {
                 continue;
             }
-            let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
+            let delimiter = isDataTypeString(keyType.dataType) ? '\'' : '';
             let element = table_keys[key];
             // replace single quotes with double quotes in strings
             element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
@@ -522,7 +525,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             if (keys.hasOwnProperty(key)) {
                 let keyType = keyTypes.find(e => (e.key === key));
                 if (!keyType.isPrimary || keyType.key === autoGenKey) continue; // avoid to add non primary keys to the WHERE condition
-                let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
+                let delimiter = isDataTypeString(keyType.dataType) ? '\'' : '';
                 let element = keys[key];
                 // replace single quotes with double quotes in strings
                 if (element != null) {
@@ -565,7 +568,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         values[element.key] = value;
         if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
             let keyType = keyTypes.find(e => (e.key === element.key));
-            let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
+            let delimiter = isDataTypeString(keyType.dataType) ? '\'' : '';
             if (value.id) { // combobox 
                 value = value.id;
             }
@@ -580,7 +583,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         comma = ') VALUES (';
         for (const key in values) {
             let keyType = keyTypes.find(e => (e.key === key));
-            let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
+            let delimiter = isDataTypeString(keyType.dataType) ? '\'' : '';
             let value = values[key];
             if (value.id) { // combobox 
                 value = value.id;
@@ -600,7 +603,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         comma = ' WHERE ';
         primaryKeys.forEach(primaryKey => {
             let keyType = keyTypes.find(e => (e.key === primaryKey.key));
-            let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
+            let delimiter = isDataTypeString(keyType.dataType) ? '\'' : '';
             let element = keys[primaryKey.key];
             // replace single quotes with double quotes in strings
             element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
@@ -656,7 +659,7 @@ function getDeleteQuery(entry_params, table_keys) {
     for (const key in table_keys) {
         if (table_keys.hasOwnProperty(key)) {
             let keyType = keyTypes.find(e => (e.key === key));
-            let delimiter = (keyType.dataType === 'text' || keyType.dataType === 'date') ? '\'' : '';
+            let delimiter = isDataTypeString(keyType.dataType) ? '\'' : '';
             let element = table_keys[key];
             // replace single quotes with double quotes in strings
             element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
