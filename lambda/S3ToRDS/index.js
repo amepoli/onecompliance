@@ -147,13 +147,15 @@ async function importCSV(table, fileName, client) {
     // query = `CREATE EXTENSION aws_commons CASCADE;`
 
     // Import CSV from S3 to Postgres
-    let query = `SELECT aws_s3.table_import_from_s3(
+    let query = `   SET session_replication_role = 'replica';
+                    SELECT aws_s3.table_import_from_s3(
                             '${table}',
                             '${columns}', 
                             '(FORMAT CSV, DELIMITER E''CSV_DELIMITER'', HEADER true)',
                             aws_commons.create_s3_uri('${bucket}', '${fileName}','${region}'), 
                             aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
-                        );`;
+                        );
+                    SET session_replication_role = 'origin';`;
 
     // Try to run query 5 times on failure
     let queryResponse = null;
