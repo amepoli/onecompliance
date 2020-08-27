@@ -11,7 +11,8 @@ import { DialogService } from "app/gorico/services/dialog.service";
         <mat-icon>{{field.buttonIcon}}</mat-icon>
       </button>
 
-<button *ngIf="!field.buttonIcon" mat-raised-button color="primary" [disabled]="field.readonly" (click)="onClickButton()">{{field.label}}</button>
+<button *ngIf="!field.buttonIcon" mat-raised-button color="primary" [disabled]="field.readonly" (click)="onClickButton()"
+[style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">{{field.label}}</button>
 </div>
 `,
   styles: []
@@ -26,7 +27,7 @@ export class ButtonComponent implements OnInit {
     private _dialogService: DialogService) { }
 
   onClickButton() {
-    let _this = this;
+    const _this = this;
 
     // Confirm first if confirmation is true before performing action
     if (_this.field.confirmButtonAction) {
@@ -49,5 +50,10 @@ export class ButtonComponent implements OnInit {
 
   }
 
-  ngOnInit() { }
+  ngOnInit() { 
+      const _this = this;
+    _this.field.style = _this.field.style == null ? { background_color: 'black', font_color: 'lightgrey' } : _this.field.style;
+    _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'black';
+    _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'lightgrey';
+  }
 }
