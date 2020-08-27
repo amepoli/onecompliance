@@ -2,6 +2,12 @@
     "$schema": "../views.schema.json",
     "entryKey": "template_risposte_previste_righe",
     "origin": "entrasp.template_risposte_previste_righe",
+    "inputEvents": [
+      {
+          "eventName": "update_template_risposte_previste_righe",
+          "actionType": "reload"
+      }
+    ],
     "predefinedQueries": [
       
       {
@@ -29,6 +35,35 @@
         "readOnly": false,
         "newLine": false
       },
+      {
+        "autoGenerate": false,
+        "format": {
+            "viewType": "button"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "cancella_risposte",
+        "label": "delete",
+        "buttonIcon": "delete",
+        "newLine": false,
+        "outputEvent": {
+            "eventName": "cancella_risposte",
+            "eventTrigger": "press"
+        },
+        "inputEvents": [
+            {
+                "eventName": "cancella_risposte",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "delete from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$id_template_rp$ and id_riga=$id_riga$",
+                "outputEventWhenComplete": "update_template_risposte_previste_righe"
+            }
+          ],
+          "readOnly": false,
+          "sameOrigin": false,
+          "size": 0.5
+        },
       {
         "autoGenerate": true,
         "format": {
