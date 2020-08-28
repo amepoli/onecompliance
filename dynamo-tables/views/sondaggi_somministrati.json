@@ -272,9 +272,50 @@
       "isPrimary": false,
       "key": "pct_da_manuale",
       "label": "Giudizio manuale",
-      "newLine": false,
+      "newLine": true,
       "readOnly": false,
       "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "riepilogo_risultati",
+      "label": "Riepilogo Risultati",
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "check_existence_riepilogo_risultati",
+        "eventTrigger": "press"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "new_riepilogo_risultati",
+      "label": "new_riepilogo_risultati",
+      "newLine": true,
+      "inputEvents": [
+        {
+          "eventName": "check_existence_riepilogo_risultati",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select check_existence_cpl_risultati as  new_riepilogo_risultati from entrasp.check_existence_cpl_risultati($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
+          "outputEventWhenComplete": "to_riepilogo_risultati"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false
     }
   ],
   "search_keys": [
@@ -311,24 +352,24 @@
     {
       "fieldName": "stato",
       "format": {
-          "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
-          "options": [],
-          "viewType": "combobox"
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+        "options": [],
+        "viewType": "combobox"
       },
       "label": "Stato",
       "newLine": true,
       "queryCond": "stato='€stato€'"
-  },
-  {
-    "fieldName": "data_comp",
-    "format": {
+    },
+    {
+      "fieldName": "data_comp",
+      "format": {
         "dataType": "date",
         "viewType": "input"
-    },
-    "label": "Data Competenza",
-    "newLine": true,
-    "queryCond": "data_comp='€data_comp€'"
-}
+      },
+      "label": "Data Competenza",
+      "newLine": true,
+      "queryCond": "data_comp='€data_comp€'"
+    }
   ],
   "origin": "entrasp.sondaggi_somministrati",
   "subTables": [
@@ -463,6 +504,28 @@
   "inputEvents": [
     {
       "actionTarget": {
+        "name": "cpl_risultati",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_sondaggio",
+            "destination": "id_sondaggio"
+          },
+          {
+            "source": "id_somministrazione",
+            "destination": "id_somministrazione"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_riepilogo_risultati"
+    },
+    {
+      "actionTarget": {
         "name": "sondaggi",
         "type": "form",
         "keymap": [
@@ -488,6 +551,14 @@
       "eventName": "to_modello_test_from_sondaggi_somministrati"
     }
   ],
-  "hideActions": [{"formActionType": "add", "viewType": "form"}, {"tableActionType":"add", "viewType": "table"}]
-
+  "hideActions": [
+    {
+      "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    }
+  ]
 }
