@@ -71,7 +71,9 @@
             "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["viewType"],
+                "required": [
+                    "viewType"
+                ],
                 "anyOf": [
                     {
                         "properties": {
@@ -103,30 +105,113 @@
                         "type": "string",
                         "description": "M: type of view affected",
                         "enum": [
-                            "table", 
+                            "table",
                             "form"
                         ]
                     },
                     "tableActionType": {
                         "type": "string",
                         "description": "?: action affected (& field mandatory) when viewType='table'",
-                        "enum":[
-                            "add", 
+                        "enum": [
+                            "add",
                             "import_export"
                         ]
                     },
                     "formActionType": {
                         "type": "string",
                         "description": "?: action affected (& field mandatory) when viewType='form'",
-                        "enum":[
-                            "add", 
-                            "delete", 
-                            "save", 
-                            "share", 
-                            "attachments", 
-                            "navigate", 
+                        "enum": [
+                            "add",
+                            "delete",
+                            "save",
+                            "share",
+                            "attachments",
+                            "navigate",
                             "import_export"
                         ]
+                    }
+                }
+            }
+        },
+        "messages": {
+            "type": "array",
+            "description": "?: set of messages (by means of related icons) to show",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "viewType",
+                    "message"
+                ],
+                "anyOf": [
+                    {
+                        "properties": {
+                            "viewType": {
+                                "enum": [
+                                    "table"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "tableMessageType"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "viewType": {
+                                "enum": [
+                                    "form"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "formMessageType"
+                        ]
+                    }
+                ],
+                "properties": {
+                    "viewType": {
+                        "type": "string",
+                        "description": "M: type of view affected",
+                        "enum": [
+                            "table",
+                            "form"
+                        ]
+                    },
+                    "tableMessageType": {
+                        "type": "string",
+                        "description": "?: action affected (& field mandatory) when viewType='table'",
+                        "enum": [
+                            "add",
+                            "import_export"
+                        ]
+                    },
+                    "formMessageType": {
+                        "type": "string",
+                        "description": "?: action affected (& field mandatory) when viewType='form'",
+                        "enum": [
+                            "add",
+                            "delete",
+                            "save",
+                            "share",
+                            "attachments",
+                            "navigate",
+                            "import_export"
+                        ]
+                    },
+                    "message": {
+                        "type": "object",
+                        "description": "M: message",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "description": "M: message title"
+                            },
+                            "text": {
+                                "type": "string",
+                                "description": "M: message text"
+                            }
+                        }
                     }
                 }
             }
@@ -828,7 +913,7 @@
                         "items": {
                             "type": "object",
                             "required": [
-                                "attributeType", 
+                                "attributeType",
                                 "queryString"
                             ],
                             "additionalProperties": false,
@@ -837,7 +922,7 @@
                                     "properties": {
                                         "attributeType": {
                                             "enum": [
-                                                "isHidden", 
+                                                "isHidden",
                                                 "readOnly"
                                             ]
                                         }
@@ -861,8 +946,8 @@
                                     "type": "string",
                                     "description": "M: affected attribute",
                                     "enum": [
-                                        "isHidden", 
-                                        "readOnly", 
+                                        "isHidden",
+                                        "readOnly",
                                         "style"
                                     ]
                                 },
