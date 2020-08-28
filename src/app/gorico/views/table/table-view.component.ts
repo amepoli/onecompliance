@@ -93,7 +93,7 @@ export class TableViewComponent implements OnChanges {
 
     dataSource: MatTableDataSource<any> = null;
     selectedRow: MatRow = null;
-    isLoading = true;
+    isLoading = false;
 
     isFullScreen = false;
 
@@ -167,51 +167,76 @@ export class TableViewComponent implements OnChanges {
         }
     }
 
+    public resetView() {
+        this.showQuickAdd = false;
+        this.showAdvSearch = false;
+
+        this.viewKeys = null;
+        this.searchKeys = null;
+        this.displayedColumns = null;
+        this.currentKeys = null;
+
+        this.searchOptions = null;
+        this.searchData = null;
+        this.dataSource = null;
+
+    }
+
     public loadData() {
         let _this = this;
-        _this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys).subscribe(result => {
-            if (result.result === 'OK' && result.data != null && result.data.table_keys != null) {
-                const params = result.data;
-                console.table(params);
-                _this.viewKeys = params.table_keys;
-                _this.searchKeys = params.search_keys;
-                _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
-                _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
-                _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
-                _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
-                _this.loadTable(null);
+        _this.resetView();
+        _this.isLoading = true;
+        _this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys).subscribe(
+            result => {
+                if (result.result === 'OK' && result.data != null && result.data.table_keys != null) {
+                    const params = result.data;
+                    console.table(params);
+                    _this.viewKeys = params.table_keys;
+                    _this.searchKeys = params.search_keys;
+                    _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
+                    _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
+                    _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
+                    _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
+                    _this.loadTable(null);
 
-                // Load Export Queries list if available
-                if (params.exportQueries && params.exportQueries.tableQueries) {
-                    console.log('exportQueries', params.exportQueries);
-                    _this._importExportService.updateExportList(_this.tableData.entryName, params.exportQueries.tableQueries);
+                    // Load Export Queries list if available
+                    if (params.exportQueries && params.exportQueries.tableQueries) {
+                        console.log('exportQueries', params.exportQueries);
+                        _this._importExportService.updateExportList(_this.tableData.entryName, params.exportQueries.tableQueries);
+                    }
+                    else {
+                        _this._importExportService.updateExportList(_this.tableData.entryName, []);
+                    }
+
+                    // Load Hide Actions if available
+                    if (params.hideActions) {
+                        _this.hideActions = _this._navigationService.getTableHideActions(params.hideActions);
+                    }
+                    else {
+                        _this.hideActions = [];
+                    }
+                    _this.onHideActionsUpdated.emit(params.hideActions);
+
                 }
                 else {
-                    _this._importExportService.updateExportList(_this.tableData.entryName, []);
+                    _this.isLoading = false;
+                    // Show error snackbar
+                    _this._toastService.showErrorToast(result.reason);
                 }
-
-                // Load Hide Actions if available
-                if (params.hideActions) {
-                    _this.hideActions = _this._navigationService.getTableHideActions(params.hideActions);
-                }
-                else {
-                    _this.hideActions = [];
-                }
-                _this.onHideActionsUpdated.emit(params.hideActions);
-
-            }
-            else {
+            },
+            error => {
                 _this.isLoading = false;
                 // Show error snackbar
-                _this._toastService.showErrorToast(result.reason);
+                _this._toastService.showErrorToast(error);
             }
-        });
+        );
         // Calculate table height
         _this.calculateTableHeight();
     }
 
     loadTable(search_keys: any): void {
         const _this = this;
+        _this.isLoading = true;
         _this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, search_keys, false, false, null, false).subscribe(
             results => {
                 console.log(results);
@@ -244,9 +269,12 @@ export class TableViewComponent implements OnChanges {
                     // Show error snackbar
                     _this._toastService.showErrorToast(results.reason);
                 }
+
+                _this.isLoading = false;
             },
             error => {
                 _this.isLoading = false;
+                _this._toastService.showErrorToast(error);
             });
 
         // Calculate table height
@@ -411,7 +439,3 @@ export class TableViewComponent implements OnChanges {
         this.onReload.emit();
     }
 }
-
-
-
-
