@@ -65,15 +65,26 @@ export class HelperService {
     }
 
     /**
+     * Get formatted Date
+     * @param date 
+     * @returns formatted date
+     */
+    public static getFormattedDate(dateTime) {
+        // Example formatted date
+        // "2017-09-25T00:00:00.000Z"
+        let formattedDate = `${dateTime.getFullYear()}-${this.getFormattedMonthDay(dateTime.getMonth() + 1)}-${this.getFormattedMonthDay(dateTime.getDate())}T00:00:00.000Z`;
+        return formattedDate;
+    }
+
+    /**
      * Get Current Date
      * @returns formatted date
      */
     public static getCurrentDate() {
         // Example formatted date
         // "2017-09-25T00:00:00.000Z"
-        let current_datetime = new Date();
-        let formatted_date = `${current_datetime.getFullYear()}-${this.getFormattedMonthDay(current_datetime.getMonth() + 1)}-${this.getFormattedMonthDay(current_datetime.getDate())}T00:00:00.000Z`;
-        return formatted_date;
+        let dateTime = new Date();
+        return this.getFormattedDate(dateTime);
     }
 
     /**

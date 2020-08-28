@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { FieldConfig } from '../../field.interface';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { HelperService } from 'app/gorico/services/helper.service';
+import { Moment } from 'moment';
 @Component({
   selector: 'app-input',
   template: `
@@ -67,6 +68,20 @@ export class InputComponent implements OnInit, AfterViewInit {
 
   onBlur(): void {
     const _this = this;
+    console.log(_this.field.value);
+
+
+    if (_this.field.inputType === 'date') {
+      let date: Moment = _this.group.get(_this.field.name).value;
+      _this.field.value = HelperService.getFormattedDate(date.toDate());
+      _this.group.get(_this.field.name).setValue(_this.field.value);
+    }
+    else {
+      _this.field.value = _this.group.get(_this.field.name).value;
+    }
+
+    console.log(_this.field.value);
+
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
       _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur' });
     }
