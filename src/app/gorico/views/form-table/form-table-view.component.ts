@@ -6,6 +6,7 @@ import { ToastService } from 'app/gorico/services/toast.service';
 import { formViewParams } from '../form/form-view.component';
 import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
+import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
 
 
 export interface formTableViewParams {
@@ -47,12 +48,16 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   hideActions: string[] = []; // Hide actions
   @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
 
+  messages: MessageElement[] = []; // Messages
+  @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
+
   constructor(
     private backendService: BackendService,
     private authService: AuthService,
     private _dialogService: DialogService,
     private _toastService: ToastService,
-    private _navigationServce: NavigationService
+    private _navigationServce: NavigationService,
+    private _messagesService: MessagesService
   ) { }
 
   ngOnInit() {
@@ -207,5 +212,10 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   updateHideActions(hideActions: HideAction[]) {
     this.hideActions = this._navigationServce.getFormHideActions(hideActions);
     this.onHideActionsUpdated.emit(hideActions);
+  }
+
+  updateMessages(messageViews: MessageView[]) {
+    this.messages = this._messagesService.getFormMessages(messageViews);
+    this.onMessagesUpdated.emit(messageViews);
   }
 }

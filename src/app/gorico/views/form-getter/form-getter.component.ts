@@ -11,6 +11,7 @@ import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
+import { MessageView } from 'app/gorico/services/messages.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -104,6 +105,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     numRows = 1;
 
     @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
+    @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
     viewKeys: formViewKey[]; // view form fields as specified by the backend
     viewProperties: any[];
@@ -195,6 +197,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                     else {
                         _this.onHideActionsUpdated.emit([]);
+                    }
+
+                    // Load Messages if available
+                    if (params.messages) {
+                        _this.onMessagesUpdated.emit(params.messages);
+                    }
+                    else {
+                        _this.onMessagesUpdated.emit([]);
                     }
 
                     // Get View properties if exist
@@ -724,7 +734,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     // we can get multiple rows from backend, each one providing a different attribute, find the right one
                                     const attrKey = keyListener + '_' + event.styleAttribute; // as per specs the returned key is of type '<key>_<styleAttribute>'
                                     const actualResult = result.find(attr => attr[attrKey] != null);
-                                    element.style[event.styleAttribute] = actualResult[attrKey]; 
+                                    element.style[event.styleAttribute] = actualResult[attrKey];
                                 }
                             }
                             if (event.outputEventWhenComplete != null) {

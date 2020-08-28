@@ -21,6 +21,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ReportService } from 'app/gorico/services/report.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService } from 'app/gorico/services/navigation.service';
+import { MessageView, MessageElement } from 'app/gorico/services/messages.service';
 
 
 @Component({
@@ -51,6 +52,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     currentCompany: string;
 
     hideActions: string[] = []; // Hide Actions
+
+    messages: MessageElement[] = []; // Messages
 
     // Private
     private _unsubscribeAll: Subject<any>;

@@ -14,6 +14,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ReportService } from 'app/gorico/services/report.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { HideAction, NavigationService } from 'app/gorico/services/navigation.service';
+import { MessageView, MessagesService, MessageElement } from 'app/gorico/services/messages.service';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -88,6 +89,9 @@ export class FormViewComponent implements OnChanges, OnInit {
     hideActions: string[] = []; // Hide actions
     @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
 
+    messages: MessageElement[] = []; // Messages
+    @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
+
     constructor(public attachDialog: MatDialog,
         private backendService: BackendService,
         private authService: AuthService,
@@ -97,7 +101,8 @@ export class FormViewComponent implements OnChanges, OnInit {
         private _pubSubService: NgxPubSubService,
         private _reportService: ReportService,
         private _importExportService: ImportExportService,
-        private _navigationServce: NavigationService
+        private _navigationServce: NavigationService,
+        private _messagesService: MessagesService
     ) {
 
     }
@@ -355,6 +360,11 @@ export class FormViewComponent implements OnChanges, OnInit {
     updateHideActions(hideActions: HideAction[]) {
         this.hideActions = this._navigationServce.getFormHideActions(hideActions);
         this.onHideActionsUpdated.emit(hideActions);
+    }
+
+    updateMessages(messageViews: MessageView[], viewType: string) {
+        this.messages = this._messagesService.getFormMessages(messageViews);
+        this.onMessagesUpdated.emit(messageViews);
     }
 }
 

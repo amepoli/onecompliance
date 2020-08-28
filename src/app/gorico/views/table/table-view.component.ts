@@ -9,6 +9,7 @@ import { ReportService } from 'app/gorico/services/report.service';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
+import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
 
 export interface tableViewParams {
     entryName: string;
@@ -100,6 +101,9 @@ export class TableViewComponent implements OnChanges {
     hideActions: string[] = []; // Hide actions
     @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
 
+    messages: MessageElement[] = []; // Messages
+    @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
+
     viewKeys: tableViewKey[];  // view fields as specified by the backend
 
     searchKeys: searchViewKey[];
@@ -124,7 +128,8 @@ export class TableViewComponent implements OnChanges {
         private _toastService: ToastService,
         private _reportService: ReportService,
         private _importExportService: ImportExportService,
-        private _navigationService: NavigationService
+        private _navigationService: NavigationService,
+        private _messagesService: MessagesService
     ) {
 
         this.calculateTableHeight();
@@ -217,6 +222,14 @@ export class TableViewComponent implements OnChanges {
                     }
                     _this.onHideActionsUpdated.emit(params.hideActions);
 
+                    // Load Messages if available
+                    if (params.messages) {
+                        _this.messages = _this._messagesService.getTableMessages(params.messages);
+                    }
+                    else {
+                        _this.messages = [];
+                    }
+                    _this.onMessagesUpdated.emit(params.messages);
                 }
                 else {
                     _this.isLoading = false;
