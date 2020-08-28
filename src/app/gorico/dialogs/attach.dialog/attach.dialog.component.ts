@@ -145,7 +145,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         const _this = this;
         // Subscribe to reload Request
         _this.fileService.reloadNeeded.subscribe(entryName => {
-            if (entryName == _this.data.entryName) {
+            if (entryName === _this.data.entryName) {
                 _this.getAttachList();
             }
         });
