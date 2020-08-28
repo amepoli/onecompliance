@@ -104,16 +104,26 @@ export class FormTableViewComponent implements OnChanges, OnInit {
     this.formGetter.addRow(this.tableData.keys);
   }
 
-  saveChanges(): void {
-    let _this = this;
-    if (!_this.formGetter.formArray.first.form.valid) {
-      // Highlight all empty required fields
-      Object.keys(_this.formGetter.formArray.first.form.controls).forEach(field => {
-        const control = _this.formGetter.formArray.first.form.get(field);
-        control.markAsTouched({ onlySelf: true });
+  isFormValid() {
+    let isValid = true;
+    if (this.formGetter.formArray && this.formGetter.formArray.length) {
+      this.formGetter.formArray.forEach(form => {
+        if (!form.form.valid) {
+          isValid = false;
+          // Highlight all empty required fields
+          Object.keys(form.form.controls).forEach(field => {
+            const control = form.form.get(field);
+            control.markAsTouched({ onlySelf: true });
+          });
+        }
       });
     }
-    else {
+    return isValid;
+  }
+
+  saveChanges(): void {
+    let _this = this;
+    if (_this.isFormValid()) {
       const values = _this.formGetter.formArray.map(form => form.form.value);
       // process the booleans (1/0 instead of true/false)
       values.forEach(entry => {

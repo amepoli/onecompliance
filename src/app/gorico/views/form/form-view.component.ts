@@ -189,15 +189,25 @@ export class FormViewComponent implements OnChanges, OnInit {
         return tabs;
     }
 
-    onSave() {
-        if (!this.formGetter.formArray.first.form.valid) {
-            // Highlight all empty required fields
-            Object.keys(this.formGetter.formArray.first.form.controls).forEach(field => {
-                const control = this.formGetter.formArray.first.form.get(field);
-                control.markAsTouched({ onlySelf: true });
+    isFormValid() {
+        let isValid = true;
+        if (this.formGetter.formArray && this.formGetter.formArray.length) {
+            this.formGetter.formArray.forEach(form => {
+                if (!form.form.valid) {
+                    isValid = false;
+                    // Highlight all empty required fields
+                    Object.keys(form.form.controls).forEach(field => {
+                        const control = form.form.get(field);
+                        control.markAsTouched({ onlySelf: true });
+                    });
+                }
             });
         }
-        else {
+        return isValid;
+    }
+
+    onSave() {
+        if (this.isFormValid()) {
             // notify parent, which will take care of propagating to siblings if needed 
             this.sendEvent.emit({ eventType: 'gotSave' });
             // get the form data, assuming there is only one form
