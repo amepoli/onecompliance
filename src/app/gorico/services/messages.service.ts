@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 export interface MessageView {
     viewType: "table" | "form";
-    tableActionType: "add" | "import_export";
-    formActionType: "add" | "delete" | "save" | "share" | "attachments" | "navigate" | "import_export";
+    tableMessageType: "add" | "import_export";
+    formMessageType: "add" | "delete" | "save" | "share" | "attachments" | "navigate" | "import_export";
     message: MessageItem;
 }
 
@@ -57,7 +57,7 @@ export class MessagesService {
             .filter(a => a.viewType === "form")
             .map(a => {
                 return {
-                    messageType: a.formActionType,
+                    messageType: a.formMessageType,
                     message: a.message
                 }
             });
@@ -76,7 +76,7 @@ export class MessagesService {
             .filter(a => a.viewType === "table")
             .map(a => {
                 return {
-                    messageType: a.tableActionType,
+                    messageType: a.tableMessageType,
                     message: a.message
                 }
             });

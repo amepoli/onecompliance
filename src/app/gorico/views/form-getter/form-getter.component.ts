@@ -206,6 +206,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     else {
                         _this.onMessagesUpdated.emit([]);
                     }
+                    console.log(params.messages);
 
                     // Get View properties if exist
                     _this.viewProperties = params.view_properties;
