@@ -3,7 +3,7 @@
   "entryKey": "cpl_trattamenti_dati",
   "form_keys": [
     {
-      "autoGenerate": false,
+      "autoGenerate": true,
       "format": {
         "dataType": "number",
         "viewType": "input"
@@ -85,11 +85,12 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_contitolare_trattamento AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_contitolare_trattamento) AS name  FROM entrasp.cpl_trattamenti_dati WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "SELECT ann.id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(ann.codice_part, ann.id_anagrafica) AS name  FROM entrasp.anagrafiche_id ann inner join entrasp.ruoli_anagrafiche ruo on ann.codice_part = ruo.codice_part and ann.id_anagrafica = ruo.id_anagrafica WHERE ann.codice_part='€global_codice_part€' and ruo.codice_ruolo in ('DIP', 'RSRSA');",
         "options": [],
-        "viewType": "combobox"
+        "viewType": "combobox", 
+        "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "key": "id_contitolare_trattamento",
       "label": "Contitolare Trattamento",
@@ -99,11 +100,12 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_rappresentante_titolare AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_rappresentante_titolare) AS name  FROM entrasp.cpl_trattamenti_dati WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "SELECT ann.id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(ann.codice_part, ann.id_anagrafica) AS name  FROM entrasp.anagrafiche_id ann inner join entrasp.ruoli_anagrafiche ruo on ann.codice_part = ruo.codice_part and ann.id_anagrafica = ruo.id_anagrafica WHERE ann.codice_part='€global_codice_part€' and ruo.codice_ruolo in ('DIP', 'RSRSA');",
         "options": [],
-        "viewType": "combobox"
+        "viewType": "combobox",
+        "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "key": "id_rappresentante_titolare",
       "label": "Rappresentante Titolare Trattamento",
