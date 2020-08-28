@@ -68,19 +68,26 @@ export class InputComponent implements OnInit, AfterViewInit {
 
   onBlur(): void {
     const _this = this;
-    console.log(_this.field.value);
 
-
+    // Extra work needed to convert date type input
     if (_this.field.inputType === 'date') {
-      let date: Moment = _this.group.get(_this.field.name).value;
-      _this.field.value = HelperService.getFormattedDate(date.toDate());
-      _this.group.get(_this.field.name).setValue(_this.field.value);
+      let dateValue: any = _this.group.get(_this.field.name).value;
+
+      // Check if date in Moment type
+      if (typeof dateValue === 'object') {
+        // Convert Moment to string
+        _this.field.value = HelperService.getFormattedDate(dateValue.toDate());
+        _this.group.get(_this.field.name).setValue(_this.field.value);
+      }
+      else {
+        // Copy as it is
+        _this.field.value = _this.group.get(_this.field.name).value;
+      }
     }
     else {
+      // Copy as it is
       _this.field.value = _this.group.get(_this.field.name).value;
     }
-
-    console.log(_this.field.value);
 
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
       _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur' });
