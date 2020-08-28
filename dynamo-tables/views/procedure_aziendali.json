@@ -55,7 +55,15 @@
             "format": {
                 "comboQuery": "SELECT id_tipo_processo AS id, entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda) AS name  FROM entrasp.tipi_processi WHERE codice_azienda=$codice_azienda$;",
                 "options": [],
-                "viewType": "combobox"
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Tipo Processo mancante",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+                
             },
             "isHidden": false,
             "isPrimary": false,
@@ -83,7 +91,14 @@
             "format": {
                 "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
                 "options": [],
-                "viewType": "combobox"
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Centro gestionale mancante",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
@@ -134,7 +149,7 @@
                 "options": [],
                 "viewType": "combobox"
             },
-            "label": "id_tipo_processo",
+            "label": "Id Processo",
             "newLine": true,
             "queryCond": "id_tipo_processo=$id_tipo_processo$"
         },
@@ -145,7 +160,7 @@
                 "options": [],
                 "viewType": "combobox"
             },
-            "label": "id_centro_gest",
+            "label": "Centro Gestionale",
             "newLine": true,
             "queryCond": "id_centro_gest=$id_centro_gest$"
         },
@@ -156,7 +171,7 @@
                 "options": [],
                 "viewType": "combobox"
             },
-            "label": "id_procedura_parent",
+            "label": "Id Procedura Superiore",
             "newLine": true,
             "queryCond": "id_procedura_parent=$id_procedura_parent$"
         },
@@ -166,9 +181,19 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "label": "id_procedura",
+            "label": "Id Procedura",
             "newLine": true,
             "queryCond": "id_procedura=$id_procedura$"
+        },
+        {
+            "fieldName": "descrizione_breve",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Descrizione",
+            "newLine": true,
+            "queryCond": "descrizione_breve='%€descrizione_breve€%'"
         },
         {
             "fieldName": "codice",
@@ -183,19 +208,9 @@
                     }
                 ]
             },
-            "label": "codice",
+            "label": "Codice",
             "newLine": true,
             "queryCond": "codice=$codice$"
-        },
-        {
-            "fieldName": "codice_azienda",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "codice_azienda",
-            "newLine": true,
-            "queryCond": "codice_azienda=$codice_azienda$"
         }
     ],
     "subTables": [
@@ -324,7 +339,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "descrizione_breve",
-            "label": "Procedura"
+            "label": "Descrizione"
         },
         {
             "format": {
