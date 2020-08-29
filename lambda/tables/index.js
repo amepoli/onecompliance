@@ -514,7 +514,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
     let comma;
 
     if (autoGenKey != null && newRecord) {  // retrieve the new ID 
-        genString = 'SELECT (MAX(' + autoGenKey + ')+1) FROM ' + entry_params.origin;
+        genString = 'SELECT (COALESCE(MAX(' + autoGenKey + '),0)+1) FROM ' + entry_params.origin;
         comma = ' WHERE ';
         for (const key in keys) {
             if (keys.hasOwnProperty(key)) {
@@ -1241,6 +1241,7 @@ exports.handler = async (event, context) => {
 
         if (method === 'POST' && !isEventUpdate) {
             let body = JSON.parse(event.body); // production scenario 
+            console.log('BODY values: ', body);
             //let body = event.body; // test scenario
             let queryStrings = [];
             for (let index = 0; index < body.length; index++) { // process all body rows

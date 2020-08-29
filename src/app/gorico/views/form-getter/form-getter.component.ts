@@ -91,7 +91,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     @ViewChildren(DynamicFormComponent) formArray: QueryList<DynamicFormComponent>;
 
     // Contains form Data
-    filteredFormData: FieldConfig[][] = [[]];
+    filteredFormData: FieldConfig[][];
 
     isLoading = true;
 
@@ -345,7 +345,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         _this.numRows = results.length;
 
         // prepare the form
-        _this.filteredFormData = JSON.parse(JSON.stringify(_this.getFormData(_this.viewKeys, results)));
+        _this.filteredFormData = _this.numRows === 0 ? [] : JSON.parse(JSON.stringify(_this.getFormData(_this.viewKeys, results)));
 
         // process the form
         _this.process_form(_this.filteredFormData);
