@@ -397,12 +397,35 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     }
 
+    private getSubKeysObject (subKeys: [{key: string, dataType: formDataType}], commaSeparatedValues: string): any {
+        const outputObject = {};
+        // field is of type '(key1,key2)', get the array
+        const subKeysArray = commaSeparatedValues.split('(')[1].split(')')[0].split(',');
+        subKeys.forEach((subKey, sub_index) => {
+            outputObject[subKey.key] = subKeysArray[sub_index];
+        });
+        return outputObject;
+    }
+
     private getFieldValues(formKeys: formViewKey[], values: any, index: number): FieldConfig[] {
         const _this = this;
         const fieldValues = new Array();
         formKeys.forEach(field => {
             if (field != null) {
                 const element = values[index][field.key];
+                // process subkeys of combos/radiobuttons/etc.
+                if (field.subKeys != null && field.subKeys.length > 0) {
+                    if (element.options != null) {
+                        element.options.forEach(option => {
+                            if (option.id != null) {
+                                option.id = _this.getSubKeysObject(field.subKeys, option.id);
+                            }
+                        });
+                    }
+                    if (element.value != null) {
+                        element.value =  _this.getSubKeysObject(field.subKeys, element.value);
+                    }
+                }
                 let fieldValue: FieldConfig;
                 if (field != null) {
                     fieldValue = _this.getFieldValue(field, element, values, index);
