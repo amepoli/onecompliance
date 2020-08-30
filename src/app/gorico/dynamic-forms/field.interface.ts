@@ -57,6 +57,7 @@ export interface FieldConfig {
   newLine?: boolean;
   buttonIcon?: string;
   confirmButtonAction?: boolean;
+  isDownloadButton?: boolean;
   width?: number;
   style?: { background_color?: string, font_color?: string, font_size?: string, font_style?: 'italic' | 'normal', font_weight?: string };
   options?: Item[];

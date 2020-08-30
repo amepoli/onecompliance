@@ -149,21 +149,23 @@ exports.handler = async (event, context) => {
 
         keys = Object.assign({ 'codice_azienda': company }, keys);
 
-        // Let's run query to get keys arrangement
-        query = `select * from entrasp.grc_listacampiditabella_pk('${entryName}')`;
-        response = await client.query(query);
-        if (response.rows && response.rows.length && response.rows[0].grc_listacampiditabella_pk) {
-            // Create query keys 
-            let queryKeys = response.rows[0].grc_listacampiditabella_pk.split(' ').join('').split(',');
-            if (queryKeys) {
-                chiave = queryKeys.reduce((acc, key) => {
-                    if (acc) {
-                        return `${acc}^${keys[key]}`;
-                    }
-                    else {
-                        return keys[key];
-                    }
-                });
+        if (requestType !== 'getFileURL') {  // avoid to mess up with queries in this simple case
+            // Let's run query to get keys arrangement
+            query = `select * from entrasp.grc_listacampiditabella_pk('${entryName}')`;
+            response = await client.query(query);
+            if (response.rows && response.rows.length && response.rows[0].grc_listacampiditabella_pk) {
+                // Create query keys 
+                let queryKeys = response.rows[0].grc_listacampiditabella_pk.split(' ').join('').split(',');
+                if (queryKeys) {
+                    chiave = queryKeys.reduce((acc, key) => {
+                        if (acc) {
+                            return `${acc}^${keys[key]}`;
+                        }
+                        else {
+                            return keys[key];
+                        }
+                    });
+                }
             }
         }
 
