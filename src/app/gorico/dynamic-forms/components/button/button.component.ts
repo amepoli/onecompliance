@@ -29,12 +29,13 @@ export class ButtonComponent implements OnInit {
     field: FieldConfig;
     group: FormGroup;
     readOnlyPage: boolean;  // not used for button
-    private httpClient: HttpClient;
+
 
     constructor(private pubsubService: NgxPubSubService,
         private _dialogService: DialogService,
         private backendService: BackendService,
-        private authService: AuthService) { }
+        private authService: AuthService,
+        private httpClient: HttpClient) { }
 
     onClickButton() {
         const _this = this;
