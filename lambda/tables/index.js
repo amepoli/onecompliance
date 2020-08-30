@@ -572,6 +572,9 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             if (value.id != null) { // combobox 
                 value = value.id;
             }
+            if (keyType.viewType === 'combobox' && value === '') {
+                value = 'null';
+            }
             // replace single quotes with double quotes in strings
             value = ((keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? value.replace(/'/g, "''") : value;
             queryString = queryString + '=' + delimiter + value + delimiter;
@@ -587,6 +590,9 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             let value = values[key];
             if (value.id) { // combobox 
                 value = value.id;
+            }
+            if (keyType.viewType === 'combobox' && value === '') {
+                value = 'null';
             }
             // replace single quotes with double quotes in strings
             value = (keyType.dataType === 'text' || keyType.viewType === 'textarea') ? value.replace(/'/g, "''") : value;
