@@ -1,12 +1,12 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "sondaggi_segnalazione_associata",
-    "origin": "entrasp.compit_rif_bo",
+    "origin": "entrasp.compiti",
     "predefinedQueries": [
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select case when object_key=objectkey then '1' else '0' end as checked,  * from entrasp.populations_descriptions($codice_azienda$, 12, '#') pd  left  join  (select * from entrasp.compiti_rif_bo rif where codice_azienda=$codice_azienda$ and rif.object_name='sondaggi') as sub  on pd.objectkey=sub.object_key order by checked desc;"
+            "queryString": "select cmp.codice_azienda, $id_sondaggio$, cmp.codice_compito, cmp.titolo, rif.object_key, rif.codice_compito as cc, case when cmp.codice_compito=rif.codice_compito then '1' else '0' end as checked  from entrasp.compiti cmp left join (select * from entrasp.compiti_rif_bo  where codice_azienda=$codice_azienda$ and object_name='sondaggi') as rif on cmp.codice_azienda=rif.codice_azienda and cmp.codice_compito=rif.codice_compito where cmp.codice_azienda=$codice_azienda$;"
         }
     ],
     "form_keys": [
@@ -17,7 +17,7 @@
                 "viewType": "input"
             },
             "isHidden": true,
-            "isPrimary": false,
+            "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
             "newLine": true,
@@ -39,40 +39,30 @@
         {
             "autoGenerate": false,
             "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "",
+            "key": "titolo",
+            "queryFunct": "select titolo from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+            "isHidden": false,
+            "isPrimary": false,
+            "readOnly": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "viewType": "checkbox"
             },
-            "newLine": false,
+            "newLine": true,
             "label": "",
             "key": "checked",
             "size": 1,
             "isHidden": false,
             "isPrimary": false,
             "readOnly": false,
-            "outputEvent": {
-                "eventName": "seleziona_campione_checked",
-                "eventTrigger": "select",
-                "conditionalQuery": "select id_somministrazione from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '#') where objectkey=$objectkey$"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "seleziona_campione_checked",
-                    "actionType": "query",
-                    "condition": "equalTo",
-                    "values": [
-                        "0"
-                    ],
-                    "queryFunct": "delete from entrasp.entrasp.compiti_rif_bo where codice_azienda=$codice_azienda$, codice_compito=$codice_compito$, object_name=$object_name$, $object_key$"
-                },
-                {
-                    "eventName": "seleziona_campione_checked",
-                    "actionType": "query",
-                    "condition": "equalTo",
-                    "values": [
-                        "1"
-                    ],
-                    "queryFunct": "INSERT INTO entrasp.compiti_rif_bo(codice_azienda, codice_compito, object_name, object_key) VALUES ($codice_azienda$, $codice_compito$, $object_name$, $object_key$););"
-                }
-            ]
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -80,23 +70,8 @@
                 "viewType": "input",
                 "dataType": "text"
             },
-            "newLine": false,
             "label": "",
-            "size": 9,
-            "key": "objectdescription",
-            "isHidden": false,
-            "isPrimary": false,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "newLine": false,
-            "label": "",
-            "key": "objectname",
+            "key": "object_key",
             "isHidden": true,
             "isPrimary": false,
             "readOnly": true
@@ -105,85 +80,31 @@
             "autoGenerate": false,
             "format": {
                 "viewType": "input",
-                "dataType": "text"
+                "dataType": "number"
             },
-            "label": "",
-            "key": "objectkey",
-            "isHidden": true,
-            "isPrimary": false,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
+            "label": "id_sondaggio",
+            "key": "id_sondaggio",
             "isHidden": false,
             "isPrimary": false,
-            "key": "Rispondi_domande_selezionato",
-            "label": "Rispondi",
-            "newLine": true,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when checked='0' then 1 else 0 end as label from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '#');"
-                }
-            ],
-            "outputEvent": {
-                "eventName": "to_sondaggi_somministrati_from_selezione_campione",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "seleziona_campione_checked",
-                    "actionType": "hide",
-                    "condition": "equalTo",
-                    "values": [
-                        "0"
-                    ]
-                }
-            ],
-            "readOnly": false,
+            "readOnly": true,
             "sameOrigin": false,
-            "size": 2
-        }
-    ],
-    "inputEvents": [
+            "newLine": false
+        },
         {
-            "actionTarget": {
-                "name": "sondaggi_somministrati",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_sondaggio",
-                        "destination": "id_sondaggio"
-                    },
-                    {
-                        "source": "id_somministrazione",
-                        "destination": "id_somministrazione"
-                    }
-                ]
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
             },
-            "actionType": "navigate",
-            "eventName": "to_sondaggi_somministrati_from_selezione_campione"
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ok",
+            "label": "ok",
+            "queryFunct": "select entrasp.object_key('sondaggi','#', 'codice_azienda='''||$codice_azienda$||''' AND id_sondaggio='||$id_sondaggio$) as ok",
+            "newLine": true,
+            "readOnly": true
         }
+     
     ],
-    "hideActions": [
-        {
-            "formActionType": "add",
-            "viewType": "form"
-        },
-        {
-            "formActionType": "delete",
-            "viewType": "form"
-        },
-        {
-            "formActionType": "save",
-            "viewType": "form"
-        }
-    ]
+    "orderBy": {"key": "checked", "order": "descending"}
 }
