@@ -41,23 +41,25 @@
             "outputEvent": {
                 "eventName": "codice_colore_change_stato",
                 "eventTrigger": "select"
-              },
-              "inputEvents": [{
-                  "eventName": "codice_colore_change_stato",
-                  "condition": "none",
-                  "values": [],
-                  "actionType": "query_style",
-                  "styleAttribute": "background_color",
-                  "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-              },
-              {
-                "eventName": "codice_colore_change_stato",
-                "condition": "none",
-                "values": [],
-                "actionType": "query_style",
-                "styleAttribute": "font_color",
-                "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-            }],
+            },
+            "inputEvents": [
+                {
+                    "eventName": "codice_colore_change_stato",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                },
+                {
+                    "eventName": "codice_colore_change_stato",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                }
+            ],
             "isHidden": false,
             "isPrimary": false,
             "key": "stato",
@@ -255,20 +257,34 @@
             "outputEvent": {
                 "eventName": "check_existence_riepilogo_risultati",
                 "eventTrigger": "press"
-                       },
-            "inputEvents": [
-                {
-                "eventName": "check_existence_riepilogo_risultati",
-                "actionType": "query",
-                "condition": "none",
-                "values": [],
-                "queryFunct": "select entrasp.check_existence_cpl_risultati($codice_azienda$, $id_sondaggio$)",
-                "outputEventWhenComplete": "to_riepilogo_risultati"
- 
-            }],           
+            },
             "readOnly": false,
             "sameOrigin": false,
             "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "new_riepilogo_risultati",
+            "label": "new_riepilogo_risultati",
+            "newLine": true,
+            "inputEvents": [
+                {
+                    "eventName": "check_existence_riepilogo_risultati",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select check_existence_cpl_risultati as  new_riepilogo_risultati from entrasp.check_existence_cpl_risultati($codice_azienda$, $id_sondaggio$)",
+                    "outputEventWhenComplete": "to_riepilogo_risultati"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -483,7 +499,35 @@
             ],
             "label": "Seleziona Campione",
             "type": "tableForm"
+        },
+        {
+            "entryKey": "sondaggi_segnalazione_associata",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "sondaggi_flags_sezioni_singola",
+                    "condition": "equalTo",
+                    "values": [
+                        "*",
+                        "0"
+                    ]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
+            ],
+            "label": "Seleziona Campione",
+            "type": "tableForm"
         }
+ 
     ],
     "table_keys": [
         {
@@ -635,8 +679,6 @@
                         "source": "id_sondaggio",
                         "destination": "id_sondaggio"
                     }
-
-                   
                 ]
             },
             "actionType": "navigate",

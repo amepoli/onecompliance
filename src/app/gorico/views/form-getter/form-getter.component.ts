@@ -29,6 +29,7 @@ export interface formViewKey { // as per API specification
     newLine: boolean;
     buttonIcon?: string;
     confirmButtonAction?: boolean;
+    isDownloadButton?: boolean;
     size?: number;
     style?: {
         background_color?: string,
@@ -92,7 +93,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     @ViewChildren(DynamicFormComponent) formArray: QueryList<DynamicFormComponent>;
 
     // Contains form Data
-    filteredFormData: FieldConfig[][] = [[]];
+    filteredFormData: FieldConfig[][];
 
     isLoading = true;
 
@@ -356,7 +357,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         _this.numRows = results.length;
 
         // prepare the form
-        _this.filteredFormData = JSON.parse(JSON.stringify(_this.getFormData(_this.viewKeys, results)));
+        _this.filteredFormData = _this.numRows === 0 ? [] : JSON.parse(JSON.stringify(_this.getFormData(_this.viewKeys, results)));
 
         // process the form
         _this.process_form(_this.filteredFormData);
@@ -408,12 +409,35 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     }
 
+    private getSubKeysObject (subKeys: [{key: string, dataType: formDataType}], commaSeparatedValues: string): any {
+        const outputObject = {};
+        // field is of type '(key1,key2)', get the array
+        const subKeysArray = commaSeparatedValues.split('(')[1].split(')')[0].split(',');
+        subKeys.forEach((subKey, sub_index) => {
+            outputObject[subKey.key] = subKeysArray[sub_index];
+        });
+        return outputObject;
+    }
+
     private getFieldValues(formKeys: formViewKey[], values: any, index: number): FieldConfig[] {
         const _this = this;
         const fieldValues = new Array();
         formKeys.forEach(field => {
             if (field != null) {
                 const element = values[index][field.key];
+                // process subkeys of combos/radiobuttons/etc.
+                if (field.subKeys != null && field.subKeys.length > 0) {
+                    if (element.options != null) {
+                        element.options.forEach(option => {
+                            if (option.id != null) {
+                                option.id = _this.getSubKeysObject(field.subKeys, option.id);
+                            }
+                        });
+                    }
+                    if (element.value != null) {
+                        element.value =  _this.getSubKeysObject(field.subKeys, element.value);
+                    }
+                }
                 let fieldValue: FieldConfig;
                 if (field != null) {
                     fieldValue = _this.getFieldValue(field, element, values, index);
@@ -443,7 +467,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 isVisible: (attribute != null && attribute.isHidden != null) ? !attribute.isHidden : field.isHidden != null ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,
                 buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
-                confirmButtonAction: field.confirmButtonAction ? true : false,
+                confirmButtonAction: (field.confirmButtonAction != null) ? field.confirmButtonAction : false,
+                isDownloadButton: (field.isDownloadButton != null) ? field.isDownloadButton : false,
                 style: (attribute != null && attribute.style != null) ? attribute.style : (field.style != null) ? field.style : null,
                 width: (field.size != null) ? (field.size * 10) - _this.margins : null, // leave a 1% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],

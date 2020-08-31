@@ -1,13 +1,12 @@
 {
     "$schema": "../views.schema.json",
-    "businessObjectName": "selezionaCampione",
-    "entryKey": "seleziona_campione",
-    "origin": "entrasp.sondaggi",
+    "entryKey": "sondaggi_segnalazione_associata",
+    "origin": "entrasp.compit_rif_bo",
     "predefinedQueries": [
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select * from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '|');"
+            "queryString": "select case when object_key=objectkey then '1' else '0' end as checked,  * from entrasp.populations_descriptions($codice_azienda$, 12, '#') pd  left  join  (select * from entrasp.compiti_rif_bo rif where codice_azienda=$codice_azienda$ and rif.object_name='sondaggi') as sub  on pd.objectkey=sub.object_key order by checked desc;"
         }
     ],
     "form_keys": [
@@ -27,26 +26,13 @@
         {
             "autoGenerate": true,
             "format": {
-                "dataType": "number",
+                "dataType": "text",
                 "viewType": "input"
             },
             "isHidden": true,
-            "isPrimary": false,
-            "key": "id_sondaggio",
-            "label": "ID Sondaggio",
-            "newLine": true,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": true,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_somministrazione",
-            "label": "ID Somministrazione",
+            "isPrimary": true,
+            "key": "codice_compito",
+            "label": "Codice compito",
             "newLine": true,
             "readOnly": true
         },
@@ -65,26 +51,17 @@
             "outputEvent": {
                 "eventName": "seleziona_campione_checked",
                 "eventTrigger": "select",
-                "conditionalQuery": "select id_somministrazione from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '|') where objectkey=$objectkey$"
+                "conditionalQuery": "select id_somministrazione from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '#') where objectkey=$objectkey$"
             },
             "inputEvents": [
                 {
                     "eventName": "seleziona_campione_checked",
-                    "actionType": "show_message",
+                    "actionType": "query",
                     "condition": "equalTo",
                     "values": [
                         "0"
                     ],
-                    "message": {
-                        "messageText": "Potrebbero esserci risposte già fornite per questa somministrazione che verrebbero cancellate. Vuoi procedere comunque?",
-                        "actionOnNo": {
-                            "actionType": "reload"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select entrasp.sondaggio_somministrato_delete($codice_azienda$, $id_somministrazione$)"
-                        }
-                    }
+                    "queryFunct": "delete from entrasp.entrasp.compiti_rif_bo where codice_azienda=$codice_azienda$, codice_compito=$codice_compito$, object_name=$object_name$, $object_key$"
                 },
                 {
                     "eventName": "seleziona_campione_checked",
@@ -93,7 +70,7 @@
                     "values": [
                         "1"
                     ],
-                    "queryFunct": "select entrasp.sondaggio_somministrato_insert(azienda =>$codice_azienda$, idsondaggio=>$id_sondaggio$, note=>$objectdescription$, objectname=>$objectname$, objectkey=>$objectkey$, objectdescription=>$objectdescription$);"
+                    "queryFunct": "INSERT INTO entrasp.compiti_rif_bo(codice_azienda, codice_compito, object_name, object_key) VALUES ($codice_azienda$, $codice_compito$, $object_name$, $object_key$););"
                 }
             ]
         },
@@ -149,7 +126,7 @@
             "attributeFuncts": [
                 {
                     "attributeType": "isHidden",
-                    "queryString": "select case when checked='0' then 1 else 0 end as label from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '|');"
+                    "queryString": "select case when checked='0' then 1 else 0 end as label from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '#');"
                 }
             ],
             "outputEvent": {
