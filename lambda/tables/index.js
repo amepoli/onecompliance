@@ -74,7 +74,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                 if (keyType != null && keyType.subKeys != null) { // key with multiple subkeys
                     console.log('Key with subkeys: ', keys[key], keyType);
                     // tslint:disable-next-line:forin
-                    for (var subkey in keyType.subKeys) {
+                    keyType.subKeys.forEach( subkey => {
                         // console.log(subKey)
                         let bracket = (delimiter === '$' && isDataTypeString(subkey)) ? '\'' : '';
                         let toReplace = delimiter + key + '.' + subkey.key + delimiter;
@@ -86,7 +86,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                             queryString = newString;
                             newString = queryString.replace(toReplace, replacement);
                         }
-                    }
+                    });
                 } else if (typeof keys[key] !== 'object' || keys[key] == null) {  // avoid spourious values like arrays form events - n.b.: null is 'object'
                     let bracket = (delimiter === '$' && keyType != null && isDataTypeString(keyType)) ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
@@ -125,6 +125,11 @@ function replaceKeysArray(queryString, keysArray, keyTypes) {
 function getKeyTypes(entry_keys) {
     let keyTypes = entry_keys.map(k => {
         return { key: k.key, viewType: k.format.viewType, dataType: k.format.dataType, subKeys: k.subKeys, isPrimary: k.isPrimary, isCalculated: k.queryFunct != null, sameOrigin: k.sameOrigin };
+    });
+    entry_keys.forEach(k => {
+        if (k.format.viewType === 'subform') {
+            keyTypes = keyTypes.concat(getKeyTypes(k.format.subform_keys));       
+        }
     });
     return keyTypes;
 }
@@ -723,7 +728,9 @@ async function processAttributeQueries(entry_params, keys, client) {
 
 async function processPreMainPost(queryString, client, notFullTable) {
 
-    let local_keys = {}; // additional keys generated with pre-main-post processing  
+    let local_keys_pre = {}; // additional keys generated with pre-processing  
+    let local_keys_post = {}; // additional keys generated with post-processing
+
     let queryData = [{}];
 
     console.log('queryString : ', queryString);
@@ -736,11 +743,11 @@ async function processPreMainPost(queryString, client, notFullTable) {
     if (queryString.preProcessQueries != null && queryString.preProcessQueries.length) {
         for (let index = 0; index < queryString.preProcessQueries.length; index++) {
             let query = queryString.preProcessQueries[index];
-            query = replaceLocalKeys(query, local_keys);
+            query = replaceLocalKeys(query, local_keys_pre);
             let result = await client.query(query);
             result = notFullTable ? result.rows[0] : result.rows;
             if (result !== null) { // add resulting keys to the list of local keys if any
-                local_keys = Object.assign(local_keys, result);
+                local_keys_pre = Object.assign(local_keys_pre, result);
             }
             console.log('Pre query : ', query, ' result : ', result);
         }
@@ -748,25 +755,29 @@ async function processPreMainPost(queryString, client, notFullTable) {
 
     // main query
     if (queryString.mainQuery != null && queryString.mainQuery !== '') {
-        let query = replaceLocalKeys(queryString.mainQuery, local_keys);
+        let query = replaceLocalKeys(queryString.mainQuery, local_keys_pre);
         queryData = await client.query(query);
         queryData = queryData.rows;
         console.log('Main query : ', query, ' result : ', queryData);
     }
 
 
-    // post-processing
+    // post-processing, exclude table view
     if (queryString.postProcessQueries != null && queryString.postProcessQueries.length) { // post-processing 
+        for (let row_index = 0; row_index < queryData.length; row_index++) {
+            local_keys_post = Object.assign(local_keys_pre, queryData[row_index]);
         for (let index = 0; index < queryString.postProcessQueries.length; index++) {
             let query = queryString.postProcessQueries[index];
-            query = replaceLocalKeys(query, local_keys);
+                query = replaceLocalKeys(query, local_keys_post);
             let result = await client.query(query);
             result = notFullTable ? result.rows[0] : result.rows;
             if (result !== null) { // add resulting keys to the list of local keys if any
-                local_keys = Object.assign(local_keys, result);
+                    local_keys_post = Object.assign(local_keys_post, result);
+                    queryData[row_index] = Object.assign(queryData[row_index], result);
             }
             console.log('Post query : ', query, ' result : ', result);
         }
+    }
     }
 
 
