@@ -21,6 +21,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ReportService } from 'app/gorico/services/report.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService } from 'app/gorico/services/navigation.service';
+import { MessageView, MessageElement } from 'app/gorico/services/messages.service';
 
 
 @Component({
@@ -51,6 +52,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     currentCompany: string;
 
     hideActions: string[] = []; // Hide Actions
+
+    messages: MessageElement[] = []; // Messages
 
     // Private
     private _unsubscribeAll: Subject<any>;
@@ -155,27 +158,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
 
         _this._reportService.onReportsLoaded.subscribe((data) => {
-            if (data.reports != null && data.reports.length > 0) {
-                console.log("Reports loaded!");
-            }
-            else {
-                console.log("Reports cleared!");
-            }
             _this.reportList = data.reports;
         });
 
         _this._importExportService.onExportListLoaded.subscribe((data) => {
-            if (data.items != null && data.items.length > 0) {
-                console.log("Items loaded!");
-            }
-            else {
-                console.log("Items cleared!");
-            }
             _this.exportList = data.items;
         });
 
         _this._navigationService.onToolbarHideActionsChanged.subscribe(hideActions => {
-            console.log("Toolbar hide actions", hideActions);
             _this.hideActions = hideActions;
         });
 

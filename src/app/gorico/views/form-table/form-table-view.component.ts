@@ -6,6 +6,7 @@ import { ToastService } from 'app/gorico/services/toast.service';
 import { formViewParams } from '../form/form-view.component';
 import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
+import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
 
 
 export interface formTableViewParams {
@@ -47,12 +48,16 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   hideActions: string[] = []; // Hide actions
   @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
 
+  messages: MessageElement[] = []; // Messages
+  @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
+
   constructor(
     private backendService: BackendService,
     private authService: AuthService,
     private _dialogService: DialogService,
     private _toastService: ToastService,
-    private _navigationServce: NavigationService
+    private _navigationServce: NavigationService,
+    private _messagesService: MessagesService
   ) { }
 
   ngOnInit() {
@@ -104,16 +109,26 @@ export class FormTableViewComponent implements OnChanges, OnInit {
     this.formGetter.addRow(this.tableData.keys);
   }
 
-  saveChanges(): void {
-    let _this = this;
-    if (!_this.formGetter.formArray.first.form.valid) {
-      // Highlight all empty required fields
-      Object.keys(_this.formGetter.formArray.first.form.controls).forEach(field => {
-        const control = _this.formGetter.formArray.first.form.get(field);
-        control.markAsTouched({ onlySelf: true });
+  isFormValid() {
+    let isValid = true;
+    if (this.formGetter.formArray && this.formGetter.formArray.length) {
+      this.formGetter.formArray.forEach(form => {
+        if (!form.form.valid) {
+          isValid = false;
+          // Highlight all empty required fields
+          Object.keys(form.form.controls).forEach(field => {
+            const control = form.form.get(field);
+            control.markAsTouched({ onlySelf: true });
+          });
+        }
       });
     }
-    else {
+    return isValid;
+  }
+
+  saveChanges(): void {
+    let _this = this;
+    if (_this.isFormValid()) {
       const values = _this.formGetter.formArray.map(form => form.form.value);
       // process the booleans (1/0 instead of true/false)
       values.forEach(entry => {
@@ -197,5 +212,10 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   updateHideActions(hideActions: HideAction[]) {
     this.hideActions = this._navigationServce.getFormHideActions(hideActions);
     this.onHideActionsUpdated.emit(hideActions);
+  }
+
+  updateMessages(messageViews: MessageView[]) {
+    this.messages = this._messagesService.getFormMessages(messageViews);
+    this.onMessagesUpdated.emit(messageViews);
   }
 }

@@ -14,6 +14,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ReportService } from 'app/gorico/services/report.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { HideAction, NavigationService } from 'app/gorico/services/navigation.service';
+import { MessageView, MessagesService, MessageElement, MessageItem } from 'app/gorico/services/messages.service';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -88,6 +89,9 @@ export class FormViewComponent implements OnChanges, OnInit {
     hideActions: string[] = []; // Hide actions
     @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
 
+    messages: MessageElement[] = []; // Messages
+    @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
+
     constructor(public attachDialog: MatDialog,
         private backendService: BackendService,
         private authService: AuthService,
@@ -97,7 +101,8 @@ export class FormViewComponent implements OnChanges, OnInit {
         private _pubSubService: NgxPubSubService,
         private _reportService: ReportService,
         private _importExportService: ImportExportService,
-        private _navigationServce: NavigationService
+        private _navigationServce: NavigationService,
+        private _messagesService: MessagesService
     ) {
 
     }
@@ -189,15 +194,25 @@ export class FormViewComponent implements OnChanges, OnInit {
         return tabs;
     }
 
-    onSave() {
-        if (!this.formGetter.formArray.first.form.valid) {
-            // Highlight all empty required fields
-            Object.keys(this.formGetter.formArray.first.form.controls).forEach(field => {
-                const control = this.formGetter.formArray.first.form.get(field);
-                control.markAsTouched({ onlySelf: true });
+    isFormValid() {
+        let isValid = true;
+        if (this.formGetter.formArray && this.formGetter.formArray.length) {
+            this.formGetter.formArray.forEach(form => {
+                if (!form.form.valid) {
+                    isValid = false;
+                    // Highlight all empty required fields
+                    Object.keys(form.form.controls).forEach(field => {
+                        const control = form.form.get(field);
+                        control.markAsTouched({ onlySelf: true });
+                    });
+                }
             });
         }
-        else {
+        return isValid;
+    }
+
+    onSave() {
+        if (this.isFormValid()) {
             // notify parent, which will take care of propagating to siblings if needed 
             this.sendEvent.emit({ eventType: 'gotSave' });
             // get the form data, assuming there is only one form
@@ -249,11 +264,28 @@ export class FormViewComponent implements OnChanges, OnInit {
 
     }
 
+
+    getDeleteMessage() {
+        let result: MessageItem = {
+            title: "Delete form",
+            text: "Are you sure you wanna delete form?"
+        };
+        if (this.messages != null && this.messages.length) {
+            let deleteMessageElements = this.messages.filter(m => m.messageType === "delete");
+            if (deleteMessageElements && deleteMessageElements.length) {
+                result.title = deleteMessageElements[0].message.title;
+                result.text = deleteMessageElements[0].message.text;
+            }
+        }
+        return result;
+    }
+
     delElement() {
         var _this = this;
+        let deleteMessage: MessageItem = _this.getDeleteMessage();
 
         // Show confirmation dialog to make sure user wants to delete
-        _this._dialogService.showConfimationDialog("Delete form", "Are you sure you wanna delete form?", "Yes", "No", "warning").then((result) => {
+        _this._dialogService.showConfimationDialog(deleteMessage.title, deleteMessage.text, "Yes", "No", "warning").then((result) => {
             if (result.value === true) {
                 // User said yes so let's delete form
                 _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys).subscribe(
@@ -345,6 +377,11 @@ export class FormViewComponent implements OnChanges, OnInit {
     updateHideActions(hideActions: HideAction[]) {
         this.hideActions = this._navigationServce.getFormHideActions(hideActions);
         this.onHideActionsUpdated.emit(hideActions);
+    }
+
+    updateMessages(messageViews: MessageView[], viewType: string) {
+        this.messages = this._messagesService.getFormMessages(messageViews);
+        this.onMessagesUpdated.emit(messageViews);
     }
 }
 

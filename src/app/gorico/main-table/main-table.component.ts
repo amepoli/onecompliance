@@ -17,6 +17,7 @@ import { DialogService } from '../services/dialog.service';
 import { ImportExportService } from '../services/import_export.service';
 import { ReportService } from '../services/report.service';
 import { NavigationService, HideAction } from '../services/navigation.service';
+import { MessageView } from '../services/messages.service';
 
 @Component({
     selector: 'main-table',
@@ -444,5 +445,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
 
     updateHideActions(hideActions: HideAction[], viewType: string) {
         this._navigationService.updateToolbarHideActions(hideActions, viewType);
+    }
+
+    updateMessages(messageViews: MessageView[], viewType: string) {
     }
 }
