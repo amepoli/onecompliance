@@ -10,11 +10,11 @@ import { Moment } from 'moment';
 <mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'margin-right': '1%', 'margin-left': '1%','width': field.width+'%'}" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
 <input [required]="isRequired" *ngIf="field.inputType !== 'date'" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
-    (blur)="onBlur()" (focus)="onFocus()"
+    (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()"
     [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
     
 <input [required]="isRequired" *ngIf="field.inputType === 'date'" matInput [matDatepicker]="picker" [value]="field.value" [placeholder]="field.label" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" 
-    (blur)="onBlur()" (focus)="onFocus()"
+    (blur)="onBlur()" (focus)="onFocus()" (dateChange)="updateValue()"
     [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
 <mat-datepicker-toggle *ngIf="field.inputType === 'date'" matSuffix [for]="picker"></mat-datepicker-toggle>
 <mat-datepicker #picker></mat-datepicker>
@@ -68,13 +68,27 @@ export class InputComponent implements OnInit, AfterViewInit {
 
   onBlur(): void {
     const _this = this;
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
+      _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur' });
+    }
+  }
+
+  onFocus(): void {
+    const _this = this;
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'focus') {
+      _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'focus' });
+    }
+  }
+
+  updateValue() {
+    const _this = this;
 
     // Extra work needed to convert date type input
     if (_this.field.inputType === 'date') {
       let dateValue: any = _this.group.get(_this.field.name).value;
 
       // Check if date in Moment type
-      if (typeof dateValue === 'object') {
+      if (dateValue != null && typeof dateValue === 'object') {
         // Convert Moment to string
         _this.field.value = HelperService.getFormattedDate(dateValue.toDate());
         _this.group.get(_this.field.name).setValue(_this.field.value);
@@ -89,16 +103,7 @@ export class InputComponent implements OnInit, AfterViewInit {
       _this.field.value = _this.group.get(_this.field.name).value;
     }
 
-    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
-      _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur' });
-    }
-  }
-
-  onFocus(): void {
-    const _this = this;
-    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'focus') {
-      _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'focus' });
-    }
+    console.log(_this.field.value);
   }
 
   formatValue() {
