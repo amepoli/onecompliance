@@ -1,0 +1,113 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "modelli_test_vr_attachments",
+  "origin": "entrasp.cdms_risorse",
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "type": "main",
+      "queryString": "select rev.client_file_name, rev.file_id||'^'||rev.client_file_name as stringa, ta.id_tipo_allegato, ta.descrizione as tipo_allegato, bo.nome_business_object, bo.chiave, entrasp.field_value_from_key(bo.chiave, bo.nome_business_object, 'id_sondaggio','^')::numeric as id_sondaggio, entrasp.field_value_from_key(bo.chiave, bo.nome_business_object, 'id_anagrafica','^')::numeric as id_anagrafica, entrasp.field_value_from_key(bo.chiave, bo.nome_business_object, 'id_somministrazione','^')::numeric as id_somministrazione, entrasp.field_value_from_key(bo.chiave, bo.nome_business_object, 'id_domanda','^')::numeric as id_domanda from entrasp.cdms_risorse as ris inner join entrasp.cdms_risorse_revisioni rev on ris.codice_azienda = rev.codice_azienda AND ris.id_risorsa = rev.id_risorsa left join entrasp.tipi_allegati ta on ris.codice_azienda=ta.codice_azienda and ris.id_tipo_allegato=ta.id_tipo_allegato inner join entrasp.cdms_risorse_oggetti bo on ris.codice_azienda = bo.codice_azienda AND ris.id_risorsa = bo.id_risorsa where ris.codice_azienda=$codice_azienda$ and entrasp.field_value_from_key(bo.chiave, bo.nome_business_object, 'id_modello_test','^')::numeric=$id_modello_test$;"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test_vr",
+      "label": "id_modello_test_vr",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test",
+      "label": "id_modello_test",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "stringa",
+      "label": "Download",
+      "isDownloadButton": true,
+      "newLine": false,
+      "size": 0.5,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "client_file_name",
+      "label": "Nome file",
+      "newLine": false,
+      "size": 5.5,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_allegato",
+      "label": "Tipo Allegato",
+      "newLine": false,
+      "size": 4,
+      "readOnly": true
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "save",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "delete",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "share",
+      "viewType": "form"
+    }
+  ]
+}
