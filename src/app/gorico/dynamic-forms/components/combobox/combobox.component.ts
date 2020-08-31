@@ -7,9 +7,9 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 @Component({
   selector: 'combobox',
   template: `
-<mat-form-field [ngStyle]="{'margin-right': '1%', 'margin-left': '1%','width': field.width+'%'}" *ngIf="field.isVisible != false" appearance="outline" [formGroup]="group">
+<mat-form-field [ngStyle]="{'margin-right': '1%', 'margin-left': '1%','width': field.width+'%'}" *ngIf="field.isVisible != false" appearance="outline">
 <mat-label>{{field.label}}</mat-label>
-<mat-select [(ngModel)]="field.value" [formControlName]="field.name" [placeholder]="field.label" (selectionChange)="onSelection($event)"
+<mat-select [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)"
 [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
 <mat-option value="" [style.color]="'grey'">Seleziona</mat-option>
@@ -52,7 +52,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     else {
       _this.field.value = '';
-      _this.group.get(_this.field.name).setValue(_this.field.value);
+      _this.group.get(_this.field.name).setValue(null);
     }
 
     // load the initial bank list
@@ -70,10 +70,10 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     const _this = this;
-    if (_this.field.value != null && this.field.eventName != null && this.field.eventTrigger != null && this.field.eventTrigger === 'select') {
-        setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
-            _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.getFormattedId(_this.field.value.id), type: 'combobox' });
-        }, 500);
+    if (_this.field.value != null && _this.field.value.id != null && _this.field.eventName != null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'select') {
+      setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
+        _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.getFormattedId(_this.field.value.id), type: 'combobox' });
+      }, 500);
     }
   }
 
@@ -88,25 +88,29 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onSelection(event: any) {
-    if (event.value != null && this.field.eventName != null && this.field.eventTrigger != null && this.field.eventTrigger === 'select') {
-        this.field.value = event.value;
-        this.group.get(this.field.name).setValue(this.field.value);
-        this.cdr.detectChanges();
-  
-        if (this.field.eventName != null) {
-          this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
-        }
+    if (event.value != null) {
+      this.field.value = event.value;
+      if (event.value === '') {
+        this.group.get(this.field.name).setValue(null);
       }
       else {
-        if (this.field.eventName != null) {
+        this.group.get(this.field.name).setValue(event.value);
+      }
+      this.cdr.detectChanges();
+    }
+    else {
+      this.field.value = '';
+      this.group.get(this.field.name).setValue(null);
+    }
+
+    if (event.value === '' || event.value == null) { // reset color style
+      this.field.style = { background_color: 'transparent', font_color: 'black' };
+    }
+
+    if (this.field.eventName != null && this.field.eventTrigger != null && this.field.eventTrigger === 'select') {
       this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
     }
   }
-
-  if (event.value === '' || event.value == null) { // reset color style
-    this.field.style = { background_color: 'transparent', font_color: 'black' };
-  }
-}
 
   resetSelection() {
     // this.group.get(this.field.name).reset();
