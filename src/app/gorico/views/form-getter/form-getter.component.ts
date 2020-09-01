@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { FieldConfig, FieldInputEvent } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
@@ -86,7 +86,7 @@ export interface formGetterParams {
 export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy {
 
     @Input() filter: string;
-    @Input() formParams: formGetterParams;
+    @Input() formParams: formGetterParams = null;
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
 
@@ -95,7 +95,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     // Contains form Data
     filteredFormData: FieldConfig[][];
 
-    isLoading = true;
+    isLoading = false;
 
     isReadOnly = false;
 
@@ -129,6 +129,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     private margins = 2; // % of margins, considering left and right
 
     constructor(
+        private cdRef: ChangeDetectorRef,
         private backendService: BackendService,
         private pubsubService: NgxPubSubService,
         private authService: AuthService,
@@ -143,12 +144,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             this.applyFilter();
         }
         // Make sure params are different before refreshing view
-        if (!this.addingNew && changes.formParams && this.formParams) {
-            if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) !== JSON.stringify(changes.formParams.currentValue))) {
-                this.refreshView();
+        // if (!this.addingNew && changes.formParams && this.formParams) {
+        //     if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) !== JSON.stringify(changes.formParams.currentValue))) {
+        //         this.refreshView();
+        //     }
+        // } else {
+        //     this.addingNew = false;
+        // }
+        if (changes.formParams && this.formParams) {
+            if (!this.addingNew) {
+                if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) !== JSON.stringify(changes.formParams.currentValue))) {
+                    this.refreshView();
+                }
+            }
+            else {
+                this.addingNew = false;
             }
         } else {
-            this.addingNew = false;
+            this.clearForm();
         }
     }
 
@@ -157,7 +170,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // check and in case publish a table event on PubSub
         _this.formArray.changes.subscribe(
             c => { // publish when last element has been shown
-                if (!_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length && (!_this.eventTrigger || _this.eventTrigger === 'onReload')) {
+                if (this.formParams && !_this.formParams.isNew && _this.outputEvent != null && _this.formArray.length && (!_this.eventTrigger || _this.eventTrigger === 'onReload')) {
                     // tslint:disable-next-line: max-line-length
                     _this.pubsubService.publishEvent(_this.outputEvent, { origin: 'table', index: 0, data: _this.filteredFormData, type: 'page' });
                 }
@@ -173,6 +186,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     refreshView() {
         const _this = this;
+        _this.isLoading = true;
+
         _this.backendService.getView(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.formParams.keys).subscribe(
             results => {
                 console.log(results);
@@ -299,6 +314,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     loadTableData(): void {
 
         const _this = this; // useful to debug
+        _this.isLoading = true;
+
         _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, null, true, _this.formParams.isNew, null, false).subscribe(
             results => {
                 console.log(results);
@@ -409,7 +426,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     }
 
-    private getSubKeysObject (subKeys: [{key: string, dataType: formDataType}], commaSeparatedValues: string): any {
+    private getSubKeysObject(subKeys: [{ key: string, dataType: formDataType }], commaSeparatedValues: string): any {
         const outputObject = {};
         // field is of type '(key1,key2)', get the array
         const subKeysArray = commaSeparatedValues.split('(')[1].split(')')[0].split(',');
@@ -435,7 +452,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         });
                     }
                     if (element.value != null) {
-                        element.value =  _this.getSubKeysObject(field.subKeys, element.value);
+                        element.value = _this.getSubKeysObject(field.subKeys, element.value);
                     }
                 }
                 let fieldValue: FieldConfig;
@@ -877,7 +894,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     reload() {
         console.log('onReload: form-getter');
+        this.clearForm();
         this.onReload.emit();
+    }
+
+    clearForm() {
+        this.filteredFormData = [];
+        this.cdRef.detectChanges();
     }
 
     applyFilter() {

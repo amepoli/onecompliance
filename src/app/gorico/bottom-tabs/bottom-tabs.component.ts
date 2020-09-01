@@ -95,9 +95,9 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-        this.activeIndex = tabChangeEvent.index >= 0 ? tabChangeEvent.index : 0;  // might get a -1
 
-        if (this.filteredTabs.length) {  // at least one tab visible
+        if (this.filteredTabs && this.filteredTabs.length) {  // at least one tab visible
+            this.activeIndex = tabChangeEvent.index >= 0 ? tabChangeEvent.index : 0;  // might get a -1
             this.tableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true, showFullScreenButton: true };
             this.formTableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true };
         }
