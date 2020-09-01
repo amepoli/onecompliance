@@ -117,6 +117,14 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
 
     reload() {
         console.log('onReload: bottom-tabs');
+        this.clearTabs();
         this.onReload.emit();
+    }
+
+    clearTabs() {
+        this.Tabs = null;
+        this.filteredTabs = null;
+        this.activeIndex = 0;
+        this.cdRef.detectChanges();
     }
 }
