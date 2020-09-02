@@ -985,13 +985,13 @@ async function process_properties(entry_params, table_keys, isFormRecord, client
 
     var tableProperties = {};
 
-    if (entry_params.view_properties == null) {
+    if (entry_params.formRowProperties == null || !isFormRecord) {
         return tableProperties;
     }
 
-    var properties = entry_params.view_properties.filter(p => isFormRecord ? p.viewType === 'formView' : p.viewType === 'tableView');
+    var properties = entry_params.formRowProperties;
 
-    var entry_keys = isFormRecord ? entry_params.form_keys : entry_params.table_keys;
+    var entry_keys = entry_params.form_keys;
 
     var keyTypes = getKeyTypes(entry_keys);
 
