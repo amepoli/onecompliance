@@ -1231,6 +1231,7 @@ exports.handler = async (event, context) => {
                         // search for local keys
                         query = replaceLocalKeys(query, queryData[qd_index]);
                         let comboData = await client.query(query);
+                        console.log('Combo query: ', query, ' Result: ', comboData.rows);
                         if (isFormRecord || isNewRecord) { // form/new record, add combobox options to relevant field
                             let comboEntry = new Object;
                             comboEntry[element.key] = new Object;
