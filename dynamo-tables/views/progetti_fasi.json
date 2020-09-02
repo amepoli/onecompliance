@@ -1,6 +1,13 @@
 {
 	"$schema": "../views.schema.json",
 	"entryKey": "progetti_fasi",
+	"predefinedQueries": [
+		{
+            "operation": "selectForm",
+            "queryString": "select stato from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=£id_sondaggio£;",
+            "type": "postProcessing"
+        }
+	],
 	"form_keys": [
 		{
 			"autoGenerate": true,
@@ -18,15 +25,39 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+                "options": [],
+                "viewType": "combobox",
 				"dataType": "text"
-			},
-			"label": "stato",
+			},			
+			"label": "Stato",
 			"key": "stato",
-			"readOnly": false,
+			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true
+			"newLine": true,
+			"outputEvent": {
+                "eventName": "codice_colore_change_stato",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "codice_colore_change_stato",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                },
+                {
+                    "eventName": "codice_colore_change_stato",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                }
+            ]
 		},
 		{
 			"autoGenerate": false,
@@ -65,20 +96,32 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false
+			"newLine": false,
+			"size": 3.25
 		},
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "number"
+				"viewType": "combobox",
+				"comboQuery": "select id_sondaggio as id, titolo as name from entrasp.sondaggi where codice_azienda=$codice_azienda$",
+				"options": []
 			},
+			"inputEvents": [
+				{
+					"eventName": "change_sondaggio_associato",
+					"actionType": "show",
+					"condition": "none",
+					"values": [
+					]
+					}
+				],
 			"label": "id_sondaggio",
 			"key": "id_sondaggio",
 			"readOnly": false,
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": false,
-			"newLine": false
+			"newLine": false,
+			"size": 3.25
 		},
 		{
 			"autoGenerate": false,
@@ -96,8 +139,27 @@
 			},
 			"readOnly": false,
 			"sameOrigin": false,
-			"size": 2
+			"size": 1.25
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "change_sondaggio_associato",
+			"label": "Cambia sondaggio associato",
+			"newLine": true,
+			"outputEvent": {
+				"eventName": "change_sondaggio_associato",
+				"eventTrigger": "press"
+			},
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 2.25
 		}
+
 	],
 	"origin": "entrasp.progetti_fasi",
 	"search_keys": [
