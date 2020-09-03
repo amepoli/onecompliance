@@ -4,9 +4,15 @@
 	"predefinedQueries": [
 		{
             "operation": "selectForm",
-            "queryString": "select stato from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=£id_sondaggio£;",
+            "queryString": "select stato from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=coalesce(£id_sondaggio£,0);",
             "type": "postProcessing"
-        }
+		},
+		{
+            "operation": "selectForm",
+            "queryString": "select case when count(id_fase)=0 then '0' else '1' end as presenza_sottofasi_liv2, id_sondaggio as id_sondaggio_liv2, stato as stato_liv2, id_fase as id_fase_liv2, titolo as titolo_liv2 from entrasp.progetti_fase where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase£;",
+            "type": "postProcessing"
+		}
+
 	],
 	"form_keys": [
 		{
@@ -37,12 +43,12 @@
 			"isPrimary": false,
 			"newLine": true,
 			"outputEvent": {
-                "eventName": "codice_colore_change_stato",
+                "eventName": "progetto_change_stato",
                 "eventTrigger": "select"
             },
             "inputEvents": [
                 {
-                    "eventName": "codice_colore_change_stato",
+                    "eventName": "progetto_change_stato",
                     "condition": "none",
                     "values": [],
                     "actionType": "query_style",
@@ -50,7 +56,7 @@
                     "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
                 },
                 {
-                    "eventName": "codice_colore_change_stato",
+                    "eventName": "progetto_change_stato",
                     "condition": "none",
                     "values": [],
                     "actionType": "query_style",
@@ -118,7 +124,7 @@
 			"label": "id_sondaggio",
 			"key": "id_sondaggio",
 			"readOnly": false,
-			"isHidden": true,
+			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
 			"size": 3.25
@@ -158,7 +164,172 @@
 			"readOnly": false,
 			"sameOrigin": false,
 			"size": 2.25
-		}
+		},
+		{
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "presenza_sottofasi_liv2",
+            "label": "presenza_sottofasi_liv2",
+			"sameOrigin": false,
+			"format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "outputEvent": {
+                "eventName": "presenza_sottofasi_liv2",
+                "eventTrigger": "change"
+            }
+        },
+		{
+            "isHidden": true,
+            "readOnly": false,
+            "isPrimary": false,
+            "key": "sotto_fasi_liv2",
+            "sameOrigin": false,
+            "label": "Sotto Fasi",
+            "saveWhenHidden": false,
+            "inputEvents": [
+                {
+                    "eventName": "presenza_sottofasi_liv2",
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+					{
+						"autoGenerate": true,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Id Fase",
+						"key": "id_fase_liv2",
+						"readOnly": true,
+						"isHidden": false,
+						"isPrimary": true,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+							"options": [],
+							"viewType": "combobox",
+							"dataType": "text"
+						},			
+						"label": "Stato",
+						"key": "stato_liv2",
+						"readOnly": true,
+						"isHidden": false,
+						"isPrimary": false,
+						"newLine": true,
+						"outputEvent": {
+							"eventName": "progetto_change_stato_liv2",
+							"eventTrigger": "select"
+						},
+						"inputEvents": [
+							{
+								"eventName": "progetto_change_stato_liv2",
+								"condition": "none",
+								"values": [],
+								"actionType": "query_style",
+								"styleAttribute": "background_color",
+								"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='£stato_liv2£'"
+							},
+							{
+								"eventName": "progetto_change_stato_liv2",
+								"condition": "none",
+								"values": [],
+								"actionType": "query_style",
+								"styleAttribute": "font_color",
+								"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='£stato_liv2£'"
+							}
+						]
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "text"
+						},
+						"label": "Titolo",
+						"key": "titolo_liv2",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"newLine": false,
+						"size": 3.25
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "combobox",
+							"comboQuery": "select id_sondaggio as id, titolo as name from entrasp.sondaggi where codice_azienda=$codice_azienda$",
+							"options": []
+						},
+						"inputEvents": [
+							{
+								"eventName": "change_sondaggio_associato_liv2",
+								"actionType": "show",
+								"condition": "none",
+								"values": [
+								]
+								}
+							],
+						"label": "ID Sondaggio",
+						"key": "id_sondaggio_liv2",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"newLine": false,
+						"size": 3.25
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "button"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "sondaggio_from_progetti_fasi_liv2",
+						"label": "Sondaggio",
+						"newLine": true,
+						"outputEvent": {
+							"eventName": "to_sondaggio_from_progetti_fasi_liv2",
+							"eventTrigger": "press"
+						},
+						"readOnly": false,
+						"sameOrigin": false,
+						"size": 1.25
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "button"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "change_sondaggio_associato_liv2",
+						"label": "Cambia sondaggio associato_liv2",
+						"newLine": true,
+						"outputEvent": {
+							"eventName": "change_sondaggio_associato_liv2",
+							"eventTrigger": "press"
+						},
+						"readOnly": false,
+						"sameOrigin": false,
+						"size": 2.25
+					}
+				]
+            }
+        }
+
 
 	],
 	"origin": "entrasp.progetti_fasi",
@@ -442,6 +613,25 @@
 			},
 			"actionType": "navigate",
 			"eventName": "to_sondaggio_from_progetti_fasi"
+		},
+		{
+			"actionTarget": {
+				"name": "sondaggi",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_sondaggio_liv2",
+						"destination": "id_sondaggio"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "to_sondaggio_from_progetti_fasi_liv2"
 		}
+
 	]
 }
