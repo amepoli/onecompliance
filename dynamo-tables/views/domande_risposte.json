@@ -5,6 +5,11 @@
             "operation": "insert",
             "queryString": "SELECT entrasp.risposte_insert($codice_azienda$, $id_modello_test$, $risposta$, $id_domanda$, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, $peso$, $note$, $id_modello_test_vr$, $punteggio_risposta$, $object_name$, $object_key$,);",
             "type": "main"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "select array(select id_risposta_prev from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$) as risposta_multipla",
+            "type": "postProcessing"
         }
     ],
     "$schema": "../views.schema.json",
@@ -14,15 +19,14 @@
         "key": "ordinamento",
         "order": "ascending"
     },
-    "view_properties": [
+    "formRowProperties": [
         {
-            "viewType": "formView",
             "propertyType": "isHidden",
             "queryString": "select id_domanda_rif IS NOT NULL as label from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$;",
             "inputEvents": [
                 {
                     "eventName": "toggle_question",
-                    "actionType": "showView",
+                    "actionType": "showRow",
                     "condition": "equalTo",
                     "keys": [
                         {
@@ -227,43 +231,17 @@
                         "readOnly": false,
                         "key": "id_risposta_prev_radio",
                         "label": "Risposta",
-                        "subKeys": [
-                            {
-                                "key": "id_risposta_prev",
-                                "dataType": "number"
-                            },
-                            {
-                                "key": "peso",
-                                "dataType": "number"
-                            }
-                        ],
-                        "queryFunct": "select (id_risposta_prev, peso) from entrasp.risposta_multipla_sondaggio(codice_azienda,id_modello_test,id_modello_test_vr,id_domanda, $id_sondaggio$, $id_somministrazione$)",
+                        "queryFunct": "select id_risposta_prev from entrasp.risposta_multipla_sondaggio(codice_azienda,id_modello_test,id_modello_test_vr,id_domanda, $id_sondaggio$, $id_somministrazione$) limit 1",
                         "format": {
                             "viewType": "radiobutton",
                             "options": [],
-                            "comboQuery": "select (id_risposta_prev, peso) as id, risposta as name from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£;"
+                            "comboQuery": "select id_risposta_prev as id, risposta as name from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£;"
                         },
                         "outputEvent": {
                             "eventName": "toggle_question",
                             "eventTrigger": "change"
                         }
-                    },
-                    {
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "readOnly": false,
-                        "key": "punteggio_id_risposta_prev",
-                        "label": "Risposta",
-                        "queryFunct": "select punteggio from entrasp.risposta_multipla_sondaggio(codice_azienda,id_modello_test,id_modello_test_vr,id_domanda, $id_sondaggio$, $id_somministrazione$)",
-                        "format": {
-                            "viewType": "input",
-                            "dataType": "number"
-                    }
-                        
-                    }
-                
-            
-                    
+                    }     
                 ]
             }
         },
@@ -295,7 +273,7 @@
                         "readOnly": false,
                         "newLine": true,
                         "key": "risposta",
-                        "label": "Risposta_",
+                        "label": "Risposta",
                         "format": {
                             "viewType": "textarea"
                         }
@@ -331,11 +309,10 @@
                         "readOnly": false,
                         "key": "risposta_multipla",
                         "label": "Risposta",
-                        "queryFunct": "select risposta from entrasp.risposta_multipla_sondaggio(codice_azienda,id_modello_test,id_modello_test_vr,id_domanda, $id_sondaggio$, $id_somministrazione$)",
                         "format": {
                             "viewType": "checkboxgroup",
                             "options": [],
-                            "comboQuery": "select id_risposta_prev as id, risposta as name from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£;"
+                            "comboQuery": "select id_risposta_prev::int as id, risposta as name from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£;"
                         },
                         "outputEvent": {
                             "eventName": "toggle_question",

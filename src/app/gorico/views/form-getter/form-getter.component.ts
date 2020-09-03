@@ -109,7 +109,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
     viewKeys: formViewKey[]; // view form fields as specified by the backend
-    viewProperties: any[];
+    formRowProperties: any[];
 
     currentKeys: any; // relevant keys passed by the parent component 
 
@@ -225,12 +225,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     console.log(params.messages);
 
                     // Get View properties if exist
-                    _this.viewProperties = params.view_properties;
-                    if (_this.viewProperties && _this.viewProperties.length) {
-                        _this.viewProperties.forEach(viewProperty => {
+                    _this.formRowProperties = params.formRowProperties;
+                    if (_this.formRowProperties && _this.formRowProperties.length) {
+                        _this.formRowProperties.forEach(formRowProperty => {
                             // Subscribe to all the input Events
-                            if (viewProperty.inputEvents && viewProperty.inputEvents.length) {
-                                viewProperty.inputEvents.forEach(event => {
+                            if (formRowProperty.inputEvents && formRowProperty.inputEvents.length) {
+                                formRowProperty.inputEvents.forEach(event => {
                                     const subcription = _this.pubsubService.subscribe(event.eventName,
                                         value => {
                                             _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
@@ -428,11 +428,18 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     private getSubKeysObject(subKeys: [{ key: string, dataType: formDataType }], commaSeparatedValues: string): any {
         const outputObject = {};
+        if (commaSeparatedValues == null) {
+            return null;
+        }
         // field is of type '(key1,key2)', get the array
-        const subKeysArray = commaSeparatedValues.split('(')[1].split(')')[0].split(',');
-        subKeys.forEach((subKey, sub_index) => {
-            outputObject[subKey.key] = subKeysArray[sub_index];
-        });
+        try {
+            const subKeysArray = commaSeparatedValues.split('(')[1].split(')')[0].split(',');
+            subKeys.forEach((subKey, sub_index) => {
+                outputObject[subKey.key] = subKeysArray[sub_index];
+            });
+        } catch (e) {
+            console.log('something wrong with subkeys');
+        }
         return outputObject;
     }
 
@@ -582,10 +589,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // console.log(`keyListener: ${keyListener}`);
         console.log(event, value, keyListener);
 
-        // check  if this is a viewProperties event
-        if (event.actionType === 'showView' && event.condition === 'equalTo') {
+        // check  if this is a formRowProperties event
+        if (event.actionType === 'showRow' && event.condition === 'equalTo') {
 
-            // Check if view_properties contains keys 
+            // Check if formRowProperties contains keys 
             if (event.keys != null) {
                 // Check each form table line to see if the condition is met
                 _this.filteredFormData.forEach((formKeys, i) => {
@@ -674,7 +681,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     listener = targetLine.find(field => field.name === keyListener);
                 }
             }
-            if (keyListener == null) {   // act on the full table --> NO! view_properties must be used in this case!!!
+            if (keyListener == null) {   // act on the full table --> NO! formRowProperties must be used in this case!!!
                 // _this.isReadOnly = conditionMet;
                 // _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly }); // signal to the parent to show/hide save button
             } else if (listener != null) {  // act on the listening element

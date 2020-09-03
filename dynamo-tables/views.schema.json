@@ -279,7 +279,7 @@
                                 "enum": [
                                     "show",
                                     "reload",
-                                    "readOnly"
+                                    "hide"
                                 ]
                             }
                         }
@@ -307,9 +307,9 @@
                         "description": "M: triggered action, if 'navigate' also set actionTarget below",
                         "enum": [
                             "show",
+                            "hide",
                             "navigate",
-                            "reload",
-                            "readOnly"
+                            "reload"
                         ]
                     },
                     "actionTarget": {
@@ -361,25 +361,17 @@
                 }
             }
         },
-        "view_properties": {
+        "formRowProperties": {
             "type": "array",
-            "description": "?: array of view properties",
+            "description": "?: dinamic handling of attributes in form and form table views",
             "items": {
                 "type": "object",
                 "required": [
-                    "viewType",
                     "propertyType"
                 ],
                 "additionalProperties": false,
                 "properties": {
-                    "viewType": {
-                        "type": "string",
-                        "description": "M: affected view",
-                        "enum": [
-                            "tableView",
-                            "formView"
-                        ]
-                    },
+
                     "propertyType": {
                         "type": "string",
                         "description": "M: affected property",
@@ -398,7 +390,7 @@
                     },
                     "inputEvents": {
                         "type": "array",
-                        "description": "?: input events associated with the view, only working with form views",
+                        "description": "?: input events associated with the attribute",
                         "items": {
                             "type": "object",
                             "required": [
@@ -415,19 +407,17 @@
                                 },
                                 "actionType": {
                                     "type": "string",
-                                    "description": "M: action triggered",
+                                    "description": "M: action triggered, showRow means that the row is shown if condition is verified on all keys",
                                     "enum": [
-                                        "showView"
+                                        "showRow"
                                     ]
                                 },
                                 "condition": {
                                     "type": "string",
-                                    "description": "M: condition on received value, only equalTo implemented so far",
+                                    "description": "M: condition on received value",
                                     "enum": [
                                         "none",
-                                        "equalTo",
-                                        "greaterThan",
-                                        "lessThan"
+                                        "equalTo"
                                     ]
                                 },
                                 "keys": {
@@ -436,19 +426,14 @@
                                     "items": {
                                         "type": "object",
                                         "description": "M: set of sender and receiver values to compare with",
-                                        "items": {
-                                            "items": {
-                                                "type": "string"
+                                        "properties": {
+                                            "sender": {
+                                                "type": "string",
+                                                "description": "M: sender key/value"
                                             },
-                                            "properties": {
-                                                "sender": {
-                                                    "type": "string",
-                                                    "description": "M: sender key/value"
-                                                },
-                                                "receiver": {
-                                                    "type": "string",
-                                                    "description": "M: receiver key to compare with"
-                                                }
+                                            "receiver": {
+                                                "type": "string",
+                                                "description": "M: receiver key to compare with"
                                             }
                                         }
                                     }
@@ -910,7 +895,7 @@
                     "insertUpdateFunct": {
                         "type": "string",
                         "description": "?: postgresql query for inserting/updating the key value, used within automatic query. FIELD MUST HAVE SAME ORIGIN."
-                    }, 
+                    },
                     "evalFunct": {
                         "type": "string",
                         "description": "?: javascript expression to evaluate the value of the field, typically with £ contoured local parameters. Can or cannot have same origin."

@@ -985,13 +985,13 @@ async function process_properties(entry_params, table_keys, isFormRecord, client
 
     var tableProperties = {};
 
-    if (entry_params.view_properties == null) {
+    if (entry_params.formRowProperties == null || !isFormRecord) {
         return tableProperties;
     }
 
-    var properties = entry_params.view_properties.filter(p => isFormRecord ? p.viewType === 'formView' : p.viewType === 'tableView');
+    var properties = entry_params.formRowProperties;
 
-    var entry_keys = isFormRecord ? entry_params.form_keys : entry_params.table_keys;
+    var entry_keys = entry_params.form_keys;
 
     var keyTypes = getKeyTypes(entry_keys);
 
@@ -1231,6 +1231,7 @@ exports.handler = async (event, context) => {
                         // search for local keys
                         query = replaceLocalKeys(query, queryData[qd_index]);
                         let comboData = await client.query(query);
+                        console.log('Combo query: ', query, ' Result: ', comboData.rows);
                         if (isFormRecord || isNewRecord) { // form/new record, add combobox options to relevant field
                             let comboEntry = new Object;
                             comboEntry[element.key] = new Object;
