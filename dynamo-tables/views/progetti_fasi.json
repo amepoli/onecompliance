@@ -9,7 +9,12 @@
 		},
 		{
 			"operation": "selectForm",
-			"queryString": "select case when count(id_fase)=0 then '0' else '1' end as presenza_sottofasi_liv2, id_sondaggio as id_sondaggio_liv2, stato as stato_liv2, id_fase as id_fase_liv2, titolo as titolo_liv2 from entrasp.progetti_fase where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase£;",
+			"queryString": "select id_sondaggio as id_sondaggio_liv2, stato as stato_liv2, id_fase as id_fase_liv2, titolo as titolo_liv2 from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase£;",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "select case when count(id_fase)=0 then '0' else '1' end as presenza_sottofasi_liv2 from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase£;",
 			"type": "postProcessing"
 		}
 	],
@@ -23,7 +28,7 @@
 			"label": "id_fase",
 			"key": "id_fase",
 			"readOnly": true,
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": true,
 			"newLine": false
 		},
@@ -221,6 +226,19 @@
 						"label": "Id Fase",
 						"key": "id_fase_liv2",
 						"readOnly": true,
+						"isHidden": true,
+						"isPrimary": false,
+						"newLine": true
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "text"
+						},
+						"label": "Titolo",
+						"key": "titolo_liv2",
+						"readOnly": false,
 						"isHidden": false,
 						"isPrimary": false,
 						"newLine": false
@@ -262,20 +280,7 @@
 							}
 						]
 					},
-					{
-						"autoGenerate": false,
-						"format": {
-							"viewType": "input",
-							"dataType": "text"
-						},
-						"label": "Titolo",
-						"key": "titolo_liv2",
-						"readOnly": false,
-						"isHidden": false,
-						"isPrimary": false,
-						"newLine": false,
-						"size": 3.25
-					},
+					
 					{
 						"autoGenerate": false,
 						"format": {
