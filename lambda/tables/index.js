@@ -37,7 +37,7 @@ function replaceLocalKeys(queryString, keys) {
         delimiters.forEach(delimiter => {
             let toReplace = delimiter + key + delimiter;
             let replacement = keys[key];
-            replacement = (typeof replacement === 'string') ? '\'' + replacement.replace(/'/g, "''") + '\'' : replacement;
+            //replacement = (typeof replacement === 'string') ? '\'' + replacement.replace(/'/g, "''") + '\'' : replacement;
             //console.log('toReplace: ', toReplace, ', replacement: ', replacement);
             let newString = queryString.replace(toReplace, replacement);
             //console.log('queryString: ', queryString, ' newString: ', newString);
@@ -53,7 +53,7 @@ function replaceLocalKeys(queryString, keys) {
 function replaceKeys(queryString, keys, keyTypes) {
 
     console.log(keys);
-    var delimiters = ['$', '€'];
+    var delimiters = ['$', '€', '£'];
     if (queryString) {
         // first replace the global variables, must be €-contoured
         for (var key in global_variables) {
@@ -74,7 +74,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                 if (keyType != null && keyType.subKeys != null) { // key with multiple subkeys
                     console.log('Key with subkeys: ', keys[key], keyType);
                     // tslint:disable-next-line:forin
-                    keyType.subKeys.forEach( subkey => {
+                    keyType.subKeys.forEach(subkey => {
                         // console.log(subKey)
                         let bracket = (delimiter === '$' && isDataTypeString(subkey)) ? '\'' : '';
                         let toReplace = delimiter + key + '.' + subkey.key + delimiter;
@@ -93,7 +93,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                     // TO BE CHECKED
                     //let replacement = keys[key].value ? keys[key].value : keys[key]; // handle subtables
                     // replace single quotes with double quotes within strings to avoid errors with queries
-
+                    // console.log('Keys[', key, ']=', keys[key], ' keyType=', keyType);
                     let valueWithFixedQuotes = (keys[key] != null && keyType != null && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
                     let replacement = keys[key] == null ? 'null' : bracket + valueWithFixedQuotes + bracket;
                     //console.log ('toReplace: ', toReplace, ' replacement: ', replacement);
@@ -128,7 +128,7 @@ function getKeyTypes(entry_keys) {
     });
     entry_keys.forEach(k => {
         if (k.format.viewType === 'subform') {
-            keyTypes = keyTypes.concat(getKeyTypes(k.format.subform_keys));       
+            keyTypes = keyTypes.concat(getKeyTypes(k.format.subform_keys));
         }
     });
     return keyTypes;
@@ -159,6 +159,21 @@ function getCalculatedParams(entry_params, keys, isForm) {
     return keys;
 }
 
+function getComboFuncts(comboQueries, entry_keys, table_keys, keyTypes) {
+    for (let index = 0; index < entry_keys.length; index++) {
+        let element = entry_keys[index];
+        if (element.format.viewType === 'combobox' || element.format.viewType === 'radiobutton' || element.format.viewType === 'checkboxgroup') {
+            let comboQuery = element.format.comboQuery;
+            if (comboQuery != null) {
+                comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
+                comboQueries.push({ key: element.key, comboQuery: comboQuery });
+            }
+        } else if (element.format.viewType === 'subform') {
+            getComboFuncts(comboQueries, element.format.subform_keys, table_keys, keyTypes);
+        }
+    }
+}
+
 // build the Postgresql query from parameters
 function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
@@ -183,6 +198,10 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
     let keyTypes = getKeyTypes(entry_keys);
 
+    if (isForm) { // check if we have comboboxes, then save query fields for later processing
+        getComboFuncts(comboQueries, entry_keys, table_keys, keyTypes);
+    }
+
     // process pre-defined queries for table/form view, if any
 
     if (entry_params.predefinedQueries) {
@@ -201,7 +220,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
             }
         });
         if (mainQuery) { // no need to further build main query, stop here
-            return { mainQuery: mainQuery, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+            return { mainQuery: mainQuery, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
 
         }
     }
@@ -216,23 +235,14 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
     for (index = 0; index < entry_keys.length; index++) {
         let element = entry_keys[index];
-        if (isForm) { // check if combobox, then save query fields for later processing
-            if (element.format.viewType === 'combobox' || element.format.viewType === 'radiobutton' || element.format.viewType === 'checkboxgroup') {
-                let comboQuery = element.format.comboQuery;
-                if (comboQuery != null) {
-                    comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
-                    comboQueries.push({ key: element.key, comboQuery: comboQuery });
+        if (isForm && element.format.viewType === 'subform') {
+            // append the keys at the end of the array (avoiding recursion, they will be processed later in the loop)
+            element.format.subform_keys.forEach(subkey => {
+                if (element.sameOrigin != null) {
+                    subkey['sameOrigin'] = element.sameOrigin;
                 }
-            } else if (element.format.viewType === 'subform') {
-                // append the keys at the end of the array (avoiding recursion, they will be processed later in the loop)
-                element.format.subform_keys.forEach(subkey => {
-                    if (element.sameOrigin != null) {
-                        subkey['sameOrigin'] = element.sameOrigin;
-                    }
-                    entry_keys.push(subkey);
-                });
-            }
-
+                entry_keys.push(subkey);
+            });
         }
         if (!element.key || (element.sameOrigin != null && !element.sameOrigin && element.queryFunct == null) || element.format.viewType === 'subform') {  // no table key or the key is from another table
             continue;
@@ -353,7 +363,22 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
     let table_keys = body;  // keys provided with body
     console.log("Event body: ", body);
     let keyTypes = getKeyTypes(entry_keys);
-    let field_key = entry_keys.find(entry => entry.key === eventInfo.field);
+
+    const findKey = (dataset, param) => {
+        let found = dataset.find(field => field.key === param);
+        if (found == null) {
+            for (let i = 0; i < dataset.length; i++) {
+                if (dataset[i].format.viewType === 'subform') {
+                    found = findKey(dataset[i].format.subform_keys, param);
+                    if (found != null) {
+                        break;
+                    }
+                }
+            }
+        }
+        return found;
+    };
+    let field_key = findKey(entry_keys, eventInfo.field); 
 
     if (field_key != null) {
         if (field_key.inputEvents != null) {
@@ -544,8 +569,8 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
     entry_keys.forEach(element => {
 
-        if (element.key == null || (element.insertUpdateFunct == null && (element.sameOrigin != null && !element.sameOrigin) || element.queryFunct != null 
-            || element.subKeys != null ||  element.format.viewType === 'subform')) { // skip foreing columns
+        if (element.key == null || (element.insertUpdateFunct == null && (element.sameOrigin != null && !element.sameOrigin) || element.queryFunct != null
+            || element.subKeys != null || element.format.viewType === 'subform')) { // skip foreing columns
             return;
         }
 
@@ -572,7 +597,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         queryString = queryString + comma + element.key;
         values[element.key] = value;
         if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
-            
+
             let delimiter = isDataTypeString(keyType) ? '\'' : '';
             if (value.id != null) { // combobox 
                 value = value.id;
@@ -745,11 +770,17 @@ async function processPreMainPost(queryString, client, notFullTable) {
             let query = queryString.preProcessQueries[index];
             query = replaceLocalKeys(query, local_keys_pre);
             let result = await client.query(query);
+            let rawResult = result;
             result = notFullTable ? result.rows[0] : result.rows;
-            if (result !== null) { // add resulting keys to the list of local keys if any
+            if (result != null) { // add resulting keys to the list of local keys if any
                 local_keys_pre = Object.assign(local_keys_pre, result);
             }
-            console.log('Pre query : ', query, ' result : ', result);
+            else {
+                rawResult.fields.forEach(field => {
+                    local_keys_pre[field.name] = null;
+                });
+            }
+            console.log('Pre query : ', query, ' result : ', result, ' raw result: ', rawResult);
         }
     }
 
@@ -766,18 +797,24 @@ async function processPreMainPost(queryString, client, notFullTable) {
     if (queryString.postProcessQueries != null && queryString.postProcessQueries.length) { // post-processing 
         for (let row_index = 0; row_index < queryData.length; row_index++) {
             local_keys_post = Object.assign(local_keys_pre, queryData[row_index]);
-        for (let index = 0; index < queryString.postProcessQueries.length; index++) {
-            let query = queryString.postProcessQueries[index];
+            for (let index = 0; index < queryString.postProcessQueries.length; index++) {
+                let query = queryString.postProcessQueries[index];
                 query = replaceLocalKeys(query, local_keys_post);
-            let result = await client.query(query);
-            result = notFullTable ? result.rows[0] : result.rows;
-            if (result !== null) { // add resulting keys to the list of local keys if any
+                let result = await client.query(query);
+                let rawResult = result;
+                result = notFullTable ? result.rows[0] : result.rows;
+                if (result != null) { // add resulting keys to the list of local keys if any
                     local_keys_post = Object.assign(local_keys_post, result);
                     queryData[row_index] = Object.assign(queryData[row_index], result);
+                } else {
+                    rawResult.fields.forEach(field => {
+                        local_keys_post[field.name] = null;
+                        queryData[row_index][field.name] = null;
+                    });
+                }
+                console.log('Post query : ', query, ' result : ', result, ' raw result: ', rawResult);
             }
-            console.log('Post query : ', query, ' result : ', result);
         }
-    }
     }
 
 
