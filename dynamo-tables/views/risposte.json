@@ -131,7 +131,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "queryFunct": "SELECT mdt.titolo from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$",
+      "queryFunct": "SELECT mdt.titolo from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test and mdt.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$",
       "key": "titolo",
       "label": "Titolo Modello Test",
       "newLine": true,
@@ -150,22 +150,22 @@
       "label": "ID Domanda",
       "newLine": false,
       "readOnly": true,
-      "size": 2
+      "size": 1.5
     },
     {
       "autoGenerate": false,
       "format": {
         "dataType": "text",
-        "viewType": "input"
+        "viewType": "textarea"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "Descrizione_domanda",
+      "key": "descrizione_domanda",
       "label": "Domanda",
-      "queryFunct": "entrasp.domande_descrizione($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$)",
+      "queryFunct": "select descrizione from entrasp.domande where codice_azienda=$codice_azienda$ and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$",
       "newLine": true,
       "readOnly": true,
-      "size": 8
+      "size": 8.5
     },
     {
       "autoGenerate": true,
@@ -178,20 +178,23 @@
       "key": "id_risposta",
       "label": "ID Risposta",
       "newLine": false,
-      "readOnly": true
+      "readOnly": true,
+      "size": 1.5
     },
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "number",
-        "viewType": "input"
+        "dataType": "text",
+        "viewType": "textarea"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "id_risposta_prev",
-      "label": "Id Risposta Prev",
+      "key": "risposta_selezionata",
+      "label": "Risposta selezionata",
+      "queryFunct": "select rp.risposta from entrasp.risposte r inner join entrasp.risposte_previste rp  on r.codice_azienda=rp.codice_azienda and r.id_risposta_prev=rp.id_risposta_prev and r.id_domanda=rp.id_domanda and r.id_modello_test_vr=rp.id_modello_test_vr and r.id_modello_test=rp.id_modello_test where rp.codice_azienda=$codice_azienda$ and id_risposta=$id_risposta$",
       "newLine": true,
-      "readOnly": true
+      "readOnly": true,
+      "size": 8.5
     }
   ],
   "origin": "entrasp.risposte",
@@ -205,6 +208,15 @@
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_risposta",
+      "label": "id_risposta"
     },
     {
       "format": {
