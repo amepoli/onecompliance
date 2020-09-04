@@ -9,7 +9,7 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 @Component({
     selector: 'app-button',
     template: `
-<div [ngStyle]="{'display': 'inline-block', 'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
+<div [ngStyle]="{'display': 'inline-block', 'width': '100%'}" *ngIf="field.isVisible != false" [formGroup]="group">
 <button *ngIf="field.buttonIcon && !field.isDownloadButton" mat-icon-button [disabled]="field.readonly" (click)="onClickButton()">
         <mat-icon>{{field.buttonIcon}}</mat-icon>
 </button>
@@ -22,7 +22,14 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 </button>
 </div>
 `,
-    styles: []
+    styles: [],
+    host: {
+        '[style.padding-top.px]': 'field.isVisible? "26": "0"',
+        '[style.margin-right]': 'field.isVisible? "1%": "0"',
+        '[style.margin-left]': 'field.isVisible? "1%": "0"',
+        '[style.width]': 'field.isVisible? field.width + "%": "0"',
+        '[style.height.px]': 'field.isVisible? "96": "0"',
+    }
 })
 
 export class ButtonComponent implements OnInit {

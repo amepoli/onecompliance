@@ -7,7 +7,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 @Component({
   selector: 'combobox',
   template: `
-<mat-form-field [ngStyle]="{'margin-right': '1%', 'margin-left': '1%','width': field.width+'%'}" *ngIf="field.isVisible != false" appearance="outline">
+<mat-form-field [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" appearance="outline">
 <mat-label>{{field.label}}</mat-label>
 <mat-select [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)"
 [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
@@ -17,7 +17,14 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 </mat-select>
 </mat-form-field>
 `,
-  styles: []
+  styles: [],
+  host: {
+    '[style.padding-top.px]': 'field.isVisible? "10": "0"',
+    '[style.margin-right]': 'field.isVisible? "1%": "0"',
+    '[style.margin-left]': 'field.isVisible? "1%": "0"',
+    '[style.width]': 'field.isVisible? field.width + "%": "0"',
+    '[style.height.px]': 'field.isVisible? "96": "0"',
+  }
 })
 export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   field: FieldConfig;

@@ -7,7 +7,7 @@ import { Moment } from 'moment';
 @Component({
   selector: 'app-input',
   template: `
-<mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'margin-right': '1%', 'margin-left': '1%','width': field.width+'%'}" appearance="outline" [formGroup]="group">
+<mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
 <input [required]="isRequired" *ngIf="field.inputType !== 'date'" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
     (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()"
@@ -24,7 +24,14 @@ import { Moment } from 'moment';
 </ng-container>
 </mat-form-field>
 `,
-  styles: []
+  styles: [],
+  host: {
+    '[style.padding-top.px]': 'field.isVisible? "10": "0"',
+    '[style.margin-right]': 'field.isVisible? "1%": "0"',
+    '[style.margin-left]': 'field.isVisible? "1%": "0"',
+    '[style.width]': 'field.isVisible? field.width + "%": "0"',
+    '[style.height.px]': 'field.isVisible? "96": "0"',
+  }
 })
 export class InputComponent implements OnInit, AfterViewInit {
   field: FieldConfig;
