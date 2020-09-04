@@ -3,14 +3,20 @@
     "predefinedQueries": [
             {
             "operation": "insert",
-            "queryString": "SELECT entrasp.risposte_insert($codice_azienda$, $id_modello_test$, $risposta$, $id_domanda$, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, $peso$, $note$, $id_modello_test_vr$, $punteggio_risposta$, $object_name$, $object_key$,);",
+            "queryString": "SELECT entrasp.risposte_insert($codice_azienda$, $id_modello_test$, $risposta$, $id_domanda$, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, $peso$, $note$, $id_modello_test_vr$, $punteggio_risposta$, $object_name$, $object_key$);",
             "type": "main"
         },
         {
             "operation": "selectForm",
             "queryString": "select array(select id_risposta_prev from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$) as risposta_multipla",
             "type": "postProcessing"
+        },
+        {
+            "operation": "update",
+            "queryString": "select risposte_update($risposta_multipla$)",
+            "type": "postProcessing"
         }
+
     ],
     "$schema": "../views.schema.json",
     "origin": "entrasp.domande",

@@ -3,10 +3,30 @@
 	"entryKey": "progetti_fasi",
 	"predefinedQueries": [
 		{
-            "operation": "selectForm",
-            "queryString": "select stato from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=£id_sondaggio£;",
-            "type": "postProcessing"
-        }
+			"operation": "selectForm",
+			"queryString": "select * from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and id_fase_sup is null;",
+			"type": "main"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "select stato from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=coalesce(£id_sondaggio£,0);",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "select id_sondaggio as id_sondaggio_liv2, stato as stato_liv2, id_fase as id_fase_liv2, id_fase_sup as id_fase_sup_liv2, titolo as titolo_liv2 from entrasp.progetti_fasi liv2 where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase£;",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "select case when count(id_fase)=0 then '0' else '1' end as presenza_sottofasi_liv2 from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase£;",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "select count(id_fase) as num_sotto_fasi_liv3 from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase_liv2£;",
+			"type": "postProcessing"
+		}
 	],
 	"form_keys": [
 		{
@@ -18,18 +38,44 @@
 			"label": "id_fase",
 			"key": "id_fase",
 			"readOnly": true,
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": true,
 			"newLine": false
 		},
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
-                "options": [],
-                "viewType": "combobox",
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "id_fase_sup",
+			"key": "id_fase_sup",
+			"readOnly": true,
+			"isHidden": true,
+			"isPrimary": false,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
 				"dataType": "text"
-			},			
+			},
+			"label": "titolo",
+			"key": "titolo",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
 			"label": "Stato",
 			"key": "stato",
 			"readOnly": true,
@@ -37,27 +83,27 @@
 			"isPrimary": false,
 			"newLine": true,
 			"outputEvent": {
-                "eventName": "codice_colore_change_stato",
-                "eventTrigger": "select"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "codice_colore_change_stato",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-                },
-                {
-                    "eventName": "codice_colore_change_stato",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "font_color",
-                    "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-                }
-            ]
+				"eventName": "progetto_fase_change_stato",
+				"eventTrigger": "select"
+			},
+			"inputEvents": [
+				{
+					"eventName": "progetto_fase_change_stato",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "background_color",
+					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+				},
+				{
+					"eventName": "progetto_change_stato",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "font_color",
+					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+				}
+			]
 		},
 		{
 			"autoGenerate": false,
@@ -88,46 +134,45 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "titolo",
-			"key": "titolo",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 3.25
-		},
-		{
-			"autoGenerate": false,
-			"format": {
 				"viewType": "combobox",
 				"comboQuery": "select id_sondaggio as id, titolo as name from entrasp.sondaggi where codice_azienda=$codice_azienda$",
 				"options": []
+			},
+			"outputEvent": {
+				"eventName": "id_sondaggio_change",
+				"eventTrigger": "select"
 			},
 			"inputEvents": [
 				{
 					"eventName": "change_sondaggio_associato",
 					"actionType": "show",
 					"condition": "none",
-					"values": [
-					]
-					}
-				],
+					"values": []
+				}
+			],
 			"label": "id_sondaggio",
 			"key": "id_sondaggio",
 			"readOnly": false,
-			"isHidden": true,
+			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 3.25
+			"size": 6.5
 		},
 		{
 			"autoGenerate": false,
 			"format": {
 				"viewType": "button"
 			},
+			"inputEvents": [
+				{
+					"eventName": "id_sondaggio_change",
+					"actionType": "hide",
+					"condition": "equalTo",
+					"values": [
+						""
+					]
+				}
+			],
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "sondaggio_from_progetti_fasi",
@@ -158,8 +203,250 @@
 			"readOnly": false,
 			"sameOrigin": false,
 			"size": 2.25
+		},
+		{
+			"isHidden": true,
+			"readOnly": true,
+			"isPrimary": false,
+			"key": "presenza_sottofasi_liv2",
+			"label": "presenza_sottofasi_liv2",
+			"sameOrigin": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"outputEvent": {
+				"eventName": "presenza_sottofasi_liv2",
+				"eventTrigger": "change"
+			}
+		},
+		{
+			"isHidden": true,
+			"readOnly": false,
+			"isPrimary": false,
+			"key": "sotto_fasi_liv2",
+			"sameOrigin": false,
+			"label": "Sotto Fasi",
+			"saveWhenHidden": false,
+			"inputEvents": [
+				{
+					"eventName": "presenza_sottofasi_liv2",
+					"actionType": "show",
+					"condition": "equalTo",
+					"values": [
+						"1"
+					]
+				}
+			],
+			"format": {
+				"viewType": "subform",
+				"subform_keys": [
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "label",
+							"dataType": "text"
+						},
+						"label": "Sotto-fase",
+						"key": "",
+						"style": {
+							"font_weight": "600",
+							"font_style": "italic",
+							"font_size": "20px"
+						},
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"newLine": false
+					},
+					{
+						"autoGenerate": true,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Id Fase liv2",
+						"key": "id_fase_liv2",
+						"readOnly": true,
+						"isHidden": true,
+						"isPrimary": false,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Id Fase sup liv2",
+						"key": "id_fase_sup_liv2",
+						"readOnly": true,
+						"isHidden": true,
+						"isPrimary": false,
+						"newLine": true
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "text"
+						},
+						"label": "Titolo",
+						"key": "titolo_liv2",
+						"style": {
+							"background_color": "#FAFAD2"
+						},
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+							"options": [],
+							"viewType": "combobox",
+							"dataType": "text"
+						},
+						"label": "Stato",
+						"key": "stato_liv2",
+						"style": {
+							"background_color": "#FAFAD2"
+						},
+						"readOnly": true,
+						"isHidden": false,
+						"isPrimary": false,
+						"newLine": true,
+						"outputEvent": {
+							"eventName": "progetto_change_stato_liv2",
+							"eventTrigger": "select"
+						},
+						"inputEvents": [
+							{
+								"eventName": "progetto_change_stato_liv2",
+								"condition": "none",
+								"values": [],
+								"actionType": "query_style",
+								"styleAttribute": "background_color",
+								"queryFunct": "select background_color as stato_liv2_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='£stato_liv2£'"
+							},
+							{
+								"eventName": "progetto_change_stato_liv2",
+								"condition": "none",
+								"values": [],
+								"actionType": "query_style",
+								"styleAttribute": "font_color",
+								"queryFunct": "select character_color as stato_liv2_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='£stato_liv2£'"
+							}
+						]
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "combobox",
+							"comboQuery": "select id_sondaggio as id, titolo as name from entrasp.sondaggi where codice_azienda=$codice_azienda$",
+							"options": []
+						},
+						"label": "ID Sondaggio",
+						"key": "id_sondaggio_liv2",
+						"readOnly": false,
+						"style": {
+							"background_color": "#FAFAD2"
+						},
+						"outputEvent": {
+							"eventName": "id_sondaggio_liv2_change",
+							"eventTrigger": "select"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"newLine": false,
+						"size": 6.5
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "button"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "sondaggio_from_progetti_fasi_liv2",
+						"label": "Sondaggio",
+						"newLine": true,
+						"outputEvent": {
+							"eventName": "to_sondaggio_from_progetti_fasi_liv2",
+							"eventTrigger": "press"
+						},
+						"inputEvents": [
+							{
+								"eventName": "id_sondaggio_liv2_change",
+								"actionType": "hide",
+								"condition": "equalTo",
+								"values": [
+									""
+								]
+							}
+						],
+						"readOnly": true,
+						"sameOrigin": false,
+						"size": 1.25
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "button"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "change_sondaggio_associato_liv2",
+						"label": "Cambia sondaggio associato",
+						"newLine": true,
+						"outputEvent": {
+							"eventName": "change_sondaggio_associato_liv2",
+							"eventTrigger": "press"
+						},
+						"readOnly": false,
+						"sameOrigin": false,
+						"size": 2.25
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"dataType": "number",
+							"viewType": "input"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"style": {
+							"background_color": "#E0FFFF"
+						},
+						"key": "num_sotto_fasi_liv3",
+						"label": "Numero sotto fasi liv3",
+						"newLine": false,
+						"readOnly": true,
+						"size": 7
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "button"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "Sotto fasi",
+						"label": "Sotto-fasi",
+						"newLine": true,
+						"outputEvent": {
+							"eventName": "navigate_sotto_fasi_liv3",
+							"eventTrigger": "press"
+						},
+						"readOnly": false,
+						"sameOrigin": false,
+						"size": 3
+					}
+				]
+			}
 		}
-
 	],
 	"origin": "entrasp.progetti_fasi",
 	"search_keys": [
@@ -442,6 +729,42 @@
 			},
 			"actionType": "navigate",
 			"eventName": "to_sondaggio_from_progetti_fasi"
+		},
+		{
+			"actionTarget": {
+				"name": "sondaggi",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_sondaggio_liv2",
+						"destination": "id_sondaggio"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "to_sondaggio_from_progetti_fasi_liv2"
+		},
+		{
+			"actionTarget": {
+				"name": "sotto-fasi",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_fase_liv2",
+						"destination": "id_fase"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "navigate_sotto_fasi_liv3"
 		}
 	]
 }
