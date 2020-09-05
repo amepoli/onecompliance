@@ -356,7 +356,7 @@
 						"isHidden": false,
 						"isPrimary": false,
 						"key": "sondaggio_from_progetti_fasi_liv2",
-						"label": "Sondaggio",			
+						"label": "Sondaggio",
 						"newLine": true,
 						"outputEvent": {
 							"eventName": "to_sondaggio_from_progetti_fasi_liv2",
@@ -397,6 +397,10 @@
 						},
 						"key": "num_sotto_fasi_liv3",
 						"label": "Numero sotto fasi liv3",
+						"outputEvent": {
+							"eventName": "num_sotto_fasi_liv3_change",
+							"eventTrigger": "change"
+						},
 						"newLine": false,
 						"readOnly": true,
 						"size": 7
@@ -411,6 +415,12 @@
 						"key": "Sotto fasi",
 						"label": "Sotto-fasi",
 						"newLine": true,
+						"attributeFuncts": [
+							{
+								"attributeType": "isHidden",
+								"queryString": "select case when count(id_fase)>0 then 0 else 1  end as label from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase_liv2£;"
+							}
+						],
 						"outputEvent": {
 							"eventName": "navigate_sotto_fasi_liv3",
 							"eventTrigger": "press"
