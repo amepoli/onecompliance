@@ -1,6 +1,13 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "rischi",
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "type": "main",
+      "queryString": "SELECT codice_part,codice_azienda,codice,codice_rischio,titolo,intensita_singola_post_rilevata,flag_modalita_valutazione_rischi_avanzata,vulnerabilita,descrizione,id_centro_gest,probabilita_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P', probabilita_pre) AS probabilita_pre_descrizione,intensita_singola_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'I', intensita_singola_pre) AS intensita_pre_descrizione,intensita_totale_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P',intensita_totale_pre) AS intensita_totale_pre_descrizione,probabilita_post,entrasp.cpl_soglie_descrizione(codice_azienda,'P', probabilita_post) AS probabilita_post_descrizione,intensita_singola_post,entrasp.cpl_soglie_descrizione(codice_azienda,'I', intensita_singola_post) AS impatto_post_descrizione,intensita_totale_post,probabilita_post_rilevata,(entrasp.cpl_soglie_descrizione(codice_azienda,'P', probabilita_post_rilevata)) AS probabilita_rett_descrizione,intensita_singola_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'I', intensita_singola_post_rilevata) AS intensita_singola_post_rett_descrizione,intensita_totale_pre FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$;"
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -183,17 +190,19 @@
       },
       "inputEvents": [
         {
-          "actionType": "query",
+          "actionType": "update",
           "eventName": "input_probabilita_pre",
           "condition": "none",
-          "values": []        }
+          "updateFunct": "",
+          "values": []
+        }
       ],
       "isHidden": false,
       "isPrimary": false,
+      "sameOrigin": false,
       "key": "probabilita_pre_descrizione",
       "label": "Probabilità Ante - Descrizione",
       "newLine": false,
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'P', probabilita_pre)",
       "readOnly": true
     },
     {
@@ -220,18 +229,19 @@
       },
       "inputEvents": [
         {
-          "actionType": "query",
+          "actionType": "update",
           "eventName": "input_intensita_singola_pre",
           "condition": "none",
+          "updateFunct": "",
           "values": []
         }
       ],
       "isHidden": false,
       "isPrimary": false,
+      "sameOrigin": false,
       "key": "intensita_pre_descrizione",
       "label": "Impatto Ante - Descrizione",
       "newLine": false,
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I', intensita_singola_pre)",
       "readOnly": true
     },
     {
@@ -293,7 +303,6 @@
       "isPrimary": false,
       "key": "intensita_totale_pre_descrizione",
       "label": "Totale Ante - Descrizione",
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'P', (£probabilita_pre£/100*£intensita_singola_pre£).toFixed(2))",
       "newLine": true,
       "readOnly": true,
       "sameOrigin": false
@@ -343,8 +352,9 @@
       },
       "inputEvents": [
         {
-          "actionType": "query",
+          "actionType": "update",
           "eventName": "input_probabilita_post",
+          "updateFunct": "",
           "condition": "none",
           "values": []
         }
@@ -354,7 +364,7 @@
       "key": "probabilita_post_descrizione",
       "label": "Probabilità Post - Descrizione",
       "newLine": false,
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'P', probabilita_post)",
+      "sameOrigin": false,
       "readOnly": true
     },
     {
@@ -381,17 +391,19 @@
       },
       "inputEvents": [
         {
-          "actionType": "query",
+          "actionType": "update",
           "eventName": "input_intensita_singola_post",
+          "updateFunct": "",
           "condition": "none",
-          "values": []        }
+          "values": []
+        }
       ],
       "isHidden": false,
       "isPrimary": false,
       "key": "impatto_post_descrizione",
       "label": "Impatto Post - Descrizione",
+      "sameOrigin": false,
       "newLine": false,
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I', intensita_singola_post)",
       "readOnly": true
     },
     {
@@ -505,10 +517,10 @@
       ],
       "isHidden": false,
       "isPrimary": false,
+      "sameOrigin": false,
       "key": "probabilita_rett_descrizione",
       "label": "Probabilità rett.- Descrizione",
       "newLine": false,
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'P', probabilita_post_rilevata)",
       "readOnly": true
     },
     {
@@ -546,7 +558,7 @@
       "key": "intensita_singola_post_rett_descrizione",
       "label": "Impatto Post Rett - Descrizione",
       "newLine": false,
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I', intensita_singola_post_rilevata)",
+      "sameOrigin": false,
       "readOnly": true
     },
     {
@@ -657,7 +669,7 @@
       "format": {
         "dataType": "text",
         "viewType": "input"
-            },
+      },
       "label": "Rischio Inerente",
       "newLine": false,
       "queryCond": "rischio_inerente=$rischio_inerente$"
@@ -665,14 +677,14 @@
     {
       "fieldName": "id_centro_gest",
       "format": {
-          "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-          "options": [],
-          "viewType": "combobox"
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
       },
       "label": "Centro Gestionale",
       "newLine": true,
       "queryCond": "(select id_centro_gest from entrasp.rischi(codice_azienda, id_modello_test))= $id_centro_gest$"
-  }
+    }
   ],
   "subTables": [
     {
