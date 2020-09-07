@@ -49,7 +49,10 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
         if (changes.Tabs && _this.Tabs.length) {
             _this.setFiltered();
             _this.subscriptions.forEach(subscription => { subscription.unsubscribe() }); // clean out subscriptions
-            _this.Tabs.forEach(tab => {  // re-suscribe
+
+            // _this.Tabs.forEach(tab => {  // re-suscribe
+            for (let i = 0; i < _this.Tabs.length; i++) {
+                let tab = _this.Tabs[i];
                 if (tab.inputEvents != null && tab.inputEvents.length) {
                     tab.inputEvents.forEach(event => {
                         if (event.actionType === 'show' || event.actionType === 'hide') {
@@ -65,38 +68,60 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
                                     // tricky way to compare two arrays
                                     const conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
                                     tab.hidden = event.actionType === 'hide' ? conditionMet : !conditionMet;
+
+                                    if (!tab.hidden) {
+                                        _this.activeIndex = i;
+                                    }
                                 }
                                 _this.setFiltered();  // reset filteredTabs
                             }));
                         }
                     });
                 }
-            });
+                // });
+            }
 
         } else if (changes.SaveData && (_this.filteredTabs[_this.activeIndex] != null && _this.filteredTabs[_this.activeIndex].type === 'tableForm')) {
             _this.tableFormSave = !_this.tableFormSave; // propagate to the child by toggling the parameter
         }
     }
 
+    getFirstVisibleTab() {
+        for (let i = 0; i < this.filteredTabs.length; i++) {
+            if (!this.filteredTabs[i].hidden) {
+                this.activeIndex = i;
+                return;
+            }
+        }
+    }
+
     setFiltered(): void {
         const _this = this;
-        _this.filteredTabs = _this.Tabs.filter(tab => !tab.hidden);
+        _this.filteredTabs = JSON.parse(JSON.stringify(_this.Tabs)); //.filter(tab => !tab.hidden);
         if (_this.filteredTabs.length) { // check if any visible tab
+
+            console.log("setFiltered", _this.activeIndex);
+
             // Check if active index is greator than maximum tabs
-            if (_this.activeIndex >= _this.filteredTabs.length) {
-                _this.activeIndex = 0;
-                _this.tabsGroup.selectedIndex = _this.activeIndex;
-                _this.cdRef.detectChanges();
+            if (_this.filteredTabs[_this.activeIndex].hidden) {
+                _this.getFirstVisibleTab();
             }
 
+            if (_this.activeIndex >= _this.filteredTabs.length) {
+                _this.activeIndex = _this.filteredTabs.length - 1;
+            }
+            _this.tabsGroup.selectedIndex = _this.activeIndex;
             _this.tableParams = { entryName: _this.filteredTabs[_this.activeIndex].table, keys: _this.filteredTabs[_this.activeIndex].keys, showHeader: true, showFullScreenButton: true };
             _this.formTableParams = { entryName: _this.filteredTabs[_this.activeIndex].table, keys: _this.filteredTabs[_this.activeIndex].keys, showHeader: true };
+
+            console.log("setFiltered", _this.activeIndex);
+            _this.cdRef.detectChanges();
         }
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
 
-        if (this.filteredTabs && this.filteredTabs.length) {  // at least one tab visible
+        if (this.filteredTabs && this.filteredTabs.length && tabChangeEvent.index > -1) {  // at least one tab visible
             this.activeIndex = tabChangeEvent.index >= 0 ? tabChangeEvent.index : 0;  // might get a -1
             this.tableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true, showFullScreenButton: true };
             this.formTableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true };
@@ -122,8 +147,8 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
     }
 
     clearTabs() {
-        this.Tabs = null;
-        this.filteredTabs = null;
+        this.Tabs = [];
+        this.filteredTabs = [];
         this.activeIndex = 0;
         this.cdRef.detectChanges();
     }

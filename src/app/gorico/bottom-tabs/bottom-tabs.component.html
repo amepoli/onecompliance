@@ -1,6 +1,6 @@
 <mat-tab-group #tabsGroup (selectedTabChange)="tabChanged($event)" class="bottom-tabs-header">
-    <mat-tab *ngFor='let tab of filteredTabs; let idx = index' [label]="tab.label">
-        <ng-container *ngIf="activeIndex === idx">
+    <mat-tab *ngFor='let tab of filteredTabs; let idx = index' [disabled]="tab.hidden" [label]="tab.label">
+        <ng-container *ngIf="activeIndex === idx && !tab.hidden">
             <table-view *ngIf="tab.type === 'table'" [isTabMode]="true" [isCurTab]="activeIndex === idx? true: false"
                 [tableData]='tableParams' (sendEvent)='onEvent($event)' (onReload)="reload()">
             </table-view>
