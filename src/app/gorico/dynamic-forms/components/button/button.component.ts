@@ -9,7 +9,7 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 @Component({
     selector: 'app-button',
     template: `
-<div [ngStyle]="{'display': 'inline-block', 'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
+<div align="center" [ngStyle]="{'display': 'inline-block', 'width': '100%'}" *ngIf="field.isVisible != false" [formGroup]="group">
 <button *ngIf="field.buttonIcon && !field.isDownloadButton" mat-icon-button [disabled]="field.readonly" (click)="onClickButton()">
         <mat-icon>{{field.buttonIcon}}</mat-icon>
 </button>
@@ -17,12 +17,19 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
         <mat-icon>cloud_download</mat-icon>
 </button>
 <button *ngIf="!field.buttonIcon && !field.isDownloadButton" mat-raised-button color="primary" [disabled]="field.readonly" (click)="onClickButton()"
-[style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
+[style.width]="'100%'" [style.height.px]="'64'" [style.padding]="'16px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
         {{field.label}}
 </button>
 </div>
 `,
-    styles: []
+    styles: [],
+    host: {
+        '[style.padding-top.px]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "14": "0"',
+        '[style.margin-right]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "1%": "8px"',
+        '[style.margin-left]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "1%": "8px"',
+        '[style.width]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? field.width + "%": "32px"',
+        '[style.height.px]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "96": "32"',
+    }
 })
 
 export class ButtonComponent implements OnInit {

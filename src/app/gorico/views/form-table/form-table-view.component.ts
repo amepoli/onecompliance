@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit, HostListener } from '@angular/core';
+import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { BackendService } from '../backend/backend.service';
 import { AuthService } from 'app/gorico/login-page/auth.service';
@@ -52,6 +52,7 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
   constructor(
+    private cdRef: ChangeDetectorRef,
     private backendService: BackendService,
     private authService: AuthService,
     private _dialogService: DialogService,
@@ -206,7 +207,13 @@ export class FormTableViewComponent implements OnChanges, OnInit {
 
   reload() {
     console.log('onReload: form-table-view');
+    this.clearForm();
     this.onReload.emit();
+  }
+
+  clearForm() {
+    this.getterParams = null;
+    this.cdRef.detectChanges();
   }
 
   updateHideActions(hideActions: HideAction[]) {

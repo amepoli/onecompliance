@@ -38,6 +38,7 @@ function getDateFormat() {
     return d.getFullYear() + '-' + month.toString() + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 }
 
+/*
 async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 
     const entry_keys = isForm ? view_keys.form_keys : view_keys.table_keys;
@@ -100,26 +101,6 @@ async function setGlobalVariables(company, client, userid) {
 
 }
 
-async function runQuery(queryString, client) {
-
-    let local_keys = {}; // additional keys generated with pre-main-post processing  
-    let queryData = [{}];
-
-    console.log('queryString : ', queryString);
-
-    if (queryString == null) {
-        return queryData;
-    }
-
-    if (queryString != null && queryString !== '') {
-        let query = replaceLocalKeys(queryString, local_keys);
-        queryData = await client.query(query);
-        queryData = queryData.rows;
-        console.log('Main query : ', query, ' result : ', queryData);
-    }
-
-    return queryData;
-}
 
 async function importCSV(table, fileName, client) {
     // Load file from S3
@@ -150,9 +131,9 @@ async function importCSV(table, fileName, client) {
     let query = `   SET session_replication_role = 'replica';
                     SELECT aws_s3.table_import_from_s3(
                             '${table}',
-                            '${columns}', 
+                            '${columns}',
                             '(FORMAT CSV, DELIMITER E''CSV_DELIMITER'', HEADER true)',
-                            aws_commons.create_s3_uri('${bucket}', '${fileName}','${region}'), 
+                            aws_commons.create_s3_uri('${bucket}', '${fileName}','${region}'),
                             aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
                         );
                     SET session_replication_role = 'origin';`;
@@ -179,6 +160,81 @@ async function importCSV(table, fileName, client) {
     }
     else {
         body = { result: 'KO', reason: 'CSV file is not valid for this table!' };
+    }
+}
+
+*/
+
+
+function getTableNameFromKey(key) {
+    return key.replace(/\.csv/g, '');
+}
+
+async function createTableImportQuery(fileName) {
+    let table = getTableNameFromKey(fileName);
+
+    // Load file from S3
+    const s3ParamsGetList = {
+        Bucket: bucket,
+        Key: fileName
+    };
+
+    const csvFile = await s3.getObject(s3ParamsGetList).promise();
+    csvData = csvFile.Body.toString(); //.replace(/;/g, '||');
+    // Try to load columns from query params
+    let columns = csvData.split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/CSV_DELIMITER/g, ',');
+
+
+    // Added schema if table does not contain
+    if (!table.includes('.')) {
+        table = `${schema}.${table}`;
+    }
+
+    // Data prepared:
+    console.table({ "fileName": fileName, "table": table, "columns": columns });
+
+    // Create extensions
+    // query = `CREATE EXTENSION aws_s3 CASCADE;`
+    // query = `CREATE EXTENSION aws_commons CASCADE;`
+
+    // Import CSV from S3 to Postgres
+    let query = `
+            SELECT aws_s3.table_import_from_s3(
+                    '${table}',
+                    '${columns}', 
+                    '(FORMAT CSV, DELIMITER E''CSV_DELIMITER'', HEADER true)',
+                    aws_commons.create_s3_uri('${bucket}', '${fileName}','${region}'), 
+                    aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
+                );
+            `;
+    console.log(query);
+    return query;
+}
+
+async function runQuery(queryString, client) {
+
+    // Try to run query 5 times on failure
+    let queryResponse = null;
+    let tries = 0;
+    while (!queryResponse && tries < 5) {
+        console.log(`Trying to run query [${tries}]`);
+        try {
+            queryResponse = await client.query(queryString);
+        }
+        catch (e) {
+            console.log(e);
+            queryResponse = null;
+            tries++;
+        }
+    }
+
+    // Check if success or failure
+    if (queryResponse) {
+        console.table(queryResponse);
+        return { result: 'OK', response: queryResponse };
+    }
+    else {
+        return { result: 'KO', reason: 'CSV file is not valid for this table!' };
     }
 }
 
@@ -215,35 +271,42 @@ exports.handler = async (event, context) => {
             }
 
             if (requestType === 'importS3ToRDS') {
-                const table = queryParams['table'];
-                console.log(`importS3ToRDS: Table: ${table}`);
+
                 var params = {
                     Bucket: bucket,
-                    Prefix: table,
+                    // Prefix: 'csv',
                     MaxKeys: 16
                 };
                 let s3Objects = await s3.listObjectsV2(params).promise();
                 if (s3Objects.Contents && s3Objects.Contents.length) {
-                    console.log(s3Objects);
-                    let files = s3Objects.Contents.map(obj => obj.Key);
-
+                    let files = s3Objects.Contents
+                        .map(obj => obj.Key)
+                        .filter(file => !file.includes('/'));
+                    console.log(files);
+                    let queryString = '';
                     // files.forEach(fileName => {
                     //     await importCSV(table, fileName, client);
                     // });
+
+                    queryString += "SET session_replication_role = 'replica';";
 
                     await files.reduce(async (promise, fileName) => {
                         // This line will wait for the last async function to finish.
                         // The first iteration uses an already resolved Promise
                         // so, it will immediately continue.
                         await promise;
-                        await importCSV(table, fileName, client);
+                        queryString += await createTableImportQuery(fileName);
                     }, Promise.resolve());
 
 
-                    body = { result: 'OK', table: table, files: files };
+                    queryString += "SET session_replication_role = 'origin';";
+
+                    console.log(queryString);
+
+                    body = await runQuery(queryString, client);
                 }
                 else {
-                    body = { result: 'OK', table: table, files: null };
+                    body = { result: 'OK', files: null };
                 }
             }
             else if (requestType === 'createNewFile') {

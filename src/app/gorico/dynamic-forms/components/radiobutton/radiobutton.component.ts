@@ -6,14 +6,19 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 @Component({
   selector: "app-radiobutton",
   template: `
-<div [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" *ngIf="field.isVisible != false" [formGroup]="group">
+<div [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" [formGroup]="group">
 <label class="radio-label-padding">{{field.label}}:</label>
 <mat-radio-group [formControlName]="field.name" [ngStyle]="{'display': 'flex', 'flex-direction': 'column'}" [(ngModel)]="chosenItem">
 <mat-radio-button *ngFor="let item of field.options" [value]="item" [disabled]="field.readonly || readOnlyPage" (change)="onCheck($event)" >{{item.name}}</mat-radio-button>
 </mat-radio-group>
 </div>
 `,
-  styles: []
+  styles: [],
+  host: {
+    '[style.margin-right]': 'field.isVisible? "1%": "0"',
+    '[style.margin-left]': 'field.isVisible? "1%": "0"',
+    '[style.width]': 'field.isVisible? field.width + "%": "0"'
+  }
 })
 export class RadiobuttonComponent implements OnInit {
   field: FieldConfig;

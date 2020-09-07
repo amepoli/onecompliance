@@ -7,7 +7,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
   selector: "app-checkboxgroup",
   template: `
     <div *ngIf="field.isVisible != false">
-      <div [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" [formGroup]="group" *ngFor="let item of field.options; let i = index" >
+      <div [ngStyle]="{'width': '100%'}" [formGroup]="group" *ngFor="let item of field.options; let i = index" >
         <mat-checkbox [disabled]="field.readonly || readOnlyPage" [checked]="selection[i]" (change)="onCheck(i, $event.checked)"></mat-checkbox>
         <label class="checkboxgroup-label-padding">{{item.name}}</label>
       </div>
@@ -17,7 +17,13 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
     .checkboxgroup-label-padding {
       padding-left: 4px;
     }
-  `]
+  `],
+  host: {
+    '[style.padding-top.px]': 'field.isVisible? "8": "0"',
+    '[style.margin-right]': 'field.isVisible? "1%": "0"',
+    '[style.margin-left]': 'field.isVisible? "1%": "0"',
+    '[style.width]': 'field.isVisible? field.width + "%": "0"'
+  }
 })
 export class CheckboxGroupComponent implements OnInit {
   field: FieldConfig;
@@ -32,9 +38,9 @@ export class CheckboxGroupComponent implements OnInit {
     const _this = this;
 
     if (_this.field.value == null || _this.field.value.length == null) {
-        _this.field.value = [];
+      _this.field.value = [];
     }
-    _this.field.options.forEach (option => {
+    _this.field.options.forEach(option => {
       const selected = (_this.field.value.indexOf(option.id)) > -1 ? 1 : 0;
       _this.selection.push(selected);
     });
@@ -54,10 +60,10 @@ export class CheckboxGroupComponent implements OnInit {
 
     var index = _this.field.value.indexOf(_this.field.options[id].id);
 
-    if (index > -1 && !checked ) {  //remove an existing element from value array
-       _this.field.value.splice(index, 1);
+    if (index > -1 && !checked) {  //remove an existing element from value array
+      _this.field.value.splice(index, 1);
     } else if (checked && index === -1) {
-       _this.field.value.push(_this.field.options[id].id);
+      _this.field.value.push(_this.field.options[id].id);
     }
 
     if (_this.field.eventName !== null) {

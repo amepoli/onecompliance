@@ -6,7 +6,8 @@ import {
   OnInit,
   Output,
   ViewChildren,
-  QueryList
+  QueryList,
+  ViewEncapsulation
 } from '@angular/core';
 import {
   FormGroup,
@@ -25,7 +26,8 @@ import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive'
   </ng-container>
   </form>
   `,
-  styles: []
+  styleUrls: ['./dynamic-form.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() fields: FieldConfig[] = [];
