@@ -255,16 +255,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 _this.subscriptions.push(subcription);
                             });
                         }
-                        _this.viewKeys.forEach(key => {    // subscribe to single field events
-                            if (key.inputEvents != null) {
-                                key.inputEvents.forEach(event => {
-                                    const subscription = _this.pubsubService.subscribe(event.eventName, value => {
-                                        _this.eventCallback(event, value, key.key);
-                                    });
-                                    _this.subscriptions.push(subscription);
-                                });
-                            }
-                        });
+                        _this.subscribeFieldInputEvents(_this.viewKeys);
                     }
                     // take note of global table output event if any
                     if (params.outputEvent != null) {
@@ -289,6 +280,23 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             });
 
+    }
+
+    subscribeFieldInputEvents(viewKeys: formViewKey[]): void {
+        const _this = this;
+        viewKeys.forEach(key => {    // subscribe to single field events
+            if (key.inputEvents != null) {
+                key.inputEvents.forEach(event => {
+                    const subscription = _this.pubsubService.subscribe(event.eventName, value => {
+                        _this.eventCallback(event, value, key.key);
+                    });
+                    _this.subscriptions.push(subscription);
+                });
+            }
+            if (key.format.viewType === 'subform' && key.format.subform_keys != null) {
+                _this.subscribeFieldInputEvents(key.format.subform_keys);
+            }
+        });
     }
 
     getCurrentKeys(validKeysArray: formViewKey[], inputKeys: any) {
@@ -776,7 +784,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     }
                                 }
                             } else {  // query_style
-                                let element = _this.filteredFormData[current_index].find(field => field.name === keyListener);
+                                const filterFormData = (dataset, param) => {
+                                    let found = dataset.find(field => field.name === param);
+                                    if (found == null) {
+                                        for (let i = 0; i < dataset.length; i++) {
+                                            if (dataset[i].subform != null) {
+                                                found = filterFormData(dataset[i].subform, param);
+                                                if (found != null) {
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    return found;
+                                };
+                                const element = filterFormData(_this.filteredFormData[current_index], keyListener);
                                 if (element != null && event.styleAttribute != null) {
                                     if (element.style == null) {
                                         element.style = {};

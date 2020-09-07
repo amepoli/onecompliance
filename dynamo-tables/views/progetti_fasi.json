@@ -19,7 +19,7 @@
 		},
 		{
 			"operation": "selectForm",
-			"queryString": "select case when count(id_fase)=0 then '0' else '1' end as presenza_sottofasi_liv2 from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase£;",
+			"queryString": "select case when count(id_fase)=0 then 0 else 1 end as presenza_sottofasi_liv2 from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase£;",
 			"type": "postProcessing"
 		},
 		{
@@ -138,10 +138,6 @@
 				"comboQuery": "select id_sondaggio as id, titolo as name from entrasp.sondaggi where codice_azienda=$codice_azienda$",
 				"options": []
 			},
-			"outputEvent": {
-				"eventName": "id_sondaggio_change",
-				"eventTrigger": "select"
-			},
 			"inputEvents": [
 				{
 					"eventName": "change_sondaggio_associato",
@@ -163,20 +159,16 @@
 			"format": {
 				"viewType": "button"
 			},
-			"inputEvents": [
-				{
-					"eventName": "id_sondaggio_change",
-					"actionType": "hide",
-					"condition": "equalTo",
-					"values": [
-						""
-					]
-				}
-			],
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "sondaggio_from_progetti_fasi",
 			"label": "Sondaggio",
+			"attributeFuncts": [
+				{
+					"attributeType": "isHidden",
+					"queryString": "select case when id_sondaggio is null then 1 else 0 end as label from entrasp.progetti_fasi where id_fase=$id_fase$ and codice_azienda=$codice_azienda$;"
+				}
+			],
 			"newLine": true,
 			"outputEvent": {
 				"eventName": "to_sondaggio_from_progetti_fasi",
@@ -213,7 +205,7 @@
 			"sameOrigin": false,
 			"format": {
 				"viewType": "input",
-				"dataType": "text"
+				"dataType": "number"
 			},
 			"outputEvent": {
 				"eventName": "presenza_sottofasi_liv2",
@@ -311,9 +303,6 @@
 						},
 						"label": "Stato",
 						"key": "stato_liv2",
-						"style": {
-							"background_color": "#FAFAD2"
-						},
 						"readOnly": true,
 						"isHidden": false,
 						"isPrimary": false,
@@ -329,7 +318,7 @@
 								"values": [],
 								"actionType": "query_style",
 								"styleAttribute": "background_color",
-								"queryFunct": "select background_color as stato_liv2_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='£stato_liv2£'"
+								"queryFunct": "select background_color as stato_liv2_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato_liv2$"
 							},
 							{
 								"eventName": "progetto_change_stato_liv2",
@@ -337,7 +326,7 @@
 								"values": [],
 								"actionType": "query_style",
 								"styleAttribute": "font_color",
-								"queryFunct": "select character_color as stato_liv2_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='£stato_liv2£'"
+								"queryFunct": "select character_color as stato_liv2_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato_liv2$"
 							}
 						]
 					},
@@ -353,10 +342,6 @@
 						"readOnly": false,
 						"style": {
 							"background_color": "#FAFAD2"
-						},
-						"outputEvent": {
-							"eventName": "id_sondaggio_liv2_change",
-							"eventTrigger": "select"
 						},
 						"isHidden": false,
 						"isPrimary": false,
@@ -377,16 +362,6 @@
 							"eventName": "to_sondaggio_from_progetti_fasi_liv2",
 							"eventTrigger": "press"
 						},
-						"inputEvents": [
-							{
-								"eventName": "id_sondaggio_liv2_change",
-								"actionType": "hide",
-								"condition": "equalTo",
-								"values": [
-									""
-								]
-							}
-						],
 						"readOnly": true,
 						"sameOrigin": false,
 						"size": 1.25
@@ -422,6 +397,10 @@
 						},
 						"key": "num_sotto_fasi_liv3",
 						"label": "Numero sotto fasi liv3",
+						"outputEvent": {
+							"eventName": "num_sotto_fasi_liv3_change",
+							"eventTrigger": "change"
+						},
 						"newLine": false,
 						"readOnly": true,
 						"size": 7
@@ -436,6 +415,12 @@
 						"key": "Sotto fasi",
 						"label": "Sotto-fasi",
 						"newLine": true,
+						"attributeFuncts": [
+							{
+								"attributeType": "isHidden",
+								"queryString": "select case when count(id_fase)>0 then 0 else 1  end as label from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase_liv2£;"
+							}
+						],
 						"outputEvent": {
 							"eventName": "navigate_sotto_fasi_liv3",
 							"eventTrigger": "press"
