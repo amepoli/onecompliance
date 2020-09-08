@@ -167,7 +167,13 @@ async function importCSV(table, fileName, client) {
 
 
 function getTableNameFromKey(key) {
-    return key.replace(/\.csv/g, '');
+    if (key.includes('/')) {
+        let parts = key.split('/');
+        return parts[parts.length - 1].replace(/\.csv/g, '');
+    }
+    else {
+        return key.replace(/\.csv/g, '');
+    }
 }
 
 async function createTableImportQuery(fileName) {
@@ -211,6 +217,44 @@ async function createTableImportQuery(fileName) {
     return query;
 }
 
+async function copyFilestoDone(files, azienda) {
+    let date = getDateFormat();
+
+    await files.reduce(async (promise, fileName) => {
+        // This line will wait for the last async function to finish.
+        // The first iteration uses an already resolved Promise
+        // so, it will immediately continue.
+        await promise;
+
+        var params = {
+            Bucket: bucket,
+            CopySource: bucket + "/" + fileName,
+            Key: azienda + '/done/' + date + '/' + getTableNameFromKey(fileName) + '.csv'
+        };
+
+        let s3CopyResult = await s3.copyObject(params).promise();
+        console.log(s3CopyResult);
+    }, Promise.resolve());
+
+    return true;
+}
+
+async function deleteFiles(files) {
+    var params = {
+        Bucket: "examplebucket",
+        Delete: {
+            Objects:
+                files.map(file => {
+                    return { Key: file };
+                }),
+            Quiet: false
+        }
+    };
+    let deleteResult = s3.deleteObjects(params).promise();
+    console.log(deleteResult);
+    return true;
+}
+
 async function runQuery(queryString, client) {
 
     // Try to run query 5 times on failure
@@ -231,10 +275,10 @@ async function runQuery(queryString, client) {
     // Check if success or failure
     if (queryResponse) {
         console.table(queryResponse);
-        return { result: 'OK', response: queryResponse };
+        return true;
     }
     else {
-        return { result: 'KO', reason: 'CSV file is not valid for this table!' };
+        return false;
     }
 }
 
@@ -246,6 +290,7 @@ exports.handler = async (event, context) => {
     console.log('queryParams', queryParams);
 
     const requestType = queryParams['request_type'];
+    const azienda = queryParams['azienda'];
 
     // If no Request type provided, exit with an error
     if (!requestType) {
@@ -274,14 +319,16 @@ exports.handler = async (event, context) => {
 
                 var params = {
                     Bucket: bucket,
-                    // Prefix: 'csv',
-                    MaxKeys: 16
+                    Delimiter: '/',
+                    Prefix: azienda + "/", // 'csv',
+                    MaxKeys: 256
                 };
                 let s3Objects = await s3.listObjectsV2(params).promise();
+                // console.log(s3Objects);
                 if (s3Objects.Contents && s3Objects.Contents.length) {
                     let files = s3Objects.Contents
                         .map(obj => obj.Key)
-                        .filter(file => !file.includes('/'));
+                        .filter(file => (file.split('/').length < 3 && file.includes('.csv')));
                     console.log(files);
                     let queryString = '';
                     // files.forEach(fileName => {
@@ -303,7 +350,25 @@ exports.handler = async (event, context) => {
 
                     console.log(queryString);
 
-                    body = await runQuery(queryString, client);
+                    let result = await runQuery(queryString, client);
+                    if (result) {
+                        result = await copyFilestoDone(files, azienda);
+                        if (result) {
+                            result = await deleteFiles(files);
+                            if (result) {
+                                body = { result: 'OK', response: 'Success!' };
+                            }
+                            else {
+                                body = { result: 'KO', reason: 'Could not delete files!' }
+                            }
+                        }
+                        else {
+                            body = { result: 'KO', reason: 'Could not copy files!' };
+                        }
+                    }
+                    else {
+                        body = { result: 'KO', reason: 'Could not import CSVs!' };
+                    }
                 }
                 else {
                     body = { result: 'OK', files: null };
