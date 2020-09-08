@@ -241,16 +241,18 @@ async function copyFilestoDone(files, azienda) {
 
 async function deleteFiles(files) {
     var params = {
-        Bucket: "examplebucket",
+        Bucket: bucket,
         Delete: {
-            Objects:
-                files.map(file => {
-                    return { Key: file };
-                }),
+            Objects: [],
             Quiet: false
         }
     };
-    let deleteResult = s3.deleteObjects(params).promise();
+    files.map(file => {
+        params.Delete.Objects.push({ 'Key': file });
+    })
+    console.table(params.Delete.Objects);
+    console.table(params);
+    let deleteResult = await s3.deleteObjects(params).promise();
     console.log(deleteResult);
     return true;
 }
