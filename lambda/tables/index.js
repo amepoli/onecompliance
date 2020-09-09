@@ -87,16 +87,16 @@ function replaceKeys(queryString, keys, keyTypes) {
                             newString = queryString.replace(toReplace, replacement);
                         }
                     });
-                } else if (typeof keys[key] !== 'object' || keys[key] == null) {  // avoid spourious values like arrays form events - n.b.: null is 'object'
+                } else if (typeof keys[key] !== 'object' || keys[key] == null || keyType.viewType === 'checkboxgroup') {  // avoid spourious values like arrays form events - n.b.: null is 'object'
                     let bracket = (delimiter === '$' && keyType != null && isDataTypeString(keyType)) ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
-                    // TO BE CHECKED
-                    //let replacement = keys[key].value ? keys[key].value : keys[key]; // handle subtables
-                    // replace single quotes with double quotes within strings to avoid errors with queries
-                    // console.log('Keys[', key, ']=', keys[key], ' keyType=', keyType);
                     let valueWithFixedQuotes = (keys[key] != null && keyType != null && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
                     let replacement = keys[key] == null ? 'null' : bracket + valueWithFixedQuotes + bracket;
-                    //console.log ('toReplace: ', toReplace, ' replacement: ', replacement);
+                    // handle checkboxgroup, converting array to string
+                    replacement = (keyType.viewType === 'checkboxgroup') ? 
+                        '[' + ((keys[key] != null && keys[key].length > 0) ? keys[key].toString() : '') + ']' 
+                        : replacement;
+                    //console.log ('toReplace: ', toReplace, ' replacement: ', replacement, ' value: ', keys[key], ' keyType: ', keyType);
                     let newString = queryString.replace(toReplace, replacement);
                     while (newString !== queryString) { // handle multiple occurences
                         queryString = newString;
@@ -795,8 +795,10 @@ async function processPreMainPost(queryString, client, notFullTable) {
 
     // post-processing, exclude table view
     if (queryString.postProcessQueries != null && queryString.postProcessQueries.length) { // post-processing 
-        for (let row_index = 0; row_index < queryData.length; row_index++) {
-            local_keys_post = Object.assign(local_keys_pre, queryData[row_index]);
+        let haveMainData = queryData.length > 0;
+        let maxindex = haveMainData ? queryData.length : 1; // run the queries once if e.g. is insert/update or no rows
+        for (let row_index = 0; row_index < maxindex ; row_index++) {
+            local_keys_post = haveMainData ? Object.assign(local_keys_pre, queryData[row_index]) : local_keys_post;
             for (let index = 0; index < queryString.postProcessQueries.length; index++) {
                 let query = queryString.postProcessQueries[index];
                 query = replaceLocalKeys(query, local_keys_post);
@@ -805,11 +807,15 @@ async function processPreMainPost(queryString, client, notFullTable) {
                 result = notFullTable ? result.rows[0] : result.rows;
                 if (result != null) { // add resulting keys to the list of local keys if any
                     local_keys_post = Object.assign(local_keys_post, result);
-                    queryData[row_index] = Object.assign(queryData[row_index], result);
+                    if (haveMainData) {
+                        queryData[row_index] = Object.assign(queryData[row_index], result);
+                    }
                 } else {
                     rawResult.fields.forEach(field => {
                         local_keys_post[field.name] = null;
-                        queryData[row_index][field.name] = null;
+                        if (haveMainData) {
+                            queryData[row_index][field.name] = null;
+                        }
                     });
                 }
                 console.log('Post query : ', query, ' result : ', result, ' raw result: ', rawResult);
@@ -1321,7 +1327,9 @@ exports.handler = async (event, context) => {
                 queryString = getInsertUpdateQuery(entry_params, keys, newRecord);
                 queryStrings.push(queryString);
             }
+
             // process insert/update query string(s)
+            console.log('Insert/update queries: ', queryStrings);
             queryData = [];
             for (let index = 0; index < queryStrings.length; index++) {
                 let data = await processPreMainPost(queryStrings[index], client, true);
