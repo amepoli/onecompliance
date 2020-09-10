@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener } from '@angular/core';
+import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener, ViewEncapsulation } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 import { FieldConfig } from '../../dynamic-forms/field.interface';
@@ -54,7 +54,8 @@ export interface searchViewKey { // as per API specification
 @Component({
     selector: 'table-view',
     templateUrl: './table-view.component.html',
-    styleUrls: ['./table-view.component.scss']
+    styleUrls: ['./table-view.component.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 
 
