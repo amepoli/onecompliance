@@ -42,6 +42,8 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
 
     subscriptions: Subscription[] = [];
 
+    firstLoad: boolean = true;
+
     constructor(private cdRef: ChangeDetectorRef, private pubsubService: NgxPubSubService) { }
 
     ngOnChanges(changes) {
@@ -69,8 +71,9 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
                                     const conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
                                     tab.hidden = event.actionType === 'hide' ? conditionMet : !conditionMet;
 
-                                    if (!tab.hidden) {
+                                    if (!tab.hidden && _this.firstLoad) {
                                         _this.activeIndex = i;
+                                        _this.firstLoad = false;
                                     }
                                 }
                                 _this.setFiltered();  // reset filteredTabs
@@ -90,6 +93,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
         for (let i = 0; i < this.filteredTabs.length; i++) {
             if (!this.filteredTabs[i].hidden) {
                 this.activeIndex = i;
+                this.firstLoad = true;
                 return;
             }
         }
@@ -100,8 +104,6 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
         _this.filteredTabs = JSON.parse(JSON.stringify(_this.Tabs)); //.filter(tab => !tab.hidden);
         if (_this.filteredTabs.length) { // check if any visible tab
 
-            console.log("setFiltered", _this.activeIndex);
-
             // Check if active index is greator than maximum tabs
             if (_this.filteredTabs[_this.activeIndex].hidden) {
                 _this.getFirstVisibleTab();
@@ -110,17 +112,16 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
             if (_this.activeIndex >= _this.filteredTabs.length) {
                 _this.activeIndex = _this.filteredTabs.length - 1;
             }
+
             _this.tabsGroup.selectedIndex = _this.activeIndex;
             _this.tableParams = { entryName: _this.filteredTabs[_this.activeIndex].table, keys: _this.filteredTabs[_this.activeIndex].keys, showHeader: true, showFullScreenButton: true };
             _this.formTableParams = { entryName: _this.filteredTabs[_this.activeIndex].table, keys: _this.filteredTabs[_this.activeIndex].keys, showHeader: true };
 
-            console.log("setFiltered", _this.activeIndex);
             _this.cdRef.detectChanges();
         }
     }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-
         if (this.filteredTabs && this.filteredTabs.length && tabChangeEvent.index > -1) {  // at least one tab visible
             this.activeIndex = tabChangeEvent.index >= 0 ? tabChangeEvent.index : 0;  // might get a -1
             this.tableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true, showFullScreenButton: true };
@@ -149,7 +150,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
     clearTabs() {
         this.Tabs = [];
         this.filteredTabs = [];
-        this.activeIndex = 0;
+        // this.activeIndex = 0;
         this.cdRef.detectChanges();
     }
 }
