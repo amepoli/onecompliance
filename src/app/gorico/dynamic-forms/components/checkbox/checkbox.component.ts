@@ -44,13 +44,13 @@ export class CheckboxComponent implements OnInit {
     if (_this.field.eventName !== null) {
       if (!_this.field.conditionalQuery) {
         // No condition required, wait a while before triggering the event
-        _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: event.checked, type: _this.field.eventTrigger });
+        _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: event.checked ? '1' : '0', type: _this.field.eventTrigger });
       }
       else {
         // First need to run a query
         // Query here
         // wait a while before triggering the event
-        _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: event.checked, type: _this.field.eventTrigger });
+        _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: event.checked ? '1' : '0', type: _this.field.eventTrigger });
       }
 
     }

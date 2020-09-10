@@ -606,7 +606,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                 value = 'null';
             }
             // replace single quotes with double quotes in strings
-            value = ((keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? value.replace(/'/g, "''") : value;
+            value = (value == null) ? value : ((keyType.dataType === 'text' && keyType.viewType === 'input') || keyType.viewType === 'textarea') ? value.replace(/'/g, "''") : value;
             queryString = queryString + '=' + delimiter + value + delimiter;
         }
         comma = ', ';
