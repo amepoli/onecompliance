@@ -31,6 +31,13 @@ export class BackendService {
   constructor(private amplifyService: AmplifyService) {
   }
 
+  private replacer(key, value){
+    if (value === undefined){
+        return null;
+    }
+    return value;
+}
+
   getView(entryName: string, company: string, keys: any): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys) };
@@ -69,7 +76,7 @@ export class BackendService {
   updateData(entryName: string, company: string, keys: any, data: any): Observable<any> {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, form: 1, keys: JSON.stringify(keys) };
-    this.myPutPostInit.body = data;
+    this.myPutPostInit.body = JSON.parse(JSON.stringify(data, this.replacer));
     return from(this.amplifyService.api().post(this.apiName, '/data', this.myPutPostInit));
   }
 

@@ -135,9 +135,13 @@ export class FormTableViewComponent implements OnChanges, OnInit {
       values.forEach(entry => {
         for (const value in entry) {
           if (entry.hasOwnProperty(value)) {
-            const element = entry[value];
+            let element = entry[value];
             if (element == null) {
-              continue; // skip null entries
+              // check if it is one of the table keys
+              element = entry[value] = _this.tableData.keys[value];
+              if (element == null) {
+                continue; // skip null entries
+              }
             }
             // decode combos
             if (element['id'] != null) {
@@ -157,7 +161,7 @@ export class FormTableViewComponent implements OnChanges, OnInit {
         result => {
           console.log(result);
           if (result.result === 'OK') {
-            _this._toastService.showSuccessToast("Saved successfully!"); // show success toast
+            _this._toastService.showSuccessToast('Saved successfully!'); // show success toast
             if (_this.formGetter.eventTrigger === 'onSave') {
               setTimeout(() => {
                 _this.sendEvent.emit({ eventType: _this.formGetter.outputEvent }); // notify parent
