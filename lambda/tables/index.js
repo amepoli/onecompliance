@@ -87,13 +87,13 @@ function replaceKeys(queryString, keys, keyTypes) {
                             newString = queryString.replace(toReplace, replacement);
                         }
                     });
-                } else if (typeof keys[key] !== 'object' || keys[key] == null || keyType.viewType === 'checkboxgroup') {  // avoid spourious values like arrays form events - n.b.: null is 'object'
+                } else if (typeof keys[key] !== 'object' || keys[key] == null || (keyType != null && keyType.viewType === 'checkboxgroup')) {  // avoid spourious values like arrays form events - n.b.: null is 'object'
                     let bracket = (delimiter === '$' && keyType != null && isDataTypeString(keyType)) ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
                     let valueWithFixedQuotes = (keys[key] != null && keyType != null && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
                     let replacement = keys[key] == null ? 'null' : bracket + valueWithFixedQuotes + bracket;
                     // handle checkboxgroup, converting array to string
-                    replacement = (keyType.viewType === 'checkboxgroup') ? 
+                    replacement = (keyType != null && keyType.viewType === 'checkboxgroup') ? 
                         '[' + ((keys[key] != null && keys[key].length > 0) ? keys[key].toString() : '') + ']' 
                         : replacement;
                     //console.log ('toReplace: ', toReplace, ' replacement: ', replacement, ' value: ', keys[key], ' keyType: ', keyType);
