@@ -762,6 +762,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
                     result => {
                         if (result.result === 'OK') {
+                            if (event.successMessage) {
+                                _this._toastService.showSuccessToast(event.successMessage);
+                            }
+
                             result = result.data;
                             console.log(`keyListener: ${keyListener}`);
                             //console.table(result);

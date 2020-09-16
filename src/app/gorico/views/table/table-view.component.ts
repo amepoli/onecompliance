@@ -10,6 +10,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
 import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
+import { HelperService } from 'app/gorico/services/helper.service';
 
 export interface tableViewParams {
     entryName: string;
@@ -93,6 +94,7 @@ export class TableViewComponent implements OnChanges {
 
     displayedColumns: string[];
 
+    styles = {};
     dataSource: MatTableDataSource<any> = null;
     selectedRow: MatRow = null;
     isLoading = false;
@@ -205,6 +207,8 @@ export class TableViewComponent implements OnChanges {
                     _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
                     _this.loadTable(null);
 
+                    _this.loadStyle(params.table_keys);
+
                     // Load Export Queries list if available
                     if (params.exportQueries && params.exportQueries.tableQueries) {
                         console.log('exportQueries', params.exportQueries);
@@ -293,6 +297,32 @@ export class TableViewComponent implements OnChanges {
 
         // Calculate table height
         this.calculateTableHeight();
+    }
+
+    loadStyle(table_keys) {
+        this.styles = {};
+        table_keys.forEach(key => {
+            if (key.style && key.style.length) {
+                key.style.forEach(style => {
+                    if (!this.styles[key.key]) {
+                        this.styles[key.key] = {};
+                    }
+                    this.styles[key.key][style.value] = style;
+                });
+            }
+        });
+    }
+
+    getElementStyle(row, column) {
+        let styles = {};
+        if (row && column && this.styles[row] && this.styles[row][column]) {
+            Object.keys(this.styles[row][column]).forEach(key => {
+                if (key != 'value') {
+                    styles[HelperService.getStyleName(key)] = this.styles[row][column][key];
+                }
+            });
+        }
+        return styles;
     }
 
     private getSearchData(searchKeys: searchViewKey[]): FieldConfig[] {
