@@ -99,5 +99,26 @@ export class HelperService {
         });
         return result;
     }
+
+
+    /**
+     * Get css style name from json compatible key
+     * @param styleKey
+     * @returns CSS Style name
+     */
+    public static getStyleName(styleKey) {
+        switch (styleKey) {
+            default: case 'font_color':
+                return 'color';
+            case 'background_color':
+                return 'background-color';
+            case 'font_size':
+                return 'font-size';
+            case 'font_style':
+                return 'font-style';
+            case 'font_weight':
+                return 'font-weight';
+        }
+    }
 }
 
