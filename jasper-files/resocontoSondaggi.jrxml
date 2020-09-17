@@ -13,14 +13,14 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select  snd.*, cr.*, mt.titolo from entrasp.sondaggi snd left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio where snd.codice_azienda = 'DEMO' and snd.id_sondaggio = 358"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,entrasp.cpl_giudizi_verifiche_descrizione('DEMO', cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione('DEMO', cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione('DEMO', cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione('DEMO', cr.id_giudizio_follow_up) as giudizio_follow_up from entrasp.sondaggi snd left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio where snd.codice_azienda = 'DEMO' and snd.id_sondaggio = 358"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["DEMO"]]></defaultValueExpression>
@@ -169,6 +169,11 @@
 		<property name="com.jaspersoft.studio.field.label" value="flag_annullamento_manuale"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
 	</field>
+	<field name="COLUMN_29" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
+	</field>
 	<field name="id_risultato" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="id_risultato"/>
 		<property name="com.jaspersoft.studio.field.label" value="id_risultato"/>
@@ -194,6 +199,16 @@
 		<property name="com.jaspersoft.studio.field.label" value="decisioni_assunte"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
 	</field>
+	<field name="COLUMN_35" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
+	</field>
+	<field name="COLUMN_36" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_somministrazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_somministrazione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
+	</field>
 	<field name="follow_up" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="follow_up"/>
 		<property name="com.jaspersoft.studio.field.label" value="follow_up"/>
@@ -213,6 +228,31 @@
 		<property name="com.jaspersoft.studio.field.name" value="id_giudizio_livello_2"/>
 		<property name="com.jaspersoft.studio.field.label" value="id_giudizio_livello_2"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
+	</field>
+	<field name="mt_titolo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="mt_titolo"/>
+		<property name="com.jaspersoft.studio.field.label" value="mt_titolo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="modelli_test"/>
+	</field>
+	<field name="cg_descr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cg_descr"/>
+		<property name="com.jaspersoft.studio.field.label" value="cg_descr"/>
+	</field>
+	<field name="giudizio_complessivo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="giudizio_complessivo"/>
+		<property name="com.jaspersoft.studio.field.label" value="giudizio_complessivo"/>
+	</field>
+	<field name="giudizio_1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="giudizio_1"/>
+		<property name="com.jaspersoft.studio.field.label" value="giudizio_1"/>
+	</field>
+	<field name="giudizio_2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="giudizio_2"/>
+		<property name="com.jaspersoft.studio.field.label" value="giudizio_2"/>
+	</field>
+	<field name="giudizio_follow_up" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="giudizio_follow_up"/>
+		<property name="com.jaspersoft.studio.field.label" value="giudizio_follow_up"/>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
@@ -435,6 +475,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cg_descr}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" mode="Opaque" x="445" y="21" width="110" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="2d214de0-b0a7-4175-bfd3-619a2f6e463e">
@@ -468,6 +509,7 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="5"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{mt_titolo}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" mode="Opaque" x="0" y="125" width="555" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="78a4b50f-aae1-4079-84c7-bedbfec260a9">
@@ -768,7 +810,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{id_giudizio_follow_up}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{giudizio_follow_up}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" mode="Opaque" x="111" y="561" width="130" height="20" backcolor="#FCF408" uuid="dd0e164b-ad30-4dd0-ad85-50751a7eded1">
@@ -782,7 +824,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{id_giudizio_livello_1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{giudizio_1}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" mode="Opaque" x="110" y="591" width="130" height="20" backcolor="#FCF408" uuid="e2642e98-7ee2-455e-b787-97c32892bc9a">
@@ -796,7 +838,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{id_giudizio_livello_2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{giudizio_2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" mode="Opaque" x="111" y="621" width="130" height="20" backcolor="#FCF408" uuid="f17943e9-8671-4a10-bb31-b8a497771898">
@@ -810,7 +852,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{id_giudizio}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{giudizio_complessivo}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
