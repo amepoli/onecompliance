@@ -187,24 +187,29 @@ async function createTableImportQuery(fileName) {
 
     const csvFile = await s3.getObject(s3ParamsGetList).promise();
     csvData = csvFile.Body.toString(); //.replace(/;/g, '||');
-    // Try to load columns from query params
-    let columns = csvData.split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/CSV_DELIMITER/g, ',');
+
+    let lines = csvData.split('\n');
+
+    // Check if file contains any rows
+    if (lines.length > 1 && lines[1].length > 0) {
+        // Try to load columns from query params
+        let columns = lines[0].replace(/'/g, '').replace(/\r/g, '').replace(/CSV_DELIMITER/g, ',');
 
 
-    // Added schema if table does not contain
-    if (!table.includes('.')) {
-        table = `${schema}.${table}`;
-    }
+        // Added schema if table does not contain
+        if (!table.includes('.')) {
+            table = `${schema}.${table}`;
+        }
 
-    // Data prepared:
-    console.table({ "fileName": fileName, "table": table, "columns": columns });
+        // Data prepared:
+        console.table({ "fileName": fileName, "table": table, "columns": columns });
 
-    // Create extensions
-    // query = `CREATE EXTENSION aws_s3 CASCADE;`
-    // query = `CREATE EXTENSION aws_commons CASCADE;`
+        // Create extensions
+        // query = `CREATE EXTENSION aws_s3 CASCADE;`
+        // query = `CREATE EXTENSION aws_commons CASCADE;`
 
-    // Import CSV from S3 to Postgres
-    let query = `
+        // Import CSV from S3 to Postgres
+        let query = `
             SELECT aws_s3.table_import_from_s3(
                     '${table}',
                     '${columns}', 
@@ -213,8 +218,13 @@ async function createTableImportQuery(fileName) {
                     aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
                 );
             `;
-    console.log(query);
-    return query;
+        console.log(query);
+        return query;
+    }
+    else {
+        console.log(`Skipping ${fileName}. Contains 0 rows.`);
+        return '';
+    }
 }
 
 async function copyFilestoDone(files, azienda) {
