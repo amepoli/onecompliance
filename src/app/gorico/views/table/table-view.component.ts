@@ -313,12 +313,12 @@ export class TableViewComponent implements OnChanges {
         });
     }
 
-    getElementStyle(row, column) {
+    getElementStyle(column, value) {
         let styles = {};
-        if (row && column && this.styles[row] && this.styles[row][column]) {
-            Object.keys(this.styles[row][column]).forEach(key => {
+        if (column && value && this.styles[column] && this.styles[column][value]) {
+            Object.keys(this.styles[column][value]).forEach(key => {
                 if (key != 'value') {
-                    styles[HelperService.getStyleName(key)] = this.styles[row][column][key];
+                    styles[HelperService.getStyleName(key)] = this.styles[column][value][key];
                 }
             });
         }
