@@ -48,6 +48,7 @@
                 "eventTrigger": "press"
             },
             "readOnly": false,
+            "size": 3,
             "sameOrigin": false
         },
         {
@@ -60,7 +61,7 @@
             "isPrimary": false,
             "key": "new_id_sondaggio",
             "label": "new_id_sondaggio",
-            "newLine": true,
+            "newLine": false,
             "inputEvents": [
                 {
                     "eventName": "sondaggio_new",
@@ -86,34 +87,25 @@
             "label": "Codice",
             "queryFunct": "SELECT codice from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
             "newLine": false,
+            "size": 2,
             "readOnly": false
         },
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_tipo_modello_test AS id, entrasp.tipo_modello_test_descr(id_tipo_modello_test, codice_azienda) AS name  FROM entrasp.tipi_modello_test WHERE codice_azienda=$codice_azienda$;",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "queryFunct": "SELECT id_tipo_modello_test from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_tipo_modello_test",
-            "label": "Tipo Modello Test",
-            "newLine": false,
-            "readOnly": false
-        },
-        {
-            "fieldName": "data_ins",
-            "format": {
               "dataType": "date",
+              "value": "£CURRENT_DATE£",
               "viewType": "input"
             },
-            "label": "Data ins.",
-            "newLine": true,
-            "queryCond": "data_ins='€data_ins€'"
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_ins",
+            "label": "Data Inserimento",
+            "newLine": false,
+            "size": 3,
+            "readOnly": false
           },
-        {
+          {
             "autoGenerate": true,
             "format": {
                 "dataType": "number",
@@ -123,7 +115,8 @@
             "isPrimary": true,
             "key": "id_modello_test",
             "label": "ID",
-            "newLine": false,
+            "newLine": true,
+            "size": 2,
             "readOnly": true,
             "inputEvents": [
                 {
@@ -138,18 +131,35 @@
         {
             "autoGenerate": false,
             "format": {
+                "comboQuery": "SELECT id_tipo_modello_test AS id, entrasp.tipo_modello_test_descr(id_tipo_modello_test, codice_azienda) AS name  FROM entrasp.tipi_modello_test WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "queryFunct": "SELECT id_tipo_modello_test from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo_modello_test",
+            "label": "Tipo Modello Test",
+            "newLine": false,
+            "size": 1.5,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "viewType": "button"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "duplica_mdt",
-            "label": "Duplica",
+            "label": "Duplica Sondaggio",
             "newLine": false,
             "outputEvent": {
                 "eventName": "modelli_test_button_duplica",
                 "eventTrigger": "press"
             },
             "readOnly": false,
+            "size": 1.5,
             "sameOrigin": false
         },
         {
@@ -164,6 +174,7 @@
             "key": "id_modello_test_vr",
             "label": "Versione",
             "newLine": false,
+            "size": 1.5,
             "readOnly": true,
             "inputEvents": [
                 {
@@ -184,7 +195,8 @@
             "isPrimary": false,
             "key": "nuova_versione_mdt",
             "label": "Nuova Versione",
-            "newLine": true,
+            "size": 1.5,
+            "newLine": false,
             "outputEvent": {
                 "eventName": "modelli_test_button_nuova_versione",
                 "eventTrigger": "press"
@@ -205,6 +217,7 @@
             "key": "id_centro_gest",
             "label": "Centro Gestionale",
             "newLine": true,
+            "size": 4,
             "readOnly": false
         },    
         {
@@ -218,6 +231,7 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
+            "size": 10,
             "newLine": true,
             "readOnly": false
         },
@@ -232,6 +246,7 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
+            "size": 10,
             "newLine": true,
             "readOnly": false
         },
@@ -246,9 +261,26 @@
             "isPrimary": false,
             "key": "documentazione_necessaria",
             "label": "Documentazione Necessaria",
-            "newLine": true,
+            "newLine": false,
+            "size": 5,
             "readOnly": false,
             "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_risultato AS id, descrizione AS name  FROM entrasp.modelli_test_risultati WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "queryFunct": "SELECT id_risultato from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_risultato",
+            "label": "Criterio di analisi",
+            "newLine": true,
+            "size": 5,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -264,49 +296,6 @@
             "newLine": true,
             "readOnly": false,
             "size": 3
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "value": false,
-                "viewType": "checkbox"
-            },
-            "queryFunct": "SELECT flag_applicazione_singola from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "flag_applicazione_singola",
-            "label": "Applica all'intera popolazione",
-            "outputEvent": {
-                "eventName": "flag_applicazione_singola",
-                "eventTrigger": "change"
-            },
-            "newLine": true,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_filtro_selezione AS id, descrizione AS name  FROM entrasp.filtri_selezione_oggetti order by descrizione;",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "inputEvents": [
-                {
-                    "actionType": "hide",
-                    "eventName": "flag_applicazione_singola",
-                    "condition": "equalTo",
-                    "values": [
-                        "1"
-                    ]
-                }
-            ],
-            "queryFunct": "SELECT id_filtro_selezione from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_filtro_selezione",
-            "label": "Filtro selezione",
-            "newLine": true,
-            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -425,6 +414,49 @@
             "newLine": true
         },
         {
+            "autoGenerate": false,
+            "format": {
+                "value": false,
+                "viewType": "checkbox"
+            },
+            "queryFunct": "SELECT flag_applicazione_singola from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_applicazione_singola",
+            "label": "Applica all'intera popolazione",
+            "outputEvent": {
+                "eventName": "flag_applicazione_singola",
+                "eventTrigger": "change"
+            },
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_filtro_selezione AS id, descrizione AS name  FROM entrasp.filtri_selezione_oggetti order by descrizione;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "flag_applicazione_singola",
+                    "condition": "equalTo",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "queryFunct": "SELECT id_filtro_selezione from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_filtro_selezione",
+            "label": "Selezioni Popolazione",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
             "autoGenerate": true,
             "format": {
                 "dataType": "text",
@@ -463,21 +495,6 @@
             ],
             "readOnly": false,
             "sameOrigin": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_risultato AS id, descrizione AS name  FROM entrasp.modelli_test_risultati WHERE codice_azienda=$codice_azienda$;",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "queryFunct": "SELECT id_risultato from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_risultato",
-            "label": "Criterio di analisi",
-            "newLine": true,
-            "readOnly": false
         }
     ],
     "origin": "entrasp.modelli_test_vr",
