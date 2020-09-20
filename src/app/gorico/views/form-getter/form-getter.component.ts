@@ -484,7 +484,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this;
         let fieldValue: FieldConfig;
 
-        const attribute = _this.attributes[index] != null ? _this.attributes[index][field.key] : null;
+        const attribute = _this.attributes[field.key];
+
+        let attributeStyle = null;
+
+        if (attribute != null && attribute.style != null) {
+            attributeStyle = {};
+            for (const style in attribute.style) {
+                if (Object.prototype.hasOwnProperty.call(attribute.style, style)) {
+                    const el = attribute.style[style];
+                    if (el != null && el[index] != null) {
+                        attributeStyle[style] = el[index];
+                    }
+                }
+            }
+        }
 
         if (field != null) {
             fieldValue = {
@@ -495,13 +509,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 fullValueSet: values[index],
                 value: (element != null) ? ((element.options != null) ? element.value : element) : null,
                 inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
-                readonly: (attribute != null && attribute.readOnly != null) ? attribute.readOnly : _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
-                isVisible: (attribute != null && attribute.isHidden != null) ? !attribute.isHidden : field.isHidden != null ? !field.isHidden : true,
+                readonly: (attribute != null && attribute.readOnly != null && attribute.readOnly[index] != null) ? attribute.readOnly[index] : _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
+                isVisible: (attribute != null && attribute.isHidden != null && attribute.isHidden[index] != null) ? !attribute.isHidden[index] : field.isHidden != null ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,
                 buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
                 confirmButtonAction: (field.confirmButtonAction != null) ? field.confirmButtonAction : false,
                 isDownloadButton: (field.isDownloadButton != null) ? field.isDownloadButton : false,
-                style: (attribute != null && attribute.style != null) ? attribute.style : (field.style != null) ? field.style : null,
+                style: attributeStyle != null ? attributeStyle : (field.style != null) ? field.style : null,
                 width: (field.size != null) ? (field.size * 10) - _this.margins : null, // leave a 1% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],
                 validations: (field.format.validations != null) ? field.format.validations : [],

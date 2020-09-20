@@ -709,42 +709,63 @@ function getDeleteQuery(entry_params, table_keys) {
 
 }
 
+function getAttributeFuncts(keys) {
+
+    let attributeFuncts = [];
+    keys.forEach(key => {
+        if (key.key != null && key.attributeFuncts != null && key.attributeFuncts.length > 0) {
+            key.attributeFuncts.forEach(attributeFunct => {
+                attributeFuncts.push({key: key.key, attributeFunct: attributeFunct});
+            });
+        } else if (key.format != null && key.format.viewType === 'subform' && key.format.subform_keys != null) {
+            attributeFuncts = attributeFuncts.concat(getAttributeFuncts(key.format.subform_keys));
+        }
+    });
+    return attributeFuncts;
+}
+
 async function processAttributeQueries(entry_params, keys, client) {
 
     let entry_keys = entry_params.form_keys;
 
     let keyTypes = getKeyTypes(entry_keys);
 
-    let attributes = [];
+    let attributes = {};
 
-    for (let i = 0; i < entry_keys.length; i++) {
-        const entry_key = entry_keys[i];
-        if (entry_key.key == null || entry_key.attributeFuncts == null || entry_key.attributeFuncts.length === 0) {
-            continue;
-        }
+    let attributeFunctArray = getAttributeFuncts(entry_keys);
 
-        for (let j = 0; j < entry_key.attributeFuncts.length; j++) {
-            const attributeFunct = entry_key.attributeFuncts[j];
-            if (attributeFunct.queryString == null || attributeFunct.attributeType == null || (attributeFunct.attributeType === 'style' && attributeFunct.styleAttribute == null)) {
+    console.log('Attribute Array:  ', attributeFunctArray);
+
+    for (let j = 0; j < attributeFunctArray.length; j++) {
+        const attributeFunctEl = attributeFunctArray[j];
+        const attributeFunct = attributeFunctEl.attributeFunct;
+        const entry_key = attributeFunctEl.key;
+        if (attributeFunct.queryString == null || attributeFunct.attributeType == null || (attributeFunct.attributeType === 'style' && attributeFunct.styleAttribute == null)) {
                 continue;
-            }
-            console.log('Attribute: ', attributeFunct.queryString, keys[0], keyTypes);
-            const query = replaceKeys(attributeFunct.queryString, keys[0], keyTypes);
-            console.log('Query attributes: ', query);
-            let result = await client.query(query);
-            result = result.rows;
-            console.log('Query attributes result: ', result);
-            for (let k = 0; k < result.length; k++) {
-                let attribute = {};
-                attribute[entry_key.key] = {};
-                if (attributeFunct.attributeType === 'style') {
-                    let attr_style = {};
-                    attr_style[attributeFunct.styleAttribute] = result[k].label;  // query must return {label: value} 
-                    attribute[entry_key.key]['style'] = Object.assign(attribute[entry_key.key]['style'], attr_style);
-                } else {
-                    attribute[entry_key.key][attributeFunct.attributeType] = result[k].label;
+        }
+        console.log('Attribute: ', attributeFunct.queryString, keys[0], keyTypes);
+        const query = replaceKeys(attributeFunct.queryString, keys[0], keyTypes);
+        console.log('Query attributes: ', query);
+        let result = await client.query(query);
+        result = result.rows;
+        console.log('Query attributes result: ', result);
+        for (let k = 0; k < result.length; k++) {
+            if (attributes[entry_key] == null) {
+                attributes[entry_key] = {};
+            } 
+            if (attributeFunct.attributeType === 'style') {
+                if (attributes[entry_key]['style'] == null) {
+                    attributes[entry_key]['style'] = {};
                 }
-                attributes.push(attribute);
+                if (attributes[entry_key]['style'][attributeFunct.styleAttribute] == null) {
+                    attributes[entry_key]['style'][attributeFunct.styleAttribute] = []; // push en empty array
+                }
+                attributes[entry_key]['style'][attributeFunct.styleAttribute].push(result[k].label); // query must return {label: value} 
+            } else {
+                if (attributes[entry_key][attributeFunct.attributeType] == null) {
+                    attributes[entry_key][attributeFunct.attributeType] = [];
+                }
+                attributes[entry_key][attributeFunct.attributeType].push(result[k].label);
             }
         }
     }
