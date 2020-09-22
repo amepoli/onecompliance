@@ -16,14 +16,14 @@
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="250"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="745"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[]]></parameterDescription>
-		<defaultValueExpression><![CDATA["select m.*, m_vr.*, entrasp.centri_gestionali_descr(m.codice_part,m.id_centro_gest) as cg_descr, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test, m.codice_azienda) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='1' and m.codice_azienda = 'DEMO' and m.id_modello_test = 1"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select m.*, m_vr.*, entrasp.centri_gestionali_descr(m.codice_part,m.id_centro_gest) as cg_descr, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test, m.codice_azienda) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='1' and m.codice_azienda = 'DEMO' and m.id_modello_test = 71"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -272,7 +272,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="235" splitType="Stretch">
+		<band height="269" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="175" width="556" height="20" uuid="7ff531dc-7cbf-44fa-8efe-ff94688a877b">
@@ -333,22 +333,6 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{id_modello_test_vr}]]></textFieldExpression>
 			</textField>
-			<subreport>
-				<reportElement x="1" y="230" width="547" height="2" uuid="a71340be-679b-4900-8b9c-780bfad2fff9">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<subreportParameter name="codice_azienda">
-					<subreportParameterExpression><![CDATA[$F{codice_azienda}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="id_modello_test">
-					<subreportParameterExpression><![CDATA[$F{id_modello_test}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="id_modello_test_vr">
-					<subreportParameterExpression><![CDATA[$F{id_modello_test_vr}]]></subreportParameterExpression>
-				</subreportParameter>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA["modelliTestQA_sezioni.jasper"]]></subreportExpression>
-			</subreport>
 			<textField>
 				<reportElement mode="Opaque" x="0" y="7" width="269" height="21" forecolor="#FFFFFF" backcolor="#0AADFF" uuid="1c9b9158-810c-4a2e-a99a-381c25244042">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -461,6 +445,20 @@
 			<line>
 				<reportElement positionType="Float" x="120" y="210" width="320" height="1" uuid="84af1414-0d82-441b-9a84-8ee03b7ed5ae"/>
 			</line>
+			<subreport>
+				<reportElement positionType="Float" x="1" y="234" width="555" height="16" uuid="4bf3f509-b55f-46a7-a8c7-be59b2bd819b"/>
+				<subreportParameter name="codice_azienda">
+					<subreportParameterExpression><![CDATA[$F{codice_azienda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id_modello_test">
+					<subreportParameterExpression><![CDATA[$F{id_modello_test}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id_modello_test_vr">
+					<subreportParameterExpression><![CDATA[$F{id_modello_test_vr}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["modelliTestQA_sez_nopunt.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 	<columnFooter>
