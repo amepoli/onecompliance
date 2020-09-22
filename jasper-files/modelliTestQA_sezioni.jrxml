@@ -33,104 +33,77 @@
 		<defaultValueExpression><![CDATA[new BigDecimal(9.000)]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select ds.descrizione as ds_descrizione, d.*, rp.id_risposta_prev, rp.risposta as rp_risposta, rp.ordinamento as rp_ordinamento, rp.note as rp_note, rp.peso as rp_peso, rp.punteggio as rp_punteggio 
-from entrasp.domande d, entrasp.risposte_previste rp, entrasp.domande_sezioni ds
-where d.id_sezione is not null 
-and d.codice_azienda=ds.codice_azienda 
-and d.id_modello_test= ds.id_modello_test 
-and d.id_modello_test_vr= ds.id_modello_test_vr
-and d.id_sezione= ds.id_sezione
-and d.codice_azienda=rp.codice_azienda 
-and d.id_modello_test= rp.id_modello_test 
-and d.id_modello_test_vr= rp.id_modello_test_vr
-and d.id_domanda= rp.id_domanda and ds.id_sezione is not null
-and d.codice_azienda=  $P{codice_azienda} 
-and d.id_modello_test= $P{id_modello_test} 
-and d.id_modello_test_vr= $P{id_modello_test_vr}
-and d.id_sezione= $P{id_sezione}]]>
+		<![CDATA[select d.id_domanda,d.descrizione, d.ordinamento, rp.id_modello_test, rp.risposta, d.note, rp.ordinamento as r_ordinamento from entrasp.domande d
+
+join entrasp.risposte_previste rp on d.codice_azienda=rp.codice_azienda and d.id_domanda=rp.id_domanda and d.id_modello_test_vr=rp.id_modello_test_vr and d.id_modello_test=rp.id_modello_test
+
+where d.codice_azienda='DEMO' and d.id_modello_test= 84 and d.id_modello_test_vr= 1]]>
 	</queryString>
-	<field name="ds_descrizione" class="java.lang.String"/>
-	<field name="codice_azienda" class="java.lang.String"/>
-	<field name="id_modello_test" class="java.math.BigDecimal"/>
-	<field name="id_domanda" class="java.math.BigDecimal"/>
-	<field name="descrizione" class="java.lang.String"/>
-	<field name="data_inizio_validita" class="java.sql.Date"/>
-	<field name="data_fine_validita" class="java.sql.Date"/>
-	<field name="id_sezione" class="java.math.BigDecimal"/>
-	<field name="ordinamento" class="java.math.BigDecimal"/>
-	<field name="tree_path" class="java.lang.String"/>
-	<field name="note" class="java.lang.String"/>
-	<field name="punteggio" class="java.math.BigDecimal"/>
-	<field name="id_modello_test_vr" class="java.math.BigDecimal"/>
-	<field name="flag_risposta_multipla" class="java.lang.String"/>
-	<field name="peso_risposte_default" class="java.math.BigDecimal"/>
-	<field name="id_domanda_rif" class="java.math.BigDecimal"/>
-	<field name="id_risposta_prev_rif" class="java.math.BigDecimal"/>
-	<field name="id_filtro_selezione" class="java.math.BigDecimal"/>
-	<field name="flag_non_applicabile_risposta_null" class="java.lang.String"/>
-	<field name="tipo_punteggio_risposta_multipla" class="java.lang.String"/>
-	<field name="id_db" class="java.math.BigDecimal"/>
-	<field name="query_risultato" class="java.lang.String"/>
-	<field name="bind_risultato" class="java.lang.String"/>
-	<field name="query_allegato" class="java.lang.String"/>
-	<field name="bind_allegato" class="java.lang.String"/>
-	<field name="flag_inversione_pct_efficacia_presidi" class="java.lang.String"/>
-	<field name="id_tipo_allegato" class="java.math.BigDecimal"/>
-	<field name="id_risposta_prev" class="java.math.BigDecimal"/>
-	<field name="rp_risposta" class="java.lang.String"/>
-	<field name="rp_ordinamento" class="java.math.BigDecimal"/>
-	<field name="rp_note" class="java.lang.String"/>
-	<field name="rp_peso" class="java.math.BigDecimal"/>
-	<field name="rp_punteggio" class="java.math.BigDecimal"/>
-	<group name="id_sezione">
-		<groupExpression><![CDATA[$F{id_sezione}]]></groupExpression>
-		<groupHeader>
-			<band height="32">
-				<line>
-					<reportElement x="4" y="3" width="480" height="1" uuid="9542b8d1-01d1-4236-a7ff-4bb522323818">
-						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-					</reportElement>
-				</line>
-				<textField textAdjust="StretchHeight">
-					<reportElement mode="Opaque" x="3" y="7" width="484" height="20" isRemoveLineWhenBlank="true" backcolor="#CCFFFF" uuid="c10a621c-331c-4f83-bf7b-86d29c453bb0"/>
-					<textElement>
-						<font isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
-				</textField>
-				<line>
-					<reportElement positionType="Float" x="4" y="28" width="480" height="1" uuid="ce7a1ec2-a433-4fd4-a56a-d72e14b779f1"/>
-				</line>
-			</band>
-		</groupHeader>
-	</group>
+	<field name="id_domanda" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_domanda"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_domanda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="domande"/>
+	</field>
+	<field name="descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="domande"/>
+	</field>
+	<field name="ordinamento" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ordinamento"/>
+		<property name="com.jaspersoft.studio.field.label" value="ordinamento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="domande"/>
+	</field>
+	<field name="id_modello_test" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_modello_test"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_modello_test"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="risposte_previste"/>
+	</field>
+	<field name="risposta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="risposta"/>
+		<property name="com.jaspersoft.studio.field.label" value="risposta"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="risposte_previste"/>
+	</field>
+	<field name="note" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="note"/>
+		<property name="com.jaspersoft.studio.field.label" value="note"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="domande"/>
+	</field>
+	<field name="r_ordinamento" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="r_ordinamento"/>
+		<property name="com.jaspersoft.studio.field.label" value="r_ordinamento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="risposte_previste"/>
+	</field>
 	<group name="id_domanda">
 		<groupExpression><![CDATA[$F{id_domanda}]]></groupExpression>
 		<groupHeader>
-			<band height="47">
-				<line>
-					<reportElement x="14" y="3" width="480" height="1" uuid="6c9cd948-ac7c-4456-b5f4-1cdbb0dc6502"/>
-				</line>
+			<band height="46">
 				<textField textAdjust="StretchHeight">
-					<reportElement x="41" y="7" width="457" height="20" isRemoveLineWhenBlank="true" uuid="00f65303-29ba-4a28-9288-0ce8e9cd487f"/>
-					<textElement>
+					<reportElement positionType="Float" mode="Opaque" x="40" y="3" width="460" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="4795dd44-9dff-4b30-995a-61fe4420dedf">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font isBold="true"/>
+						<paragraph leftIndent="3"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 				</textField>
-				<line>
-					<reportElement positionType="Float" x="14" y="27" width="480" height="1" uuid="6c9cd948-ac7c-4456-b5f4-1cdbb0dc6502"/>
-				</line>
-				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="20" y="31" width="474" height="11" isRemoveLineWhenBlank="true" uuid="b8f604e4-5cad-46ff-a213-24d9b4e2fc2b"/>
+				<textField textAdjust="StretchHeight">
+					<reportElement positionType="Float" x="40" y="23" width="460" height="21" uuid="32527e69-d9dd-4fa4-8189-810246989ef9">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="rtf">
+						<font isBold="false" isItalic="true"/>
+						<paragraph leftIndent="8"/>
+					</textElement>
 					<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
 				</textField>
-				<textField>
-					<reportElement x="17" y="7" width="22" height="20" uuid="529e0d87-557f-4290-87fa-5becfd4e2a5a">
-						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				<textField textAdjust="StretchHeight">
+					<reportElement positionType="Float" mode="Opaque" x="10" y="3" width="30" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="306d1c1f-eb0e-4d5d-9970-ef1c774dd8fd">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
-					<textElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{ordinamento}]]></textFieldExpression>
@@ -142,28 +115,26 @@ and d.id_sezione= $P{id_sezione}]]>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="500" splitType="Stretch">
+		<band height="35" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<textField>
-				<reportElement x="37" y="3" width="35" height="20" uuid="66840760-1370-431b-b4ef-65b8b7ecdb04">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" x="28" y="2" width="20" height="20" uuid="0196a9ec-4cfe-4f2c-aebb-41572bbb46b4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{rp_ordinamento}]]></textFieldExpression>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{r_ordinamento}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="74" y="3" width="430" height="20" uuid="9843095c-e1b4-4fc7-a948-65b7fb4b2b47">
-					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" x="48" y="2" width="360" height="20" uuid="3a96a34e-ea97-42e1-838e-cbc0f36d5ed6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{rp_risposta}]]></textFieldExpression>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{risposta}]]></textFieldExpression>
 			</textField>
-			<line>
-				<reportElement positionType="Float" x="32" y="27" width="480" height="1" uuid="c19061df-1c38-4c2b-a31f-fb6a26632017">
-					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
-				</reportElement>
-			</line>
 		</band>
 	</detail>
 </jasperReport>
