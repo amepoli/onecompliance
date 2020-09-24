@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="testoNormativo" pageWidth="595" pageHeight="842" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" whenResourceMissingType="Empty" uuid="d26c6182-e27a-4f58-9157-55acab90753d">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="testiNormativi"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="mainQuery" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select tn.id_testo_normativo as tn_idtn, tn.descrizione as tn_descr, an.codice_articolo_normativo as an_codartnorm, an.rubrica as an_rub,an.id_testo_normativo as an_idtn, r.codice as r_cod, r.titolo as r_tit, r.descrizione as r_descr, entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_pre) as int_tot_ante, entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_post) as int_tot_post from entrasp.testi_normativi tn join entrasp.articoli_normativi an on  tn.id_testo_normativo = an.id_testo_normativo right join entrasp.rischi_articoli_normativi ran on an.id_testo_normativo = ran.id_testo_normativo and an.codice_articolo_normativo = ran.codice_articolo_normativo right join entrasp.rischi r on r.codice_azienda = ran.codice_azienda and r.codice_rischio = ran.codice_rischio where r.codice_azienda='DEMO'"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{mainQuery}]]>
+	</queryString>
+	<field name="tn_idtn" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tn_idtn"/>
+		<property name="com.jaspersoft.studio.field.label" value="tn_idtn"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="testi_normativi"/>
+	</field>
+	<field name="tn_descr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tn_descr"/>
+		<property name="com.jaspersoft.studio.field.label" value="tn_descr"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="testi_normativi"/>
+	</field>
+	<field name="an_codartnorm" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="an_codartnorm"/>
+		<property name="com.jaspersoft.studio.field.label" value="an_codartnorm"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articoli_normativi"/>
+	</field>
+	<field name="an_rub" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="an_rub"/>
+		<property name="com.jaspersoft.studio.field.label" value="an_rub"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articoli_normativi"/>
+	</field>
+	<field name="an_idtn" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="an_idtn"/>
+		<property name="com.jaspersoft.studio.field.label" value="an_idtn"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articoli_normativi"/>
+	</field>
+	<field name="r_cod" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="r_cod"/>
+		<property name="com.jaspersoft.studio.field.label" value="r_cod"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
+	</field>
+	<field name="r_tit" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="r_tit"/>
+		<property name="com.jaspersoft.studio.field.label" value="r_tit"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
+	</field>
+	<field name="r_descr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="r_descr"/>
+		<property name="com.jaspersoft.studio.field.label" value="r_descr"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
+	</field>
+	<field name="int_tot_ante" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="int_tot_ante"/>
+		<property name="com.jaspersoft.studio.field.label" value="int_tot_ante"/>
+	</field>
+	<field name="int_tot_post" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="int_tot_post"/>
+		<property name="com.jaspersoft.studio.field.label" value="int_tot_post"/>
+	</field>
+	<group name="Gruppo1">
+		<groupExpression><![CDATA[$F{tn_idtn}]]></groupExpression>
+		<groupHeader>
+			<band height="38">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="1" y="6" width="159" height="25" forecolor="#FCFAFA" backcolor="#25599C" uuid="e259e4f7-d531-49a3-8972-96834e303bc3">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FCFAFA"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FCFAFA"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FCFAFA"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FCFAFA"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="16" isBold="true"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tn_descr}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="Float" x="0" y="33" width="535" height="1" uuid="a7d4e228-7c95-4619-bc4c-3de190819aa2"/>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Gruppo2">
+		<groupExpression><![CDATA[$F{an_idtn}]]></groupExpression>
+		<groupHeader>
+			<band height="37">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" mode="Opaque" x="27" y="2" width="99" height="24" isRemoveLineWhenBlank="true" backcolor="#C0F0FC" uuid="ce90f457-b286-4af7-8606-1321f267b547">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font size="14" isBold="true"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{an_codartnorm}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" mode="Opaque" x="126" y="2" width="409" height="24" backcolor="#C0F0FC" uuid="aa6db4d7-751a-4a4c-ac3f-d33c6eea4aad">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font size="14" isBold="true"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{an_rub}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement positionType="Float" x="27" y="32" width="508" height="1" uuid="398a4ec5-6b2c-4dd1-adf1-d3c7398d1692"/>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="69">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<image onErrorType="Blank">
+				<reportElement key="image" positionType="Float" x="83" y="10" width="337" height="50" uuid="f40c3536-fcf5-429b-9a81-23517b02adb9">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA["./logos/"+ $P{codice_azienda} + ".png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="68" y="3" width="397" height="66" uuid="fa357327-440c-4706-a447-f876b6266ac2">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="102">
+			<frame>
+				<reportElement positionType="Float" x="81" y="67" width="458" height="15" uuid="32f214c8-f39c-4d8b-9ea7-7c8422782994"/>
+				<textField textAdjust="StretchHeight">
+					<reportElement positionType="Float" x="101" y="0" width="357" height="15" uuid="03b5b58f-0823-42ec-862c-85d99533bdf0"/>
+					<textFieldExpression><![CDATA[$F{int_tot_ante}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="2" y="0" width="100" height="15" uuid="a0a6b87b-b17e-485d-85df-28e239418ab4">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="none">
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Intensità totale ante:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement x="82" y="3" width="458" height="15" uuid="d583522d-839b-4cfa-ba3b-fa126a3347ca"/>
+				<textField textAdjust="StretchHeight">
+					<reportElement x="100" y="0" width="357" height="15" uuid="581a1292-ec0c-4dad-a21b-cc1021f4067f">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{r_cod}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="-1" y="0" width="100" height="15" uuid="2074e655-5835-4a15-a07c-49b7da039f76">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="none">
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Codice Rischio:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="83" y="25" width="457" height="15" uuid="06000ace-9d09-448b-9d8e-301d8a65f167"/>
+				<textField textAdjust="StretchHeight">
+					<reportElement positionType="Float" x="100" y="0" width="356" height="15" uuid="4ce73cbe-7a35-40bc-92b6-a5c836a71697">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{r_tit}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="-1" y="0" width="100" height="15" uuid="b4758d02-ac97-4b80-b204-83eb08ffdfe2">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="none">
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Titolo:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="82" y="47" width="457" height="15" uuid="794cb99c-9fcf-4bdb-926c-0769331deb99"/>
+				<textField textAdjust="StretchHeight">
+					<reportElement positionType="Float" x="100" y="0" width="357" height="15" uuid="99804a7e-3666-43f1-a109-c0f9dd3c4f03">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{r_descr}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="100" height="15" uuid="d0e3c552-009a-4863-a5e0-6e76a1e941c8">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="none">
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Descrizione:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" x="82" y="87" width="457" height="15" uuid="c961e298-9ef7-4b80-9c8c-45b81969050a"/>
+				<textField textAdjust="StretchHeight">
+					<reportElement positionType="Float" x="100" y="0" width="357" height="15" uuid="e1364f67-95d2-4868-bbe6-fff165622d51"/>
+					<textFieldExpression><![CDATA[$F{int_tot_post}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="0" width="100" height="15" uuid="971a1bf5-9f7f-4f4e-9c21-9e4a84ee664e">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="none">
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<text><![CDATA[Intensità totale post:]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="35">
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="0" y="15" width="100" height="20" uuid="ea0a3fd5-a4a2-4747-81b1-a4d756c2ad69"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="439" y="15" width="100" height="20" uuid="68042134-2810-4edf-a233-8f1a7675ae5e"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="5" width="535" height="1" uuid="2d10d479-d605-4af0-aa59-68d282b1b796"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

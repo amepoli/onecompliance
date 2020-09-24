@@ -1,6 +1,6 @@
 {
     "$schema": "../views.schema.json",
-    "entryKey": "procedure_aziendali",
+    "entryKey": "procedure_aziendali_sub",
     "form_keys": [
         {
             "autoGenerate": false,
@@ -63,6 +63,7 @@
                         "validator": "Validators.required"
                     }
                 ]
+                
             },
             "isHidden": false,
             "isPrimary": false,
@@ -137,6 +138,7 @@
             "size": 9,
             "sameOrigin": false
         }
+  
     ],
     "origin": "entrasp.procedure_aziendali",
     "search_keys": [
@@ -211,78 +213,6 @@
             "queryCond": "codice=$codice$"
         }
     ],
-    "subTables": [
-        {
-            "entryKey": "procedure_aziendali_sub",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_procedura",
-                    "son": "id_procedura_parent"
-                }
-            ],
-            "label": "Sotto-procedure"
-        },
-        {
-            "entryKey": "attivita_sub",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_procedura",
-                    "son": "id_procedura"
-                }
-            ],
-            "label": "Attività"
-        },
-        {
-            "entryKey": "compiti_procedure_sub",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_procedura",
-                    "son": " id_procedura"
-                }
-            ],
-            "label": "Compiti Procedure"
-        },
-        {
-            "entryKey": "presidi_sub",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_procedura",
-                    "son": " id_procedura"
-                }
-            ],
-            "label": "Presidi"
-        },
-        {
-            "entryKey": "fonti_rischio_sub",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_procedura",
-                    "son": " id_procedura"
-                }
-            ],
-            "label": "Fonti Rischio"
-        }
-    ],
     "table_keys": [
         {
             "format": {
@@ -304,20 +234,11 @@
         },
         {
             "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_tipo_processo",
-            "label": "id_tipo_processo"
-        },
-        {
-            "format": {
                 "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_tipo_processo_trans",
+            "key": "Tipo_processo_trans",
             "queryFunct": "entrasp.tipo_processo_descr(id_tipo_processo,$codice_azienda$)",
             "label": "Tipo processo"
         },
@@ -329,6 +250,15 @@
             "isPrimary": true,
             "key": "id_procedura",
             "label": "Id Procedura"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_procedura_parent",
+            "label": "Id Procedura_parent"
         },
         {
             "format": {
@@ -350,32 +280,13 @@
         },
         {
             "format": {
-                "dataType": "number"
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "descrizioni_centro_gestionale",
             "label": "Centro gestionale",
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_procedura_parent",
-            "label": "Id Procedura Superiore"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "Descr_procedura_parent",
-            "queryFunct": "entrasp.procedure_aziendali_descr(id_procedura_parent,codice_azienda)",
-            "label": "Procedura Superiore"
         }
     ]
 }
