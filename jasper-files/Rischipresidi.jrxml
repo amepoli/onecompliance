@@ -13,7 +13,7 @@
 	<property name="ireport.zoom" value="1.3310000000000004"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -35,13 +35,32 @@
 	<parameter name="codice_azienda" class="java.lang.String"/>
 	<parameter name="codice_rischio" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select rp.codice_azienda, rp.codice_rischio,rp.id_presidio, pr.descrizione, pr.stato_attuazione  from entrasp.rischi_presidi rp, entrasp.presidi pr where rp.codice_azienda=$P{codice_azienda} and rp.codice_rischio=$P{codice_rischio} and rp.codice_azienda=pr.codice_azienda and rp.id_presidio=pr.id_presidio]]>
+		<![CDATA[select rp.codice_azienda, rp.codice_rischio,rp.id_presidio, pr.descrizione, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione  from entrasp.rischi_presidi rp, entrasp.presidi pr where rp.codice_azienda=$P{codice_azienda} and rp.codice_rischio=$P{codice_rischio} and rp.codice_azienda=pr.codice_azienda and rp.id_presidio=pr.id_presidio]]>
 	</queryString>
-	<field name="codice_azienda" class="java.lang.String"/>
-	<field name="codice_rischio" class="java.lang.String"/>
-	<field name="id_presidio" class="java.math.BigDecimal"/>
-	<field name="descrizione" class="java.lang.String"/>
-	<field name="stato_attuazione" class="java.lang.String"/>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi_presidi"/>
+	</field>
+	<field name="codice_rischio" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_rischio"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_rischio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi_presidi"/>
+	</field>
+	<field name="id_presidio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_presidio"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_presidio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi_presidi"/>
+	</field>
+	<field name="descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="presidi"/>
+	</field>
+	<field name="stato_attuazione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stato_attuazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="stato_attuazione"/>
+	</field>
 	<title>
 		<band height="25">
 			<staticText>
