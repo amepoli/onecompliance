@@ -1,5 +1,6 @@
-import { Component, OnInit, OnChanges} from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ValidationsService } from 'app/gorico/services/validations.service';
 import { FieldConfig } from '../../field.interface';
 
 
@@ -19,25 +20,16 @@ export class SubformComponent implements OnInit {
   group: FormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
 
-  constructor() {}
-  ngOnInit()  {
+  constructor() { }
+  ngOnInit() {
     const _this = this;
     _this.field.subform.forEach(field => {
-        if (field.type === 'button') {
-            return;
-        }
-        _this.group.addControl(field.name, new FormControl(field.value, _this.bindValidations(field.validations || [])));  
+      if (field.type === 'button') {
+        return;
+      }
+      _this.group.addControl(field.name, new FormControl(field.value, ValidationsService.bindValidations(field.validations || [])));
     });
   }
 
-  bindValidations(validations: any) {
-    if (validations.length > 0) {
-      const validList = [];
-      validations.forEach(valid => {
-        validList.push(valid.validator);
-      });
-      return Validators.compose(validList);
-    }
-    return null;
-  }
+
 }

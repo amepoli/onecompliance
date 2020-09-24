@@ -1440,7 +1440,32 @@
                             "name",
                             "validator"
                         ],
-                        "additionalProperties": false,
+                        "anyOf": [
+                            {
+                                "properties": {
+                                    "name": {
+                                        "enum": [
+                                            "pattern",
+                                            "required"
+                                        ]
+                                    }
+                                },
+                                "required": []
+                            },
+                            {
+                                "properties": {
+                                    "name": {
+                                        "enum": [
+                                            "minLength",
+                                            "maxLength"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "value"
+                                ]
+                            }
+                        ],
                         "properties": {
                             "message": {
                                 "type": "string",
@@ -1451,12 +1476,18 @@
                                 "description": "M: type of validator",
                                 "enum": [
                                     "required",
-                                    "pattern"
+                                    "pattern",
+                                    "minLength",
+                                    "maxLength"
                                 ]
                             },
                             "validator": {
                                 "type": "string",
-                                "description": "M: e.g. Validators.required or (pattern) ^[a-zA-Z0-9&_ ]+$"
+                                "description": "M: e.g. Validators.minLength, Validators.maxLength, Validators.required or (pattern) ^[a-zA-Z0-9&_ ]+$"
+                            },
+                            "value": {
+                                "type": "number",
+                                "description": "?: Value in case of MinLength and MaxLength validator"
                             }
                         }
                     }
