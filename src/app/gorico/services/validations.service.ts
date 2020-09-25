@@ -23,7 +23,6 @@ export class ValidationsService {
     public static checkIfRequired(validations) {
         let required = false;
         if (validations != null && validations.length > 0) {
-            console.log('validations', validations);
             validations.forEach(validation => {
                 if (validation.name === 'required') {
                     required = true;
@@ -40,15 +39,19 @@ export class ValidationsService {
      */
     public static bindValidations(validations: any) {
         if (validations.length > 0) {
-            console.log('validations', validations);
             const validList = [];
             validations.forEach(valid => {
-                console.log('validator', valid);
-                if (valid.name === 'minLength') {
+                if (valid.name === 'minlength') {
                     validList.push(Validators.minLength(valid.value));
                 }
-                else if (valid.name === 'maxLength') {
+                else if (valid.name === 'maxlength') {
                     validList.push(Validators.maxLength(valid.value));
+                }
+                else if (valid.name === 'min') {
+                    validList.push(Validators.min(valid.value));
+                }
+                else if (valid.name === 'max') {
+                    validList.push(Validators.max(valid.value));
                 }
                 else {
                     validList.push(valid.validator);
@@ -66,11 +69,17 @@ export class ValidationsService {
      */
     public static processFormValidations(validations) {
         for (const validator of validations) {
-            if (validator['name'] === 'minLength') {
+            if (validator['name'] === 'minlength') {
                 validator['validator'] = Validators.minLength(validator['value']);
             }
-            else if (validator['name'] === 'maxLength') {
+            else if (validator['name'] === 'maxlength') {
                 validator['validator'] = Validators.maxLength(validator['value']);
+            }
+            else if (validator['name'] === 'min') {
+                validator['validator'] = Validators.min(validator['value']);
+            }
+            else if (validator['name'] === 'max') {
+                validator['validator'] = Validators.max(validator['value']);
             }
             else if (validator['name'] === 'required') {
                 validator['validator'] = Validators.required;

@@ -72,7 +72,6 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
         _this.filterItems();
       });
 
-    console.log('value:', _this.field.value);
   }
 
   ngAfterViewInit() {

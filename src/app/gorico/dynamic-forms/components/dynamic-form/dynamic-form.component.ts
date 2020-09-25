@@ -11,11 +11,10 @@ import {
 } from '@angular/core';
 import {
   FormGroup,
-  FormBuilder,
-  Validators
+  FormBuilder
 } from '@angular/forms';
 import { ValidationsService } from 'app/gorico/services/validations.service';
-import { FieldConfig, Validator } from '../../field.interface';
+import { FieldConfig } from '../../field.interface';
 import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive';
 
 @Component({

@@ -62,9 +62,10 @@ export class InputComponent implements OnInit, AfterViewInit {
     if (_this.field.validations) {
       _this.isRequired = ValidationsService.checkIfRequired(_this.field.validations);
     }
-    // _this.checkIfRequired();
 
-
+    if (_this.field.validations && _this.field.validations.length) {
+      console.log('validations', _this.field.validations);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -113,8 +114,6 @@ export class InputComponent implements OnInit, AfterViewInit {
       // Copy as it is
       _this.field.value = _this.group.get(_this.field.name).value;
     }
-
-    console.log(_this.field.value);
   }
 
   formatValue() {
