@@ -14,6 +14,7 @@ import {
   FormBuilder,
   Validators
 } from '@angular/forms';
+import { ValidationsService } from 'app/gorico/services/validations.service';
 import { FieldConfig, Validator } from '../../field.interface';
 import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive';
 
@@ -61,7 +62,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     if (this.form.valid) {
       this.submit.emit(this.form.value);
     } else {
-      this.validateAllFormFields(this.form);
+      ValidationsService.validateAllFormFields(this.form);
     }
   }
 
@@ -75,14 +76,14 @@ export class DynamicFormComponent implements OnInit, OnChanges {
         // Try creating control with validation first
         control = this.fb.control(
           field.value,
-          this.bindValidations(field.validations || [])
+          ValidationsService.bindValidations(field.validations || [])
         );
       }
       catch (e) {
         // Exception occured, this means validation is invalid, let's try without validation
         control = this.fb.control(
           field.value,
-          this.bindValidations([])
+          ValidationsService.bindValidations([])
         );
       }
       group.addControl(field.name, control);
@@ -90,21 +91,5 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     return group;
   }
 
-  bindValidations(validations: any) {
-    if (validations.length > 0) {
-      const validList = [];
-      validations.forEach(valid => {
-        validList.push(valid.validator);
-      });
-      return Validators.compose(validList);
-    }
-    return null;
-  }
 
-  validateAllFormFields(formGroup: FormGroup) {
-    Object.keys(formGroup.controls).forEach(field => {
-      const control = formGroup.get(field);
-      control.markAsTouched({ onlySelf: true });
-    });
-  }
 }

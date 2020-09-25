@@ -176,6 +176,33 @@ function getTableNameFromKey(key) {
     }
 }
 
+function getOrderedFiles(order, files) {
+    let filesWithoutPaths = files.map(file => {
+        let fileParts = file.split('/');
+        return fileParts[fileParts.length - 1];
+    });
+
+    let filesPathParts = `${files[0]}`.split('/');
+    filesPathParts.splice(-1, 1);
+    let filesPath = filesPathParts.join('/');
+
+    console.log('files[0]', files[0]);
+    console.log('filesPathParts', filesPathParts);
+    console.log('filesPath', filesPath);
+    console.log('filesWithoutPaths', filesWithoutPaths);
+
+    let orderedFiles = [];
+    order.forEach(o => {
+
+        if (filesWithoutPaths.includes(o + '.csv')) {
+            orderedFiles.push(`${filesPath}/${o}.csv`);
+        }
+    });
+    console.log('orderedFiles', orderedFiles);
+    return orderedFiles;
+}
+
+
 async function createTableImportQuery(fileName) {
     let table = getTableNameFromKey(fileName);
 
@@ -303,6 +330,7 @@ exports.handler = async (event, context) => {
 
     const requestType = queryParams['request_type'];
     const azienda = queryParams['azienda'];
+    const order = queryParams['order'];
 
     // If no Request type provided, exit with an error
     if (!requestType) {
@@ -349,6 +377,12 @@ exports.handler = async (event, context) => {
 
                     queryString += "SET session_replication_role = 'replica';";
 
+                    if (order && order.length > 0) {
+                        // Use order to organize files
+                        files = getOrderedFiles(order, files);
+                    }
+
+                    // Use files to create query
                     await files.reduce(async (promise, fileName) => {
                         // This line will wait for the last async function to finish.
                         // The first iteration uses an already resolved Promise
@@ -356,6 +390,7 @@ exports.handler = async (event, context) => {
                         await promise;
                         queryString += await createTableImportQuery(fileName);
                     }, Promise.resolve());
+
 
 
                     queryString += "SET session_replication_role = 'origin';";

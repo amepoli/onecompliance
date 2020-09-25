@@ -4,6 +4,7 @@ export interface Validator {
   name: string;
   validator: any;
   message: string;
+  value?: number
 }
 
 export interface Item {
@@ -28,10 +29,10 @@ export interface FieldInputEvent {
     name: string;
     type: 'table' | ' form' | 'tableform';
     keymap?: [
-        {
-            source: string;
-            destination: string
-        }
+      {
+        source: string;
+        destination: string
+      }
     ]
   };
   message?: {

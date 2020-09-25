@@ -9,8 +9,10 @@ import { Subscription } from 'rxjs';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
+import { ValidationsService } from 'app/gorico/services/validations.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
+
 import { MessageView } from 'app/gorico/services/messages.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
@@ -545,15 +547,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     private process_form_row(input_form_row: FieldConfig[], margins: number): void {
         let sameLineElements: FieldConfig[] = [];
         for (const result of input_form_row) {
-            if (result['validations']) {
-                for (const validator of result['validations']) {
-                    if (validator['name'] === 'required') {
-                        validator['validator'] = Validators.required;
-                    }
-                    if (validator['name'] === 'pattern') {
-                        validator['validator'] = Validators.pattern(validator['validator']);
-                    }
-                }
+            if (result['validations'] && result['validations'].length > 0) {
+                console.log("Validations in form-getter", result['validations']);
+                result['validations'] = ValidationsService.processFormValidations(result['validations']);
+                console.log("Validations in form-getter", result['validations']);
             }
             if (result.width == null && result.subform == null) {     // if null, must be null for all elements on the same line, then split the width equally
                 if (result['newLine'] === false) {

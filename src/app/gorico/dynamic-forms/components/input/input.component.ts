@@ -4,6 +4,7 @@ import { FieldConfig } from '../../field.interface';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { HelperService } from 'app/gorico/services/helper.service';
 import { Moment } from 'moment';
+import { ValidationsService } from 'app/gorico/services/validations.service';
 @Component({
   selector: 'app-input',
   template: `
@@ -58,7 +59,10 @@ export class InputComponent implements OnInit, AfterViewInit {
     _this.formatValue();
 
     // Check if required
-    _this.checkIfRequired();
+    if (_this.field.validations) {
+      _this.isRequired = ValidationsService.checkIfRequired(_this.field.validations);
+    }
+    // _this.checkIfRequired();
 
 
   }
@@ -130,16 +134,4 @@ export class InputComponent implements OnInit, AfterViewInit {
       }
     }
   }
-
-  // Check and set input to required if required validation exists
-  checkIfRequired() {
-    if (this.field.validations != null) {
-      this.field.validations.forEach(validation => {
-        if (validation.name === 'required') {
-          this.isRequired = true;
-        }
-      });
-    }
-  }
-
 }
