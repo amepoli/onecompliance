@@ -12,16 +12,17 @@
       "type": "main",
       "queryString": "SELECT  entrasp.rischi_delete($codice_azienda$, $codice_rischio$);"
     }
-
   ],
   "messages": [
     {
-    "viewType": "form",
-    "formMessageType": "delete",
-    "message": {"title": "Cancellazione rischio e oggetti collegati", 
-    "text": "Sei sicuro di voler cancellare il rischio e tutte le associazioni collegate (argomenti, articoli normativi, procedure, fonti di rischio, tipi rischi)?"}
-}
-],
+      "viewType": "form",
+      "formMessageType": "delete",
+      "message": {
+        "title": "Cancellazione rischio e oggetti collegati",
+        "text": "Sei sicuro di voler cancellare il rischio e tutte le associazioni collegate (argomenti, articoli normativi, procedure, fonti di rischio, tipi rischi)?"
+      }
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -88,7 +89,20 @@
       "autoGenerate": false,
       "format": {
         "dataType": "text",
-        "viewType": "input"
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Breve descrizione necessaria",
+            "name": "required",
+            "validator": "Validators.required"
+          },
+          {
+            "name": "maxLength",
+            "message": "Maximum length should be 200",
+            "validator": "Validators.maxLength(200)",
+            "value": 200
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
