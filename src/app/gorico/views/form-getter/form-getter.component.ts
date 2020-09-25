@@ -96,6 +96,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     // Contains form Data
     filteredFormData: FieldConfig[][];
+    quickAddData: boolean[];
 
     isLoading = false;
 
@@ -385,6 +386,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
         // prepare the form
         _this.filteredFormData = _this.numRows === 0 ? [] : JSON.parse(JSON.stringify(_this.getFormData(_this.viewKeys, results)));
+        _this.quickAddData = _this.filteredFormData.map(x => false);
 
         // process the form
         _this.process_form(_this.filteredFormData);
@@ -413,8 +415,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     const filteredFormData = _this.getFormData(_this.viewKeys, result);
                     _this.process_form(filteredFormData);
 
+                    console.log('filteredFormData[0]', filteredFormData[0]);
                     // add it to the top of the list
                     _this.filteredFormData.unshift(filteredFormData[0]);
+                    _this.quickAddData.unshift(true);
 
 
                 }
@@ -942,6 +946,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     clearForm() {
         this.filteredFormData = [];
+        this.quickAddData = [];
+
         this.cdRef.detectChanges();
     }
 
