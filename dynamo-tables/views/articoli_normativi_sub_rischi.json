@@ -1,133 +1,155 @@
 {
-    "$schema": "../views.schema.json",
-    "entryKey": "articoli_normativi_sub_rischi",
-    "origin": "entrasp.rischi_articoli_normativi",
-    "form_keys": [
+  "$schema": "../views.schema.json",
+  "entryKey": "articoli_normativi_sub_rischi",
+  "origin": "entrasp.rischi_articoli_normativi",
+  "predefinedQueries": [
+    {
+      "operation": "insert",
+      "queryString": "select entrasp.rischi_articoli_normativi_insert($codice_azienda$, $codice_rischio$, $articolo_testo_normativo.s_codice_articolo_normativo$, $articolo_testo_normativo.s_id_testo_normativo$)",
+      "type": "main"
+    }, 
+    {
+      "operation": "update",
+      "queryString": "select entrasp.rischi_articoli_normativi_update($codice_azienda$, $codice_rischio$, $articolo_testo_normativo.s_codice_articolo_normativo$, $articolo_testo_normativo.s_id_testo_normativo$)",
+      "type": "main"
+    }
+  ],
+  "form_keys": [
+    {
+      "isHidden": false,
+      "isPrimary": false,
+      "readOnly": false,
+      "key": "articolo_testo_normativo",
+      "label": "Risposta",
+      "subKeys": [
         {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "number"
-          },
-          "isHidden": true,
-          "isPrimary": true,
-          "key": "id_testo_normativo",
-          "label": "ID Testo Normativo",
-          "readOnly": true,
-          "newLine": false
+          "key": "s_id_testo_normativo",
+          "dataType": "number"
         },
         {
-            "autoGenerate": false,
-            "format": {
-            "viewType": "input",
-            "dataType": "number"
-          },
-          "isHidden": false,
-          "isPrimary": true,
-          "key": "codice_articolo_normativo",
-          "label": "Codice Articolo Normativo",
-          "readOnly": true,
-          "newLine": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-            "dataType": "text"
-          },
-          "isHidden": true,
-          "isPrimary": true,
-          "key": "codice_rischio",
-          "label": "Codice Rischio",
-          "readOnly": true,
-          "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-            "dataType": "text",
-            "viewType": "input"
-          },
-          "isHidden": true,
-          "isPrimary": true,
-          "key": "codice_azienda",
-          "label": "Codice Azienda",
-          "readOnly": true,
-          "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType":"combobox",
-                "options": [],
-                "dataType": "text"
-          },
-          "isHidden": false,
-          "isPrimary": false,
-          "key": "descrizione",
-          "label": "Articolo Normativo",
-          "queryFunct": "entrasp.articoli_normativi_rub_descr(codice_articolo_normativo, id_testo_normativo)",
-          "readOnly": true,
-          "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-            "viewType": "input",    
-            "dataType": "number"
-          },
-          "isHidden": false,
-          "isPrimary": false,
-          "key": "sanz_amm_min_quota",
-          "label": "Sanz. Amm. Min. Quota",
-          "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(codice_articolo_normativo, id_testo_normativo)",
-          "sameOrigin": false,
-          "readOnly": true,
-          "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-            "dataType": "number"
-          },
-          "isHidden": false,
-          "isPrimary": false,
-          "readOnly": true,
-          "key": "sanz_amm_max_quota",
-          "sameOrigin": false,
-          "label": "Sanz. Amm. Max. Quota",
-          "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(codice_articolo_normativo, id_testo_normativo)",
-          "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-            "dataType": "number"
-          },
-          "isHidden": false,
-          "isPrimary": false,
-          "key": "sanz_int_min",
-          "label": "Sanz. Int. Min.",
-          "readOnly": true,
-          "sameOrigin": false,
-          "queryFunct": "entrasp.articoli_normativi_sanz_int_min(codice_articolo_normativo, id_testo_normativo)",
-          "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-            "dataType": "number"
-          },
-          "isHidden": false,
-          "isPrimary": false,
-          "key": "sanz_int_max",
-          "readOnly": true,
-          "label": "Sanz. Int. Max.",
-          "sameOrigin": false,
-          "queryFunct": "entrasp.articoli_normativi_sanz_int_max(codice_articolo_normativo, id_testo_normativo)",
-          "newLine": false
+          "key": "s_codice_articolo_normativo",
+          "dataType": "text"
         }
-      ]  }
+      ],
+      "queryFunct": "select (id_testo_normativo, codice_articolo_normativo) from entrasp.rischi_articoli_normativi where codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$ and codice_articolo_normativo='£codice_articolo_normativo£' AND id_testo_normativo=£id_testo_normativo£",
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "select (id_testo_normativo, codice_articolo_normativo) as id, entrasp.articoli_normativi_rub_descr(codice_articolo_normativo, id_testo_normativo) as name from entrasp.articoli_normativi;"
+      }
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_rischio",
+      "label": "Codice Rischio",
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda",
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_testo_normativo",
+      "label": "id_testo_normativo",
+      "readOnly": true,
+      "newLine": false
+    },
+
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_articolo_normativo",
+      "label": "codice_articolo_normativo",
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "sanz_amm_min_quota",
+      "label": "Sanz. Amm. Min. Quota",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(codice_articolo_normativo, id_testo_normativo)",
+      "sameOrigin": false,
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "readOnly": true,
+      "key": "sanz_amm_max_quota",
+      "sameOrigin": false,
+      "label": "Sanz. Amm. Max. Quota",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(codice_articolo_normativo, id_testo_normativo)",
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "sanz_int_min",
+      "label": "Sanz. Int. Min.",
+      "readOnly": true,
+      "sameOrigin": false,
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(codice_articolo_normativo, id_testo_normativo)",
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "sanz_int_max",
+      "readOnly": true,
+      "label": "Sanz. Int. Max.",
+      "sameOrigin": false,
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(codice_articolo_normativo, id_testo_normativo)",
+      "newLine": false
+    }
+  ]
+}
