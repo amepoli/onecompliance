@@ -1,5 +1,5 @@
 import { Component, OnInit, OnChanges } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ValidationsService } from 'app/gorico/services/validations.service';
 import { FieldConfig } from '../../field.interface';
 

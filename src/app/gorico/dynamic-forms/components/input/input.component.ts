@@ -62,7 +62,10 @@ export class InputComponent implements OnInit, AfterViewInit {
     if (_this.field.validations) {
       _this.isRequired = ValidationsService.checkIfRequired(_this.field.validations);
     }
-    // _this.checkIfRequired();
+
+    if (_this.field.validations && _this.field.validations.length) {
+      console.log('validations', _this.field.validations);
+    }
   }
 
   ngAfterViewInit(): void {

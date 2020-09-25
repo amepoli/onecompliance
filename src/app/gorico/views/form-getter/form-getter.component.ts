@@ -2,7 +2,6 @@ import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryL
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { FieldConfig, FieldInputEvent } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
-import { Validators } from '@angular/forms';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ComboboxComponent } from 'app/gorico/dynamic-forms/components/combobox/combobox.component';
 import { Subscription } from 'rxjs';
@@ -66,7 +65,8 @@ export interface formViewKey { // as per API specification
             {
                 message: string,
                 name: string,
-                validator: string
+                validator: string,
+                value?: string
             }
         ],
         subform_keys?: formViewKey[];

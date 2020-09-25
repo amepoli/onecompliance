@@ -1,10 +1,10 @@
 import { Observable } from 'rxjs';
 
 export interface Validator {
-  name: string;
-  validator: any;
   message: string;
-  value?: number
+  name: string;
+  validator: string;
+  value?: string;
 }
 
 export interface Item {

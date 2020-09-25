@@ -1,19 +1,7 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
-import { BackendService } from 'app/gorico/views/backend/backend.service';
-import { saveAs } from 'file-saver';
-import { HttpClient } from '@angular/common/http';
-import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-upload.component';
-import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
-// and https://stackoverflow.com/a/54645398 and then 'npm run build'
-import { formGetterParams, FormGetterComponent } from 'app/gorico/views/form-getter/form-getter.component';
-import { AuthService } from 'app/gorico/login-page/auth.service';
-import { Subscription } from 'rxjs';
-import { ToastService } from 'app/gorico/services/toast.service';
+import { FormBuilder } from '@angular/forms';
 import { DialogService } from 'app/gorico/services/dialog.service';
-import { ImportExportService } from 'app/gorico/services/import_export.service';
 
 
 @Component({
