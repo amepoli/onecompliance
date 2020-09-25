@@ -219,12 +219,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     // Load Messages if available
                     if (params.messages) {
+                        console.log(params.messages);
                         _this.onMessagesUpdated.emit(params.messages);
                     }
                     else {
                         _this.onMessagesUpdated.emit([]);
                     }
-                    console.log(params.messages);
 
                     // Get View properties if exist
                     _this.formRowProperties = params.formRowProperties;
@@ -548,9 +548,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         let sameLineElements: FieldConfig[] = [];
         for (const result of input_form_row) {
             if (result['validations'] && result['validations'].length > 0) {
-                console.log("Validations in form-getter", result['validations']);
                 result['validations'] = ValidationsService.processFormValidations(result['validations']);
-                console.log("Validations in form-getter", result['validations']);
             }
             if (result.width == null && result.subform == null) {     // if null, must be null for all elements on the same line, then split the width equally
                 if (result['newLine'] === false) {
