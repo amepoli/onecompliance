@@ -1,6 +1,6 @@
 {
     "$schema": "../views.schema.json",
-    "entryKey": "presidi_sub_rischi",
+    "entryKey": "presidi_sub_of_rischi",
     "origin": "entrasp.rischi_presidi",
     "predefinedQueries": [
         {
@@ -13,8 +13,9 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "input",
-                "dataType": "number"
+                "comboQuery": "SELECT id_presidio AS id, descrizione AS name  FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
             },
             "label": "ID presidio",
             "key": "id_presidio",
@@ -22,33 +23,6 @@
             "isHidden": true,
             "isPrimary": true,
             "newLine": false
-        },
-        {
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "label": "codice_azienda",
-            "key": "codice_azienda",
-            "readOnly": false,
-            "isHidden": true,
-            "isPrimary": true,
-            "newLine": false
-        },
-        {
-            "format": {
-                "comboQuery": "SELECT codice_rischio AS id, entrasp.rischi_cod_tit(codice_azienda, codice_rischio) AS name  FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$;",
-                "options": [],
-                "viewType": "combobox",
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_rischio",
-            "label": "Codice Rischio",
-            "size": 5,
-            "newLine": false,
-            "readOnly": false
         },
         {
             "format": {
@@ -87,7 +61,31 @@
             "isHidden": false,
             "isPrimary": false,
             "size": 3,
+            "newLine": true
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
             "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_rischio",
+            "label": "Codice Rischio",
+            "newLine": false,
+            "readOnly": false
         }
     ],
     "outputEvent": {
