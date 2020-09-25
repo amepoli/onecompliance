@@ -21,7 +21,7 @@ import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive'
   exportAs: 'dynamicForm',
   selector: 'dynamic-form',
   template: `
-  <form class='dynamic-form' [id]='formName' [formGroup]='form' (submit)='onSubmit($event)'>
+  <form [style.background-color]="isQuickAdd? 'lightyellow': 'transparent'" class='dynamic-form' [id]='formName' [formGroup]='form' (submit)='onSubmit($event)'>
   <ng-container *ngFor='let field of fields;' dynamicField [field]='field' [group]='form' [readOnlyPage]='readOnlyPage'>
   </ng-container>
   </form>
@@ -30,6 +30,8 @@ import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive'
   encapsulation: ViewEncapsulation.None
 })
 export class DynamicFormComponent implements OnInit, OnChanges {
+  @Input() isQuickAdd: boolean = false;
+
   @Input() fields: FieldConfig[] = [];
 
   @Input() formName: string;
