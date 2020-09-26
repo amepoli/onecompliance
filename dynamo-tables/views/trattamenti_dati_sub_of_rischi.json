@@ -1,0 +1,96 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "trattamenti_dati_sub_of_rischi",
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "queryString": "SELECT * from entrasp.fonti_rischio where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$ and codice_tipo_fonte_rischio='TD';",
+      "type": "main"
+    }
+  ],
+  "origin": "entrasp.fonti_rischio",
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "comboQuery": "select id_procedura as id, descrizione_breve as name from entrasp.procedure_aziendali where codice_azienda=$codice_azienda$",
+        "options": [],
+        "validations": [
+          {
+            "message": "Breve descrizione necessaria",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_procedura",
+      "label": "Procedura",
+      "newLine": false,
+      "readOnly": false,
+      "size": 7
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Descrizione/Note",
+      "newLine": true,
+      "readOnly": false,
+      "size": 3
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "readOnly": true,
+      "isHidden": true,
+      "isPrimary": true,
+      "newLine": false,
+      "key": "id_fonte_rischio",
+      "label": "ID Fonte Rischio"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "key": "codice_rischio",
+      "label": "Codice Rischio"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "value": "TD"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "tipo",
+      "label": "Tipo",
+      "readOnly": true
+    }
+  ]
+}
