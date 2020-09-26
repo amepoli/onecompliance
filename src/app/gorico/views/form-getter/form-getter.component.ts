@@ -822,8 +822,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     }
                                     // we can get multiple rows from backend, each one providing a different attribute, find the right one
                                     const attrKey = keyListener + '_' + event.styleAttribute; // as per specs the returned key is of type '<key>_<styleAttribute>'
-                                    const actualResult = result.find(attr => attr[attrKey] != null);
-                                    element.style[event.styleAttribute] = actualResult[attrKey];
+                                    element.style[event.styleAttribute] = result[current_index][attrKey];
                                 }
                             }
                             if (event.outputEventWhenComplete != null) {

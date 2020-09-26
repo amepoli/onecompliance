@@ -54,7 +54,8 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     _this.field.options = _this.field.options.filter(x => x.name !== null);
 
     if (_this.field.value != null) {
-      _this.field.value = _this.field.options.find(x => x.id === _this.field.value);
+        // possibly compare object w/ subkeys value, let's stringify first
+      _this.field.value = _this.field.options.find(x => JSON.stringify(x.id) === JSON.stringify(_this.field.value));
       // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
     }
     else {
