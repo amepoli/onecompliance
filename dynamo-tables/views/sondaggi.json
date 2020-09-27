@@ -1,11 +1,13 @@
 {
     "$schema": "../views.schema.json",
     "businessObjectName": "sondaggi",
-    "predefinedQueries": [{
-        "operation": "update",
-        "type": "postProcessing",
-        "queryString": "update entrasp.progetti_fasi set stato=$stato$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
-        }],
+    "predefinedQueries": [
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.progetti_fasi set stato=$stato$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+        }
+    ],
     "entryKey": "sondaggi",
     "form_keys": [
         {
@@ -121,9 +123,9 @@
         {
             "autoGenerate": false,
             "format": {
-              "dataType": "date",
-              "value": "£CURRENT_DATE£",
-              "viewType": "input"
+                "dataType": "date",
+                "value": "£CURRENT_DATE£",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -132,13 +134,13 @@
             "newLine": false,
             "size": 2.5,
             "readOnly": false
-          },
-          {
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "dataType": "date",
-              "value": "£CURRENT_DATE£",
-              "viewType": "input"
+                "dataType": "date",
+                "value": "£CURRENT_DATE£",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -147,7 +149,7 @@
             "newLine": true,
             "size": 2.5,
             "readOnly": false
-          },
+        },
         {
             "autoGenerate": false,
             "format": {
@@ -158,8 +160,23 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo Sondaggio",
+            "newLine": false,
+            "size": 7,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
             "newLine": true,
-            "size": 10,
+            "size": 3,
             "readOnly": false
         },
         {
@@ -226,20 +243,6 @@
             "readOnly": false,
             "sameOrigin": false,
             "size": 2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_centro_gest",
-            "label": "Centro Gestionale",
-            "newLine": true,
-            "readOnly": false
         },
         {
             "format": {
@@ -318,7 +321,22 @@
             "queryFunct": "entrasp.descrizione_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
             "newLine": false,
             "readOnly": true,
-            "size": 5
+            "size": 3.25
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ris_percentuale",
+            "label": "Percentuale",
+            "queryFunct": "select percentuale from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -343,7 +361,7 @@
                     "updateFunct": "'£codice_colore£'"
                 }
             ],
-            "size": 8
+            "size": 3.25
         },
         {
             "autoGenerate": false,
@@ -354,6 +372,7 @@
             "isPrimary": false,
             "key": "riepilogo_risultati",
             "label": "Riepilogo Risultati",
+            "size": 2,
             "newLine": true,
             "outputEvent": {
                 "eventName": "check_existence_riepilogo_risultati",
@@ -364,8 +383,7 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false,
-            "size": 2
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
