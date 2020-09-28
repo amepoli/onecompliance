@@ -564,7 +564,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
             // recursively process subform
             if (result.subform != null) {
-                this.process_form_row(result.subform, margins);
+                this.process_form_row(result.subform, 2 * margins);
             }
         }
         this.processInlineElements(sameLineElements, margins); // handles inline elements of last line
