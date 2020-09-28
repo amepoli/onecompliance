@@ -3,16 +3,28 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { ValidationsService } from 'app/gorico/services/validations.service';
 import { FieldConfig } from '../../field.interface';
 
-
+// [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}"
 @Component({
   selector: 'app-subform',
   template: `
-    <div [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}" *ngIf="field.isVisible != false">
+    <div class="subform-style" *ngIf="field.isVisible != false">
         <ng-container *ngFor='let subfield of field.subform;' dynamicField [field]="subfield" [group]="group" [readOnlyPage]="readOnlyPage">
         </ng-container>
 </div>
 `,
-  styles: []
+  styles: [`
+    .subform-style {
+      margin-right: 0%;
+      margin-left: 0%;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+  `],
+  host: {
+    '[style.width]': '"100%"'
+  }
 })
 export class SubformComponent implements OnInit {
 
