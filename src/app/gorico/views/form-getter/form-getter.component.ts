@@ -28,6 +28,7 @@ export interface formViewKey { // as per API specification
     readOnly: boolean;
     isPrimary: boolean;
     newLine: boolean;
+    textarea_height?: "normal" | "extended";
     buttonIcon?: string;
     confirmButtonAction?: boolean;
     isDownloadButton?: boolean;
@@ -518,6 +519,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 readonly: (attribute != null && attribute.readOnly != null && attribute.readOnly[index] != null) ? attribute.readOnly[index] : _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
                 isVisible: (attribute != null && attribute.isHidden != null && attribute.isHidden[index] != null) ? !attribute.isHidden[index] : field.isHidden != null ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,
+                textarea_height: (field.textarea_height != null) ? field.textarea_height : "normal",
                 buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
                 confirmButtonAction: (field.confirmButtonAction != null) ? field.confirmButtonAction : false,
                 isDownloadButton: (field.isDownloadButton != null) ? field.isDownloadButton : false,
