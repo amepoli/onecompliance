@@ -26,8 +26,7 @@ import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive'
   </ng-container>
   </form>
   `,
-  styleUrls: ['./dynamic-form.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./dynamic-form.component.scss']
 })
 export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() isQuickAdd: boolean = false;

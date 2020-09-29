@@ -49,7 +49,8 @@ export interface searchViewKey { // as per API specification
                 name: string			// displayed entry value
             }];
         comboQuery?: string,		// combobox query, returns an array of [{“id”: Number, “name”: String}]
-    }
+    };
+    isVisible: boolean;
 }
 
 @Component({
@@ -348,7 +349,8 @@ export class TableViewComponent implements OnChanges {
                 inputType: field.format.dataType ? field.format.dataType : '',
                 newLine: field.newLine ? field.newLine : true,
                 options: options,
-                validations: []
+                validations: [],
+                isVisible: true
             };
             fieldValues.push(fieldValue);
         });

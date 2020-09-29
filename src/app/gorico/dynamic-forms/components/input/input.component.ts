@@ -40,6 +40,9 @@ export class InputComponent implements OnInit, AfterViewInit {
   readOnlyPage: boolean; // field.readonly overridden by page
   isRequired = false; // field is required or not
 
+  // For future use
+  // @HostBinding('style.margin-right') marginRight = '1%';
+
   constructor(private pubsubService: NgxPubSubService) { }
   ngOnInit(): void {
     const _this = this;

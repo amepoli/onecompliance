@@ -27,6 +27,7 @@ export interface formViewKey { // as per API specification
     autoGenerate?: boolean;
     readOnly: boolean;
     isPrimary: boolean;
+    isVisible: boolean;
     newLine: boolean;
     textarea_height?: "normal" | "extended";
     buttonIcon?: string;
