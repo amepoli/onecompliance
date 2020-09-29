@@ -56,6 +56,7 @@ export interface FieldConfig {
   readonly?: boolean;
   isVisible?: boolean;
   newLine?: boolean;
+  textarea_height?: "normal" | "extended";
   buttonIcon?: string;
   confirmButtonAction?: boolean;
   isDownloadButton?: boolean;
