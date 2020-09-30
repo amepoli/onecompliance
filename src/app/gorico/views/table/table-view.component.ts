@@ -51,6 +51,7 @@ export interface searchViewKey { // as per API specification
         comboQuery?: string,		// combobox query, returns an array of [{“id”: Number, “name”: String}]
     };
     isVisible: boolean;
+    width: string;
 }
 
 @Component({
@@ -63,6 +64,8 @@ export interface searchViewKey { // as per API specification
 
 
 export class TableViewComponent implements OnChanges {
+
+    private margins = 2; // % of margins, considering left and right
 
     // is Current Tab
     @Input() isTabMode: boolean = false;
@@ -350,11 +353,13 @@ export class TableViewComponent implements OnChanges {
                 newLine: field.newLine ? field.newLine : true,
                 options: options,
                 validations: [],
-                isVisible: true
+                isVisible: true,
+                width: null
             };
             fieldValues.push(fieldValue);
         });
 
+        _this.process_form_row(fieldValues, _this.margins);
         return fieldValues;
 
     }
@@ -483,5 +488,62 @@ export class TableViewComponent implements OnChanges {
     reload() {
         console.log('onReload: table-view');
         this.onReload.emit();
+    }
+
+
+
+
+
+    private process_form_row(input_form_row: FieldConfig[], margins: number): void {
+        let sameLineElements: FieldConfig[] = [];
+        for (const result of input_form_row) {
+            if (result.isVisible) {
+                sameLineElements.push(result);
+            }
+            else {
+                result.width = 0;
+            }
+            if (result['newLine'] === true && sameLineElements !== null && sameLineElements.length > 0) {
+                // result.width = this.processInlineElements(sameLineElements, margins);
+                this.processInlineElements(sameLineElements, margins);
+                sameLineElements = [];
+            }
+
+        }
+        this.processInlineElements(sameLineElements, margins); // handles inline elements of last line
+    }
+
+    private processInlineElements(elements: FieldConfig[], margins: number): number {
+
+
+        // Nicola's code
+        // const numElements = 1 + elements.length; // current + previouses
+        const numElements = elements.length; // current + previouses
+        let sumWidths = 0;
+        if (elements.length) { // some elements to put on the same line
+            // process the elements with defined 1/10 size first
+            const singleWidth = Math.floor(100 / numElements);
+            // for (const element of elements) {
+            //     element.width = singleWidth - margins; // considering 4% margins;
+            //     sumWidths += singleWidth;
+            // }
+            for (let i = 0; i < elements.length; i++) {
+                if (i === elements.length - 1) {
+                    elements[i].width = 100 - margins - sumWidths; // considering 4% margins;
+                }
+                else {
+                    if (elements[i].width === null) {
+                        sumWidths += singleWidth;
+                        elements[i].width = singleWidth - margins; // considering 4% margins;
+                    }
+                    else {
+                        sumWidths += elements[i].width;
+                        elements[i].width = elements[i].width - margins; // considering 4% margins;
+                    }
+                }
+
+            }
+        }
+        return (100 - margins - sumWidths); // considering 4% margins
     }
 }
