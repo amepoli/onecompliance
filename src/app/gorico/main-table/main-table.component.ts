@@ -267,6 +267,10 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         window.addEventListener('scroll', this.handleScroll.bind(this), true); //third parameter
+
+        ScrollService.RequestMainTableScrollToTopEventEmitter.subscribe(scroll => {
+            this.mainTable.nativeElement.scrollTo(0, 0);
+        });
     }
 
     ngOnDestroy() {

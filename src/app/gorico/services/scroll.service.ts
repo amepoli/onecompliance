@@ -16,6 +16,12 @@ export class ScrollService {
     public static MainTableScrollEventEmitter = new EventEmitter<ScrollInfo>();
 
     /**
+     * RequestMainTableScrollToTopEventEmitter
+     */
+    public static RequestMainTableScrollToTopEventEmitter = new EventEmitter<boolean>();
+
+
+    /**
      * Constructor
      *
      */

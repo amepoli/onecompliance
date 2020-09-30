@@ -57,22 +57,6 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
   formTableViewToolbarPosition: number = 0;
   @ViewChild('formTableViewToolbar') formTableViewToolbar: ElementRef;
 
-  ngAfterViewInit() {
-    let offset = ScrollService.cumulativeOffset(this.formTableViewToolbar.nativeElement);
-
-    this.formTableViewToolbarPosition = offset.top - 100;
-
-    // Make toolbar sticky based on main-table scroll
-    ScrollService.MainTableScrollEventEmitter.subscribe(scrollInfo => {
-      const windowScroll = scrollInfo.y;
-      if (windowScroll >= this.formTableViewToolbarPosition) {
-        this.isFormTableViewToolbarSticky = true;
-      } else {
-        this.isFormTableViewToolbarSticky = false;
-      }
-    });
-  }
-
   constructor(
     private cdRef: ChangeDetectorRef,
     private backendService: BackendService,
@@ -120,13 +104,37 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
 
   }
 
+  ngAfterViewInit() {
+    this.updateToolbarOffset();
 
+    // Make toolbar sticky based on main-table scroll
+    ScrollService.MainTableScrollEventEmitter.subscribe(scrollInfo => {
+      const windowScroll = scrollInfo.y;
+      if (this.formTableViewToolbarPosition < 1) {
+        this.updateToolbarOffset();
+      }
+      if (windowScroll >= this.formTableViewToolbarPosition) {
+        this.isFormTableViewToolbarSticky = true;
+      } else {
+        this.isFormTableViewToolbarSticky = false;
+      }
+    });
+  }
 
   fullScreen(): void {
     this.isFullScreen = !this.isFullScreen;
     this.sendEvent.emit({ eventType: 'fullScreen', queryParams: { value: this.isFullScreen } });
     // Update availalbe height 
     this.calculateFormHeight();
+
+    setTimeout(() => {
+      if (this.fullScreen) {
+        ScrollService.RequestMainTableScrollToTopEventEmitter.emit(true);
+        this.formTableViewToolbar.nativeElement.scrollIntoView();
+      }
+      this.updateToolbarOffset();
+    }, 500);
+
   }
 
 
@@ -252,5 +260,10 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
   updateMessages(messageViews: MessageView[]) {
     this.messages = this._messagesService.getFormMessages(messageViews);
     this.onMessagesUpdated.emit(messageViews);
+  }
+
+  updateToolbarOffset() {
+    let offset = ScrollService.cumulativeOffset(this.formTableViewToolbar.nativeElement);
+    this.formTableViewToolbarPosition = offset.top - 100;
   }
 }
