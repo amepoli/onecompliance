@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy, HostListener, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -18,6 +18,7 @@ import { ImportExportService } from '../services/import_export.service';
 import { ReportService } from '../services/report.service';
 import { NavigationService, HideAction } from '../services/navigation.service';
 import { MessageView } from '../services/messages.service';
+import { ScrollService } from '../services/scroll.service';
 
 @Component({
     selector: 'main-table',
@@ -25,7 +26,7 @@ import { MessageView } from '../services/messages.service';
     styleUrls: ['./main-table.component.scss']
 })
 
-export class MainTableComponent implements OnInit, OnDestroy {
+export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     loadTable = false;
 
@@ -80,6 +81,8 @@ export class MainTableComponent implements OnInit, OnDestroy {
     @ViewChild('Tabs') private Tabs: BottomTabsComponent;
     @ViewChild('formView') private formView: FormViewComponent;
     @ViewChild('tableView') private tableView: TableViewComponent;
+
+    @ViewChild('mainTable') mainTable: ElementRef;
 
 
 
@@ -262,8 +265,18 @@ export class MainTableComponent implements OnInit, OnDestroy {
         this.calculateFormHeight();
     }
 
+    ngAfterViewInit() {
+        window.addEventListener('scroll', this.handleScroll.bind(this), true); //third parameter
+    }
+
     ngOnDestroy() {
         this.subscriptions.forEach(subscription => { subscription.unsubscribe(); });
+        window.removeEventListener('scroll', this.handleScroll.bind(this), true);
+    }
+
+    handleScroll($event) {
+        const windowScroll = this.mainTable.nativeElement.scrollTop; //window.pageYOffset;
+        ScrollService.MainTableScrollEventEmitter.emit({ x: 0, y: windowScroll });
     }
 
     onEvent(event: any) {

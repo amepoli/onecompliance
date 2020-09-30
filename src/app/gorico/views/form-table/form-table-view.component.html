@@ -1,5 +1,6 @@
 <div class="full-width">
-    <div class="form-table-view-toolbar">
+    <div #formTableViewToolbar class="form-table-view-toolbar"
+        [class.form-table-view-toolbar-sticky]="isFormTableViewToolbarSticky">
         <mat-form-field style="padding-left: 8px; width: 256px;">
             <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
         </mat-form-field>
@@ -28,7 +29,9 @@
 
     </div>
 
-    <form-getter [filter]="filter" [formParams]='getterParams' (onReload)="reload()"
-        (onHideActionsUpdated)="updateHideActions($event)" (onMessagesUpdated)="updateMessages($event)">
+    <form-getter [class.form-table-view-content]="!isFormTableViewToolbarSticky"
+        [class.form-table-view-content-sticky]="isFormTableViewToolbarSticky" [filter]="filter"
+        [formParams]='getterParams' (onReload)="reload()" (onHideActionsUpdated)="updateHideActions($event)"
+        (onMessagesUpdated)="updateMessages($event)">
     </form-getter>
 </div>

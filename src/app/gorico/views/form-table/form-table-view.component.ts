@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit, HostListener, ChangeDetectorRef, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { BackendService } from '../backend/backend.service';
 import { AuthService } from 'app/gorico/login-page/auth.service';
@@ -7,6 +7,7 @@ import { formViewParams } from '../form/form-view.component';
 import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
+import { ScrollService } from 'app/gorico/services/scroll.service';
 
 
 export interface formTableViewParams {
@@ -21,7 +22,7 @@ export interface formTableViewParams {
   styleUrls: ['./form-table-view.component.scss']
 })
 
-export class FormTableViewComponent implements OnChanges, OnInit {
+export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit {
 
   // is Current Tab
   @Input() isTabMode: boolean = false;
@@ -50,6 +51,27 @@ export class FormTableViewComponent implements OnChanges, OnInit {
 
   messages: MessageElement[] = []; // Messages
   @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
+
+  // Form table view toolbar 
+  isFormTableViewToolbarSticky: boolean = false;
+  formTableViewToolbarPosition: number = 0;
+  @ViewChild('formTableViewToolbar') formTableViewToolbar: ElementRef;
+
+  ngAfterViewInit() {
+    let offset = ScrollService.cumulativeOffset(this.formTableViewToolbar.nativeElement);
+
+    this.formTableViewToolbarPosition = offset.top - 100;
+
+    // Make toolbar sticky based on main-table scroll
+    ScrollService.MainTableScrollEventEmitter.subscribe(scrollInfo => {
+      const windowScroll = scrollInfo.y;
+      if (windowScroll >= this.formTableViewToolbarPosition) {
+        this.isFormTableViewToolbarSticky = true;
+      } else {
+        this.isFormTableViewToolbarSticky = false;
+      }
+    });
+  }
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -97,6 +119,8 @@ export class FormTableViewComponent implements OnChanges, OnInit {
     }
 
   }
+
+
 
   fullScreen(): void {
     this.isFullScreen = !this.isFullScreen;
