@@ -165,9 +165,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             else {
                 this.addingNew = false;
             }
-        } else {
-            this.clearForm();
         }
+        // else {
+        //     this.clearForm();
+        // }
     }
 
     ngAfterViewInit() {
@@ -859,9 +860,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     if (element.style == null) {
                                         element.style = {};
                                     }
-                                    // we can get multiple rows from backend, each one providing a different attribute, find the right one
-                                    const attrKey = keyListener + '_' + event.styleAttribute; // as per specs the returned key is of type '<key>_<styleAttribute>'
-                                    element.style[event.styleAttribute] = result[current_index][attrKey];
+
+                                    if (result[current_index]) {
+                                        // we can get multiple rows from backend, each one providing a different attribute, find the right one
+                                        const attrKey = keyListener + '_' + event.styleAttribute; // as per specs the returned key is of type '<key>_<styleAttribute>'
+                                        if (result[current_index][attrKey]) {
+                                            element.style[event.styleAttribute] = result[current_index][attrKey];
+                                        }
+                                        else {
+                                            console.log(`result does not contain attrKey: ${attrKey}`);
+                                        }
+                                    }
                                 }
                             }
                             if (event.outputEventWhenComplete != null) {

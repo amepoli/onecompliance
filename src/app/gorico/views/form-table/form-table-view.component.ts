@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit, HostListener, ChangeDetectorRef, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
 import { BackendService } from '../backend/backend.service';
 import { AuthService } from 'app/gorico/login-page/auth.service';
@@ -7,6 +7,7 @@ import { formViewParams } from '../form/form-view.component';
 import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
+import { ScrollService } from 'app/gorico/services/scroll.service';
 
 
 export interface formTableViewParams {
@@ -21,7 +22,7 @@ export interface formTableViewParams {
   styleUrls: ['./form-table-view.component.scss']
 })
 
-export class FormTableViewComponent implements OnChanges, OnInit {
+export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit {
 
   // is Current Tab
   @Input() isTabMode: boolean = false;
@@ -50,6 +51,11 @@ export class FormTableViewComponent implements OnChanges, OnInit {
 
   messages: MessageElement[] = []; // Messages
   @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
+
+  // Form table view toolbar 
+  isFormTableViewToolbarSticky: boolean = false;
+  formTableViewToolbarPosition: number = 0;
+  @ViewChild('formTableViewToolbar') formTableViewToolbar: ElementRef;
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -98,11 +104,37 @@ export class FormTableViewComponent implements OnChanges, OnInit {
 
   }
 
+  ngAfterViewInit() {
+    this.updateToolbarOffset();
+
+    // Make toolbar sticky based on main-table scroll
+    ScrollService.MainTableScrollEventEmitter.subscribe(scrollInfo => {
+      const windowScroll = scrollInfo.y;
+      if (this.formTableViewToolbarPosition < 1) {
+        this.updateToolbarOffset();
+      }
+      if (windowScroll >= this.formTableViewToolbarPosition) {
+        this.isFormTableViewToolbarSticky = true;
+      } else {
+        this.isFormTableViewToolbarSticky = false;
+      }
+    });
+  }
+
   fullScreen(): void {
     this.isFullScreen = !this.isFullScreen;
     this.sendEvent.emit({ eventType: 'fullScreen', queryParams: { value: this.isFullScreen } });
     // Update availalbe height 
     this.calculateFormHeight();
+
+    setTimeout(() => {
+      if (this.fullScreen) {
+        ScrollService.RequestMainTableScrollToTopEventEmitter.emit(true);
+        this.formTableViewToolbar.nativeElement.scrollIntoView();
+      }
+      this.updateToolbarOffset();
+    }, 500);
+
   }
 
 
@@ -228,5 +260,10 @@ export class FormTableViewComponent implements OnChanges, OnInit {
   updateMessages(messageViews: MessageView[]) {
     this.messages = this._messagesService.getFormMessages(messageViews);
     this.onMessagesUpdated.emit(messageViews);
+  }
+
+  updateToolbarOffset() {
+    let offset = ScrollService.cumulativeOffset(this.formTableViewToolbar.nativeElement);
+    this.formTableViewToolbarPosition = offset.top - 100;
   }
 }
