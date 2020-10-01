@@ -10,7 +10,7 @@
     },
     {
       "operation": "selectForm",
-      "queryString": "select distinct ss.codice_azienda, ss.id_somministrazione, snd.id_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi snd left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr join entrasp.domande_sezioni ds on mvr.codice_azienda=ds.codice_azienda and mvr.id_modello_test=ds.id_modello_test and mvr.id_modello_test_vr=ds.id_modello_test_vr where snd.codice_azienda=$codice_azienda$;",
+      "queryString": "select distinct ss.codice_azienda, ss.id_somministrazione, snd.id_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi snd left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr join entrasp.domande_sezioni ds on mvr.codice_azienda=ds.codice_azienda and mvr.id_modello_test=ds.id_modello_test and mvr.id_modello_test_vr=ds.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione=$id_somministrazione$  and ds.id_sezione=$id_sezione$;",
       "type": "main"
     }
   ],
@@ -35,12 +35,27 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
       "key": "id_sezione",
       "label": "ID",
       "newLine": true,
+      "sameOrigin": false,
       "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "descr_sezione",
+      "label": "Sezione",
+      "sameOrigin": false,
+      "newLine": false,
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -79,6 +94,7 @@
       "key": "id_sondaggio",
       "label": "id_sondaggio",
       "newLine": true,
+      "sameOrigin": false,
       "readOnly": true
     },
     {
@@ -91,36 +107,9 @@
       "isPrimary": true,
       "key": "id_somministrazione",
       "label": "id_somministrazione",
+      "sameOrigin": false,
       "newLine": true,
       "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "ordinamento",
-      "label": "N.",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_sezione",
-      "label": "Sezione",
-      "newLine": false,
-      "readOnly": false,
-      "size": 7.5
     }
   ],
   "table_keys": [
@@ -201,7 +190,7 @@
         "dataType": "text"
       },
       "isHidden": false,
-      "isPrimary": false,
+      "isPrimary": true,
       "key": "descr_sezione",
       "label": "Sezione"
     }
