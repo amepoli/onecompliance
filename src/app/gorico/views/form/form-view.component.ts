@@ -381,7 +381,7 @@ export class FormViewComponent implements OnChanges, OnInit {
         this.onHideActionsUpdated.emit(hideActions);
     }
 
-    updateMessages(messageViews: MessageView[], viewType: string) {
+    updateMessages(messageViews: MessageView[]) {
         this.messages = this._messagesService.getFormMessages(messageViews);
         this.onMessagesUpdated.emit(messageViews);
     }
