@@ -1,0 +1,168 @@
+{
+    "title": "DynamoDB Profiles Entries",
+    "type": "object",
+    "required": [
+        "name",
+        "menu"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string",
+            "description": "M: DynamoDB primary key (entry)"
+        },
+        "menu": {
+            "type": "object",
+            "description": "M: Show/Hide left menu entries",
+            "additionalProperties": false,
+            "required": [
+                "allow",
+                "deny"
+            ],
+            "properties": {
+                "allow": {
+                    "type": "array",
+                    "description": "M: set of menu voices to show, '*' means all (except those in 'deny')",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "deny": {
+                    "type": "array",
+                    "description": "M: set of menu voices to hide, '*' means all. Has higher priority than 'allow'",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "tables": {
+            "type":"object",
+            "description": "?: Set of table related entries",
+            "additionalProperties": false,
+            "required": [
+                "allow",
+                "deny"
+            ],
+            "properties": {
+                "allow": {
+                    "type": "array",
+                    "description": "M: set of authorized tables, '*' means all (except those in 'deny')",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "deny": {
+                    "type": "array",
+                    "description": "M: set of non authorized tables, '*' means all. Has higher priority than 'allow'",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "form_keys": {
+                    "type": "array",
+                    "description": "?: set of properties of form views",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "entry"
+                        ],
+                        "properties": {
+                            "entry": {
+                                "type": "string",
+                                "description": "M: name of the affected table"
+                            },
+                            "hide": {
+                                "type": "array",
+                                "description": "?: set of hidden fields for the table",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "readOnly": {
+                                "type": "array",
+                                "description": "?: set of read only fields for the table",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "table_keys": {
+                    "type": "array",
+                    "description": "?: set of properties of table views",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "entry"
+                        ],
+                        "properties": {
+                            "entry": {
+                                "type": "string",
+                                "description": "M: name of the affected table"
+                            },
+                            "hide": {
+                                "type": "array",
+                                "description": "?: set of hidden fields for the table",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "readOnly": {
+                                "type": "array",
+                                "description": "?: set of read only fields for the table",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "readOnly": {
+                    "type": "array",
+                    "description": "?: set of tables readonly for the user",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "queryCond": {
+                    "type": "array",
+                    "description": "?: set of WHERE conditions to add to the queries on specific tables",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "entry",
+                            "viewType",
+                            "queryString"
+                        ],
+                        "properties": {
+                            "entry": {
+                                "type": "string",
+                                "description": "M: table name"
+                            },
+                            "viewType": {
+                                "type": "string",
+                                "description": "M: Type of view (form or table view)",
+                                "enum": [
+                                    "form",
+                                    "table"
+                                ]
+                            },
+                            "queryString": {
+                                "type": "string",
+                                "description": "M: string to add to queries' WHERE conditions, admits $/€ contoured parameters"
+                            }
+                        }    
+                    }
+                }
+            }
+        }
+    }
+}
