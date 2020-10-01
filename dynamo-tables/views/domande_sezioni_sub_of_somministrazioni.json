@@ -5,16 +5,16 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select distinct ss.codice_azienda, ss.id_somministrazione, snd.id_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione  from entrasp.sondaggi snd left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio join entrasp.modelli_test_vr mvr on ss.codice_azienda=mvr.codice_azienda and ss.id_modello_test=mvr.id_modello_test and ss.id_modello_test_vr=mvr.id_modello_test_vr join entrasp.domande_sezioni ds on mvr.codice_azienda=ds.codice_azienda and mvr.id_modello_test=ds.id_modello_test and mvr.id_modello_test_vr=ds.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$;",
+      "queryString": "select distinct ss.codice_azienda, ss.id_somministrazione, snd.id_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi snd left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr join entrasp.domande_sezioni ds on mvr.codice_azienda=ds.codice_azienda and mvr.id_modello_test=ds.id_modello_test and mvr.id_modello_test_vr=ds.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione=$id_somministrazione$ order by ds.ordinamento asc;",
       "type": "main"
     },
     {
       "operation": "selectForm",
-      "queryString": "select distinct ss.codice_azienda, ss.id_somministrazione, snd.id_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione  from entrasp.sondaggi snd left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio join entrasp.modelli_test_vr mvr on ss.codice_azienda=mvr.codice_azienda and ss.id_modello_test=mvr.id_modello_test and ss.id_modello_test_vr=mvr.id_modello_test_vr join entrasp.domande_sezioni ds on mvr.codice_azienda=ds.codice_azienda and mvr.id_modello_test=ds.id_modello_test and mvr.id_modello_test_vr=ds.id_modello_test_vr where snd.codice_azienda=$codice_azienda$;",
+      "queryString": "select distinct ss.codice_azienda, ss.id_somministrazione, snd.id_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi snd left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr join entrasp.domande_sezioni ds on mvr.codice_azienda=ds.codice_azienda and mvr.id_modello_test=ds.id_modello_test and mvr.id_modello_test_vr=ds.id_modello_test_vr where snd.codice_azienda=$codice_azienda$;",
       "type": "main"
     }
   ],
-  "entryKey": "domande_sezioni_sub_of_sondaggi",
+  "entryKey": "domande_sezioni_sub_of_somministrazioni",
   "form_keys": [
     {
       "autoGenerate": false,
@@ -106,6 +106,19 @@
       "isPrimary": true,
       "key": "id_sondaggio",
       "label": "id_sondaggio",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_somministrazione",
+      "label": "id_somministrazione",
       "newLine": true,
       "readOnly": true
     },
@@ -238,6 +251,15 @@
       "format": {
         "dataType": "number"
       },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_somministrazione",
+      "label": "id_somministrazione"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
       "isHidden": false,
       "isPrimary": false,
       "key": "ordinamento",
@@ -258,7 +280,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "descrizione",
+      "key": "descr_sezione",
       "label": "Sezione"
     }
   ],
