@@ -174,8 +174,24 @@ function getComboFuncts(comboQueries, entry_keys, table_keys, keyTypes) {
     }
 }
 
+function addQueryCond(queryString, queryCond) {
+    let result = queryString;
+
+    if (result == null) {
+        return null;
+    }
+
+    if (queryCond != null) {
+        // remove ';'
+        result = result.split(';')[0];
+        result = result + queryCond + ';';
+    }
+
+    return result;
+}
+
 // build the Postgresql query from parameters
-function getTableQuery(entry_params, table_keys, isForm, search_keys) {
+function getTableQuery(entry_params, table_keys, isForm, search_keys, additionalQueryConds) {
 
     let comboQueries = [];
 
@@ -185,12 +201,21 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
 
     let orderBy;
 
+    let additionalQueryCond;
+
     let entry_keys;
+
     if (isForm) {
         entry_keys = entry_params.form_keys;
+        additionalQueryCond = additionalQueryConds.find(cond => {cond.viewType === 'form'});
     } else {
         entry_keys = entry_params.table_keys;
+        additionalQueryCond = additionalQueryConds.find(cond => {cond.viewType === 'table'});
     }
+
+    if (additionalQueryCond != null) {
+        additionalQueryCond = " AND " + additionalQueryCond.queryString + ";";
+    } 
 
     orderBy = entry_params.orderBy;
 
@@ -209,13 +234,13 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
         entry_params.predefinedQueries.forEach(query => {
             if ((isForm && query.operation === "selectForm") || (!isForm && query.operation === "selectTable")) {
                 if (query.type === "main" && search_keys == null) {
-                    mainQuery = replaceKeys(query.queryString, table_keys, keyTypes); // only one main query allowed
+                    mainQuery = replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes); // only one main query allowed
                 } else if (query.type === "search" && search_keys != null) {
-                    mainQuery = replaceKeys(query.queryString, table_keys, keyTypes); // only one main query allowed
+                    mainQuery = replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes); // only one main query allowed
                 } else if (query.type === "preProcessing") {
-                    preProcessQueries.push(replaceKeys(query.queryString, table_keys, keyTypes));
+                    preProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
                 } else if (query.type === "postProcessing") {
-                    postProcessQueries.push(replaceKeys(query.queryString, table_keys, keyTypes));
+                    postProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
                 }
             }
         });
@@ -323,6 +348,8 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys) {
     }
 
     queryString = queryString + ';';
+
+    queryString = replaceKeys(addQueryCond(queryString, additionalQueryCond), table_keys, keyTypes);
 
     return { mainQuery: queryString, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
 
@@ -899,7 +926,7 @@ async function getProfile(userid, company) {
     return profile;
 }
 
-async function checkEntry(entry_name, profile) {
+async function getProfileData(profile) {
 
     var profileParams = {
         TableName: 'PROFILES_NAME',
@@ -907,12 +934,15 @@ async function checkEntry(entry_name, profile) {
             name: profile
         }
     };
-    let allowed = false;
-    let permissions = await dynamo.get(profileParams).promise();
-    permissions = permissions.Item;
-    console.log('Permissions: ', permissions, ' Entry: ', entry_name);
-    if (permissions != null && permissions.tables != null) {
-        permissions = permissions.tables;
+    let data = await dynamo.get(profileParams).promise();
+    return data.Item;
+}
+
+
+function isAuthorized(entry_name, profileData) {
+
+    if (profileData != null && profileData.tables != null) {
+        let permissions = profileData.tables;
         if (permissions.allow.indexOf(entry_name) !== -1) { // allowed 
             allowed = true;
         } else if (permissions.allow[0] === '*') { // check denied 
@@ -924,45 +954,16 @@ async function checkEntry(entry_name, profile) {
     return allowed;
 }
 
-async function checkReadOnly(entry_name, profile) {
+function isReadOnly(entry_name, profileData) {
 
-    var profileParams = {
-        TableName: 'PROFILES_NAME',
-        Key: {
-            name: profile
-        }
-    };
     let readonly = false;
-    let permissions = await dynamo.get(profileParams).promise();
-    permissions = permissions.Item;
-
-    if (permissions != null && permissions.tables != null && permissions.tables.readOnly != null) {
-        permissions = permissions.tables.readOnly;
+    if (profileData != null && profileData.tables != null && profileData.tables.readOnly != null) {
+        let permissions = profileData.tables.readOnly;
         if (permissions.indexOf(entry_name) !== -1) { // readOnly 
             readonly = true;
         }
     }
     return readonly;
-}
-
-async function isAuthorized(entry_name, company, userid) {
-
-    if (company == null) {
-        console.log('Error: No company provided!');
-        return false;
-    }
-
-    // we have a company, now check if user has authorization for the table
-    const profile = await getProfile(userid, company);
-    const response = await checkEntry(entry_name, profile);
-    return response;
-
-}
-
-async function isReadOnly(entry_name, company, userid) {
-    const profile = await getProfile(userid, company);
-    const response = await checkReadOnly(entry_name, profile);
-    return response;
 }
 
 function data2xls(data, title, viewKeys) {
@@ -1139,6 +1140,18 @@ async function setGlobalVariables(company, client, userid) {
 
 }
 
+function getAdditionalQueryCond(entry_name, profileData) {
+
+    var queryConds = [];
+
+    if (profileData != null && profileData.tables != null && profileData.tables.queryCond != null) {
+        let queryCond = profileData.tables.queryCond;
+        queryConds = queryCond.filter(cond => cond.entry === entry_name);
+    }
+
+    return queryConds;
+}
+
 // main function starts here
 
 exports.handler = async (event, context) => {
@@ -1184,7 +1197,11 @@ exports.handler = async (event, context) => {
 
     var company = queryParams['company'];
 
-    var authorized = await isAuthorized(queryParams.entry_name, company, userid);
+    const profile = await getProfile(userid, company);
+
+    const profileData = await getProfileData(profile);
+
+    var authorized = isAuthorized(queryParams.entry_name, profileData);
 
     if (!authorized) {
         console.log(method, ' request for ', queryParams.entry_name, ' not authorized!');
@@ -1198,7 +1215,7 @@ exports.handler = async (event, context) => {
         console.log(method, ' request for ', queryParams.entry_name, ' authorized!');
     }
 
-    var readOnly = await isReadOnly(queryParams.entry_name, company, userid);
+    var readOnly = isReadOnly(queryParams.entry_name, profileData);
 
     // avoid update, insert or delete if read only
     if (readOnly && (method === 'DELETE' || (method === 'POST' && !isEventUpdate))) {
@@ -1221,6 +1238,8 @@ exports.handler = async (event, context) => {
 
     var attributes = {};
 
+    var additionalQueryCond = [];
+
     try {
 
 
@@ -1237,17 +1256,21 @@ exports.handler = async (event, context) => {
 
         await setGlobalVariables(company, client, userid);
 
+        // retrieve additional query conditions from profile (if any)
+        
+        additionalQueryCond = getAdditionalQueryCond(queryParams.entry_name, profileData);
+
         if (method === 'GET') {
             if (dashboardIndex != null) {
                 queryString = getDashboardQuery(entry_params, table_keys, dashboardIndex);
             } else if (isSearchRequest) {
-                queryString = getTableQuery(entry_params, table_keys, false, search_keys);
+                queryString = getTableQuery(entry_params, table_keys, false, search_keys, additionalQueryCond);
             } else if (isNewRecord) {
                 queryString = getNewQuery(entry_params, table_keys);
             } else if (isFormRecord) {
-                queryString = getTableQuery(entry_params, table_keys, true, null);
+                queryString = getTableQuery(entry_params, table_keys, true, null, additionalQueryCond);
             } else { // table query
-                queryString = getTableQuery(entry_params, table_keys, false, null);
+                queryString = getTableQuery(entry_params, table_keys, false, null, additionalQueryCond);
                 // add the search combos if any
                 getSearchCombos(entry_params, table_keys, false, queryString.comboQueries);
             }
