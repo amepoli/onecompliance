@@ -13,14 +13,14 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,entrasp.cpl_giudizi_verifiche_descrizione('DEMO', cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione('DEMO', cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione('DEMO', cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione('DEMO', cr.id_giudizio_follow_up) as giudizio_follow_up from entrasp.sondaggi snd left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio where snd.codice_azienda = 'DEMO' and snd.id_sondaggio = 358"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up from entrasp.sondaggi snd left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio ,entrasp.grc_punteggi_giudizi_finali_per_sondaggio(snd.codice_azienda, snd.id_sondaggio) funct where snd.codice_azienda = 'DEMO' and snd.id_sondaggio = 358"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["DEMO"]]></defaultValueExpression>
@@ -237,6 +237,18 @@
 	<field name="cg_descr" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="cg_descr"/>
 		<property name="com.jaspersoft.studio.field.label" value="cg_descr"/>
+	</field>
+	<field name="giudizio_trans" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="giudizio_trans"/>
+		<property name="com.jaspersoft.studio.field.label" value="giudizio_trans"/>
+	</field>
+	<field name="stato_transcodificato" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stato_transcodificato"/>
+		<property name="com.jaspersoft.studio.field.label" value="stato_transcodificato"/>
+	</field>
+	<field name="percentuale" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="percentuale"/>
+		<property name="com.jaspersoft.studio.field.label" value="percentuale"/>
 	</field>
 	<field name="giudizio_complessivo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="giudizio_complessivo"/>
@@ -541,7 +553,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{stato}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{stato_transcodificato}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" mode="Opaque" x="0" y="230" width="110" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="9bd32867-b70a-490d-a335-909f8c5b6379">
@@ -572,6 +584,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{percentuale}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" mode="Opaque" x="233" y="230" width="110" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="82453b7d-8373-4810-a392-fab0f2d34b64">
@@ -591,7 +604,7 @@
 				<text><![CDATA[Risultato]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Opaque" x="445" y="250" width="110" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="15a421f4-5ef3-4346-893d-7685d364f645">
+				<reportElement positionType="Float" mode="Opaque" x="445" y="250" width="110" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="15a421f4-5ef3-4346-893d-7685d364f645">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -602,8 +615,9 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true" isItalic="true"/>
+					<font isBold="false" isItalic="false"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{giudizio_trans}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement positionType="Float" mode="Opaque" x="445" y="230" width="110" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="fd14ddaf-4aae-4d21-b136-3cbb7dcb200d">
@@ -704,6 +718,7 @@
 				<reportElement positionType="Float" x="1" y="498" width="555" height="20" uuid="085d9cae-b8dc-4d03-a6c2-0fb82d2e5bcd">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -711,6 +726,9 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="5"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{follow_up}]]></textFieldExpression>
 			</textField>
 			<staticText>
