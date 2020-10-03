@@ -1,5 +1,7 @@
 {
     "entryKey": "domande_risposte",
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.domande",
     "predefinedQueries": [
         {
             "operation": "selectForm",
@@ -8,32 +10,30 @@
         },
         {
             "operation": "selectForm",
-            "queryString": "select id_risposta, risposta, id_risposta_prev as id_risposta_prev_radio, note as note_rb, note as note_mc  from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$ limit 1",
+            "queryString": "select codice_azienda, id_somministrazione, id_sondaggio, id_modello_test, id_modello_test_vr, id_risposta, risposta, id_risposta_prev as id_risposta_prev_radio, note as note_rb, note as note_mc  from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$ limit 1",
             "type": "postProcessing"
         },
         {
             "operation": "selectForm",
-            "queryString": "select id_sezione from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ limit 1",
+            "queryString": "select punteggio, id_sezione from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ limit 1",
             "type": "postProcessing"
         },
         {
             "operation": "insert",
-            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, 10, 0, coalesce($note_rb$, $note_mc$, ''), $id_modello_test_vr$, 0, '€risposta_multipla€')",
+            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, 0, coalesce($note_rb$, $note_mc$, ''), $id_modello_test_vr$, 0, '€risposta_multipla€')",
             "type": "main"
         },
         {
             "operation": "update",
-            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, 10, 0, coalesce($note_rb$, $note_mc$, ''),  $id_modello_test_vr$, 0, '€risposta_multipla€')",
+            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, 0, coalesce($note_rb$, $note_mc$, ''),  $id_modello_test_vr$, 0, '€risposta_multipla€')",
             "type": "main"
         },
         {
             "operation": "delete",
-            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, 10, 0, coalesce($note_rb$, $note_mc$, ''), $id_modello_test_vr$, 0, '€risposta_multipla€')",
+            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, 0, coalesce($note_rb$, $note_mc$, ''), $id_modello_test_vr$, 0, '€risposta_multipla€')",
             "type": "main"
         }
     ],
-    "$schema": "../views.schema.json",
-    "origin": "entrasp.domande",
     "businessObjectName": "domandeRisposte",
     "orderBy": {
         "key": "ordinamento",
@@ -101,10 +101,33 @@
             }
         },
         {
-            "isHidden": true,
+            "isHidden": false,
+            "readOnly": true,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "label": "id_modello_test",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": false,
+            "readOnly": true,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "label": "id_modello_test_vr",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": false,
             "readOnly": true,
             "isPrimary": false,
             "sameOrigin": false,
+            "newLine": true,
             "key": "id_sondaggio",
             "label": "id_sondaggio",
             "format": {
@@ -113,24 +136,25 @@
             }
         },
         {
-            "isHidden": true,
+            "isHidden": false,
             "readOnly": true,
             "isPrimary": false,
             "sameOrigin": false,
-            "key": "id_sezione",
-            "label": "id_sezione", 
+            "key": "id_somministrazione",
+            "label": "id_somministrazione",
             "format": {
                 "viewType": "input",
                 "dataType": "number"
             }
         },
         {
-            "isHidden": true,
+            "isHidden": false,
             "readOnly": true,
             "isPrimary": false,
             "sameOrigin": false,
-            "key": "id_somministrazione",
-            "label": "id_somministrazione",
+            "newLine": true,
+            "key": "id_sezione",
+            "label": "id_sezione",
             "format": {
                 "viewType": "input",
                 "dataType": "number"
@@ -172,28 +196,6 @@
             }
         },
         {
-            "isHidden": true,
-            "readOnly": true,
-            "isPrimary": true,
-            "key": "id_modello_test",
-            "label": "id_modello_test",
-            "format": {
-                "viewType": "input",
-                "dataType": "number"
-            }
-        },
-        {
-            "isHidden": true,
-            "readOnly": true,
-            "isPrimary": true,
-            "key": "id_modello_test_vr",
-            "label": "id_modello_test_vr",
-            "format": {
-                "viewType": "input",
-                "dataType": "number"
-            }
-        },
-        {
             "isHidden": false,
             "readOnly": true,
             "isPrimary": false,
@@ -223,6 +225,7 @@
             "readOnly": true,
             "isPrimary": false,
             "key": "punteggio",
+            "sameOrigin": false,
             "label": "Punteggio",
             "format": {
                 "viewType": "input",
@@ -395,5 +398,4 @@
             }
         }
     ]
-
 }

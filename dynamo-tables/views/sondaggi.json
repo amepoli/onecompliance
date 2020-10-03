@@ -1,6 +1,7 @@
 {
     "$schema": "../views.schema.json",
     "businessObjectName": "sondaggi",
+    "origin": "entrasp.sondaggi",
     "predefinedQueries": [
         {
             "operation": "update",
@@ -44,7 +45,7 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": false,
             "key": "id_somministrazione",
             "label": "Id Somministrazione",
@@ -440,8 +441,18 @@
                 "viewType": "input"
             },
             "label": "Id Modello di Test",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "id_modello_test=$id_modello_test$"
+        },
+        {
+            "fieldName": "id_sondaggio",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "id Sondaggio",
+            "newLine": false,
+            "queryCond": "id_sondaggio=$id_sondaggio$"
         },
         {
             "fieldName": "data_comp",
@@ -454,16 +465,6 @@
             "queryCond": "data_comp='€data_comp€'"
         },
         {
-            "fieldName": "id_sondaggio",
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "label": "id Sondaggio",
-            "newLine": true,
-            "queryCond": "id_sondaggio=$id_sondaggio$"
-        },
-        {
             "fieldName": "id_centro_gest",
             "format": {
                 "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
@@ -471,7 +472,7 @@
                 "viewType": "combobox"
             },
             "label": "Centro Gestionale",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "id_centro_gest=$id_centro_gest$"
         },
         {
@@ -486,7 +487,6 @@
             "queryCond": "stato='€stato€'"
         }
     ],
-    "origin": "entrasp.sondaggi",
     "subTables": [
         {
             "entryKey": "domande_risposte",
@@ -545,15 +545,15 @@
                 {
                     "parent": "codice_azienda",
                     "son": "codice_azienda"
-                  },
-                  {
+                },
+                {
                     "parent": "id_sondaggio",
                     "son": "id_sondaggio"
-                  },
-                  {
+                },
+                {
                     "parent": "id_somministrazione",
                     "son": "id_somministrazione"
-                  }
+                }
             ],
             "label": "Domande e Risposte - Sezioni",
             "type": "table"
@@ -724,21 +724,21 @@
             "key": "stato",
             "label": "Stato",
             "style": [
-              {
-                "value": "Chiuso",
-                "font_color": "green",
-                "font_weight": "500"
-              },
-              {
-                "value": "Provvisorio",
-                "font_color": "#D97F02",
-                "font_weight": "500"
-              },
-              {
-                "value": "Confermato",
-                "font_color": "red",
-                "font_weight": "500"
-              }
+                {
+                    "value": "Chiuso",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Provvisorio",
+                    "font_color": "#D97F02",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Confermato",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
             ]
         }
     ],
