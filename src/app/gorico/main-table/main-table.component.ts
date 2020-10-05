@@ -127,7 +127,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // Report related subscriptions
         _this._reportService.reloadRequested.subscribe((entryName) => {
             if (entryName === _this.tableName) {
-                _this._reportService.getReports(_this.tableName, _this.authService.getCurrentCompany(), _this.currentTableKeys);
+                _this._reportService.getReports(_this.tableName, _this.authService.getCurrentCompany(), _this.currentTableKeys, (_this.tableType === 'form'));
             }
         });
 
