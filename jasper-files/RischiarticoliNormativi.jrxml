@@ -13,7 +13,7 @@
 	<property name="ireport.zoom" value="1.3310000000000004"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -26,15 +26,41 @@
 	<parameter name="codice_azienda" class="java.lang.String"/>
 	<parameter name="codice_rischio" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select entrasp.articoli_normativi_descrizione(ran.codice_articolo_normativo, ran.id_testo_normativo),an.rubrica,ran.codice_articolo_normativo,ran.id_testo_normativo,ran.codice_rischio,ran.codice_azienda ,entrasp.testi_normativi_rif_descr(ran.id_testo_normativo) from entrasp.rischi_articoli_normativi ran, entrasp.articoli_normativi an where codice_azienda=$P{codice_azienda} and codice_rischio=$P{codice_rischio} and ran.codice_articolo_normativo = an.codice_articolo_normativo and ran.id_testo_normativo=an.id_testo_normativo]]>
+		<![CDATA[select entrasp.articoli_normativi_descrizione(ran.codice_articolo_normativo, ran.id_testo_normativo),an.rubrica,ran.codice_articolo_normativo,ran.id_testo_normativo,ran.codice_rischio,ran.codice_azienda ,entrasp.testi_normativi_rif_descr2(ran.id_testo_normativo) from entrasp.rischi_articoli_normativi ran, entrasp.articoli_normativi an where codice_azienda=$P{codice_azienda} and codice_rischio=$P{codice_rischio} and ran.codice_articolo_normativo = an.codice_articolo_normativo and ran.id_testo_normativo=an.id_testo_normativo]]>
 	</queryString>
-	<field name="articoli_normativi_descrizione" class="java.lang.String"/>
-	<field name="rubrica" class="java.lang.String"/>
-	<field name="codice_articolo_normativo" class="java.lang.String"/>
-	<field name="id_testo_normativo" class="java.math.BigDecimal"/>
-	<field name="codice_rischio" class="java.lang.String"/>
-	<field name="codice_azienda" class="java.lang.String"/>
-	<field name="testi_normativi_rif_descr" class="java.lang.String"/>
+	<field name="articoli_normativi_descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="articoli_normativi_descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="articoli_normativi_descrizione"/>
+	</field>
+	<field name="rubrica" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rubrica"/>
+		<property name="com.jaspersoft.studio.field.label" value="rubrica"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articoli_normativi"/>
+	</field>
+	<field name="codice_articolo_normativo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_articolo_normativo"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_articolo_normativo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi_articoli_normativi"/>
+	</field>
+	<field name="id_testo_normativo" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_testo_normativo"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_testo_normativo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi_articoli_normativi"/>
+	</field>
+	<field name="codice_rischio" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_rischio"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_rischio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi_articoli_normativi"/>
+	</field>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi_articoli_normativi"/>
+	</field>
+	<field name="testi_normativi_rif_descr2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="testi_normativi_rif_descr2"/>
+		<property name="com.jaspersoft.studio.field.label" value="testi_normativi_rif_descr2"/>
+	</field>
 	<title>
 		<band height="25">
 			<staticText>
@@ -119,7 +145,7 @@
 				<textElement verticalAlignment="Middle">
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{testi_normativi_rif_descr}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{testi_normativi_rif_descr2}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
