@@ -206,18 +206,19 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
     let entry_keys;
 
     //console.log("Additional QUERY conds: ", additionalQueryConds);
+    if (additionalQueryConds != null) {
+        if (isForm && additionalQueryConds != null) {
+            entry_keys = entry_params.form_keys;
+            additionalQueryCond = additionalQueryConds.find(cond => cond.viewType === 'form');
+        } else {
+            entry_keys = entry_params.table_keys;
+            additionalQueryCond = additionalQueryConds.find(cond => cond.viewType === 'table');
+        }
 
-    if (isForm) {
-        entry_keys = entry_params.form_keys;
-        additionalQueryCond = additionalQueryConds.find(cond => cond.viewType === 'form');
-    } else {
-        entry_keys = entry_params.table_keys;
-        additionalQueryCond = additionalQueryConds.find(cond => cond.viewType === 'table');
+        if (additionalQueryCond != null) {
+            additionalQueryCond = " AND " + additionalQueryCond.queryString + ";";
+        }
     }
-
-    if (additionalQueryCond != null) {
-        additionalQueryCond = " AND " + additionalQueryCond.queryString + ";";
-    } 
     
     orderBy = entry_params.orderBy;
 
@@ -1365,7 +1366,7 @@ exports.handler = async (event, context) => {
                 });
                 if (!newRecord) {
                     // have to check if the record exists (update) or is new (insert), so try to recover it
-                    queryString = getTableQuery(entry_params, primaryKeys, true, null);
+                    queryString = getTableQuery(entry_params, primaryKeys, true, null, additionalQueryCond);
                     queryData = await processPreMainPost(queryString, client, true);
                     // perform insert or update depending on previous query
                     newRecord = queryData.length ? false : true;
