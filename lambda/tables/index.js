@@ -205,18 +205,20 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     let entry_keys;
 
+    //console.log("Additional QUERY conds: ", additionalQueryConds);
+
     if (isForm) {
         entry_keys = entry_params.form_keys;
-        additionalQueryCond = additionalQueryConds.find(cond => {cond.viewType === 'form'});
+        additionalQueryCond = additionalQueryConds.find(cond => cond.viewType === 'form');
     } else {
         entry_keys = entry_params.table_keys;
-        additionalQueryCond = additionalQueryConds.find(cond => {cond.viewType === 'table'});
+        additionalQueryCond = additionalQueryConds.find(cond => cond.viewType === 'table');
     }
 
     if (additionalQueryCond != null) {
         additionalQueryCond = " AND " + additionalQueryCond.queryString + ";";
     } 
-
+    
     orderBy = entry_params.orderBy;
 
     if (!entry_keys) return '';
