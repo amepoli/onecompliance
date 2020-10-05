@@ -350,7 +350,7 @@ export class TableViewComponent implements OnChanges {
                 value: null,
                 type: field.format.viewType,
                 inputType: field.format.dataType ? field.format.dataType : '',
-                newLine: field.newLine ? field.newLine : true,
+                newLine: field.newLine !== null ? field.newLine : true,
                 options: options,
                 validations: [],
                 isVisible: true,
