@@ -129,7 +129,7 @@
             "isPrimary": true,
             "key": "id_modello_test",
             "label": "ID",
-            "newLine": true,
+            "newLine": false,
             "size": 2,
             "readOnly": true,
             "inputEvents": [
@@ -141,6 +141,50 @@
                     "queryFunct": "select idnew as id_modello_test, cod as codice from entrasp.grc_accoda_singolo_modello_test($codice_azienda$, $codice_azienda$, $id_modello_test$, $id_modello_test_vr$);"
                 }
             ]
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_esterno",
+            "label": "Codice esterno",
+            "queryFunct": "SELECT codice_esterno from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "allinea_codici_esterni",
+            "label": "Allineamento esterno",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "allinea_codici_esterni",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "allinea_codici_esterni",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.modelli_test_new_version_same_codice_esterno($codice_azienda$,$id_modello_test$, $id_modello_test_vr$, $codice_esterno$);"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -177,7 +221,7 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "size": 1.5,
+            "size": 1.75,
             "sameOrigin": false
         },
         {
@@ -192,7 +236,7 @@
             "key": "id_modello_test_vr",
             "label": "Versione",
             "newLine": false,
-            "size": 1.5,
+            "size": 1.25,
             "readOnly": true,
             "inputEvents": [
                 {
@@ -335,24 +379,6 @@
         {
             "autoGenerate": false,
             "format": {
-                "value": false,
-                "viewType": "checkbox"
-            },
-            "queryFunct": "SELECT flag_mostra_punteggi from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "flag_mostra_punteggi",
-            "label": "Mostra Punteggi",
-            "outputEvent": {
-                "eventName": "flag_mostra_punteggi",
-                "eventTrigger": "change"
-            },
-            "readOnly": false,
-            "sameOrigin": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "dataType": "number",
                 "viewType": "input"
             },
@@ -373,8 +399,27 @@
             "isPrimary": false,
             "key": "peso_risposte_default",
             "label": "Peso attribuito se manca la risposta",
-            "newLine": false,
+            "newLine": true,
             "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": false,
+                "viewType": "checkbox"
+            },
+            "queryFunct": "SELECT flag_mostra_punteggi from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_mostra_punteggi",
+            "label": "Mostra Punteggi",
+            "outputEvent": {
+                "eventName": "flag_mostra_punteggi",
+                "eventTrigger": "change"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -390,7 +435,8 @@
                 "eventName": "flag_non_applicabile_risposta_null",
                 "eventTrigger": "change"
             },
-            "readOnly": false
+            "readOnly": false,
+            "newLine": true
         },
         {
             "autoGenerate": false,
@@ -428,7 +474,7 @@
                 }
             ],
             "readOnly": false,
-            "newLine": true
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -472,50 +518,6 @@
             "label": "Selezioni Popolazione",
             "newLine": true,
             "readOnly": false
-        },
-        {
-            "autoGenerate": true,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_esterno",
-            "label": "Codice esterno",
-            "queryFunct": "SELECT codice_esterno from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "newLine": false,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "allinea_codici_esterni",
-            "label": "Allineamento esterno",
-            "newLine": true,
-            "outputEvent": {
-                "eventName": "allinea_codici_esterni",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "allinea_codici_esterni",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select entrasp.modelli_test_new_version_same_codice_esterno($codice_azienda$,$id_modello_test$, $id_modello_test_vr$, $codice_esterno$);"
-                }
-            ],
-            "readOnly": false,
-            "sameOrigin": false
         }
     ],
     "origin": "entrasp.modelli_test_vr",
