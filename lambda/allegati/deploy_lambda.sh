@@ -19,6 +19,7 @@ if [ $1 == "gorico_dev" ]
   then
     DBNAME="Gorico"
   else
+    DBNAME="$1"
     LAMBDANAME="${LAMBDANAME}_$1"
     DYN_USERSNAME="${DYN_USERSNAME}_$1"
     DYN_PROFILESNAME="${DYN_PROFILESNAME}_$1"

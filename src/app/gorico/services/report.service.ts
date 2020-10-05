@@ -103,9 +103,9 @@ export class ReportService // implements Resolve<any>
         );
     }
 
-    getReports(entryName: string, company: string, keys: any) {
+    getReports(entryName: string, company: string, keys: any, isForm: boolean) {
         let _this = this;
-        _this._backendService.getReportList(entryName, company, keys).subscribe(
+        _this._backendService.getReportList(entryName, company, keys, isForm).subscribe(
             response => {
                 console.log(response);
                 if (response.result === 'OK') {
