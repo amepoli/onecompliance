@@ -14,6 +14,11 @@
             "type": "postProcessing"
         },
         {
+            "operation": "selectForm",
+            "queryString": "select sum(peso) as peso_mc  from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$",
+            "type": "postProcessing"
+        },
+        {
             "operation": "insert",
             "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, 0, coalesce($note_rb$, $note_mc$, ''), $id_modello_test_vr$, coalesce($peso_oa$, $peso_rb$), '€risposta_multipla€')",
             "type": "main"
@@ -395,6 +400,8 @@
                         "readOnly": false,
                         "key": "risposta_multipla",
                         "label": "Risposta",
+                        "newLine": false,
+                        "size": 9,
                         "format": {
                             "viewType": "checkboxgroup",
                             "options": [],
@@ -403,6 +410,20 @@
                         "outputEvent": {
                             "eventName": "toggle_question",
                             "eventTrigger": "change"
+                        }
+                    },
+                    {
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": true,
+                        "newLine": true,
+                        "key": "peso_mc",
+                        "sameOrigin": false,
+                        "label": "Peso",
+                        "size": 1,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "number"
                         }
                     },
                     {
