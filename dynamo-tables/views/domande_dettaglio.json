@@ -5,12 +5,12 @@
   "predefinedQueries": [
     {
       "operation": "insert",
-      "queryString": "SELECT entrasp.domande_insert(codiceazienda=>$codice_azienda$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, descrizione_=>$descrizione$, datafinevalidita=>$data_fine_validita$, idsezione=>$id_sezione$, note_=>$note$, punteggio_=>$punteggio$, pesorispostedefault=>$peso_risposte_default$, iddomandarif=>$id_domanda_rif$, idrispostaprevrif=>$id_risposta_prev_rif$, idfiltroselezione=>$id_filtro_selezione$, tipopunteggiorispostamultipla=>$tipo_punteggio_risposta_multipla$, iddb=>$id_db$, queryrisultato=>$query_risultato$, bindrisultato=>$bind_risultato$, queryallegato=>$query_allegato$, bindallegato=>$bind_allegato$, idtipoallegato=>$id_tipo_allegato$, flaginversionepctefficaciapresidi=>$flag_inversione_pct_efficacia_presidi$, datainiziovalidita=>data_inizio_validita, treepath=>tree_path, flagrispostamultipla=>flag_risposta_multipla, flagnonapplicabilerispostanull=>flag_non_applicabile_risposta_null, ord=> coalesce($ordinamento$, -1));",
+      "queryString": "SELECT entrasp.domande_insert(codiceazienda=>$codice_azienda$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, descrizione_=>$descrizione$, datafinevalidita=>$data_fine_validita$, idsezione=>$id_sezione$, note_=>$note$, punteggio_=>$punteggio$, pesorispostedefault=>$peso_risposte_default$, iddomandarif=>$id_domanda_rif$, idrispostaprevrif=>$id_risposta_prev_rif$, idfiltroselezione=>$id_filtro_selezione$, tipopunteggiorispostamultipla=>$tipo_punteggio_risposta_multipla$, iddb=>$id_db$, queryrisultato=>$query_risultato$, bindrisultato=>$bind_risultato$, queryallegato=>$query_allegato$, bindallegato=>$bind_allegato$, idtipoallegato=>$id_tipo_allegato$, flaginversionepctefficaciapresidi=>$flag_inversione_pct_efficacia_presidi$, datainiziovalidita=>data_inizio_validita, flagrispostamultipla=>flag_risposta_multipla, flagnonapplicabilerispostanull=>flag_non_applicabile_risposta_null, ord=> coalesce($ordinamento$, -1));",
       "type": "main"
     },
     {
       "operation": "update",
-      "queryString": "SELECT entrasp.domande_update(codiceazienda=>$codice_azienda$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, iddomanda=>$id_domanda$, descrizione_=>$descrizione$, datafinevalidita=>$data_fine_validita$, idsezione=>$id_sezione$, note_=>$note$, punteggio_=>$punteggio$, pesorispostedefault=>$peso_risposte_default$, iddomandarif=>$id_domanda_rif$, idrispostaprevrif=>$id_risposta_prev_rif$, idfiltroselezione=>$id_filtro_selezione$, tipopunteggiorispostamultipla=>$tipo_punteggio_risposta_multipla$, iddb=>$id_db$, queryrisultato=>$query_risultato$, bindrisultato=>$bind_risultato$, queryallegato=>$query_allegato$, bindallegato=>$bind_allegato$, idtipoallegato=>$id_tipo_allegato$, flaginversionepctefficaciapresidi=>$flag_inversione_pct_efficacia_presidi$, datainiziovalidita=>$data_inizio_validita$, treepath=>$tree_path$, flagrispostamultipla=>$flag_risposta_multipla$, flagnonapplicabilerispostanull=>$flag_non_applicabile_risposta_null$, ord=> coalesce($ordinamento$, -1));",
+      "queryString": "SELECT entrasp.domande_update(codiceazienda=>$codice_azienda$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, iddomanda=>$id_domanda$, descrizione_=>$descrizione$, datafinevalidita=>$data_fine_validita$, idsezione=>$id_sezione$, note_=>$note$, punteggio_=>$punteggio$, pesorispostedefault=>$peso_risposte_default$, iddomandarif=>$id_domanda_rif$, idrispostaprevrif=>$id_risposta_prev_rif$, idfiltroselezione=>$id_filtro_selezione$, tipopunteggiorispostamultipla=>$tipo_punteggio_risposta_multipla$, iddb=>$id_db$, queryrisultato=>$query_risultato$, bindrisultato=>$bind_risultato$, queryallegato=>$query_allegato$, bindallegato=>$bind_allegato$, idtipoallegato=>$id_tipo_allegato$, flaginversionepctefficaciapresidi=>$flag_inversione_pct_efficacia_presidi$, datainiziovalidita=>$data_inizio_validita$, flagrispostamultipla=>$flag_risposta_multipla$, flagnonapplicabilerispostanull=>$flag_non_applicabile_risposta_null$, ord=> coalesce($ordinamento$, -1));",
       "type": "main"
     }
   ],
@@ -109,6 +109,20 @@
       "newLine": true,
       "readOnly": false,
       "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_sezione AS id, descrizione AS name  FROM entrasp.domande_sezioni WHERE codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_sezione",
+      "label": "Sezione",
+      "newLine": true,
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -320,19 +334,36 @@
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "checkbox"
+        "viewType": "checkbox",
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "flag_risposta_multipla",
       "label": "Risposta Multipla",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_RISP_MULTIPLE'",
+        "dataType": "text",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_punteggio_risposta_multipla",
+      "label": "Tipo punteggio",
       "newLine": true,
       "readOnly": false
     },
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "checkbox"
+        "viewType": "checkbox",
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -344,7 +375,8 @@
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "checkbox"
+        "viewType": "checkbox",
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
