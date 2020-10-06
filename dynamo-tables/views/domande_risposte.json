@@ -15,22 +15,32 @@
         },
         {
             "operation": "selectForm",
+            "queryString": "select id_risultato from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "selectForm",
             "queryString": "select sum(peso) as peso_mc  from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$",
             "type": "postProcessing"
         },
         {
+            "operation": "selectForm",
+            "queryString": "select codice_colore as codice_colore_peso_rb_k, codice_colore as codice_colore_peso_oa_k from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$, £id_risultato£, coalesce(£peso_rb£, £peso_oa£))",
+            "type": "postProcessing"
+        },
+        {
             "operation": "insert",
-            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, 0, coalesce($note_rb$, $note_mc$, ''), $id_modello_test_vr$, coalesce($peso_oa$, $peso_rb$), '€risposta_multipla€')",
+            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, coalesce($peso_oa$, $peso_rb$)::numeric, coalesce($note_rb$, $note_mc$, ''), $id_modello_test_vr$, null::numeric, '€risposta_multipla€')",
             "type": "main"
         },
         {
             "operation": "update",
-            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, 0, coalesce($note_rb$, $note_mc$, ''),  $id_modello_test_vr$, coalesce($peso_oa$, $peso_rb$), '€risposta_multipla€')",
+            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, coalesce($peso_oa$, $peso_rb$)::numeric, coalesce($note_rb$, $note_mc$, ''),  $id_modello_test_vr$, null::numeric, '€risposta_multipla€')",
             "type": "main"
         },
         {
             "operation": "delete",
-            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, 0, coalesce($note_rb$, $note_mc$, ''), $id_modello_test_vr$, coalesce($peso_oa$, $peso_rb$), '€risposta_multipla€')",
+            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, coalesce($peso_oa$, $peso_rb$)::numeric, coalesce($note_rb$, $note_mc$, ''), $id_modello_test_vr$, null::numeric, '€risposta_multipla€')",
             "type": "main"
         }
     ],
@@ -73,6 +83,19 @@
             "format": {
                 "viewType": "input",
                 "dataType": "text"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "id_risultato",
+            "label": "id_risultato",
+            "sameOrigin": false,
+            "newLine": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
             }
         },
         {
@@ -287,7 +310,6 @@
                             "eventName": "toggle_question",
                             "eventTrigger": "change"
                         }
-
                     },
                     {
                         "isHidden": false,
@@ -295,6 +317,16 @@
                         "readOnly": true,
                         "newLine": true,
                         "key": "peso_rb",
+                        "inputEvents": [
+                            {
+                                "eventName": "codice_colore_change_peso_rb",
+                                "condition": "none",
+                                "values": [],
+                                "actionType": "update_style",
+                                "styleAttribute": "background_color",
+                                "updateFunct": "'£codice_colore_peso_rb_k£'"
+                            }
+                        ],
                         "sameOrigin": false,
                         "label": "Peso",
                         "size": 1,
@@ -302,6 +334,24 @@
                             "viewType": "input",
                             "dataType": "number"
                         }
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "codice_colore_peso_rb_k",
+                        "outputEvent": {
+                            "eventName": "codice_colore_change_peso_rb",
+                            "eventTrigger": "change"
+                        },
+                        "label": "codice_colore",
+                        "sameOrigin": false,
+                        "newLine": true,
+                        "readOnly": false
                     },
                     {
                         "isHidden": false,
@@ -363,11 +413,39 @@
                         "key": "peso_oa",
                         "sameOrigin": false,
                         "label": "Peso",
+                        "inputEvents": [
+                            {
+                                "eventName": "codice_colore_change_peso_oa",
+                                "condition": "none",
+                                "values": [],
+                                "actionType": "update_style",
+                                "styleAttribute": "background_color",
+                                "updateFunct": "'£codice_colore_peso_oa£'"
+                            }
+                        ],
                         "size": 1,
                         "format": {
                             "viewType": "input",
                             "dataType": "number"
                         }
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "codice_colore_peso_oa_k",
+                        "outputEvent": {
+                            "eventName": "codice_colore_change_peso_oa",
+                            "eventTrigger": "change"
+                        },
+                        "label": "codice_colore",
+                        "sameOrigin": false,
+                        "newLine": true,
+                        "readOnly": true
                     }
                 ]
             }
