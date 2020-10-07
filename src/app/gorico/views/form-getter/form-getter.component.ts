@@ -159,7 +159,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         if (changes.formParams && this.formParams) {
             if (!this.addingNew) {
                 if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) !== JSON.stringify(changes.formParams.currentValue))) {
-                    this.refreshView();
+                    this.refreshView(true);
                 }
             }
             else {
@@ -190,7 +190,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         });
     }
 
-    refreshView() {
+    refreshView(reloadEvents: boolean) {
         const _this = this;
         _this.isLoading = true;
 
@@ -250,7 +250,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
                     _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables });
                     // handle input events
-                    if (_this.firstRefresh) {
+                    if (_this.firstRefresh || reloadEvents) {
                         _this.firstRefresh = false;     // avoid to subscribe to events again when refreshed
                         if (params.inputEvents != null) {  // subscribe to global table events
                             params.inputEvents.forEach(event => {
@@ -752,7 +752,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
             }
         } else if (event.actionType === 'reload' && conditionMet) {
-            _this.refreshView();
+            _this.refreshView(false);
             if (event.outputEventWhenComplete != null) {
                 _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
             }
