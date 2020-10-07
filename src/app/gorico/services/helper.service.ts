@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 export interface MarkerReplacer {
     /**
@@ -120,5 +121,16 @@ export class HelperService {
                 return 'font-weight';
         }
     }
+
+    /**
+     * Redirect to Uri
+     * @param router Router
+     * @param uri Uri
+     */
+    public static redirectTo(router: Router, uri: string) {
+        router.navigateByUrl('/redirect', { skipLocationChange: true }).then(() =>
+            router.navigate([uri]));
+    }
+
 }
 
