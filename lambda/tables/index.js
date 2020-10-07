@@ -90,7 +90,12 @@ function replaceKeys(queryString, keys, keyTypes) {
                 } else if (typeof keys[key] !== 'object' || keys[key] == null || (keyType != null && keyType.viewType === 'checkboxgroup')) {  // avoid spourious values like arrays form events - n.b.: null is 'object'
                     let bracket = (delimiter === '$' && keyType != null && isDataTypeString(keyType)) ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
-                    let valueWithFixedQuotes = (keys[key] != null && keyType != null && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
+                    let valueWithFixedQuotes = keys[key];
+                    try {
+                        valueWithFixedQuotes = (keys[key] != null && keyType != null && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
+                    } catch(e) {
+                        console.log("Error on key: ", key, " with value: ", keys[key]);
+                    }
                     let replacement = keys[key] == null ? 'null' : bracket + valueWithFixedQuotes + bracket;
                     // handle checkboxgroup, converting array to string
                     replacement = (keyType != null && keyType.viewType === 'checkboxgroup') ? 
