@@ -190,7 +190,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         });
     }
 
-    refreshView(reloadEvents: boolean) {
+    refreshView(reloadEvents: boolean = true) {
         const _this = this;
         _this.isLoading = true;
 
