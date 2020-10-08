@@ -96,7 +96,7 @@
             "key": "descrizione",
             "label": "Descrizione Estesa",
             "newLine": true,
-            "textarea_height": "extended",
+            "textareaHeight": "L",
             "readOnly": false
         },
         {
@@ -123,7 +123,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_procedura AS id,  id_procedura AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$;",
+                "comboQuery": "SELECT id_procedura AS id,  id_procedura AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$ and id_procedura!=$id_procedura$;",
                 "options": [],
                 "viewType": "combobox"
             },
@@ -138,7 +138,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_procedura AS id, entrasp.procedure_aziendali_descr(id_procedura,codice_azienda) AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$;",
+                "comboQuery": "SELECT id_procedura AS id, entrasp.procedure_aziendali_descr(id_procedura,codice_azienda) AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$ and and id_procedura!=$id_procedura$;",
                 "options": [],
                 "viewType": "combobox"
             },
@@ -269,7 +269,7 @@
             "label": "Compiti Procedure"
         },
         {
-            "entryKey": "presidi_sub",
+            "entryKey": "presidi",
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -283,7 +283,7 @@
             "label": "Presidi"
         },
         {
-            "entryKey": "fonti_rischio_sub",
+            "entryKey": "rischi_sub_of_procedure",
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -294,13 +294,14 @@
                     "son": " id_procedura"
                 }
             ],
-            "label": "Fonti Rischio"
+            "type": "tableForm",
+            "label": "Rischi associati"
         }
     ],
     "table_keys": [
         {
             "format": {
-                "dataType": "text"
+                "dataType": "text" 
             },
             "isHidden": true,
             "isPrimary": true,

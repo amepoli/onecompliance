@@ -29,7 +29,7 @@ export interface formViewKey { // as per API specification
     isPrimary: boolean;
     isVisible: boolean;
     newLine: boolean;
-    textarea_height?: "normal" | "extended";
+    textareaHeight?: "S" | "M" | "L" | "XL";
     buttonIcon?: string;
     confirmButtonAction?: boolean;
     isDownloadButton?: boolean;
@@ -159,7 +159,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         if (changes.formParams && this.formParams) {
             if (!this.addingNew) {
                 if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) !== JSON.stringify(changes.formParams.currentValue))) {
-                    this.refreshView();
+                    this.refreshView(true);
                 }
             }
             else {
@@ -190,7 +190,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         });
     }
 
-    refreshView() {
+    refreshView(reloadEvents: boolean) {
         const _this = this;
         _this.isLoading = true;
 
@@ -250,7 +250,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
                     _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables });
                     // handle input events
-                    if (_this.firstRefresh) {
+                    if (_this.firstRefresh || reloadEvents) {
                         _this.firstRefresh = false;     // avoid to subscribe to events again when refreshed
                         if (params.inputEvents != null) {  // subscribe to global table events
                             params.inputEvents.forEach(event => {
@@ -521,7 +521,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 readonly: (attribute != null && attribute.readOnly != null && attribute.readOnly[index] != null) ? attribute.readOnly[index] : _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
                 isVisible: (attribute != null && attribute.isHidden != null && attribute.isHidden[index] != null) ? !attribute.isHidden[index] : field.isHidden != null ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,
-                textarea_height: (field.textarea_height != null) ? field.textarea_height : "normal",
+                textareaHeight: (field.textareaHeight != null) ? field.textareaHeight : "S",
                 buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
                 confirmButtonAction: (field.confirmButtonAction != null) ? field.confirmButtonAction : false,
                 isDownloadButton: (field.isDownloadButton != null) ? field.isDownloadButton : false,
@@ -752,7 +752,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
             }
         } else if (event.actionType === 'reload' && conditionMet) {
-            _this.refreshView();
+            _this.refreshView(false);
             if (event.outputEventWhenComplete != null) {
                 _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
             }

@@ -16,7 +16,7 @@ const pool = new Pool({
     connectionTimeoutMillis: 1000
 });
 
-var sender_address = 'amedeo.poli@alacritas.eu';
+var sender_address = 'amedeo.poli@audifit.it';
 
 // Some test addresses
 //var admin_addresses = ['akhtar.syedzeeshan@alacritas.eu', 'amedeo.poli@alacritas.eu', 'nicola.capovilla@alacritas.eu'];
@@ -70,7 +70,12 @@ async function getListOrQuery(input) {
                 return input.list.split(',');
             }
             else {
-                return [input.list];
+                if (input.list.length > 0) {
+                    return [input.list];
+                }
+                else {
+                    return [];
+                }
             }
         }
         else if (input.query != null && input.query.length > 0) {
@@ -78,6 +83,9 @@ async function getListOrQuery(input) {
             if (result != null) {
                 return result;
             }
+        }
+        else {
+            return [];
         }
     }
 }
@@ -97,6 +105,8 @@ async function getBody(body) {
             result += body.footer + '\n';
         }
     }
+
+    return result;
 }
 
 async function sendEmail(to, cc, body, subject) {
@@ -145,18 +155,21 @@ exports.handler = async (event, context, callback) => {
     if (entry) {
         console.log(entry);
 
-        // Run query
-        let result = await runQuery(entry.conditionalQuery);
+        let result = true;
+        if (entry.conditionalQuery && entry.conditionalQuery.length > 0) {
+            // Run query
+            result = await runQuery(entry.conditionalQuery);
+        }
         if (result) {
             console.log(result[0]);
 
             // Get recipients
             let to = await getListOrQuery(entry.to);
-            console.log(to);
+            console.log('to', to);
 
             // Get CC
             let cc = await getListOrQuery(entry.cc);
-            console.log(cc);
+            console.log('cc', cc);
 
             // Get body
             let body = await getBody(entry.body);
@@ -166,6 +179,13 @@ exports.handler = async (event, context, callback) => {
             if (emailSent) {
                 console.log({ 'Success': true, 'Error': null })
             }
+            else {
+                console.log("Error: Could not send email!");
+            }
+
+        }
+        else {
+            console.log("Error: Could not run query!");
         }
     }
     callback(null, event);

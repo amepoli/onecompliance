@@ -90,7 +90,12 @@ function replaceKeys(queryString, keys, keyTypes) {
                 } else if (typeof keys[key] !== 'object' || keys[key] == null || (keyType != null && keyType.viewType === 'checkboxgroup')) {  // avoid spourious values like arrays form events - n.b.: null is 'object'
                     let bracket = (delimiter === '$' && keyType != null && isDataTypeString(keyType)) ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
-                    let valueWithFixedQuotes = (keys[key] != null && keyType != null && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
+                    let valueWithFixedQuotes = keys[key];
+                    try {
+                        valueWithFixedQuotes = (keys[key] != null && keyType != null && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
+                    } catch(e) {
+                        console.log("Error on key: ", key, " with value: ", keys[key]);
+                    }
                     let replacement = keys[key] == null ? 'null' : bracket + valueWithFixedQuotes + bracket;
                     // handle checkboxgroup, converting array to string
                     replacement = (keyType != null && keyType.viewType === 'checkboxgroup') ? 
@@ -205,18 +210,21 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     let entry_keys;
 
-    if (isForm) {
-        entry_keys = entry_params.form_keys;
-        additionalQueryCond = additionalQueryConds.find(cond => {cond.viewType === 'form'});
-    } else {
-        entry_keys = entry_params.table_keys;
-        additionalQueryCond = additionalQueryConds.find(cond => {cond.viewType === 'table'});
+    //console.log("Additional QUERY conds: ", additionalQueryConds);
+    if (additionalQueryConds != null) {
+        if (isForm && additionalQueryConds != null) {
+            entry_keys = entry_params.form_keys;
+            additionalQueryCond = additionalQueryConds.find(cond => cond.viewType === 'form');
+        } else {
+            entry_keys = entry_params.table_keys;
+            additionalQueryCond = additionalQueryConds.find(cond => cond.viewType === 'table');
+        }
+
+        if (additionalQueryCond != null) {
+            additionalQueryCond = " AND " + additionalQueryCond.queryString + ";";
+        }
     }
-
-    if (additionalQueryCond != null) {
-        additionalQueryCond = " AND " + additionalQueryCond.queryString + ";";
-    } 
-
+    
     orderBy = entry_params.orderBy;
 
     if (!entry_keys) return '';
@@ -1363,7 +1371,7 @@ exports.handler = async (event, context) => {
                 });
                 if (!newRecord) {
                     // have to check if the record exists (update) or is new (insert), so try to recover it
-                    queryString = getTableQuery(entry_params, primaryKeys, true, null);
+                    queryString = getTableQuery(entry_params, primaryKeys, true, null, additionalQueryCond);
                     queryData = await processPreMainPost(queryString, client, true);
                     // perform insert or update depending on previous query
                     newRecord = queryData.length ? false : true;

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports5.2.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="procedureAziendali" pageWidth="595" pageHeight="842" columnWidth="567" columnSpacing="567" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="376ede0d-23cd-4d7b-a1bf-664463cad42c">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="procedureAziendali"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ConnexioInLocale"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="mainQuery" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select pa1.descrizione_breve as uno_db, pa2.descrizione_breve as due_db, pa3.descrizione_breve as tre_db, pa1.codice as uno_c, pa2.codice as due_c, pa3.codice as tre_c, pa1.id_procedura as uno_id_proc, pa2.id_procedura as due_id_proc, pa3.id_procedura as tre_id_proc,pa1.id_procedura_parent as uno_id_pp, pa2.id_procedura_parent as due_id_pp, pa3.id_procedura_parent as tre_id_pp from entrasp.procedure_aziendali pa1 left join entrasp.procedure_aziendali pa2 on pa1.id_procedura=pa2.id_procedura_parent and pa1.codice_azienda=pa2.codice_azienda left join entrasp.procedure_aziendali pa3 on pa2.id_procedura=pa3.id_procedura_parent and pa2.codice_azienda=pa3.codice_azienda where pa1.codice_azienda ='ASCOHOLDING' and pa1.id_procedura_parent is null"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{mainQuery}]]>
+	</queryString>
+	<field name="uno_db" class="java.lang.String"/>
+	<field name="due_db" class="java.lang.String"/>
+	<field name="tre_db" class="java.lang.String"/>
+	<field name="uno_c" class="java.lang.String"/>
+	<field name="due_c" class="java.lang.String"/>
+	<field name="tre_c" class="java.lang.String"/>
+	<field name="uno_id_proc" class="java.math.BigDecimal"/>
+	<field name="due_id_proc" class="java.math.BigDecimal"/>
+	<field name="tre_id_proc" class="java.math.BigDecimal"/>
+	<field name="uno_id_pp" class="java.math.BigDecimal"/>
+	<field name="due_id_pp" class="java.math.BigDecimal"/>
+	<field name="tre_id_pp" class="java.math.BigDecimal"/>
+	<sortField name="uno_id_proc"/>
+	<sortField name="due_id_pp"/>
+	<sortField name="tre_id_pp"/>
+	<group name="Proc_liv1">
+		<groupExpression><![CDATA[$F{uno_id_proc}]]></groupExpression>
+		<groupHeader>
+			<band height="43">
+				<property name="com.jaspersoft.studio.layout"/>
+				<textField isBlankWhenNull="false">
+					<reportElement positionType="Float" x="114" y="7" width="323" height="30" uuid="b55216e9-28e1-4b68-b086-2893b006cb88"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{uno_db}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement positionType="Float" x="7" y="7" width="100" height="30" uuid="a9ecbe6d-c687-43d7-84fd-2d41fe4fbe27"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{uno_c}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement positionType="Float" x="444" y="7" width="100" height="30" uuid="94fc3f82-6543-4983-b67b-29154e08d0b9"/>
+					<textFieldExpression><![CDATA[$F{uno_id_proc}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="pp_liv2">
+		<groupExpression><![CDATA[$F{due_id_pp}]]></groupExpression>
+		<groupHeader>
+			<band height="11">
+				<property name="com.jaspersoft.studio.layout"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="73" y="5" width="72" height="1" uuid="972d6506-b321-44b8-85bf-e536a8418b63">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{due_c}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" isPrintRepeatedValues="false" x="152" y="5" width="330" height="1" uuid="8c5287ee-f4f9-4a6e-82ec-bd224f70efd4">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="022a03f0-7fa9-460e-9b97-d0dab3a7fbb9"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{due_db}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="485" y="5" width="72" height="1" uuid="ea50a8a2-17f5-401a-9713-46bd9f9c3bdc">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a23b1deb-389f-4552-9923-ccabb059fc9c"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{due_id_pp}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="5" y="5" width="60" height="1" uuid="8c07c778-648c-4546-88c4-4fdaa59cfb88">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{due_id_proc}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="pp_liv3">
+		<groupExpression><![CDATA[$F{tre_id_pp}]]></groupExpression>
+		<groupHeader>
+			<band height="13">
+				<property name="com.jaspersoft.studio.layout"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="71" y="4" width="100" height="1" uuid="40c81d28-f482-41c6-9f26-c830334ad9b7">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="0ef4e30a-bb56-4e31-b9f0-f56f9e69f14d"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{tre_c}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="175" y="4" width="310" height="1" uuid="b7ad4379-c67e-422d-9956-54ab2e1bb396">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a0538771-e10d-4355-81f1-03524bbdf138"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{tre_db}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="492" y="4" width="72" height="1" uuid="9c0a5196-3bbb-4775-9b80-9c26c655dbc4">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6231f743-2483-437a-88e2-dac40c82c8de"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{tre_id_pp}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="31" y="4" width="40" height="1" uuid="39275063-5192-45c6-860e-121881ef2e94">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="34984481-6993-4693-9a38-4b21f98e6cb9"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{tre_id_proc}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="88" splitType="Stretch">
+			<image onErrorType="Blank">
+				<reportElement key="image" positionType="Float" stretchType="RelativeToBandHeight" x="147" y="10" width="245" height="50" uuid="1ee677eb-7a53-46ab-b3e7-40e557500c98">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA["logos\\"+ $P{codice_azienda} + ".png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="68" y="3" width="397" height="66" uuid="1de0741b-b861-4451-b825-0c849c22c7f3">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="4" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="6">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.spreadsheet.SpreadsheetLayout"/>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="53" splitType="Stretch">
+			<textField pattern="d MMMM y">
+				<reportElement x="29" y="19" width="100" height="20" uuid="de20263b-27a7-43c9-96b8-5894cefb7792"/>
+				<textElement markup="html">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="244" y="19" width="100" height="20" uuid="60ac1a9f-1ff5-420c-bbb2-3076fe4f7f41"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="3" y="7" width="564" height="1" uuid="54a13e49-05fd-451c-a3b5-f06dbc30cdea"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
