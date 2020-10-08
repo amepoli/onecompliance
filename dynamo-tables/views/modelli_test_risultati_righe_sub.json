@@ -5,8 +5,8 @@
     "predefinedQueries": [
       {
         "operation": "selectForm",
-        "queryString": "select codice_colore, descrizione from entrasp.tipi_modelli_test_risultati_righe where prog_riga=£prog_riga£ and codice_azienda=$codice_azienda$ and id_tipo_risultato=£id_tipo_risultato£",
-        "type": "postProcessing"
+        "queryString": "SELECT mt.*, tm.descrizione, tm.codice_colore FROM entrasp.modelli_test_risultati_righe mt inner join  entrasp.tipi_modelli_test_risultati_righe tm on mt.codice_azienda=tm.codice_azienda and mt.id_tipo_risultato=tm.id_tipo_risultato  and mt.prog_riga=tm.prog_riga  WHERE mt.codice_azienda=$codice_azienda$ AND id_risultato=$id_risultato$;",
+        "type": "main"
       }
     ],
     "form_keys": [
@@ -30,7 +30,7 @@
           "viewType": "input",
           "dataType": "number"
         },
-        "isHidden": false,
+        "isHidden": true,
         "isPrimary": false,
         "key": "prog_riga",
         "label": "prog_riga",
@@ -66,16 +66,16 @@
       {
         "autoGenerate": false,
         "format": {
-          "comboQuery": "select id_tipo_risultato as id, entrasp.modelli_test_risultati_righe_descrizione(prog_riga, id_tipo_risultato, codice_azienda) as name FROM entrasp.modelli_test_risultati_righe WHERE prog_riga=$prog_riga$ and codice_azienda=$codice_azienda$;",
-                "options": [],
-                "viewType": "combobox"
+          "viewType": "input",
+          "dataType": "text"
         },
-        "isHidden": false,
+        "isHidden": true,
         "isPrimary": false,
+        "sameOrigin": false,
         "key": "id_tipo_risultato",
         "label": "Descrizione",
-        "readOnly": false,
-        "newLine": true
+        "readOnly": true,
+        "newLine": false
       },
       {
         "autoGenerate": false,
@@ -96,63 +96,6 @@
           "viewType": "input",
           "dataType": "text"
         },
-       
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "giorni_rischedulazione",
-        "label": "Dopo quanti giorni?",  
-        "readOnly": false,
-        "newLine": false,
-        "size": 1
-      },
-      {
-        "autoGenerate": false,
-        "format": {
-          "viewType": "input", 
-          "dataType": "text"
-        },
-        
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "pct_significativa_manuale",
-        "label": "Percentuale significativa manuale",
-        "readOnly": false,
-        "newLine": false,
-        "size": 6
-      },
-      {
-        "autoGenerate": false,
-        "format": {
-          "viewType": "input",
-          "dataType": "text"
-        },
-        "outputEvent": {
-            "eventName": "codice_colore_change",
-            "eventTrigger": "blur"
-          },
-          "inputEvents": [{
-              "eventName": "codice_colore_change",
-              "condition": "none",
-              "values": [],
-              "actionType": "update_style",
-              "styleAttribute": "background_color",
-              "updateFunct": "'£codice_colore£'"
-          }],
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "codice_colore",
-        "sameOrigin": false,
-        "label": "Colore",  
-        "readOnly": false,
-        "newLine": false
-        
-      },
-      {
-        "autoGenerate": false,
-        "format": {
-          "viewType": "input",
-          "dataType": "text"
-        },
         "inputEvents": [{
             "eventName": "codice_colore_change",
             "condition": "none",
@@ -166,6 +109,48 @@
         "isPrimary": false,
         "key": "descrizione",
         "label": "Descrizione",
+        "readOnly": false,
+        "newLine": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input",
+          "dataType": "text"
+        },
+       
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "giorni_rischedulazione",
+        "label": "Dopo quanti giorni?",  
+        "readOnly": false,
+        "newLine": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input", 
+          "dataType": "text"
+        },
+        
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "pct_significativa_manuale",
+        "label": "Percentuale significativa manuale",
+        "readOnly": false,
+        "newLine": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input",
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "codice_colore",
+        "sameOrigin": false,
+        "label": "Colore",  
         "readOnly": false,
         "newLine": false
       }
