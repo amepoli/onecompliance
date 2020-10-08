@@ -76,6 +76,13 @@
                 },
                 {
                     "eventName": "sondaggio_change_stato",
+                    "condition": "equalTo",
+                    "values": ["C"],
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.sondaggio_insert($codice_azienda$, $titolo$, $id_modello_test$, $id_modello_test_vr$, $data_esecuzione$+coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0), (select case when coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)=0 then false else true end));"
+                },
+                {
+                    "eventName": "sondaggio_change_stato",
                     "condition": "none",
                     "values": [],
                     "actionType": "query_style",
@@ -808,4 +815,5 @@
             "viewType": "table"
         }
     ]
+
 }

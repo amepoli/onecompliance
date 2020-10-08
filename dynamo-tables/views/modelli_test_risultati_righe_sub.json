@@ -2,6 +2,13 @@
     "$schema": "../views.schema.json",
     "entryKey": "modelli_test_risultati_righe_sub",
     "origin": "entrasp.modelli_test_risultati_righe",
+    "predefinedQueries": [
+      {
+        "operation": "selectForm",
+        "queryString": "select codice_colore, descrizione from entrasp.tipi_modelli_test_risultati_righe where prog_riga=£prog_riga£ and codice_azienda=$codice_azienda$ and id_tipo_risultato=£id_tipo_risultato£",
+        "type": "postProcessing"
+      }
+    ],
     "form_keys": [
       {
         "autoGenerate": false,
@@ -59,7 +66,7 @@
       {
         "autoGenerate": false,
         "format": {
-          "comboQuery": "select id_tipo_risultato as id, entrasp.modelli_test_risultati_righe_descrizione(prog_riga, id_tipo_risultato, codice_azienda) as name FROM entrasp.modelli_test_risultati_righe WHERE prog_riga=£prog_riga£ and codice_azienda=$codice_azienda$;",
+          "comboQuery": "select id_tipo_risultato as id, entrasp.modelli_test_risultati_righe_descrizione(prog_riga, id_tipo_risultato, codice_azienda) as name FROM entrasp.modelli_test_risultati_righe WHERE prog_riga=$prog_riga$ and codice_azienda=$codice_azienda$;",
                 "options": [],
                 "viewType": "combobox"
         },
@@ -134,7 +141,7 @@
         "isHidden": false,
         "isPrimary": false,
         "key": "codice_colore",
-        "queryFunct": "select codice_colore from entrasp.tipi_modelli_test_risultati_righe where prog_riga=$prog_riga$ and codice_azienda=$codice_azienda$ and id_tipo_risultato=$id_tipo_risultato$",
+        "sameOrigin": false,
         "label": "Colore",  
         "readOnly": false,
         "newLine": false
@@ -155,6 +162,7 @@
             "updateFunct": "'£codice_colore£'"
         }],
         "isHidden": false,
+        "sameOrigin": false,
         "isPrimary": false,
         "key": "descrizione",
         "label": "Descrizione",
