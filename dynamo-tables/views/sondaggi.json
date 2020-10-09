@@ -77,7 +77,9 @@
                 {
                     "eventName": "sondaggio_change_stato",
                     "condition": "equalTo",
-                    "values": ["C"],
+                    "values": [
+                        "C"
+                    ],
                     "actionType": "query",
                     "queryFunct": "select entrasp.sondaggio_insert($codice_azienda$, $titolo$, $id_modello_test$, $id_modello_test_vr$, $data_esecuzione$+coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0), (select case when coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)=0 then false else true end));"
                 },
@@ -432,7 +434,7 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "select check_existence_cpl_risultati as  new_riepilogo_risultati from entrasp.check_existence_cpl_risultati($codice_azienda$, $id_sondaggio$)",
+                    "queryFunct": "select check_existence_cpl_risultati as new_riepilogo_risultati from entrasp.check_existence_cpl_risultati($codice_azienda$, $id_sondaggio$)",
                     "outputEventWhenComplete": "to_riepilogo_risultati"
                 }
             ],
@@ -774,7 +776,7 @@
         },
         {
             "actionTarget": {
-                "name": "cpl_risultati",
+                "name": "cpl_risultati_sondaggi",
                 "type": "form",
                 "keymap": [
                     {
@@ -815,5 +817,4 @@
             "viewType": "table"
         }
     ]
-
 }
