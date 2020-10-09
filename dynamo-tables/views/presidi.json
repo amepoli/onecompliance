@@ -1,5 +1,6 @@
 {
     "$schema": "../views.schema.json",
+    "origin": "entrasp.presidi",
     "entryKey": "presidi",
     "form_keys": [
         {
@@ -25,7 +26,7 @@
             "isHidden":true,
             "isPrimary": false,
             "key": "id_procedura",
-            "label": "Procedura",
+            "label": "Presidio",
             "newLine": false,
             "size": 1,
             "readOnly": true
@@ -108,11 +109,40 @@
             "isPrimary": false,
             "key": "note",
             "label": "Note",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "create_proc_aziendale",
+            "label": "Crea procedura aziendale associata",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "procedura_aziendale_create",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "queryFunct": "select entrasp.procedura_aziendale_create_from_presidio($codice_azienda$, $id_presidio$)",
+                    "eventName": "procedura_aziendale_create",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
         }
     ],
-    "origin": "entrasp.presidi",
     "subTables": [
         {
             "entryKey": "rischi_associati_sub_of_presidi",
