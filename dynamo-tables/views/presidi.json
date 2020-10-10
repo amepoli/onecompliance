@@ -48,6 +48,26 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                      "message": "Necessario codice",
+                      "name": "required",
+                      "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
                 "viewType": "input"
             },
             "isHidden": false,
@@ -74,9 +94,26 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "text",
-                "viewType": "input"
+                "comboQuery": "SELECT id_presidio AS id, titolo AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$ and id_presidio!=$id_presidio$;",
+                "options": [],
+                "viewType": "combobox"
             },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_presidio_parent",
+            "label": "Presidio parent",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text",
+                "value": "A"
+              },
             "isHidden": false,
             "isPrimary": false,
             "key": "stato_attuazione",
@@ -164,6 +201,16 @@
             "key": "id_presidio",
             "label": "ID Presidio"
         },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice"
+        },
+       
         {
             "format": {
                 "dataType": "number"
