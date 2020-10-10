@@ -3,52 +3,92 @@
   "entryKey": "rischi_associati_sub_of_presidi",
   "origin": "entrasp.rischi_presidi",
   "search_keys": [],
-  "table_keys": [
+  "form_keys": [
     {
+      "autoGenerate": false,
       "format": {
+        "viewType": "input",
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "codice_azienda",
-      "label": "Codice Azienda"
+      "label": "codice_azienda",
+      "readOnly": false,
+      "newLine": true
     },
     {
+      "autoGenerate": false,
       "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_rischio",
-      "label": "Codice Rischio"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "queryFunct": "select descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$$codice_rischio$$"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "annotazioni",
-      "label": "Note"
-    },
-    {
-      "format": {
+        "viewType": "input",
         "dataType": "number"
       },
       "isHidden": true,
       "isPrimary": true,
       "key": "id_presidio",
-      "label": "ID presidio"
+      "label": "ID presidio",
+      "readOnly": true,
+      "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_rischio_presidio_k",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "cancella_rischio_presidio",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "cancella_rischio_presidio",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "delete from entrasp.rischi_presidi where codice_azienda=$codice_azienda$ and id_procedura=$id_presidio$ and codice_rischio=$codice_rischio$",
+          "outputEventWhenComplete": "update_fonti_rischio"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT codice_rischio AS id, entrasp.rischi_cod_tit(codice_azienda, codice_rischio) AS name  FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_rischio",
+      "label": "Rischio",
+      "readOnly": false,
+      "newLine": true,
+      "size": 9
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "textarea",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "annotazioni",
+      "label": "Annotazioni",
+      "readOnly": false,
+      "textareaHeight": "M",
+      "newLine": true,
+      "size": 10
     }
   ]
 }
