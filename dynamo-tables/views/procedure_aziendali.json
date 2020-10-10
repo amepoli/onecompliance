@@ -158,6 +158,34 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "navigate_to_presidio_k",
+            "label": "Presidio associato",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "navigate_to_presidio",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 2,
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select  when count(id_presidio)=0 then 1 else 0 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_procedura=$id_procedura$;"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "crea_presidio",
             "label": "Crea presidio associato",
             "newLine": false,
@@ -180,7 +208,13 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 2
+            "size": 2,
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select  when count(id_presidio)>0 then 1 else 0 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_procedura=$id_procedura$;"
+                }
+            ]
         }
     ],
     "origin": "entrasp.procedure_aziendali",
@@ -321,7 +355,8 @@
                     "son": "id_procedura"
                 }
             ],
-            "label": "Presidi associati"
+            "label": "Presidi associati",
+            "isHidden": true
         },
         {
             "entryKey": "rischi_sub_of_procedure",
@@ -433,5 +468,25 @@
             "queryFunct": "entrasp.procedure_aziendali_descr(id_procedura_parent,codice_azienda)",
             "label": "Procedura Superiore"
         }
-    ]
+    ],
+    "inputEvents": [
+        {
+            "actionTarget": {
+                "name": "presidi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "navigate_to_presidio"
+        }
+       ]
 }
