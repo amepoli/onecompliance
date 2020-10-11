@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
+import { default as appData } from '../../../../../app_data.json';
 
 
 
@@ -9,7 +10,7 @@ import { Observable, from } from 'rxjs';
 })
 export class BackendService {
 
-  private apiName = 'gorico';
+  private apiName = appData.apiName;
   private myGetInit = { // OPTIONAL
     headers: {
     }, // OPTIONAL
