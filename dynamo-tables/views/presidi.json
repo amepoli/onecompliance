@@ -62,7 +62,7 @@
             "key": "codice",
             "label": "Codice",
             "newLine": false,
-            "readOnly": true
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -184,6 +184,34 @@
             "attributeFuncts": [
                 {
                     "attributeType": "isHidden",
+                    "queryString": "select case when id_procedura is null then 0 else 1 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "navigate_to_procedura_aziendale_k",
+            "label": "Procedura aziendale associata",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "navigate_to_procedura_aziendale",
+                "eventTrigger": "press"
+            },
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
                     "queryString": "select case when id_procedura is null then 1 else 0 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
                 }
             ],
@@ -292,6 +320,26 @@
             "key": "descrizioni_centro_gestionale",
             "label": "Centro gestionale",
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionTarget": {
+                "name": "procedure_aziendali",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "navigate_to_procedura_aziendale"
         }
     ]
 }
