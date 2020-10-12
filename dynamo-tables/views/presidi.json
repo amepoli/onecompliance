@@ -4,34 +4,6 @@
     "entryKey": "presidi",
     "form_keys": [
         {
-            "autoGenerate": true,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "id_presidio",
-            "label": "ID",
-            "newLine": false,
-            "size": 1,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden":true,
-            "isPrimary": false,
-            "key": "id_procedura",
-            "label": "Presidio",
-            "newLine": false,
-            "size": 1,
-            "readOnly": true
-        },
-        {
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
@@ -42,6 +14,20 @@
             "key": "codice_azienda",
             "label": "Codice Azienda",
             "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_presidio",
+            "label": "ID",
+            "newLine": false,
+            "size": 3,
             "readOnly": true
         },
         {
@@ -125,14 +111,30 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
-                "viewType": "input"
+                "viewType": "textarea"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "note",
             "label": "Note",
+            "textareaHeight": "M",
             "newLine": true,
             "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_procedura AS id, descrizione_breve AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_procedura",
+            "label": "Procedura associata",
+            "newLine": false,
+            "size": 8,
+             "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -157,12 +159,19 @@
                     "values": []
                 }
             ],
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when id_procedura is null then 1 else 0 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
+                }
+            ],
             "style": {
                 "background_color": "#25599C",
                 "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false
+            "sameOrigin": false,
+            "size": 1
         }
     ],
     "subTables": [
@@ -180,6 +189,21 @@
             ],
             "type": "tableForm",
             "label": "Rischi Associati"
+        },
+        {
+            "entryKey": "presidi",
+            "keys": [
+                {
+                    "parent": "id_presidio",
+                    "son": "id_presidio_parent"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ],
+            "type": "tableForm",
+            "label": "Sotto presidi"
         }
     ],
     "table_keys": [
@@ -210,7 +234,6 @@
             "key": "codice",
             "label": "Codice"
         },
-       
         {
             "format": {
                 "dataType": "number"
@@ -220,6 +243,16 @@
             "key": "id_procedura",
             "label": "id_procedura"
         },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_presidio_parent",
+            "label": "id_presidio_parent"
+        },
+       
         {
             "format": {
                 "dataType": "text"
