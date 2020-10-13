@@ -82,14 +82,7 @@
             "format": {
                 "comboQuery": "SELECT id_tipo_processo AS id, descrizione AS name  FROM entrasp.tipi_processi WHERE codice_azienda=$codice_azienda$ and tabella_rif='presidi';",
                 "options": [],
-                "viewType": "combobox",
-                "validations": [
-                    {
-                        "message": "Tipo Presidio mancante",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
+                "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -371,6 +364,81 @@
               }
             ]
           }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_tipo_presidio",
+            "format": {
+                "comboQuery": "SELECT id_tipo_processo AS id, descrizione AS name  FROM entrasp.tipi_processi WHERE codice_azienda=$codice_azienda$ and tabella_rif='presidi';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Id Processo",
+            "newLine": false,
+            "queryCond": "id_tipo_presidio=$id_tipo_presidio$"
+        },
+        {
+            "fieldName": "id_centro_gest",
+            "format": {
+                "comboQuery": "SELECT codice_part AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Centro Gestionale",
+            "newLine": false,
+            "queryCond": "id_centro_gest=$id_centro_gest$"
+        },
+        {
+            "fieldName": "id_presidio_parent",
+            "format": {
+                "comboQuery": "SELECT id_presidio AS id, descrizione_breve AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Presidio Superiore",
+            "newLine": true,
+            "queryCond": "id_presidio_parent=$id_presidio_parent$"
+        },
+        {
+            "fieldName": "id_presidio",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Id Presidio",
+            "newLine": false,
+            "queryCond": "id_presidio=$id_presidio$"
+        },
+        {
+            "fieldName": "descrizione_breve",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Descrizione",
+            "newLine": false,
+            "queryCond": "descrizione_breve='%€descrizione_breve€%'"
+        },
+        {
+            "fieldName": "codice",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Codice",
+            "newLine": true,
+            "queryCond": "codice=$codice$"
+        },
+        {
+            "fieldName": "flag_principali",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Solo Principali",
+            "newLine": false,
+            "queryCond": "id_presidio_parent IS null"
+        }
     ],
     "inputEvents": [
         {
