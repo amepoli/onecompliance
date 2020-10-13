@@ -135,7 +135,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT codice::character AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE';",
+                "comboQuery": "SELECT codice::character AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE';",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text",
@@ -146,7 +146,21 @@
             "key": "stato_attuazione",
             "label": "Stato Attuazione",
             "newLine": true,
-            "readOnly": false
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "procedura_change_stato",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "procedura_change_stato",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_attuazione_background_color from entrasp.transcodifiche where tipo_dato='STATO_ATTUAZIONE' and codice=$stato_attuazione$"
+                }
+            ]
         },
         {
             "autoGenerate": false,
