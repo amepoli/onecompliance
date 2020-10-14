@@ -221,7 +221,7 @@ export class FormViewComponent implements OnChanges, OnInit {
             actionTarget: {
                 name: this.tableData.entryName,
                 type: 'form',
-                keymap: null// Object.keys(this.currentKeys).map(key => { return { destination: key, source: key } })
+                keymap: Object.keys(this.currentKeys).map(key => { return { destination: key, source: key } })
             },
             values: values
         };
@@ -285,8 +285,6 @@ export class FormViewComponent implements OnChanges, OnInit {
                         // Show error snackbar
                         this._toastService.showErrorToast(result.reason);
                         this.savingState = 'save';
-                        this.navigationToViewHome(values, []);
-
                     }
                 }
             );
