@@ -2,8 +2,8 @@ const Pool = require('pg-pool');
 const pool = new Pool({
     host: 'HOST_NAME',
     database: 'DB_NAME',
-    user: 'postgres',
-    password: 'et2themax',
+    user: 'USER_NAME',
+    password: 'PASSWORD',
     port: 5432,
     max: 1,
     min: 0,
@@ -1418,12 +1418,12 @@ exports.handler = async (event, context) => {
             var uuid = context.awsRequestId; // generate a 'unique' UUID as filename
             var filename = 'Excel/' + uuid + '.xlsx'
             var s3ParamsInsert = {
-                Bucket: 'gorico2.reports',
+                Bucket: 'BUCKET_NAME',
                 Key: filename,
                 Body: excelData
             };
             var s3ParamsUrl = {
-                Bucket: 'gorico2.reports',
+                Bucket: 'BUCKET_NAME',
                 Key: filename
             };
 

@@ -6,17 +6,18 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
-LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.menu.lambdaName"`
+LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.attachments.lambdaName"`
 
 DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
 DYN_PROFILESNAME=`cat ../../${1}.json | jq -r ".dynamoTables.profiles.tableName"`
 DYN_VIEWSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.views.tableName"`
-DYN_NAVIGATIONNAME=`cat ../../${1}.json | jq -r ".dynamoTables.navigation.tableName"`
 
 DBNAME=`cat ../../${1}.json | jq -r ".postgres.dbName"`
 HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
 USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
 PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
+
+BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.attachments.s3.bucket"`
 
 #replace Variables
 cp index.js index.js.ori
@@ -28,7 +29,7 @@ sed -i -e "s/PASSWORD/${PASSWORD}/g" index.js
 sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
 sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
 sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
-sed -i -e "s/NAVIGATION_NAME/${DYN_NAVIGATIONNAME}/g" index.js
+sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js
 
 rm index.js-e
 

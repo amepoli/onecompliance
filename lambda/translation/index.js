@@ -19,7 +19,7 @@ exports.handler = async (event, context) => {
     console.log('userid: ', userid, ' language: ', lang);
 
     var langParams = {
-        TableName: 'translation',
+        TableName: 'TRANSLATION_NAME',
         Key: {
             lang: lang
         }

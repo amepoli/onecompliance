@@ -2,34 +2,28 @@
 
 if [ $# -eq 0 ]
   then
-    echo "Please provide the target environment [gorico_prod, gorico_test, gorico_dev, xxx_prod, xxx_test, xxx_dev]"
+    echo "Please provide the target environment [gorico_prod, gorico_dev, xxx_prod, xxx_dev]"
     exit 0
 fi
 
-LAMBDANAME="views"
+LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.views.lambdaName"`
 
-DYN_USERSNAME="users"
-DYN_PROFILESNAME="profiles"
-DYN_VIEWSNAME="views"
+DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
+DYN_PROFILESNAME=`cat ../../${1}.json | jq -r ".dynamoTables.profiles.tableName"`
+DYN_VIEWSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.views.tableName"`
 
-DBNAME=""
-HOSTNAME="goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com"
-
-if [ $1 == "gorico_dev" ]
-  then
-    DBNAME="Gorico"
-  else
-    LAMBDANAME="${LAMBDANAME}_$1"
-    DYN_USERSNAME="${DYN_USERSNAME}_$1"
-    DYN_PROFILESNAME="${DYN_PROFILESNAME}_$1"
-    DYN_VIEWSNAME="${DYN_VIEWSNAME}_$1"
-fi
+DBNAME=`cat ../../${1}.json | jq -r ".postgres.dbName"`
+HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
+USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
+PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
 
 #replace Variables
 cp index.js index.js.ori
 
 sed -i -e "s/DB_NAME/${DBNAME}/g" index.js
 sed -i -e "s/HOST_NAME/${HOSTNAME}/g" index.js
+sed -i -e "s/USER_NAME/${USERNAME}/g" index.js
+sed -i -e "s/PASSWORD/${PASSWORD}/g" index.js
 sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
 sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
 sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
