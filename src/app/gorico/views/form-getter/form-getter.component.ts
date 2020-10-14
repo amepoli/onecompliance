@@ -13,6 +13,7 @@ import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
 
 import { MessageView } from 'app/gorico/services/messages.service';
+import { HelperService } from 'app/gorico/services/helper.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -182,6 +183,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
         );
+
+
+        const subcription = _this.pubsubService.subscribe('navigate_on_save_button',
+            value => {
+                _this.eventCallback(value.data, value, null); // null as keyListener means that the full table is affected
+            });
+        _this.subscriptions.push(subcription);
+
     }
 
     ngOnDestroy() {
@@ -641,6 +650,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
 
 
+
     // callback for pubSub events, value has form of {origin, index, valueSet, data}
     private eventCallback(event: any, value: any, keyListener: string): void {
         const _this = this;
@@ -714,7 +724,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (keyListener != null && value.type !== 'page') {
                 const targetLine = _this.filteredFormData[value.index];  // recover the form "line"
                 if (targetLine != null) {
-                    listener = targetLine.find(field => field.name === keyListener);
+                    listener = HelperService.findElement(targetLine, keyListener);
+                    // listener = targetLine.find(field => field.name === keyListener);
                 }
             }
             if (keyListener == null) {   // act on the full table
@@ -739,7 +750,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (keyListener != null && value.type !== 'page') {
                 const targetLine = _this.filteredFormData[value.index];  // recover the form "line"
                 if (targetLine != null) {
-                    listener = targetLine.find(field => field.name === keyListener);
+                    listener = HelperService.findElement(targetLine, keyListener);
+                    // listener = targetLine.find(field => field.name === keyListener);
                 }
             }
             if (keyListener == null) {   // act on the full table --> NO! formRowProperties must be used in this case!!!
@@ -766,10 +778,18 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (event.actionTarget.keymap != null && event.actionTarget.keymap.length) { // explicit key map between tables
                 event.actionTarget.keymap.forEach(element => {
                     if (element.source != null && element.destination != null) {
-                        filteredKeys[element.destination] = keys[element.source] != null ? keys[element.source].id != null ? keys[element.source].id : keys[element.source] : null;
+                        // Check if event contains values in case of manually generated event
+                        if (event.values != null) {
+                            filteredKeys[element.destination] = event.values[element.source] != null ? event.values[element.source] : null;
+                        }
+                        else if (keys != null) {
+                            filteredKeys[element.destination] = keys[element.source] != null ? keys[element.source].id != null ? keys[element.source].id : keys[element.source] : null;
+                        }
                     }
+
                 });
-            } else {
+            }
+            else {
                 const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
                 filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
             }
@@ -835,14 +855,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                             // patch the form
                                             childrenArray[current_index].form.patchValue({ [k]: result[0][k] });
                                             // patch the undelying data
-                                            const el = _this.filteredFormData[current_index].find(field => field.name === k);
+                                            const el = HelperService.findElement(_this.filteredFormData[current_index], k);
+                                            // const el = _this.filteredFormData[current_index].find(field => field.name === k);
                                             el.value = result[0][k];
                                         }
                                     }
                                 }
                             } else {  // query_style
                                 const filterFormData = (dataset, param) => {
-                                    let found = dataset.find(field => field.name === param);
+                                    let found = HelperService.findElement(dataset, param);
+                                    // let found = dataset.find(field => field.name === param);
                                     if (found == null) {
                                         for (let i = 0; i < dataset.length; i++) {
                                             if (dataset[i].subform != null) {
@@ -861,11 +883,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                         element.style = {};
                                     }
 
-                                    if (result[current_index]) {
+                                    if (result[0]) {
                                         // we can get multiple rows from backend, each one providing a different attribute, find the right one
                                         const attrKey = keyListener + '_' + event.styleAttribute; // as per specs the returned key is of type '<key>_<styleAttribute>'
-                                        if (result[current_index][attrKey]) {
-                                            element.style[event.styleAttribute] = result[current_index][attrKey];
+                                        if (result[0][attrKey]) {
+                                            element.style[event.styleAttribute] = result[0][attrKey];
                                         }
                                         else {
                                             console.log(`result does not contain attrKey: ${attrKey}`);
@@ -896,7 +918,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 if (event.actionType === 'update') {
                     childrenArray[value.index].form.patchValue({ [keyListener]: eval(resolvedFunct) });
                 } else { // update_syle
-                    const element = _this.filteredFormData[value.index].find(field => field.name === keyListener);
+                    const element = HelperService.findElement(this.filteredFormData[value.index], keyListener);
+                    // const element = _this.filteredFormData[value.index].find(field => field.name === keyListener);
                     if (element != null && event.styleAttribute != null) {
                         element.style[event.styleAttribute] = eval(resolvedFunct);
                     }

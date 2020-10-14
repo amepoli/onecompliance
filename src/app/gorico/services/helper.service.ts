@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { FieldConfig } from '../dynamic-forms/field.interface';
 
 export interface MarkerReplacer {
     /**
@@ -121,6 +122,29 @@ export class HelperService {
                 return 'font-weight';
         }
     }
+
+    /**
+     * Find element by recursively checking subforms
+     * @param form form to check element
+     * @param name name of the field to find
+     * @returns element
+     */
+    public static findElement(form: FieldConfig[], name: string) {
+        let element = null;
+        form.forEach(field => {
+            if (field.name === name) {
+                element = field;
+            }
+            if (field.subform && !element) {
+                let findResult = this.findElement(field.subform, name);
+                if (findResult) {
+                    element = findResult;
+                }
+            }
+        });
+        return element;
+    }
+
 
     /**
      * Redirect to Uri

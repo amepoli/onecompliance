@@ -92,7 +92,8 @@ export class FormViewComponent implements OnChanges, OnInit {
     messages: MessageElement[] = []; // Messages
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
-    constructor(public attachDialog: MatDialog,
+    constructor(private pubsubService: NgxPubSubService,
+        public attachDialog: MatDialog,
         private backendService: BackendService,
         private authService: AuthService,
         private _dialogService: DialogService,
@@ -213,6 +214,30 @@ export class FormViewComponent implements OnChanges, OnInit {
         return isValid;
     }
 
+    navigationToViewHome(values, data) {
+        let event = {
+            actionType: 'navigate',
+            eventName: 'navigate_on_save_button',
+            actionTarget: {
+                name: this.tableData.entryName,
+                type: 'form',
+                keymap: null// Object.keys(this.currentKeys).map(key => { return { destination: key, source: key } })
+            },
+            values: values
+        };
+
+        if (data && data.length && data[0] && data[0].length && data[0][0]) {
+            Object.keys(data[0][0]).forEach(key => {
+                values[key] = data[0][0][key];
+            })
+        }
+
+        this.pubsubService.publishEvent(event.eventName, { origin: 'save_button', index: 0, valueSet: [], data: event, type: 'button_click' }); // provide index in case of multiple instances of the button
+
+
+        console.log(event);
+    }
+
     onSave() {
         if (this.isFormValid()) {
             // notify parent, which will take care of propagating to siblings if needed 
@@ -252,18 +277,23 @@ export class FormViewComponent implements OnChanges, OnInit {
                         this.savingState = 'done';
                         setTimeout(() => {
                             this.savingState = 'save';
-                            this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+                            this.navigationToViewHome(values, result.data);
+                            // this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
                         }, 1000);
                     }
                     else {
                         // Show error snackbar
                         this._toastService.showErrorToast(result.reason);
                         this.savingState = 'save';
+                        this.navigationToViewHome(values, []);
+
                     }
                 }
             );
         }
-
+        else {
+            this._toastService.showErrorToast("Form is not valid!");
+        }
     }
 
 
