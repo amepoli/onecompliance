@@ -446,12 +446,24 @@
         {
             "fieldName": "id_modello_test",
             "format": {
-                "dataType": "number",
-                "viewType": "input"
+                "comboQuery": "SELECT id_modello_test AS id, id_modello_test||' - '||titolo AS name  FROM entrasp.modelli_test WHERE codice_azienda='€global_codice_azienda€';",
+                "options": [],
+                "viewType": "combobox"
             },
             "label": "Id Modello di Test",
             "newLine": false,
             "queryCond": "id_modello_test=$id_modello_test$"
+        },
+        {
+            "fieldName": "id_tipo_modello_test",
+            "format": {
+                "comboQuery": "SELECT id_tipo_modello_test AS id,descrizione  AS name  FROM entrasp.tipi_modello_test WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo modello test",
+            "newLine": true,
+            "queryCond": "id_sondaggio in(select id_sondaggio from entrasp.sondaggi snd join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where mt.id_tipo_modello_test=$id_tipo_modello_test$ and codice_azienda=$global_codice_azienda$"
         },
         {
             "fieldName": "id_sondaggio",
