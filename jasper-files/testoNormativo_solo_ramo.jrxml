@@ -20,10 +20,10 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select tn.id_testo_normativo,tn.descrizione as tn_descr , an.codice_articolo_normativo as an_codartnorm, an.descrizione as an_descr,an.rubrica as an_rub, r.codice_rischio as r_cod, r.titolo as r_tit, r.descrizione as r_descr, entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_pre) as int_tot_ante,entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_post) as int_tot_post from entrasp.testi_normativi tn join entrasp.articoli_normativi an on  tn.id_testo_normativo = an.id_testo_normativo left join entrasp.rischi_articoli_normativi ran on an.id_testo_normativo = ran.id_testo_normativo and an.codice_articolo_normativo = ran.codice_articolo_normativo left join entrasp.rischi r on ran.codice_azienda=r.codice_azienda and ran.codice_rischio=r.codice_rischio where tn.id_testo_normativo=3"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select tn.id_testo_normativo,tn.descrizione as tn_descr , an.codice_articolo_normativo as an_codartnorm, an.descrizione as an_descr,an.rubrica as an_rub, r.codice_rischio as r_cod, r.titolo as r_tit, r.descrizione as r_descr, entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_pre) as int_tot_ante,entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_post) as int_tot_post from entrasp.testi_normativi tn join entrasp.articoli_normativi an on  tn.id_testo_normativo = an.id_testo_normativo left join entrasp.rischi_articoli_normativi ran on an.id_testo_normativo = ran.id_testo_normativo and an.codice_articolo_normativo = ran.codice_articolo_normativo left join entrasp.rischi r on ran.codice_azienda=r.codice_azienda and ran.codice_rischio=r.codice_rischio where tn.id_testo_normativo=3 and r.codice_azienda='ASCOHOLDING'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
-		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["ASCOHOLDING"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[$P!{mainQuery}]]>
