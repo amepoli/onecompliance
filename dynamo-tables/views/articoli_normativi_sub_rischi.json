@@ -21,6 +21,35 @@
   ],
   "form_keys": [
     {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_art_normativi",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "cancella_articoli_normativi",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "cancella_articoli_normativi",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "delete from entrasp.rischi_articoli_normativi where codice_azienda = $codice_azienda$ and id_testo_normativo=$id_testo_normativo$ and codice_articolo_normativo=$codice_articolo_normativo$ and codice_rischio = $codice_rischio$",
+          "outputEventWhenComplete": "update_rischi_articoli_normativi"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+    },
+    {
       "isHidden": false,
       "isPrimary": false,
       "readOnly": false,
@@ -28,7 +57,7 @@
       "label": "Articolo normativo",
       "sameOrigin": false,
       "newLine": false,
-      "size": 6,
+      "size": 5,
       "subKeys": [
         {
           "key": "s_id_testo_normativo",
@@ -160,6 +189,12 @@
       "label": "codice_articolo_normativo",
       "readOnly": true,
       "newLine": false
+    }
+  ],
+  "inputEvents": [
+    {
+      "eventName": "update_rischi_articoli_normativi",
+      "actionType": "reload"
     }
   ]
 }
