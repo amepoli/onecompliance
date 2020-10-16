@@ -58,11 +58,17 @@
 
 
             <ng-container [matColumnDef]="entry.key" *ngFor="let entry of viewKeys">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [hidden]="entry.isHidden">
-                    {{entry.label}} </mat-header-cell>
-                <mat-cell *matCellDef="let row" [style.border-radius.px]="'24'"
-                    [ngStyle]="getElementStyle(entry.key, row[entry.key])" [hidden]="entry.isHidden">
-                    {{entry.format.dataType === 'date' ? (row[entry.key] | date: 'dd/MM/yyyy') : row[entry.key]}}
+                <mat-header-cell [style.width]="entry.width? entry.width: ''"
+                    [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matHeaderCellDef mat-sort-header
+                    [hidden]="entry.isHidden">
+                    {{entry.label}}</mat-header-cell>
+                <mat-cell [style.width]="entry.width? entry.width: ''"
+                    [style.flex]="entry.width? '0 0 ' + entry.width: '1'" class="no-overflow" *matCellDef="let row"
+                    [style.border-radius.px]="'24'" [ngStyle]="getElementStyle(entry.key, row[entry.key])"
+                    [hidden]="entry.isHidden">
+                    <p style="width: 100%;">
+                        {{entry.format.dataType === 'date' ? (row[entry.key] | date: 'dd/MM/yyyy') : row[entry.key]}}
+                    </p>
                 </mat-cell>
             </ng-container>
 

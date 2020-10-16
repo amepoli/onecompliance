@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports5.2.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="testoNormativo" pageWidth="595" pageHeight="842" columnWidth="539" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" whenResourceMissingType="Empty" uuid="d26c6182-e27a-4f58-9157-55acab90753d">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
@@ -19,26 +19,14 @@
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
-	<parameter name="mainQuery" class="java.lang.String"/>
+	<parameter name="mainQuery" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select an2.id_testo_normativo as an2_idtn, tn2.descrizione as tn2_descr, an2.codice_articolo_normativo as an2_codartnorm, an2.rubrica as an2_rub, tn.id_testo_normativo as tn_idtn,tn2.id_testo_normativo as tn2_idtn,tn2.id_testo_normativo as tn2_idtn, tn.descrizione as tn_descr, an.codice_articolo_normativo as an_codartnorm,an.rubrica as an_rub , r.codice_rischio as r_cod, r.titolo as r_tit, r.descrizione as r_descr, entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_pre) as int_tot_ante,entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_post) as int_tot_post from entrasp.testi_normativi tn join entrasp.articoli_normativi an on  tn.id_testo_normativo = an.id_testo_normativo  join entrasp.articoli_normativi_rif  anr on an.codice_articolo_normativo = anr.codice_articolo_normativo_rif and an.id_testo_normativo = anr.id_testo_normativo_rif join entrasp.articoli_normativi an2 on anr.codice_articolo_normativo = an2.codice_articolo_normativo and anr.id_testo_normativo = an2.id_testo_normativo join entrasp.testi_normativi tn2 on an2.id_testo_normativo=tn2.id_testo_normativo join entrasp.rischi_articoli_normativi ran on anr.id_testo_normativo = ran.id_testo_normativo and anr.codice_articolo_normativo = ran.codice_articolo_normativo join entrasp.rischi r on ran.codice_azienda=r.codice_azienda and ran.codice_rischio=r.codice_rischio where  r.codice_azienda='ASCOHOLDING'"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
-		<defaultValueExpression><![CDATA["DEMO"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["ASCOHOLDING"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select an2.id_testo_normativo as an2_idtn, tn2.descrizione as tn2_descr, an2.codice_articolo_normativo as an2_codartnorm, an2.rubrica as an2_rub,
-tn.id_testo_normativo as tn_idtn,tn2.id_testo_normativo as tn2_idtn,tn2.id_testo_normativo as tn2_idtn, tn.descrizione as tn_descr, 
-an.codice_articolo_normativo as an_codartnorm,an.rubrica as an_rub , r.codice_rischio as r_cod,ran.codice_azienda,r.codice_azienda, r.titolo as r_tit, r.descrizione as r_descr, 
-entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_pre) as int_tot_ante,
-entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_post) as int_tot_post 
-
-from entrasp.testi_normativi tn 
-join entrasp.articoli_normativi an on  tn.id_testo_normativo = an.id_testo_normativo 
-join entrasp.articoli_normativi_rif  anr on an.codice_articolo_normativo = anr.codice_articolo_normativo 
-join entrasp.articoli_normativi an2 on anr.codice_articolo_normativo_rif = an2.codice_articolo_normativo 
-join entrasp.testi_normativi tn2 on an2.id_testo_normativo=tn2.id_testo_normativo 
-join entrasp.rischi_articoli_normativi ran on an2.id_testo_normativo = ran.id_testo_normativo and an2.codice_articolo_normativo = ran.codice_articolo_normativo 
-join entrasp.rischi r on ran.codice_azienda=r.codice_azienda and ran.codice_rischio=r.codice_rischio and r.codice_azienda=$P{codice_azienda}
-
-where tn.id_testo_normativo=3]]>
+		<![CDATA[$P{mainQuery}]]>
 	</queryString>
 	<field name="an2_idtn" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="an2_idtn"/>
@@ -128,7 +116,7 @@ where tn.id_testo_normativo=3]]>
 		<groupExpression><![CDATA[$F{tn_idtn}]]></groupExpression>
 		<groupHeader>
 			<band height="38">
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement mode="Opaque" x="1" y="6" width="159" height="25" forecolor="#FCFAFA" backcolor="#25599C" uuid="e259e4f7-d531-49a3-8972-96834e303bc3">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					</reportElement>
@@ -154,8 +142,8 @@ where tn.id_testo_normativo=3]]>
 		<groupExpression><![CDATA[$F{an_codartnorm}]]></groupExpression>
 		<groupHeader>
 			<band height="37">
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" mode="Opaque" x="27" y="2" width="93" height="24" isRemoveLineWhenBlank="true" backcolor="#C0F0FC" uuid="ce90f457-b286-4af7-8606-1321f267b547">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" mode="Opaque" x="11" y="2" width="93" height="24" isRemoveLineWhenBlank="true" backcolor="#C0F0FC" uuid="ce90f457-b286-4af7-8606-1321f267b547">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					</reportElement>
@@ -171,8 +159,8 @@ where tn.id_testo_normativo=3]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{an_codartnorm}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" mode="Opaque" x="126" y="2" width="409" height="24" backcolor="#C0F0FC" uuid="aa6db4d7-751a-4a4c-ac3f-d33c6eea4aad">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" mode="Opaque" x="110" y="2" width="409" height="24" backcolor="#C0F0FC" uuid="aa6db4d7-751a-4a4c-ac3f-d33c6eea4aad">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					</reportElement>
 					<box>
@@ -188,7 +176,7 @@ where tn.id_testo_normativo=3]]>
 					<textFieldExpression><![CDATA[$F{an_rub}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement positionType="Float" x="27" y="32" width="508" height="1" uuid="398a4ec5-6b2c-4dd1-adf1-d3c7398d1692"/>
+					<reportElement positionType="Float" x="11" y="32" width="508" height="1" uuid="398a4ec5-6b2c-4dd1-adf1-d3c7398d1692"/>
 				</line>
 			</band>
 		</groupHeader>
@@ -198,7 +186,7 @@ where tn.id_testo_normativo=3]]>
 		<groupHeader>
 			<band height="31">
 				<textField isBlankWhenNull="true">
-					<reportElement x="52" y="3" width="483" height="18" forecolor="#0C24F7" uuid="b4ac07ae-9296-47f6-95f4-71977cd7855d">
+					<reportElement x="36" y="3" width="483" height="18" forecolor="#0C24F7" uuid="b4ac07ae-9296-47f6-95f4-71977cd7855d">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					</reportElement>
@@ -209,7 +197,7 @@ where tn.id_testo_normativo=3]]>
 					<textFieldExpression><![CDATA[$F{tn2_descr}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement positionType="Float" x="52" y="24" width="483" height="1" uuid="5d9f7074-7bcd-47f9-84b6-448f6ad89d25"/>
+					<reportElement positionType="Float" x="36" y="24" width="483" height="1" uuid="5d9f7074-7bcd-47f9-84b6-448f6ad89d25"/>
 				</line>
 			</band>
 		</groupHeader>
@@ -219,21 +207,21 @@ where tn.id_testo_normativo=3]]>
 		<groupHeader>
 			<band height="27">
 				<textField isBlankWhenNull="true">
-					<reportElement x="80" y="2" width="57" height="15" uuid="74ff1ca5-a105-45c8-880c-907ecd6ae47e"/>
+					<reportElement x="64" y="2" width="57" height="15" uuid="74ff1ca5-a105-45c8-880c-907ecd6ae47e"/>
 					<textElement>
 						<font isBold="true" isUnderline="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{an2_codartnorm}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement x="136" y="2" width="399" height="15" uuid="9ef38137-906a-446b-b94c-7d1c46d79121"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="120" y="2" width="399" height="15" uuid="9ef38137-906a-446b-b94c-7d1c46d79121"/>
 					<textElement>
 						<font isBold="true" isUnderline="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{an2_rub}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement positionType="Float" x="80" y="20" width="455" height="1" uuid="83265756-afce-450b-b473-f9d5b4ffbf7c"/>
+					<reportElement positionType="Float" x="64" y="20" width="455" height="1" uuid="83265756-afce-450b-b473-f9d5b4ffbf7c"/>
 				</line>
 			</band>
 		</groupHeader>
@@ -274,15 +262,15 @@ where tn.id_testo_normativo=3]]>
 	<detail>
 		<band height="108" splitType="Stretch">
 			<frame>
-				<reportElement positionType="Float" x="77" y="67" width="357" height="15" uuid="aefe8420-cc7f-49c0-a6fc-906a19405fd6">
+				<reportElement positionType="Float" x="61" y="67" width="357" height="15" uuid="aefe8420-cc7f-49c0-a6fc-906a19405fd6">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="101" y="0" width="357" height="15" uuid="a318ca66-122f-44ab-abb8-ab7ffacb6a14"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="85" y="0" width="272" height="15" uuid="a318ca66-122f-44ab-abb8-ab7ffacb6a14"/>
 					<textFieldExpression><![CDATA[$F{int_tot_ante}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" x="-1" y="0" width="100" height="15" uuid="4d138cb1-3ef8-4b2c-b82c-a299b0235108">
+					<reportElement positionType="Float" x="-17" y="0" width="100" height="15" uuid="4d138cb1-3ef8-4b2c-b82c-a299b0235108">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle" markup="none">
@@ -292,15 +280,15 @@ where tn.id_testo_normativo=3]]>
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement x="77" y="3" width="357" height="15" uuid="ca3b9078-dcb2-4720-908f-eee8d61d24a9"/>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement x="100" y="0" width="357" height="15" uuid="f3aa6a37-1f7b-42fc-b337-75e7087c249d">
+				<reportElement x="61" y="3" width="357" height="15" uuid="ca3b9078-dcb2-4720-908f-eee8d61d24a9"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="84" y="0" width="273" height="15" uuid="f3aa6a37-1f7b-42fc-b337-75e7087c249d">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
 					<textFieldExpression><![CDATA[$F{r_cod}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="-1" y="0" width="100" height="15" uuid="cc3ed634-4452-4421-9c24-bc9845df4269">
+					<reportElement x="-17" y="0" width="100" height="15" uuid="cc3ed634-4452-4421-9c24-bc9845df4269">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle" markup="none">
@@ -310,15 +298,15 @@ where tn.id_testo_normativo=3]]>
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement positionType="Float" x="78" y="25" width="357" height="15" uuid="0458962b-244d-4a23-8022-835b55ce903c"/>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="100" y="0" width="357" height="15" uuid="1c74a9a3-52ac-4c80-b6eb-0eb543730bc1">
+				<reportElement positionType="Float" x="62" y="25" width="357" height="15" uuid="0458962b-244d-4a23-8022-835b55ce903c"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="84" y="0" width="272" height="15" uuid="1c74a9a3-52ac-4c80-b6eb-0eb543730bc1">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
 					<textFieldExpression><![CDATA[$F{r_tit}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" x="-1" y="0" width="100" height="15" uuid="a61e7304-5747-4ebe-8ea4-3a66c2ead1a0">
+					<reportElement positionType="Float" x="-17" y="0" width="100" height="15" uuid="a61e7304-5747-4ebe-8ea4-3a66c2ead1a0">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle" markup="none">
@@ -328,15 +316,15 @@ where tn.id_testo_normativo=3]]>
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement positionType="Float" x="78" y="47" width="357" height="15" uuid="8312b5dc-d9c0-4f17-80f7-046379d49f4f"/>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="100" y="0" width="357" height="15" uuid="79fbc14d-0b0f-4984-b6bf-19ace39f896e">
+				<reportElement positionType="Float" x="62" y="47" width="357" height="15" uuid="8312b5dc-d9c0-4f17-80f7-046379d49f4f"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="84" y="0" width="272" height="15" uuid="79fbc14d-0b0f-4984-b6bf-19ace39f896e">
 						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					</reportElement>
 					<textFieldExpression><![CDATA[$F{r_descr}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" x="-1" y="0" width="100" height="15" uuid="57220564-fe27-4027-a7a4-1146ff8b1f5d">
+					<reportElement positionType="Float" x="-17" y="0" width="100" height="15" uuid="57220564-fe27-4027-a7a4-1146ff8b1f5d">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle" markup="none">
@@ -346,13 +334,13 @@ where tn.id_testo_normativo=3]]>
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement positionType="Float" x="78" y="87" width="357" height="15" uuid="2fd34f1c-925d-47f4-91e5-f8305b2598bd"/>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="100" y="0" width="357" height="15" uuid="46f63fc3-7cb1-4743-a2f0-b312930b235c"/>
+				<reportElement positionType="Float" x="62" y="87" width="357" height="15" uuid="2fd34f1c-925d-47f4-91e5-f8305b2598bd"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="84" y="0" width="272" height="15" uuid="46f63fc3-7cb1-4743-a2f0-b312930b235c"/>
 					<textFieldExpression><![CDATA[$F{int_tot_post}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" x="-1" y="0" width="100" height="15" uuid="911a7a5c-9421-4ff5-bdc0-77dc67937865">
+					<reportElement positionType="Float" x="-17" y="0" width="100" height="15" uuid="911a7a5c-9421-4ff5-bdc0-77dc67937865">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>

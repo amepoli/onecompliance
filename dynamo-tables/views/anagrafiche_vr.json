@@ -21,7 +21,14 @@
                 "comboQuery": "select codice as id, transcodifica as name from entrasp.transcodifiche where tipo_dato='TIPO_SOGGETTO'",
                 "options": [],
                 "value": "E",
-                "viewType": "combobox"
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Tipo soggetto necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
@@ -30,7 +37,7 @@
             "newLine": false,
             "outputEvent": {
                 "eventName": "combo_tipo_soggetto",
-                "eventTrigger": "change"
+                "eventTrigger": "select"
             },
             "queryFunct": "SELECT tipo_soggetto from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
             "readOnly": false,
@@ -83,6 +90,7 @@
         },
         {
             "format": {
+                "viewType": "subform",
                 "subform_keys": [
                     {
                         "autoGenerate": false,
@@ -112,8 +120,7 @@
                         "queryFunct": "SELECT cognome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "readOnly": false
                     }
-                ],
-                "viewType": "subform"
+                ]
             },
             "inputEvents": [
                 {
@@ -127,18 +134,31 @@
             ],
             "isHidden": true,
             "isPrimary": false,
-            "key": "nome_cognome",
-            "label": "nome_cognome",
+            "key": "persone_fisiche",
+            "label": "Persone Fisiche",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
             "saveWhenHidden": true
         },
         {
-            "autoGenerate": false,
             "format": {
-                "dataType": "text",
-                "viewType": "textarea"
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "textarea"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "ragione_sociale",
+                        "label": "Ragione sociale",
+                        "newLine": true,
+                        "readOnly": false
+                    }
+                ]
             },
             "inputEvents": [
                 {
@@ -152,11 +172,12 @@
             ],
             "isHidden": true,
             "isPrimary": false,
-            "key": "ragione_sociale",
-            "label": "Ragione sociale",
+            "key": "persone_giuridiche",
+            "label": "Persone Giuridiche",
             "newLine": true,
             "readOnly": false,
-            "size": 10
+            "sameOrigin": false,
+            "saveWhenHidden": true
         },
         {
             "autoGenerate": true,
@@ -208,7 +229,6 @@
             "label": "Versione",
             "newLine": false,
             "readOnly": true
-           
         },
         {
             "autoGenerate": false,
@@ -230,7 +250,6 @@
             },
             "readOnly": false,
             "sameOrigin": false
-            
         },
         {
             "autoGenerate": false,
@@ -279,7 +298,7 @@
     ],
     "origin": "entrasp.anagrafiche_vr",
     "predefinedQueries": [
-        {
+          {
             "operation": "selectTable",
             "queryString": "SELECT an.codice_part, an.id_anagrafica, an.nome,  an.cognome, avr.ragione_sociale, avr.denominazione, avr.prog_vr, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica);",
             "type": "main"
@@ -306,13 +325,27 @@
             "isHidden": false,
             "keys": [
                 {
-                    
                     "parent": "id_anagrafica",
                     "son": "id_anagrafica"
                 }
             ],
             "label": "Allegati Associati",
             "type": "tableForm"
+        },
+        {
+            "entryKey": "sondaggi_somministrati",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_anagrafica"
+                },
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                }
+            ],
+            "label": "Sondaggi Associati"
         }
     ],
     "table_keys": [

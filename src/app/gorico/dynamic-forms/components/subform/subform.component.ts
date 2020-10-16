@@ -14,12 +14,12 @@ import { FieldConfig } from '../../field.interface';
 `,
   styles: [`
     .subform-style {
-      margin-right: 0%;
-      margin-left: 0%;
+      margin-right: 2%;
+      margin-left: 2%;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      width: 100%;
+      width: 96%;
     }
   `],
   host: {
