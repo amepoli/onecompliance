@@ -7,6 +7,11 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
+if [ ! -f ../../${1}.json ]; then
+    echo "Target not found!"
+    exit 0
+fi
+
 TABLENAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
 
 if [ $? -ne 0 ]
