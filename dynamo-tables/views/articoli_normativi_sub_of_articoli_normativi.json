@@ -1,11 +1,11 @@
 {
   "$schema": "../views.schema.json",
-  "entryKey": "articoli_normativi_sub_rischi",
-  "origin": "entrasp.rischi_articoli_normativi",
+  "entryKey": "articoli_normativi_sub_of_articoli_normativi",
+  "origin": "entrasp.articoli_normativi_rif",
   "predefinedQueries": [
     {
       "operation": "selectForm",
-      "queryString": "select (id_testo_normativo, codice_articolo_normativo) as articolo_testo_normativo from entrasp.rischi_articoli_normativi where codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$ and codice_articolo_normativo='£codice_articolo_normativo£' AND id_testo_normativo=£id_testo_normativo£",
+      "queryString": "select (id_testo_normativo_rif, codice_articolo_normativo_rif) as articolo_testo_normativo_rif from entrasp.articoli_normativi_rif where codice_azienda=$codice_azienda$ AND id_testo_normativo=$id_testo_normativo$ and codice_articolo_normativo=$codice_articolo_normativo$",
       "type": "postProcessing"
     },
     {
@@ -27,22 +27,22 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "cancella_art_normativi",
+      "key": "cancella_art_normativi_rif_k",
       "label": "delete",
       "buttonIcon": "delete",
       "newLine": false,
       "outputEvent": {
-        "eventName": "cancella_articoli_normativi",
+        "eventName": "cancella_articoli_normativi_rif",
         "eventTrigger": "press"
       },
       "inputEvents": [
         {
-          "eventName": "cancella_articoli_normativi",
+          "eventName": "cancella_articoli_normativi_rif",
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "delete from entrasp.rischi_articoli_normativi where codice_azienda = $codice_azienda$ and id_testo_normativo=$id_testo_normativo$ and codice_articolo_normativo=$codice_articolo_normativo$ and codice_rischio = $codice_rischio$",
-          "outputEventWhenComplete": "update_rischi_articoli_normativi"
+          "queryFunct": "delete from entrasp.articoli_normativi_rif where codice_azienda = $codice_azienda$ and id_testo_normativo=$id_testo_normativo$ and codice_articolo_normativo=$codice_articolo_normativo$ and id_testo_normativo_rif=$id_testo_normativo_rif$ and codice_articolo_normativo_rif=$codice_articolo_normativo_rif$",
+          "outputEventWhenComplete": "update_articoli_normativi_rif"
         }
       ],
       "readOnly": false,
@@ -53,18 +53,18 @@
       "isHidden": false,
       "isPrimary": false,
       "readOnly": false,
-      "key": "articolo_testo_normativo",
-      "label": "Articolo normativo",
+      "key": "articolo_testo_normativo_rif",
+      "label": "Articolo normativo (foglia)",
       "sameOrigin": false,
       "newLine": false,
       "size": 5,
       "subKeys": [
         {
-          "key": "s_id_testo_normativo",
+          "key": "s_id_testo_normativo_rif",
           "dataType": "number"
         },
         {
-          "key": "s_codice_articolo_normativo",
+          "key": "s_codice_articolo_normativo_rif",
           "dataType": "text"
         }
       ],
@@ -84,7 +84,7 @@
       "isPrimary": false,
       "key": "sanz_amm_min_quota",
       "label": "Sanz.Amm.Min.Quote",
-      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(codice_articolo_normativo, id_testo_normativo)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(codice_articolo_normativo_rif, id_testo_normativo_rif)",
       "sameOrigin": false,
       "readOnly": true,
       "newLine": false,
@@ -102,7 +102,7 @@
       "key": "sanz_amm_max_quota",
       "sameOrigin": false,
       "label": "Sanz.Amm.Max.Quote",
-      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(codice_articolo_normativo, id_testo_normativo)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(codice_articolo_normativo_rif, id_testo_normativo_rif)",
       "newLine": false,
       "size": 1
     },
@@ -118,7 +118,7 @@
       "label": "Sanz.Int.Min.gg.",
       "readOnly": true,
       "sameOrigin": false,
-      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(codice_articolo_normativo, id_testo_normativo)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(codice_articolo_normativo_rif, id_testo_normativo_rif)",
       "newLine": false,
       "size": 1
     },
@@ -134,22 +134,9 @@
       "readOnly": true,
       "label": "Sanz.Int.Max.gg.",
       "sameOrigin": false,
-      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(codice_articolo_normativo, id_testo_normativo)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(codice_articolo_normativo_rif, id_testo_normativo_rif)",
       "newLine": true,
       "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_rischio",
-      "label": "Codice Rischio",
-      "readOnly": true,
-      "newLine": false
     },
     {
       "autoGenerate": false,
@@ -193,7 +180,7 @@
   ],
   "inputEvents": [
     {
-      "eventName": "update_rischi_articoli_normativi",
+      "eventName": "update_articoli_normativi_rif",
       "actionType": "reload"
     }
   ]
