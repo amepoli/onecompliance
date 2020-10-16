@@ -6,7 +6,8 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
-cp $1.json app_data.json
+rm appdata.json
+ln -s $1.json appdata.json
 
 #APINAME=`cat app_data.json | jq -r ".apiName"`
 

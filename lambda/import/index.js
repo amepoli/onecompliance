@@ -7,7 +7,7 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const bucket = 'BUCKET_NAME';
 const region = 'REGION';
 const accessKey = 'ACCESS_KEY';
-const secret = 'j+PM/Zgnu/sXU6dhHd0wXraJn3a9NtCRgQbI0S6P';
+const secret = 'SECRETKEY';
 
 const schema = 'SCHEMA';
 
@@ -17,8 +17,8 @@ const Pool = require('pg-pool');
 const pool = new Pool({
     host: 'HOST_NAME',
     database: 'DB_NAME',
-    user: 'postgres',
-    password: 'et2themax',
+    user: 'USER_NAME',
+    password: 'PASSWORD',
     port: 5432,
     max: 1,
     min: 0,

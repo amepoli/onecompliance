@@ -3,17 +3,25 @@
 
 if [ $# -eq 0 ]
   then
-    echo "Please provide the target environment [gorico_prod, gorico_test, gorico_dev, xxx_prod, xxx_test, xxx_dev]"
+    echo "Please provide the target environment [gorico_prod, gorico_dev, xxx_prod, xxx_dev]"
     exit 0
 fi
 
-TABLENAME="views"
-MAINKEY="entryKey"
+TABLENAME=`cat ../../${1}.json | jq -r ".dynamoTables.views.tableName"`
 
-if [ $1 != "gorico_dev" ]
+if [ $? -ne 0 ]
   then
-    TABLENAME="${TABLENAME}_$1"
-fi
+    echo "Something went wrong!"
+    exit 1
+fi 
+
+MAINKEY=`cat ../../${1}.json | jq -r ".dynamoTables.views.mainKey"`
+
+if [ $? -ne 0 ]
+  then
+    echo "Something went wrong!"
+    exit 1
+fi 
 
 TABLE_EXISTS=`aws dynamodb list-tables | grep \"${TABLENAME}\"`
 

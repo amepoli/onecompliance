@@ -2,43 +2,35 @@
 
 if [ $# -eq 0 ]
   then
-    echo "Please provide the target environment [gorico_prod, gorico_test, gorico_dev, xxx_prod, xxx_test, xxx_dev]"
+    echo "Please provide the target environment [gorico_prod, gorico_dev, xxx_prod, xxx_dev]"
     exit 0
 fi
 
-LAMBDANAME="import"
-SCHEMA="entrasp"
+LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.import.lambdaName"`
 
-DYN_USERSNAME="users"
-DYN_PROFILESNAME="profiles"
-DYN_VIEWSNAME="views"
+DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
+DYN_PROFILESNAME=`cat ../../${1}.json | jq -r ".dynamoTables.profiles.tableName"`
+DYN_VIEWSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.views.tableName"`
 
-DBNAME=""
-HOSTNAME="goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com"
+DBNAME=`cat ../../${1}.json | jq -r ".postgres.dbName"`
+HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
+USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
+PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
 
-BUCKETNAME="gorico2.import"
+BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.import.s3.bucket"`
 REGION="eu-central-1"
-ACCESSKEY="AKIAVH7FFOJ5BBH3AY4R"
-SECRETKEY="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"
+ACCESSKEY=`cat ../../${1}.json | jq -r ".lambdas.import.s3.accessKey"`
+SECRETKEY=`cat ../../${1}.json | jq -r ".lambdas.import.s3.secretKey"`
 
 CSVDELIMITER="~"
-
-if [ $1 == "gorico_dev" ]
-  then
-    DBNAME="Gorico"
-  else
-    DBNAME="$1"
-    LAMBDANAME="${LAMBDANAME}_$1"
-    DYN_USERSNAME="${DYN_USERSNAME}_$1"
-    DYN_PROFILESNAME="${DYN_PROFILESNAME}_$1"
-    DYN_VIEWSNAME="${DYN_VIEWSNAME}_$1"
-fi
 
 #replace Variables
 cp index.js index.js.ori
 
 sed -i -e "s/DB_NAME/${DBNAME}/g" index.js
 sed -i -e "s/HOST_NAME/${HOSTNAME}/g" index.js
+sed -i -e "s/USER_NAME/${USERNAME}/g" index.js
+sed -i -e "s/PASSWORD/${PASSWORD}/g" index.js
 sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
 sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
 sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
@@ -46,7 +38,7 @@ sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
 sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js
 sed -i -e "s/REGION/${REGION}/g" index.js
 sed -i -e "s/ACCESS_KEY/${ACCESSKEY}/g" index.js
-sed -i -e "s/SECRET_KEY/${SECRETKEY}/g" index.js
+sed -i -e "s|SECRET_KEY|${SECRETKEY}|g" index.js
 sed -i -e "s/SCHEMA/${SCHEMA}/g" index.js
 
 sed -i -e "s/CSV_DELIMITER/${CSVDELIMITER}/g" index.js
@@ -58,7 +50,7 @@ rm index.js-e
 
 rm ./nodejs.zip
 
-zip -r nodejs.zip node_modules index.js package.json
+zip -r nodejs.zip index.js package.json
 
 aws lambda update-function-code --function-name $LAMBDANAME --zip-file fileb://./nodejs.zip
 
