@@ -16,7 +16,7 @@ const pool = new Pool({
     connectionTimeoutMillis: 1000
 });
 
-var sender_address = 'amedeo.poli@audifit.it';
+var sender_address = 'amedeo.poli@auditft.it';
 
 // Some test addresses
 //var admin_addresses = ['akhtar.syedzeeshan@alacritas.eu', 'amedeo.poli@alacritas.eu', 'nicola.capovilla@alacritas.eu'];
