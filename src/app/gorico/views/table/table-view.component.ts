@@ -32,6 +32,7 @@ export interface tableViewKey { // as per API specification
         dataType: tableDataType,
         value?: any
     };
+    width?: string;
 }
 
 export interface searchViewKey { // as per API specification
@@ -210,6 +211,8 @@ export class TableViewComponent implements OnChanges {
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
                     _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
                     _this.loadTable(null);
+
+                    console.log(_this.viewKeys);
 
                     _this.loadStyle(params.table_keys);
 
