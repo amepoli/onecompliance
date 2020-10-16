@@ -13,7 +13,7 @@
 	<property name="ireport.zoom" value="1.3310000000000004"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -35,12 +35,17 @@
 	<parameter name="codice_azienda" class="java.lang.String"/>
 	<parameter name="codice_rischio" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select rp.codice_azienda, rp.codice_rischio,rp.id_presidio, pr.descrizione, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione  from entrasp.rischi_presidi rp, entrasp.presidi pr where rp.codice_azienda=$P{codice_azienda} and rp.codice_rischio=$P{codice_rischio} and rp.codice_azienda=pr.codice_azienda and rp.id_presidio=pr.id_presidio]]>
+		<![CDATA[select rp.codice_azienda, pr.codice, rp.codice_rischio,rp.id_presidio,pr.descrizione_breve, pr.descrizione, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione  from entrasp.rischi_presidi rp, entrasp.presidi pr where rp.codice_azienda=$P{codice_azienda} and rp.codice_rischio=$P{codice_rischio} and rp.codice_azienda=pr.codice_azienda and rp.id_presidio=pr.id_presidio]]>
 	</queryString>
 	<field name="codice_azienda" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
 		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="rischi_presidi"/>
+	</field>
+	<field name="codice" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="presidi"/>
 	</field>
 	<field name="codice_rischio" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice_rischio"/>
@@ -52,6 +57,11 @@
 		<property name="com.jaspersoft.studio.field.label" value="id_presidio"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="rischi_presidi"/>
 	</field>
+	<field name="descrizione_breve" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione_breve"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione_breve"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="presidi"/>
+	</field>
 	<field name="descrizione" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
 		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
@@ -62,7 +72,7 @@
 		<property name="com.jaspersoft.studio.field.label" value="stato_attuazione"/>
 	</field>
 	<title>
-		<band height="49">
+		<band height="51">
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="2" width="560" height="20" forecolor="#FFFFFF" backcolor="#4CB6D9" uuid="9aa06b90-d7e8-4cc9-a5eb-28197ec94f2e">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -73,7 +83,7 @@
 				<text><![CDATA[Presidi associati]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="29" width="400" height="17" forecolor="#FFFFFF" backcolor="#25599C" uuid="84003b3e-b0b1-405c-80f6-96c505df13f0">
+				<reportElement mode="Opaque" x="91" y="29" width="350" height="17" forecolor="#FFFFFF" backcolor="#25599C" uuid="84003b3e-b0b1-405c-80f6-96c505df13f0">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -91,7 +101,7 @@
 				<text><![CDATA[DESCRIZIONE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="420" y="29" width="139" height="17" forecolor="#FFFFFF" backcolor="#25599C" uuid="b552c1db-8f77-43ab-9489-c5ffb259b680">
+				<reportElement mode="Opaque" x="450" y="29" width="109" height="17" forecolor="#FFFFFF" backcolor="#25599C" uuid="b552c1db-8f77-43ab-9489-c5ffb259b680">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -107,33 +117,59 @@
 				</textElement>
 				<text><![CDATA[STATO ATTUAZIONE]]></text>
 			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="8" y="29" width="70" height="17" forecolor="#FFFFFF" backcolor="#25599C" uuid="c64ca25f-2c8e-4041-89cc-da2b630efe5f">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[CODICE]]></text>
+			</staticText>
 		</band>
 	</title>
 	<detail>
-		<band height="45" splitType="Stretch">
+		<band height="33" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<line>
-				<reportElement positionType="Float" x="0" y="32" width="560" height="1" uuid="72c5bfff-58fa-48e4-9c9f-257f58075b7b">
+				<reportElement positionType="Float" x="0" y="29" width="560" height="1" uuid="72c5bfff-58fa-48e4-9c9f-257f58075b7b">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 			</line>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="0" y="4" width="400" height="20" uuid="4ecdd2e5-6785-47d2-8d2d-13af21ce7279">
+				<reportElement positionType="Float" x="450" y="4" width="109" height="20" uuid="372605be-6ae9-4c4a-bd50-8ed94f2df659">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle">
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
-			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="420" y="4" width="139" height="20" uuid="372605be-6ae9-4c4a-bd50-8ed94f2df659">
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{stato_attuazione}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="91" y="4" width="350" height="20" uuid="712ab8f1-277b-4a14-9926-273056d3bf20">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descrizione_breve}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="8" y="4" width="70" height="20" uuid="b0610ea1-c545-43b2-a685-1017e187af17">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{codice}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
