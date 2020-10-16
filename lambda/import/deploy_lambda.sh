@@ -6,6 +6,11 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
+if [ ! -f ../../${1}.json ]; then
+    echo "Target not found!"
+    exit 0
+fi
+
 LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.import.lambdaName"`
 
 DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
@@ -16,6 +21,7 @@ DBNAME=`cat ../../${1}.json | jq -r ".postgres.dbName"`
 HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
 USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
 PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
+SCHEMA=`cat ../../${1}.json | jq -r ".postgres.schema"`
 
 BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.import.s3.bucket"`
 REGION="eu-central-1"

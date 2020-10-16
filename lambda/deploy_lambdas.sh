@@ -9,7 +9,7 @@ fi
 cd tables
 echo "Deploying tables"
 ./deploy_lambda.sh $1
-cd ../allegati
+cd ../attachments
 echo "Deploying allegati"
 ./deploy_lambda.sh $1
 cd ../navigation

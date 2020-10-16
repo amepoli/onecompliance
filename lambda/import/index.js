@@ -7,7 +7,7 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const bucket = 'BUCKET_NAME';
 const region = 'REGION';
 const accessKey = 'ACCESS_KEY';
-const secret = 'SECRETKEY';
+const secret = 'SECRET_KEY';
 
 const schema = 'SCHEMA';
 

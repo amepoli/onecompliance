@@ -6,6 +6,11 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
+if [ ! -f ../../${1}.json ]; then
+    echo "Target not found!"
+    exit 0
+fi
+
 LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.translation.lambdaName"`
 
 DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
