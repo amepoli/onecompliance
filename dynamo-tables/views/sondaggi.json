@@ -81,7 +81,7 @@
                         "C"
                     ],
                     "actionType": "query",
-                    "queryFunct": "select entrasp.sondaggio_insert($codice_azienda$, $titolo$, $id_modello_test$, $id_modello_test_vr$, $data_esecuzione$+coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0), (select case when coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)=0 then false else true end));"
+                    "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$, $titolo$, $id_modello_test$, $id_modello_test_vr$, $data_esecuzione$+coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0), (select case when coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)=0 then false else true end));"
                 },
                 {
                     "eventName": "sondaggio_change_stato",
@@ -143,7 +143,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 2
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -157,7 +157,7 @@
             "key": "data_esecuzione",
             "label": "Data Esecuzione",
             "newLine": false,
-            "size": 2.5,
+            "size": 2,
             "readOnly": false
         },
         {
@@ -171,9 +171,31 @@
             "isPrimary": false,
             "key": "data_comp",
             "label": "Data Competenza",
-            "newLine": true,
-            "size": 2.5,
+            "newLine": false,
+            "size": 2,
             "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "pianifica_serie",
+            "label": "Pianifica serie",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "to_sondaggi_replan",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -440,7 +462,21 @@
             ],
             "readOnly": false,
             "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_serie",
+            "label": "Riepilogo Risultati",
+            "newLine": true,
+            "readOnly": true
         }
+      
     ],
     "search_keys": [
         {
@@ -648,13 +684,27 @@
             ],
             "label": "Allegati Associati",
             "type": "tableForm"
+        },
+        {
+            "entryKey": "sondaggi",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                }
+
+            ],
+            "label": "Sondaggi serie"
         }
     ],
     "table_keys": [
         {
             "format": {
-                "dataType": "text",
-                "value": "DEMO"
+                "dataType": "text"
             },
             "isHidden": true,
             "isPrimary": true,
@@ -761,9 +811,36 @@
                     "font_weight": "500"
                 }
             ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_serie",
+            "label": "id_serie"
         }
     ],
     "inputEvents": [
+        {
+            "actionTarget": {
+                "name": "sondaggi_replan",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_sondaggi_replan"
+        },
         {
             "actionTarget": {
                 "name": "modelli_test_vr",

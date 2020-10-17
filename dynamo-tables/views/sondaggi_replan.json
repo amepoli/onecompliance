@@ -1,0 +1,216 @@
+{
+    "$schema": "../views.schema.json",
+    "businessObjectName": "sondaggi",
+    "entryKey": "sondaggi_replan",
+    "origin": "entrasp.sondaggi",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_serie",
+            "label": "id_serie",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "label": "ID Sondaggio",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Inserire un breve titolo",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Titolo Sondaggio",
+            "newLine": true,
+            "size": 7,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_modello_test",
+            "label": "Titolo Modello Test",
+            "newLine": false,
+            "size": 6,
+            "queryFunct": "entrasp.mdt_codtitolo(codice_azienda, id_modello_test)",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "ID Modello Test",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test_vr",
+            "label": "Versione Modello Test",
+            "newLine": true,
+            "readOnly": true,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_value",
+            "sameOrigin": false,
+            "label": "Unità misura intervalli (days, weeks, months)",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_multiplier",
+            "label": "Numero intervalli",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "repeats_number",
+            "label": "Numero sondaggi da generare",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "date_start",
+            "label": "Data inizio",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "date_end",
+            "label": "Data fine",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true
+        },
+
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "pianifica",
+            "label": "pianifica",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "sondaggi_series_pianifica",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "sondaggi_series_pianifica",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.sondaggio_insert_series($codice_azienda$, $id_sondaggio$, $id_serie$, $interval_value$, $interval_multiplier$, $repetitions_number$, $date_start$, $date_end$);"
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 2
+        }
+    ]
+}
