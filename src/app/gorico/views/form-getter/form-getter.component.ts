@@ -793,6 +793,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
                 filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
             }
+            // destroy current subscriptions before moving to a new view
+            _this.subscriptions.forEach(subscription => {
+                subscription.unsubscribe();
+            });
             _this.sendEvent.emit({ eventType: 'navigate', queryParams: { entry: event.actionTarget, keys: [filteredKeys], index: 1, total: 1 } });
             if (event.outputEventWhenComplete != null) {
                 _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
