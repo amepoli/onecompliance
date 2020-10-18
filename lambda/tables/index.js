@@ -1296,7 +1296,7 @@ exports.handler = async (event, context) => {
             // process dashboard queries
             queryData = await processDashboard(queryString, client);
         } else {
-            // process query string(s) - just check if new insertion in case of POST
+            // process query string(s) 
             queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'));
         }
 
