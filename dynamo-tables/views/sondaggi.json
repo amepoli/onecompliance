@@ -337,7 +337,7 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "pct_da",
-            "label": "Giudizio",
+            "label": "pct_da",
             "queryFunct": "select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
             "newLine": false,
             "readOnly": true
@@ -375,7 +375,7 @@
             "queryFunct": "entrasp.descrizione_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
             "newLine": false,
             "readOnly": true,
-            "size": 3.25
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -390,7 +390,7 @@
             "queryFunct": "select percentuale from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
             "newLine": false,
             "readOnly": true,
-            "size": 1.5
+            "size": 1
         },
         {
             "autoGenerate": false,
@@ -415,7 +415,22 @@
                     "updateFunct": "'£codice_colore£'"
                 }
             ],
-            "size": 3.25
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select ftmtr.pct_da as id, ftmtr.descrizione as name from entrasp.modelli_test_risultati_righe mtr join entrasp.tipi_modelli_test_risultati_righe_descr_from_risultati_righe($codice_azienda$, mtr.pct_da, mtr.id_risultato) ftmtr  on ftmtr.codice_azienda=mtr.codice_azienda and ftmtr.id_risultato=mtr.id_risultato where mtr.codice_azienda=$codice_azienda$ and mtr.id_risultato=entrasp.id_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$);",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "pct_da_manuale",
+            "label": "Giudizio Manuale",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -426,7 +441,7 @@
             "isPrimary": false,
             "key": "riepilogo_risultati",
             "label": "Riepilogo Risultati",
-            "size": 2,
+            "size": 1.5,
             "newLine": true,
             "outputEvent": {
                 "eventName": "check_existence_riepilogo_risultati",
@@ -475,8 +490,21 @@
             "label": "Riepilogo Risultati",
             "newLine": true,
             "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "pct_da",
+            "label": "pct_da",
+            "queryFunct": "select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "newLine": false,
+            "readOnly": true
         }
-      
     ],
     "search_keys": [
         {
@@ -696,7 +724,6 @@
                     "parent": "id_modello_test",
                     "son": "id_modello_test"
                 }
-
             ],
             "label": "Sondaggi serie"
         }
