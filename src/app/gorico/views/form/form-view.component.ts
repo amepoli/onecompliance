@@ -111,6 +111,10 @@ export class FormViewComponent implements OnChanges, OnInit {
     ngOnInit() {
         const _this = this; // useful to debug
 
+        if (_this.tableData.navBarMode === 'add') {
+            _this.isQuickAdd = true;
+        }
+
         // Subscribe to Reload Request
         _this._fileService.reloadNeeded.subscribe(entryName => {
             if (entryName === _this.tableData.entryName) {
@@ -277,7 +281,9 @@ export class FormViewComponent implements OnChanges, OnInit {
                         this.savingState = 'done';
                         setTimeout(() => {
                             this.savingState = 'save';
-                            this.navigationToViewHome(values, result.data);
+                            if (this.isQuickAdd) {
+                                this.navigationToViewHome(values, result.data);
+                            }
                             // this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
                         }, 1000);
                     }

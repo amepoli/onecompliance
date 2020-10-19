@@ -266,6 +266,7 @@ export class TableViewComponent implements OnChanges {
             results => {
                 console.log(results);
                 if (results.result === 'OK') {
+                    _this.showAdvSearch = false;
                     results = results.data;
                     if (results.search_options) { // got some search combobox options
                         _this.searchOptions = results.search_options; // store them
