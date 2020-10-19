@@ -6,6 +6,35 @@
         {
             "autoGenerate": false,
             "format": {
+              "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cancella_t_rischio",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "cancella_tipi_rischio",
+              "eventTrigger": "press"
+            },
+            "inputEvents": [
+              {
+                "eventName": "cancella_tipi_rischio",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "delete from entrasp.rischi_tipi where codice_azienda = $codice_azienda$ and codice_rischio=$codice_rischio$ and id_tipo_rischio=$id_tipo_rischio$",
+                "outputEventWhenComplete": "update_rischi_articoli_normativi"
+              } 
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+          },
+        {
+            "autoGenerate": false,
+            "format": {
                 "comboQuery": "SELECT id_tipo_rischio AS id, entrasp.tipi_rischio_descrizione(id_tipo_rischio, $codice_azienda$) AS name  FROM entrasp.tipi_rischio WHERE codice_azienda=$codice_azienda$;",
                 "options": [],
                 "viewType": "combobox",
@@ -16,9 +45,8 @@
             "key": "id_tipo_rischio",
             "label": "Tipo rischio",
             "readOnly": false,
-            "size": 10,
+            "size": 9,
             "newLine": true
-
         },
         {
             "autoGenerate": false,
@@ -46,5 +74,11 @@
             "readOnly": true,
             "newLine": false
         }
-    ]
+        ],
+    "inputEvents": [
+        {
+          "eventName": "update_rischi_articoli_normativi",
+          "actionType": "reload"
+        }
+      ]
 }

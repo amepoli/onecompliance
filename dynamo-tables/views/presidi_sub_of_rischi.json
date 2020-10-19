@@ -13,6 +13,35 @@
         {
             "autoGenerate": false,
             "format": {
+              "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cancella_presidio",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "cancella_presidi_rischi",
+              "eventTrigger": "press"
+            },
+            "inputEvents": [
+              {
+                "eventName": "cancella_presidi_rischi",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "delete from entrasp.rischi_presidi where codice_azienda = $codice_azienda$ and codice_rischio=$codice_rischio$ and id_presidio=$id_presidio$",
+                "outputEventWhenComplete": "update_rischi_articoli_normativi"
+              } 
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+          },
+        {
+            "autoGenerate": false,
+            "format": {
                 "comboQuery": "SELECT id_presidio AS id, descrizione AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$;",
                 "options": [],
                 "viewType": "combobox"
@@ -23,7 +52,7 @@
             "isHidden": false,
             "isPrimary": true,
             "newLine": false,
-            "size": 5.5
+            "size": 4.5
         },
         {
             "format": {
@@ -89,6 +118,12 @@
             "readOnly": false
         }
     ],
+    "inputEvents": [
+        {
+          "eventName": "update_rischi_articoli_normativi",
+          "actionType": "reload"
+        }
+      ],
     "outputEvent": {
         "eventName": "savedForm",
         "eventTrigger": "onSave"

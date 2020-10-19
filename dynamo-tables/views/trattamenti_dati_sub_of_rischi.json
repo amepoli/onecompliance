@@ -8,8 +8,37 @@
       "type": "main"
     }
   ],
-  "origin": "entrasp.fonti_rischio",
+  "origin": "entrasp.cpl_trattamenti_dati_rischi",
   "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_trat",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "cancella_trattamenti_rischi",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "cancella_trattamenti_rischi",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "delete from entrasp.cpl_trattamenti_dati_rischi where codice_azienda = $codice_azienda$ and codice_rischio=$codice_rischio$ and id_trattamento_dati=$id_trattamento_dati$",
+          "outputEventWhenComplete": "update_rischi_articoli_normativi"
+        } 
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -26,8 +55,8 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "id_procedura",
-      "label": "Procedura",
+      "key": "id_trattamento_dati",
+      "label": "Trattamento Dato",
       "newLine": false,
       "readOnly": false,
       "size": 7
@@ -91,6 +120,12 @@
       "key": "tipo",
       "label": "Tipo",
       "readOnly": true
+    }
+  ],
+  "inputEvents": [
+    {
+      "eventName": "update_rischi_articoli_normativi",
+      "actionType": "reload"
     }
   ]
 }

@@ -11,6 +11,35 @@
   "origin": "entrasp.fonti_rischio",
   "form_keys": [
     {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cancella_proc",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "cancella_processi_rischi",
+              "eventTrigger": "press"
+            },
+            "inputEvents": [
+              {
+                "eventName": "cancella_processi_rischi",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "delete from entrasp.fonti_rischio where codice_azienda = $codice_azienda$ and codice_rischio=$codice_rischio$ and id_fonte_rischio=$id_fonte_rischio$",
+                "outputEventWhenComplete": "update_rischi_articoli_normativi"
+              } 
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+          },
+    {
       "autoGenerate": false,
       "format": {
         "viewType": "combobox",
@@ -30,7 +59,7 @@
       "label": "Procedura",
       "newLine": false,
       "readOnly": false,
-      "size": 7
+      "size": 6
     },
     {
       "format": {
@@ -91,6 +120,12 @@
       "key": "tipo",
       "label": "Tipo",
       "readOnly": true
+    }
+  ],
+  "inputEvents": [
+    {
+      "eventName": "update_rischi_articoli_normativi",
+      "actionType": "reload"
     }
   ]
 }
