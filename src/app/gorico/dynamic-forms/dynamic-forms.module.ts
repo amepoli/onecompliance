@@ -15,6 +15,7 @@ import { DynamicFieldDirective } from './components/dynamic-field/dynamic-field.
 import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.component';
 import { ComboboxComponent } from './components/combobox/combobox.component';
 import { TextAreaComponent } from './components/textarea/textarea.component';
+import { InvisibleComponent } from './components/invisible/invisible.component';
 import { LabelComponent } from './components/label/label.component';
 import { SubformComponent } from './components/subform/subform.component';
 
@@ -34,6 +35,7 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     DynamicFormComponent,
     ComboboxComponent,
     TextAreaComponent,
+    InvisibleComponent,
     LabelComponent,
     SubformComponent
   ],
@@ -57,6 +59,7 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     DynamicFormComponent,
     ComboboxComponent,
     TextAreaComponent,
+    InvisibleComponent,
     LabelComponent,
     SubformComponent
   ],
@@ -70,6 +73,7 @@ import { MAT_DATE_LOCALE } from '@angular/material';
     CheckboxComponent,
     ComboboxComponent,
     TextAreaComponent,
+    InvisibleComponent,
     LabelComponent,
     SubformComponent
   ],

@@ -19,6 +19,7 @@ import { ComboboxComponent } from "../combobox/combobox.component";
 import { TextAreaComponent } from '../textarea/textarea.component';
 import { SubformComponent } from '../subform/subform.component';
 import { LabelComponent } from "../label/label.component";
+import { InvisibleComponent } from "../invisible/invisible.component";
 
 const componentMapper = {
   input: InputComponent,
@@ -30,6 +31,7 @@ const componentMapper = {
   checkbox: CheckboxComponent,
   combobox: ComboboxComponent,
   textarea: TextAreaComponent,
+  invisble: InvisibleComponent,
   label: LabelComponent,
   subform: SubformComponent
 };
