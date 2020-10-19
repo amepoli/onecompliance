@@ -25,6 +25,9 @@ async function runQuery(query) {
     try {
         const client = await pool.connect();
         let response = await client.query(query);
+        await client.release();
+        client = null;
+
         if (response && response.rows && response.rows.length) {
             return response.rows;
         }
@@ -32,6 +35,8 @@ async function runQuery(query) {
             console.log({ 'Success': false, 'Message': 'Postgresql: No data!', 'Error': null });
             return null;
         }
+
+
     }
     catch (e) {
         console.log({ 'Success': false, 'Message': 'Postgresql: Invalid request!', 'Error': e });
