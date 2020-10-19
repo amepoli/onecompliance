@@ -20,7 +20,7 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select pr.* ,att.codice_attivita as cod_att, att.descrizione as modello_di_progetto from entrasp.progetti pr join entrasp.attivita att on pr.codice_azienda=att.codice_azienda and pr.codice_attivita=att.codice_attivita where pr.codice_azienda='DEMO'"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select pr.codice_azienda, pr.id_progetto,pr.codice_progetto, pr.titolo , pr.id_tipo_progetto, pr.codice_part, pr.id_cliente, entrasp.transcodifiche_transcodifica('STATO', pr.stato) as stato,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_cliente) from entrasp.progetti pr WHERE pr.codice_azienda='DEMO'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -48,11 +48,6 @@
 		<property name="com.jaspersoft.studio.field.label" value="titolo"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
 	</field>
-	<field name="stato" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="stato"/>
-		<property name="com.jaspersoft.studio.field.label" value="stato"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
 	<field name="id_tipo_progetto" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="id_tipo_progetto"/>
 		<property name="com.jaspersoft.studio.field.label" value="id_tipo_progetto"/>
@@ -68,65 +63,14 @@
 		<property name="com.jaspersoft.studio.field.label" value="id_cliente"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
 	</field>
-	<field name="tipi_risorsa_previsti" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="tipi_risorsa_previsti"/>
-		<property name="com.jaspersoft.studio.field.label" value="tipi_risorsa_previsti"/>
+	<field name="stato" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stato"/>
+		<property name="com.jaspersoft.studio.field.label" value="stato"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
 	</field>
-	<field name="data_inserimento" class="java.sql.Date">
-		<property name="com.jaspersoft.studio.field.name" value="data_inserimento"/>
-		<property name="com.jaspersoft.studio.field.label" value="data_inserimento"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
-	<field name="id_cliente_sede" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_cliente_sede"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_cliente_sede"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
-	<field name="id_articolo" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_articolo"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_articolo"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
-	<field name="codice_variante" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="codice_variante"/>
-		<property name="com.jaspersoft.studio.field.label" value="codice_variante"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
-	<field name="codice_attivita" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="codice_attivita"/>
-		<property name="com.jaspersoft.studio.field.label" value="codice_attivita"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
-	<field name="flag_template" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="flag_template"/>
-		<property name="com.jaspersoft.studio.field.label" value="flag_template"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
-	<field name="ts_last_state" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="ts_last_state"/>
-		<property name="com.jaspersoft.studio.field.label" value="ts_last_state"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
-	<field name="flag_fatturato" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="flag_fatturato"/>
-		<property name="com.jaspersoft.studio.field.label" value="flag_fatturato"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
-	<field name="id_fattura" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_fattura"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_fattura"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
-	<field name="cod_att" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="cod_att"/>
-		<property name="com.jaspersoft.studio.field.label" value="cod_att"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
-	</field>
-	<field name="modello_di_progetto" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="modello_di_progetto"/>
-		<property name="com.jaspersoft.studio.field.label" value="modello_di_progetto"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
+	<field name="anagrafiche_vr_dati_identificativi" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="anagrafiche_vr_dati_identificativi"/>
+		<property name="com.jaspersoft.studio.field.label" value="anagrafiche_vr_dati_identificativi"/>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
@@ -163,7 +107,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="257">
+		<band height="262">
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement isPrintRepeatedValues="false" mode="Opaque" x="0" y="49" width="100" height="20" backcolor="#FFFFFF" uuid="9d8d67a8-8fa2-4de6-9369-448ddd8436e8">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -261,38 +205,6 @@
 				<text><![CDATA[ID progetto]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="1" y="110" width="555" height="10" isRemoveLineWhenBlank="true" uuid="20a63d65-f4e7-4643-bd20-1caa42305869">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{modello_di_progetto}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement mode="Opaque" x="0" y="90" width="556" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="671a41f3-8451-464b-a30c-cc99ece38de0">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box>
-					<pen lineColor="#000000"/>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Modello di progetto]]></text>
-			</staticText>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="1" y="152" width="555" height="10" isRemoveLineWhenBlank="true" uuid="43f598d9-3e5a-4482-b480-d3884e59c683">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -338,7 +250,7 @@
 				<textElement>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{id_cliente}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{anagrafiche_vr_dati_identificativi}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="174" width="556" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="6cbcfd39-a2bf-48f8-81c8-f5f4c03248a7">
@@ -355,38 +267,6 @@
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[ID cliente]]></text>
-			</staticText>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="1" y="238" width="555" height="10" isRemoveLineWhenBlank="true" uuid="cd316abd-adbe-4005-a507-e558a38358eb">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement>
-					<paragraph leftIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{data_inserimento}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement mode="Opaque" x="0" y="218" width="556" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="97d63f59-f8ef-4536-a2e9-ddc4eee60c9a">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box>
-					<pen lineColor="#000000"/>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Data inserimento]]></text>
 			</staticText>
 		</band>
 	</detail>
