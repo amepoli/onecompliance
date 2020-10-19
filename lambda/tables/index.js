@@ -852,7 +852,8 @@ async function processPreMainPost(queryString, client, notFullTable) {
     // post-processing, exclude table view
     if (queryString.postProcessQueries != null && queryString.postProcessQueries.length) { // post-processing 
         let haveMainData = queryData.length > 0;
-        let maxindex = haveMainData ? queryData.length : 1; // run the queries once if e.g. is insert/update or no rows
+        // let maxindex = haveMainData ? queryData.length : 1; // run the queries once if e.g. is insert/update or no rows
+        let maxindex = queryData.length;
         for (let row_index = 0; row_index < maxindex ; row_index++) {
             local_keys_post = haveMainData ? Object.assign(local_keys_pre, queryData[row_index]) : local_keys_post;
             for (let index = 0; index < queryString.postProcessQueries.length; index++) {
