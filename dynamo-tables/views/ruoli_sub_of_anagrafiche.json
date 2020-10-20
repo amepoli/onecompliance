@@ -1,0 +1,95 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "ruoli_sub_of_anagrafiche",
+    "origin": "entrasp.ruoli_anagrafiche",
+    "inputEvents": [
+      {
+          "eventName": "update_anagrafiche_vr",
+          "actionType": "reload"
+      }
+  ],
+    "form_keys": [
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input",
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda",
+        "readOnly": false,
+        "newLine": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input",
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_part",
+        "label": "codice_part",
+        "readOnly": false,
+        "newLine": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+            "viewType": "button"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "cancella_ruoli",
+        "label": "delete",
+        "buttonIcon": "delete",
+        "newLine": false,
+        "outputEvent": {
+            "eventName": "ruoli_cancella",
+            "eventTrigger": "press"
+        },
+        "inputEvents": [
+            {
+                "eventName": "ruoli_cancella",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "delete from entrasp.ruoli_anagrafiche where codice_azienda=$codice_azienda$ and codice_part =$codice_part$ and id_anagrafica=$id_anagrafica$ and codice_ruolo=$codice_ruolo$",
+                "outputEventWhenComplete": "update_anagrafiche_vr"
+            }],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input",
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_anagrafica",
+        "label": "ID",
+        "readOnly": false,
+        "newLine": false
+      }, 
+      {
+        "autoGenerate": false,
+        "format": {
+          "comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli where codice_part='€global_codice_part€';",
+                  "options": [],
+                  "viewType": "combobox",
+                  "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "codice_ruolo",
+        "label": "Ruolo",
+        "readOnly": false,
+        "newLine": false
+      }
+    ]
+  }
