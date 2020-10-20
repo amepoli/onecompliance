@@ -17,7 +17,7 @@ import { HelperService } from 'app/gorico/services/helper.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
-export type formViewType = 'input' | 'textarea' | 'combobox' | 'checkbox' | 'radiobutton' | 'checkboxgroup' | 'button' | 'subform';
+export type formViewType = 'input' | 'textarea' | 'combobox' | 'invisible' | 'checkbox' | 'radiobutton' | 'checkboxgroup' | 'button' | 'subform';
 
 export type eventActionType = 'show' | 'update' | 'query' | 'update_style' | 'query_style';
 
