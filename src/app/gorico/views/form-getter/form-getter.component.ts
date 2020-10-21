@@ -29,6 +29,8 @@ export interface formViewKey { // as per API specification
     readOnly: boolean;
     isPrimary: boolean;
     isVisible: boolean;
+    isLevel?: boolean;
+    hasLevel?: boolean;
     newLine: boolean;
     textareaHeight?: "S" | "M" | "L" | "XL";
     buttonIcon?: string;

@@ -25,6 +25,8 @@ export type tableDataType = 'text' | 'date' | 'number' | 'boolean';
 export interface tableViewKey { // as per API specification
     isHidden: boolean;
     isPrimary: boolean;
+    isLevel?: boolean;
+    hasLevel?: boolean;
     key: string;
     label: string;
     queryFunct?: string;
@@ -125,6 +127,12 @@ export class TableViewComponent implements OnChanges {
     // Height available for table
     tableHeight = 1000;
 
+    // Level related stuff
+    isLevel: string = null;
+    hasLevel: string[] = null;
+    levelIndentationMarker: string = '.';
+    levelIndentationValue: number = 13;
+
     // toolbar pub/sub topics
     subMsgCmdTopic = '/toolbar/out/cmd';
     pubMsgCmdTopic = '/toolbar/in/cmd';
@@ -215,7 +223,7 @@ export class TableViewComponent implements OnChanges {
                     console.log(_this.viewKeys);
 
                     _this.loadStyle(params.table_keys);
-
+                    _this.loadLevel(params.table_keys);
                     // Load Export Queries list if available
                     if (params.exportQueries && params.exportQueries.tableQueries) {
                         console.log('exportQueries', params.exportQueries);
@@ -305,6 +313,41 @@ export class TableViewComponent implements OnChanges {
 
         // Calculate table height
         this.calculateTableHeight();
+    }
+
+    loadLevel(table_keys) {
+        this.isLevel = null;
+        this.hasLevel = null;
+
+        table_keys.forEach(key => {
+            if (key.isLevel) {
+                if (!this.isLevel) {
+                    this.isLevel = key.key;
+                }
+                else {
+                    console.error("More than one isLevel key defined!");
+                }
+            }
+            else if (key.hasLevel) {
+                if (!this.hasLevel) {
+                    this.hasLevel = [];
+                }
+                this.hasLevel.push(key.key);
+            }
+        });
+
+        console.log('isLevel', this.isLevel);
+        console.log('hasLevel', this.hasLevel);
+    }
+
+    getLevel(row, key) {
+        if (this.isLevel == key || (this.hasLevel && this.hasLevel.includes(key))) {
+            let text = row[this.isLevel].split(this.levelIndentationMarker);
+            return text ? (text.length - 1) * this.levelIndentationValue : 0;
+        }
+        else {
+            return 0;
+        }
     }
 
     loadStyle(table_keys) {

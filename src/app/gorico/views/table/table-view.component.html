@@ -54,19 +54,17 @@
     <div class="mat-elevation-z2 table-view-content">
 
         <table mat-table [hidden]="isLoading" [dataSource]="dataSource" matSort>
-
-
-
             <ng-container [matColumnDef]="entry.key" *ngFor="let entry of viewKeys">
                 <mat-header-cell [style.width]="entry.width? entry.width: ''"
                     [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matHeaderCellDef mat-sort-header
                     [hidden]="entry.isHidden">
-                    {{entry.label}}</mat-header-cell>
+                    {{entry.label}}
+                </mat-header-cell>
                 <mat-cell [style.width]="entry.width? entry.width: ''"
                     [style.flex]="entry.width? '0 0 ' + entry.width: '1'" class="no-overflow" *matCellDef="let row"
                     [style.border-radius.px]="'24'" [ngStyle]="getElementStyle(entry.key, row[entry.key])"
                     [hidden]="entry.isHidden">
-                    <p style="width: 100%;">
+                    <p style="width: 100%; text-align: left;" [style.padding-left.px]="getLevel(row, entry.key)">
                         {{entry.format.dataType === 'date' ? (row[entry.key] | date: 'dd/MM/yyyy') : row[entry.key]}}
                     </p>
                 </mat-cell>
