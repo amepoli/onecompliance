@@ -4,9 +4,9 @@ import { FieldConfig } from "../../field.interface";
 @Component({
   selector: "app-invisible",
   template: `
-<mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" [formGroup]="group">
-<mat-label></mat-label>
-</mat-form-field>
+<div *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}">
+
+</div>
 `,
   styles: [],
   host: {
@@ -21,12 +21,8 @@ export class InvisibleComponent implements OnInit {
   group: FormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
 
-  //    '[style.height.px]': 'field.isVisible? (field.textareaHeight == "l"? "206": "96"): "0"',
-
-
   constructor() { }
   ngOnInit() {
-    console.log('textareaHeight:', this.field.textareaHeight);
   }
 
 }

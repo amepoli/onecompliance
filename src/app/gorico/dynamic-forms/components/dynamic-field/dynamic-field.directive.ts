@@ -31,7 +31,7 @@ const componentMapper = {
   checkbox: CheckboxComponent,
   combobox: ComboboxComponent,
   textarea: TextAreaComponent,
-  invisble: InvisibleComponent,
+  invisible: InvisibleComponent,
   label: LabelComponent,
   subform: SubformComponent
 };
