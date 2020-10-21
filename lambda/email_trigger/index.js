@@ -1,5 +1,9 @@
 var aws = require('aws-sdk');
 aws.config.update({ region: 'eu-central-1' });
+var lambda = new aws.Lambda({
+    region: 'eu-central-1' //change to your region
+});
+
 var ddb = new aws.DynamoDB({ apiVersion: '2012-10-08' });
 var ses = new aws.SES({ apiVersion: '2010-12-01' });
 const dynamo = new aws.DynamoDB.DocumentClient();
@@ -116,7 +120,9 @@ async function getBody(body) {
 
 async function sendEmail(to, cc, body, subject) {
     try {
-        var eParams = {
+        // eParams for SES
+        /* 
+        let eParams = {
             Destination: {
                 ToAddresses: to,
                 CcAddresses: cc,
@@ -138,10 +144,40 @@ async function sendEmail(to, cc, body, subject) {
             // Replace source_email with your SES validated email address
             Source: sender_address
         };
+        */
+
+        // eParams for email_sender lambda
+        let eParams = {
+            "data": {
+                "to": to,
+                "cc": cc,
+                "body": body,
+                "subject": subject,
+                "sender": sender_address
+            }
+        }
 
         console.log(eParams);
 
-        await ses.sendEmail(eParams).promise();
+        // Send email using lambda
+        lambda.invoke({
+            //FunctionName: 'arn:aws:lambda:us-west-2:xxxxxx:function:TrackIP',
+            FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:email_sender',
+
+            Payload: JSON.stringify(eParams)
+        }, function (error, data) {
+            if (error) {
+                //context.done('error', error);
+                console.log('error', error);
+            }
+            if (data && data.Payload) {
+                //context.succeed(data.Payload)
+                console.log(data.Payload);
+            }
+        });
+
+        // Send email using SES
+        // await ses.sendEmail(eParams).promise();
 
         console.log("EMAIL CODE END");
         return true;
