@@ -4,27 +4,7 @@
 	"predefinedQueries": [
 		{
 			"operation": "selectForm",
-			"queryString": "select * from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and id_fase_sup is null;",
-			"type": "main"
-		},
-		{
-			"operation": "selectForm",
 			"queryString": "select stato, data_prevista from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=coalesce(£id_sondaggio£,0);",
-			"type": "postProcessing"
-		},
-		{
-			"operation": "selectForm",
-			"queryString": "select id_sondaggio as id_sondaggio_liv2, stato as stato_liv2, id_fase as id_fase_liv2, id_fase_sup as id_fase_sup_liv2, titolo as titolo_liv2 from entrasp.progetti_fasi liv2 where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase£;",
-			"type": "postProcessing"
-		},
-		{
-			"operation": "selectForm",
-			"queryString": "select case when count(id_fase)=0 then 0 else 1 end as presenza_sottofasi_liv2 from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase£;",
-			"type": "postProcessing"
-		},
-		{
-			"operation": "selectForm",
-			"queryString": "select count(id_fase) as num_sotto_fasi_liv3 from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase_liv2£;",
 			"type": "postProcessing"
 		}
 	],
@@ -54,6 +34,19 @@
 			"isHidden": true,
 			"isPrimary": false,
 			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Codice",
+			"key": "codice",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
 		},
 		{
 			"autoGenerate": false,
@@ -218,250 +211,6 @@
 			"readOnly": false,
 			"sameOrigin": false,
 			"size": 2
-		},
-		{
-			"isHidden": true,
-			"readOnly": true,
-			"isPrimary": false,
-			"key": "presenza_sottofasi_liv2",
-			"label": "presenza_sottofasi_liv2",
-			"sameOrigin": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"outputEvent": {
-				"eventName": "presenza_sottofasi_liv2",
-				"eventTrigger": "change"
-			}
-		},
-		{
-			"isHidden": true,
-			"readOnly": false,
-			"isPrimary": false,
-			"key": "sotto_fasi_liv2",
-			"sameOrigin": false,
-			"label": "Sotto Fasi",
-			"saveWhenHidden": false,
-			"inputEvents": [
-				{
-					"eventName": "presenza_sottofasi_liv2",
-					"actionType": "show",
-					"condition": "equalTo",
-					"values": [
-						"1"
-					]
-				}
-			],
-			"format": {
-				"viewType": "subform",
-				"subform_keys": [
-					{
-						"autoGenerate": false,
-						"format": {
-							"viewType": "label",
-							"dataType": "text"
-						},
-						"label": "Sotto-fase",
-						"key": "sottofase_label",
-						"style": {
-							"font_weight": "600",
-							"font_style": "italic",
-							"font_size": "20px"
-						},
-						"readOnly": false,
-						"isHidden": false,
-						"isPrimary": false,
-						"newLine": true
-					},
-					{
-						"autoGenerate": true,
-						"format": {
-							"viewType": "input",
-							"dataType": "number"
-						},
-						"label": "Id Fase liv2",
-						"key": "id_fase_liv2",
-						"readOnly": true,
-						"isHidden": true,
-						"isPrimary": false,
-						"newLine": true
-					},
-					{
-						"autoGenerate": false,
-						"format": {
-							"viewType": "input",
-							"dataType": "number"
-						},
-						"label": "Id Fase sup liv2",
-						"key": "id_fase_sup_liv2",
-						"readOnly": true,
-						"isHidden": true,
-						"isPrimary": false,
-						"newLine": false
-					},
-					{
-						"autoGenerate": false,
-						"format": {
-							"viewType": "input",
-							"dataType": "text"
-						},
-						"label": "Titolo",
-						"key": "titolo_liv2",
-						"style": {
-							"background_color": "#FAFAD2"
-						},
-						"readOnly": false,
-						"isHidden": false,
-						"isPrimary": false,
-						"newLine": false
-					},
-					{
-						"autoGenerate": false,
-						"format": {
-							"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
-							"options": [],
-							"viewType": "combobox",
-							"dataType": "text"
-						},
-						"label": "Stato",
-						"key": "stato_liv2",
-						"readOnly": true,
-						"isHidden": false,
-						"isPrimary": false,
-						"newLine": true,
-						"outputEvent": {
-							"eventName": "progetto_change_stato_liv2",
-							"eventTrigger": "select"
-						},
-						"inputEvents": [
-							{
-								"eventName": "progetto_change_stato_liv2",
-								"condition": "none",
-								"values": [],
-								"actionType": "query_style",
-								"styleAttribute": "background_color",
-								"queryFunct": "select background_color as stato_liv2_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato_liv2$"
-							},
-							{
-								"eventName": "progetto_change_stato_liv2",
-								"condition": "none",
-								"values": [],
-								"actionType": "query_style",
-								"styleAttribute": "font_color",
-								"queryFunct": "select character_color as stato_liv2_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato_liv2$"
-							}
-						]
-					},
-					{
-						"autoGenerate": false,
-						"format": {
-							"viewType": "combobox",
-							"comboQuery": "select id_sondaggio as id, titolo as name from entrasp.sondaggi where codice_azienda=$codice_azienda$",
-							"options": []
-						},
-						"label": "ID Sondaggio",
-						"key": "id_sondaggio_liv2",
-						"readOnly": false,
-						"style": {
-							"background_color": "#FAFAD2"
-						},
-						"isHidden": false,
-						"isPrimary": false,
-						"newLine": false,
-						"size": 6.5
-					},
-					{
-						"autoGenerate": false,
-						"format": {
-							"viewType": "button"
-						},
-						"isHidden": false,
-						"isPrimary": false,
-						"key": "sondaggio_from_progetti_fasi_liv2",
-						"label": "Sondaggio",
-						"newLine": false,
-						"outputEvent": {
-							"eventName": "to_sondaggio_from_progetti_fasi_liv2",
-							"eventTrigger": "press"
-						},
-						"style": {
-							"background_color": "#25599C",
-							"font_color": "white"
-						},
-						"readOnly": true,
-						"sameOrigin": false,
-						"size": 1.25
-					},
-					{
-						"autoGenerate": false,
-						"format": {
-							"viewType": "button"
-						},
-						"isHidden": false,
-						"isPrimary": false,
-						"key": "change_sondaggio_associato_liv2",
-						"label": "Cambia sondaggio associato",
-						"newLine": true,
-						"outputEvent": {
-							"eventName": "change_sondaggio_associato_liv2",
-							"eventTrigger": "press"
-						},
-						"style": {
-							"background_color": "#25599C",
-							"font_color": "white"
-						},
-						"readOnly": false,
-						"sameOrigin": false,
-						"size": 2.25
-					},
-					{
-						"autoGenerate": false,
-						"format": {
-							"dataType": "number",
-							"viewType": "input"
-						},
-						"isHidden": false,
-						"isPrimary": false,
-						"style": {
-							"background_color": "#E0FFFF"
-						},
-						"key": "num_sotto_fasi_liv3",
-						"label": "Numero sotto fasi liv3",
-						"outputEvent": {
-							"eventName": "num_sotto_fasi_liv3_change",
-							"eventTrigger": "change"
-						},
-						"newLine": false,
-						"readOnly": true,
-						"size": 7
-					},
-					{
-						"autoGenerate": false,
-						"format": {
-							"viewType": "button"
-						},
-						"isHidden": false,
-						"isPrimary": false,
-						"key": "sotto_fasi",
-						"label": "Sotto fasi",
-						"newLine": true,
-						"attributeFuncts": [
-							{
-								"attributeType": "isHidden",
-								"queryString": "select case when count(id_fase)>0 then 0 else 1  end as label from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase_sup=£id_fase_liv2£;"
-							}
-						],
-						"outputEvent": {
-							"eventName": "navigate_sotto_fasi_liv3",
-							"eventTrigger": "press"
-						},
-						"readOnly": false,
-						"sameOrigin": false,
-						"size": 3
-					}
-				]
-			}
 		}
 	],
 	"origin": "entrasp.progetti_fasi",
@@ -488,160 +237,6 @@
 		}
 	],
 	"subTables": [
-		{
-			"entryKey": "_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase",
-					"son": "id_fase"
-				}
-			],
-			"label": " "
-		},
-		{
-			"entryKey": "t_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase",
-					"son": "id_fase"
-				}
-			],
-			"label": "t"
-		},
-		{
-			"entryKey": "_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase",
-					"son": "id_fase"
-				}
-			],
-			"label": " "
-		},
-		{
-			"entryKey": "vazioni_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase",
-					"son": "id_fase"
-				}
-			],
-			"label": "vazioni"
-		},
-		{
-			"entryKey": "e_base_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase",
-					"son": "id_fase"
-				}
-			],
-			"label": "e_base"
-		},
-		{
-			"entryKey": "_fasi_sal_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase",
-					"son": "id_fase"
-				}
-			],
-			"label": "_fasi_sal"
-		},
-		{
-			"entryKey": "voro_righe_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase",
-					"son": "id_fase"
-				}
-			],
-			"label": "voro_righe"
-		},
-		{
-			"entryKey": "_fasi_zone_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase",
-					"son": "id_fase"
-				}
-			],
-			"label": "_fasi_zone"
-		},
-		{
-			"entryKey": "_fasi_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase_sup",
-					"son": "id_fase"
-				}
-			],
-			"label": "_fasi"
-		},
-		{
-			"entryKey": "_fasi_relazioni_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase_prec",
-					"son": "id_fase"
-				}
-			],
-			"label": "_fasi_relazioni"
-		},
-		{
-			"entryKey": "_fasi_relazioni_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase_succ",
-					"son": "id_fase"
-				}
-			],
-			"label": "_fasi_relazioni"
-		},
 		{
 			"entryKey": "_fasi_tr_sub",
 			"keys": [
@@ -672,33 +267,7 @@
 		}
 	],
 	"table_keys": [
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "stato",
-			"label": "stato",
-			"style": [
-				{
-					"value": "Chiuso",
-					"font_color": "green",
-					"font_weight": "500"
-				},
-				{
-					"value": "Provvisorio",
-					"font_color": "#D97F02",
-					"font_weight": "500"
-				},
-				{
-					"value": "Confermato",
-					"font_color": "red",
-					"font_weight": "500"
-				}
-			]
-		},
-		{
+			{
 			"format": {
 				"dataType": "number"
 			},
@@ -720,7 +289,7 @@
 			"format": {
 				"dataType": "number"
 			},
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": true,
 			"key": "id_fase",
 			"label": "id_fase"
@@ -730,9 +299,51 @@
 				"dataType": "text"
 			},
 			"isHidden": false,
+			"isLevel": true,
+			"hasLevel": true,
+			"isPrimary": true,
+			"key": "codice",
+			"label": "Codice",
+			"width": "8%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
 			"isPrimary": false,
 			"key": "titolo",
-			"label": "titolo"
+			"hasLevel": true,
+			"label": "Titolo",
+			"width": "30%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "stato",
+			"queryFunct": "entrasp.transcodifiche_transcodifica('STATO', stato)",
+			"label": "Stato",
+			"width": "8%",
+			"style": [
+				{
+					"value": "Chiuso",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Provvisorio",
+					"font_color": "#D97F02",
+					"font_weight": "500"
+				},
+				{
+					"value": "Attivo",
+					"font_color": "red",
+					"font_weight": "500"
+				}
+			]
 		},
 		{
 			"format": {
@@ -799,5 +410,9 @@
 			"actionType": "navigate",
 			"eventName": "navigate_sotto_fasi_liv3"
 		}
-	]
+	],
+	"orderBy": {
+		"key": "codice", 
+		"order": "ascending"
+	}
 }
