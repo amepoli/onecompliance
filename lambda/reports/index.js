@@ -189,7 +189,7 @@ async function addCodiceAzienda (keys, company, view_keys, client, isForm) {
     const entry_azienda = entry_keys.find(entry => entry.key === 'codice_azienda');
     const entry_part = entry_keys.find(entry => entry.key === 'codice_part');
     
-    if (entry_azienda != null) {
+    if (entry_azienda != null && entry_azienda.isPrimary) {
         keys['codice_azienda'] = company;
     }
 
@@ -200,7 +200,7 @@ async function addCodiceAzienda (keys, company, view_keys, client, isForm) {
         const response = await client.query(queryString);
 
 
-        if (response != null ) {
+        if (response != null && entry_part.isPrimary) {
             keys['codice_part'] = response.rows[0].codice_part;
         }
     }
