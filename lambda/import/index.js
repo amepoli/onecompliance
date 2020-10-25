@@ -6,8 +6,8 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
 const bucket = 'BUCKET_NAME';
 const region = 'REGION';
-const accessKey = 'ACCESS_KEY';
-const secret = 'SECRET_KEY';
+// const accessKey = 'ACCESS_KEY';
+// const secret = 'SECRET_KEY';
 
 const schema = 'SCHEMA';
 
@@ -427,9 +427,9 @@ exports.handler = async (event, context) => {
                             '${table}',
                             '${columns}', 
                             '(FORMAT CSV, DELIMITER E''CSV_DELIMITER'', HEADER true)',
-                            aws_commons.create_s3_uri('${bucket}', '${fileName}','${region}'), 
-                            aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
+                            aws_commons.create_s3_uri('${bucket}', '${fileName}','${region}')
                         );`;
+                        // ,aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
 
                         // Try to run query 5 times on failure
                         let queryResponse = null;
