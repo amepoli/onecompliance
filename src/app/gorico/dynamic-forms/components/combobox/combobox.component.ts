@@ -54,7 +54,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     _this.field.options = _this.field.options.filter(x => x.name !== null);
 
     if (_this.field.value != null) {
-        // possibly compare object w/ subkeys value, let's stringify first
+      // possibly compare object w/ subkeys value, let's stringify first
       _this.field.value = _this.field.options.find(x => JSON.stringify(x.id) === JSON.stringify(_this.field.value));
       // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
     }
@@ -77,7 +77,8 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     const _this = this;
-    if (_this.field.value != null && _this.field.value.id != null && _this.field.eventName != null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'select') {
+    if (this.field.eventName != null && this.field.eventTrigger != null && this.field.eventTrigger === 'select') {
+      // this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
       setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
         // _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.getFormattedId(_this.field.value.id), type: 'combobox' });
         _this.sendEvent();
@@ -150,6 +151,9 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private sendEvent() {
     let value = this.group.get(this.field.name).value != null ? this.getFormattedId(this.group.get(this.field.name).value.id) : null;
+    if (!value) {
+      value = this.field.value && this.field.value.id ? this.field.value.id : null;
+    }
     console.log('value', value);
     this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: value, type: 'combobox' });
   }
