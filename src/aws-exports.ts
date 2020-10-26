@@ -11,6 +11,11 @@ const awsmobile =  {
             "name": "gorico",
             "endpoint": "https://qovyfcdvfj.execute-api.eu-central-1.amazonaws.com/Prod",
             "region": "eu-central-1"
+        },
+        {
+            "name": "goricoprod",
+            "endpoint": "https://qybpoq5mdg.execute-api.eu-central-1.amazonaws.com/Prod",
+            "region": "eu-central-1"
         }
     ]
 };
