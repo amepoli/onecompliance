@@ -2,7 +2,7 @@
 
 if [ $# -eq 0 ]
   then
-    echo "Please provide the target environment [gorico_prod, gorico_test, gorico_dev, xxx_prod, xxx_test, xxx_dev]"
+    echo "Please provide the target environment [gorico_prod, gorico_dev, xxx_prod, xxx_dev]"
     exit 0
 fi
 
@@ -27,5 +27,7 @@ echo "Deploying users"
 cd ../views
 echo "Deploying views"
 ./deploy_lambda.sh $1
+cd ../import
+echo "Deploying import"
+./deploy_lambda.sh $1
 cd ..
-

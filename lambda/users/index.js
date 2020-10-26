@@ -2,18 +2,6 @@ const AWS = require('aws-sdk');
 AWS.config.update({region: 'eu-central-1'});
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
-const Pool = require('pg-pool');
-const pool = new Pool({
-    host: 'HOST_NAME',
-    database: 'DB_NAME',
-    user: 'USER_NAME',
-    password: 'PASSWORD',
-    port: 5432,
-    max: 1,
-    min: 0,
-    idleTimeoutMillis: 300000,
-    connectionTimeoutMillis: 1000
-});
 
 async function getCompanies(data) {
     var companies = [];

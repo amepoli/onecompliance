@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core'; 
 import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
 import { default as appData } from '../../../../../appdata.json';
