@@ -112,6 +112,8 @@ export class HelperService {
         switch (styleKey) {
             default: case 'font_color':
                 return 'color';
+            case 'text_align':
+                return 'text-align';
             case 'background_color':
                 return 'background-color';
             case 'font_size':
