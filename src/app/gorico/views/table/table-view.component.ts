@@ -366,12 +366,24 @@ export class TableViewComponent implements OnChanges {
 
     getElementStyle(column, value) {
         let styles = {};
-        if (column && value && this.styles[column] && this.styles[column][value]) {
-            Object.keys(this.styles[column][value]).forEach(key => {
-                if (key != 'value') {
-                    styles[HelperService.getStyleName(key)] = this.styles[column][value][key];
-                }
-            });
+        if (column && value && this.styles[column]) {
+            let values: string[] = Object.keys(this.styles[column]);
+
+            if (value && values.includes(value)) {
+                Object.keys(this.styles[column][value]).forEach(key => {
+                    if (key != 'value') {
+                        styles[HelperService.getStyleName(key)] = this.styles[column][value][key];
+                    }
+                });
+            }
+            else if (values.includes("*")) {
+                Object.keys(this.styles[column]["*"]).forEach(key => {
+                    if (key != 'value') {
+                        styles[HelperService.getStyleName(key)] = this.styles[column]["*"][key];
+                    }
+                });
+            }
+
         }
         return styles;
     }
