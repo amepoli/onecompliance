@@ -4,6 +4,11 @@
     "origin": "entrasp.sondaggi",
     "predefinedQueries": [
         {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "select id_somministrazione, id_sondaggio_succ from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1"
+        },
+        {
             "operation": "insert",
             "type": "postProcessing",
             "queryString": "update entrasp.sondaggi set codice_part='£global_codice_part£' WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
@@ -55,7 +60,21 @@
             "key": "id_somministrazione",
             "label": "Id Somministrazione",
             "newLine": false,
-            "queryFunct": "select id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1",
+            "sameOrigin": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_sondaggio_succ",
+            "label": "id_sondaggio_succ",
+            "newLine": false,
+            "sameOrigin": false,
             "readOnly": true
         },
         {
@@ -380,7 +399,7 @@
             "queryFunct": "entrasp.descrizione_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
             "newLine": false,
             "readOnly": true,
-            "size": 2.5
+            "size": 3
         },
         {
             "autoGenerate": false,
@@ -420,7 +439,7 @@
                     "updateFunct": "'£codice_colore£'"
                 }
             ],
-            "size": 2.5
+            "size": 3
         },
         {
             "autoGenerate": false,
@@ -433,9 +452,9 @@
             "isPrimary": false,
             "key": "pct_da_manuale",
             "label": "Giudizio Manuale",
-            "newLine": false,
+            "newLine": true,
             "readOnly": false,
-            "size": 2.5
+            "size": 3
         },
         {
             "autoGenerate": false,
@@ -446,8 +465,7 @@
             "isPrimary": false,
             "key": "riepilogo_risultati",
             "label": "Riepilogo Risultati",
-            "size": 1.5,
-            "newLine": true,
+            "newLine": false,
             "outputEvent": {
                 "eventName": "check_existence_riepilogo_risultati",
                 "eventTrigger": "press"
@@ -459,6 +477,60 @@
             "readOnly": false,
             "sameOrigin": false
         },
+        {
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "sondaggio_successivo_k",
+			"label": "Sondaggio riprogrammato successivo ",
+			"attributeFuncts": [
+				{
+					"attributeType": "isHidden",
+					"queryString": "select case when id_sondaggio_succ is null then 1 else 0 end as label from entrasp.sondaggi_somministrati where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
+				}
+			],
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "to_sondaggio_successivo",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+        },
+        {
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "sondaggio_precedente_k",
+			"label": "Sondaggio origine",
+			"attributeFuncts": [
+				{
+					"attributeType": "isHidden",
+					"queryString": "select case when count(id_sondaggio)=0 then 1 else 0 end as label from entrasp.sondaggi_somministrati where id_sondaggio_succ=$id_sondaggio$ and codice_azienda=$codice_azienda$;"
+				}
+			],
+			"newLine": true,
+			"outputEvent": {
+				"eventName": "to_sondaggio_precedente",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
         {
             "autoGenerate": false,
             "format": {
