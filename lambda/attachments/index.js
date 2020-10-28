@@ -160,21 +160,17 @@ exports.handler = async (event, context) => {
             // Let's run query to get keys arrangement
             query = `select * from entrasp.grc_listacampiditabella_pk('${entryName}')`;
             response = await client.query(query);
+            console.log ('Query keys: ', query, ' response ', response, ' keys ', keys);
             if (response.rows && response.rows.length && response.rows[0].grc_listacampiditabella_pk) {
                 // Create query keys 
                 let queryKeys = response.rows[0].grc_listacampiditabella_pk.split(' ').join('').split(',');
-                if (queryKeys) {
-                    chiave = queryKeys.reduce((acc, key) => {
-                        if (acc) {
-                            return `${acc}^${keys[key]}`;
-                        }
-                        else {
-                            return keys[key];
-                        }
-                    });
+                if (queryKeys != null) {
+                    chiave = keys[queryKeys[0]];
+                    for (let i= 1; i < queryKeys.length; i++) {
+                        chiave = chiave + '^' + keys[queryKeys[i]];
+                    }
                 }
             }
-
 
             if (requestType === 'getFileList') {
                 query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' AND nome_business_object='${bus_object}' AND chiave='${chiave}';`;
