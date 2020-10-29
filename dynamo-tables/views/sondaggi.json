@@ -172,7 +172,7 @@
 					"queryString": "select case when count(id_sondaggio)=0 then 1 else 0 end as label from entrasp.sondaggi_somministrati where id_sondaggio_succ=$id_sondaggio$ and codice_azienda=$codice_azienda$;"
 				}
 			],
-			"newLine": false,
+			"newLine": true,
 			"outputEvent": {
 				"eventName": "to_sondaggio_precedente",
 				"eventTrigger": "press"
@@ -1033,7 +1033,25 @@
         },
         {
             "actionTarget": {
-                "name": "cpl_risultati_sondaggi",
+                "name": "sondaggi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio_succ",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_sondaggio_successivo"
+        },
+        {
+            "actionTarget": {
+                "name": "sondaggi",
                 "type": "form",
                 "keymap": [
                     {
@@ -1042,12 +1060,12 @@
                     },
                     {
                         "source": "id_sondaggio",
-                        "destination": "id_sondaggio"
+                        "destination": "id_sondaggio_succ"
                     }
                 ]
             },
             "actionType": "navigate",
-            "eventName": "to_riepilogo_risultati"
+            "eventName": "to_sondaggio_precedente"
         }
     ],
     "exportQueries": {
