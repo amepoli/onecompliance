@@ -172,7 +172,7 @@
 					"queryString": "select case when count(id_sondaggio)=0 then 1 else 0 end as label from entrasp.sondaggi_somministrati where id_sondaggio_succ=$id_sondaggio$ and codice_azienda=$codice_azienda$;"
 				}
 			],
-			"newLine": false,
+			"newLine": true,
 			"outputEvent": {
 				"eventName": "to_sondaggio_precedente",
 				"eventTrigger": "press"
@@ -876,11 +876,11 @@
             "key": "id_sondaggio",
             "label": "ID",
             "style": [
-                {"text_align": "end",
+                {"text_align": "center",
                     "value": "*"
                 }
             ],
-            "width": "2%"
+            "width": "5%"
         },
         {
             "format": {
@@ -890,7 +890,7 @@
             "isPrimary": false,
             "key": "data_comp",
             "label": "Data Competenza",
-            "width": "4%"
+            "width": "6%"
         },
         {
             "format": {
@@ -900,7 +900,7 @@
             "isPrimary": false,
             "key": "data_esecuzione",
             "label": "Data Esecuzione",
-            "width": "4%"
+            "width": "6%"
         },
         {
             "format": {
@@ -910,7 +910,7 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "width": "30%"
+            "width": "45%"
         },
         {
             "format": {
@@ -950,7 +950,7 @@
             "key": "centro_gest",
             "label": "Centro Gestionale",
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest)",
-            "width": "10%"
+            "width": "12%"
         },
         {
             "format": {
@@ -959,6 +959,7 @@
             "isHidden": false,
             "isPrimary": false,
             "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
+            "width": "8%",
             "key": "stato",
             "label": "Stato",
             "style": [
@@ -1032,7 +1033,25 @@
         },
         {
             "actionTarget": {
-                "name": "cpl_risultati_sondaggi",
+                "name": "sondaggi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio_succ",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_sondaggio_successivo"
+        },
+        {
+            "actionTarget": {
+                "name": "sondaggi",
                 "type": "form",
                 "keymap": [
                     {
@@ -1041,12 +1060,12 @@
                     },
                     {
                         "source": "id_sondaggio",
-                        "destination": "id_sondaggio"
+                        "destination": "id_sondaggio_succ"
                     }
                 ]
             },
             "actionType": "navigate",
-            "eventName": "to_riepilogo_risultati"
+            "eventName": "to_sondaggio_precedente"
         }
     ],
     "exportQueries": {
