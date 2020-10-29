@@ -158,7 +158,7 @@ exports.handler = async (event, context) => {
             keys = Object.assign({ 'codice_azienda': company }, keys);
 
             // Let's run query to get keys arrangement
-            query = `select * from entrasp.grc_listacampiditabella_pk('${entryName}')`;
+            query = `select * from entrasp.grc_listacampiditabella_pk('${bus_object}')`;
             response = await client.query(query);
             console.log ('Query keys: ', query, ' response ', response, ' keys ', keys);
             if (response.rows && response.rows.length && response.rows[0].grc_listacampiditabella_pk) {
