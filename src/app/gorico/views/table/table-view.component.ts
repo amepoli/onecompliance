@@ -342,7 +342,7 @@ export class TableViewComponent implements OnChanges {
 
     getLevel(row, key) {
         if (this.isLevel == key || (this.hasLevel && this.hasLevel.includes(key))) {
-            let text = row[this.isLevel].split(this.levelIndentationMarker);
+            let text = row[this.isLevel] ? row[this.isLevel].split(this.levelIndentationMarker) : null;
             return text ? (text.length) * this.levelIndentationValue : this.levelIndentationValue;
         }
         else {
