@@ -51,6 +51,49 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "reopen_sondaggio_k",
+            "label": "Riapri sondaggio",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "sondaggi_reopen",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "sondaggi_reopen",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.sondaggi set stato='A' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "survey_reload"
+                }
+            ],
+            "style": {
+                "background_color": "#fada5e",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.6,
+            "attributeFuncts": [
+                {
+                    "attributeType": "style",
+                    "styleAttribute": "background_color",
+                    "queryString": "select case when stato='C' then '#fada5e' else '#698EC2' end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
+                },
+                {
+                    "attributeType": "readOnly",
+                    "queryString": "select case when stato='C' then false else true end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$;"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "duplica_sondaggio",
             "label": "Duplica Sondaggio",
             "newLine": false,
@@ -64,7 +107,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1.5
+            "size": 1.4
         },
         {
             "autoGenerate": false,
@@ -86,7 +129,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1.5
+            "size": 1.4
         },
         {
             "autoGenerate": false,
@@ -108,7 +151,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 2
+            "size": 1.4
         },
         {
             "autoGenerate": false,
@@ -130,7 +173,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 2
+            "size": 1.4
         },
         {
             "autoGenerate": false,
@@ -146,11 +189,11 @@
                     "attributeType": "style",
                     "styleAttribute": "background_color",
                     "queryString": "select case when id_sondaggio_succ is null then '#698EC2' else '#25599C' end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
-                    },
-                    {
+                },
+                {
                     "attributeType": "readOnly",
                     "queryString": "select case when id_sondaggio_succ is null then true else false end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
-                    }
+                }
             ],
             "newLine": false,
             "outputEvent": {
@@ -163,7 +206,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1.5
+            "size": 1.4
         },
         {
             "autoGenerate": false,
@@ -185,7 +228,7 @@
                     "queryString": "select case when count(id_sondaggio)=0 then true else false end as label from entrasp.sondaggi where id_sondaggio_succ=$id_sondaggio$ and codice_azienda=$codice_azienda$;"
                 }
             ],
-            "newLine": true,
+            "newLine": false,
             "outputEvent": {
                 "eventName": "to_sondaggio_precedente",
                 "eventTrigger": "press"
@@ -196,7 +239,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1.5
+            "size": 1.4
         },
         {
             "autoGenerate": false,
@@ -252,6 +295,7 @@
                         "C"
                     ],
                     "actionType": "query",
+                    "outputEventWhenComplete": "survey_reload",
                     "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$, $titolo$, $id_modello_test$, $id_modello_test_vr$, $data_esecuzione$::date, (select case when coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)=0 then false else true end));"
                 }
             ],
@@ -309,7 +353,7 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
-                "value": "£CURRENT_DATE£",
+                "value": "CURRENT_DATE",
                 "viewType": "input"
             },
             "isHidden": false,
@@ -610,7 +654,7 @@
             "key": "pct_da",
             "label": "pct_da",
             "queryFunct": "select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
-            "newLine": false,
+            "newLine": true,
             "readOnly": true
         }
     ],
@@ -1046,6 +1090,10 @@
             },
             "actionType": "navigate",
             "eventName": "to_sondaggio_precedente"
+        },
+        {
+            "actionType": "reload",
+            "eventName": "survey_reload"
         }
     ],
     "exportQueries": {
