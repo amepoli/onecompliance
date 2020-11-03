@@ -14,7 +14,12 @@ import { FieldConfig } from "../../field.interface";
 </ng-container>
 </mat-form-field>
 `,
-  styles: [],
+  styles: [`
+    :host ::ng-deep .mat-form-field-flex {
+      background-color: aliceblue;
+      border-radius: 8px;
+    }
+  `],
   host: {
     '[style.margin-right]': 'field.isVisible? "1%": "0"',
     '[style.margin-left]': 'field.isVisible? "1%": "0"',

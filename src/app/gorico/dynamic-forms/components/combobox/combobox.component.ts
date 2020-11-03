@@ -17,7 +17,12 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 </mat-select>
 </mat-form-field>
 `,
-  styles: [],
+  styles: [`
+    :host ::ng-deep .mat-form-field-flex {
+      background-color: aliceblue;
+      border-radius: 8px;
+    }
+  `],
   host: {
     '[style.padding-top.px]': 'field.isVisible? "10": "0"',
     '[style.margin-right]': 'field.isVisible? "1%": "0"',

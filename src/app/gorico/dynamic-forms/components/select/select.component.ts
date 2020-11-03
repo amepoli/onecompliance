@@ -10,11 +10,16 @@ import { FieldConfig } from "../../field.interface";
 </mat-select>
 </mat-form-field>
 `,
-  styles: []
+  styles: [`
+    :host ::ng-deep .mat-form-field-flex {
+      background-color: aliceblue;
+      border-radius: 8px;
+    }
+  `]
 })
 export class SelectComponent implements OnInit {
   field: FieldConfig;
   group: FormGroup;
-  constructor() {}
-  ngOnInit() {}
+  constructor() { }
+  ngOnInit() { }
 }
