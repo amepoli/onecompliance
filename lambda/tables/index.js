@@ -785,6 +785,9 @@ async function processAttributeQueries(entry_params, keys, client) {
             let result = await client.query(query);
             result = result.rows[0];
             console.log('Query attributes result: ', result);
+            if (result == null) {
+                continue;
+            }
             if (attributes[entry_key] == null) {
                 attributes[entry_key] = {};
             }

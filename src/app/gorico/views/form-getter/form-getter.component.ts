@@ -536,7 +536,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
                 confirmButtonAction: (field.confirmButtonAction != null) ? field.confirmButtonAction : false,
                 isDownloadButton: (field.isDownloadButton != null) ? field.isDownloadButton : false,
-                style: attributeStyle != null ? attributeStyle : (field.style != null) ? field.style : null,
+                style: attributeStyle != null ? Object.assign(field.style, attributeStyle) : (field.style != null) ? field.style : null,
                 width: (field.size != null) ? (field.size * 10) : null, // leave a 1% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],
                 validations: (field.format.validations != null) ? field.format.validations : [],
