@@ -6,12 +6,12 @@
         {
             "operation": "insert",
             "type": "postProcessing",
-            "queryString": "update entrasp.sondaggi set codice_part='£global_codice_part£' WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
+            "queryString": "update entrasp.sondaggi set codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
         },
         {
             "operation": "update",
             "type": "postProcessing",
-            "queryString": "update entrasp.progetti_fasi set stato=$stato$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+            "queryString": "update entrasp.progetti_fasi set stato=$stato$, pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)"
         },
         {
             "operation": "delete",
@@ -142,15 +142,6 @@
             "key": "sondaggio_successivo_k",
             "label": "Sondaggio riprogrammato successivo ",
             "attributeFuncts": [
-                {
-                    "attributeType": "style",
-                    "styleAttribute": "background_color",
-                    "queryString": "select case when id_sondaggio_succ is null then '#698EC2' else '#25599C' end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
-                },
-                {
-                    "attributeType": "readOnly",
-                    "queryString": "select case when id_sondaggio_succ is null then '1' else '0' end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
-                }
             ],
             "newLine": false,
             "outputEvent": {
@@ -175,10 +166,6 @@
             "key": "sondaggio_precedente_k",
             "label": "Sondaggio origine",
             "attributeFuncts": [
-                {
-                    "attributeType": "readOnly",
-                    "queryString": "select case when count(id_sondaggio)=0 then 1 else 0 end as label from entrasp.sondaggi where id_sondaggio_succ=$id_sondaggio$ and codice_azienda=$codice_azienda$;"
-                }
             ],
             "newLine": true,
             "outputEvent": {
@@ -219,7 +206,7 @@
             "label": "ID Sondaggio",
             "newLine": false,
             "readOnly": true,
-            "size": 1.5,
+            "size": 1,
             "inputEvents": [
                 {
                     "eventName": "sondaggi_button_duplica",
@@ -241,7 +228,22 @@
             "key": "id_sondaggio_succ",
             "label": "ID Sondaggio Succ.",
             "newLine": false,
-            "size": 1.5,
+            "size": 1,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_sondaggio_prec",
+            "queryFunct": "select id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$",
+            "label": "ID Sondaggio Prec.",
+            "newLine": false,
+            "size": 1,
             "readOnly": true
         },
         {
@@ -272,15 +274,7 @@
                         "C"
                     ],
                     "actionType": "query",
-                    "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$, $titolo$, $id_modello_test$, $id_modello_test_vr$, ($data_esecuzione$::date+coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)*interval '1 day')::date, (select case when coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)=0 then false else true end));"
-                },
-                {
-                    "eventName": "sondaggio_change_stato",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "font_color",
-                    "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                    "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$, $titolo$, $id_modello_test$, $id_modello_test_vr$, $data_esecuzione$::date, (select case when coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)=0 then false else true end));"
                 }
             ],
             "isHidden": false,
@@ -294,6 +288,21 @@
         {
             "autoGenerate": false,
             "format": {
+                "dataType": "date",
+                "value": "£CURRENT_DATE£",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_prevista",
+            "label": "Data prevista esec.",
+            "newLine": false,
+            "size": 1.5,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "viewType": "invisible"
             },
             "isHidden": false,
@@ -303,7 +312,7 @@
             "sameOrigin": false,
             "newLine": false,
             "readOnly": true,
-            "size": 2
+            "size": 0.5
         },
         {
             "autoGenerate": false,
@@ -454,7 +463,6 @@
             "isPrimary": false,
             "key": "pct_da",
             "label": "pct_da",
-            "queryFunct": "select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
             "newLine": false,
             "readOnly": true
         },
@@ -1025,8 +1033,8 @@
                         "destination": "codice_azienda"
                     },
                     {
-                        "source": "id_sondaggio",
-                        "destination": "id_sondaggio_succ"
+                        "source": "id_sondaggio_prec",
+                        "destination": "id_sondaggio"
                     }
                 ]
             },
