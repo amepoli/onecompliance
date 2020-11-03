@@ -244,6 +244,17 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_sondaggio_succ",
+            "inputEvents": [
+                {
+                    "eventName": "sondaggio_change_stato",
+                    "condition": "equalTo",
+                    "values": [
+                        "C"
+                    ],
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$, $titolo$, $id_modello_test$, $id_modello_test_vr$, $data_esecuzione$::date, (select case when coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)=0 then false else true end));"
+                }
+            ],
             "label": "ID Sondaggio Succ.",
             "newLine": false,
             "size": 1,
@@ -284,15 +295,6 @@
                     "actionType": "query_style",
                     "styleAttribute": "background_color",
                     "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-                },
-                {
-                    "eventName": "sondaggio_change_stato",
-                    "condition": "equalTo",
-                    "values": [
-                        "C"
-                    ],
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$, $titolo$, $id_modello_test$, $id_modello_test_vr$, $data_esecuzione$::date, (select case when coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)=0 then false else true end));"
                 }
             ],
             "isHidden": false,
