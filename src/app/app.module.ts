@@ -24,7 +24,10 @@ import { MailConfirmModule } from 'app/gorico/login-page/mail-confirm.module';
 import { AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
 import { NgxPubSubModule } from '@pscoped/ngx-pub-sub';
 import { MainDashboardsModule } from 'app/gorico/main-dashboards/main-dashboards.module';
+import { RedirectModule } from 'app/gorico/redirect/redirect.module';
+
 import { ToastrModule } from 'ngx-toastr';
+
 
 const appRoutes: Routes = [];
 
@@ -75,6 +78,9 @@ const appRoutes: Routes = [];
         AmplifyAngularModule,
         NgxPubSubModule,
         MainDashboardsModule,
+
+        // Redirect
+        RedirectModule,
 
     ],
     providers: [
