@@ -82,10 +82,91 @@
                     "queryString": "select case when stato='C' then '#fada5e' else '#698EC2' end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
                 },
                 {
+                    "attributeType": "style",
+                    "styleAttribute": "font_color",
+                    "queryString": "select case when stato='C' then 'white' else 'grey' end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
+                },
+                {
                     "attributeType": "readOnly",
                     "queryString": "select case when stato='C' then false else true end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$;"
                 }
             ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sondaggio_successivo_k",
+            "label": "Sondaggio riprogrammato",
+            "attributeFuncts": [
+                {
+                    "attributeType": "style",
+                    "styleAttribute": "background_color",
+                    "queryString": "select case when id_sondaggio_succ is null then '#698EC2' else '#25599C' end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
+                },
+                {
+                    "attributeType": "style",
+                    "styleAttribute": "font_color",
+                    "queryString": "select case when id_sondaggio_succ is null then 'grey' else 'white' end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
+                },
+                {
+                    "attributeType": "readOnly",
+                    "queryString": "select case when id_sondaggio_succ is null then true else false end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
+                }
+            ],
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "to_sondaggio_successivo",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sondaggio_precedente_k",
+            "label": "Sondaggio origine",
+            "attributeFuncts": [
+                {
+                    "attributeType": "style",
+                    "styleAttribute": "background_color",
+                    "queryString": "select case when count(id_sondaggio)=0 then '#698EC2' else '#25599C' end as label from entrasp.sondaggi where id_sondaggio_succ=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
+                },
+                {
+                    "attributeType": "style",
+                    "styleAttribute": "font_color",
+                    "queryString": "select case when count(id_sondaggio)=0 then 'grey' else 'white' end as label from entrasp.sondaggi where id_sondaggio_succ=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
+                },
+                {
+                    "attributeType": "readOnly",
+                    "queryString": "select case when count(id_sondaggio)=0 then true else false end as label from entrasp.sondaggi where id_sondaggio_succ=$id_sondaggio$ and codice_azienda=$codice_azienda$;"
+                }
+            ],
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "to_sondaggio_precedente",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.4
         },
         {
             "autoGenerate": false,
@@ -162,75 +243,9 @@
             "isPrimary": false,
             "key": "riepilogo_risultati",
             "label": "Riepilogo Risultati",
-            "newLine": false,
+            "newLine": true,
             "outputEvent": {
                 "eventName": "check_existence_riepilogo_risultati",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1.4
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "sondaggio_successivo_k",
-            "label": "Sondaggio riprogrammato",
-            "attributeFuncts": [
-                {
-                    "attributeType": "style",
-                    "styleAttribute": "background_color",
-                    "queryString": "select case when id_sondaggio_succ is null then '#698EC2' else '#25599C' end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
-                },
-                {
-                    "attributeType": "readOnly",
-                    "queryString": "select case when id_sondaggio_succ is null then true else false end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
-                }
-            ],
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "to_sondaggio_successivo",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1.4
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "sondaggio_precedente_k",
-            "label": "Sondaggio origine",
-            "attributeFuncts": [
-                {
-                    "attributeType": "style",
-                    "styleAttribute": "background_color",
-                    "queryString": "select case when count(id_sondaggio)=0 then '#698EC2' else '#25599C' end as label from entrasp.sondaggi where id_sondaggio_succ=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
-                },
-                {
-                    "attributeType": "readOnly",
-                    "queryString": "select case when count(id_sondaggio)=0 then true else false end as label from entrasp.sondaggi where id_sondaggio_succ=$id_sondaggio$ and codice_azienda=$codice_azienda$;"
-                }
-            ],
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "to_sondaggio_precedente",
                 "eventTrigger": "press"
             },
             "style": {
@@ -267,7 +282,7 @@
             "label": "ID Sondaggio",
             "newLine": false,
             "readOnly": true,
-            "size": 1,
+            "size": 1.6,
             "inputEvents": [
                 {
                     "eventName": "sondaggi_button_duplica",
@@ -301,7 +316,7 @@
             ],
             "label": "ID Sondaggio Succ.",
             "newLine": false,
-            "size": 1,
+            "size": 1.4,
             "readOnly": true
         },
         {
@@ -316,7 +331,7 @@
             "queryFunct": "select id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$",
             "label": "ID Sondaggio Prec.",
             "newLine": false,
-            "size": 1,
+            "size": 1.4,
             "readOnly": true
         },
         {
@@ -347,7 +362,7 @@
             "label": "Stato",
             "newLine": false,
             "readOnly": false,
-            "size": 2
+            "size": 1.4
         },
         {
             "autoGenerate": false,
@@ -361,7 +376,7 @@
             "key": "data_prevista",
             "label": "Data prevista esec.",
             "newLine": false,
-            "size": 2,
+            "size": 1.5,
             "readOnly": false
         },
         {
