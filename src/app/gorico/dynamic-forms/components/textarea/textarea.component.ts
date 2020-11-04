@@ -15,9 +15,9 @@ import { FieldConfig } from "../../field.interface";
 </mat-form-field>
 `,
   styles: [`
-    : host :: ng - deep.mat - form - field - flex {
-      background- color: aliceblue;
-      border- radius: 8px;
+    :host ::ng-deep .mat-form-field-flex {
+      background-color: aliceblue;
+      border-radius: 8px;
     }
   
     .text-area-s {
