@@ -863,7 +863,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                             // patch the undelying data
                                             const el = HelperService.findElement(_this.filteredFormData[current_index], k);
                                             // const el = _this.filteredFormData[current_index].find(field => field.name === k);
-                                            el.value = result[0][k];
+                                            if (el != null && result[0][k]) {
+                                                el.value = result[0][k];
+                                            }
                                         }
                                     }
                                 }
