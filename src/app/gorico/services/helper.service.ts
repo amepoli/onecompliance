@@ -154,8 +154,10 @@ export class HelperService {
      * @param uri Uri
      */
     public static redirectTo(router: Router, uri: string) {
-        router.navigateByUrl('/redirect', { skipLocationChange: true }).then(() =>
-            router.navigate([uri]));
+        router.navigate([`/redirect/${encodeURIComponent(uri)}`]);
+
+        // router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
+        //     router.navigate([uri]));
     }
 
 }
