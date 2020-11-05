@@ -284,6 +284,9 @@ export class FormViewComponent implements OnChanges, OnInit {
                             if (this.isQuickAdd) {
                                 this.navigationToViewHome(values, result.data);
                             }
+                            else {
+                                this.refreshView();
+                            }
                             // this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
                         }, 1000);
                     }
