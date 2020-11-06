@@ -496,7 +496,27 @@
             "label": "Solo Principali",
             "newLine": false,
             "queryCond": "id_presidio_parent IS null"
-        }
+        },
+        {
+            "fieldName": "presidio_no_rischi",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza rischi",
+            "newLine": false,
+            "queryCond": "id_presidio not in(select id_presidio from entrasp.rischi_presidi where codice_azienda=$codice_azienda$)"
+          },
+          {
+            "fieldName": "presidio_with_rischi",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con rischi",
+            "newLine": false,
+            "queryCond": "id_presidio in(select id_presidio from entrasp.rischi_presidi where codice_azienda=$codice_azienda$)"
+          }      
     ],
     "inputEvents": [
         {
