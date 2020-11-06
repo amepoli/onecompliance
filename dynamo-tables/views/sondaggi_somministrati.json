@@ -3,6 +3,18 @@
   "origin": "entrasp.sondaggi_somministrati",
   "businessObjectName": "sondaggiSomministrati",
   "entryKey": "sondaggi_somministrati",
+  "predefinedQueries": [
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$);"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$);"
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -220,7 +232,6 @@
       "isPrimary": false,
       "key": "pct_da",
       "label": "Giudizio",
-      "insertUpdateFunct": "select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)",
       "newLine": false,
       "readOnly": true
     },
@@ -257,7 +268,23 @@
       "queryFunct": "entrasp.descrizione_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
       "newLine": false,
       "readOnly": true,
-      "size": 3
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "completo_si_no",
+      "label": "Completo sì/no",
+      "sameOrigin": false,
+      "queryFunct": "select sondaggio_completato from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)",
+      "newLine": false,
+      "readOnly": true,
+      "size": 2
     },
     {
       "autoGenerate": false,
@@ -272,7 +299,7 @@
       "queryFunct": "select percentuale from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)",
       "newLine": false,
       "readOnly": true,
-      "size": 1.5
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -297,7 +324,7 @@
           "updateFunct": "'£codice_colore£'"
         }
       ],
-      "size": 2
+      "size": 1.5
     },
     {
       "autoGenerate": false,
