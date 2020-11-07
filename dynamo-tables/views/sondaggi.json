@@ -4,6 +4,11 @@
     "origin": "entrasp.sondaggi",
     "predefinedQueries": [
         {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select *, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da, codice_azienda) as giudizio from entrasp.sondaggi where codice_azienda=$codice_azienda$"
+        },
+        {
             "operation": "insert",
             "type": "postProcessing",
             "queryString": "update entrasp.sondaggi set codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
@@ -585,7 +590,7 @@
             "queryFunct": "select sondaggio_completato from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
             "newLine": false,
             "readOnly": true,
-            "size": 1
+            "size": 3
           },      
         {
             "autoGenerate": false,
@@ -625,7 +630,7 @@
                     "updateFunct": "'£codice_colore£'"
                 }
             ],
-            "size": 2
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -640,7 +645,7 @@
             "label": "Giudizio Manuale",
             "newLine": true,
             "readOnly": false,
-            "size": 2
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -970,7 +975,7 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "width": "45%"
+            "width": "30%"
         },
         {
             "format": {
@@ -980,6 +985,7 @@
             "isPrimary": false,
             "key": "modello_test",
             "label": "Modello di Test",
+            "width": "30%",
             "queryFunct": "entrasp.modello_test_titolo(codice_azienda,id_modello_test, id_modello_test_vr)"
         },
         {
@@ -990,7 +996,27 @@
             "isPrimary": false,
             "key": "id_modello_test",
             "label": "Id_modello_test",
-            "width": "30%"
+            "width": "7%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio",
+            "label": "Giudizio automatico",
+            "width": "15%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio_manuale",
+            "label": "Giudizio manuale",
+            "width": "15%"
         },
         {
             "format": {

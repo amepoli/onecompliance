@@ -162,9 +162,22 @@
         "viewType": "input"
       },
       "label": "Descrizione",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "descrizione=$descrizione$"
+    },
+    {
+      "fieldName": "id_tipo_risultato",
+      "format": {
+        "comboQuery": "SELECT id_tipo_risultato AS id, descrizione AS name  FROM entrasp.tipi_modelli_test_risultati WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Criterio di analisi",
+      "newLine": false,
+      "queryCond": "id_tipo_risultato=$id_tipo_risultato$"
     }
+
+
   ],
   "subTables": [
     {
@@ -235,9 +248,21 @@
     },
     {
       "format": {
-        "dataType": "number"
+        "dataType": "text"
       },
       "isHidden": false,
+      "isPrimary": false,
+      "key": "criterio_di_analisi",
+      "queryFunct": "entrasp.tipo_modello_test_risultato_descr(id_tipo_risultato, codice_azienda)",
+      "label": "Criterio analisi",
+      "width": "20%"
+    
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
       "isPrimary": true,
       "key": "id_risultato",
       "label": "ID"
@@ -249,7 +274,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "descrizione",
-      "label": "Descrizione"
+      "label": "Sottocriterio di analisi",
+      "width": "40%"
     },
     {
       "format": {
@@ -258,7 +284,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "stato",
-      "label": "Stato"
+      "label": "Stato",
+      "width": "10%"
     },
     {
       "format": {
@@ -267,7 +294,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "pct_pesatura",
-      "label": "Peso"
+      "label": "Peso",
+      "width": "10%"
     }
   ],
   "inputEvents": [
