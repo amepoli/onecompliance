@@ -6,7 +6,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select distinct ss.codice_azienda, ss.id_somministrazione, snd.id_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi snd left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr join entrasp.domande_sezioni ds on mvr.codice_azienda=ds.codice_azienda and mvr.id_modello_test=ds.id_modello_test and mvr.id_modello_test_vr=ds.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione=$id_somministrazione$ order by ds.ordinamento asc;",
+      "queryString": "select distinct ss.codice_azienda, ss.id_somministrazione, snd.id_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione, round(prs.punteggio,2) as punteggio, prs.pesosezione from entrasp.sondaggi snd left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr join entrasp.domande_sezioni ds on mvr.codice_azienda=ds.codice_azienda and mvr.id_modello_test=ds.id_modello_test and mvr.id_modello_test_vr=ds.id_modello_test_vr join entrasp.grc_punteggio_risposte_somministrazione_per_sezione(snd.codice_azienda,ss.id_somministrazione) prs on ds.id_sezione=prs.idsezione and ds.codice_azienda=prs.codiceazienda where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione=$id_somministrazione$ order by ds.ordinamento asc;",
       "type": "main"
     },
     {
@@ -154,7 +154,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "punteggio",
-      "label": "Punteggio sezione",
+      "label": "Punteggio % sezione",
       "sameOrigin": false,
       "newLine": true,
       "readOnly": true,
@@ -244,7 +244,27 @@
       "isPrimary": false,
       "key": "descr_sezione",
       "label": "Sezione",
-      "width": "95%"
+      "width": "40%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "punteggio",
+      "label": "Risultato sez. %",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "pesosezione",
+      "label": "Peso sezione",
+      "width": "10%"
     }
   ],
   "orderBy": {
