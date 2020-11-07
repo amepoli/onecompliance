@@ -5,6 +5,11 @@
   "entryKey": "sondaggi_somministrati",
   "predefinedQueries": [
     {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select *, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da, codice_azienda) as giudizio from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$"
+    },
+    {
       "operation": "selectForm",
       "type": "postProcessing",
       "queryString": "select codice_colore, round(percentuale,2) as ris_percentuale, sondaggio_completato, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
@@ -307,8 +312,8 @@
     {
       "autoGenerate": false,
       "format": {
-          "dataType": "text",
-          "viewType": "input"
+        "dataType": "text",
+        "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -620,6 +625,26 @@
     },
     {
       "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "giudizio",
+      "label": "Giudizio automatico",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "giudizio_manuale",
+      "label": "Giudizio manuale",
+      "width": "10%"
+    },
+    {
+      "format": {
         "dataType": "number"
       },
       "isHidden": true,
@@ -636,7 +661,7 @@
       "isPrimary": false,
       "key": "codice_part",
       "label": "codice_part",
-      "queryFunct" : "select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$"
+      "queryFunct": "select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$"
     }
   ],
   "inputEvents": [
@@ -686,18 +711,18 @@
         "type": "form",
         "keymap": [
           {
-              "source": "codice_azienda",
-              "destination": "codice_azienda"
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
           },
           {
-              "source": "id_modello_test",
-              "destination": "id_modello_test"
+            "source": "id_modello_test",
+            "destination": "id_modello_test"
           },
           {
-              "source": "id_modello_test_vr",
-              "destination": "id_modello_test_vr"
+            "source": "id_modello_test_vr",
+            "destination": "id_modello_test_vr"
           }
-      ]
+        ]
       },
       "actionType": "navigate",
       "eventName": "to_modello_test_from_sondaggi_somministrati"
