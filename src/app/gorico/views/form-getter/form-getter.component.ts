@@ -813,7 +813,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             while (index > 0) {
                 index--;
                 const current_index = (target_index != null) ? target_index : index;
-                chiavi = childrenArray[current_index].form.value;
+                // some lines might be hidden, search for the right one
+                const current_line = childrenArray.find(c => c.fields[0].index === current_index);
+                if (current_line == null) {
+                    continue;
+                }
+                chiavi = current_line.form.value;
                 // fix problem with changed value that might be not updated yet by getting it directly from event
                 if (value.type === 'change') {
                     chiavi[value.origin] = value.data;
@@ -851,7 +856,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             if (event.actionType === 'query') {
                                 if (targetViewField.format.viewType === 'combobox') {   // got combobox options
                                     // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
-                                    const combobox = <ComboboxComponent>childrenArray[current_index].dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
+                                    const combobox = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
                                     combobox.setOptions(result);
                                 } else {                                                // got field value
                                     //     childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
@@ -859,7 +864,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     for (var k in result[0]) {
                                         if (result[0].hasOwnProperty(k)) {
                                             // patch the form
-                                            childrenArray[current_index].form.patchValue({ [k]: result[0][k] });
+                                            current_line.form.patchValue({ [k]: result[0][k] });
                                             // patch the undelying data
                                             const el = HelperService.findElement(_this.filteredFormData[current_index], k);
                                             // const el = _this.filteredFormData[current_index].find(field => field.name === k);
@@ -920,11 +925,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         } else if ((event.actionType === 'update' || event.actionType === 'update_style') && conditionMet) {
             if (event.updateFunct != null && keyListener != null) {
                 const childrenArray = _this.formArray.toArray();
-                const keys = childrenArray[value.index].form.value;
+                // some lines might be hidden, search for the right one
+                const current_line = childrenArray.find(c => c.fields[0].index === value.index);
+                if (current_line == null) {
+                    return;
+                }
+                const keys = current_line.form.value;
                 const resolvedFunct = _this.replaceLocalKeys(event.updateFunct, keys);
                 // tslint:disable-next-line: no-eval
                 if (event.actionType === 'update') {
-                    childrenArray[value.index].form.patchValue({ [keyListener]: eval(resolvedFunct) });
+                    current_line.form.patchValue({ [keyListener]: eval(resolvedFunct) });
                 } else { // update_syle
                     const element = HelperService.findElement(this.filteredFormData[value.index], keyListener);
                     // const element = _this.filteredFormData[value.index].find(field => field.name === keyListener);
@@ -969,7 +979,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     while (index > 0) {
                         index--;
                         const current_index = (target_index != null) ? target_index : index;
-                        chiavi = childrenArray[current_index].form.value;
+                        // some lines might be hidden, search for the right one
+                        const current_line = childrenArray.find(c => c.fields[0].index === current_index);
+                        if (current_line == null) {
+                            continue;
+                        }
+                        chiavi = current_line.form.value;
                         // fix problem with changed value that might be not updated yet by getting it directly from event
                         if (value.type === 'change') {
                             chiavi[value.origin] = value.data;
