@@ -5,6 +5,16 @@
   "entryKey": "sondaggi_somministrati",
   "predefinedQueries": [
     {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select *, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da, codice_azienda) as giudizio,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as stato from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$"
+    },
+    {
+      "operation": "selectForm",
+      "type": "postProcessing",
+      "queryString": "select codice_colore, round(percentuale,2) as ris_percentuale, sondaggio_completato, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+    },
+    {
       "operation": "insert",
       "type": "postProcessing",
       "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$);"
@@ -249,7 +259,6 @@
         "eventTrigger": "change"
       },
       "label": "codice_colore",
-      "queryFunct": "select codice_colore from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)",
       "sameOrigin": false,
       "newLine": true,
       "readOnly": true
@@ -268,7 +277,7 @@
       "queryFunct": "entrasp.descrizione_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
       "newLine": false,
       "readOnly": true,
-      "size": 2
+      "size": 3.5
     },
     {
       "autoGenerate": false,
@@ -278,25 +287,24 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "completo_si_no",
+      "key": "sondaggio_completato",
       "label": "Completo sì/no",
       "sameOrigin": false,
-      "queryFunct": "select sondaggio_completato from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)",
       "newLine": false,
       "readOnly": true,
-      "size": 2
+      "size": 1.5
     },
     {
       "autoGenerate": false,
       "format": {
-          "dataType": "text",
-          "viewType": "input"
+        "dataType": "text",
+        "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "ris_percentuale",
-      "label": "Percentuale",
-      "queryFunct": "select percentuale from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)",
+      "key": "punteggio_description",
+      "label": "Punti ottenuti",
+      "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
       "size": 1
@@ -309,9 +317,24 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "key": "ris_percentuale",
+      "label": "Percentuale",
+      "sameOrigin": false,
+      "newLine": false,
+      "readOnly": true,
+      "size": 0.75
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
       "key": "giudizio",
+      "sameOrigin": false,
       "label": "Giudizio",
-      "queryFunct": "select giudizio from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)",
       "newLine": false,
       "readOnly": true,
       "inputEvents": [
@@ -324,7 +347,7 @@
           "updateFunct": "'£codice_colore£'"
         }
       ],
-      "size": 1.5
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -339,7 +362,7 @@
       "label": "Giudizio Manuale",
       "newLine": false,
       "readOnly": false,
-      "size": 1.5
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -360,7 +383,7 @@
         "font_color": "white"
       },
       "readOnly": false,
-      "size": 2,
+      "size": 2.25,
       "sameOrigin": false
     },
     {
@@ -528,7 +551,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_sondaggio",
-      "label": "ID sondaggio"
+      "label": "ID sondaggio",
+      "width": "8%"
     },
     {
       "format": {
@@ -537,7 +561,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_somministrazione",
-      "label": "ID Somministrazione"
+      "label": "ID Somministrazione",
+      "width": "8%"
     },
     {
       "format": {
@@ -546,7 +571,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "data_esecuzione",
-      "label": "Data Esecuzione"
+      "label": "Data Esecuzione",
+      "width": "8%"
     },
     {
       "format": {
@@ -556,7 +582,65 @@
       "isPrimary": false,
       "key": "titolo_sondaggio",
       "label": "Titolo",
+      "width": "25%",
       "queryFunct": "entrasp.sondaggio_titolo(codice_azienda,id_sondaggio)"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "object_description",
+      "label": "Oggetto di verifica",
+      "width": "20%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "stato",
+      "width": "10%",
+      "label": "Stato",
+      "style": [
+        {
+          "value": "Chiuso",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Provvisorio",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Confermato",
+          "font_color": "red",
+          "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "giudizio",
+      "label": "Giudizio automatico",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "giudizio_manuale",
+      "label": "Giudizio manuale",
+      "width": "10%"
     },
     {
       "format": {
@@ -576,34 +660,7 @@
       "isPrimary": false,
       "key": "codice_part",
       "label": "codice_part",
-      "queryFunct" : "select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato",
-      "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
-      "label": "Stato",
-      "style": [
-        {
-          "value": "Chiuso",
-          "font_color": "green",
-          "font_weight": "500"
-        },
-        {
-          "value": "Provvisorio",
-          "font_color": "#D97F02",
-          "font_weight": "500"
-        },
-        {
-          "value": "Confermato",
-          "font_color": "red",
-          "font_weight": "500"
-        }
-      ]
+      "queryFunct": "select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$"
     }
   ],
   "inputEvents": [
@@ -653,18 +710,18 @@
         "type": "form",
         "keymap": [
           {
-              "source": "codice_azienda",
-              "destination": "codice_azienda"
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
           },
           {
-              "source": "id_modello_test",
-              "destination": "id_modello_test"
+            "source": "id_modello_test",
+            "destination": "id_modello_test"
           },
           {
-              "source": "id_modello_test_vr",
-              "destination": "id_modello_test_vr"
+            "source": "id_modello_test_vr",
+            "destination": "id_modello_test_vr"
           }
-      ]
+        ]
       },
       "actionType": "navigate",
       "eventName": "to_modello_test_from_sondaggi_somministrati"
