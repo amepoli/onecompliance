@@ -35,12 +35,16 @@
 	<parameter name="codice_azienda" class="java.lang.String"/>
 	<parameter name="codice_rischio" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select pa.descrizione_breve, pa.descrizione, fr.codice_rischio, pa.codice, fr.codice_azienda from entrasp.fonti_rischio fr join entrasp.procedure_aziendali pa on  fr.codice_azienda=pa.codice_azienda and fr.id_procedura=pa.id_procedura where fr.codice_azienda=$P{codice_azienda} and fr.codice_rischio=$P{codice_rischio}]]>
+		<![CDATA[select pa.descrizione_breve, entrasp.centri_gestionali_descr(pa.codice_part, pa.id_centro_gest), pa.descrizione, fr.codice_rischio, pa.codice, fr.codice_azienda from entrasp.fonti_rischio fr join entrasp.procedure_aziendali pa on  fr.codice_azienda=pa.codice_azienda and fr.id_procedura=pa.id_procedura where fr.codice_azienda=$P{codice_azienda} and fr.codice_rischio=$P{codice_rischio}]]>
 	</queryString>
 	<field name="descrizione_breve" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="descrizione_breve"/>
 		<property name="com.jaspersoft.studio.field.label" value="descrizione_breve"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	</field>
+	<field name="centri_gestionali_descr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="centri_gestionali_descr"/>
+		<property name="com.jaspersoft.studio.field.label" value="centri_gestionali_descr"/>
 	</field>
 	<field name="descrizione" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
@@ -77,10 +81,10 @@
 		</band>
 	</title>
 	<detail>
-		<band height="77" splitType="Stretch">
+		<band height="96" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<line>
-				<reportElement positionType="Float" x="0" y="60" width="560" height="1" uuid="72c5bfff-58fa-48e4-9c9f-257f58075b7b"/>
+				<reportElement positionType="Float" x="0" y="75" width="560" height="1" uuid="72c5bfff-58fa-48e4-9c9f-257f58075b7b"/>
 			</line>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="3" y="34" width="557" height="19" uuid="56f42e5b-5ffb-49c3-bcb5-afac8436d3d9"/>
@@ -107,6 +111,20 @@
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codice}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="5" y="61" width="105" height="18" uuid="3b176789-4f03-4f05-bfcb-4dbd9b2fdb8a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
+				<text><![CDATA[Centro Gestionale:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="125" y="61" width="403" height="18" uuid="5651388b-2f5e-4fcc-a711-c9ca51ecaaf4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{centri_gestionali_descr}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
