@@ -9,6 +9,16 @@
             "queryString": "select *, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da, codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as stato from entrasp.sondaggi where codice_azienda=$codice_azienda$"
         },
         {
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "select *, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as stato, entrasp.descrizione_risultato_from_sondaggio(codice_azienda, id_sondaggio) as criterio_analisi from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "select codice_colore, codice_colore_completato, percentuale as ris_percentuale, sondaggio_completato, giudizio from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)"
+        },
+        {
             "operation": "insert",
             "type": "postProcessing",
             "queryString": "update entrasp.sondaggi set codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
@@ -555,7 +565,24 @@
                 "eventTrigger": "change"
             },
             "label": "codice_colore",
-            "queryFunct": "select codice_colore from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "sameOrigin": false,
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_colore_completato",
+            "outputEvent": {
+                "eventName": "codice_colore_completato_change",
+                "eventTrigger": "change"
+            },
+            "label": "codice_colore_completato",
             "sameOrigin": false,
             "newLine": true,
             "readOnly": true
@@ -571,7 +598,6 @@
             "key": "criterio_analisi",
             "label": "Criterio di analisi",
             "sameOrigin": false,
-            "queryFunct": "entrasp.descrizione_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
             "newLine": false,
             "readOnly": true,
             "size": 3
@@ -584,12 +610,21 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "completo_si_no",
+            "key": "sondaggio_completato",
             "label": "Completo sì/no",
             "sameOrigin": false,
-            "queryFunct": "select sondaggio_completato from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
             "newLine": false,
             "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "codice_colore_completato_change",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "update_style",
+                    "styleAttribute": "background_color",
+                    "updateFunct": "'£codice_colore_completato£'"
+                }
+            ],
             "size": 3
         },
         {
@@ -602,7 +637,7 @@
             "isPrimary": false,
             "key": "ris_percentuale",
             "label": "Percentuale",
-            "queryFunct": "select percentuale from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "sameOrigin": false,
             "newLine": false,
             "readOnly": true,
             "size": 1
@@ -617,7 +652,7 @@
             "isPrimary": false,
             "key": "giudizio",
             "label": "Giudizio",
-            "queryFunct": "select giudizio from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "sameOrigin": false,
             "newLine": false,
             "readOnly": true,
             "inputEvents": [
