@@ -6,17 +6,22 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select *, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da, codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as stato from entrasp.sondaggi where codice_azienda=$codice_azienda$"
+            "queryString": "select *, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, sn.pct_da_manuale, sn.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, pct_da, sn.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', sn.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi sn inner join entrasp.modelli_test_vr mvr on sn.codice_azienda=mvr.codice_azienda and sn.id_modello_test=mvr.id_modello_test and sn.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on sn.codice_azienda=mt.codice_azienda and sn.id_modello_test=mt.id_modello_test where sn.codice_azienda=$codice_azienda$"
+        },
+        {
+            "operation": "selectForm",
+            "type": "preProcessing",
+            "queryString": "update entrasp.sondaggi sn set pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE sn.codice_azienda=$codice_azienda$ AND sn.id_sondaggio=$id_sondaggio$;"
         },
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select *, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.descrizione_risultato_from_sondaggio(codice_azienda, id_sondaggio) as criterio_analisi from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+            "queryString": "select *, entrasp.mdt_codtitolo(codice_azienda, id_modello_test) as descr_modello_test, (select id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$) as id_sondaggio_prec, entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio) as flags_sezioni_multi, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.descrizione_risultato_from_sondaggio(codice_azienda, id_sondaggio) as criterio_analisi from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         },
         {
             "operation": "selectForm",
             "type": "postProcessing",
-            "queryString": "select codice_colore, codice_colore_completato, percentuale as ris_percentuale, sondaggio_completato, giudizio from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)"
+            "queryString": "select pct_da, idrisultato as id_risultato, codice_colore, codice_colore_completato, percentuale as ris_percentuale, sondaggio_completato, giudizio from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)"
         },
         {
             "operation": "insert",
@@ -341,8 +346,8 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_sondaggio_prec",
-            "queryFunct": "select id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$",
             "label": "ID Sondaggio Prec.",
+            "sameOrigin": false,
             "newLine": false,
             "size": 1.4,
             "readOnly": true
@@ -476,7 +481,7 @@
             "label": "Titolo Modello Test",
             "newLine": false,
             "size": 7,
-            "queryFunct": "entrasp.mdt_codtitolo(codice_azienda, id_modello_test)",
+            "sameOrigin": false,
             "readOnly": true
         },
         {
@@ -520,7 +525,7 @@
                 "eventName": "sondaggi_flags_sezioni_singola",
                 "eventTrigger": "change"
             },
-            "queryFunct": "entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio)",
+            "sameOrigin": false,
             "readOnly": true
         },
         {
@@ -533,7 +538,7 @@
             "isPrimary": false,
             "key": "id_risultato",
             "label": "id_risultato",
-            "queryFunct": "entrasp.id_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "sameOrigin": false,
             "newLine": true,
             "readOnly": true
         },
@@ -728,7 +733,7 @@
             "isPrimary": false,
             "key": "pct_da",
             "label": "pct_da",
-            "queryFunct": "select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)",
+            "sameOrigin": false,
             "newLine": true,
             "readOnly": true
         }
@@ -1019,8 +1024,7 @@
             "isPrimary": false,
             "key": "modello_test",
             "label": "Modello di Test",
-            "width": "20%",
-            "queryFunct": "entrasp.modello_test_titolo(codice_azienda,id_modello_test, id_modello_test_vr)"
+            "width": "20%"
         },
         {
             "format": {
@@ -1104,7 +1108,6 @@
                 "dataType": "number"
             },
             "isHidden": true,
-            "queryFunct": "entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio)",
             "isPrimary": false,
             "key": "id_risultato",
             "label": "Criterio di analisi"
