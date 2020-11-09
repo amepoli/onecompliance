@@ -1070,6 +1070,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     }
 
                                 }
+                                else if (value.constructor == Object) {
+                                    let comboField: any = value;
+                                    if (comboField.options && comboField.options.length && comboField.value) {
+                                        let selectedItem = comboField.options.filter(x => x.id == comboField.value)[0];
+                                        if (selectedItem.name && selectedItem.name.toLowerCase().includes(_this.filter)) {
+                                            add = true;
+                                            done = true;
+                                        }
+                                        else {
+                                            add = false;
+                                            done = false;
+                                        }
+                                    }
+                                    // Combobox
+                                    // code here...
+                                }
                             }
                         });
 
