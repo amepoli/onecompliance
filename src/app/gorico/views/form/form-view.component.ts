@@ -92,6 +92,8 @@ export class FormViewComponent implements OnChanges, OnInit {
     messages: MessageElement[] = []; // Messages
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
+    refreshOnSave = false;
+
     constructor(private pubsubService: NgxPubSubService,
         public attachDialog: MatDialog,
         private backendService: BackendService,
@@ -284,7 +286,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                             if (this.isQuickAdd) {
                                 this.navigationToViewHome(values, result.data);
                             }
-                            else {
+                            else if (this.refreshOnSave) {
                                 this.refreshView();
                             }
                             // this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
