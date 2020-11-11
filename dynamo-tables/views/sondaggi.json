@@ -6,7 +6,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select *, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, sn.pct_da_manuale, sn.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, pct_da, sn.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', sn.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi sn inner join entrasp.modelli_test_vr mvr on sn.codice_azienda=mvr.codice_azienda and sn.id_modello_test=mvr.id_modello_test and sn.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on sn.codice_azienda=mt.codice_azienda and sn.id_modello_test=mt.id_modello_test where sn.codice_azienda=$codice_azienda$"
+            "queryString": "select sn.*, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, sn.pct_da_manuale, sn.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, pct_da, sn.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', sn.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi sn inner join entrasp.modelli_test_vr mvr on sn.codice_azienda=mvr.codice_azienda and sn.id_modello_test=mvr.id_modello_test and sn.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on sn.codice_azienda=mt.codice_azienda and sn.id_modello_test=mt.id_modello_test where sn.codice_azienda=$codice_azienda$"
         },
         {
             "operation": "selectForm",
@@ -749,7 +749,7 @@
             },
             "label": "Id Modello di Test",
             "newLine": false,
-            "queryCond": "id_modello_test=$id_modello_test$"
+            "queryCond": "sn.id_modello_test=$id_modello_test$"
         },
         {
             "fieldName": "id_tipo_modello_test",
@@ -760,7 +760,7 @@
             },
             "label": "Tipo modello test",
             "newLine": true,
-            "queryCond": "id_sondaggio in(select id_sondaggio from entrasp.sondaggi snd join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where mt.id_tipo_modello_test=$id_tipo_modello_test$ and mt.codice_azienda=$codice_azienda$)"
+            "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test$"
         },
         {
             "fieldName": "id_sondaggio",
