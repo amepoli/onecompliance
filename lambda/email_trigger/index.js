@@ -4,210 +4,63 @@ var lambda = new aws.Lambda({
     region: 'eu-central-1' //change to your region
 });
 
-var ddb = new aws.DynamoDB({ apiVersion: '2012-10-08' });
-var ses = new aws.SES({ apiVersion: '2010-12-01' });
-const dynamo = new aws.DynamoDB.DocumentClient();
-const Pool = require('pg-pool');
-const pool = new Pool({
-    host: 'HOST_NAME',
-    database: 'DB_NAME',
-    user: 'postgres',
-    password: 'et2themax',
-    port: 5432,
-    max: 1,
-    min: 0,
-    idleTimeoutMillis: 300000,
-    connectionTimeoutMillis: 1000
-});
+async function compose_email(payload) {
+    let composeEmail =
+        await lambda.invoke({
+            //FunctionName: 'arn:aws:lambda:us-west-2:xxxxxx:function:TrackIP',
+            FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:email_composer',
+            Payload: JSON.stringify(payload)
+        }).promise();
 
-var sender_address = 'amedeo.poli@alacritas.eu';
+    console.log('email_compose', composeEmail);
 
-// Some test addresses
-//var admin_addresses = ['akhtar.syedzeeshan@alacritas.eu', 'amedeo.poli@alacritas.eu', 'nicola.capovilla@alacritas.eu'];
-
-async function runQuery(query) {
-    try {
-        const client = await pool.connect();
-        let response = await client.query(query);
-        await client.release();
-        client = null;
-
-        if (response && response.rows && response.rows.length) {
-            return response.rows;
+    if (composeEmail.Payload) {
+        if (composeEmail.Payload.errorMessage) {
+            return { 'Success': false, 'Data': null, 'Error': composeEmail.Payload.errorMessage };
         }
         else {
-            console.log({ 'Success': false, 'Message': 'Postgresql: No data!', 'Error': null });
-            return null;
+            return { 'Success': true, 'Data': composeEmail.Payload, 'Error': null };
         }
-
-
     }
-    catch (e) {
-        console.log({ 'Success': false, 'Message': 'Postgresql: Invalid request!', 'Error': e });
-        return null;
+    else {
+        return { 'Success': false, 'Data': null, 'Error': 'Could not compose email!' };
     }
 }
 
-async function getEntry(templateKey) {
-    try {
-        templateKey = templateKey || "test";
-        console.log(`Using templateKey: ${templateKey}`);
+async function send_email(payload) {
+    let sendEmail =
+        await lambda.invoke({
+            //FunctionName: 'arn:aws:lambda:us-west-2:xxxxxx:function:TrackIP',
+            FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:email_sender',
+            Payload: JSON.stringify(payload)
+        }).promise();
 
-        const DynamoParams = {
-            TableName: 'email_templates',
-            Key: {
-                templateKey: templateKey
-            }
-        };
-        const data = await dynamo.get(DynamoParams).promise();
-        if (data.Item) {
-            return data.Item;
-        }
-        else {
-            return null;
-        }
+    console.log('email_sender', sendEmail);
+
+    if (sendEmail.Payload) {
+        return { 'Success': true, 'Message': sendEmail.Payload, 'Error': null };
     }
-    catch (e) {
-        console.log({ 'Success': false, 'Error': e });
+    else {
+        return { 'Success': false, 'Message': null, 'Error': 'Could not send email!' };
     }
 }
 
-async function getListOrQuery(input) {
-    if (input != null) {
-        if (input.list != null && input.list.length > 0) {
-            if (input.list.includes(',')) {
-                return input.list.split(',');
-            }
-            else {
-                if (input.list.length > 0) {
-                    return [input.list];
-                }
-                else {
-                    return [];
-                }
-            }
-        }
-        else if (input.query != null && input.query.length > 0) {
-            let result = await runQuery(input.query);
-            if (result != null) {
-                return result;
-            }
-        }
-        else {
-            return [];
-        }
-    }
-}
-
-async function getBody(body) {
-    let result = "";
-
-    if (body != null) {
-        if (body.header != null && body.header.length > 0) {
-            result += body.header + '\n';
-        }
-        if (body.query != null && body.query.length > 0) {
-            let query_result = await runQuery(body.query);
-            result += query_result[0] + '\n';
-        }
-        if (body.footer != null && body.footer.length > 0) {
-            result += body.footer + '\n';
-        }
-    }
-
-    return result;
-}
-
-async function sendEmail(to, cc, body, subject) {
-    try {
-        // eParams for SES
-        /* 
-        let eParams = {
-            Destination: {
-                ToAddresses: to,
-                CcAddresses: cc,
-                BccAddresses: null
-            },
-            Message: {
-                Body: {
-                    Text: {
-                        Charset: "UTF-8",
-                        Data: body
-                    }
-                },
-                Subject: {
-                    Charset: "UTF-8",
-                    Data: subject
-                }
-            },
-
-            // Replace source_email with your SES validated email address
-            Source: sender_address
-        };
-        */
-
-        // eParams for email_sender lambda
-        let eParams = {
-            "data": {
-                "to": to,
-                "cc": cc,
-                "body": body,
-                "subject": subject,
-                "sender": sender_address
-            }
-        }
-
-        console.log(eParams);
-
-        // Send email using lambda
-
-
-        // Send email using SES
-        // await ses.sendEmail(eParams).promise();
-
-        console.log("EMAIL CODE END");
-        return true;
-    }
-    catch (e) {
-        console.log({ 'Success': false, 'Message': 'Could not send email!', 'Error': e });
-        return false;
-    }
-}
 
 exports.handler = async (event, context, callback) => {
     console.log(event);
 
-    lambda.invoke({
-        //FunctionName: 'arn:aws:lambda:us-west-2:xxxxxx:function:TrackIP',
-        FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:email_composer',
+    let composeEmailResponse = await compose_email(event);
 
-        Payload: JSON.stringify(event)
-    }, function (error, data) {
-        if (error) {
-            //context.done('error', error);
-            console.log('error', error);
+    if (composeEmailResponse.Success && composeEmailResponse.Data) {
+        let sendEmailResponse = await send_email(composeEmailResponse.Data);
+        if (sendEmailResponse.Success && sendEmailResponse.Message) {
+            callback(null, JSON.parse(sendEmailResponse.Message));
         }
-        if (data && data.Payload) {
-            //context.succeed(data.Payload)
-            console.log(data.Payload);
+        else {
+            callback(null, JSON.parse(sendEmailResponse.Error));
         }
-    });
-
-    // lambda.invoke({
-    //     //FunctionName: 'arn:aws:lambda:us-west-2:xxxxxx:function:TrackIP',
-    //     FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:email_sender',
-
-    //     Payload: JSON.stringify(eParams)
-    // }, function (error, data) {
-    //     if (error) {
-    //         //context.done('error', error);
-    //         console.log('error', error);
-    //     }
-    //     if (data && data.Payload) {
-    //         //context.succeed(data.Payload)
-    //         console.log(data.Payload);
-    //     }
-    // });
-
-    callback(null, event);
+    }
+    else {
+        callback(null, JSON.parse(composeEmailResponse.Error));
+    }
 };
