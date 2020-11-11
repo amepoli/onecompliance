@@ -215,14 +215,28 @@ exports.handler = async (event, context, callback) => {
             // Get body
             let body = await getBody(entry.body);
 
-            // Send email
-            let emailSent = await sendEmail(to, cc, body, entry.subject);
-            if (emailSent) {
-                console.log({ 'Success': true, 'Error': null })
+            console.log("Calling back...");
+
+            let eParams = {
+                "data": {
+                    "to": to,
+                    "cc": cc,
+                    "body": body,
+                    "subject": entry.subject,
+                    "sender": sender_address
+                }
             }
-            else {
-                console.log("Error: Could not send email!");
-            }
+            event = eParams;
+            callback(null, eParams);
+
+            // // Send email
+            // let emailSent = await sendEmail(to, cc, body, entry.subject);
+            // if (emailSent) {
+            //     console.log({ 'Success': true, 'Error': null })
+            // }
+            // else {
+            //     console.log("Error: Could not send email!");
+            // }
 
         }
         else {
