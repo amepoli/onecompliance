@@ -160,21 +160,7 @@ async function sendEmail(to, cc, body, subject) {
         console.log(eParams);
 
         // Send email using lambda
-        lambda.invoke({
-            //FunctionName: 'arn:aws:lambda:us-west-2:xxxxxx:function:TrackIP',
-            FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:email_sender',
 
-            Payload: JSON.stringify(eParams)
-        }, function (error, data) {
-            if (error) {
-                //context.done('error', error);
-                console.log('error', error);
-            }
-            if (data && data.Payload) {
-                //context.succeed(data.Payload)
-                console.log(data.Payload);
-            }
-        });
 
         // Send email using SES
         // await ses.sendEmail(eParams).promise();
@@ -191,43 +177,37 @@ async function sendEmail(to, cc, body, subject) {
 exports.handler = async (event, context, callback) => {
     console.log(event);
 
-    // Let's get entry from DynammoDB using templateKey from event
-    const entry = await getEntry(event.templateKey);
-    if (entry) {
-        console.log(entry);
+    lambda.invoke({
+        //FunctionName: 'arn:aws:lambda:us-west-2:xxxxxx:function:TrackIP',
+        FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:email_composer',
 
-        let result = true;
-        if (entry.conditionalQuery && entry.conditionalQuery.length > 0) {
-            // Run query
-            result = await runQuery(entry.conditionalQuery);
+        Payload: JSON.stringify(event)
+    }, function (error, data) {
+        if (error) {
+            //context.done('error', error);
+            console.log('error', error);
         }
-        if (result) {
-            console.log(result[0]);
-
-            // Get recipients
-            let to = await getListOrQuery(entry.to);
-            console.log('to', to);
-
-            // Get CC
-            let cc = await getListOrQuery(entry.cc);
-            console.log('cc', cc);
-
-            // Get body
-            let body = await getBody(entry.body);
-
-            // Send email
-            let emailSent = await sendEmail(to, cc, body, entry.subject);
-            if (emailSent) {
-                console.log({ 'Success': true, 'Error': null })
-            }
-            else {
-                console.log("Error: Could not send email!");
-            }
-
+        if (data && data.Payload) {
+            //context.succeed(data.Payload)
+            console.log(data.Payload);
         }
-        else {
-            console.log("Error: Could not run query!");
-        }
-    }
+    });
+
+    // lambda.invoke({
+    //     //FunctionName: 'arn:aws:lambda:us-west-2:xxxxxx:function:TrackIP',
+    //     FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:email_sender',
+
+    //     Payload: JSON.stringify(eParams)
+    // }, function (error, data) {
+    //     if (error) {
+    //         //context.done('error', error);
+    //         console.log('error', error);
+    //     }
+    //     if (data && data.Payload) {
+    //         //context.succeed(data.Payload)
+    //         console.log(data.Payload);
+    //     }
+    // });
+
     callback(null, event);
 };
