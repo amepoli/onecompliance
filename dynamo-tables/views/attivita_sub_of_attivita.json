@@ -1,13 +1,8 @@
 {
     "$schema": "../views.schema.json",
-    "entryKey": "attivita",
+    "entryKey": "attivita_sub_of_attivita",
     "origin": "entrasp.attivita",
     "predefinedQueries": [
-        {
-            "type": "main",
-            "operation": "selectTable",
-            "queryString": "select * from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent is null;"
-        }
     ],
     "form_keys": [
         {
@@ -135,7 +130,7 @@
                     "son": "codice_attivita"
                 }
             ],
-            "label": "Progetti Associati"
+            "label":  "Progetti Associati"
         }
     ],
     "table_keys": [
@@ -165,6 +160,16 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "queryFunct": "entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)",
+            "key": "codice_attivita_origine",
+            "label": "codice_attivita_origine"
         },
         {
             "format": {
