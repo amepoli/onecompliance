@@ -237,14 +237,15 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     // process pre-defined queries for table/form view, if any
 
+    let searchQuery;
     if (entry_params.predefinedQueries) {
         let mainQuery;
         entry_params.predefinedQueries.forEach(query => {
             if ((isForm && query.operation === "selectForm") || (!isForm && query.operation === "selectTable")) {
                 if (query.type === "main" && search_keys == null) {
                     mainQuery = replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes); // only one main query allowed
-                } else if (query.type === "search" && search_keys != null) {
-                    mainQuery = replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes); // only one main query allowed
+                } else if (query.type === "main" && search_keys != null) {
+                    searchQuery = replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes); // only one main query allowed
                 } else if (query.type === "preProcessing") {
                     preProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
                 } else if (query.type === "postProcessing") {
@@ -258,65 +259,71 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
         }
     }
 
-    // automatic build of main query
-
-    let queryString = 'SELECT ';
-    let comma = ''; // first entry has no comma 
-    // keep track of calculated where conditions, query becomes subqueries. 
-    // See https://stackoverflow.com/questions/47455962/using-function-result-in-where-clause-in-postgresql
+    let queryString, comma;
     let calculatedWhereCond = [];
 
-    for (index = 0; index < entry_keys.length; index++) {
-        let element = entry_keys[index];
-        if (isForm && element.format.viewType === 'subform') {
-            // append the keys at the end of the array (avoiding recursion, they will be processed later in the loop)
-            element.format.subform_keys.forEach(subkey => {
-                if (element.sameOrigin != null) {
-                    subkey['sameOrigin'] = element.sameOrigin;
-                }
-                entry_keys.push(subkey);
-            });
-        }
-        if (!element.key || (element.sameOrigin != null && !element.sameOrigin && element.queryFunct == null) || element.format.viewType === 'subform') {  // no table key or the key is from another table
-            continue;
-        }
+    // automatic build of main query
+    if (searchQuery == null) {
+        queryString = 'SELECT ';
+        comma = ''; // first entry has no comma 
+        // keep track of calculated where conditions, query becomes subqueries. 
+        // See https://stackoverflow.com/questions/47455962/using-function-result-in-where-clause-in-postgresql
 
-        let fieldString = comma + element.key;
-        if (element.hasOwnProperty('queryFunct')) { // overridden by funct
-            fieldString = comma + '(' + replaceKeys(element.queryFunct, table_keys, keyTypes) + ') AS ' + element.key;
-        }
-        comma = ','; // needed only the first time
-        queryString = queryString + fieldString;
-
-    };
-
-    if (entry_params.origin) {
-        queryString = queryString + ' FROM ' + entry_params.origin;
-    } else {  // no underlying table, skip building of main query, still there might be some combos
-        return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
-    }
-
-    comma = ' WHERE ';
-
-    for (const key in table_keys) {
-        if (table_keys.hasOwnProperty(key)) {
-            let keyType = keyTypes.find(e => (e.key === key));
-            // it might happen with subtables that a key linked with parent table has not the same origin
-            if (keyType.sameOrigin != null && !keyType.sameOrigin) {
+        for (index = 0; index < entry_keys.length; index++) {
+            let element = entry_keys[index];
+            if (isForm && element.format.viewType === 'subform') {
+                // append the keys at the end of the array (avoiding recursion, they will be processed later in the loop)
+                element.format.subform_keys.forEach(subkey => {
+                    if (element.sameOrigin != null) {
+                        subkey['sameOrigin'] = element.sameOrigin;
+                    }
+                    entry_keys.push(subkey);
+                });
+            }
+            if (!element.key || (element.sameOrigin != null && !element.sameOrigin && element.queryFunct == null) || element.format.viewType === 'subform') {  // no table key or the key is from another table
                 continue;
             }
-            let delimiter = isDataTypeString(keyType) ? '\'' : '';
-            let element = table_keys[key];
-            // replace single quotes with double quotes in strings
-            element = ((keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? element.replace(/'/g, "''") : element;
-            if (keyType.isCalculated) { // delay and make it part of the query above
-                calculatedWhereCond.push({ key: key, value: element, delimiter: delimiter })
-            } else {
-                let fieldString = comma + key + '=' + delimiter + element + delimiter;
-                queryString = queryString + fieldString;
-                comma = ' AND '; // needed only the first time
+
+            let fieldString = comma + element.key;
+            if (element.hasOwnProperty('queryFunct')) { // overridden by funct
+                fieldString = comma + '(' + replaceKeys(element.queryFunct, table_keys, keyTypes) + ') AS ' + element.key;
+            }
+            comma = ','; // needed only the first time
+            queryString = queryString + fieldString;
+
+        };
+
+        if (entry_params.origin) {
+            queryString = queryString + ' FROM ' + entry_params.origin;
+        } else {  // no underlying table, skip building of main query, still there might be some combos
+            return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+        }
+
+        comma = ' WHERE ';
+
+        for (const key in table_keys) {
+            if (table_keys.hasOwnProperty(key)) {
+                let keyType = keyTypes.find(e => (e.key === key));
+                // it might happen with subtables that a key linked with parent table has not the same origin
+                if (keyType.sameOrigin != null && !keyType.sameOrigin) {
+                    continue;
+                }
+                let delimiter = isDataTypeString(keyType) ? '\'' : '';
+                let element = table_keys[key];
+                // replace single quotes with double quotes in strings
+                element = ((keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? element.replace(/'/g, "''") : element;
+                if (keyType.isCalculated) { // delay and make it part of the query above
+                    calculatedWhereCond.push({ key: key, value: element, delimiter: delimiter })
+                } else {
+                    let fieldString = comma + key + '=' + delimiter + element + delimiter;
+                    queryString = queryString + fieldString;
+                    comma = ' AND '; // needed only the first time
+                }
             }
         }
+    } else {  //searchQuery
+        queryString = searchQuery.slice(0, -1);  // remove the final ';'
+        comma = queryString.includes('where') || queryString.includes('WHERE') ? ' AND ' : ' WHERE ';
     }
 
     if (search_keys) {
