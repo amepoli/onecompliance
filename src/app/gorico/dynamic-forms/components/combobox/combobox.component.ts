@@ -48,6 +48,8 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(private pubsubService: NgxPubSubService, private cdr: ChangeDetectorRef) { }
 
+  private skipNextEvent = false;
+
   ngOnInit() {
 
     const _this = this;
@@ -96,9 +98,10 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     this._onDestroy.complete();
   }
 
-  setOptions(options: any[]) {
+  setOptions(options: any[], skipNextEvent: boolean) {
     this.field.options = options;
     this.filteredItems.next(this.field.options.slice());
+    this.skipNextEvent = skipNextEvent;
   }
 
   onSelection(event: any) {
@@ -155,11 +158,16 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private sendEvent() {
-    let value = this.group.get(this.field.name).value != null ? this.getFormattedId(this.group.get(this.field.name).value.id) : null;
-    if (!value) {
-      value = this.field.value && this.field.value.id ? this.field.value.id : null;
+    if (!this.skipNextEvent) {
+      let value = this.group.get(this.field.name).value != null ? this.getFormattedId(this.group.get(this.field.name).value.id) : null;
+      if (!value) {
+        value = this.field.value && this.field.value.id ? this.field.value.id : null;
+      }
+      console.log('value', value);
+      this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: value, type: 'combobox' });
     }
-    console.log('value', value);
-    this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: value, type: 'combobox' });
+    else {
+      this.skipNextEvent = false;
+    }
   }
 }
