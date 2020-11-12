@@ -857,7 +857,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 if (targetViewField.format.viewType === 'combobox') {   // got combobox options
                                     // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
                                     const combobox = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
-                                    combobox.setOptions(result);
+                                    combobox.setOptions(result, true);
                                 } else {                                                // got field value
                                     //     childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
                                     // Patch all the values we got from query

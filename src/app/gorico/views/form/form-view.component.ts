@@ -92,7 +92,7 @@ export class FormViewComponent implements OnChanges, OnInit {
     messages: MessageElement[] = []; // Messages
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
-    refreshOnSave = false;
+    refreshOnSave = true;
 
     constructor(private pubsubService: NgxPubSubService,
         public attachDialog: MatDialog,
