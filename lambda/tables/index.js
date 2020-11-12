@@ -322,7 +322,11 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
             }
         }
     } else {  //searchQuery
-        queryString = searchQuery.slice(0, -1);  // remove the final ';'
+        if (searchQuery.slice(-1) === ';') {
+            queryString = searchQuery.slice(0, -1);  // remove the final ';'
+        } else {
+            queryString = searchQuery;
+        }
         comma = queryString.includes('where') || queryString.includes('WHERE') ? ' AND ' : ' WHERE ';
     }
 
