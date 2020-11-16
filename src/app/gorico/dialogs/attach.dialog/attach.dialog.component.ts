@@ -258,10 +258,9 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                         url: _this.form.value.docURL,
                                         descrizione_breve: _this.form.value.shortDesc,
                                         content_type: mime.lookup(_this.form.value.fileName),
-                                        // id_tipo_allegato: _this.form.value.type.value,
-                                        id_tipo_allegato: 2,
+                                        id_tipo_allegato: _this.form.value.type != null ? _this.form.value.type.id : null,                                        
                                         dimensione: _this.form.value.dimension,
-                                        autore: _this.authService.getUsername
+                                        autore: _this.authService.getUsername()
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
                                         responseCheck => {
