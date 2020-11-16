@@ -1,5 +1,5 @@
 var aws = require('aws-sdk');
-aws.config.update({ region: 'eu-central-1' });
+aws.config.update({ region: 'REGION' });
 var ses = new aws.SES({ apiVersion: '2010-12-01' });
 
 let data = {

@@ -1,7 +1,7 @@
 var aws = require('aws-sdk');
-aws.config.update({ region: 'eu-central-1' });
+aws.config.update({ region: 'REGION' });
 var lambda = new aws.Lambda({
-    region: 'eu-central-1' //change to your region
+    region: 'REGION' //change to your region
 });
 
 async function compose_email(payload) {

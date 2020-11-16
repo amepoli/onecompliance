@@ -2,38 +2,43 @@
 
 if [ $# -eq 0 ]
   then
-    echo "Please provide the target environment [gorico_prod, gorico_test, gorico_dev, xxx_prod, xxx_test, xxx_dev]"
+    echo "Please provide the target environment [gorico_prod, gorico_dev, xxx_prod, xxx_dev]"
     exit 0
 fi
 
-LAMBDANAME="email_trigger"
-
-DYN_USERSNAME="users"
-DYN_PROFILESNAME="profiles"
-DYN_VIEWSNAME="views"
-
-DBNAME=""
-HOSTNAME="goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com"
-
-if [ $1 == "gorico_dev" ]
-  then
-    DBNAME="Gorico"
-  else
-    DBNAME="$1"
-    LAMBDANAME="${LAMBDANAME}_$1"
-    DYN_USERSNAME="${DYN_USERSNAME}_$1"
-    DYN_PROFILESNAME="${DYN_PROFILESNAME}_$1"
-    DYN_VIEWSNAME="${DYN_VIEWSNAME}_$1"
+if [ ! -f ../../${1}.json ]; then
+    echo "Target not found!"
+    exit 0
 fi
+
+LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.email_trigger.lambdaName"`
+
+DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
+DYN_PROFILESNAME=`cat ../../${1}.json | jq -r ".dynamoTables.profiles.tableName"`
+DYN_VIEWSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.views.tableName"`
+
+DBNAME=`cat ../../${1}.json | jq -r ".postgres.dbName"`
+HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
+USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
+PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
+SCHEMA=`cat ../../${1}.json | jq -r ".postgres.schema"`
+
+REGION="eu-central-1"
 
 #replace Variables
 cp index.js index.js.ori
 
 sed -i -e "s/DB_NAME/${DBNAME}/g" index.js
 sed -i -e "s/HOST_NAME/${HOSTNAME}/g" index.js
+sed -i -e "s/USER_NAME/${USERNAME}/g" index.js
+sed -i -e "s/PASSWORD/${PASSWORD}/g" index.js
 sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
 sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
 sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
+
+sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js
+sed -i -e "s/REGION/${REGION}/g" index.js
+sed -i -e "s/SCHEMA/${SCHEMA}/g" index.js
 
 rm index.js-e
 

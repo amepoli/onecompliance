@@ -19,6 +19,7 @@ export class BackendService {
   private usersApiName = appData.lambdas.users.apiName;
   private menuApiName = appData.lambdas.menu.apiName;
   private langApiName = appData.lambdas.translation.apiName;
+  private emailApiName = appData.lambdas.email_trigger.apiName;
 
   private myGetInit = { // OPTIONAL
     headers: {
