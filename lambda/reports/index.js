@@ -2,20 +2,20 @@ const AWS = require('aws-sdk');
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
-  host: 'HOST_NAME',
-  database: 'DB_NAME',
-  user: 'USER_NAME',
-  password: 'PASSWORD',
-  port: 5432,
-  max: 1,
-  min: 0,
-  idleTimeoutMillis: 300000,
-  connectionTimeoutMillis: 1000
+    host: 'HOST_NAME',
+    database: 'DB_NAME',
+    user: 'USER_NAME',
+    password: 'PASSWORD',
+    port: 5432,
+    max: 1,
+    min: 0,
+    idleTimeoutMillis: 300000,
+    connectionTimeoutMillis: 1000
 });
 const request = require('sync-request');
 
-async function tableName2BusinessObject (table_name) {
-    
+async function tableName2BusinessObject(table_name) {
+
     if (table_name == null) {
         return null;
     }
@@ -34,26 +34,26 @@ async function tableName2BusinessObject (table_name) {
     if (business_object != null) {
         return business_object;
     }
-    
+
     let lut = {};
-    
-    let charArray = ['a','b','c','d','e','f','g','h','i','k','j','l','m','n','o','p','q','r','s','t','u','v','x','y','w','z','1','2','3','4','5','6','7','8','9','0'];
-    
+
+    let charArray = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k', 'j', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'w', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+
     charArray.forEach(ch => {
-        lut['_' + ch] =  ch.toUpperCase();
+        lut['_' + ch] = ch.toUpperCase();
     });
-    
+
     business_object = '';
-    
+
     while (business_object !== table_name) {
         business_object = table_name;
         for (var toReplace in lut) {
             table_name = table_name.replace(toReplace, lut[toReplace]);
         }
     }
-    
+
     return business_object;
-    
+
 }
 
 function replaceKeys(queryString, keys, keyTypes) {
@@ -95,23 +95,26 @@ function replaceKeys(queryString, keys, keyTypes) {
     return queryString;
 }
 
-function getURLFromServer(mainQuery, company) {
+function getURLFromServer(mainQuery, company, idAnagrafica) {
 
     let jsonParams = {
-        mainReport: { 
+        mainReport: {
             name: mainQuery.name,
             query: mainQuery.query,
         },
         subReports: [],
-        params: [{"key": "codice_azienda", "value": company}]
+        params: [
+            { "key": "codice_azienda", "value": company },
+            { "key": "user_id_anagrafica", "value": idAnagrafica }
+        ]
     };
-   
+
     console.log(jsonParams);
 
     var res = request('POST', 'http://172.31.47.204:8080/json', {
         json: jsonParams
     });
-    
+
     return res.getBody('utf8');
 
 }
@@ -139,11 +142,11 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
         return { key: k.key, dataType: dataType, isPrimary: k.isPrimary };
     });
 
-    let comma = ((query.indexOf('WHERE') === -1) && (query.indexOf('where') === -1))? ' WHERE ' :  ' AND '; // check if there is already a where condition
+    let comma = ((query.indexOf('WHERE') === -1) && (query.indexOf('where') === -1)) ? ' WHERE ' : ' AND '; // check if there is already a where condition
 
     // remove last semicolon if any
     if (queryString[queryString.length - 1] === ';') {
-        queryString = queryString.slice(0,queryString.length - 1);
+        queryString = queryString.slice(0, queryString.length - 1);
     }
 
     if (keys != null) {
@@ -182,13 +185,13 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
     return query;
 }
 
-async function addCodiceAzienda (keys, company, view_keys, client, isForm) {
-    
+async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
+
     const entry_keys = isForm ? view_keys.form_keys : view_keys.table_keys;
 
     const entry_azienda = entry_keys.find(entry => entry.key === 'codice_azienda');
     const entry_part = entry_keys.find(entry => entry.key === 'codice_part');
-    
+
     if (entry_azienda != null && entry_azienda.isPrimary) {
         keys['codice_azienda'] = company;
     }
@@ -206,42 +209,69 @@ async function addCodiceAzienda (keys, company, view_keys, client, isForm) {
     }
 
     console.log('Keys: ', keys);
-    
+
+}
+
+async function getIdAnagrafica(company, userid) {
+
+    var userParams = {
+        TableName: 'USERS_NAME',
+        Key: {
+            userid: userid
+        }
+    };
+
+    var data = await dynamo.get(userParams).promise();
+    data = data.Item;
+
+    let result = "";
+    if (data != null) {
+        let companies = data.companies;
+        if (company != null) {
+            companies.forEach(c => {
+                if (c.name === company && !result) { // found user's profile
+                    result = c.id_anagrafica;
+                }
+            });
+        }
+    }
+
+    return result;
 }
 
 
 exports.handler = async (event, context) => {
-    
+
     const queryParams = event.queryStringParameters;
-    
+
     console.log(queryParams);
-    
+
     // const queryParams = event; / test
-   
+
     let keys = queryParams['keys'];
 
     const company = queryParams['company'];
 
     if (keys != null) {
-       keys = JSON.parse(keys);  // comment out in case of test
+        keys = JSON.parse(keys);  // comment out in case of test
     }
 
     let search_keys = queryParams['search_keys'];
 
     if (search_keys != null) {
         search_keys = JSON.parse(search_keys);  // comment out in case of test
-     }
+    }
 
     const entryName = queryParams['entry_name'];
     const list = queryParams['list'];
 
     var isFormRecord = (queryParams['form'] === '1');
-    
+
     const method = event.httpMethod;
 
     var reportName, requestType;
-    
-    
+
+
     if (entryName == null || (keys == null && list == null) || company == null) {
         requestType = 'badRequest';
     } else if (method === 'GET') {
@@ -250,9 +280,9 @@ exports.handler = async (event, context) => {
         requestType = 'getReport';
         reportName = JSON.parse(event.body);
     }
-            
-    console.log('Lets start '+ requestType);
-    
+
+    console.log('Lets start ' + requestType);
+
     if (requestType === 'badRequest') {
         return {
             "isBase64Encoded": false,
@@ -263,13 +293,13 @@ exports.handler = async (event, context) => {
     }
 
     const reportDynamoParams = {
-    TableName: 'REPORTS_NAME',
-    Key: {
-        name: ''
-      }
+        TableName: 'REPORTS_NAME',
+        Key: {
+            name: ''
+        }
     };
 
-    const viewDynamoParams =    {
+    const viewDynamoParams = {
         TableName: 'VIEWS_NAME',
         Key: {
             entryKey: entryName
@@ -281,44 +311,46 @@ exports.handler = async (event, context) => {
 
     try {
 
-       // read the entry params from DynamoDB view table
-       let entry_params = await dynamo.get(viewDynamoParams).promise();
+        // read the entry params from DynamoDB view table
+        let entry_params = await dynamo.get(viewDynamoParams).promise();
 
-       entry_params = entry_params.Item;
+        entry_params = entry_params.Item;
 
-       // retrieve codice_azienda and codice_part from company if needed
+        // retrieve codice_azienda and codice_part from company if needed
 
-       await addCodiceAzienda(keys, company, entry_params, client, isFormRecord);
-       
-       const business_object = await tableName2BusinessObject(entryName);
-       
-       if (requestType === 'getList') {
-           const query = `select * from entrasp.object_reports where context_object='${business_object}';`;
-           const response = await client.query(query);
-           body = {result: 'OK', list: response.rows.map(row => ({"alias": row.alias, "descrizione": row.descrizione}))};
-       } else if (requestType === 'getReport') {
-           reportDynamoParams.Key.name = reportName;
-           var data = await dynamo.get(reportDynamoParams).promise();
-           const keyPrefix = data.Item.tableNickname != null ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
-           const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, keys, search_keys, isFormRecord);
-           const mainQuery = { name: reportName, query: queryString };
-           const url = await getURLFromServer(mainQuery, company);
-           if (url != null && url !== '') {
-               body = { result: 'OK', url: url };
-           } else {
-               body = { result: 'KO', reason: 'Something wrong with the server' };
-           }
-       } else {
-           body = { result: 'KO', reason: 'Bad Request' };
-       }
+        await addCodiceAzienda(keys, company, entry_params, client, isFormRecord);
+
+        const business_object = await tableName2BusinessObject(entryName);
+
+        if (requestType === 'getList') {
+            const query = `select * from entrasp.object_reports where context_object='${business_object}';`;
+            const response = await client.query(query);
+            body = { result: 'OK', list: response.rows.map(row => ({ "alias": row.alias, "descrizione": row.descrizione })) };
+        } else if (requestType === 'getReport') {
+            reportDynamoParams.Key.name = reportName;
+            var data = await dynamo.get(reportDynamoParams).promise();
+            const keyPrefix = data.Item.tableNickname != null ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
+            const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, keys, search_keys, isFormRecord);
+            const mainQuery = { name: reportName, query: queryString };
+            const userId = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+            const idUserAnagrafica = await getIdAnagrafica(company, userId);
+            const url = await getURLFromServer(mainQuery, company, idUserAnagrafica);
+            if (url != null && url !== '') {
+                body = { result: 'OK', url: url };
+            } else {
+                body = { result: 'KO', reason: 'Something wrong with the server' };
+            }
+        } else {
+            body = { result: 'KO', reason: 'Bad Request' };
+        }
     } catch (e) {
-       console.log(e);
-       body = { result: 'KO', reason: 'Server error'};
+        console.log(e);
+        body = { result: 'KO', reason: 'Server error' };
     }
-    
+
     await client.release();
 
-    
+
     return {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
