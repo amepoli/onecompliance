@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'; 
+import { Injectable } from '@angular/core';
 import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
 import { default as appData } from '../../../../../appdata.json';
@@ -10,10 +10,10 @@ import { default as appData } from '../../../../../appdata.json';
 })
 export class BackendService {
 
-  private apiName = appData.apiName; 
+  private apiName = appData.apiName;
   private tablesApiName = appData.lambdas.tables.apiName;
   private viewsApiName = appData.lambdas.views.apiName;
-  private attachApiName = appData.lambdas.attachments.apiName; 
+  private attachApiName = appData.lambdas.attachments.apiName;
   private reportsApiName = appData.lambdas.reports.apiName;
   private importApiName = appData.lambdas.import.apiName;
   private usersApiName = appData.lambdas.users.apiName;
@@ -42,12 +42,12 @@ export class BackendService {
   constructor(private amplifyService: AmplifyService) {
   }
 
-  private replacer(key, value){
-    if (value === undefined){
-        return null;
+  private replacer(key, value) {
+    if (value === undefined) {
+      return null;
     }
     return value;
-}
+  }
 
   getView(entryName: string, company: string, keys: any): Observable<any> {
     this.amplifyService.auth();
@@ -124,7 +124,7 @@ export class BackendService {
 
   getReportList(entryName: string, company: string, keys: any, isFormView: boolean): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), list: '1', form: isFormView ? 1 : 0};
+    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), list: '1', form: isFormView ? 1 : 0 };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.reportsApiName, this.myGetInit));
   }
 
@@ -213,5 +213,11 @@ export class BackendService {
 
     this.myPutPostInit.queryStringParameters = { request_type: 'importS3ToRDS', table: table };
     return from(this.amplifyService.api().post(this.apiName, '/S3ToRDS', this.myPutPostInit));
+  }
+
+  sendEmail(templateKey: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { templateKey: templateKey };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.emailApiName, this.myPutPostInit));
   }
 }
