@@ -968,6 +968,29 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
                     }
                 }
+                else if (actionType === 'email') {
+                    _this.backendService.sendEmail('test').subscribe(
+                        result => {
+                            console.log(result);
+                            if (result.Success) {
+                                _this._toastService.showSuccessToast(result.Message);
+                            }
+                            else {
+                                _this._toastService.showErrorToast(result.Error);
+                            }
+                            if (event.outputEventWhenComplete != null) {
+                                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                            }
+                        }, error => {
+                            _this._toastService.showErrorToast(error);
+                            if (event.outputEventWhenComplete != null) {
+                                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                            }
+                        });
+
+
+
+                }
                 else {
                     // Run query
                     let chiavi = {};
