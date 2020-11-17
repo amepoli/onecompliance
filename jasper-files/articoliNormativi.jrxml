@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="articoliNormativi" pageWidth="537" pageHeight="800" columnWidth="509" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="1817892e-a501-4573-8578-d16b642e3b96">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="articoliNormativi" pageWidth="565" pageHeight="800" columnWidth="537" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="1817892e-a501-4573-8578-d16b642e3b96">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
 	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
@@ -13,14 +13,23 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select descrizione, rubrica, codice_articolo_normativo,rif_esterno_url, note, id_testo_normativo from entrasp.articoli_normativi where id_testo_normativo = 1"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select descrizione, rubrica, codice_articolo_normativo,rif_esterno_url, note, id_testo_normativo from entrasp.articoli_normativi where id_testo_normativo = 3"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -34,13 +43,15 @@
 	<field name="rif_esterno_url" class="java.lang.String"/>
 	<field name="note" class="java.lang.String"/>
 	<field name="id_testo_normativo" class="java.math.BigDecimal"/>
+	<sortField name="codice_articolo_normativo"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="82">
+		<band height="100">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<image onErrorType="Blank">
-				<reportElement key="image" positionType="Float" stretchType="ContainerHeight" x="147" y="10" width="245" height="50" uuid="73a833e4-4ff1-48c8-9aa0-bffd7f8a2256">
+				<reportElement key="image" positionType="Float" stretchType="ContainerHeight" x="146" y="10" width="245" height="50" uuid="73a833e4-4ff1-48c8-9aa0-bffd7f8a2256">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -53,7 +64,7 @@
 				<imageExpression><![CDATA["./logos/"+ $P{codice_azienda} + ".png"]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement mode="Transparent" x="67" y="3" width="397" height="66" uuid="8b2c0e77-7ebc-423a-a2cd-ee93b35984a4">
+				<reportElement mode="Transparent" x="70" y="0" width="397" height="66" uuid="8b2c0e77-7ebc-423a-a2cd-ee93b35984a4">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -66,13 +77,20 @@
 				</box>
 				<text><![CDATA[]]></text>
 			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="69" width="537" height="30" backcolor="#97F7D7" uuid="cafe0fa6-169f-47cb-9ef2-a6bfe3af2d2c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Articoli normativi e riferimenti]]></text>
+			</staticText>
 		</band>
 	</title>
 	<detail>
-		<band height="140" splitType="Stretch">
+		<band height="125" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="130" y="0" width="379" height="20" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="df15393c-5fca-49c2-baf5-1d60b3b55cbc">
+				<reportElement mode="Opaque" x="130" y="0" width="407" height="20" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="df15393c-5fca-49c2-baf5-1d60b3b55cbc">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -88,35 +106,46 @@
 				<textFieldExpression><![CDATA[$F{rubrica}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement x="10" y="32" width="490" height="14" isRemoveLineWhenBlank="true" uuid="ed1db7ad-961b-4c34-8969-3982b0809a00"/>
+				<reportElement positionType="Float" x="0" y="28" width="537" height="14" isRemoveLineWhenBlank="true" uuid="ed1db7ad-961b-4c34-8969-3982b0809a00"/>
 				<textElement>
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="10" y="57" width="490" height="14" isRemoveLineWhenBlank="true" uuid="7d9173fc-aaaf-4923-9937-254df62d5491"/>
+				<reportElement positionType="Float" x="0" y="54" width="537" height="14" isRemoveLineWhenBlank="true" uuid="7d9173fc-aaaf-4923-9937-254df62d5491"/>
 				<textElement>
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rif_esterno_url}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="10" y="72" width="490" height="14" isRemoveLineWhenBlank="true" uuid="69ba3849-97ec-4298-9fc4-2dc177944d4a"/>
+				<reportElement positionType="Float" x="0" y="71" width="537" height="14" isRemoveLineWhenBlank="true" uuid="69ba3849-97ec-4298-9fc4-2dc177944d4a"/>
 				<textElement>
 					<font isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" x="10" y="87" width="490" height="15" uuid="2ec84ac7-7dfa-4d22-936a-714901abaddf"/>
-				<text><![CDATA[Riferimenti]]></text>
+				<reportElement positionType="Float" x="0" y="87" width="537" height="15" uuid="2ec84ac7-7dfa-4d22-936a-714901abaddf">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<text><![CDATA[Riferimenti:]]></text>
 			</staticText>
 			<line>
-				<reportElement positionType="Float" x="13" y="52" width="487" height="2" uuid="a3ec3563-a14f-4ac7-9eb7-82dcaa08066e"/>
+				<reportElement positionType="Float" x="0" y="48" width="537" height="1" uuid="a3ec3563-a14f-4ac7-9eb7-82dcaa08066e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 			</line>
 			<subreport>
-				<reportElement x="10" y="110" width="480" height="20" uuid="8bc3e987-2539-47b7-aef7-e3c09aa1e7b6"/>
+				<reportElement positionType="Float" x="30" y="110" width="507" height="9" uuid="8bc3e987-2539-47b7-aef7-e3c09aa1e7b6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<subreportParameter name="codice_articolo_normativo">
 					<subreportParameterExpression><![CDATA[$F{codice_articolo_normativo}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -143,6 +172,25 @@
 			</textField>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="36">
+			<textField>
+				<reportElement x="0" y="16" width="100" height="20" uuid="ab64d1a0-44dd-4bfe-813e-d15ac37c1743">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="10" width="537" height="1" uuid="e8e20464-0017-47ff-9e40-014f30de4ee6">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</line>
+		</band>
+	</pageFooter>
 	<summary>
 		<band splitType="Stretch"/>
 	</summary>
