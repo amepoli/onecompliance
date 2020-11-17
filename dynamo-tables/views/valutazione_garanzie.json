@@ -1,7 +1,7 @@
 {
 	"$schema": "../views.schema.json",
-	"entryKey": "valutazione_contratti",
-	"origin": "entrasp.valutazione_contratti",
+	"entryKey": "valutazione_garanzie",
+	"origin": "entrasp.valutazione_garanzie",
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -22,8 +22,8 @@
 				"viewType": "input",
 				"dataType": "number"
 			},
-			"label": "ID Valutazione Contratti",
-			"key": "id_valutazione_contratti",
+			"label": "ID Valutazione Garanzie",
+			"key": "id_valutazione_garanzie",
 			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": true,
@@ -32,54 +32,17 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "number"
+				"comboQuery": "SELECT codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='MODALITA_REALIZZO'",
+				"dataType": "text",
+				"options": [],
+				"viewType": "combobox"
 			},
-			"label": "ID Contratto",
-			"key": "id_contratto",
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "modalita_realizzo",
+			"label": "Modalità di Realizzo",
 			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
 			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_riferimento",
-			"label": "Data Riferimento",
-			"newLine": false,
-			"readOnly": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_ultimo_pagamento",
-			"label": "Data Ultimo Pagamento",
-			"newLine": false,
-			"readOnly": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_primo_insoluto",
-			"label": "Data Primo Insoluto",
-			"newLine": false,
-			"readOnly": false
 		},
 		{
 			"autoGenerate": false,
@@ -97,11 +60,63 @@
 		{
 			"autoGenerate": false,
 			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_rif_bil",
+			"label": "Data di Bilancio di Riferimento",
+			"newLine": false,
+			"readOnly": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_ultima_periz_dispon",
+			"label": "Data Ultima Perizia",
+			"newLine": false,
+			"readOnly": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "ID Garanzia",
+			"key": "id_garanzia",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "Valore",
+			"key": "valore",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
 				"viewType": "input",
 				"dataType": "text"
 			},
-			"label": "Note Valore Nominale",
-			"key": "note_valore_nominale",
+			"label": "Tipo Valore",
+			"key": "tipo_valore",
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
@@ -111,17 +126,10 @@
 			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
-				"validations": [
-					{
-					  "message": "Campo necessario",
-					  "name": "required",
-					  "validator": "Validators.required"
-					}
-				  ],
-				"dataType": "number"
+				"dataType": "text"
 			},
-			"label": "Valore Stimato",
-			"key": "valore_stimato",
+			"label": "Perito",
+			"key": "perito",
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
@@ -138,125 +146,113 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"validations": [
-					{
-					  "message": "Campo necessario",
-					  "name": "required",
-					  "validator": "Validators.required"
-					}
-				  ],
-				"dataType": "number"
-			},
-			"label": "Stima Nuovo Fondo Pertinenza",
-			"key": "stima_nuovo_fondo_pertinenza",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
 			"newLine": false
 		},
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"validations": [
-					{
-					  "message": "Campo necessario",
-					  "name": "required",
-					  "validator": "Validators.required"
-					}
-				  ],
-				"dataType": "number"
+				"dataType": "date",
+				"viewType": "input"
 			},
-			"label": "Tasso Attualizzazione",
-			"key": "tasso_attualizzazione",
-			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Valore Attuale",
-			"key": "valore_attuale",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Perdita da Attualizzazione",
-			"key": "perdita_attualizzazione",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Ripresa Attualizzazione",
-			"key": "ripresa_attualizzazione",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Valore Netto non Attualizzato",
-			"key": "valore_netto_non_attualizzato",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Valore Attualizzato",
-			"key": "valore_attualizzato",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"value": "0",
-				"viewType": "checkbox"
-			},
-			"key": "escludi_da_report",
-			"label": "Escludi da Report",
+			"key": "data_presumibile_realizzo",
+			"label": "Data Presumibile di Realizzo",
 			"newLine": false,
+			"readOnly": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "Sconto Qualità Perizia",
+			"key": "sconto_qualita_perizia",
 			"readOnly": false,
 			"isHidden": false,
-			"isPrimary": false
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "Sconto Base d'Asta",
+			"key": "sconto_base_asta",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "Valore Scontato",
+			"key": "valore_scontato",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "Crediti Precedenti",
+			"key": "crediti_precedenti",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='GRADO_IPOT'",
+				"dataType": "text",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "grado_ipoteca",
+			"label": "Grado Ipoteca",
+			"readOnly": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "Spese di Esecuzione",
+			"key": "spese_esecuzione",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "% di soddisfazione",
+			"key": "quota_perc_sodd",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
 		}
 	],
 	"table_keys": [
@@ -266,7 +262,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": true,
-			"key": "id_valutazione_contratti",
+			"key": "id_valutazione_garanzie",
 			"label": "ID"
 		},
 		{
@@ -277,33 +273,6 @@
 			"isPrimary": true,
 			"key": "codice_azienda",
 			"label": "codice_azienda"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_riferimento",
-			"label": "Data Riferimento"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_ultimo_pagamento",
-			"label": "Data Ultimo Pagamento"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "valore_stimato",
-			"label": "Valore Stimato"
 		}
 	]
 }
