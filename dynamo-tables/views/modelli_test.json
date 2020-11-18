@@ -2,6 +2,18 @@
   "$schema": "../views.schema.json",
   "businessObjectName": "modelliTest",
   "entryKey": "modelli_test",
+  "predefinedQueries": [
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "update entrasp.sondaggi set codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "update entrasp.modelli_test set codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -296,7 +308,7 @@
       "isPrimary": false,
       "key": "centro_gest",
       "label": "Centro Gestionale",
-      "queryFunct": "entrasp.centri_gestionali_descr($codice_azienda$, id_centro_gest)"
+      "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
     }
   ]
 }
