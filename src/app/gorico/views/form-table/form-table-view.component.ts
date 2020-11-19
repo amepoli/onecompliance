@@ -197,9 +197,10 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
             if (_this.formGetter.eventTrigger === 'onSave') {
               setTimeout(() => {
                 _this.sendEvent.emit({ eventType: _this.formGetter.outputEvent }); // notify parent
-                _this.formGetter.refreshView();
               }, 1000);
             }
+            _this.formGetter.refreshView();
+
           }
           else {
             // Show error snackbar
