@@ -127,6 +127,7 @@ export class LoginPageComponent implements OnInit {
         this.authService.userinfo.subscribe(info => {
             if (info && info.username != null) {
                 // got info from backend, now we can proceed
+                this.authService.setUsername(info.username);
                 this._dialogService.closeDialog();
                 this.router.navigate([this.returnUrl]);
             }
