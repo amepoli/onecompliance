@@ -84,6 +84,22 @@ export class AuthService {
     return this.email;
   }
 
+  public forgotPassword(username: string): void {
+    this.amplifyService.auth().forgotPassword(username)
+    .then(data => console.log(data))
+    .catch((err) => {
+      this.errorInfo$.emit(err);
+      this._setError(err); });
+  }
+
+  public forgotPasswordSubmit(username: string, code: string, new_password: string): void {
+    this.amplifyService.auth().forgotPasswordSubmit(username, code, new_password)
+    .then(data => console.log(data))
+    .catch((err) => {
+      this.errorInfo$.emit(err);
+      this._setError(err); });
+  }
+
 
   /** signin */
   public signIn(): void {
@@ -121,10 +137,22 @@ export class AuthService {
     this.amplifyService.auth().signUp(this.username,
       this.password,
       this.email)
-      .then(user => this.amplifyService.setAuthState({ state: 'confirmSignUp', user: { 'username': this.username } }))
+      .then(user => this.amplifyService.setAuthState({ state: 'sign-up', user: { 'username': this.username } }))
       .catch(err => {
         this.errorInfo$.emit(err);
-        this._setError(err)
+        this._setError(err);
+      });
+  }
+
+  public confirmSignUp(code: string): void {
+      this.amplifyService.auth().confirmSignUp(this.username, code)
+      .then(data => {
+         this.amplifyService.setAuthState({ state: 'confirm-sign-up', user: { 'username': this.username } });
+          console.log(data);
+      })
+      .catch(err => {
+        this.errorInfo$.emit(err);
+        this._setError(err);
       });
   }
 

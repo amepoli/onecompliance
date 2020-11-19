@@ -1,0 +1,89 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+import { FuseConfigService } from '@fuse/services/config.service';
+import { fuseAnimations } from '@fuse/animations';
+import { AuthService } from './auth.service';
+
+@Component({
+    selector   : 'forgot-password',
+    templateUrl: './forgot-password.component.html',
+    styleUrls  : ['./forgot-password.component.scss'],
+    animations : fuseAnimations
+})
+export class ForgotPasswordComponent implements OnInit
+{
+    forgotPasswordForm: FormGroup;
+
+    verificationForm: FormGroup;
+
+    emailSent = false;
+
+    passwordReset = false;
+
+    hide = true;
+
+    /**
+     * Constructor
+     *
+     * @param {FuseConfigService} _fuseConfigService
+     * @param {FormBuilder} _formBuilder
+     */
+    constructor(
+        private _fuseConfigService: FuseConfigService,
+        private _formBuilder: FormBuilder,
+        private authService: AuthService
+    )
+    {
+        // Configure the layout
+        this._fuseConfigService.config = {
+            layout: {
+                navbar   : {
+                    hidden: true
+                },
+                toolbar  : {
+                    hidden: true
+                },
+                footer   : {
+                    hidden: true
+                },
+                sidepanel: {
+                    hidden: true
+                }
+            }
+        };
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * On init
+     */
+    ngOnInit(): void
+    {
+        this.forgotPasswordForm = this._formBuilder.group({
+            username: ['', Validators.required]
+        });
+
+        this.verificationForm = this._formBuilder.group({
+            verificationCode: ['', Validators.required],
+            password: ['', [Validators.required,
+            Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&_])[A-Za-z\d$@$!%*?&_].{8,}')]]
+        });
+    }
+
+    onSubmit(): void {
+        this.emailSent = true;
+        this.passwordReset = false;
+        this.authService.forgotPassword(this.forgotPasswordForm.value.username);
+    }
+
+    onSubmitCode(): void {
+        this.emailSent = false;
+        this.passwordReset = true;
+        this.authService.forgotPasswordSubmit(this.forgotPasswordForm.value.username, 
+            this.verificationForm.value.verificationCode, this.verificationForm.value.password);
+    }
+}

@@ -2,7 +2,40 @@
 
     <div id="mail-confirm-form-wrapper" fxLayout="column" fxLayoutAlign="center center">
 
-        <div id="mail-confirm-form" [@animate]="{value:'*',params:{duration:'300ms',y:'100px'}}">
+    <div id="mail-confirm-form" [@animate]="{value:'*',params:{duration:'300ms',y:'100px'}}">
+
+    <form name="insertCodeForm" [formGroup]="insertCodeForm" (ngSubmit)="onSubmit()" novalidate>
+
+        <div class="title">CONFIRM SIGNUP</div>
+
+        <p>
+            Abbiamo spedito una mail con il codice di verifica, lo inserisca qui sotto / An email containing the verification code has been sent, please insert it here below.
+        </p>
+
+        <mat-form-field>
+            <input matInput placeholder="Verification Code" formControlName="code">
+            <mat-error *ngIf="insertCodeForm.get('code').hasError('required')">
+                Inserisca il codice che Le è stato mandato via email / Please insert the verification code sent to your email address
+            </mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="accent" class="submit-button"
+                aria-label="SEND EMAIL" [disabled]="insertCodeForm.invalid">
+            SEND VERIFICATION CODE
+        </button>
+
+        <p *ngIf="codeOk">
+            Codice inviato / Code sent.
+        </p>
+    
+    </form>
+
+    </div>
+    </div>
+
+    <div id="mail-confirm-form-wrapper" fxLayout="column" fxLayoutAlign="center center">
+
+        <div *ngIf="codeOk" id="mail-confirm-form" [@animate]="{value:'*',params:{duration:'300ms',y:'100px'}}">
 
             <div class="logo">
                 <mat-icon class="mat-accent s-96">email</mat-icon>
@@ -12,15 +45,9 @@
 
             <div class="subtitle">
                 <p>
-                    Una mail di conferma è stata spedita a <b>{{ email }}</b>.
-                </p>
-                <p>
                     La contatteremo non appena il Suo account sarà attivo.
                 </p>
                 <br>
-                <p>
-                    A confirmation e-mail has been sent to <b>{{ email }}</b>.
-                </p>
                 <p>
                     We will contact you as soon as your account will be active.
                 </p>

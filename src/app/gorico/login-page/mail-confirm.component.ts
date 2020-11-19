@@ -4,6 +4,7 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
 
 import { AuthService } from './auth.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
     selector   : 'mail-confirm',
@@ -13,7 +14,12 @@ import { AuthService } from './auth.service';
 })
 export class MailConfirmComponent implements OnInit
 {
+    insertCodeForm: FormGroup;
+
     email = 'user@example.com';
+    username: string;
+    codeOk  =  false;
+
     /**
      * Constructor
      *
@@ -21,7 +27,8 @@ export class MailConfirmComponent implements OnInit
      */
     constructor(
         private _fuseConfigService: FuseConfigService,
-        private _authService: AuthService
+        private _authService: AuthService,
+        private _formBuilder: FormBuilder
     )
     {
         // Configure the layout
@@ -44,10 +51,26 @@ export class MailConfirmComponent implements OnInit
     }
     ngOnInit(): void {
         this.email = this._authService.getEmail();
+        this.username = this._authService.getUsername(); 
+
+        this.insertCodeForm = this._formBuilder.group({
+            code: ['', Validators.required]
+        });
+
+        this._authService.authStateChange$
+            .subscribe(authState => {
+                if (authState.state === 'confirm-sign-up') {
+                    this.codeOk = true;
+                }
+            });
     }
 
-    setEmail(email: string) : void
+    setEmail(email: string): void
     {
         this.email = email;
+    }
+
+    onSubmit(): void {
+        this._authService.confirmSignUp(this.insertCodeForm.value.code);
     }
 }

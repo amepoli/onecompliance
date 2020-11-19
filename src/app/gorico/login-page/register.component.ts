@@ -71,13 +71,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.registerForm = this._formBuilder.group({
             name: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
-            password: ['', Validators.required],
+            password: ['', [Validators.required,
+                Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&_])[A-Za-z\d$@$!%*?&_].{8,}')]],
             passwordConfirm: ['', [Validators.required, confirmPasswordValidator]]
         });
 
         this.authService.authStateChange$
             .subscribe(authState => {
-                if (authState.state === 'confirmSignUp') {
+                if (authState.state === 'sign-up') {
                     this._dialogService.closeDialog();
                     this.authService.setEmail(this.registerForm.get('email').value);
                     this.router.navigate(['/mail-confirm']);

@@ -21,6 +21,7 @@ import { LoginPageModule } from 'app/gorico/login-page/login-page.module';
 import { RegisterModule } from 'app/gorico/login-page/register.module';
 import { MainTableModule } from 'app/gorico/main-table/main-table.module';
 import { MailConfirmModule } from 'app/gorico/login-page/mail-confirm.module';
+import { ForgotPasswordModule } from 'app/gorico/login-page/forgot-password.module';
 import { AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
 import { NgxPubSubModule } from '@pscoped/ngx-pub-sub';
 import { MainDashboardsModule } from 'app/gorico/main-dashboards/main-dashboards.module';
@@ -74,6 +75,7 @@ const appRoutes: Routes = [];
         LoginPageModule,
         RegisterModule,
         MailConfirmModule,
+        ForgotPasswordModule,
         MainTableModule,
         AmplifyAngularModule,
         NgxPubSubModule,

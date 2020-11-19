@@ -4,33 +4,30 @@ import { MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule } fr
 
 import { FuseSharedModule } from '@fuse/shared.module';
 
-import { MailConfirmComponent } from './mail-confirm.component';
+import { ForgotPasswordComponent } from './forgot-password.component';
 
 const routes = [
     {
-        path     : 'mail-confirm',
-        component: MailConfirmComponent
+        path     : 'forgot-password',
+        component: ForgotPasswordComponent
     }
 ];
 
 @NgModule({
     declarations: [
-        MailConfirmComponent
+        ForgotPasswordComponent
     ],
     imports     : [
         RouterModule.forChild(routes),
 
-        MatIconModule,
-
-        MatFormFieldModule,
-
-        MatInputModule,
-
         MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
 
         FuseSharedModule
     ]
 })
-export class MailConfirmModule
+export class ForgotPasswordModule
 {
 }

@@ -107,7 +107,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.router.events.subscribe((e) => {
             if (e instanceof NavigationEnd) {
                 // Check if not signed in and we are not currently on login or register page
-                if (!this._authService.isSignedIn && !e.url.includes('login') && !e.url.includes('register')) {
+                if (!this._authService.isSignedIn && !e.url.includes('login') && !e.url.includes('register') && !e.url.includes('forgot-password') && !e.url.includes('mail-confirm')) {
                     console.log('Redirecting to login page');
                     // Add redirect path if not home
                     if (e.url.length > 3) {

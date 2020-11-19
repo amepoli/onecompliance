@@ -13,7 +13,7 @@
             <form name="registerForm" [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
 
                 <mat-form-field>
-                    <input matInput placeholder="Name" formControlName="name">
+                    <input matInput placeholder="Username" formControlName="name">
                     <mat-error>
                         Name is required
                     </mat-error>
@@ -31,10 +31,15 @@
 
                 <mat-form-field>
                     <input matInput type="password" placeholder="Password" formControlName="password">
-                    <mat-error>
+                    <mat-error *ngIf="registerForm.get('password').hasError('required')">
                         Password is required
                     </mat-error>
+                    <mat-error *ngIf="registerForm.get('password').hasError('pattern')"> 
+                        Password must have at least 8 chars, an uppercase letter, a lowercase letter, a number and a special char 
+                    </mat-error>
                 </mat-form-field>
+
+                <br>
 
                 <mat-form-field>
                     <input matInput type="password" placeholder="Password (Confirm)" formControlName="passwordConfirm">
