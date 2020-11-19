@@ -191,8 +191,17 @@ async function sendEmail(to, cc, body, subject) {
 exports.handler = async (event, context, callback) => {
     console.log(event);
 
-    // Let's get entry from DynammoDB using templateKey from event
-    const entry = await getEntry(event.templateKey);
+    let entry = null;
+
+    if (event.templateKey) {
+        // Let's get entry from DynammoDB using templateKey from event
+        entry = await getEntry(event.templateKey);
+    }
+    else {
+        // If no templateKey, then the event must be the data
+        entry = event;
+    }
+
     if (entry) {
         console.log(entry);
 

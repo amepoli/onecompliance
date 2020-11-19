@@ -199,6 +199,8 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
                 _this.sendEvent.emit({ eventType: _this.formGetter.outputEvent }); // notify parent
               }, 1000);
             }
+            _this.formGetter.refreshView();
+
           }
           else {
             // Show error snackbar
