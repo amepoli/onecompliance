@@ -1,0 +1,158 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "rischi_sub_of_trattamenti_dati",
+    "origin": "entrasp.fonti_rischio",
+    "inputEvents": [
+      {
+        "eventName": "update_fonti_rischio",
+        "actionType": "reload"
+      },
+      {
+        "actionTarget": {
+            "name": "rischi",
+            "type": "form",
+            "keymap": [
+                {
+                    "source": "codice_azienda",
+                    "destination": "codice_azienda"
+                },
+                {
+                    "source": "codice_rischio",
+                    "destination": "codice_rischio"
+                }
+            ]
+        },
+        "actionType": "navigate",
+        "eventName": "to_rischio"
+    }
+    ],
+    "form_keys": [
+      {
+        "autoGenerate": true,
+        "format": {
+          "viewType": "input",
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_fonte_rischio",
+        "label": "id_fonte_rischio",
+        "readOnly": true,
+        "newLine": true
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input",
+          "dataType": "text",
+          "value": "TD"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_tipo_fonte_rischio",
+        "label": "codice_tipo_fonte_rischio",
+        "readOnly": false,
+        "newLine": true
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input",
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda",
+        "readOnly": false,
+        "newLine": true
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input",
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "id_trattamento_dati",
+        "label": "ID trattamento dati",
+        "readOnly": true,
+        "newLine": true
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "button"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "cancella_fonte_rischio",
+        "label": "delete",
+        "buttonIcon": "delete",
+        "newLine": false,
+        "outputEvent": {
+          "eventName": "cancella_fonte_rischio",
+          "eventTrigger": "press"
+        },
+        "inputEvents": [
+          {
+            "eventName": "cancella_fonte_rischio",
+            "actionType": "query",
+            "condition": "none",
+            "values": [],
+            "queryFunct": "delete from entrasp.fonti_rischio where codice_azienda=$codice_azienda$ and id_procedura=$id_procedura$ and codice_rischio=$codice_rischio$",
+            "outputEventWhenComplete": "update_fonti_rischio"
+          }
+        ],
+        "readOnly": false,
+        "sameOrigin": false,
+        "size": 1
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "comboQuery": "SELECT codice_rischio AS id, entrasp.rischi_cod_tit(codice_azienda, codice_rischio) AS name  FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$;",
+          "options": [],
+          "viewType": "combobox",
+          "dataType": "text",
+          "validations": [
+            {
+              "message": "Selezionare rischio associato",
+              "name": "required",
+              "validator": "Validators.required"
+            }
+          ]
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "codice_rischio",
+        "label": "Rischio",
+        "readOnly": false,
+        "newLine": false,
+        "size": 8
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+            "viewType": "button"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "rischio_associato",
+        "label": "Dettaglio",
+        "newLine": false,
+        "outputEvent": {
+            "eventName": "to_rischio",
+            "eventTrigger": "press"
+        },
+     "style": {
+            "background_color": "#25599C",
+            "font_color": "white"
+        },
+        "readOnly": false,
+        "sameOrigin": false,
+        "size": 1
+    }
+    ]
+  }
