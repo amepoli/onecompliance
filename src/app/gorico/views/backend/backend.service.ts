@@ -215,9 +215,28 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/S3ToRDS', this.myPutPostInit));
   }
 
-  sendEmail(templateKey: string): Observable<any> {
+  sendEmailUsingTemplate(templateKey: string): Observable<any> {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { templateKey: templateKey };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.emailApiName, this.myPutPostInit));
   }
+
+  sendEmail(subject: string, header: string, query: string, footer: string, company: string, conditionQuery: string, onSuccessQuery: string, to: string, cc: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = {
+      subject: subject,
+      body: {
+        header: header,
+        query: query,
+        footer: footer
+      },
+      company: company,
+      conditionQuery: conditionQuery,
+      onSuccessQuery: onSuccessQuery,
+      to: to,
+      cc: cc
+    };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.emailApiName, this.myPutPostInit));
+  }
+
 }

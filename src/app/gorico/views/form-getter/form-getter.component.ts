@@ -145,7 +145,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private _dialogService: DialogService,
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
-    ) { }
+    ) {
+        let _this = this;
+
+    }
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.filter && this.results && this.results.length) {
@@ -297,6 +300,29 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             });
 
+    }
+
+    sendEmail(data: any) {
+        let _this = this;
+
+        (data.templateKey ?
+            _this.backendService.sendEmailUsingTemplate(data) :
+            _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.to, data.cc))
+            .subscribe(
+                result => {
+                    console.log(result);
+                    if (result.Success) {
+                        _this._toastService.showSuccessToast(result.Message);
+                    }
+                    else {
+                        _this._toastService.showErrorToast(result.Error);
+                    }
+
+                }, error => {
+                    _this._toastService.showErrorToast(error);
+
+                }
+            );
     }
 
     subscribeFieldInputEvents(viewKeys: formViewKey[]): void {
@@ -969,27 +995,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                 }
                 else if (actionType === 'email') {
-                    _this.backendService.sendEmail('test').subscribe(
-                        result => {
-                            console.log(result);
-                            if (result.Success) {
-                                _this._toastService.showSuccessToast(result.Message);
-                            }
-                            else {
-                                _this._toastService.showErrorToast(result.Error);
-                            }
-                            if (event.outputEventWhenComplete != null) {
-                                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
-                            }
-                        }, error => {
-                            _this._toastService.showErrorToast(error);
-                            if (event.outputEventWhenComplete != null) {
-                                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
-                            }
-                        });
-
-
-
+                    _this.sendEmail({ templateKey: 'test' });
                 }
                 else {
                     // Run query
