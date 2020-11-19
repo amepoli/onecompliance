@@ -84,7 +84,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     const _this = this;
-    if (this.field.eventName != null && this.field.eventTrigger != null && this.field.eventTrigger === 'select') {
+    if (this.field.eventName != null && this.field.eventTrigger === 'load') {
       // this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
       setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
         // _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.getFormattedId(_this.field.value.id), type: 'combobox' });
@@ -124,7 +124,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       this.field.style = { background_color: 'transparent', font_color: 'black' };
     }
 
-    if (this.field.eventName != null && this.field.eventTrigger != null && this.field.eventTrigger === 'select') {
+    if (this.field.eventName != null && this.field.eventTrigger === 'select') {
       // this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
       this.sendEvent();
     }
