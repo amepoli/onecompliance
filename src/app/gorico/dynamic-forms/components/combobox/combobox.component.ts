@@ -158,16 +158,18 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private sendEvent() {
-    if (!this.skipNextEvent) {
-      let value = this.group.get(this.field.name).value != null ? this.getFormattedId(this.group.get(this.field.name).value.id) : null;
-      if (!value) {
-        value = this.field.value && this.field.value.id ? this.field.value.id : null;
-      }
-      console.log('value', value);
-      this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: value, type: 'combobox' });
+    // if (!this.skipNextEvent) {
+    // }
+    // else {
+    //   this.skipNextEvent = false;
+    // }
+
+    let value = this.group.get(this.field.name).value != null ? this.getFormattedId(this.group.get(this.field.name).value.id) : null;
+    if (!value) {
+      value = this.field.value && this.field.value.id ? this.field.value.id : null;
     }
-    else {
-      this.skipNextEvent = false;
-    }
+    console.log('value', value);
+    this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: value, type: 'combobox' });
+
   }
 }
