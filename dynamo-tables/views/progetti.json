@@ -8,6 +8,16 @@
 			"queryString": "select entrasp.progetti_insert($codice_azienda$,$titolo$,$codice_progetto$,'€codice_attivita€');"
 		}
 	],
+	"outputEvents": [
+        {
+            "eventName": "onSaveProgetti",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoadProgetti",
+            "eventTrigger": "onReload"
+        }
+    ],
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -46,7 +56,7 @@
 					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
 				},
 				{
-					"eventName": "codice_colore_load_stato",
+					"eventName": "onLoadProgetti",
 					"condition": "none",
 					"values": [],
 					"actionType": "query_style",
@@ -54,7 +64,7 @@
 					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
 				},
 				{
-					"eventName": "codice_attivita_load_stato",
+					"eventName": "onLoadProgetti",
 					"condition": "none",
 					"values": [],
 					"actionType": "query_style",
@@ -103,10 +113,6 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"outputEvent": {
-				"eventName": "codice_attivita_load_stato",
-				"eventTrigger": "load"
-			},
 			"newLine": true
 		},
 		{

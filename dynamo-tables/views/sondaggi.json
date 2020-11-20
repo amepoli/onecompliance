@@ -1,10 +1,16 @@
 {
     "$schema": "../views.schema.json",
     "businessObjectName": "sondaggi",
-    "outputEvent": {
-        "eventName": "onSaveSondaggio",
-        "eventTrigger": "onSave"
-    },
+    "outputEvents": [
+        {
+            "eventName": "onSaveSondaggio",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoadSondaggio",
+            "eventTrigger": "onReload"
+        }
+    ],
     "origin": "entrasp.sondaggi",
     "predefinedQueries": [
         {
@@ -363,6 +369,14 @@
                     "actionType": "query_style",
                     "styleAttribute": "background_color",
                     "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                },
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
                 }
             ],
             "isHidden": false,
@@ -454,10 +468,6 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "outputEvent": {
-                "eventName": "sondaggio_load_id_centro_gest",
-                "eventTrigger": "load"
-            },
             "key": "id_centro_gest",
             "label": "Centro Gestionale",
             "newLine": true,
