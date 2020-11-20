@@ -196,11 +196,11 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
           console.log(result);
           if (result.result === 'OK') {
             _this._toastService.showSuccessToast('Saved successfully!'); // show success toast
-            if (this.refreshOnSave) {
-              this.formGetter.refreshView();
+            if (_this.refreshOnSave) {
+              _this.formGetter.refreshView();
             }
             else {
-              this.formGetter.runOnSaveEvents();
+              _this.formGetter.runOnSaveEvents();
             }
 
             // if (_this.formGetter.eventTrigger === 'onSave') {
