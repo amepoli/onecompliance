@@ -92,7 +92,7 @@ export class FormViewComponent implements OnChanges, OnInit {
     messages: MessageElement[] = []; // Messages
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
-    refreshOnSave = true;
+    refreshOnSave = false;
 
     constructor(private pubsubService: NgxPubSubService,
         public attachDialog: MatDialog,
@@ -288,6 +288,9 @@ export class FormViewComponent implements OnChanges, OnInit {
                             }
                             else if (this.refreshOnSave) {
                                 this.refreshView();
+                            }
+                            else {
+                                this.formGetter.runOnSaveEvents();
                             }
                             // this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
                         }, 1000);
