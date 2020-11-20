@@ -39,6 +39,8 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
 
   processView = false;   // handle the form-getter child view
 
+  refreshOnSave = false;
+
   isFullScreen = false;
 
   filter: string = ""; // for filtering results
@@ -194,12 +196,18 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
           console.log(result);
           if (result.result === 'OK') {
             _this._toastService.showSuccessToast('Saved successfully!'); // show success toast
-            if (_this.formGetter.eventTrigger === 'onSave') {
-              setTimeout(() => {
-                _this.sendEvent.emit({ eventType: _this.formGetter.outputEvent }); // notify parent
-              }, 1000);
+            if (this.refreshOnSave) {
+              this.formGetter.refreshView();
             }
-            _this.formGetter.refreshView();
+            else {
+              this.formGetter.runOnSaveEvents();
+            }
+
+            // if (_this.formGetter.eventTrigger === 'onSave') {
+            //   setTimeout(() => {
+            //     _this.sendEvent.emit({ eventType: _this.formGetter.outputEvent }); // notify parent
+            //   }, 1000);
+            // }
 
           }
           else {
