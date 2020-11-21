@@ -1,7 +1,8 @@
 {
     "$schema": "../views.schema.json",
-    "businessObjectName": "sondaggi",
     "origin": "entrasp.sondaggi",
+    "entryKey": "sondaggi_sub_of_modelli_test",
+    "businessObjectName": "sondaggi",
     "outputEvents": [
         {
             "eventName": "onSaveSondaggio",
@@ -12,11 +13,11 @@
             "eventTrigger": "onReload"
         }
     ],
-      "predefinedQueries": [
+    "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select sn.*, gf.sondaggio_completato,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, sn.pct_da_manuale, sn.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, sn.pct_da, sn.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', sn.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi sn inner join entrasp.modelli_test_vr mvr on sn.codice_azienda=mvr.codice_azienda and sn.id_modello_test=mvr.id_modello_test and sn.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on sn.codice_azienda=mt.codice_azienda and sn.id_modello_test=mt.id_modello_test inner join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(sn.codice_azienda, sn.id_sondaggio) gf on sn.codice_azienda=gf.codiceazienda and sn.id_sondaggio=gf.idsondaggio where sn.codice_azienda=$codice_azienda$"
+            "queryString": "select sn.*, gf.sondaggio_completato,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, sn.pct_da_manuale, sn.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, sn.pct_da, sn.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', sn.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi sn inner join entrasp.modelli_test_vr mvr on sn.codice_azienda=mvr.codice_azienda and sn.id_modello_test=mvr.id_modello_test and sn.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on sn.codice_azienda=mt.codice_azienda and sn.id_modello_test=mt.id_modello_test inner join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(sn.codice_azienda, sn.id_sondaggio) gf on sn.codice_azienda=gf.codiceazienda and sn.id_sondaggio=gf.idsondaggio where sn.codice_azienda=$codice_azienda$ and sn.id_modello_test=$id_modello_test$"
         },
         {
             "operation": "selectForm",
@@ -49,7 +50,6 @@
             "queryString": "select entrasp.sondaggio_delete($codice_azienda$, $id_sondaggio$)"
         }
     ],
-    "entryKey": "sondaggi",
     "messages": [
         {
             "viewType": "form",
