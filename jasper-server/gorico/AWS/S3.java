@@ -50,7 +50,7 @@ public class S3 {
     public void InitS3() {
         if (s3Client == null) {
             this.clientRegion = Regions.EU_CENTRAL_1;
-            this.bucketName = "gorico2.reports";
+            this.bucketName = "gorico2-reports";
             this.s3Client = AmazonS3ClientBuilder.standard().withRegion(clientRegion)
                     // .withCredentials(new ProfileCredentialsProvider())
                     .build();

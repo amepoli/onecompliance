@@ -755,12 +755,12 @@ exports.handler = async (event, context) => {
                     // console.log('dataset', dataset);
 
                     var s3ParamsInsert = {
-                        Bucket: 'gorico2.reports',
+                        Bucket: 'gorico2-reports',
                         Key: fileName,
                         Body: fileBody
                     };
                     var s3ParamsUrl = {
-                        Bucket: 'gorico2.reports',
+                        Bucket: 'gorico2-reports',
                         Key: fileName
                     };
 

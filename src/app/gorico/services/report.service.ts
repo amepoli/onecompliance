@@ -73,7 +73,7 @@ export class ReportService // implements Resolve<any>
             response => {
                 console.log(response);
                 if (response.result === 'OK') {
-                    const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
+                    const url = response.url; 
                     _this._httpClient.get(url, { responseType: 'blob' }).subscribe(
                         fileData => {
                             // Save the file 
