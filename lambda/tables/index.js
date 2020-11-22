@@ -558,6 +558,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
     let autoGenKeyEntry = entry_keys.find(key => key.autoGenerate === true);
 
     let autoGenKey = autoGenKeyEntry != null && autoGenKeyEntry.key != null ? autoGenKeyEntry.key : null;
+    let autoGenType = autoGenKeyEntry != null && autoGenKeyEntry.format != null ? autoGenKeyEntry.format.dataType : null;
 
     // further check if the value is passed from front-end, in such case skip the autogeneration
     autoGenKey = keys[autoGenKey] != null ? null : autoGenKey;
@@ -590,7 +591,12 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
     let comma;
 
     if (autoGenKey != null && newRecord) {  // retrieve the new ID 
-        genString = 'SELECT (COALESCE(MAX(' + autoGenKey + '),0)+1) FROM ' + entry_params.origin;
+        if (autoGenKey == 'number') {
+            genString = 'SELECT (COALESCE(MAX(' + autoGenKey + '),0)+1) FROM ' + entry_params.origin;
+        } else if (autoGenKey == 'text'){ // string
+            genString = 'SELECT (COALESCE(MAX(' + autoGenKey + ')::numeric, 0)+1)::varchar FROM ' + entry_params.origin;
+        }
+        
         comma = ' WHERE ';
         for (const key in keys) {
             if (keys.hasOwnProperty(key)) {
@@ -606,6 +612,9 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                 genString = genString + fieldString;
                 comma = ' AND '; // needed only the first time
             }
+        }
+        if (autoGenKey == 'text'){ 
+            genString = genString + comma + autoGenKey + " ~ '^-?[0-9]+.?[0-9]*$'";
         }
     }
 
