@@ -109,7 +109,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
         const _this = this;
 
-        _this.route.params
+        _this.subscriptions.push(_this.route.params
             .subscribe(params => {
                 _this.navigationHistory.length = 0;       // flush navigation history
                 _this.level = 0;
@@ -122,35 +122,35 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     _this.backendService.dashboardKeys : {};
                 _this.backendService.dashboardKeys = null; // reset dashboard path
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
-            });
+            }));
 
         // Report related subscriptions
-        _this._reportService.reloadRequested.subscribe((entryName) => {
+        _this.subscriptions.push(_this._reportService.reloadRequested.subscribe((entryName) => {
             if (entryName === _this.tableName) {
                 _this._reportService.getReports(_this.tableName, _this.authService.getCurrentCompany(), _this.currentTableKeys, (_this.tableType === 'form'));
             }
-        });
+        }));
 
-        _this._reportService.getReportRequested.subscribe((alias) => {
+        _this.subscriptions.push(_this._reportService.getReportRequested.subscribe((alias) => {
             _this._reportService.getReport(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, alias, (_this.tableType === 'form'), _this.searchKeys);
-        });
+        }));
 
         // Import Export related subscriptions
-        _this._importExportService.onGetTemplateRequested.subscribe((entryName) => {
+        _this.subscriptions.push(_this._importExportService.onGetTemplateRequested.subscribe((entryName) => {
             _this._importExportService.getTemplateFile(_this.tableName);
-        });
+        }));
 
-        _this._importExportService.onImportRequested.subscribe((entryName) => {
+        _this.subscriptions.push(_this._importExportService.onImportRequested.subscribe((entryName) => {
             _this._importExportService.importCSV(_this.tableName);
-        });
+        }));
 
-        _this._importExportService.onGetCSVRequested.subscribe(label => {
+        _this.subscriptions.push(_this._importExportService.onGetCSVRequested.subscribe(label => {
             _this._importExportService.downloadCSV(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', label);
-        });
+        }));
 
-        _this._importExportService.onGetExcelRequested.subscribe(label => {
+        _this.subscriptions.push(_this._importExportService.onGetExcelRequested.subscribe(label => {
             _this._importExportService.downloadExcel(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', label);
-        });
+        }));
 
         // subscribe to toolbar requests
         _this.subscriptions.push(_this.pubSubService.subscribe(_this.subMsgCmdTopic,
@@ -268,9 +268,9 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         window.addEventListener('scroll', this.handleScroll.bind(this), true); //third parameter
 
-        ScrollService.RequestMainTableScrollToTopEventEmitter.subscribe(scroll => {
+        this.subscriptions.push(ScrollService.RequestMainTableScrollToTopEventEmitter.subscribe(scroll => {
             this.mainTable.nativeElement.scrollTo(0, 0);
-        });
+        }));
     }
 
     ngOnDestroy() {
