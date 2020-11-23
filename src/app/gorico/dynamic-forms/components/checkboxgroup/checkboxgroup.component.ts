@@ -50,9 +50,7 @@ export class CheckboxGroupComponent implements OnInit {
     // });
 
     // trigger an event the first time
-    if (_this.field.isVisible && _this.field.eventName) {
-      setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'checkboxgroup' }); }, 50);
-    }
+    setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'checkboxgroup' }); }, 50);
   }
 
   onCheck(id: number, checked: boolean): void {
@@ -68,7 +66,7 @@ export class CheckboxGroupComponent implements OnInit {
       _this.field.value.push(_this.field.options[id].id);
     }
 
-    if (_this.field.isVisible && _this.field.eventName !== null) {
+    if (_this.field.eventName !== null) {
       // wait a while before triggering the event
       setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'checkboxgroup' }); }, 50);
     }

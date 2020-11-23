@@ -33,10 +33,7 @@ export class RadiobuttonComponent implements OnInit {
     console.log(_this.field);
     _this.chosenItem = _this.field.options.find(o => JSON.stringify(o.id) === JSON.stringify(_this.field.value));
     // trigger an event the first time 
-    if (_this.field.isVisible) {
-      setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'radiobutton' }); }, 50);
-
-    }
+    setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'radiobutton' }); }, 50);
   }
 
   onCheck(event: any): void {
@@ -45,7 +42,7 @@ export class RadiobuttonComponent implements OnInit {
     console.log(event);
     console.log(_this.field.eventName);
 
-    if (_this.field.isVisible && _this.field.eventName !== null) {
+    if (_this.field.eventName !== null) {
       // wait a while before triggering the event
       setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: event.value.id, type: 'radiobutton' }); }, 50);
     }

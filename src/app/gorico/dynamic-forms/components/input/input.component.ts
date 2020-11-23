@@ -54,12 +54,12 @@ export class InputComponent implements OnInit, AfterViewInit {
     _this.field.style = _this.field.style == null ? { background_color: 'transparent', font_color: 'black' } : _this.field.style;
     _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'transparent';
     _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
-    if (_this.field.isVisible && _this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
       _this.group.get(_this.field.name).valueChanges.subscribe(value => {
         _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: value, type: 'change' });
       });
     }
-    if (_this.field.isVisible && _this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
       setTimeout(() => _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'blur' }), 50);
     }
 
@@ -79,7 +79,7 @@ export class InputComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     const _this = this;
     // publish a change event to start if expected
-    if (_this.field.isVisible && _this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
       setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
         _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
       }, 500);
@@ -88,14 +88,14 @@ export class InputComponent implements OnInit, AfterViewInit {
 
   onBlur(): void {
     const _this = this;
-    if (_this.field.isVisible && _this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
       _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur' });
     }
   }
 
   onFocus(): void {
     const _this = this;
-    if (_this.field.isVisible && _this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'focus') {
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'focus') {
       _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'focus' });
     }
   }
