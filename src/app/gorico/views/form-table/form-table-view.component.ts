@@ -148,16 +148,31 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
     let isValid = true;
     if (this.formGetter.formArray && this.formGetter.formArray.length) {
       this.formGetter.formArray.forEach(form => {
-        if (!form.form.valid) {
-          isValid = false;
-          // Highlight all empty required fields
-          Object.keys(form.form.controls).forEach(field => {
-            const control = form.form.get(field);
-            control.markAsTouched({ onlySelf: true });
-          });
-        }
+        // Old method in which we check the whole form at once
+        // This is not good because it also checks invisible fields
+        // if (!form.form.valid) {
+        //     isValid = false;
+        // }
+
+        form.fields.forEach(field => {
+          if (field.isVisible) {
+            if (!form.form.get(field.name).valid) {
+              form.form.get(field.name).markAsTouched({ onlySelf: false });
+              isValid = false;
+            }
+          }
+        });
+
+        // if (!isValid) {
+        //     // Highlight all empty required fields
+        //     Object.keys(form.form.controls).forEach(field => {
+        //         const control = form.form.get(field);
+        //         control.markAsTouched({ onlySelf: false });
+        //     });
+        // }
       });
     }
+
     return isValid;
   }
 
