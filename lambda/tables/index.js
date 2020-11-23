@@ -633,7 +633,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         let keyType = keyTypes.find(e => (e.key === element.key));
 
         if (element.insertUpdateFunct != null) { // predefined query for inserting/updating this field
-            value = '(' + _this.replaceKeys(element.insertUpdateFunct, keys, keyTypes) + ')';
+            value = '(' + replaceKeys(element.insertUpdateFunct, keys, keyTypes) + ')';
             keyType.dataType = keyType.viewType = null; // avoid to get further quotes added 
         } else if (element.autoGenerate && newRecord && genString != null) {  // it is an autogenerate value
             value = '(' + genString + ')'; // pass the generation query string as value 
