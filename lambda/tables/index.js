@@ -591,9 +591,9 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
     let comma;
 
     if (autoGenKey != null && newRecord) {  // retrieve the new ID 
-        if (autoGenKey == 'number') {
+        if (autoGenType == 'number') {
             genString = 'SELECT (COALESCE(MAX(' + autoGenKey + '),0)+1) FROM ' + entry_params.origin;
-        } else if (autoGenKey == 'text'){ // string
+        } else if (autoGenType == 'text'){ // string
             genString = 'SELECT (COALESCE(MAX(' + autoGenKey + ')::numeric, 0)+1)::varchar FROM ' + entry_params.origin;
         }
         
@@ -613,7 +613,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                 comma = ' AND '; // needed only the first time
             }
         }
-        if (autoGenKey == 'text'){ 
+        if (autoGenType == 'text'){ 
             genString = genString + comma + autoGenKey + " ~ '^-?[0-9]+.?[0-9]*$'";
         }
     }
