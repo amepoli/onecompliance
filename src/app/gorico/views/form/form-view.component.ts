@@ -216,7 +216,7 @@ export class FormViewComponent implements OnChanges, OnInit {
 
                 form.fields.forEach(field => {
                     if (field.isVisible) {
-                        if (!form.form.get(field.name).valid) {
+                        if (form.form.get(field.name) && !form.form.get(field.name).valid) {
                             form.form.get(field.name).markAsTouched({ onlySelf: false });
                             isValid = false;
                         }
