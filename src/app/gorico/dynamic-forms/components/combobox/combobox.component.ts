@@ -15,6 +15,11 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 <mat-option value="" [style.color]="'grey'">Seleziona</mat-option>
 <mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly || readOnlyPage">{{item.name}}</mat-option>
 </mat-select>
+
+<ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+<mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
+</ng-container>
+
 </mat-form-field>
 `,
   styles: [`
