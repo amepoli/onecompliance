@@ -4,12 +4,13 @@ import { FieldConfig, Item } from '../../field.interface';
 import { ReplaySubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { ValidationsService } from 'app/gorico/services/validations.service';
 @Component({
   selector: 'combobox',
   template: `
 <mat-form-field [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" appearance="outline">
 <mat-label>{{field.label}}</mat-label>
-<mat-select [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)"
+<mat-select [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)"
 [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
 <mat-option value="" [style.color]="'grey'">Seleziona</mat-option>
@@ -40,6 +41,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   field: FieldConfig;
   group: FormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
+  isRequired = false; // field is required or not
 
   /** control for the MatSelect filter keyword */
   public itemFilterCtrl: FormControl = new FormControl();
@@ -84,6 +86,11 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(() => {
         _this.filterItems();
       });
+
+    // Check if required
+    if (_this.field.validations) {
+      _this.isRequired = ValidationsService.checkIfRequired(_this.field.validations);
+    }
 
   }
 
