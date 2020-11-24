@@ -2,6 +2,16 @@
     "entryKey": "domande_risposte",
     "$schema": "../views.schema.json",
     "origin": "entrasp.domande",
+    "outputEvents": [
+        {
+            "eventName": "onSaveD_R",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoadD_R",
+            "eventTrigger": "onReload"
+        }
+    ],
     "predefinedQueries": [
         {
             "operation": "selectForm",
@@ -269,7 +279,7 @@
                 "eventName": "to_risposta",
                 "eventTrigger": "press"
             },
-         "style": {
+            "style": {
                 "background_color": "#25599C",
                 "font_color": "white"
             },
@@ -341,12 +351,19 @@
                         "key": "peso_rb",
                         "inputEvents": [
                             {
-                                "eventName": "codice_colore_change_peso_rb",
+                                "eventName": "toggle_question",
+                                "actionType": "query",
                                 "condition": "none",
                                 "values": [],
-                                "actionType": "update_style",
+                                "queryFunct": "select peso as peso_rb from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=$id_risposta_prev_radio$ and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
+                            },
+                            {
+                                "eventName": "toggle_question",
+                                "condition": "none",
+                                "values": [],
+                                "actionType": "query_style",
                                 "styleAttribute": "background_color",
-                                "updateFunct": "'£codice_colore_peso_rb_k£'"
+                                "queryFunct": "select codice_colore as peso_rb_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select peso from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=$id_risposta_prev_radio$ and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
                             }
                         ],
                         "sameOrigin": false,
