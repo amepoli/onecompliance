@@ -895,7 +895,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             console.log(`keyListener: ${keyListener}`);
                             //console.table(result);
                             if (event.actionType === 'query') {
-                                if (targetViewField.format.viewType === 'combobox') {   // got combobox options
+                                if (targetViewField && targetViewField.format && targetViewField.format.viewType === 'combobox') {   // got combobox options
                                     // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
                                     const combobox = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
                                     combobox.setOptions(result, true);
