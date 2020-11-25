@@ -1,15 +1,25 @@
 {
   "$schema": "../views.schema.json",
   "businessObjectName": "domande",
+  "outputEvents": [
+    {
+      "eventName": "onSaveDomande",
+      "eventTrigger": "onSave"
+    },
+    {
+      "eventName": "onLoadDomande",
+      "eventTrigger": "onReload"
+    }
+  ],
   "predefinedQueries": [
     {
       "operation": "insert",
-      "queryString": "SELECT entrasp.domande_insert_update(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idmodellotestvr=>$id_modello_test_vr$::numeric, iddomanda=>$id_domanda$::numeric, descrizione_=>$descrizione$::text, note_=>$note$::text, punteggio_=>$punteggio$::numeric, flagrispostamultipla=>'€flag_risposta_multipla€'::character, ord=> coalesce($ordinamento$, -1)::numeric);",
+      "queryString": "SELECT entrasp.domande_insert_update(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idmodellotestvr=>$id_modello_test_vr$::numeric, iddomanda=>$id_domanda$::numeric, descrizione_=>$descrizione$::text, note_=>$note$::text, punteggio_=>$punteggio$::numeric, flagrispostamultipla=>'€flag_risposta_multipla€'::character, ord=> coalesce($ordinamento$, -1)::numeric, idtemplaterp=>$risposte$);",
       "type": "main"
     },
     {
       "operation": "update",
-      "queryString": "SELECT entrasp.domande_insert_update(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idmodellotestvr=>$id_modello_test_vr$::numeric, iddomanda=>$id_domanda$::numeric, descrizione_=>$descrizione$::text, note_=>$note$::text, punteggio_=>$punteggio$::numeric, flagrispostamultipla=>'€flag_risposta_multipla€'::character, ord=> coalesce($ordinamento$, -1)::numeric);",
+      "queryString": "SELECT entrasp.domande_insert_update(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idmodellotestvr=>$id_modello_test_vr$::numeric, iddomanda=>$id_domanda$::numeric, descrizione_=>$descrizione$::text, note_=>$note$::text, punteggio_=>$punteggio$::numeric, flagrispostamultipla=>'€flag_risposta_multipla€'::character, ord=> coalesce($ordinamento$, -1)::numeric, idtemplaterp=>$risposte$);",
       "type": "main"
     }
   ],
@@ -179,7 +189,7 @@
         "viewType": "textarea",
         "validations": [
           {
-            "message": "Codice mancante",
+            "message": "Descrizione richiesta",
             "name": "required",
             "validator": "Validators.required"
           }
@@ -212,15 +222,6 @@
         "viewType": "combobox",
         "options": []
       },
-      "inputEvents": [
-        {
-          "actionType": "query",
-          "eventName": "table_domande",
-          "queryFunct": "SELECT id_template_rp AS id, descrizione AS name from entrasp.template_risposte_previste WHERE codice_azienda=$codice_azienda$;",
-          "condition": "none",
-          "values": []
-        }
-      ],
       "isHidden": false,
       "isPrimary": false,
       "key": "risposte",
@@ -247,6 +248,20 @@
           "condition": "none",
           "values": [],
           "queryFunct": "select  string_agg(concat(ordinamento,') ',risposta,' (',peso,'%)'), E'\n') as mostra_risposte from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$risposte$;"
+        },
+        {
+          "actionType": "query",
+          "eventName": "onLoadDomande",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.risposte_previste_mostra($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as mostra_risposte"
+        },
+        {
+          "actionType": "query",
+          "eventName": "risposte_possibili_reload",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.risposte_previste_mostra($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as mostra_risposte"
         }
       ],
       "queryFunct": "entrasp.risposte_previste_mostra(codice_azienda, id_modello_test, id_modello_test_vr,id_domanda)",
@@ -264,6 +279,10 @@
   "inputEvents": [
     {
       "eventName": "update_domande",
+      "actionType": "reload"
+    },
+    {
+      "eventName": "onSaveDomande",
       "actionType": "reload"
     },
     {
