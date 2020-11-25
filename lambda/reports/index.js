@@ -95,7 +95,7 @@ function replaceKeys(queryString, keys, keyTypes) {
     return queryString;
 }
 
-function getURLFromServer(mainQuery, company, idAnagrafica) {
+function getURLFromServer(mainQuery, company, username, idAnagrafica) {
 
     let jsonParams = {
         mainReport: {
@@ -105,6 +105,7 @@ function getURLFromServer(mainQuery, company, idAnagrafica) {
         subReports: [],
         params: [
             { "key": "codice_azienda", "value": company },
+            { "key": "username", "value": username },
             { "key": "user_id_anagrafica", "value": idAnagrafica }
         ]
     };
@@ -212,8 +213,7 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 
 }
 
-async function getIdAnagrafica(company, userid) {
-
+async function getUserData(userid) {
     var userParams = {
         TableName: 'USERS_NAME',
         Key: {
@@ -223,6 +223,12 @@ async function getIdAnagrafica(company, userid) {
 
     var data = await dynamo.get(userParams).promise();
     data = data.Item;
+    console.log(data.username);
+
+    return data;
+}
+
+async function getIdAnagrafica(company, data) {
 
     let result = "";
     if (data != null) {
@@ -333,8 +339,12 @@ exports.handler = async (event, context) => {
             const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, keys, search_keys, isFormRecord);
             const mainQuery = { name: reportName, query: queryString };
             const userId = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
-            const idUserAnagrafica = await getIdAnagrafica(company, userId);
-            const url = await getURLFromServer(mainQuery, company, idUserAnagrafica);
+
+            const userData = await getUserData(userId);
+            const username = userData.username;
+            const idUserAnagrafica = await getIdAnagrafica(company, userData);
+
+            const url = await getURLFromServer(mainQuery, company, username, idUserAnagrafica);
             if (url != null && url !== '') {
                 body = { result: 'OK', url: url };
             } else {
