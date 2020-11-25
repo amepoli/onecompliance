@@ -40,17 +40,17 @@
         },
         {
             "operation": "insert",
-            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, coalesce($peso_oa$, $peso_rb$)::numeric, coalesce($note_rb$, $note_mc$, ''), $id_modello_test_vr$, null::numeric, '€risposta_multipla€')",
+            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$)::numeric, note_=>coalesce($note_rb$, $note_mc$, ''), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar)",    
             "type": "main"
         },
         {
             "operation": "update",
-            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, coalesce($peso_oa$, $peso_rb$)::numeric, coalesce($note_rb$, $note_mc$, ''),  $id_modello_test_vr$, null::numeric, '€risposta_multipla€')",
+            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$)::numeric, note_=>coalesce($note_rb$, $note_mc$, ''), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar)",    
             "type": "main"
         },
         {
             "operation": "delete",
-            "queryString": "select entrasp.risposte_update_insert($codice_azienda$, $id_modello_test$, $id_risposta$, $risposta$, $id_domanda$::numeric, $id_risposta_prev_radio$, $id_sondaggio$, $id_somministrazione$, $punteggio$, coalesce($peso_oa$, $peso_rb$)::numeric, coalesce($note_rb$, $note_mc$, ''), $id_modello_test_vr$, null::numeric, '€risposta_multipla€')",
+            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$)::numeric, note_=>coalesce($note_rb$, $note_mc$, ''), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar)",    
             "type": "main"
         }
     ],
@@ -355,7 +355,7 @@
                                 "actionType": "query",
                                 "condition": "none",
                                 "values": [],
-                                "queryFunct": "select peso as peso_rb from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=$id_risposta_prev_radio$ and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
+                                "queryFunct": "select peso as peso_rb from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_id_risposta('id_risposta_prev_radio', $id_risposta_prev_radio$) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
                             },
                             {
                                 "eventName": "toggle_question",
@@ -363,7 +363,7 @@
                                 "values": [],
                                 "actionType": "query_style",
                                 "styleAttribute": "background_color",
-                                "queryFunct": "select codice_colore as peso_rb_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select peso from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=$id_risposta_prev_radio$ and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
+                                "queryFunct": "select codice_colore as peso_rb_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select peso from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_id_risposta('id_risposta_prev_radio', $id_risposta_prev_radio$) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
                             }
                         ],
                         "sameOrigin": false,
