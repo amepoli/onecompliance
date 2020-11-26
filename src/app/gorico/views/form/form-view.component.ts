@@ -261,11 +261,12 @@ export class FormViewComponent implements OnChanges, OnInit {
     }
 
     onSave() {
-        if (this.isFormValid()) {
+        let _this = this;
+        if (_this.isFormValid()) {
             // notify parent, which will take care of propagating to siblings if needed 
-            this.sendEvent.emit({ eventType: 'gotSave' });
+            _this.sendEvent.emit({ eventType: 'gotSave' });
             // get the form data, assuming there is only one form
-            let values = this.formGetter.formArray.first.form.value;
+            let values = _this.formGetter.formArray.first.form.value;
 
             // process the booleans (1/0 instead of true/false)
             for (const value in values) {
@@ -289,38 +290,38 @@ export class FormViewComponent implements OnChanges, OnInit {
                 }
             }
 
-            this.savingState = 'saving';
-            this.backendService.updateData(this.tableData.entryName, this.authService.getCurrentCompany(), this.currentKeys, [values]).subscribe(   // backend expects an array of data
+            _this.savingState = 'saving';
+            _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, [values]).subscribe(   // backend expects an array of data
                 result => {
                     console.log(result);
                     if (result.result === 'OK') {
                         // Show success toast
-                        this._toastService.showSuccessToast('Saved');
-                        this.savingState = 'done';
+                        _this._toastService.showSuccessToast('Saved');
+                        _this.savingState = 'done';
                         setTimeout(() => {
-                            this.savingState = 'save';
-                            if (this.isQuickAdd) {
-                                this.navigationToViewHome(values, result.data);
+                            _this.savingState = 'save';
+                            if (_this.isQuickAdd || _this.tableData.isNew) {
+                                _this.navigationToViewHome(values, result.data);
                             }
-                            else if (this.refreshOnSave) {
-                                this.refreshView();
+                            else if (_this.refreshOnSave) {
+                                _this.refreshView();
                             }
                             else {
-                                this.formGetter.runOnSaveEvents();
+                                _this.formGetter.runOnSaveEvents();
                             }
-                            // this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+                            // _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
                         }, 1000);
                     }
                     else {
                         // Show error snackbar
-                        this._toastService.showErrorToast(result.reason);
-                        this.savingState = 'save';
+                        _this._toastService.showErrorToast(result.reason);
+                        _this.savingState = 'save';
                     }
                 }
             );
         }
         else {
-            this._toastService.showErrorToast("Form is not valid!");
+            _this._toastService.showErrorToast("Form is not valid!");
         }
     }
 
