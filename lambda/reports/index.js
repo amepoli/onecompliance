@@ -105,8 +105,8 @@ function getURLFromServer(mainQuery, company, username, idAnagrafica) {
         subReports: [],
         params: [
             { "key": "codice_azienda", "value": company },
-            { "key": "username", "value": username },
-            { "key": "user_id_anagrafica", "value": idAnagrafica }
+            { "key": "global_username", "value": username },
+            { "key": "global_userid", "value": idAnagrafica }
         ]
     };
 
