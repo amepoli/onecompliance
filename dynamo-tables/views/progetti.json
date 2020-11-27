@@ -3,21 +3,27 @@
 	"entryKey": "progetti",
 	"predefinedQueries": [
 		{
-			"type": "main",
-			"operation": "insert",
-			"queryString": "select entrasp.progetti_insert($codice_azienda$,$titolo$,$codice_progetto$,'€codice_attivita€');"
+			"queryString": "select case when count(id_fase)=0 and (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)>0 then 'C' when (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)=0 then 'P' else 'A' end as stato  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and stato='P'",
+			"type": "postProcessing",
+			"operation": "selectForm"
 		}
 	],
 	"outputEvents": [
-        {
-            "eventName": "onSaveProgetti",
-            "eventTrigger": "onSave"
-        },
-        {
-            "eventName": "onLoadProgetti",
-            "eventTrigger": "onReload"
-        }
-    ],
+		{
+			"eventName": "onSaveProgetti",
+			"eventTrigger": "onSave"
+		},
+		{
+			"eventName": "onLoadProgetti",
+			"eventTrigger": "onReload"
+		}
+	],
+	"inputEvents": [
+		{
+			"eventName": "formReload",
+			"actionType": "reload"
+		}
+	],
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -32,7 +38,6 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"queryFunct": "select case when count(id_fase)=0 and (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)>0 then 'C' when (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)=0 then 'P' else 'A' end  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and stato='P'",
 			"newLine": false,
 			"outputEvent": {
 				"eventName": "codice_colore_change_stato",
@@ -71,7 +76,6 @@
 					"styleAttribute": "font_color",
 					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
 				}
-
 			]
 		},
 		{
@@ -114,20 +118,6 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number",
-				"value": "0"
-			},
-			"label": "id_tipo_progetto",
-			"key": "id_tipo_progetto",
-			"readOnly": false,
-			"isHidden": true,
-			"isPrimary": false,
-			"newLine": false
 		},
 		{
 			"autoGenerate": false,
@@ -202,6 +192,38 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "avvia_progetti",
+			"label": "Avvia Progetto",
+			"newLine": true,
+			"outputEvent": {
+				"eventName": "progetti_avvia",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"inputEvents": [
+				{
+					"eventName": "progetti_avvia",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.progetti_insert($codice_azienda$,$titolo$, $id_progetto$,'€codice_attivita€');",
+					"outputEventWhenComplete": "formReload"
+				}
+			],
+			"readOnly": false,
+			"size": 2,
+			"sameOrigin": false
 		}
 	],
 	"origin": "entrasp.progetti",
@@ -267,22 +289,21 @@
 			"label": "Consuntivazioni"
 		},
 		{
-            "entryKey": "progetti_attachments",
-            "isHidden": false,
-            "keys": [
-                {
-                    "parent": "id_cliente",
-                    "son": "id_anagrafica"
-                },
-                {
-                    "parent": "codice_part",
-                    "son": "codice_part"
-                }
-            ],
-            "label": "Allegati Associati",
-            "type": "tableForm"
-        }
-	
+			"entryKey": "progetti_attachments",
+			"isHidden": false,
+			"keys": [
+				{
+					"parent": "id_cliente",
+					"son": "id_anagrafica"
+				},
+				{
+					"parent": "codice_part",
+					"son": "codice_part"
+				}
+			],
+			"label": "Allegati Associati",
+			"type": "tableForm"
+		}
 	],
 	"table_keys": [
 		{
@@ -295,22 +316,22 @@
 			"queryFunct": "entrasp.transcodifiche_transcodifica('STATO', stato)",
 			"label": "Stato",
 			"style": [
-                {
-                    "value": "Chiuso",
-                    "font_color": "green",
-                    "font_weight": "500"
-                },
-                {
-                    "value": "Provvisorio",
-                    "font_color": "#D97F02",
-                    "font_weight": "500"
-                },
-                {
-                    "value": "Attivo",
-                    "font_color": "red",
-                    "font_weight": "500"
-                }
-            ]
+				{
+					"value": "Chiuso",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Provvisorio",
+					"font_color": "#D97F02",
+					"font_weight": "500"
+				},
+				{
+					"value": "Attivo",
+					"font_color": "red",
+					"font_weight": "500"
+				}
+			]
 		},
 		{
 			"format": {
