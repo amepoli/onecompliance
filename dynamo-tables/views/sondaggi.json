@@ -294,10 +294,27 @@
             "inputEvents": [
                 {
                     "eventName": "sondaggi_button_duplica",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler duplicare questo sondaggio? (si verrà automaticamente trasferiti nel nuovo sondaggio)",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"                }
+                    },
+                    "outputEventWhenComplete": "aggiorna_id_sondaggio"
+                },
+                {
+                    "eventName": "aggiorna_id_sondaggio",
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"
+                    "queryFunct": "select max(id_sondaggio) as id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
                 }
             ]
         },
