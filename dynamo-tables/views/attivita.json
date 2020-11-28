@@ -2,6 +2,12 @@
     "$schema": "../views.schema.json",
     "entryKey": "attivita",
     "origin": "entrasp.attivita",
+    "inputEvents": [
+		{
+			"eventName": "formReload",
+			"actionType": "reload"
+		}
+	],
     "predefinedQueries": [
         {
             "type": "main",
@@ -63,6 +69,38 @@
             "newLine": false,
             "readOnly": false
         },
+        {
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "aggiorna_codici",
+			"label": "Aggiorna Codici",
+			"newLine": true,
+			"outputEvent": {
+				"eventName": "codici_aggiorna",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"inputEvents": [
+				{
+					"eventName": "codici_aggiorna",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.attivita_codice_update(codice_azienda, codice_attivita, null) from entrasp.attivita where codice_azienda=$codice_azienda$ and entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)=$codice_attivita$ and codice_attivita_parent is not null;",
+					"outputEventWhenComplete": "formReload"
+				}
+			],
+			"readOnly": false,
+			"size": 2,
+			"sameOrigin": false
+		},
         {
             "autoGenerate": false,
             "format": {
