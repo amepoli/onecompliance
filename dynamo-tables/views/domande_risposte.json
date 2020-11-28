@@ -35,7 +35,7 @@
         },
         {
             "operation": "selectForm",
-            "queryString": "select codice_colore as codice_colore_peso_rb_k, codice_colore as codice_colore_peso_oa_k from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto('€global_codice_azienda€'::varchar, £id_risultato£::numeric, coalesce(£peso_rb£, £peso_oa£)::numeric)",
+            "queryString": "select codice_colore as codice_colore_peso_rb_k, codice_colore as codice_colore_peso_oa_k from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto('€global_codice_azienda€'::varchar, £id_risultato£::numeric, sum(coalesce(£peso_rb£, £peso_oa£))::numeric)",
             "type": "postProcessing"
         },
         {
@@ -247,9 +247,11 @@
             "key": "descrizione",
             "label": "Descrizione",
             "format": {
-                "viewType": "textarea"
+                "viewType": "textarea",
+                "dataType": "text"
             },
             "newLine": false,
+            "textareaHeight": "M",
             "size": 6.5
         },
         {
@@ -367,7 +369,7 @@
                             }
                         ],
                         "sameOrigin": false,
-                        "label": "Punteggio %",
+                        "label": "Risultato %",
                         "size": 1,
                         "format": {
                             "viewType": "input",
@@ -451,7 +453,7 @@
                         "newLine": true,
                         "key": "peso_oa",
                         "sameOrigin": false,
-                        "label": "Punteggio %",
+                        "label": "Risultato %",
                         "inputEvents": [
                             {
                                 "eventName": "codice_colore_change_peso_oa",
@@ -532,7 +534,7 @@
                             "comboQuery": "select id_risposta_prev::int as id, risposta as name from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£;"
                         },
                         "outputEvent": {
-                            "eventName": "toggle_question",
+                            "eventName": "toggle_question_mc",
                             "eventTrigger": "change"
                         }
                     },
@@ -542,13 +544,30 @@
                         "readOnly": true,
                         "newLine": true,
                         "key": "peso_mc",
-                        "sameOrigin": false,
-                        "label": "Punteggio %",
+                        "sameOrigin": false,                   
+                        "label": "Risultato %",
                         "size": 1,
                         "format": {
                             "viewType": "input",
                             "dataType": "number"
-                        }
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "toggle_question_mc",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select sum(peso) as peso_mc from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=any(entrasp.entrasp.evaluate_given_field_multiple('risposta_multipla', '$risposta_multipla$')) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
+                            },
+                            {
+                                "eventName": "toggle_question_mc",
+                                "condition": "none",
+                                "values": [],
+                                "actionType": "query_style",
+                                "styleAttribute": "background_color",
+                                "queryFunct": "select codice_colore as peso_mc_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select sum(peso) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=any(entrasp.entrasp.evaluate_given_field_multiple('risposta_multipla', '$risposta_multipla$')) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
+                            }
+                        ]
                     },
                     {
                         "isHidden": false,
