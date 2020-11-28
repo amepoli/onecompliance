@@ -207,7 +207,23 @@
 			"isPrimary": false,
 			"key": "avvia_progetti",
 			"label": "Avvia Progetto",
-			"newLine": true,
+			"attributeFuncts": [
+				{
+                    "attributeType": "style",
+                    "styleAttribute": "background_color",
+                    "queryString": "select case when count(id_progetto) = 0 then '#698EC2' else '#25599C' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+                },
+                {
+                    "attributeType": "style",
+                    "styleAttribute": "font_color",
+                    "queryString": "select case when count(id_progetto) = 0 then '#5b635a' else 'white' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+                },
+				{
+                    "attributeType": "readOnly",
+                    "queryString": "select case when count(id_progetto) = 0 then false else true end from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$"
+                }
+			],
+			"newLine": false,
 			"outputEvent": {
 				"eventName": "progetti_avvia",
 				"eventTrigger": "press"
@@ -226,7 +242,7 @@
 					"outputEventWhenComplete": "formReload"
 				}
 			],
-			"readOnly": false,
+			"readOnly": true,
 			"size": 2,
 			"sameOrigin": false
 		}
