@@ -245,7 +245,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
                 if (query.type === "main" && search_keys == null) {
                     mainQuery = replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes); // only one main query allowed
                 } else if (query.type === "main" && search_keys != null) {
-                    searchQuery = replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes); // only one main query allowed
+                    searchQuery = replaceKeys(query.queryString, table_keys, keyTypes); // only one main query allowed
                 } else if (query.type === "preProcessing") {
                     preProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
                 } else if (query.type === "postProcessing") {
@@ -330,13 +330,15 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
         comma = queryString.includes('where') || queryString.includes('WHERE') ? ' AND ' : ' WHERE ';
     }
 
-    if (search_keys) {
+    if (search_keys != null) {
 
         let search_params = entry_params.search_keys;
         let search_types = search_params.map(k => {
             let dataType = k.format.dataType ? k.format.dataType : '';
             return { key: k.fieldName, dataType: dataType };
         });
+
+        console.log("Query so far: ", queryString);
 
         for (const key in search_keys) {
             if (search_keys.hasOwnProperty(key)) {
