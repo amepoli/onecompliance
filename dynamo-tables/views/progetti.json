@@ -32,7 +32,15 @@
 				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
 				"options": [],
 				"viewType": "combobox",
-				"dataType": "text"
+				"dataType": "text",
+				"value": "A",
+				"validations": [
+					{
+						"message": "Stato necessario",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
 			},
 			"label": "Stato",
 			"key": "stato",
@@ -84,11 +92,13 @@
 			"format": {
 				"viewType": "input",
 				"dataType": "text",
-				"validations": [{
-					"message": "Necessario specificare un codice del progetto",
-					"name": "required",
-					"validator": "Validators.required"
-				}]
+				"validations": [
+					{
+						"message": "Necessario specificare un codice del progetto",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
 			},
 			"label": "Codice Progetto",
 			"key": "codice_progetto",
@@ -123,7 +133,7 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true		
+			"newLine": true
 		},
 		{
 			"autoGenerate": false,
@@ -210,19 +220,19 @@
 			"label": "Avvia Progetto",
 			"attributeFuncts": [
 				{
-                    "attributeType": "style",
-                    "styleAttribute": "background_color",
-                    "queryString": "select case when count(id_progetto) = 0 then '#698EC2' else '#25599C' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-                },
-                {
-                    "attributeType": "style",
-                    "styleAttribute": "font_color",
-                    "queryString": "select case when count(id_progetto) = 0 then '#5b635a' else 'white'  end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-                },
+					"attributeType": "style",
+					"styleAttribute": "background_color",
+					"queryString": "select case when count(id_progetto) = 0 then '#698EC2' else '#25599C' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+				},
 				{
-                    "attributeType": "readOnly",
-                    "queryString": "select case when count(id_progetto) = 0  then false else true end as label from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$"
-                }
+					"attributeType": "style",
+					"styleAttribute": "font_color",
+					"queryString": "select case when count(id_progetto) = 0 then '#5b635a' else 'white'  end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+				},
+				{
+					"attributeType": "readOnly",
+					"queryString": "select case when count(id_progetto) = 0  then false else true end as label from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$"
+				}
 			],
 			"newLine": false,
 			"outputEvent": {
@@ -256,7 +266,7 @@
 				"viewType": "input"
 			},
 			"fieldName": "stato",
-			"newLine": true,
+			"newLine": false,
 			"queryCond": "stato=$stato$"
 		},
 		{
@@ -268,6 +278,16 @@
 			"fieldName": "id_progetto",
 			"newLine": true,
 			"queryCond": "id_progetto=$id_progetto$"
+		},
+		{
+			"label": "Codice progetto",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"fieldName": "codice_progetto",
+			"newLine": false,
+			"queryCond": "codice_progetto=$codice_progetto$"
 		},
 		{
 			"label": "Id Cliente",
@@ -371,6 +391,15 @@
 			"isPrimary": false,
 			"key": "codice_attivita",
 			"label": "Codice Attività"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_progetto",
+			"label": "Codice Progetto"
 		},
 		{
 			"format": {
