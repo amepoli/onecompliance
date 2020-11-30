@@ -42,6 +42,22 @@
     {
       "autoGenerate": false,
       "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "stato",
+      "label": "Stato",
+      "newLine": false,
+      "size": 2,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "dataType": "number",
         "viewType": "input"
       },
@@ -51,7 +67,7 @@
       "label": "ID Sondaggio",
       "newLine": false,
       "readOnly": true,
-      "size": 4
+      "size": 2
     },
     {
       "autoGenerate": true,
@@ -206,21 +222,6 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato",
-      "label": "Stato",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
         "dataType": "number",
         "viewType": "input"
       },
@@ -315,6 +316,13 @@
           "actionType": "update_style",
           "styleAttribute": "background_color",
           "updateFunct": "'£colore_somministrazione_completa£'"
+        },
+        {
+          "eventName": "colore_somministrazione_completa_change",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$);"
         }
       ],
       "sameOrigin": false,
