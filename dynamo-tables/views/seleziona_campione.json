@@ -3,6 +3,16 @@
     "businessObjectName": "selezionaCampione",
     "entryKey": "seleziona_campione",
     "origin": "entrasp.sondaggi",
+    "outputEvents": [
+        {
+            "eventName": "onSaveSel",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoadSel",
+            "eventTrigger": "onReload"
+        }
+    ],
     "predefinedQueries": [
         {
             "operation": "selectForm",
@@ -48,7 +58,12 @@
             "key": "id_somministrazione",
             "label": "ID Somministrazione",
             "newLine": true,
-            "readOnly": true
+            "readOnly": true,
+             "outputEvent": {
+                 "eventName": "id_somministrazione_load",
+                 "eventTrigger": "load",
+                 "conditionalQuery": "select $id_somministrazione$ as id_somm"
+             }
         },
         {
             "autoGenerate": false,
@@ -118,30 +133,30 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "Rispondi_domande_selezionato",
+            "key": "risposte_k",
             "label": "Risposte",
             "newLine": true,
-            "attributeFuncts": [
+            "inputEvents": [
                 {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when checked='0' then 1 else 0 end as label from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '|');"
+                    "eventName": "id_somministrazione_load",
+                    "actionType": "show",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "eventName": "seleziona_campione_checked",
+                    "actionType": "hide",
+                    "condition": "equalTo",
+                    "values": [
+                        "false"
+                    ]
                 }
             ],
             "outputEvent": {
                 "eventName": "to_sondaggi_somministrati_from_selezione_campione",
                 "eventTrigger": "press"
             },
-            "inputEvents": [
-                {
-                    "eventName": "seleziona_campione_checked",
-                    "actionType": "hide",
-                    "condition": "equalTo",
-                    "values": [
-                        "0"
-                    ]
-                }
-            ],
-            "style": {
+                "style": {
                 "background_color": "#25599C",
                 "font_color": "white"
             },
