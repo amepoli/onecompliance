@@ -301,6 +301,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                         setTimeout(() => {
                             _this.savingState = 'save';
                             if (_this.isQuickAdd || (_this.tableData && _this.tableData.isNew)) {
+                                _this.isQuickAdd = false;
                                 _this.navigationToViewHome(values, result.data);
                             }
                             else if (_this.refreshOnSave) {
