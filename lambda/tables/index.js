@@ -694,6 +694,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         }
     } else { // add WHERE conditions to UPDATE query
         comma = ' WHERE ';
+        keyTypes = getKeyTypes(entry_keys);  // regenerate keyTypes as they have been modified above 
         primaryKeys.forEach(primaryKey => {
             let keyType = keyTypes.find(e => (e.key === primaryKey.key));
             let delimiter = isDataTypeString(keyType) ? '\'' : '';
