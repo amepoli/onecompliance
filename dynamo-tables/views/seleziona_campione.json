@@ -138,18 +138,26 @@
             "newLine": true,
             "inputEvents": [
                 {
-                    "eventName": "id_somministrazione_load",
-                    "actionType": "show",
+                    "eventName": "seleziona_campione_checked",
+                    "actionType": "readOnly",
                     "condition": "none",
-                    "values": []
+                    "values": [],
+                    "queryFunct": "select case when count(id_somministrazione)=0 then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"                    
                 },
                 {
-                    "eventName": "seleziona_campione_checked",
-                    "actionType": "hide",
-                    "condition": "equalTo",
-                    "values": [
-                        "false"
-                    ]
+                    "eventName": "onLoadSel",
+                    "actionType": "readOnly",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when count(id_somministrazione)=0 then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"                    
+                },
+                {
+                    "eventName": "onLoadSel",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select case when count(id_somministrazione)=0 then '#698EC2' else '#25599C' end as risposte_k_background_color from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"                    
                 }
             ],
             "outputEvent": {
