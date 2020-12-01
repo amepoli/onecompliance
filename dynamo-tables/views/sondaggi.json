@@ -12,7 +12,7 @@
             "eventTrigger": "onReload"
         }
     ],
-      "predefinedQueries": [
+    "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
@@ -251,7 +251,7 @@
             "isPrimary": false,
             "key": "modello_test_from_sondaggi",
             "label": "Modello Test Associato",
-            "newLine": false,
+            "newLine": true,
             "outputEvent": {
                 "eventName": "to_modello_test_from_sondaggi",
                 "eventTrigger": "press"
@@ -305,7 +305,8 @@
                         },
                         "actionOnYes": {
                             "actionType": "query",
-                            "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"                }
+                            "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"
+                        }
                     },
                     "outputEventWhenComplete": "aggiorna_id_sondaggio"
                 },
@@ -408,7 +409,6 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
-                "value": "CURRENT_DATE",
                 "viewType": "input"
             },
             "isHidden": false,
@@ -423,7 +423,6 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
-                "value": "CURRENT_DATE",
                 "viewType": "input"
             },
             "isHidden": false,
@@ -766,7 +765,6 @@
             "sameOrigin": false,
             "size": 1.4
         },
-        
         {
             "autoGenerate": false,
             "format": {
@@ -1100,10 +1098,11 @@
             "key": "giudizio",
             "label": "Giudizio automatico",
             "width": "8%",
-            "style": [{
-                "value": "*",
-                "text_align": "center"
-                            }
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                }
             ]
         },
         {
@@ -1222,9 +1221,26 @@
             "key": "modello_test",
             "label": "Modello di Test"
         }
- 
     ],
     "inputEvents": [
+        {
+            "actionTarget": {
+                "name": "cpl_risultati_sondaggi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_riepilogo_risultati"
+        },
         {
             "actionTarget": {
                 "name": "sondaggi_replan",
