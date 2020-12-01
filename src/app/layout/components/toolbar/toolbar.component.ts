@@ -19,7 +19,7 @@ import { Router } from '@angular/router';
 
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ReportService } from 'app/gorico/services/report.service';
-import { ImportExportService } from 'app/gorico/services/import_export.service';
+import { ImportItem, ExportItem, ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService } from 'app/gorico/services/navigation.service';
 import { MessageView, MessageElement } from 'app/gorico/services/messages.service';
 
@@ -40,7 +40,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     userStatusOptions: any[];
 
     reportList: { 'alias': string, 'descrizione': string }[] = [];
-    exportList: { 'label': string, 'queryString': string }[] = [];
+    importList: ImportItem[] = [];
+    exportList: ExportItem[] = [];
 
     userCompanies: string[] = [];
 
@@ -159,6 +160,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
         _this._reportService.onReportsLoaded.subscribe((data) => {
             _this.reportList = data.reports;
+        });
+
+        _this._importExportService.onImportListLoaded.subscribe((data) => {
+            _this.importList = data.items;
         });
 
         _this._importExportService.onExportListLoaded.subscribe((data) => {
@@ -296,6 +301,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'import' });
     }
 
+    importAdvanced(item: ImportItem) {
+        this._importExportService.requestAdvancedImport(item.label);
+    }
+
     downloadTemplateFile(): void {
         this._importExportService.requestGetTemplate();
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'downloadTemplateFile' });
@@ -306,7 +315,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this._importExportService.requestGetCSV(null);
     }
 
-    downloadAdvancedCSV(item: { 'label': string, 'queryString': string }): void {
+    downloadAdvancedCSV(item: ExportItem): void {
         console.log(item);
         this._importExportService.requestGetCSV(item.label);
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
@@ -317,7 +326,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this._importExportService.requestGetExcel(null);
     }
 
-    downloadAdvancedExcel(item: { 'label': string, 'queryString': string }): void {
+    downloadAdvancedExcel(item: ExportItem): void {
         console.log(item);
         this._importExportService.requestGetExcel(item.label);
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });

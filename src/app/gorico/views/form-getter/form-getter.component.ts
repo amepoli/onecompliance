@@ -242,9 +242,19 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if (_this.viewKeys == null) {
                         return;                         // no formKeys defined for the table, stop here
                     }
+
+                    // Load Import Queries list if available
+                    if (params.importQueries && params.importQueries.formQueries) {
+                        console.log('importQueries', params.importQueries);
+                        _this._importExportService.updateImportList(_this.formParams.entryName, params.importQueries.formQueries);
+                    }
+                    else {
+                        _this._importExportService.updateImportList(_this.formParams.entryName, []);
+                    }
+
                     // Load Export Queries list if available
                     if (params.exportQueries && params.exportQueries.formQueries) {
-                        console.log('exportQueries', params.formQueries);
+                        console.log('exportQueries', params.exportQueries);
                         _this._importExportService.updateExportList(_this.formParams.entryName, params.exportQueries.formQueries);
                     }
                     else {

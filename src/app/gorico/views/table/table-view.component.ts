@@ -224,6 +224,16 @@ export class TableViewComponent implements OnChanges {
 
                     _this.loadStyle(params.table_keys);
                     _this.loadLevel(params.table_keys);
+
+                    // Load Import Queries list if available
+                    if (params.importQueries && params.importQueries.tableQueries) {
+                        console.log('importQueries', params.importQueries);
+                        _this._importExportService.updateImportList(_this.tableData.entryName, params.importQueries.tableQueries);
+                    }
+                    else {
+                        _this._importExportService.updateImportList(_this.tableData.entryName, []);
+                    }
+
                     // Load Export Queries list if available
                     if (params.exportQueries && params.exportQueries.tableQueries) {
                         console.log('exportQueries', params.exportQueries);

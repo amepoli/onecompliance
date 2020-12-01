@@ -96,6 +96,19 @@
                     <span>Upload CSV</span>
                 </button>
 
+                <button *ngIf="importList && importList.length" mat-menu-item [matMenuTriggerFor]="advancedImportMenu">
+                    <mat-icon>miscellaneous_services</mat-icon>
+                    <span>Advanced</span>
+                </button>
+            </mat-menu>
+
+            <mat-menu #advancedImportMenu="matMenu" [overlapTrigger]="false">
+
+                <button *ngFor="let item of importList" mat-menu-item (click)="importAdvanced(item)">
+                    <mat-icon>format_align_justify</mat-icon>
+                    <span>{{item.label}}</span>
+                </button>
+
             </mat-menu>
 
             <mat-menu #downloadMenu="matMenu" [overlapTrigger]="false">
