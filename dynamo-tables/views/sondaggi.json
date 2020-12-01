@@ -42,11 +42,6 @@
             "operation": "update",
             "type": "postProcessing",
             "queryString": "update entrasp.progetti_fasi set stato=$stato$, codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)"
-        },
-        {
-            "operation": "delete",
-            "type": "main",
-            "queryString": "select entrasp.sondaggio_delete($codice_azienda$, $id_sondaggio$)"
         }
     ],
     "entryKey": "sondaggi",
@@ -56,8 +51,15 @@
             "formMessageType": "delete",
             "message": {
                 "title": "Cancellazione sondaggio, somministrazioni e risposte",
-                "text": "Sei sicuro di voler cancellare il sondaggio e tutte le somministrazioni, domande e oggetti collegati?"
-            }
+                "text": "Sei sicuro di voler cancellare il sondaggio e tutte le somministrazioni, domande e oggetti collegati?",
+                "actionOnNo": {
+                    "actionType": "reload"
+                },
+                "actionOnYes": {
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.sondaggio_delete($codice_azienda$, $id_sondaggio$)"
+                }
+            }    
         }
     ],
     "form_keys": [
