@@ -11,6 +11,17 @@ import { DialogService } from './dialog.service';
 import { MatDialog } from '@angular/material';
 import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
 
+
+export interface ImportItem {
+    label: string;
+    queryString: string;
+}
+
+export interface ImportList {
+    entryName: string;
+    items: ExportItem[]
+};
+
 export interface ExportItem {
     label: string;
     queryString: string;
@@ -26,18 +37,34 @@ export interface ExportList {
 })
 export class ImportExportService {
 
-    // local data
-    private _currentData: ExportList = {
+    // local import data
+    private _currentImportData: ImportList = {
+        entryName: "",
+        items: []
+    };
+
+    // local export data
+    private _currentExportData: ExportList = {
         entryName: "",
         items: []
     };
 
     // get current data
-    public getCurrentData() {
-        return this._currentData;
+    public getCurrentExportData() {
+        return this._currentExportData;
     }
 
-    // Stream for loaded list
+    // Stream for loaded importlist
+    public onImportListLoaded: BehaviorSubject<ImportList>;
+
+    // Event Emitter for import requests
+    public onImportRequested: EventEmitter<string> = new EventEmitter();
+
+    // Event Emitter for importing advanced requests
+    public onAdvancedImportRequested: EventEmitter<string> = new EventEmitter();
+
+
+    // Stream for loaded export list
     public onExportListLoaded: BehaviorSubject<ExportList>;
 
     // Event Emitter for getting csv requests
@@ -45,9 +72,6 @@ export class ImportExportService {
 
     // Event Emitter for getting excel requests
     public onGetExcelRequested: EventEmitter<string> = new EventEmitter();
-
-    // Event Emitter for import requests
-    public onImportRequested: EventEmitter<string> = new EventEmitter();
 
     // Event Emitter for getting template requests
     public onGetTemplateRequested: EventEmitter<string> = new EventEmitter();
@@ -64,26 +88,57 @@ export class ImportExportService {
         private _toastService: ToastService,
         private _dialogService: DialogService
     ) {
+        let _this = this;
 
         // Set the defaults
-        this.onExportListLoaded = new BehaviorSubject(
-            {
-                entryName: "test", items: [
-                    {
-                        label: 't1',
-                        queryString: 'test 1'
-                    },
-                    {
-                        label: 't2',
-                        queryString: 'test 2'
-                    },
-                    {
-                        label: 't3',
-                        queryString: 'test 3'
-                    }
-                ]
-            }
-        );
+        _this._currentImportData = {
+            entryName: "test",
+            items: [
+                {
+                    label: 'i1',
+                    queryString: 'test 1'
+                },
+                {
+                    label: 'i2',
+                    queryString: 'test 2'
+                },
+                {
+                    label: 'i3',
+                    queryString: 'test 3'
+                }
+            ]
+        };
+
+        _this._currentExportData = {
+            entryName: "test", items: [
+                {
+                    label: 't1',
+                    queryString: 'test 1'
+                },
+                {
+                    label: 't2',
+                    queryString: 'test 2'
+                },
+                {
+                    label: 't3',
+                    queryString: 'test 3'
+                }
+            ]
+        };
+
+
+        _this.onImportListLoaded = new BehaviorSubject(_this._currentImportData);
+        _this.onExportListLoaded = new BehaviorSubject(_this._currentExportData);
+    }
+
+    /**
+     * Update import list
+     * @param tableName table to import into
+     * @param data table 
+     */
+    updateImportList(tableName: string, data: ImportItem[]) {
+        this._currentImportData = { entryName: tableName, items: data };
+        this.onImportListLoaded.next(this._currentImportData);
     }
 
     /**
@@ -92,8 +147,8 @@ export class ImportExportService {
      * @param data table 
      */
     updateExportList(tableName: string, data: ExportItem[]) {
-        this._currentData = { entryName: tableName, items: data };
-        this.onExportListLoaded.next(this._currentData);
+        this._currentExportData = { entryName: tableName, items: data };
+        this.onExportListLoaded.next(this._currentExportData);
     }
 
     /**
@@ -113,7 +168,30 @@ export class ImportExportService {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 console.table(result);
-                _this.performImport(result.tableName, result.files, result.allowMultipleFiles);
+                _this.performImport(result.tableName, result.files, null, result.allowMultipleFiles);
+            }
+        });
+    }
+
+    /**
+     * Show Import Dialog
+     * @param tableName table to import into
+     * @param label label of the import item
+     */
+    importAdvancedCSV(tableName: string, label: string): void {
+        let _this = this;
+
+        // Open dialog
+        const dialogRef = this._importDialog.open(ImportDialogComponent, {
+            width: '1280px',
+            data: { tableName: tableName }
+        });
+
+        // Check result to perform import
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                console.table(result);
+                _this.performImport(result.tableName, result.files, label, result.allowMultipleFiles);
             }
         });
     }
@@ -271,7 +349,7 @@ export class ImportExportService {
      * @param files files to import, currently only one file supported
      * @param allowMultipleFiles should import single or multiple files
      */
-    performImport(tableName: string, files: any[], allowMultipleFiles: boolean): void {
+    performImport(tableName: string, files: any[], label: string = null, allowMultipleFiles: boolean): void {
 
         if (files != null && files.length) {
             this._dialogService.showLoadingDialog("Uploading", "Please wait...");
@@ -403,14 +481,31 @@ export class ImportExportService {
         }
     }
 
-    requestGetCSV(label) {
+    requestImport(entryName = "") {
+        this.onImportRequested.emit(entryName);
+    }
+
+    requestAdvancedImport(label: string) {
+        // if label is null, this must be normal CSV
+        if (label === null) {
+            this.onImportRequested.emit("");
+        }
+        else {
+            // label is not null, request if item with label exists in current list
+            if (this._currentImportData.items.filter(x => x.label === label).length > 0) {
+                this.onAdvancedImportRequested.emit(label);
+            }
+        }
+    }
+
+    requestGetCSV(label: string) {
         // if label is null, this must be normal CSV
         if (label === null) {
             this.onGetCSVRequested.emit(null);
         }
         else {
             // label is not null, request if item with label exists in current list
-            if (this._currentData.items.filter(x => x.label === label).length > 0) {
+            if (this._currentExportData.items.filter(x => x.label === label).length > 0) {
                 this.onGetCSVRequested.emit(label);
             }
         }
@@ -423,14 +518,10 @@ export class ImportExportService {
         }
         else {
             // label is not null, request if item with label exists in current list
-            if (this._currentData.items.filter(x => x.label === label).length > 0) {
+            if (this._currentExportData.items.filter(x => x.label === label).length > 0) {
                 this.onGetExcelRequested.emit(label);
             }
         }
-    }
-
-    requestImport(entryName = "") {
-        this.onImportRequested.emit(entryName);
     }
 
     requestGetTemplate(entryName = "") {
