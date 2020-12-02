@@ -16,18 +16,13 @@
     },
     {
       "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+    },
+    {
+      "operation": "selectForm",
       "type": "postProcessing",
       "queryString": "select colore_somministrazione_completa, codice_colore, round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
-    },
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$);"
-    },
-    {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$);"
     }
   ],
   "form_keys": [
