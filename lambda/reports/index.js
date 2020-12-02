@@ -150,7 +150,7 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
         queryString = queryString.slice(0, queryString.length - 1);
     }
 
-    if (keys != null) {
+    if (keys) {
         for (const key in keys) {
             if (keys.hasOwnProperty(key)) {
                 let keyType = keyTypes.find(e => (e.key === key));
@@ -163,7 +163,7 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
         }
     }
 
-    if (search_keys != null) {
+    if (search_keys) {
         let search_params = entry_params.search_keys;
         let search_types = search_params.map(k => {
             let dataType = k.format.dataType ? k.format.dataType : '';
@@ -230,13 +230,13 @@ async function getUserData(userid) {
 
 async function getIdAnagrafica(company, data) {
 
-    let result = "";
+    let result = null;
     if (data != null) {
         let companies = data.companies;
         if (company != null) {
             companies.forEach(c => {
                 if (c.name === company && !result) { // found user's profile
-                    result = c.id_anagrafica;
+                    result = "" + (parseInt("" + c.id_anagrafica));
                 }
             });
         }
@@ -264,7 +264,7 @@ exports.handler = async (event, context) => {
 
     let search_keys = queryParams['search_keys'];
 
-    if (search_keys != null) {
+    if (search_keys != null && search_keys != '') {
         search_keys = JSON.parse(search_keys);  // comment out in case of test
     }
 
