@@ -41,6 +41,8 @@ rm index.js-e
 
 rm ./nodejs.zip
 
+npm install
+
 zip -r nodejs.zip node_modules index.js package.json
 
 aws lambda update-function-code --function-name $LAMBDANAME --zip-file fileb://./nodejs.zip
