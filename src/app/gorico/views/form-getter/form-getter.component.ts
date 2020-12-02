@@ -129,7 +129,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     outputEvents: OutputEvent[]; // event to be published to PubSub after (re)loading the table values
     // eventTrigger: string = null;
 
-    subscriptions: Subscription[] = [];
+    formSubscriptions: Subscription[] = [];
+    generalSubscriptions: Subscription[] = [];
 
     results: any[] = null;
 
@@ -198,12 +199,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             value => {
                 _this.eventCallback(value.data, value, null); // null as keyListener means that the full table is affected
             });
-        _this.subscriptions.push(subcription);
+        _this.generalSubscriptions.push(subcription);
 
     }
 
     ngOnDestroy() {
-        this.subscriptions.forEach(subscription => {
+        this.generalSubscriptions.forEach(subscription => {
+            subscription.unsubscribe();
+        });
+
+        this.formSubscriptions.forEach(subscription => {
             subscription.unsubscribe();
         });
     }
@@ -289,7 +294,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                         value => {
                                             _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
                                         });
-                                    _this.subscriptions.push(subcription);
+                                    _this.formSubscriptions.push(subcription);
                                 });
                             }
                         });
@@ -306,7 +311,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     value => {
                                         _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
                                     });
-                                _this.subscriptions.push(subcription);
+                                _this.formSubscriptions.push(subcription);
                             });
                         }
                         _this.subscribeFieldInputEvents(_this.viewKeys);
@@ -358,7 +363,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     const subscription = _this.pubsubService.subscribe(event.eventName, value => {
                         _this.eventCallback(event, value, key.key);
                     });
-                    _this.subscriptions.push(subscription);
+                    _this.formSubscriptions.push(subscription);
                 });
             }
             if (key.format.viewType === 'subform' && key.format.subform_keys != null) {
@@ -847,7 +852,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
             }
             // destroy current subscriptions before moving to a new view
-            _this.subscriptions.forEach(subscription => {
+            _this.formSubscriptions.forEach(subscription => {
                 subscription.unsubscribe();
             });
             _this.sendEvent.emit({ eventType: 'navigate', queryParams: { entry: event.actionTarget, keys: [filteredKeys], index: 1, total: 1 } });
