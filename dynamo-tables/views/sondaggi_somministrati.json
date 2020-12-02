@@ -11,6 +11,11 @@
     },
     {
       "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.sondaggi_somministrati set somministrazione_completata=entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
+    },
+    {
+      "operation": "selectForm",
       "type": "postProcessing",
       "queryString": "select colore_somministrazione_completa, codice_colore, round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
     },
@@ -307,6 +312,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "somministrazione_completata",
+      "queryFunct": "select entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$) as somministrazione_completata",
       "label": "Completo sì/no",
       "inputEvents": [
         {
@@ -316,13 +322,6 @@
           "actionType": "update_style",
           "styleAttribute": "background_color",
           "updateFunct": "'£colore_somministrazione_completa£'"
-        },
-        {
-          "eventName": "colore_somministrazione_completa_change",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$) as somministrazione_completata;"
         }
       ],
       "sameOrigin": false,
