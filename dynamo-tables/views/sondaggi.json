@@ -26,7 +26,12 @@
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select *, entrasp.mdt_codtitolo(codice_azienda, id_modello_test) as descr_modello_test, (select id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$) as id_sondaggio_prec, entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio) as flags_sezioni_multi, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.descrizione_risultato_from_sondaggio(codice_azienda, id_sondaggio) as criterio_analisi from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+            "queryString": "select *, entrasp.mdt_codtitolo(codice_azienda, id_modello_test) as descr_modello_test, (select id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$) as id_sondaggio_prec, entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(codice_azienda, id_sondaggio) as flags_sezioni_activate, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.descrizione_risultato_from_sondaggio(codice_azienda, id_sondaggio) as criterio_analisi from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "select  id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1"
         },
         {
             "operation": "selectForm",
@@ -552,6 +557,22 @@
             "readOnly": true
         },
         {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "flags_sezioni_activate",
+            "label": "flags_sezioni_activate",
+            "outputEvent": {
+                "eventName": "flags_sezioni_activate_singola",
+                "eventTrigger": "change"
+            },
+            "sameOrigin": false,
+            "readOnly": true
+        },
+        {
             "autoGenerate": false,
             "format": {
                 "dataType": "number",
@@ -891,9 +912,10 @@
             "inputEvents": [
                 {
                     "actionType": "show",
-                    "eventName": "sondaggi_flags_sezioni_singola",
+                    "eventName": "flags_sezioni_activate_singola",
                     "condition": "equalTo",
                     "values": [
+                        "1",
                         "0",
                         "1"
                     ]
@@ -930,9 +952,10 @@
             "inputEvents": [
                 {
                     "actionType": "show",
-                    "eventName": "sondaggi_flags_sezioni_singola",
+                    "eventName": "flags_sezioni_activate_singola",
                     "condition": "equalTo",
                     "values": [
+                        "1",
                         "1",
                         "1"
                     ]
