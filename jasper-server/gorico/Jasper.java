@@ -145,17 +145,7 @@ public class Jasper {
 
     public String createReportUsingJasperData(JasperData data) {
         try {
-
-            // String connectString =
-            // "jdbc:postgresql://goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com:5432/Gorico";
-            String connectString = "jdbc:postgresql://" + Constants.POSTGRES_SERVER + ":" + Constants.POSTGRES_PORT
-                    + "/" + Constants.POSTGRES_DATABASE;
-            Connection jdbcConnection = Database.getInstance().connectPgDB(connectString, Constants.POSTGRES_USERNAME,
-                    Constants.POSTGRES_PASSWORD);
-
-            JasperDesign mainReportDesign = JRXmlLoader.load(Constants.REPORTS_DIR + data.mainReport.name + ".jrxml");
-            JasperReport mainReport = JasperCompileManager.compileReport(mainReportDesign);
-
+            
             // ResultSet mainReportResultSet = jdbcConnection
             // .createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
             // ResultSet.CONCUR_READ_ONLY).executeQuery(data.mainReport.query);
@@ -188,6 +178,9 @@ public class Jasper {
 
             String companyName = null;
             boolean logoProvided = false;
+            
+            DatabaseDetails db = new DatabaseDetails();
+            db.setPort(Constants.POSTGRES_PORT);
 
             for (JasperParam param : data.params) {
                 params.put(param.key, param.value);
@@ -198,6 +191,19 @@ public class Jasper {
                 }
                 if (param.key.toLowerCase().equals("logo")) {
                     logoProvided = true;
+                }
+
+                if (param.key.toLowerCase().equals("db_host")) {
+                    db.setHost((String) param.value);
+                }
+                if (param.key.toLowerCase().equals("db_name")) {
+                    db.setDatabase((String) param.value);
+                }
+                if (param.key.toLowerCase().equals("db_user")) {
+                    db.setUsername((String) param.value);
+                }
+                if (param.key.toLowerCase().equals("db_password")) {
+                    db.setPassword((String) param.value);
                 }
             }
 
@@ -214,6 +220,14 @@ public class Jasper {
 
             // params.put("modelloTestVr.domandeSezioni", "modelloTestVr.domandeSezioni");
             // params.put("tipoModelloTest.descrizione", "tipoModelloTest.descrizione");
+
+            // String connectString =
+            // "jdbc:postgresql://goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com:5432/Gorico";
+            String connectString = "jdbc:postgresql://" + db.getHost() + ":" + db.getPort() + "/" + db.getDatabase();
+            Connection jdbcConnection = Database.getInstance().connectPgDB(connectString, db.getUsername(), db.getPassword());
+
+            JasperDesign mainReportDesign = JRXmlLoader.load(Constants.REPORTS_DIR + data.mainReport.name + ".jrxml");
+            JasperReport mainReport = JasperCompileManager.compileReport(mainReportDesign);
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(mainReport, params, jdbcConnection);
             jdbcConnection.close();
