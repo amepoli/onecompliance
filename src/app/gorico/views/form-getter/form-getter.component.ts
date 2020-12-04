@@ -97,6 +97,9 @@ export interface formGetterParams {
 })
 export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy {
 
+    // Is form-getter part of form-view
+    @Input() isFormView: boolean = false;
+
     @Input() filter: string;
     @Input() formParams: formGetterParams = null;
     @Output() sendEvent = new EventEmitter<any>();
@@ -195,11 +198,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         );
 
 
-        const subcription = _this.pubsubService.subscribe('navigate_on_save_button',
-            value => {
-                _this.eventCallback(value.data, value, null); // null as keyListener means that the full table is affected
-            });
-        _this.generalSubscriptions.push(subcription);
+        if (_this.isFormView) {
+            const subcription = _this.pubsubService.subscribe('navigate_on_save_button',
+                value => {
+                    _this.eventCallback(value.data, value, null); // null as keyListener means that the full table is affected
+                });
+            _this.generalSubscriptions.push(subcription);
+        }
 
     }
 
@@ -248,23 +253,27 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         return;                         // no formKeys defined for the table, stop here
                     }
 
-                    // Load Import Queries list if available
-                    if (params.importQueries && params.importQueries.formQueries) {
-                        console.log('importQueries', params.importQueries);
-                        _this._importExportService.updateImportList(_this.formParams.entryName, params.importQueries.formQueries);
-                    }
-                    else {
-                        _this._importExportService.updateImportList(_this.formParams.entryName, []);
+                    if (_this.isFormView) {
+                        // Load Import Queries list if available
+                        if (params.importQueries && params.importQueries.formQueries) {
+                            console.log('importQueries', params.importQueries);
+                            _this._importExportService.updateImportList(_this.formParams.entryName, params.importQueries.formQueries);
+                        }
+                        else {
+                            _this._importExportService.updateImportList(_this.formParams.entryName, []);
+                        }
+
+                        // Load Export Queries list if available
+                        if (params.exportQueries && params.exportQueries.formQueries) {
+                            console.log('exportQueries', params.exportQueries);
+                            _this._importExportService.updateExportList(_this.formParams.entryName, params.exportQueries.formQueries);
+                        }
+                        else {
+                            _this._importExportService.updateExportList(_this.formParams.entryName, []);
+                        }
+
                     }
 
-                    // Load Export Queries list if available
-                    if (params.exportQueries && params.exportQueries.formQueries) {
-                        console.log('exportQueries', params.exportQueries);
-                        _this._importExportService.updateExportList(_this.formParams.entryName, params.exportQueries.formQueries);
-                    }
-                    else {
-                        _this._importExportService.updateExportList(_this.formParams.entryName, []);
-                    }
 
                     // Load Hide actions if available
                     if (params.hideActions) {

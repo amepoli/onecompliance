@@ -106,7 +106,11 @@ function getURLFromServer(mainQuery, company, username, idAnagrafica) {
         params: [
             { "key": "codice_azienda", "value": company },
             { "key": "global_username", "value": username },
-            { "key": "global_userid", "value": idAnagrafica }
+            { "key": "global_userid", "value": idAnagrafica },
+            { "key": "db_host", "value": 'HOST_NAME' },
+            { "key": "db_name", "value": 'DB_NAME' },
+            { "key": "db_user", "value": 'USER_NAME' },
+            { "key": "db_password", "value": 'PASSWORD' }
         ]
     };
 
