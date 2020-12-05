@@ -195,9 +195,36 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "object_description",
+      "inputEvents": [
+        {
+          "eventName": "ObjectKeyChange",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select objectdescription as object_description from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '|');"
+        }
+      ],
+      "label": "Somministrazione su/di",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "select objectkey as id, objectdescription as name from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '|');",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "object_key",
+      "outputEvent": {
+        "eventName": "ObjectKeyChange",
+        "eventTrigger": "change"
+      },
       "label": "Somministrazione su/di",
       "newLine": true,
       "readOnly": true
