@@ -15,6 +15,7 @@ import { ReportService } from 'app/gorico/services/report.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { HideAction, NavigationService } from 'app/gorico/services/navigation.service';
 import { MessageView, MessagesService, MessageElement, MessageItem } from 'app/gorico/services/messages.service';
+import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -105,7 +106,8 @@ export class FormViewComponent implements OnChanges, OnInit {
         private _reportService: ReportService,
         private _importExportService: ImportExportService,
         private _navigationServce: NavigationService,
-        private _messagesService: MessagesService
+        private _messagesService: MessagesService,
+        private _console: ConsoleLoggerService
     ) {
 
     }
@@ -257,7 +259,7 @@ export class FormViewComponent implements OnChanges, OnInit {
         this.pubsubService.publishEvent(event.eventName, { origin: 'save_button', index: 0, valueSet: [], data: event, type: 'button_click' }); // provide index in case of multiple instances of the button
 
 
-        console.log(event);
+        this._console.log(event);
     }
 
     onSave() {
@@ -272,7 +274,7 @@ export class FormViewComponent implements OnChanges, OnInit {
             for (const value in values) {
                 if (values.hasOwnProperty(value)) {
                     const element = values[value];
-                    console.log(element);
+                    _this._console.log(element);
                     if (element == null) {
                         continue; // skip null entries
                     }
@@ -293,7 +295,7 @@ export class FormViewComponent implements OnChanges, OnInit {
             _this.savingState = 'saving';
             _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, [values]).subscribe(   // backend expects an array of data
                 result => {
-                    console.log(result);
+                    _this._console.log(result);
                     if (result.result === 'OK') {
                         // Show success toast
                         _this._toastService.showSuccessToast('Saved');
@@ -352,7 +354,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                 // User said yes so let's delete form
                 _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys).subscribe(
                     result => {
-                        console.log(result);
+                        _this._console.log(result);
                         if (result.result === 'OK') {
                             // Show success toast
                             _this._toastService.showSuccessToast("Form Deleted");
@@ -393,7 +395,7 @@ export class FormViewComponent implements OnChanges, OnInit {
         //console.table(_this.currentKeys);
         _this.backendService.getAttachList(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys).subscribe(
             result => {
-                console.log(result);
+                _this._console.log(result);
                 if (result.result === 'OK') {
                     let listFiles = result.list;
                     const files = [];

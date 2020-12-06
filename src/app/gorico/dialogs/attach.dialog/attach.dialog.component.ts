@@ -12,6 +12,7 @@ import { formGetterParams, FormGetterComponent } from 'app/gorico/views/form-get
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from 'app/gorico/services/toast.service';
+import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 
 
 @Component({
@@ -68,7 +69,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         private backendService: BackendService,
         private httpClient: HttpClient,
         private authService: AuthService,
-        private _toastService: ToastService) {
+        private _toastService: ToastService,
+        private _console: ConsoleLoggerService) {
 
         const _this = this;
 
@@ -112,7 +114,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                     _this.backendService.deleteFile(_this.data.entryName, _this.authService.getCurrentCompany(), selected.id_risorsa, selected.file_id, _this.data.keys).subscribe(
                         url => {
                             if (url != null) {
-                                console.table(url);
+                                _this._console.table(url);
                                 _this.httpClient.delete(url.url).subscribe(
                                     fileData => {
                                         _this.fileService.requestReload(_this.data.entryName);
@@ -120,7 +122,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                             }
                         },
                         err => {
-                            console.error(err);
+                            _this._console.error(err);
                         });
                 }
             }
@@ -187,7 +189,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     getAttachList() {
         this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(), this.data.keys).subscribe(
             result => {
-                console.log(result);
+                this._console.log(result);
                 if (result.result === 'OK') {
                     this.listFiles = result.list;
                     const files = [];
@@ -224,19 +226,19 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onSave(): void {
         const _this = this;
-        console.log(event);
+        _this._console.log(event);
         _this.attach = false;
         if (_this.file != null) {
             // get the S3 URL 
             _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(), _this.data.keys).subscribe(
                 responseURL => {
-                    console.log(responseURL);
+                    _this._console.log(responseURL);
                     if (responseURL != null && responseURL.result === 'OK') {
                         const blob = new Blob([_this.file]);
                         // upload the file using obtained url
                         _this.httpClient.put(responseURL.url, blob).subscribe(
                             responsePut => {
-                                console.log('File uploaded with filename: ', responseURL.filename);
+                                _this._console.log('File uploaded with filename: ', responseURL.filename);
                                 // retrieve file content
                                 const reader = new FileReader();
                                 reader.onload = function (e) {
@@ -249,7 +251,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     var buffer = Buffer.from(<string>content);
                                     // create file content hash
                                     const hash = createHash('sha1').update(buffer).digest("hex");
-                                    console.log(hash);
+                                    _this._console.log(hash);
                                     // check that the file has been correctly uploaded and pass file params to the backend
                                     var mime = require('mime-types');
                                     const fileParams = {
@@ -265,7 +267,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
                                         responseCheck => {
                                             _this.fileService.requestReload(_this.data.entryName);
-                                            console.log(responseCheck);
+                                            _this._console.log(responseCheck);
                                         }
                                     );
 

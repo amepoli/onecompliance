@@ -1,5 +1,6 @@
 import { Component, HostBinding, OnInit, ViewEncapsulation } from "@angular/core";
 import { FormGroup } from "@angular/forms";
+import { ConsoleLoggerService } from "app/gorico/services/console_logger.service";
 import { FieldConfig } from "../../field.interface";
 @Component({
   selector: "app-textarea",
@@ -61,9 +62,9 @@ export class TextAreaComponent implements OnInit {
 
   @HostBinding('style.height.px') height = '0';
 
-  constructor() { }
+  constructor(private _console: ConsoleLoggerService) { }
   ngOnInit() {
-    console.log('textareaHeight:', this.field.textareaHeight);
+    this._console.log('textareaHeight:', this.field.textareaHeight);
     this.setHeights();
   }
 

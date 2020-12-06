@@ -14,6 +14,7 @@ import { NavigationService, HideAction } from 'app/gorico/services/navigation.se
 
 import { MessageView } from 'app/gorico/services/messages.service';
 import { HelperService } from 'app/gorico/services/helper.service';
+import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -154,8 +155,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private _dialogService: DialogService,
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
+        private _console: ConsoleLoggerService
     ) {
-        let _this = this;
+        const _this = this;
 
     }
 
@@ -244,7 +246,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
         _this.backendService.getView(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.formParams.keys).subscribe(
             results => {
-                console.log(results);
+                _this._console.log(results);
                 if (results.result === 'OK') {
                     const params = results.data;
 
@@ -256,7 +258,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if (_this.isFormView) {
                         // Load Import Queries list if available
                         if (params.importQueries && params.importQueries.formQueries) {
-                            console.log('importQueries', params.importQueries);
+                            _this._console.log('importQueries', params.importQueries);
                             _this._importExportService.updateImportList(_this.formParams.entryName, params.importQueries.formQueries);
                         }
                         else {
@@ -265,7 +267,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                         // Load Export Queries list if available
                         if (params.exportQueries && params.exportQueries.formQueries) {
-                            console.log('exportQueries', params.exportQueries);
+                            _this._console.log('exportQueries', params.exportQueries);
                             _this._importExportService.updateExportList(_this.formParams.entryName, params.exportQueries.formQueries);
                         }
                         else {
@@ -285,7 +287,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     // Load Messages if available
                     if (params.messages) {
-                        console.log(params.messages);
+                        _this._console.log(params.messages);
                         _this.onMessagesUpdated.emit(params.messages);
                     }
                     else {
@@ -349,7 +351,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.to, data.cc))
             .subscribe(
                 result => {
-                    console.log(result);
+                    _this._console.log(result);
                     if (result.Success) {
                         _this._toastService.showSuccessToast(result.Message);
                     }
@@ -408,7 +410,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
         _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, null, true, _this.formParams.isNew, null, false).subscribe(
             results => {
-                console.log(results);
+                _this._console.log(results);
                 if (results.result === 'OK') {
                     _this.isReadOnly = results.flags.readOnly;
                     // hide/make read only relevant rows if any
@@ -478,7 +480,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this;
         _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, null, true, true, null, false).subscribe(
             result => {
-                console.log(result);
+                _this._console.log(result);
                 if (result.result === 'OK') {
                     result = result.data;
                     // add passed keys, if any - useful to valorize father's keys in subtables
@@ -494,7 +496,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     const filteredFormData = _this.getFormData(_this.viewKeys, result);
                     _this.process_form(filteredFormData);
 
-                    console.log('filteredFormData[0]', filteredFormData[0]);
+                    _this._console.log('filteredFormData[0]', filteredFormData[0]);
                     // add it to the top of the list
                     _this.filteredFormData.unshift(filteredFormData[0]);
                     _this.quickAddData.unshift(true);
@@ -531,7 +533,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 outputObject[subKey.key] = subKeysArray[sub_index];
             });
         } catch (e) {
-            console.log('something wrong with subkeys');
+            this._console.log('something wrong with subkeys');
         }
         return outputObject;
     }
@@ -725,7 +727,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // console.table(value);
         // console.table(_this.filteredFormData);
         // console.log(`keyListener: ${keyListener}`);
-        console.log(event, value, keyListener);
+        _this._console.log(event, value, keyListener);
 
         // check  if this is a formRowProperties event
         if (event.actionType === 'showRow' && event.condition === 'equalTo') {
@@ -916,7 +918,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             }
 
                             result = result.data;
-                            console.log(`keyListener: ${keyListener}`);
+                            _this._console.log(`keyListener: ${keyListener}`);
                             //console.table(result);
                             if (event.actionType === 'query') {
                                 if (targetViewField && targetViewField.format && targetViewField.format.viewType === 'combobox') {   // got combobox options
@@ -968,7 +970,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                             element.style[event.styleAttribute] = result[0][attrKey];
                                         }
                                         else {
-                                            console.log(`result does not contain attrKey: ${attrKey}`);
+                                            _this._console.log(`result does not contain attrKey: ${attrKey}`);
                                         }
                                     }
                                 }
@@ -979,10 +981,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                         else {
                             // Show error snackbar
-                            console.log(`keyListener: ${keyListener}`);
+                            _this._console.log(`keyListener: ${keyListener}`);
                             //console.table(result);
 
-                            console.log(result);
+                            _this._console.log(result);
                             _this._toastService.showErrorToast(result.reason);
                         }
                     });
@@ -1080,14 +1082,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, keyListener, chiavi, event.eventName, result ? 'actionYes' : 'actionNo', true).subscribe(
                             result => {
                                 if (result.result === 'OK') {
-                                    console.table(result);
+                                    _this._console.table(result);
                                     _this._toastService.showSuccessToast("Success!");
                                     if (event.outputEventWhenComplete != null) {
                                         _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
                                     }
                                 }
                                 else {
-                                    console.table(result);
+                                    _this._console.table(result);
                                     _this._toastService.showErrorToast(result.reason);
                                 }
                             });
@@ -1100,7 +1102,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
 
     reload() {
-        console.log('onReload: form-getter');
+        this._console.log('onReload: form-getter');
         this.clearForm();
         this.onReload.emit();
     }

@@ -8,6 +8,7 @@ import { NavigationService, HideAction } from 'app/gorico/services/navigation.se
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
 import { ScrollService } from 'app/gorico/services/scroll.service';
+import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 
 
 export interface formTableViewParams {
@@ -66,7 +67,8 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
     private _dialogService: DialogService,
     private _toastService: ToastService,
     private _navigationServce: NavigationService,
-    private _messagesService: MessagesService
+    private _messagesService: MessagesService,
+    private _console: ConsoleLoggerService
   ) { }
 
   ngOnInit() {
@@ -96,12 +98,12 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
       // _this.saveChanges();
     }
     else if (changes.isCurTab) {
-      console.table({ change: "form-isCurTab", tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
-      console.log("inside form-table-view isCurTab changes!");
+      _this._console.table({ change: "form-isCurTab", tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
+      _this._console.log("inside form-table-view isCurTab changes!");
     }
     else if (changes.isTabMode) {
-      console.table({ change: "form-isTabMode", tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
-      console.log("inside form-table-view isCurTab changes!");
+      _this._console.table({ change: "form-isTabMode", tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
+      _this._console.log("inside form-table-view isCurTab changes!");
     }
 
   }
@@ -208,7 +210,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
       });
       _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys, values).subscribe(   // backend expects an array of data
         result => {
-          console.log(result);
+          _this._console.log(result);
           if (result.result === 'OK') {
             _this._toastService.showSuccessToast('Saved successfully!'); // show success toast
             if (_this.refreshOnSave) {
@@ -267,7 +269,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
   }
 
   reload() {
-    console.log('onReload: form-table-view');
+    this._console.log('onReload: form-table-view');
     this.clearForm();
     this.onReload.emit();
   }

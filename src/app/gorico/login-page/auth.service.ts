@@ -9,6 +9,7 @@ import { FuseNavigationService } from '@fuse/components/navigation/navigation.se
 import { ToastService } from 'app/gorico/services/toast.service';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
+import { ConsoleLoggerService } from '../services/console_logger.service';
 
 export interface UserInfo {
   name: string;
@@ -47,6 +48,7 @@ export class AuthService {
     private _toastService: ToastService,
     private _fuseTranslationLoaderService: FuseTranslationLoaderService,
     private _translateService: TranslateService,
+    private _console: ConsoleLoggerService
   ) {
     this.amplifyService = amplifyService;
 
@@ -86,7 +88,7 @@ export class AuthService {
 
   public forgotPassword(username: string): void {
     this.amplifyService.auth().forgotPassword(username)
-    .then(data => console.log(data))
+    .then(data => this._console.log(data))
     .catch((err) => {
       this.errorInfo$.emit(err);
       this._setError(err); });
@@ -94,7 +96,7 @@ export class AuthService {
 
   public forgotPasswordSubmit(username: string, code: string, new_password: string): void {
     this.amplifyService.auth().forgotPasswordSubmit(username, code, new_password)
-    .then(data => console.log(data))
+    .then(data => this._console.log(data))
     .catch((err) => {
       this.errorInfo$.emit(err);
       this._setError(err); });
@@ -148,7 +150,7 @@ export class AuthService {
       this.amplifyService.auth().confirmSignUp(this.username, code)
       .then(data => {
          this.amplifyService.setAuthState({ state: 'confirm-sign-up', user: { 'username': this.username } });
-          console.log(data);
+          this._console.log(data);
       })
       .catch(err => {
         this.errorInfo$.emit(err);
@@ -200,7 +202,7 @@ export class AuthService {
           if (_this.currentCompany == null) {  // do not get default company if reloading because of user chose a different company
             _this.currentCompany = ud.userdata.companies[0];
           }
-          console.log(ud.userdata);
+          _this._console.log(ud.userdata);
 
           //load default language for user
           _this._translateService.setDefaultLang(ud.userdata.language);
@@ -215,7 +217,7 @@ export class AuthService {
           // Show error snackbar
           _this._toastService.showErrorToast(ud.reason);
           _this.userinfo.next(null);
-          console.error(ud);
+          _this._console.error(ud);
         }
       });
   }
@@ -295,7 +297,7 @@ export class AuthService {
         }
       })
       .catch(error => {
-        console.error(error);
+        this._console.error(error);
 
         // Error occured which means the session was invalid or expired
         // Emit the error so we can stop showing the loading dialog

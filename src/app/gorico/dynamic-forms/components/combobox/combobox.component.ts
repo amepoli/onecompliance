@@ -5,6 +5,7 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ValidationsService } from 'app/gorico/services/validations.service';
+import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 @Component({
   selector: 'combobox',
   template: `
@@ -53,7 +54,9 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   private _onDestroy = new Subject<void>();
 
 
-  constructor(private pubsubService: NgxPubSubService, private cdr: ChangeDetectorRef) { }
+  constructor(private pubsubService: NgxPubSubService, 
+                private cdr: ChangeDetectorRef,
+                private _console: ConsoleLoggerService) { }
 
   private skipNextEvent = false;
 
@@ -180,7 +183,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!value) {
       value = this.field.value && this.field.value.id ? this.field.value.id : null;
     }
-    console.log('value', value);
+    this._console.log('value', value);
     this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: value, type: 'combobox' });
 
   }

@@ -5,6 +5,7 @@ import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { HelperService } from 'app/gorico/services/helper.service';
 import { Moment } from 'moment';
 import { ValidationsService } from 'app/gorico/services/validations.service';
+import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 @Component({
   selector: 'app-input',
   template: `
@@ -48,7 +49,8 @@ export class InputComponent implements OnInit, AfterViewInit {
   // For future use
   // @HostBinding('style.margin-right') marginRight = '1%';
 
-  constructor(private pubsubService: NgxPubSubService) { }
+  constructor(private pubsubService: NgxPubSubService,
+              private _console: ConsoleLoggerService) { }
   ngOnInit(): void {
     const _this = this;
     _this.field.style = _this.field.style == null ? { background_color: 'transparent', font_color: 'black' } : _this.field.style;
@@ -72,7 +74,7 @@ export class InputComponent implements OnInit, AfterViewInit {
     }
 
     if (_this.field.validations && _this.field.validations.length) {
-      console.log('validations', _this.field.validations);
+      _this._console.log('validations', _this.field.validations);
     }
   }
 

@@ -6,6 +6,7 @@ import { tableViewKey } from '../table/table-view.component';
 import { _MatChipListMixinBase } from '@angular/material';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
+import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 
 
 export interface DashboardParams {
@@ -35,7 +36,8 @@ export class DashboardComponent {
 
     constructor(private backendService: BackendService,
         private authService: AuthService,
-        private _toastService: ToastService) { }
+        private _toastService: ToastService,
+        private _console: ConsoleLoggerService) { }
 
     @ViewChild('pivot1') child: WebDataRocksPivot;
 
@@ -46,7 +48,7 @@ export class DashboardComponent {
     @Output() cellClick = new EventEmitter<DashboardCellEvent>();
 
     onPivotReady(pivot: WebDataRocks.Pivot): void {
-        console.log('pivot table ready');
+        this._console.log('pivot table ready');
     }
 
     onCustomizeCell(cell: WebDataRocks.CellBuilder, data: WebDataRocks.CellData): void {
@@ -72,13 +74,13 @@ export class DashboardComponent {
                     // recover the dashboard labels
                     _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex, false).subscribe(
                         response => {
-                            console.log(response);
+                            _this._console.log(response);
                             if (response.result === 'OK') {
                                 const labels = response.data;
                                 // now recover the dashboard data
                                 _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, null, false).subscribe(
                                     results => {
-                                        console.log(results);
+                                        _this._console.log(results);
                                         if (results.result === 'OK') {
                                             results = _this.setOrder(results.data, labels);
                                             const report = _this.setReport(viewResults, _this.tableParams.entryIndex, results, lang, labels);

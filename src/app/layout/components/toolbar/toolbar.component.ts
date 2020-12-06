@@ -22,6 +22,7 @@ import { ReportService } from 'app/gorico/services/report.service';
 import { ImportItem, ExportItem, ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService } from 'app/gorico/services/navigation.service';
 import { MessageView, MessageElement } from 'app/gorico/services/messages.service';
+import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 
 
 @Component({
@@ -78,7 +79,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         private router: Router,
         private _reportService: ReportService,
         private _importExportService: ImportExportService,
-        private _navigationService: NavigationService
+        private _navigationService: NavigationService,
+        private _console: ConsoleLoggerService
     ) {
         // Set the defaults
         this.userStatusOptions = [
@@ -244,7 +246,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
      */
     search(value): void {
         // Do your search here...
-        console.log(value);
+        this._console.log(value);
     }
 
     /**
@@ -268,7 +270,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     logout(): void {
         const _this = this;
-        console.log('Signing out');
+        _this._console.log('Signing out');
         _this._authService.signOut();
         _this.router.navigate(['/login']);
     }
@@ -283,11 +285,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     getReportList(): void {
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_list' });
-        console.log("No need to getReportList in toolbar now. Report already loaded!");
+        this._console.log("No need to getReportList in toolbar now. Report already loaded!");
     }
 
     getReport(item: { 'alias': string, 'descrizione': string }): void {
-        console.log(item);
+        this._console.log(item);
         this._reportService.requestGetReport(item.alias);
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
     }
@@ -311,23 +313,23 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     }
 
     downloadCSV() {
-        console.log('Downloading CSV');
+        this._console.log('Downloading CSV');
         this._importExportService.requestGetCSV(null);
     }
 
     downloadAdvancedCSV(item: ExportItem): void {
-        console.log(item);
+        this._console.log(item);
         this._importExportService.requestGetCSV(item.label);
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
     }
 
     downloadExcel() {
-        console.log('Downloading CSV');
+        this._console.log('Downloading CSV');
         this._importExportService.requestGetExcel(null);
     }
 
     downloadAdvancedExcel(item: ExportItem): void {
-        console.log(item);
+        this._console.log(item);
         this._importExportService.requestGetExcel(item.label);
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
     }

@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { FieldConfig } from "../../field.interface";
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { ConsoleLoggerService } from "app/gorico/services/console_logger.service";
 
 @Component({
   selector: "app-radiobutton",
@@ -27,10 +28,11 @@ export class RadiobuttonComponent implements OnInit {
 
   chosenItem: any;
 
-  constructor(private pubsubService: NgxPubSubService) { }
+  constructor(private pubsubService: NgxPubSubService,
+            private _console: ConsoleLoggerService) { }
   ngOnInit() {
     const _this = this;
-    console.log(_this.field);
+    _this._console.log(_this.field);
     _this.chosenItem = _this.field.options.find(o => JSON.stringify(o.id) === JSON.stringify(_this.field.value));
     // trigger an event the first time 
     setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'radiobutton' }); }, 50);
@@ -39,8 +41,8 @@ export class RadiobuttonComponent implements OnInit {
   onCheck(event: any): void {
     const _this = this;
 
-    console.log(event);
-    console.log(_this.field.eventName);
+    _this._console.log(event);
+    _this._console.log(_this.field.eventName);
 
     if (_this.field.eventName !== null) {
       // wait a while before triggering the event

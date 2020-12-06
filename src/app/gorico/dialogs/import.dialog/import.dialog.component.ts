@@ -2,6 +2,7 @@ import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDest
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { FormBuilder } from '@angular/forms';
 import { DialogService } from 'app/gorico/services/dialog.service';
+import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 
 
 @Component({
@@ -23,7 +24,8 @@ export class ImportDialogComponent {
     constructor(private _formBuilder: FormBuilder,
         public dialogRef: MatDialogRef<ImportDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
-        private _dialogService: DialogService
+        private _dialogService: DialogService,
+        private _console: ConsoleLoggerService
     ) {
         this.tableName = data.tableName;
     }
@@ -83,7 +85,7 @@ export class ImportDialogComponent {
                 this.files = [...this.files, fileInput.target.files[i]]
             }
 
-            console.table(this.files);
+            this._console.table(this.files);
         }
 
         // Clear files input element
@@ -108,7 +110,7 @@ export class ImportDialogComponent {
     // Remove file from files list
     removeFile(i: number) {
         if (this.files && this.files[i]) {
-            console.log(`Removing: ${i}`);
+            this._console.log(`Removing: ${i}`);
             this.files.splice(i, 1);
         }
     }

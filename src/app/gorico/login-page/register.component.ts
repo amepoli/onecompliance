@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 
 import { Router } from '@angular/router';
 import { DialogService } from '../services/dialog.service';
+import { ConsoleLoggerService } from '../services/console_logger.service';
 
 
 @Component({
@@ -32,7 +33,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
         private _formBuilder: FormBuilder,
         private router: Router,
         private authService: AuthService,
-        private _dialogService: DialogService
+        private _dialogService: DialogService,
+        private _console: ConsoleLoggerService
     ) {
         // Configure the layout
         this._fuseConfigService.config = {
@@ -117,7 +119,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
 
     onSubmit(): void {
-        console.log(this.registerForm);
+        this._console.log(this.registerForm);
         this.authService.setUsername(this.registerForm.value.name);
         this.authService.setPassword(this.registerForm.value.password);
         this.authService.setEmail(this.registerForm.value.email);

@@ -8,6 +8,7 @@ import { BackendService } from '../views/backend/backend.service';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { AuthService } from '../login-page/auth.service';
 import { DialogService } from './dialog.service';
+import { ConsoleLoggerService } from './console_logger.service';
 
 export interface ReportItem {
     alias: string;
@@ -58,6 +59,7 @@ export class ReportService // implements Resolve<any>
         private _backendService: BackendService,
         private _toastService: ToastService,
         private _dialogService: DialogService,
+        private _console: ConsoleLoggerService
 
     ) {
         // Set the defaults
@@ -71,7 +73,7 @@ export class ReportService // implements Resolve<any>
 
         _this._backendService.getReport(entryName, company, keys, alias, isForm, searchKeys).subscribe(
             response => {
-                console.log(response);
+                _this._console.log(response);
                 if (response.result === 'OK') {
                     const url = response.url; 
                     _this._httpClient.get(url, { responseType: 'blob' }).subscribe(
@@ -107,7 +109,7 @@ export class ReportService // implements Resolve<any>
         let _this = this;
         _this._backendService.getReportList(entryName, company, keys, isForm).subscribe(
             response => {
-                console.log(response);
+                _this._console.log(response);
                 if (response.result === 'OK') {
                     // Store data locally
                     _this._currentData = {

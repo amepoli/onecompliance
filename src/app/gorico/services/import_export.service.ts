@@ -10,6 +10,7 @@ import { AuthService } from '../login-page/auth.service';
 import { DialogService } from './dialog.service';
 import { MatDialog } from '@angular/material';
 import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
+import { ConsoleLoggerService } from './console_logger.service';
 
 
 export interface ImportItem {
@@ -39,13 +40,13 @@ export class ImportExportService {
 
     // local import data
     private _currentImportData: ImportList = {
-        entryName: "",
+        entryName: '',
         items: []
     };
 
     // local export data
     private _currentExportData: ExportList = {
-        entryName: "",
+        entryName: '',
         items: []
     };
 
@@ -86,13 +87,14 @@ export class ImportExportService {
         private _httpClient: HttpClient,
         private _authService: AuthService,
         private _toastService: ToastService,
-        private _dialogService: DialogService
+        private _dialogService: DialogService,
+        private _console: ConsoleLoggerService
     ) {
-        let _this = this;
+        const _this = this;
 
         // Set the defaults
         _this._currentImportData = {
-            entryName: "test",
+            entryName: 'test',
             items: [
                 {
                     label: 'i1',
@@ -110,7 +112,7 @@ export class ImportExportService {
         };
 
         _this._currentExportData = {
-            entryName: "test", items: [
+            entryName: 'test', items: [
                 {
                     label: 't1',
                     queryString: 'test 1'
@@ -156,7 +158,7 @@ export class ImportExportService {
      * @param tableName table to import into
      */
     importCSV(tableName: string): void {
-        let _this = this;
+        const _this = this;
 
         // Open dialog
         const dialogRef = this._importDialog.open(ImportDialogComponent, {
@@ -167,7 +169,7 @@ export class ImportExportService {
         // Check result to perform import
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                console.table(result);
+                _this._console.table(result);
                 _this.performImport(result.tableName, result.files, null, result.allowMultipleFiles);
             }
         });
@@ -179,7 +181,7 @@ export class ImportExportService {
      * @param label label of the import item
      */
     importAdvancedCSV(tableName: string, label: string): void {
-        let _this = this;
+        const _this = this;
 
         // Open dialog
         const dialogRef = this._importDialog.open(ImportDialogComponent, {
@@ -190,7 +192,7 @@ export class ImportExportService {
         // Check result to perform import
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                console.table(result);
+                _this._console.table(result);
                 _this.performImport(result.tableName, result.files, label, result.allowMultipleFiles);
             }
         });
@@ -200,23 +202,23 @@ export class ImportExportService {
         let _this = this;
 
         // Show loading Dialog
-        _this._dialogService.showLoadingDialog("Preparing CSV", "Please wait...");
+        _this._dialogService.showLoadingDialog('Preparing CSV', 'Please wait...');
 
         _this._backendService.getCSV(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, advanced_query_label)
             .subscribe(
                 response => {
                     _this._dialogService.closeDialog();
-                    console.log(response);
+                    _this._console.log(response);
                     if (response.result === 'OK') {
                         // File is okay.
                         // Let's try to download it using simple window method first
-                        let downloadWindow = window.open(response.url, "_blank");
+                        let downloadWindow = window.open(response.url, '_blank');
 
                         // Check if the browser allowed window.open function
                         if (downloadWindow) {
                             // Window opened so must have downloaded
                             // Show success toast
-                            _this._toastService.showSuccessToast("", "CSV downloaded successfully!");
+                            _this._toastService.showSuccessToast('', 'CSV downloaded successfully!');
                         }
                         else {
                             // Window did not open so let's try the manual download methond
@@ -232,18 +234,18 @@ export class ImportExportService {
                                     saveAs(fileData, fileName);
 
                                     // Show success toast
-                                    _this._toastService.showSuccessToast("", "CSV downloaded successfully!");
+                                    _this._toastService.showSuccessToast('', 'CSV downloaded successfully!');
                                 });
                         }
                     }
                     else {
                         // File did not succeed, show error message
-                        _this._toastService.showErrorToast("An error occured!", "An error occured!")
+                        _this._toastService.showErrorToast('An error occured!', 'An error occured!')
                     }
                 }, error => {
                     // Error occured!
                     _this._dialogService.closeDialog();
-                    _this._toastService.showErrorToast("An error occured!", error);
+                    _this._toastService.showErrorToast('An error occured!', error);
 
                 });
 
@@ -254,23 +256,23 @@ export class ImportExportService {
         let _this = this;
 
         // Show loading Dialog
-        _this._dialogService.showLoadingDialog("Preparing Excel sheet", "Please wait...");
+        _this._dialogService.showLoadingDialog('Preparing Excel sheet', 'Please wait...');
 
         _this._backendService.getExcel(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, advanced_query_label)
             .subscribe(
                 response => {
                     _this._dialogService.closeDialog();
-                    console.log(response);
+                    _this._console.log(response);
                     if (response.result === 'OK') {
                         // File is okay.
                         // Let's try to download it using simple window method first
-                        let downloadWindow = window.open(response.url, "_blank");
+                        let downloadWindow = window.open(response.url, '_blank');
 
                         // Check if the browser allowed window.open function
                         if (downloadWindow) {
                             // Window opened so must have downloaded
                             // Show success toast
-                            _this._toastService.showSuccessToast("", "Excel sheet downloaded successfully!");
+                            _this._toastService.showSuccessToast('', 'Excel sheet downloaded successfully!');
                         }
                         else {
                             // Window did not open so let's try the manual download methond
@@ -286,18 +288,18 @@ export class ImportExportService {
                                     saveAs(fileData, fileName);
 
                                     // Show success toast
-                                    _this._toastService.showSuccessToast("", "Excel sheet downloaded successfully!");
+                                    _this._toastService.showSuccessToast('', 'Excel sheet downloaded successfully!');
                                 });
                         }
                     }
                     else {
                         // File did not succeed, show error message
-                        _this._toastService.showErrorToast("An error occured!", "An error occured!")
+                        _this._toastService.showErrorToast('An error occured!', 'An error occured!')
                     }
                 }, error => {
                     // Error occured!
                     _this._dialogService.closeDialog();
-                    _this._toastService.showErrorToast("An error occured!", error);
+                    _this._toastService.showErrorToast('An error occured!', error);
 
                 });
 
@@ -311,29 +313,29 @@ export class ImportExportService {
     getTemplateFile(tableName: string) {
 
         if (tableName) {
-            this._dialogService.showLoadingDialog("Downloading Template", "Please wait...");
+            this._dialogService.showLoadingDialog('Downloading Template', 'Please wait...');
 
             this._backendService.downloadTemplate(tableName).subscribe(
                 downloadTemplateResponse => {
-                    console.log(downloadTemplateResponse);
+                    this._console.log(downloadTemplateResponse);
                     if (downloadTemplateResponse != null && downloadTemplateResponse.result === 'OK') {
                         // Let's save it
-                        var blob = new Blob([downloadTemplateResponse.response], { type: "octet/stream" });
+                        var blob = new Blob([downloadTemplateResponse.response], { type: 'octet/stream' });
                         saveAs(blob, `${tableName}_template.csv`);
                         this._dialogService.closeDialog();
-                        this._toastService.showSuccessToast("Template downloaded successfully!");
+                        this._toastService.showSuccessToast('Template downloaded successfully!');
                         return;
                     }
                     else {
                         this._dialogService.closeDialog();
-                        console.error(downloadTemplateResponse.reason);
+                        this._console.error(downloadTemplateResponse.reason);
                         // Show error snackbar
                         this._toastService.showErrorToast(downloadTemplateResponse.reason);
                     }
                 }, error => {
                     // Error occured!
                     this._dialogService.closeDialog();
-                    this._toastService.showErrorToast("An error occured!", error);
+                    this._toastService.showErrorToast('An error occured!', error);
 
                 }
             );
@@ -352,100 +354,100 @@ export class ImportExportService {
     performImport(tableName: string, files: any[], label: string = null, allowMultipleFiles: boolean): void {
 
         if (files != null && files.length) {
-            this._dialogService.showLoadingDialog("Uploading", "Please wait...");
+            this._dialogService.showLoadingDialog('Uploading', 'Please wait...');
             // Get the S3 Create URL 
             this._backendService.createImportFileURL().subscribe(
                 createURLResponse => {
-                    console.log(createURLResponse);
+                    this._console.log(createURLResponse);
                     if (createURLResponse != null && createURLResponse.result === 'OK') {
                         const blob = new Blob([files[0]]);
                         // Upload the file using obtained url
                         this._httpClient.put(createURLResponse.url, blob).subscribe(
                             responsePut => {
-                                console.table(responsePut);
-                                this._toastService.showSuccessToast("File uploaded!");
-                                this._dialogService.showLoadingDialog("Importing", "Please wait...");
+                                this._console.table(responsePut);
+                                this._toastService.showSuccessToast('File uploaded!');
+                                this._dialogService.showLoadingDialog('Importing', 'Please wait...');
 
                                 // Import CSV in Postgres
                                 this._backendService.importFileFromS3(this._authService.getCurrentCompany(), createURLResponse.fileName, tableName, null).subscribe(
                                     importFileFromS3Response => {
-                                        console.log(importFileFromS3Response);
+                                        this._console.log(importFileFromS3Response);
                                         if (importFileFromS3Response != null && importFileFromS3Response.result === 'OK') {
 
-                                            this._toastService.showSuccessToast("File imported!");
-                                            this._dialogService.showLoadingDialog("Finalizing", "Please wait...");
+                                            this._toastService.showSuccessToast('File imported!');
+                                            this._dialogService.showLoadingDialog('Finalizing', 'Please wait...');
 
                                             // Get the S3 Delete URL
                                             this._backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
                                                 deleteURLResponse => {
-                                                    console.log(deleteURLResponse);
+                                                    this._console.log(deleteURLResponse);
                                                     if (deleteURLResponse != null && deleteURLResponse.result === 'OK') {
                                                         // Delete file from S3
                                                         this._httpClient.delete(deleteURLResponse.url).subscribe(
                                                             responseDelete => {
-                                                                console.table(responseDelete);
+                                                                this._console.table(responseDelete);
                                                                 // Success
-                                                                this._toastService.showSuccessToast("File imported!");
+                                                                this._toastService.showSuccessToast('File imported!');
                                                                 this._dialogService.closeDialog();
-                                                                this._dialogService.showSuccessDialog("Success", "Data imported successfully!");
+                                                                this._dialogService.showSuccessDialog('Success', 'Data imported successfully!');
                                                             },
                                                             error => {
-                                                                console.error(error);
+                                                                this._console.error(error);
                                                                 this._dialogService.closeDialog();
-                                                                this._dialogService.showErrorDialog("Error", "Error uploading file!");
+                                                                this._dialogService.showErrorDialog('Error', 'Error uploading file!');
                                                             }
                                                         );
                                                     }
                                                     else {
                                                         this._dialogService.closeDialog();
-                                                        console.error(createURLResponse.reason);
+                                                        this._console.error(createURLResponse.reason);
                                                         // Show error snackbar
                                                         this._toastService.showErrorToast(createURLResponse.reason);
                                                     }
                                                 }, error => {
                                                     // Error occured!
                                                     this._dialogService.closeDialog();
-                                                    this._toastService.showErrorToast("An error occured!", error);
+                                                    this._toastService.showErrorToast('An error occured!', error);
 
                                                 }
                                             )
                                         }
                                         else {
                                             // Failure
-                                            console.error(importFileFromS3Response.reason);
-                                            this._toastService.showErrorToast("File import error!");
-                                            this._dialogService.showLoadingDialog("Finalizing", "Please wait...");
+                                            this._console.error(importFileFromS3Response.reason);
+                                            this._toastService.showErrorToast('File import error!');
+                                            this._dialogService.showLoadingDialog('Finalizing', 'Please wait...');
 
                                             // Get the S3 Delete URL
                                             this._backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
                                                 deleteURLResponse => {
-                                                    console.log(deleteURLResponse);
+                                                    this._console.log(deleteURLResponse);
                                                     if (deleteURLResponse != null && deleteURLResponse.result === 'OK') {
                                                         // Delete file from S3
                                                         this._httpClient.delete(deleteURLResponse.url).subscribe(
                                                             responseDelete => {
-                                                                console.table(responseDelete);
+                                                                this._console.table(responseDelete);
                                                                 // Show error
                                                                 this._dialogService.closeDialog();
-                                                                this._dialogService.showErrorDialog("Error", importFileFromS3Response.reason);
+                                                                this._dialogService.showErrorDialog('Error', importFileFromS3Response.reason);
                                                             },
                                                             error => {
-                                                                console.error(error);
+                                                                this._console.error(error);
                                                                 this._dialogService.closeDialog();
-                                                                this._dialogService.showErrorDialog("Error", "Error deleting file!");
+                                                                this._dialogService.showErrorDialog('Error', 'Error deleting file!');
                                                             }
                                                         );
                                                     }
                                                     else {
                                                         this._dialogService.closeDialog();
-                                                        console.error(createURLResponse.reason);
+                                                        this._console.error(createURLResponse.reason);
                                                         // Show error snackbar
                                                         this._toastService.showErrorToast(createURLResponse.reason);
                                                     }
                                                 }, error => {
                                                     // Error occured!
                                                     this._dialogService.closeDialog();
-                                                    this._toastService.showErrorToast("An error occured!", error);
+                                                    this._toastService.showErrorToast('An error occured!', error);
 
                                                 }
                                             )
@@ -453,42 +455,42 @@ export class ImportExportService {
                                     }, error => {
                                         // Error occured!
                                         this._dialogService.closeDialog();
-                                        this._toastService.showErrorToast("An error occured!", error);
+                                        this._toastService.showErrorToast('An error occured!', error);
 
                                     }
-                                )
+                                );
                             },
                             error => {
-                                console.error(error);
+                                this._console.error(error);
                                 this._dialogService.closeDialog();
-                                this._dialogService.showErrorDialog("Error", "Error uploading file!");
+                                this._dialogService.showErrorDialog('Error', 'Error uploading file!');
                             }
                         );
                     }
                     else {
                         this._dialogService.closeDialog();
-                        console.error(createURLResponse.reason);
+                        this._console.error(createURLResponse.reason);
                         // Show error snackbar
                         this._toastService.showErrorToast(createURLResponse.reason);
                     }
                 }, error => {
                     // Error occured!
                     this._dialogService.closeDialog();
-                    this._toastService.showErrorToast("An error occured!", error);
+                    this._toastService.showErrorToast('An error occured!', error);
 
                 }
             )
         }
     }
 
-    requestImport(entryName = "") {
+    requestImport(entryName = '') {
         this.onImportRequested.emit(entryName);
     }
 
     requestAdvancedImport(label: string) {
         // if label is null, this must be normal CSV
         if (label === null) {
-            this.onImportRequested.emit("");
+            this.onImportRequested.emit('');
         }
         else {
             // label is not null, request if item with label exists in current list
@@ -524,7 +526,7 @@ export class ImportExportService {
         }
     }
 
-    requestGetTemplate(entryName = "") {
+    requestGetTemplate(entryName = '') {
         this.onGetTemplateRequested.emit(entryName);
     }
 

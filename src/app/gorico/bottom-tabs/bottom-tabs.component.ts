@@ -4,6 +4,7 @@ import { tableViewParams } from 'app/gorico/views/table/table-view.component';
 import { formTableViewParams } from '../views/form-table/form-table-view.component';
 import { Subscription } from 'rxjs';
 import { NgxPubSubService } from "@pscoped/ngx-pub-sub";
+import { ConsoleLoggerService } from '../services/console_logger.service';
 
 
 export interface TabType {
@@ -44,7 +45,9 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
 
     firstLoad: boolean = true;
 
-    constructor(private cdRef: ChangeDetectorRef, private pubsubService: NgxPubSubService) { }
+    constructor(private cdRef: ChangeDetectorRef, 
+                private pubsubService: NgxPubSubService,
+                private _console: ConsoleLoggerService) { }
 
     ngOnChanges(changes) {
         const _this = this;
@@ -142,7 +145,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
     }
 
     reload() {
-        console.log('onReload: bottom-tabs');
+        this._console.log('onReload: bottom-tabs');
         this.clearTabs();
         this.onReload.emit();
     }

@@ -11,6 +11,7 @@ import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
 import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
 import { HelperService } from 'app/gorico/services/helper.service';
+import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 
 export interface tableViewParams {
     entryName: string;
@@ -145,21 +146,22 @@ export class TableViewComponent implements OnChanges {
         private _reportService: ReportService,
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
-        private _messagesService: MessagesService
+        private _messagesService: MessagesService,
+        private _console: ConsoleLoggerService
     ) {
 
         this.calculateTableHeight();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        let _this = this;
-        console.log(`isCurTab: ${_this.isCurTab}`);
+        const _this = this;
+        _this._console.log(`isCurTab: ${_this.isCurTab}`);
 
         if (changes.tableData) {
             _this.quickAddFormParams.entryName = _this.tableData.entryName;
             _this.quickAddFormParams.keys = _this.tableData.keys;
 
-            console.table({ data: _this.tableData, change: 'tableData', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
+            _this._console.table({ data: _this.tableData, change: 'tableData', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
 
             // Check if it is main table
             if (!_this.isTabMode) {
@@ -177,9 +179,9 @@ export class TableViewComponent implements OnChanges {
             }
         }
         else if (changes.isCurTab) {
-            console.log("inside table-view isCurTab changes!");
+            _this._console.log("inside table-view isCurTab changes!");
 
-            console.table({ change: 'isCurTab', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
+            _this._console.table({ change: 'isCurTab', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
 
             if (_this.isTabMode && _this.isCurTab) {
                 this.loadData();
@@ -211,7 +213,7 @@ export class TableViewComponent implements OnChanges {
             result => {
                 if (result.result === 'OK' && result.data != null && result.data.table_keys != null) {
                     const params = result.data;
-                    console.table(params);
+                    _this._console.table(params);
                     _this.viewKeys = params.table_keys;
                     _this.searchKeys = params.search_keys;
                     _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
@@ -220,14 +222,14 @@ export class TableViewComponent implements OnChanges {
                     _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
                     _this.loadTable(null);
 
-                    console.log(_this.viewKeys);
+                    _this._console.log(_this.viewKeys);
 
                     _this.loadStyle(params.table_keys);
                     _this.loadLevel(params.table_keys);
 
                     // Load Import Queries list if available
                     if (params.importQueries && params.importQueries.tableQueries) {
-                        console.log('importQueries', params.importQueries);
+                        _this._console.log('importQueries', params.importQueries);
                         _this._importExportService.updateImportList(_this.tableData.entryName, params.importQueries.tableQueries);
                     }
                     else {
@@ -236,7 +238,7 @@ export class TableViewComponent implements OnChanges {
 
                     // Load Export Queries list if available
                     if (params.exportQueries && params.exportQueries.tableQueries) {
-                        console.log('exportQueries', params.exportQueries);
+                        _this._console.log('exportQueries', params.exportQueries);
                         _this._importExportService.updateExportList(_this.tableData.entryName, params.exportQueries.tableQueries);
                     }
                     else {
@@ -282,7 +284,7 @@ export class TableViewComponent implements OnChanges {
         _this.isLoading = true;
         _this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, search_keys, false, false, null, false).subscribe(
             results => {
-                console.log(results);
+                _this._console.log(results);
                 if (results.result === 'OK') {
                     _this.showAdvSearch = false;
                     results = results.data;
@@ -335,7 +337,7 @@ export class TableViewComponent implements OnChanges {
                     this.isLevel = key.key;
                 }
                 else {
-                    console.error("More than one isLevel key defined!");
+                    this._console.error("More than one isLevel key defined!");
                 }
             }
             else if (key.hasLevel) {
@@ -346,8 +348,8 @@ export class TableViewComponent implements OnChanges {
             }
         });
 
-        console.log('isLevel', this.isLevel);
-        console.log('hasLevel', this.hasLevel);
+        this._console.log('isLevel', this.isLevel);
+        this._console.log('hasLevel', this.hasLevel);
     }
 
     getLevel(row, key) {
@@ -442,7 +444,7 @@ export class TableViewComponent implements OnChanges {
     }
 
     search_submit(value: any) {
-        console.log(value);
+        this._console.log(value);
         // clean-up null or empty values
         let cleanedValues = {};
         for (const key in value) {
@@ -555,7 +557,7 @@ export class TableViewComponent implements OnChanges {
     }
 
     reload() {
-        console.log('onReload: table-view');
+        this._console.log('onReload: table-view');
         this.onReload.emit();
     }
 

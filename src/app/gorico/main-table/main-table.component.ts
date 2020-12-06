@@ -19,6 +19,7 @@ import { ReportService } from '../services/report.service';
 import { NavigationService, HideAction } from '../services/navigation.service';
 import { MessageView } from '../services/messages.service';
 import { ScrollService } from '../services/scroll.service';
+import { ConsoleLoggerService } from '../services/console_logger.service';
 
 @Component({
     selector: 'main-table',
@@ -102,7 +103,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         private _importExportService: ImportExportService,
         private _reportService: ReportService,
         private _navigationService: NavigationService,
-        private _cdr: ChangeDetectorRef) {
+        private _cdr: ChangeDetectorRef,
+        private _console: ConsoleLoggerService) {
     }
 
     ngOnInit(): void {
@@ -215,7 +217,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                         (_this.tableType === 'form'), false, null, true).subscribe(
                             response => {
                                 _this._dialogService.closeDialog();
-                                console.log(response);
+                                _this._console.log(response);
                                 if (response.result === 'OK') {
                                     // File is okay.
                                     // Let's try to download it using simple window method first
@@ -460,7 +462,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     reload() {
-        console.log('onReload: main-table');
+        this._console.log('onReload: main-table');
         this.formView.refreshView();
     }
 
