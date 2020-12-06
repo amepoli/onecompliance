@@ -18,27 +18,27 @@ export class ConsoleLoggerService implements ILoggerService {
     environment = appData.environment;
 
     info(value: any, ...rest: any[]): void {
-        if (!this.environment.production)
+        if (this.environment !== 'production')
             console.info(value, rest);
     }
 
     log(value: any, ...rest: any[]): void {
-        if (!this.environment.production)
+        if (this.environment !== 'production')
             console.log(value, rest);
     }
 
     warn(value: any, ...rest: any[]): void {
-        if (!this.environment.production)
+        if (this.environment !== 'production')
             console.warn(value, rest);
     }
 
     error(value: any, ...rest: any[]): void {
-        if (!this.environment.production)
+        if (this.environment !== 'production')
             console.error(value, rest);
     }
 
     table(value: any, ...rest: any[]): void {
-        if (!this.environment.production)
+        if (this.environment !== 'production')
             console.table(value, rest);
     }
 }
