@@ -140,8 +140,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     attributes: any[] = null;
 
-    private firstRefresh = true;
-
     private addingNew = false;   // avoid to trigger a refresh (with related events) when adding a row  
 
     private margins = 2; // % of margins, considering left and right
@@ -176,6 +174,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         if (changes.formParams && this.formParams) {
             if (!this.addingNew) {
                 if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) !== JSON.stringify(changes.formParams.currentValue))) {
+                    // unsubscribe and then subscribe again
+                    this.formSubscriptions.forEach(subscription => {
+                        subscription.unsubscribe();
+                    });
                     this.refreshView(true);
                 }
             }
@@ -314,8 +316,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
                     _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables });
                     // handle input events
-                    if (_this.firstRefresh || reloadEvents) {
-                        _this.firstRefresh = false;     // avoid to subscribe to events again when refreshed
+                    if (reloadEvents) {
                         if (params.inputEvents != null) {  // subscribe to global table events
                             params.inputEvents.forEach(event => {
                                 const subcription = _this.pubsubService.subscribe(event.eventName,
