@@ -6,11 +6,6 @@
     "predefinedQueries": [
         {
             "type": "main",
-            "operation": "selectTable",
-            "queryString": "SELECT mt.codice_azienda, mt.id_modello_test, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mt.codice_azienda=$codice_azienda$ and mt.id_modello_test=$id_modello_test$;"
-        },
-        {
-            "type": "main",
             "operation": "insert",
             "queryString": "select entrasp.modello_test_insert(codiceazienda=>$codice_azienda$::varchar, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>'€flag_applicazione_singola€',  id_filtro_selezione=>$id_filtro_selezione$, documentazione_necessaria=>$documentazione_necessaria$, flag_sezioni=>'€flag_sezioni€', giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$, codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, codice_esterno=>$codice_esterno$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>'€flag_mostra_punteggi€', id_risultato=>$id_risultato$);"
         },
@@ -676,13 +671,21 @@
     "table_keys": [
         {
             "format": {
-                "dataType": "text",
-                "value": "DEMO"
+                "dataType": "text"
             },
             "isHidden": true,
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "label": "ID Versione"
         },
         {
             "format": {
