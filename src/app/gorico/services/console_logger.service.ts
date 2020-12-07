@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { default as appData } from '../../../../appData.json';
+import { default as appData } from '../../../../appdata.json';
 
 export interface ILoggerService {
     info(value: any, ...rest: any[]): void;
