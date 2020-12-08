@@ -36,7 +36,7 @@
         {
             "operation": "selectForm",
             "type": "postProcessing",
-            "queryString": "select idrisultato as id_risultato, codice_colore, codice_colore_completato, percentuale as ris_percentuale, sondaggio_completato from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)"
+            "queryString": "select idrisultato as id_risultato, percentuale as ris_percentuale, sondaggio_completato from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)"
         },
         {
             "operation": "insert",
@@ -64,7 +64,7 @@
                     "actionType": "query",
                     "queryFunct": "select entrasp.sondaggio_delete($codice_azienda$, $id_sondaggio$)"
                 }
-            }    
+            }
         }
     ],
     "form_keys": [
@@ -592,42 +592,6 @@
                 "dataType": "text",
                 "viewType": "input"
             },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "codice_colore",
-            "outputEvent": {
-                "eventName": "codice_colore_change",
-                "eventTrigger": "change"
-            },
-            "label": "codice_colore",
-            "sameOrigin": false,
-            "newLine": true,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "codice_colore_completato",
-            "outputEvent": {
-                "eventName": "codice_colore_completato_change",
-                "eventTrigger": "change"
-            },
-            "label": "codice_colore_completato",
-            "sameOrigin": false,
-            "newLine": true,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
             "isHidden": false,
             "isPrimary": false,
             "key": "criterio_analisi",
@@ -647,17 +611,38 @@
             "isPrimary": false,
             "key": "sondaggio_completato",
             "label": "Completo sì/no",
-            "sameOrigin": false,
             "newLine": false,
             "readOnly": true,
             "inputEvents": [
                 {
-                    "eventName": "codice_colore_completato_change",
+                    "eventName": "onSaveSondaggio",
                     "condition": "none",
                     "values": [],
-                    "actionType": "update_style",
+                    "actionType": "query_style",
                     "styleAttribute": "background_color",
-                    "updateFunct": "'£codice_colore_completato£'"
+                    "queryFunct": "SELECT codice_colore_completato as sondaggio_completato_background_color FROM entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$);"
+                },
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT codice_colore_completato as sondaggio_completato_background_color FROM entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$);"
+                },
+                {
+                    "eventName": "onSaveSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "SELECT sondaggio_completato FROM entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$);"
+                },
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "SELECT sondaggio_completato FROM entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$);"
                 }
             ],
             "size": 3
@@ -689,40 +674,46 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT pct_da AS id, giudizio AS name  FROM entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$);",
-                "options": [],
-                "viewType": "combobox",
+                "viewType": "input",
                 "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "pct_da",
+            "key": "giudizio",
             "label": "Giudizio",
+            "sameOrigin": false,
             "newLine": false,
             "readOnly": true,
             "inputEvents": [
-                {
-                    "eventName": "codice_colore_change",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "update_style",
-                    "styleAttribute": "background_color",
-                    "updateFunct": "'£codice_colore£'"
-                },
                 {
                     "eventName": "onSaveSondaggio",
                     "condition": "none",
                     "values": [],
                     "actionType": "query_style",
                     "styleAttribute": "background_color",
-                    "queryFunct": "SELECT codice_colore as pct_da_background_color FROM entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$);"
+                    "queryFunct": "SELECT codice_colore as giudizio_background_color FROM entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$);"
+                },
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT codice_colore as giudizio_background_color FROM entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$);"
                 },
                 {
                     "eventName": "onSaveSondaggio",
                     "condition": "none",
                     "values": [],
                     "actionType": "query",
-                    "queryFunct": "SELECT pct_da FROM entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$);"
+                    "queryFunct": "SELECT giudizio FROM entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$);"
+                },
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "SELECT giudizio FROM entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$);"
                 }
             ],
             "size": 1.5

@@ -5,14 +5,14 @@
   "entryKey": "sondaggi_somministrati",
   "outputEvents": [
     {
-        "eventName": "onSaveSomministrazione",
-        "eventTrigger": "onSave"
+      "eventName": "onSaveSomministrazione",
+      "eventTrigger": "onSave"
     },
     {
-        "eventName": "onLoadSomministrazione",
-        "eventTrigger": "onReload"
+      "eventName": "onLoadSomministrazione",
+      "eventTrigger": "onReload"
     }
-],
+  ],
   "predefinedQueries": [
     {
       "operation": "selectTable",
@@ -32,7 +32,7 @@
     {
       "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "select colore_somministrazione_completa, codice_colore, round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+      "queryString": "select round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
     }
   ],
   "form_keys": [
@@ -277,42 +277,6 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_colore",
-      "outputEvent": {
-        "eventName": "codice_colore_change",
-        "eventTrigger": "change"
-      },
-      "label": "codice_colore",
-      "sameOrigin": false,
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "colore_somministrazione_completa",
-      "outputEvent": {
-        "eventName": "colore_somministrazione_completa_change",
-        "eventTrigger": "change"
-      },
-      "label": "codice_colore",
-      "sameOrigin": false,
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
       "isHidden": false,
       "isPrimary": false,
       "key": "criterio_analisi",
@@ -336,15 +300,36 @@
       "label": "Completo sì/no",
       "inputEvents": [
         {
-          "eventName": "colore_somministrazione_completa_change",
-          "condition": "none",
-          "values": [],
-          "actionType": "update_style",
-          "styleAttribute": "background_color",
-          "updateFunct": "'£colore_somministrazione_completa£'"
+            "eventName": "onSaveSomministrazione",
+            "condition": "none",
+            "values": [],
+            "actionType": "query_style",
+            "styleAttribute": "background_color",
+            "queryFunct": "SELECT colore_somministrazione_completa as somministrazione_completata_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+            "eventName": "onLoadSomministrazione",
+            "condition": "none",
+            "values": [],
+            "actionType": "query_style",
+            "styleAttribute": "background_color",
+            "queryFunct": "SELECT colore_somministrazione_completa as somministrazione_completata_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+            "eventName": "onSaveSomministrazione",
+            "condition": "none",
+            "values": [],
+            "actionType": "query",
+            "queryFunct": "SELECT sondaggio_completato as somministrazione_completata FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+            "eventName": "onLoadSomministrazione",
+            "condition": "none",
+            "values": [],
+            "actionType": "query",
+            "queryFunct": "SELECT sondaggio_completato as somministrazione_completata FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
         }
-      ],
-      "sameOrigin": false,
+    ],
       "newLine": false,
       "readOnly": true,
       "size": 1.5
@@ -380,45 +365,51 @@
       "size": 0.75
     },
     {
-        "autoGenerate": false,
-        "format": {
-            "comboQuery": "SELECT pct_da AS id, giudizio AS name  FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);",
-            "options": [],
-            "viewType": "combobox",
-            "dataType": "text"
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "giudizio",
+      "label": "Giudizio",
+      "sameOrigin": false,
+      "newLine": false,
+      "readOnly": true,
+      "inputEvents": [
+        {
+          "eventName": "onLoadSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "SELECT codice_colore as giudizio_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
         },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "pct_da",
-        "label": "Giudizio",
-        "newLine": false,
-        "readOnly": true,
-        "inputEvents": [
-            {
-                "eventName": "codice_colore_change",
-                "condition": "none",
-                "values": [],
-                "actionType": "update_style",
-                "styleAttribute": "background_color",
-                "updateFunct": "'£codice_colore£'"
-            },
-            {
-                "eventName": "onSaveSomministrazione",
-                "condition": "none",
-                "values": [],
-                "actionType": "query_style",
-                "styleAttribute": "background_color",
-                "queryFunct": "SELECT codice_colore as pct_da_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
-            },
-            {
-                "eventName": "onSaveSomministrazione",
-                "condition": "none",
-                "values": [],
-                "actionType": "query",
-                "queryFunct": "SELECT pct_da FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
-            }
-        ],
-        "size": 1.5
+        {
+          "eventName": "onLoadSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "SELECT codice_colore as giudizio_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+          "eventName": "onSaveSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "SELECT giudizio FROM entrasp.grc_punteggi_giudizi($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+          "eventName": "onSaveSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "SELECT pct_da FROM entrasp.grc_punteggi_giudizi($codice_azienda$, $iid_somministrazione$);"
+        }
+      ],
+      "size": 1.5
     },
     {
       "autoGenerate": false,
