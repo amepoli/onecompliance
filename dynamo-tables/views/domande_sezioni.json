@@ -72,13 +72,24 @@
         "eventTrigger": "press"
       },
       "inputEvents": [
-   
         {
           "eventName": "sezioni_cancella",
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.sezioni_domande_delete ($codice_azienda$, $id_sezione$, $id_modello_test$, $id_modello_test_vr$)"
+          "queryFunct": "select entrasp.sezioni_domande_delete ($codice_azienda$, $id_sezione$, $id_modello_test$, $id_modello_test_vr$)",
+          "message": {
+            "messageText": "Sei sicuro di voler cancellare questa sezione? (le domande presenti saranno spostate nell'ultima sezione)",
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select id_modello_test from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test_vr=$id_modello_test_vr$"
+            },
+            "actionOnYes": {
+              "actionType": "query",
+              "queryFunct": "select entrasp.sezioni_domande_delete ($codice_azienda$, $id_sezione$, $id_modello_test$, $id_modello_test_vr$);"
+            }
+          },
+          "outputEventWhenComplete": "reLoad_form_domande_sezioni"
         }
       ],
       "readOnly": false,
@@ -187,6 +198,10 @@
       },
       "actionType": "navigate",
       "eventName": "navigate_to_sezioni_detail"
+    },
+    {
+      "actionType": "reload",
+      "eventName": "reLoad_form_domande_sezioni"
     }
   ]
 }
