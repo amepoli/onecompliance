@@ -10,8 +10,13 @@
     },
     {
       "type": "main",
+      "operation": "selectForm",
+      "queryString": "select *, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti WHERE codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+    },
+    {
+      "type": "main",
       "operation": "selectTable",
-      "queryString": "select *, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti;"
+      "queryString": "select *, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti WHERE 1=1"
     }
   ],
   "form_keys": [
@@ -239,6 +244,17 @@
   "origin": "entrasp.compiti",
   "search_keys": [
     {
+      "fieldName": "codice_azienda",
+      "format": {
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Azienda",
+      "newLine": false,
+      "queryCond": "codice_azienda='€codice_azienda€'"
+    },
+    {
       "fieldName": "stato",
       "format": {
         "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
@@ -350,10 +366,11 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_codifica_stato",
-      "label": "codice_codifica_stato"
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda",
+      "width": "6%"
     },
     {
       "format": {
@@ -382,15 +399,6 @@
         }
       ]
     },
-        {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda"
-    },
     {
       "format": {
         "dataType": "text"
@@ -418,7 +426,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo",
-      "width": "40%",
+      "width": "35%",
       "label": "Titolo"
     },
     {
@@ -428,7 +436,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "note",
-      "width": "45%",
+      "width": "40%",
       "label": "Note"
     },
     {
