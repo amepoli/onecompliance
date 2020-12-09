@@ -1021,11 +1021,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 // Initialize with No action info
                 var actionType = event.message.actionOnNo.actionType;
                 var queryFunct = event.message.actionOnNo.queryFunct;
+                var action = 'actionNo';
 
                 // If user clicked yes, load yes action info 
                 if (result.value === true) {
                     actionType = event.message.actionOnYes.actionType;
                     queryFunct = event.message.actionOnYes.queryFunct;
+                    action = 'actionYes'
                 }
 
                 // Let's perform Yes Action
@@ -1080,7 +1082,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             }
                         }
-                        _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, keyListener, chiavi, event.eventName, result ? 'actionYes' : 'actionNo', true).subscribe(
+                        _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, keyListener, chiavi, event.eventName, action, true).subscribe(
                             result => {
                                 if (result.result === 'OK') {
                                     _this._console.table(result);
