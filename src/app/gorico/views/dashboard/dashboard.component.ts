@@ -1,4 +1,4 @@
-import { Component, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ViewChild, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { default as italiano } from './it.json';
 import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4.js';
 import { BackendService } from '../backend/backend.service';
@@ -7,6 +7,7 @@ import { _MatChipListMixinBase } from '@angular/material';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { ReportService } from 'app/gorico/services/report.service';
 
 
 export interface DashboardParams {
@@ -32,12 +33,13 @@ export interface DashboardCellEvent {
 })
 
 
-export class DashboardComponent {
+export class DashboardComponent implements AfterViewInit {
 
     constructor(private backendService: BackendService,
         private authService: AuthService,
         private _toastService: ToastService,
-        private _console: ConsoleLoggerService) { }
+        private _console: ConsoleLoggerService,
+        private _reportService: ReportService) { }
 
     @ViewChild('pivot1') child: WebDataRocksPivot;
 
@@ -47,6 +49,11 @@ export class DashboardComponent {
 
     @Output() cellClick = new EventEmitter<DashboardCellEvent>();
 
+
+    ngAfterViewInit(){
+        this._reportService.getReports('dashboard', null, null, true);
+    }
+    
     onPivotReady(pivot: WebDataRocks.Pivot): void {
         this._console.log('pivot table ready');
     }
