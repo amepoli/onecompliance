@@ -7,13 +7,19 @@
       "type": "main",
       "operation": "insert",
       "queryString": "select entrasp.compito_insert(codiceazienda=>$codice_azienda$, codice_compito=>$codice_compito$, ute_ins=>$ute_ins$::varchar,  data_ins=>'€data_ins€', id_cliente=>$id_cliente$, data_segnalazione=>'€data_segnalazione€', titolo=>$titolo$,  note=>$note$, id_centro_gest=>$id_centro_gest$, stato=>$stato$, id_responsabile=>$id_responsabile$,  id_tipo_segnalazione=>$id_tipo_segnalazione$);"
+    },
+    {
+      "type": "main",
+      "operation": "selectTable",
+      "queryString": "select codice_codifica_stato, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)as stato, codice_azienda, codice_compito, data_segnalazione, titolo, id_tipo_segnalazione, id_centro_gest from entrasp.compiti where codice_azienda='€global_codice_azienda€' and id_tipo_segnalazione!=0"
     }
+
   ],
   "form_keys": [
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni where codice_azienda = $codice_azienda$;",
+        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni where codice_azienda = $codice_azienda$ and id_tipo_segnalazione!=0;",
         "options": [],
         "viewType": "combobox"
       },
