@@ -124,7 +124,7 @@ function getURLFromServer(mainQuery, company, username, idAnagrafica) {
 
 }
 
-async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, isForm) {
+async function getQuery(entry_name, queryString, keyPrefix, ignorePrefixInSearchKey, keys, search_keys, isForm) {
     let query = queryString;
 
     if (query == null || query === '') {
@@ -179,7 +179,7 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
                 let search_param = search_params.find(s => (s.fieldName === key));
                 if (search_param != null && search_param.queryCond != null) {
                     let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
-                    query = query + comma + keyPrefix + fieldString;
+                    query = query + comma + (!ignorePrefixInSearchKey ? keyPrefix : '') + fieldString;
                     comma = ' AND '; // needed only the first time if no table_keys
                 }
             }
@@ -187,6 +187,9 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
     }
 
     query = query + ';';
+
+    console.log(query);
+
     return query;
 }
 
@@ -339,8 +342,9 @@ exports.handler = async (event, context) => {
         } else if (requestType === 'getReport') {
             reportDynamoParams.Key.name = reportName;
             var data = await dynamo.get(reportDynamoParams).promise();
-            const keyPrefix = data.Item.tableNickname != null ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
-            const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, keys, search_keys, isFormRecord);
+            const keyPrefix = data.Item.tableNickname ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
+            const ignorePrefixInSearchKey = data.Item.ignorePrefixInSearchKey ? true : false;
+            const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, ignorePrefixInSearchKey, keys, search_keys, isFormRecord);
             const mainQuery = { name: reportName, query: queryString };
             const userId = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
 
