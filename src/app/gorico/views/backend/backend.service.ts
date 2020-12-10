@@ -132,7 +132,7 @@ export class BackendService {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), form: isFormView ? 1 : 0 };
     if (search_keys != null) {
-      this.myPutPostInit.queryStringParameters['search_keys'] = search_keys;
+      this.myPutPostInit.queryStringParameters['search_keys'] = JSON.stringify(search_keys);
     }
     this.myPutPostInit.body = reportName;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.reportsApiName, this.myPutPostInit));
