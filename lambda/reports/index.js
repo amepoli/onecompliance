@@ -167,8 +167,8 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
         }
     }
 
-    if (search_keys) {
-        let search_params = entry_params.search_keys;
+    if (search_keys && entry_params.Item.search_keys) {
+        let search_params = entry_params.Item.search_keys;
         let search_types = search_params.map(k => {
             let dataType = k.format.dataType ? k.format.dataType : '';
             return { key: k.fieldName, dataType: dataType };
