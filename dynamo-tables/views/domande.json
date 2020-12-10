@@ -21,6 +21,11 @@
       "operation": "update",
       "queryString": "SELECT entrasp.domande_insert_update(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idmodellotestvr=>$id_modello_test_vr$::numeric, iddomanda=>$id_domanda$::numeric, descrizione_=>$descrizione$::text, note_=>$note$::text, punteggio_=>$punteggio$::numeric, flagrispostamultipla=>'€flag_risposta_multipla€'::character, ord=> $ordinamento$::numeric, idtemplaterp=>$risposte$, idsezione=>$id_sezione$);",
       "type": "main"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.risposte rp set punteggio = dm.punteggio from entrasp.domande dm where rp.codice_azienda= dm.codice_azienda and rp.id_domanda = dm.id_domanda and rp.id_modello_test = dm.id_modello_test and rp.id_modello_test_vr = dm.id_modello_test_vr and rp.punteggio!=dm.punteggio and rp.codice_azienda = $codice_azienda$ and rp.id_modello_test =$id_modello_test$ and rp.id_domanda =$id_domanda$ and rp.id_modello_test_vr = $id_modello_test_vr$;",
+      "type": "postProcessing"
     }
   ],
   "entryKey": "domande",
