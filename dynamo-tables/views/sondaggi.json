@@ -16,12 +16,12 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select sn.*, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, sn.pct_da_manuale, sn.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, sn.pct_da, sn.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', sn.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi sn inner join entrasp.modelli_test_vr mvr on sn.codice_azienda=mvr.codice_azienda and sn.id_modello_test=mvr.id_modello_test and sn.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on sn.codice_azienda=mt.codice_azienda and sn.id_modello_test=mt.id_modello_test where sn.codice_azienda=$codice_azienda$"
+            "queryString": "select snd.*, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$"
         },
         {
             "operation": "selectForm",
             "type": "preProcessing",
-            "queryString": "update entrasp.sondaggi sn set sondaggio_completato=pfs.sondaggio_completato, pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE sn.codice_azienda=$codice_azienda$ AND sn.id_sondaggio=$id_sondaggio$;"
+            "queryString": "update entrasp.sondaggi snd set sondaggio_completato=pfs.sondaggio_completato, pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE snd.codice_azienda=$codice_azienda$ AND snd.id_sondaggio=$id_sondaggio$;"
         },
         {
             "operation": "selectForm",
@@ -853,7 +853,7 @@
             },
             "label": "Id Modello di Test",
             "newLine": false,
-            "queryCond": "sn.id_modello_test=$id_modello_test$"
+            "queryCond": "snd.id_modello_test=$id_modello_test$"
         },
         {
             "fieldName": "id_tipo_modello_test",
@@ -874,7 +874,7 @@
             },
             "label": "id Sondaggio",
             "newLine": false,
-            "queryCond": "sn.id_sondaggio=$id_sondaggio$"
+            "queryCond": "snd.id_sondaggio=$id_sondaggio$"
         },
         {
             "fieldName": "data_comp",
@@ -884,7 +884,7 @@
             },
             "label": "Data Competenza",
             "newLine": true,
-            "queryCond": "sn.data_comp='€data_comp€'"
+            "queryCond": "snd.data_comp='€data_comp€'"
         },
         {
             "fieldName": "id_centro_gest",
@@ -895,7 +895,7 @@
             },
             "label": "Centro Gestionale",
             "newLine": false,
-            "queryCond": "sn.id_centro_gest=$id_centro_gest$"
+            "queryCond": "snd.id_centro_gest=$id_centro_gest$"
         },
         {
             "fieldName": "stato",
@@ -906,7 +906,7 @@
             },
             "label": "Stato",
             "newLine": true,
-            "queryCond": "sn.stato='€stato€'"
+            "queryCond": "snd.stato='€stato€'"
         }
     ],
     "subTables": [
