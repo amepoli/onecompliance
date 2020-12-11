@@ -833,7 +833,7 @@ async function processAttributeQueries(entry_params, keys, client) {
     return attributes;
 }
 
-async function processPreMainPost(queryString, client, notFullTable) {
+async function processPreMainPost(queryString, client, notFullTable, isGet) {
 
     let local_keys_pre = {}; // additional keys generated with pre-processing  
     let local_keys_post = {}; // additional keys generated with post-processing
@@ -878,8 +878,8 @@ async function processPreMainPost(queryString, client, notFullTable) {
     // post-processing, exclude table view
     if (queryString.postProcessQueries != null && queryString.postProcessQueries.length) { // post-processing 
         let haveMainData = queryData.length > 0;
-        // let maxindex = haveMainData ? queryData.length : 1; // run the queries once if e.g. is insert/update or no rows
-        let maxindex = queryData.length;
+        // let maxindex = haveMainData ? queryData.length : 1; 
+        let maxindex = isGet ? queryData.length : 1; // run the queries once if is insert/update/delete, one per row if get
         for (let row_index = 0; row_index < maxindex ; row_index++) {
             local_keys_post = haveMainData ? Object.assign(local_keys_pre, queryData[row_index]) : local_keys_post;
             for (let index = 0; index < queryString.postProcessQueries.length; index++) {
@@ -1324,7 +1324,7 @@ exports.handler = async (event, context) => {
             queryData = await processDashboard(queryString, client);
         } else {
             // process query string(s) 
-            queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'));
+            queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'), (method ==='GET'));
         }
 
         // process comboboxes and/or event queries 
@@ -1399,7 +1399,7 @@ exports.handler = async (event, context) => {
                 if (!newRecord) {
                     // have to check if the record exists (update) or is new (insert), so try to recover it
                     queryString = getTableQuery(entry_params, primaryKeys, true, null, additionalQueryCond);
-                    queryData = await processPreMainPost(queryString, client, true);
+                    queryData = await processPreMainPost(queryString, client, true, false);
                     // perform insert or update depending on previous query
                     newRecord = queryData.length ? false : true;
                 }
@@ -1411,7 +1411,7 @@ exports.handler = async (event, context) => {
             console.log('Insert/update queries: ', queryStrings);
             queryData = [];
             for (let index = 0; index < queryStrings.length; index++) {
-                let data = await processPreMainPost(queryStrings[index], client, true);
+                let data = await processPreMainPost(queryStrings[index], client, true, false);
                 queryData.push(data);
             }
         }
