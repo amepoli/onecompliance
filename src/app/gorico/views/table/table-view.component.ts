@@ -203,6 +203,9 @@ export class TableViewComponent implements OnChanges {
         this.searchData = null;
         this.dataSource = null;
 
+        this.searchKeys = null;
+        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
+    
     }
 
     public loadData() {
