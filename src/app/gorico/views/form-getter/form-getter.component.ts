@@ -245,7 +245,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     refreshView(reloadEvents: boolean = true) {
         const _this = this;
         _this.isLoading = true;
-
+        _this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
+    
         _this.backendService.getView(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.formParams.keys).subscribe(
             results => {
                 _this._console.log(results);
