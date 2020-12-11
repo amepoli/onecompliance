@@ -222,12 +222,12 @@
 				{
 					"attributeType": "style",
 					"styleAttribute": "background_color",
-					"queryString": "select case when count(id_progetto) = 0 then '#698EC2' else '#25599C' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+					"queryString": "select case when count(id_progetto) != 0 then '#698EC2' else '#25599C' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
 				},
 				{
 					"attributeType": "style",
 					"styleAttribute": "font_color",
-					"queryString": "select case when count(id_progetto) = 0 then '#5b635a' else 'white'  end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+					"queryString": "select case when count(id_progetto) != 0 then '#5b635a' else 'white'  end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
 				},
 				{
 					"attributeType": "readOnly",
@@ -270,37 +270,17 @@
 				"eventName": "codici_aggiorna",
 				"eventTrigger": "press"
 			},
-			"style": {
-				"background_color": "#698EC2",
-				"font_color": "#5b635a"
-			},
 			"inputEvents": [
 				{
 					"eventName": "codici_aggiorna",
 					"actionType": "query",
 					"condition": "none",
 					"values": [],
-					"queryFunct": "update entrasp.progetti_fasi set codice=entrasp.progetto_fase_codice(codice_azienda, id_fase, codice) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and codice is null;",
+					"queryFunct": "update entrasp.progetti_fasi set codice=entrasp.progetto_fase_codice(codice_azienda, id_fase, null) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;",
 					"outputEventWhenComplete": "formReload"
 				}
 			],
-			"attributeFuncts": [
-				{
-					"attributeType": "style",
-					"styleAttribute": "background_color",
-					"queryString": "select case when count(id_progetto) != 0 then '#698EC2' else '#25599C' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-				},
-				{
-					"attributeType": "style",
-					"styleAttribute": "font_color",
-					"queryString": "select case when count(id_progetto) != 0 then '#5b635a' else 'white'  end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-				},
-				{
-					"attributeType": "readOnly",
-					"queryString": "select case when count(id_progetto) != 0  then false else true end as label from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$"
-				}
-			],
-			"readOnly": true,
+			"readOnly": false,
 			"sameOrigin": false
 		}
 	],
