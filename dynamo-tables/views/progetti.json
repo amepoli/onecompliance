@@ -23,7 +23,26 @@
 		{
 			"eventName": "formReload",
 			"actionType": "reload"
-		}
+		},
+		{
+            "actionTarget": {
+                "name": "attivita",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_attivita",
+                        "destination": "codice_attivita"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_attivita_associata"
+        }
+       
 	],
 	"form_keys": [
 		{
@@ -48,6 +67,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
+			"size": 3,
 			"outputEvent": {
 				"eventName": "codice_colore_change_stato",
 				"eventTrigger": "select"
@@ -105,6 +125,7 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
+			"size": 3,
 			"newLine": false
 		},
 		{
@@ -118,7 +139,23 @@
 			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": true,
-			"newLine": true
+			"newLine": false,
+			"size": 2
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date",
+				"value": "£CURRENT_DATE£"
+			},
+			"label": "Data Inserimento",
+			"key": "data_inserimento",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true,
+			"size": 2
 		},
 		{
 			"autoGenerate": false,
@@ -133,7 +170,46 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true
+			"size": 8,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "modello_progetto",
+			"label": "Modello di progetto",
+			"size": 2,
+			"attributeFuncts": [
+				{
+					"attributeType": "style",
+					"styleAttribute": "background_color",
+					"queryString": "select case when entrasp.evaluate_given_field('codice_attivita', '$codice_attivita$') is null then '#698EC2' else '#25599C' end as label;"
+				},
+				{
+					"attributeType": "style",
+					"styleAttribute": "font_color",
+					"queryString": "select case when entrasp.evaluate_given_field('codice_attivita', '$codice_attivita$') is null then '#25599C' else 'white' end as label;"
+				},
+				{
+					"attributeType": "readOnly",
+					"queryString": "select case when entrasp.evaluate_given_field('codice_attivita', '$codice_attivita$') is null then true else false end as label;"
+				}
+			],
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "to_attivita_associata",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#698EC2",
+				"font_color": "#5b635a"
+			},
+			"readOnly": true,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -193,21 +269,8 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date",
-				"value": "£CURRENT_DATE£"
-			},
-			"label": "Data Inserimento",
-			"key": "data_inserimento",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
+			"newLine": false,
+			"size": 6
 		},
 		{
 			"autoGenerate": false,
@@ -254,7 +317,8 @@
 				}
 			],
 			"readOnly": true,
-			"sameOrigin": false
+			"sameOrigin": false,
+			"size": 2
 		},
 		{
 			"autoGenerate": false,
@@ -281,7 +345,8 @@
 				}
 			],
 			"readOnly": false,
-			"sameOrigin": false
+			"sameOrigin": false,
+			"size": 2
 		}
 	],
 	"search_keys": [
@@ -302,7 +367,7 @@
 				"viewType": "input"
 			},
 			"fieldName": "id_progetto",
-			"newLine": true,
+			"newLine": false,
 			"queryCond": "id_progetto=$id_progetto$"
 		},
 		{
