@@ -75,12 +75,17 @@
         },
         {
             "operation": "selectForm",
-            "queryString": "select id_risposta, risposta, id_risposta_prev as id_risposta_prev_radio, peso as peso_oa, note as note_rb, note as note_mc  from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$ limit 1",
+            "queryString": "select id_risposta, risposta, id_risposta_prev as id_risposta_prev_radio, peso as peso_rb, peso as peso_oa, note as note_rb, note as note_mc  from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$ limit 1",
             "type": "postProcessing"
         },
         {
             "operation": "selectForm",
             "queryString": "select id_risultato from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "select codice_colore as codice_colore_peso_rb_k, codice_colore as codice_colore_peso_oa_k from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto('€global_codice_azienda€'::varchar, £id_risultato£::numeric, coalesce(£peso_rb£, £peso_oa£)::numeric)",
             "type": "postProcessing"
         },
         {
@@ -344,7 +349,7 @@
                     "values": [],
                     "actionType": "query_style",
                     "styleAttribute": "background_color",
-                    "queryFunct": "select case when count(id_risposta)=0 then '#698EC2' else '#25599C' end as dettaglio_background_color from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+                    "queryFunct": "select case when count(id_risposta)=0 then '#698EC2' else '#25599C' end as dettaglio_background_color from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=$id_domanda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
                 },
                 {
                     "eventName": "onSaveD_R",
@@ -352,14 +357,14 @@
                     "values": [],
                     "actionType": "query_style",
                     "styleAttribute": "font_color",
-                    "queryFunct": "select case when count(id_risposta)=0 then '#5b635a' else 'white' end as dettaglio_font_color from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+                    "queryFunct": "select case when count(id_risposta)=0 then '#5b635a' else 'white' end as dettaglio_font_color from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=$id_domanda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
                 },
                 {
                     "eventName": "onSaveD_R",
                     "condition": "none",
                     "values": [],
                     "actionType": "readOnly",
-                    "queryFunct": "select case when count(id_risposta)=0 then true else false end as label from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+                    "queryFunct": "select case when count(id_risposta)=0 then true else false end as label from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=$id_domanda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
                 },
                 {
                     "eventName": "onLoadD_R",
@@ -487,6 +492,24 @@
                             "viewType": "input",
                             "dataType": "number"
                         }
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "codice_colore_peso_rb_k",
+                        "outputEvent": {
+                            "eventName": "codice_colore_change_peso_rb",
+                            "eventTrigger": "change"
+                        },
+                        "label": "codice_colore",
+                        "sameOrigin": false,
+                        "newLine": true,
+                        "readOnly": false
                     },
                     {
                         "isHidden": false,
