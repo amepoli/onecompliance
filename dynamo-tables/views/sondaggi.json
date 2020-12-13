@@ -46,7 +46,7 @@
         {
             "operation": "update",
             "type": "postProcessing",
-            "queryString": "update entrasp.progetti_fasi set stato=$stato$, codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)"
+            "queryString": "update entrasp.progetti_fasi set stato=$stato$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         }
     ],
     "entryKey": "sondaggi",
@@ -343,7 +343,8 @@
                         "C"
                     ],
                     "actionType": "query",
-                    "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$, $titolo$, $id_modello_test$, $id_modello_test_vr$, $data_esecuzione$::date, (select case when coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)=0 then false else true end));"
+                    "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$);",
+                    "outputEventWhenComplete": "survey_reload"
                 }
             ],
             "label": "ID Sondaggio Succ.",
@@ -495,6 +496,28 @@
             "label": "Centro Gestionale",
             "newLine": true,
             "size": 3,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Inserire una breve descrizione",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "newLine": false,
+            "textareaHeight": "L",
+            "size": 10,
             "readOnly": false
         },
         {
