@@ -66,6 +66,20 @@
       "readOnly": false
     },
     {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_somministrazione",
+      "label": "ID Somministrazione",
+      "newLine": false,
+      "readOnly": true,
+      "size": 2.25
+    },
+    {
       "autoGenerate": false,
       "format": {
         "dataType": "number",
@@ -80,20 +94,6 @@
       "size": 2
     },
     {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_somministrazione",
-      "label": "ID Somministrazione",
-      "newLine": false,
-      "readOnly": true,
-      "size": 4
-    },
-    {
       "autoGenerate": false,
       "format": {
         "viewType": "button"
@@ -102,11 +102,42 @@
       "isPrimary": false,
       "key": "sondaggi_from_sondaggi_somministrati",
       "label": "Sondaggio",
-      "newLine": true,
+      "newLine": false,
       "outputEvent": {
         "eventName": "to_sondaggi_from_sondaggi_somministrati",
         "eventTrigger": "press"
       },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1.75
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "close_associated_sondaggio_button",
+      "label": "Chiudi Sondaggio",
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "close_associated_sondaggio",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+            "eventName": "close_associated_sondaggio_button",
+            "condition": "none",
+            "values": [],
+            "actionType": "query",
+            "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$);"
+        }
+      ],
       "style": {
         "background_color": "#25599C",
         "font_color": "white"
@@ -466,7 +497,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "riepilogo_risultati",
-      "label": "Riepilogo Risultati",
+      "label": "Riepilogo Risultati Somm.",
       "newLine": true,
       "outputEvent": {
         "eventName": "check_existence_riepilogo_risultati",
