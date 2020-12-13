@@ -16,12 +16,12 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select sn.*, gf.sondaggio_completato,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, sn.pct_da_manuale, sn.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, sn.pct_da, sn.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', sn.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi sn inner join entrasp.modelli_test_vr mvr on sn.codice_azienda=mvr.codice_azienda and sn.id_modello_test=mvr.id_modello_test and sn.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on sn.codice_azienda=mt.codice_azienda and sn.id_modello_test=mt.id_modello_test inner join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(sn.codice_azienda, sn.id_sondaggio) gf on sn.codice_azienda=gf.codiceazienda and sn.id_sondaggio=gf.idsondaggio where sn.codice_azienda=$codice_azienda$ and sn.id_modello_test=$id_modello_test$"
+            "queryString": "select snd.*, gf.sondaggio_completato,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(snd.codice_azienda, snd.id_sondaggio) gf on snd.codice_azienda=gf.codiceazienda and snd.id_sondaggio=gf.idsondaggio where snd.codice_azienda=$codice_azienda$ and snd.id_modello_test=$id_modello_test$"
         },
         {
             "operation": "selectForm",
             "type": "preProcessing",
-            "queryString": "update entrasp.sondaggi sn set pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE sn.codice_azienda=$codice_azienda$ AND sn.id_sondaggio=$id_sondaggio$;"
+            "queryString": "update entrasp.sondaggi snd set pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE snd.codice_azienda=$codice_azienda$ AND snd.id_sondaggio=$id_sondaggio$;"
         },
         {
             "operation": "selectForm",

@@ -333,6 +333,34 @@ async function runQuery(queryString, client) {
     return queryData;
 }
 
+async function overrideTable(son) {
+
+    if (son.inheritsFrom == null) {
+        return son;
+    }
+
+    const DynamoParams = {
+        TableName: 'VIEWS_NAME',
+        Key: {
+            entryKey: son.inheritsFrom
+        }
+    };
+
+    var father = await dynamo.get(DynamoParams).promise();
+
+    father = father.Item;
+    if (father == null) {
+        return son;
+    }
+
+    for (const field in son) {
+        if (son.hasOwnProperty(field) && field != "inheritsFrom" && field != "$schema") {
+            father[field] = son[field];
+        }
+    }
+    return father;
+}
+
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
@@ -528,7 +556,9 @@ exports.handler = async (event, context) => {
                 };
 
                 let entry_params = await dynamo.get(DynamoParams).promise();
-                entry_params = entry_params.Item;
+
+                // complete table if inherited
+                entry_params = await overrideTable(entry_params.Item);
 
                 await addCodiceAzienda(table_keys, company, entry_params, client, isForm);
                 await setGlobalVariables(company, client, userid);

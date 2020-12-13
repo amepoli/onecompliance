@@ -97,7 +97,7 @@ async function overrideTable(son) {
     }
 
     for (const field in son) {
-        if (son.hasOwnProperty(field) && field != "inheritsFrom") {
+        if (son.hasOwnProperty(field) && field != "inheritsFrom" && field != "$schema") {
             father[field] = son[field];
         }
     }

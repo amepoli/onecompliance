@@ -14,6 +14,34 @@ const pool = new Pool({
 });
 const request = require('sync-request');
 
+async function overrideTable(son) {
+
+    if (son.inheritsFrom == null) {
+        return son;
+    }
+
+    const DynamoParams = {
+        TableName: 'VIEWS_NAME',
+        Key: {
+            entryKey: son.inheritsFrom
+        }
+    };
+
+    var father = await dynamo.get(DynamoParams).promise();
+
+    father = father.Item;
+    if (father == null) {
+        return son;
+    }
+
+    for (const field in son) {
+        if (son.hasOwnProperty(field) && field != "inheritsFrom" && field != "$schema") {
+            father[field] = son[field];
+        }
+    }
+    return father;
+}
+
 async function tableName2BusinessObject(table_name) {
 
     if (table_name == null) {
@@ -29,7 +57,10 @@ async function tableName2BusinessObject(table_name) {
 
     let entry_params = await dynamo.get(DynamoParams).promise();
 
-    let business_object = entry_params.Item.businessObjectName;
+    // complete table if inherited
+    entry_params = await overrideTable(entry_params.Item);
+
+    let business_object = entry_params.businessObjectName;
 
     if (business_object != null) {
         return business_object;
@@ -140,7 +171,10 @@ async function getQuery(entry_name, queryString, keyPrefix, ignorePrefixInSearch
 
     let entry_params = await dynamo.get(DynamoParams).promise();
 
-    let entry_keys = isForm ? entry_params.Item.form_keys : entry_params.Item.table_keys;
+    // complete table if inherited
+    entry_params = await overrideTable(entry_params.Item);
+
+    let entry_keys = isForm ? entry_params.form_keys : entry_params.table_keys;
 
     let keyTypes = entry_keys.map(k => {
         let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
@@ -327,7 +361,8 @@ exports.handler = async (event, context) => {
         // read the entry params from DynamoDB view table
         let entry_params = await dynamo.get(viewDynamoParams).promise();
 
-        entry_params = entry_params.Item;
+        // complete table if inherited
+        entry_params = await overrideTable(entry_params.Item);
 
         // retrieve codice_azienda and codice_part from company if needed
 
