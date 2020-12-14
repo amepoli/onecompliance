@@ -144,6 +144,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     private margins = 2; // % of margins, considering left and right
 
+    private pagination = {
+        curPage: 1,
+        curRecords: [],
+        totalPages: 1
+    };
+
+    private recordsPerPage = 5;
+
     constructor(
         private cdRef: ChangeDetectorRef,
         private backendService: BackendService,
@@ -220,6 +228,41 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         this.formSubscriptions.forEach(subscription => {
             subscription.unsubscribe();
         });
+    }
+
+    public resetPagination(){
+        if(this.filteredFormData && this.filteredFormData.length){
+            this.pagination = {
+                curPage: 1,
+                curRecords: [],
+                totalPages: Math.ceil(this.filteredFormData.length / this.recordsPerPage)
+            };
+            this.updatePagination(0);
+        }
+        else{
+            this.pagination = {
+                curPage: 1,
+                curRecords: [],
+                totalPages: 1
+            };
+        }
+    }
+
+    public updatePagination(pageInc: number = 0){
+        let curPage = (this.pagination.curPage+pageInc > 0 && this.pagination.curPage+pageInc <= this.pagination.totalPages)? this.pagination.curPage+pageInc: this.pagination.curPage;
+
+        let start = (curPage-1) * this.recordsPerPage;
+        let end = Math.min( this.filteredFormData.length, start + this.recordsPerPage);
+
+        let curRecords = [];
+        for(let i = start; i < end; i++){
+            curRecords = [...curRecords, i];
+        }
+        
+        //let curRecords = Array(Math.min(this.recordsPerPage,  + ).map((v, i) => ((this.pagination.curPage -1) * this.pagination.recordsPerPage) + i);
+        this.pagination.curPage = curPage;
+        this.pagination.curRecords = curRecords;
+    
     }
 
     public runOnReloadEvents() {
@@ -470,6 +513,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // prepare the form
         _this.filteredFormData = _this.numRows === 0 ? [] : JSON.parse(JSON.stringify(_this.getFormData(_this.viewKeys, results)));
         _this.quickAddData = _this.filteredFormData.map(x => false);
+        _this.resetPagination();
 
         // process the form
         _this.process_form(_this.filteredFormData);
