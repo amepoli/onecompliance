@@ -2,200 +2,15 @@
     "$schema": "../views.schema.json",
     "businessObjectName": "selezionaCampione",
     "entryKey": "seleziona_campione",
-    "origin": "entrasp.sondaggi",
+    "origin": "entrasp.sondaggi_somministrati",
     "outputEvents": [
         {
-            "eventName": "onSaveSel",
+            "eventName": "onSaveSelezionaCampione",
             "eventTrigger": "onSave"
         },
         {
-            "eventName": "onLoadSel",
+            "eventName": "onLoadSelezionaCampione",
             "eventTrigger": "onReload"
-        }
-    ],
-    "predefinedQueries": [
-        {
-            "operation": "selectForm",
-            "type": "main",
-            "queryString": "select * from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '|') limit 50;"
-        }
-    ],
-    "form_keys": [
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "codice_azienda",
-            "label": "codice_azienda",
-            "newLine": true,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_sondaggio",
-            "label": "ID Sondaggio",
-            "newLine": true,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_somministrazione",
-            "label": "ID Somministrazione",
-            "newLine": true,
-            "readOnly": true,
-             "outputEvent": {
-                 "eventName": "id_somministrazione_load",
-                 "eventTrigger": "load",
-                 "conditionalQuery": "select $id_somministrazione$ as id_somm"
-             }
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "checkbox"
-            },
-            "newLine": false,
-            "label": "",
-            "key": "checked",
-            "size": 1,
-            "isHidden": false,
-            "isPrimary": false,
-            "readOnly": false,
-            "outputEvent": {
-                "eventName": "seleziona_campione_checked",
-                "eventTrigger": "select"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "seleziona_campione_checked",
-                    "actionType": "show_message",
-                    "condition": "equalTo",
-                    "values": [
-                        "0"
-                    ],
-                    "message": {
-                        "messageText": "Potrebbero esserci risposte già fornite per questa somministrazione che verrebbero cancellate. Vuoi procedere comunque?",
-                        "actionOnNo": {
-                            "actionType": "reload"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select entrasp.sondaggio_somministrato_delete($codice_azienda$, $id_somministrazione$)"
-                        }
-                    }
-                },
-                {
-                    "eventName": "seleziona_campione_checked",
-                    "actionType": "query",
-                    "condition": "equalTo",
-                    "outputEventWhenComplete": "seleziona_campione_reload",
-                    "values": [
-                        "1"
-                    ],
-                    "queryFunct": "select entrasp.sondaggio_somministrato_insert(azienda =>$codice_azienda$, idsondaggio=>$id_sondaggio$, note=>$objectdescription$, objectname=>$objectname$, objectkey=>$objectkey$, objectdescription=>$objectdescription$);"
-                }
-            ]
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "newLine": false,
-            "label": "",
-            "size": 7,
-            "key": "objectdescription",
-            "isHidden": false,
-            "isPrimary": false,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "risposte_k",
-            "label": "Risposte",
-            "newLine": true,
-            "inputEvents": [
-                {
-                    "eventName": "seleziona_campione_checked",
-                    "actionType": "readOnly",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when count(id_somministrazione)=0 then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"                    
-                },
-                {
-                    "eventName": "onLoadSel",
-                    "actionType": "readOnly",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when count(id_somministrazione)=0 then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"                    
-                },
-                {
-                    "eventName": "onLoadSel",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "queryFunct": "select case when count(id_somministrazione)=0 then '#698EC2' else '#25599C' end as risposte_k_background_color from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"                    
-                }
-            ],
-            "outputEvent": {
-                "eventName": "to_sondaggi_somministrati_from_selezione_campione",
-                "eventTrigger": "press"
-            },
-                "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "newLine": false,
-            "label": "",
-            "key": "objectname",
-            "isHidden": true,
-            "isPrimary": false,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "label": "",
-            "key": "objectkey",
-            "isHidden": true,
-            "isPrimary": false,
-            "readOnly": true
         }
     ],
     "inputEvents": [
@@ -223,21 +38,205 @@
         },
         {
             "actionType": "reload",
-            "eventName": "seleziona_campione_reload"
+            "eventName": "reloadSelezionaCampione"
         }
     ],
-    "hideActions": [
+    "predefinedQueries": [
         {
-            "formActionType": "add",
-            "viewType": "form"
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "select * from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
         },
         {
-            "formActionType": "delete",
-            "viewType": "form"
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "update entrasp.sondaggi_somministrati set somministrazione_completata=entrasp.sondaggi_somministrati_complete($codice_azienda$, £id_somministrazione£) where codice_azienda=$codice_azienda$ and id_somministrazione=£id_somministrazione£"
         },
         {
-            "formActionType": "save",
-            "viewType": "form"
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "select round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, £id_somministrazione£);"
+        },
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": "select entrasp.campione_insert($codice_azienda$, $id_sondaggio$, $object_key$) as id_somministrazione;"
         }
-    ]
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_somministrazione",
+            "label": "ID Somministrazione",
+            "newLine": false,
+            "readOnly": true,
+             "inputEvents": [
+                    {
+                       "eventName": "onSaveSelezionaCampione",
+                       "actionType": "query",
+                       "queryFunct": "",
+                       "condition": "none",
+                       "values": [],
+                       "outputEventWhenComplete": "reloadSelezionaCampione"
+                    }
+             ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "inputEvents": [
+                {
+                    "eventName": "onLoadSelezionaCampione",
+                    "queryFunct": "select id_sondaggio from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
+                }
+            ],
+            "key": "id_sondaggio",
+            "label": "ID Sondaggio",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "somministrazione_cancella_key",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "somministrazione_cancella",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "somministrazione_cancella",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler cancellare questa somministrazione? (Saranno cancellate parallelamente tutte le risposte fornite)",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=£id_somministrazione£"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.sondaggio_somministrato_delete($codice_azienda$, $id_somministrazione$);"
+                        }
+                    },
+                    "outputEventWhenComplete": "reloadSelezionaCampione"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select objectkey as id, objectdescription as name from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '|') order by objectdescription;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "object_key",
+            "label": "Somministrazione su/di",
+            "newLine": false,
+            "readOnly": false,
+            "size": 6.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "somministrazione_completata",
+            "label": "Completo sì/no",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "risposte_k",
+            "label": "Risposte",
+            "newLine": true,
+            "inputEvents": [
+                {
+                    "eventName": "seleziona_campione_checked",
+                    "actionType": "readOnly",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when count(id_somministrazione)=0 then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
+                },
+                {
+                    "eventName": "onLoadSel",
+                    "actionType": "readOnly",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when count(id_somministrazione)=0 then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
+                },
+                {
+                    "eventName": "onLoadSel",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select case when count(id_somministrazione)=0 then '#698EC2' else '#25599C' end as risposte_k_background_color from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
+                }
+            ],
+            "outputEvent": {
+                "eventName": "to_sondaggi_somministrati_from_selezione_campione",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.5
+        }
+    ],
+    "orderBy": {
+        "key": "object_description",
+        "order": "ascending"
+    }
 }
