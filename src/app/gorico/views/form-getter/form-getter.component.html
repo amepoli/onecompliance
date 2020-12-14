@@ -1,8 +1,8 @@
 <div class='full-width' *ngIf="formParams">
-    <div *ngFor="let item of filteredFormData; let idx=index">
+    <div *ngFor="let idx of pagination.curRecords">
         <div *ngIf="formParams.isVisible && !isLoading && (hiddenRows[idx] == null || hiddenRows[idx] === false)">
             <hr><br>
-            <dynamic-form class="form-container" [isQuickAdd]="quickAddData[idx]" [fields]='item'
+            <dynamic-form class="form-container" [isQuickAdd]="quickAddData[idx]" [fields]='filteredFormData[idx]'
                 [readOnlyPage]='readonlyRows[idx]'>
             </dynamic-form>
         </div>
@@ -13,4 +13,13 @@
         </mat-progress-spinner>
     </mat-card>
 
+    <div align=center style="display: flex;" *ngIf="pagination.totalPages > 1">
+        <button [disabled]="pagination.curPage == 1" mat-button (click)="updatePagination(-1)">
+            <mat-icon>keyboard_arrow_left</mat-icon>Previous
+        </button>
+        <p>Page {{this.pagination.curPage}} of {{this.pagination.totalPages}}</p>
+        <button [disabled]="pagination.curPage == this.pagination.totalPages" mat-button (click)="updatePagination(1)">
+            <mat-icon>keyboard_arrow_right</mat-icon>Next
+        </button>
+    </div>
 </div>
