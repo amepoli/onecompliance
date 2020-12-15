@@ -2,6 +2,17 @@
     "$schema": "../views.schema.json",
     "entryKey": "attivita",
     "origin": "entrasp.attivita",
+    "outputEvents": [
+        { 
+            "eventName": "attivita_load",
+            "eventTrigger": "onReload"
+        },
+        { 
+            "eventName": "attivita_save",
+            "eventTrigger": "onSave"
+        }
+
+    ],
     "inputEvents": [
         {
             "eventName": "formReload",
@@ -186,47 +197,9 @@
             "newLine": false,
             "readOnly": false,
             "sameOrigin": false,
-            "size": 6
+            "size": 5
         },
         {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "modello_test_from_sondaggi",
-            "label": "Modello Test Associato",
-            "newLine": true,
-            "outputEvent": {
-                "eventName": "to_modello_test_from_attivita",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "attributeFuncts": [
-				{
-					"attributeType": "style",
-					"styleAttribute": "background_color",
-					"queryString": "select case when $id_modello_test$ is null then '#698EC2' else '#25599C' end as label;"
-				},
-				{
-					"attributeType": "style",
-					"styleAttribute": "font_color",
-					"queryString": "select case when count(id_progetto) = 0 then '#5b635a' else 'white'  end as label;"
-				},
-				{
-					"attributeType": "readOnly",
-					"queryString": "select case when count(id_progetto) = 0  then false else true end as label"
-				}
-			],
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 2
-        },
-           {
             "autoGenerate": false,
             "format": {
                 "dataType": "number",
@@ -247,8 +220,103 @@
             "label": "id_modello_test_vr",
             "newLine": false,
             "readOnly": false,
-            "sameOrigin": false
+            "sameOrigin": false,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "modello_test_from_sondaggi",
+            "label": "Modello Test Associato",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "to_modello_test_from_attivita",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "inputEvents": [
+				{
+                    "eventName": "id_modello_test_change",
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "condition": "none",
+                    "values": [],
+					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
+				},
+                {
+                    "eventName": "id_modello_test_change",
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "condition": "none",
+                    "values": [],
+					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
+				},
+                {
+                    "eventName": "id_modello_test_change",
+                    "actionType": "readOnly",
+                    "condition": "none",
+                    "values": [],
+					"queryFunct": "select case when $id_modello_test$='' then true else false end as label;"
+                },
+                {
+                    "eventName": "attivita_load",
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "condition": "none",
+                    "values": [],
+					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
+				},
+                {
+                    "eventName": "attivita_load",
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "condition": "none",
+                    "values": [],
+					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
+				},
+                {
+                    "eventName": "attivita_load",
+                    "actionType": "readOnly",
+                    "condition": "none",
+                    "values": [],
+					"queryFunct": "select case when $id_modello_test$='' then true else false end as label;"
+                },
+                {
+                    "eventName": "attivita_save",
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "condition": "none",
+                    "values": [],
+					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
+				},
+                {
+                    "eventName": "attivita_save",
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "condition": "none",
+                    "values": [],
+					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
+				},
+                {
+                    "eventName": "attivita_save",
+                    "actionType": "readOnly",
+                    "condition": "none",
+                    "values": [],
+					"queryFunct": "select case when $id_modello_test$='' then true else false end as label;"
+				}	
+			],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 2
         }
+          
     ],
     "search_keys": [],
     "subTables": [
