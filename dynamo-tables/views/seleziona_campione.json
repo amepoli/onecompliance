@@ -89,16 +89,16 @@
             "label": "ID Somministrazione",
             "newLine": false,
             "readOnly": true,
-             "inputEvents": [
-                    {
-                       "eventName": "onSaveSelezionaCampione",
-                       "actionType": "query",
-                       "queryFunct": "",
-                       "condition": "none",
-                       "values": [],
-                       "outputEventWhenComplete": "reloadSelezionaCampione"
-                    }
-             ]
+            "inputEvents": [
+                {
+                    "eventName": "onSaveSelezionaCampione",
+                    "actionType": "query",
+                    "queryFunct": "",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "reloadSelezionaCampione"
+                }
+            ]
         },
         {
             "autoGenerate": false,
@@ -111,6 +111,9 @@
             "inputEvents": [
                 {
                     "eventName": "onLoadSelezionaCampione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
                     "queryFunct": "select id_sondaggio from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
                 }
             ],
@@ -186,7 +189,17 @@
             "label": "Completo sì/no",
             "newLine": false,
             "readOnly": true,
-            "size": 1.5
+            "inputEvents": [
+                {
+                  "eventName": "onLoadSelezionaCampione",
+                  "condition": "none",
+                  "values": [],
+                  "actionType": "query_style",
+                  "styleAttribute": "background_color",
+                  "queryFunct": "SELECT colore_somministrazione_completa as somministrazione_completata_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+                }
+             ],
+             "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -200,21 +213,14 @@
             "newLine": true,
             "inputEvents": [
                 {
-                    "eventName": "seleziona_campione_checked",
+                    "eventName": "onLoadSelezionaCampione",
                     "actionType": "readOnly",
                     "condition": "none",
                     "values": [],
                     "queryFunct": "select case when count(id_somministrazione)=0 then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
                 },
                 {
-                    "eventName": "onLoadSel",
-                    "actionType": "readOnly",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when count(id_somministrazione)=0 then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
-                },
-                {
-                    "eventName": "onLoadSel",
+                    "eventName": "onLoadSelezionaCampione",
                     "condition": "none",
                     "values": [],
                     "actionType": "query_style",

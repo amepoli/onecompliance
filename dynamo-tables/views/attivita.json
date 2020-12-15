@@ -3,11 +3,34 @@
     "entryKey": "attivita",
     "origin": "entrasp.attivita",
     "inputEvents": [
-		{
-			"eventName": "formReload",
-			"actionType": "reload"
-		}
-	],
+        {
+            "eventName": "formReload",
+            "actionType": "reload"
+        },
+        {
+            "actionTarget": {
+                "name": "modelli_test_vr",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "id_modello_test_vr",
+                        "destination": "id_modello_test_vr"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_modello_test_from_attivita"
+        }
+      
+    ],
     "predefinedQueries": [
         {
             "type": "main",
@@ -70,37 +93,37 @@
             "readOnly": false
         },
         {
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "aggiorna_codici",
-			"label": "Aggiorna Codici",
-			"newLine": true,
-			"outputEvent": {
-				"eventName": "codici_aggiorna",
-				"eventTrigger": "press"
-			},
-			"style": {
-				"background_color": "#25599C",
-				"font_color": "white"
-			},
-			"inputEvents": [
-				{
-					"eventName": "codici_aggiorna",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.attivita_codice_update(codice_azienda, codice_attivita, null) from entrasp.attivita where codice_azienda=$codice_azienda$ and entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)=$codice_attivita$ and codice_attivita_parent is not null;",
-					"outputEventWhenComplete": "formReload"
-				}
-			],
-			"readOnly": false,
-			"size": 2,
-			"sameOrigin": false
-		},
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "aggiorna_codici",
+            "label": "Aggiorna Codici",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "codici_aggiorna",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "codici_aggiorna",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.attivita_codice_update(codice_azienda, codice_attivita, null) from entrasp.attivita where codice_azienda=$codice_azienda$ and entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)=$codice_attivita$ and codice_attivita_parent is not null;",
+                    "outputEventWhenComplete": "formReload"
+                }
+            ],
+            "readOnly": false,
+            "size": 2,
+            "sameOrigin": false
+        },
         {
             "autoGenerate": false,
             "format": {
@@ -111,8 +134,9 @@
             "isPrimary": false,
             "key": "ordinamento",
             "label": "Ordinamento",
-            "newLine": true,
-            "readOnly": false
+            "newLine": false,
+            "readOnly": false,
+            "size": 1
         },
         {
             "autoGenerate": false,
@@ -125,21 +149,8 @@
             "key": "descrizione",
             "label": "Descrizione",
             "newLine": true,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_attivita_parent",
-            "label": "Codice Attività Superiore",
-            "newLine": true,
-            "size": 1,
-            "readOnly": false
+            "readOnly": false,
+            "size": 9
         },
         {
             "autoGenerate": false,
@@ -154,7 +165,72 @@
             "label": "Attività Livello Superiore",
             "newLine": false,
             "readOnly": false,
-            "size": 9,
+            "sameOrigin": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_modello_test AS id, codice||'-'||titolo AS name  FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "outputEvent": {
+                "eventName": "id_modello_test_change",
+                "eventTrigger": "change"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "Id Modello Test",
+            "newLine": false,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 6
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "modello_test_from_sondaggi",
+            "label": "Modello Test Associato",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "to_modello_test_from_attivita",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 2
+        },
+           {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "id_modello_test_change",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],                    
+                    "queryFunct": "select max(id_modello_test_vr) from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test_vr",
+            "label": "id_modello_test_vr",
+            "newLine": false,
+            "readOnly": false,
             "sameOrigin": false
         }
     ],
