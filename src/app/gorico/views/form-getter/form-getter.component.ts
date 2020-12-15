@@ -543,10 +543,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.process_form(filteredFormData);
 
                     _this._console.log('filteredFormData[0]', filteredFormData[0]);
+                    
+                    if(_this.filteredFormData && _this.filteredFormData.length){
+                        _this.filteredFormData.unshift(filteredFormData[0]);
+                        _this.quickAddData.unshift(true);
+                    }
+                    else{
+                        _this.filteredFormData = filteredFormData;
+                        _this.quickAddData = [true];
+                    }
                     // add it to the top of the list
-                    _this.filteredFormData.unshift(filteredFormData[0]);
-                    _this.quickAddData.unshift(true);
-
+                    _this.resetPagination();
 
                 }
                 else {
