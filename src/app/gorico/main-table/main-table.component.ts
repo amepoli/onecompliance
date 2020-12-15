@@ -389,6 +389,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
     historyPop(item: any): void {
         const _this = this;
         _this.fullScreenTab = false; // reset in case of fullScreen Tab view
+        _this.tabs = [];
         _this.navigationHistory.length = item.level; // remove itself and following history elements 
         _this.level = item.level;
         if (!_this.level) { // if root (i.e. table) reset form params
@@ -424,6 +425,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             params: _this.tableType === 'table' ? _this.tableParams : _this.formParams,
             description: _this.currentDescription
         };
+        _this.tabs = [];
         _this.navigationHistory.push(currentNavigation);
         _this.level = _this.level + 1; // going in depth
     }
