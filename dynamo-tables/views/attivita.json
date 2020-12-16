@@ -2,16 +2,16 @@
     "$schema": "../views.schema.json",
     "entryKey": "attivita",
     "origin": "entrasp.attivita",
+    "businessObjectName": "attivita",
     "outputEvents": [
-        { 
+        {
             "eventName": "attivita_load",
             "eventTrigger": "onReload"
         },
-        { 
+        {
             "eventName": "attivita_save",
             "eventTrigger": "onSave"
         }
-
     ],
     "inputEvents": [
         {
@@ -40,13 +40,17 @@
             "actionType": "navigate",
             "eventName": "to_modello_test_from_attivita"
         }
-      
     ],
     "predefinedQueries": [
         {
             "type": "main",
             "operation": "selectTable",
             "queryString": "select * from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent is null;"
+        },
+        {
+            "type": "main",
+            "operation": "selectForm",
+            "queryString": "select *, entrasp.grc_max_id_mdt_vr(codice_azienda, id_modello_test) as id_modello_test_vr from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita=$codice_attivita$;"
         }
     ],
     "form_keys": [
@@ -168,11 +172,12 @@
             "format": {
                 "comboQuery": "SELECT codice_attivita AS id, descrizione AS name  FROM entrasp.attivita WHERE codice_azienda=$codice_azienda$;",
                 "options": [],
-                "viewType": "combobox"
+                "viewType": "combobox",
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "codice_attivita_parent_trans",
+            "key": "codice_attivita_parent",
             "label": "Attività Livello Superiore",
             "newLine": false,
             "readOnly": false,
@@ -182,13 +187,13 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_modello_test AS id, codice||'-'||titolo AS name  FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$;",
+                "comboQuery": "SELECT id_modello_test AS id, codice||'-'||titolo AS name FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$;",
                 "options": [],
                 "viewType": "combobox"
             },
             "outputEvent": {
                 "eventName": "id_modello_test_change",
-                "eventTrigger": "change"
+                "eventTrigger": "select"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -210,14 +215,14 @@
                     "eventName": "id_modello_test_change",
                     "actionType": "query",
                     "condition": "none",
-                    "values": [],                    
+                    "values": [],
                     "queryFunct": "select max(id_modello_test_vr) from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
                 }
             ],
             "isHidden": false,
             "isPrimary": false,
             "key": "id_modello_test_vr",
-            "label": "id_modello_test_vr",
+            "label": "Ver.",
             "newLine": false,
             "readOnly": false,
             "sameOrigin": false,
@@ -242,28 +247,28 @@
                 "font_color": "white"
             },
             "inputEvents": [
-				{
+                {
                     "eventName": "id_modello_test_change",
                     "actionType": "query_style",
                     "styleAttribute": "background_color",
                     "condition": "none",
                     "values": [],
-					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
-				},
+                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
+                },
                 {
                     "eventName": "id_modello_test_change",
                     "actionType": "query_style",
                     "styleAttribute": "font_color",
                     "condition": "none",
                     "values": [],
-					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
-				},
+                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
+                },
                 {
                     "eventName": "id_modello_test_change",
                     "actionType": "readOnly",
                     "condition": "none",
                     "values": [],
-					"queryFunct": "select case when $id_modello_test$='' then true else false end as label;"
+                    "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
                 },
                 {
                     "eventName": "attivita_load",
@@ -271,22 +276,22 @@
                     "styleAttribute": "background_color",
                     "condition": "none",
                     "values": [],
-					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
-				},
+                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
+                },
                 {
                     "eventName": "attivita_load",
                     "actionType": "query_style",
                     "styleAttribute": "font_color",
                     "condition": "none",
                     "values": [],
-					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
-				},
+                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
+                },
                 {
                     "eventName": "attivita_load",
                     "actionType": "readOnly",
                     "condition": "none",
                     "values": [],
-					"queryFunct": "select case when $id_modello_test$='' then true else false end as label;"
+                    "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
                 },
                 {
                     "eventName": "attivita_save",
@@ -294,29 +299,28 @@
                     "styleAttribute": "background_color",
                     "condition": "none",
                     "values": [],
-					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
-				},
+                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
+                },
                 {
                     "eventName": "attivita_save",
                     "actionType": "query_style",
                     "styleAttribute": "font_color",
                     "condition": "none",
                     "values": [],
-					"queryFunct": "select case when $id_modello_test$='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
-				},
+                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
+                },
                 {
                     "eventName": "attivita_save",
                     "actionType": "readOnly",
                     "condition": "none",
                     "values": [],
-					"queryFunct": "select case when $id_modello_test$='' then true else false end as label;"
-				}	
-			],
+                    "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
+                }
+            ],
             "readOnly": false,
             "sameOrigin": false,
             "size": 2
         }
-          
     ],
     "search_keys": [],
     "subTables": [
