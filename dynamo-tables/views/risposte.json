@@ -357,7 +357,29 @@
       "label": "Id Somministrazione",
       "newLine": true,
       "queryCond": "id_somministrazione=$id_somministrazione$"
-    }
+    },
+    {
+      "fieldName": "domanda",
+      "format": {
+        "comboQuery": "SELECT id_domanda AS id,descrizione  AS name  FROM entrasp.domande WHERE codice_azienda=$codice_azienda$ and id_modello_test = entrasp.evaluate_given_field£ ('id_modello_test', '£id_modello_test£');",
+        "options": [],
+        "viewType": "combobox"
+    },
+      "label": "Domanda",
+      "newLine": false,
+      "queryCond": "id_domanda =$id_domanda$"
+  },
+  {
+    "fieldName": "risposta",
+    "format": {
+      "comboQuery": "SELECT id_risposta_prev AS id,risposta  AS name  FROM entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test=entrasp.evaluate_given_field£ ('id_modello_test', '£id_modello_test£') and id_domanda =entrasp.evaluate_given_field ('id_domanda', '£id_domanda£');",
+      "options": [],
+      "viewType": "combobox"
+  },
+    "label": "Risposta",
+    "newLine": true,
+    "queryCond": "id_risposta =$id_risposta$"
+}
   ],
   "subTables": [
     {
