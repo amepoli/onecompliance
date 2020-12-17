@@ -62,7 +62,7 @@
       "style": {
         "background_color": "#25599C",
         "font_color": "white"
-    },
+      },
       "readOnly": false,
       "sameOrigin": false,
       "size": 2
@@ -127,7 +127,7 @@
       "style": {
         "background_color": "#25599C",
         "font_color": "white"
-    },
+      },
       "readOnly": false,
       "sameOrigin": false,
       "size": 2
@@ -319,14 +319,15 @@
   },
   "search_keys": [
     {
-      "fieldName": "id_modello_test",
+      "fieldName": "id_modello_test_s",
       "format": {
-        "dataType": "number",
-        "viewType": "input"
+        "comboQuery": "SELECT id_modello_test AS id, id_modello_test||'-'||titolo  AS name  FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ order by id_modello_test;",
+        "options": [],
+        "viewType": "combobox"
       },
       "label": "Id Modello di Test",
       "newLine": false,
-      "queryCond": "id_modello_test=$id_modello_test$"
+      "queryCond": "id_modello_test=$id_modello_test_s$"
     },
     {
       "fieldName": "id_sondaggio",
@@ -359,50 +360,50 @@
       "queryCond": "id_somministrazione=$id_somministrazione$"
     },
     {
-      "fieldName": "domanda",
+      "fieldName": "id_domanda_s",
       "format": {
-        "comboQuery": "SELECT id_domanda AS id,descrizione  AS name  FROM entrasp.domande WHERE codice_azienda=$codice_azienda$ and id_modello_test = entrasp.evaluate_given_field£ ('id_modello_test', '£id_modello_test£');",
+        "comboQuery": "SELECT id_domanda AS id, id_modello_test||'-'||id_domanda||'-'||descrizione  AS name  FROM entrasp.domande WHERE codice_azienda=$codice_azienda$ order by id_domanda, descrizione;",
         "options": [],
         "viewType": "combobox"
-    },
+      },
       "label": "Domanda",
       "newLine": false,
-      "queryCond": "id_domanda =$id_domanda$"
-  },
-  {
-    "fieldName": "risposta",
-    "format": {
-      "comboQuery": "SELECT id_risposta_prev AS id,risposta  AS name  FROM entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test=entrasp.evaluate_given_field£ ('id_modello_test', '£id_modello_test£') and id_domanda =entrasp.evaluate_given_field ('id_domanda', '£id_domanda£');",
-      "options": [],
-      "viewType": "combobox"
-  },
-    "label": "Risposta",
-    "newLine": true,
-    "queryCond": "id_risposta =$id_risposta$"
-}
+      "queryCond": "id_domanda=$id_domanda_s$"
+    },
+    {
+      "fieldName": "risposta",
+      "format": {
+        "comboQuery": "SELECT id_risposta_prev AS id, id_modello_test||'-'||id_domanda||'-'||id_risposta_prev||'-'||risposta AS name FROM entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ order by id_domanda, risposta;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Risposta",
+      "newLine": true,
+      "queryCond": "id_risposta =$id_risposta$"
+    }
   ],
   "subTables": [
     {
       "entryKey": "risposte_attachments",
       "isHidden": false,
       "keys": [
-          {
-              "parent": "codice_azienda",
-              "son": "codice_azienda"
-          },
-          {
-              "parent": "id_domanda",
-              "son": "id_domanda"
-          },
-          {
-              "parent": "id_somministrazione",
-              "son": "id_somministrazione"
-          }
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
       ],
       "label": "Allegati associati",
       "type": "tableForm"
-  }
-],
+    }
+  ],
   "inputEvents": [
     {
       "actionTarget": {
@@ -445,5 +446,14 @@
       "eventName": "to_modello_test_from_risposta"
     }
   ],
-  "hideActions": [{"formActionType": "add", "viewType": "form"}, {"tableActionType":"add", "viewType": "table"}]
+  "hideActions": [
+    {
+      "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    }
+  ]
 }
