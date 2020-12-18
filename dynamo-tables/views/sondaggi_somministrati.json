@@ -70,8 +70,8 @@
       "size": 2,
       "readOnly": false,
       "outputEvent": {
-        "eventName": "somm_change_stato",
-        "eventTrigger": "change"
+        "eventName": "close_associated_sondaggio_combo",
+        "eventTrigger": "select"
       },
       "inputEvents": [
         {
@@ -157,11 +157,11 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "close_associated_sondaggio_button",
+      "key": "close_associated_sondaggio_button_key",
       "label": "Chiudi Sondaggio",
       "newLine": false,
       "outputEvent": {
-        "eventName": "close_associated_sondaggio",
+        "eventName": "close_associated_sondaggio_button",
         "eventTrigger": "press"
       },
       "style": {
@@ -331,9 +331,19 @@
       "readOnly": true,
       "inputEvents": [
         {
-          "eventName": "close_associated_sondaggio",
+          "eventName": "close_associated_sondaggio_button",
           "condition": "none",
           "values": [],
+          "actionType": "query",
+          "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
+          "outputEventWhenComplete": "sondaggi_somministrati_reload"
+        },
+        {
+          "eventName": "close_associated_sondaggio_combo",
+          "condition": "equalTo",
+          "values": [
+            "C"
+          ],
           "actionType": "query",
           "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
           "outputEventWhenComplete": "sondaggi_somministrati_reload"
@@ -689,7 +699,22 @@
       ],
       "readOnly": false,
       "sameOrigin": false
-    }
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_sondaggio_succ",
+      "label": "id_sondaggio_succ",
+      "sameOrigin": false,
+      "newLine": true,
+      "readOnly": true
+    }          
+  
   ],
   "search_keys": [
     {
@@ -1048,6 +1073,10 @@
           {
             "source": "id_somministrazione_succ",
             "destination": "id_somministrazione"
+          },
+          {
+            "source": "id_sondaggio_succ",
+            "destination": "id_sondaggio"
           }
         ]
       },
@@ -1072,7 +1101,6 @@
       "actionType": "navigate",
       "eventName": "to_somm_precedente"
     }
-
   ],
   "hideActions": [
     {
