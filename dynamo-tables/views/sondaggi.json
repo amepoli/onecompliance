@@ -41,7 +41,7 @@
         {
             "operation": "insert",
             "type": "postProcessing",
-            "queryString": "update entrasp.sondaggi set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
+            "queryString": "update entrasp.sondaggi set codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
         },
         {
             "operation": "update",
@@ -343,7 +343,7 @@
                         "C"
                     ],
                     "actionType": "query",
-                    "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$);",
+                    "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$) as id_sondaggio_succ;",
                     "outputEventWhenComplete": "survey_reload"
                 }
             ],
@@ -377,7 +377,7 @@
             },
             "outputEvent": {
                 "eventName": "sondaggio_change_stato",
-                "eventTrigger": "change"
+                "eventTrigger": "select"
             },
             "inputEvents": [
                 {

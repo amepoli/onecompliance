@@ -21,17 +21,22 @@
         {
             "operation": "selectForm",
             "type": "preProcessing",
-            "queryString": "update entrasp.sondaggi snd set pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE snd.codice_azienda=$codice_azienda$ AND snd.id_sondaggio=$id_sondaggio$;"
+            "queryString": "update entrasp.sondaggi snd set sondaggio_completato=pfs.sondaggio_completato, pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE snd.codice_azienda=$codice_azienda$ AND snd.id_sondaggio=$id_sondaggio$;"
         },
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select *, entrasp.mdt_codtitolo(codice_azienda, id_modello_test) as descr_modello_test, (select id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$) as id_sondaggio_prec, entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio) as flags_sezioni_multi, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.descrizione_risultato_from_sondaggio(codice_azienda, id_sondaggio) as criterio_analisi from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+            "queryString": "select *, entrasp.mdt_codtitolo(codice_azienda, id_modello_test) as descr_modello_test, (select id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$) as id_sondaggio_prec, entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(codice_azienda, id_sondaggio) as flags_sezioni_activate, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.descrizione_risultato_from_sondaggio(codice_azienda, id_sondaggio) as criterio_analisi from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         },
         {
             "operation": "selectForm",
             "type": "postProcessing",
-            "queryString": "select pct_da, idrisultato as id_risultato, codice_colore, codice_colore_completato, percentuale as ris_percentuale, sondaggio_completato, giudizio from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)"
+            "queryString": "select  id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "select idrisultato as id_risultato, percentuale as ris_percentuale, sondaggio_completato from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)"
         },
         {
             "operation": "insert",
@@ -41,12 +46,7 @@
         {
             "operation": "update",
             "type": "postProcessing",
-            "queryString": "update entrasp.progetti_fasi set stato=$stato$, codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)"
-        },
-        {
-            "operation": "delete",
-            "type": "main",
-            "queryString": "select entrasp.sondaggio_delete($codice_azienda$, $id_sondaggio$)"
+            "queryString": "update entrasp.progetti_fasi set stato=$stato$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         }
     ]
 }
