@@ -16,7 +16,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select snd.*, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$"
+            "queryString": "select snd.*, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, (select object_description from entrasp.sondaggi_somministrati ss where ss.codice_azienda=$codice_azienda$ and ss.id_sondaggio=snd.id_sondaggio limit 1) as sondaggio_su,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$ and data_prevista<=CURRENT_DATE"
         },
         {
             "operation": "selectForm",
@@ -1166,6 +1166,16 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "data_prevista",
+            "label": "Data Prevista",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "data_esecuzione",
             "label": "Data Esecuzione",
             "width": "6%"
@@ -1178,7 +1188,17 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "width": "35%"
+            "width": "25%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sondaggio_su",
+            "label": "Oggetto",
+            "width": "10%"
         },
         {
             "format": {
@@ -1188,7 +1208,7 @@
             "isPrimary": false,
             "key": "giudizio",
             "label": "Giudizio automatico",
-            "width": "8%",
+            "width": "6%",
             "style": [
                 {
                     "value": "*",
@@ -1233,8 +1253,7 @@
             "isPrimary": false,
             "key": "centro_gest",
             "label": "Centro Gestionale",
-            "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest)",
-            "width": "10%"
+            "width": "8%"
         },
         {
             "format": {
@@ -1242,7 +1261,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "8%",
+            "width": "6%",
             "key": "stato",
             "label": "Stato",
             "style": [

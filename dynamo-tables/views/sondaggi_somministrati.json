@@ -17,7 +17,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select ss.*, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and snd.id_modello_test_vr=mt.id_modello_test_vr where ss.codice_azienda=$codice_azienda$"
+      "queryString": "select ss.*, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and snd.id_modello_test_vr=mt.id_modello_test_vr where ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or snd.data_esecuzione is not null)"
     },
     {
       "operation": "selectForm",
@@ -38,6 +38,11 @@
       "operation": "selectForm",
       "type": "postProcessing",
       "queryString": "select id_somministrazione as id_somm_prec from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione_succ=$id_somministrazione$;"
+    },
+    {
+      "operation": "selectForm",
+      "type": "postProcessing",
+      "queryString": "select id_sondaggio as id_sondaggio_prec from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$"
     }
   ],
   "form_keys": [
@@ -67,7 +72,7 @@
       "key": "stato",
       "label": "Stato",
       "newLine": false,
-      "size": 2,
+      "size": 3,
       "readOnly": false,
       "outputEvent": {
         "eventName": "close_associated_sondaggio_combo",
@@ -208,7 +213,7 @@
       },
       "readOnly": false,
       "sameOrigin": false,
-      "size": 1.7
+      "size": 1.2
     },
     {
       "autoGenerate": false,
@@ -246,7 +251,22 @@
       },
       "readOnly": false,
       "sameOrigin": false,
-      "size": 1.7
+      "size": 1.2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_prevista",
+      "label": "Data esecuzione",
+      "newLine": false,
+      "sameOrigin": false,
+      "readOnly": true,
+      "size": 1.5
     },
     {
       "autoGenerate": false,
@@ -260,7 +280,7 @@
       "label": "Data esecuzione",
       "newLine": false,
       "readOnly": false,
-      "size": 2
+      "size": 1.5
     },
     {
       "autoGenerate": false,
@@ -711,10 +731,23 @@
       "key": "id_sondaggio_succ",
       "label": "id_sondaggio_succ",
       "sameOrigin": false,
-      "newLine": true,
+      "newLine": false,
       "readOnly": true
-    }          
-  
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_sondaggio_prec",
+      "label": "ID Sondaggio Prec.",
+      "sameOrigin": false,
+      "newLine": false,
+      "readOnly": true
+    }
   ],
   "search_keys": [
     {
@@ -887,6 +920,16 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "key": "data_prevista",
+      "label": "Data Prevista",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
       "key": "data_esecuzione",
       "label": "Data Esecuzione",
       "width": "8%"
@@ -899,7 +942,7 @@
       "isPrimary": false,
       "key": "titolo_sondaggio",
       "label": "Titolo",
-      "width": "35%"
+      "width": "28%"
     },
     {
       "format": {
@@ -1095,6 +1138,10 @@
           {
             "source": "id_somm_prec",
             "destination": "id_somministrazione"
+          },
+          {
+            "source": "id_sondaggio_prec",
+            "destination": "id_sondaggio"
           }
         ]
       },
