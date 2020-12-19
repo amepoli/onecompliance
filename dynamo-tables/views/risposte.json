@@ -42,7 +42,7 @@
       "key": "id_somministrazione",
       "label": "ID Somministrazione",
       "newLine": false,
-      "readOnly": true,
+      "readOnly": false,
       "size": 4
     },
     {
@@ -362,20 +362,18 @@
     {
       "fieldName": "id_domanda_s",
       "format": {
-        "comboQuery": "SELECT id_domanda AS id, id_modello_test||'-'||id_domanda||'-'||descrizione  AS name  FROM entrasp.domande WHERE codice_azienda=$codice_azienda$ order by id_domanda;",
-        "options": [],
-        "viewType": "combobox"
+        "dataType": "number",
+        "viewType": "input"
       },
       "label": "Domanda",
       "newLine": false,
       "queryCond": "id_domanda=$id_domanda_s$"
     },
     {
-      "fieldName": "risposta",
+      "fieldName": "id_risposta",
       "format": {
-        "comboQuery": "SELECT id_risposta_prev AS id, id_modello_test||'-'||id_domanda||'-'||id_risposta_prev||'-'||risposta AS name FROM entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ order by id_domanda, risposta;",
-        "options": [],
-        "viewType": "combobox"
+        "dataType": "number",
+        "viewType": "input"
       },
       "label": "Risposta",
       "newLine": true,
@@ -402,7 +400,28 @@
       ],
       "label": "Allegati associati",
       "type": "tableForm"
+    },
+    {
+      "entryKey": "compiti_rif_bo_keys",
+      "isHidden": false,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
+      ],
+      "label": "Segnalazioni associate",
+      "type": "tableForm"
     }
+
   ],
   "inputEvents": [
     {
