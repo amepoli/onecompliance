@@ -3,6 +3,7 @@
   "entryKey": "compiti_rif_bo_keys",
   "origin": "entrasp.compiti_rif_bo_keys",
   "search_keys": [],
+  "predefinedQueries": [{"queryString": "select *, codice_compito as codice_compito_titolo from entrasp.compiti_rif_bo_keys where codice_azienda=$codice_azienda$"}],
   "inputEvents": [
     {
       "eventName": "to_compiti_from_keys",
@@ -40,15 +41,28 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "input"
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "inputEvents": [
+        {
+          "eventName": "titolo_change",
+          "actionType": "update",
+          "updateFunct": "'£codice_compito_titolo.id£'",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "outputEvent": {
+        "eventName": "codice_compito_change",
+        "eventTrigger": "change"
       },
       "isHidden": false,
       "isPrimary": true,
       "key": "codice_compito",
       "label": "Codice Compito",
       "newLine": false,
-      "readOnly": true,
+      "readOnly": false,
       "size": 1.5
     },
     {
@@ -68,17 +82,33 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "input"
+        "comboQuery": "SELECT codice_compito AS id, codice_compito||'-'||titolo AS name FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$ order by titolo;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "inputEvents": [
+        {
+          "eventName": "codice_compito_change",
+          "actionType": "update",
+          "updateFunct": "'£codice_compito£'",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "outputEvent": {
+        "eventName": "titolo_change",
+        "eventTrigger": "select"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "titolo",
+      "key": "codice_compito_titolo",
       "label": "Titolo",
       "newLine": false,
-      "readOnly": true,
+      "sameOrigin": false,
+      "readOnly": false,
       "size": 6
-    },    
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -181,18 +211,6 @@
     }
   ],
   "hideActions": [
-    {
-      "formActionType": "add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "save",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "delete",
-      "viewType": "form"
-    },
     {
       "formActionType": "share",
       "viewType": "form"
