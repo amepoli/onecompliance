@@ -134,6 +134,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "id_cliente",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente)",
 			"label": "ID Cliente"
 		  },
 		  {
@@ -143,10 +144,25 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "id_tipo_contratto",
+			"queryFunct": "entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto)",
 			"label": "Tipo Contratto"
 		  }
 	  ],
 	  "subTables": [
+		{
+			"entryKey": "garanzie",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_contratto",
+					"son": "id_contratto"
+				}
+			],
+			"label": "Garanzie"
+		},
 		{
 			"entryKey": "valutazione_garanzie",
 			"keys": [
@@ -155,11 +171,25 @@
 					"son": "codice_azienda"
 				},
 				{
-					"parent": "id_valutazione_garanzie",
-					"son": "id_valutazione_garanzie"
+					"parent": "id_contratto",
+					"son": "id_contratto"
 				}
 			],
 			"label": "Valutazione Garanzie"
+		},
+		{
+			"entryKey": "incassi_previsti_effettivi",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_contratto",
+					"son": "id_contratto"
+				}
+			],
+			"label": "Incassi Previsti ed Effettivi"
 		}
 	]
 }

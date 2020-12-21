@@ -2,6 +2,7 @@
 	"$schema": "../views.schema.json",
 	"entryKey": "garanzie",
 	"origin": "entrasp.garanzie",
+	"businessObjectName": "garanzie",
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -32,7 +33,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "select id_tipo_garanzia as id, descrizione as name from entrasp.tipi_garanzia where codice_azienda = $codice_azienda$;",
+				"comboQuery": "select id_tipo_garanzia as id, descrizione as name from entrasp.tipi_garanzia;",
 				"options": [],
 				"viewType": "combobox"
 			},
@@ -205,8 +206,23 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "id_tipo_garanzia",
-			"queryFunct": "",
 			"label": "Tipo Garanzia"
+		}
+	],
+	"subTables": [
+		{
+			"entryKey": "valutazione_garanzie",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_garanzia",
+					"son": "id_garanzia"
+				}
+			],
+			"label": "Valutazione Garanzie"
 		}
 	]
 }
