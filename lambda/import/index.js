@@ -485,6 +485,65 @@ exports.handler = async (event, context) => {
                     }
                 }
             }
+            else if (requestType === 'importAdvancedFile') {
+
+                console.log("Importing advanced file...");
+                body = { result: 'OK', reason: 'Done!' };
+
+                // Load mandatory query params
+                let fileName = queryParams['filename'];
+                let table = queryParams['table'];
+                let queryString = JSON.parse(event.body);
+
+                // Check if mandatory query params provided
+                if (!fileName || !table || !queryString) {
+                    // Error Response Body
+                    body = { result: 'KO', reason: 'Check File, table and queryString are correct!' };
+                }
+                else {
+                    // Load file from S3
+                    const s3ParamsGetList = {
+                        Bucket: bucket,
+                        Key: fileName
+                    };
+
+                    // Added schema if table does not contain
+                    if (!table.includes('.')) {
+                        table = `${schema}.${table}`;
+                    }
+
+
+                    // Import CSV from S3 to Postgres
+                    query = queryString.replace(new RegExp('$file$', 'g'), fileName);;
+
+                    // Data prepared:
+                    console.table({ "fileName": fileName, "query": query, "table": table });
+
+                    // Try to run query 5 times on failure
+                    let queryResponse = null;
+                    let tries = 0;
+                    while (!queryResponse && tries < 5) {
+                        console.log(`Trying to run query [${tries}]`);
+                        try {
+                            queryResponse = await client.query(query);
+                        }
+                        catch (e) {
+                            console.log(e);
+                            queryResponse = null;
+                            tries++;
+                        }
+                    }
+
+                    // Check if success or failure
+                    if (queryResponse) {
+                        console.table(queryResponse);
+                        body = { result: 'OK', response: queryResponse };
+                    }
+                    else {
+                        body = { result: 'KO', reason: 'Advanced import failed!' };
+                    }
+                }
+            }
             else if (requestType === 'deleteFile') {
                 const fileName = queryParams['filename'];
 

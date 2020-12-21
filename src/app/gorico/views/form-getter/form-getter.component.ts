@@ -150,7 +150,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         totalPages: 1
     };
 
-    private recordsPerPage = 5;
+    private recordsPerPage = 10000;
 
     constructor(
         private cdRef: ChangeDetectorRef,

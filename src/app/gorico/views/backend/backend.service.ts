@@ -173,6 +173,17 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
   }
 
+  importAdvancedFileFromS3(company: string, queryString: string, fileName: string, table: string): Observable<any> {
+    this.amplifyService.auth();
+
+    // Test data:
+    // this.myPutPostInit.queryStringParameters = { request_type: 'importFile', company: 'DEMO', queryString: '', filename: 's3test.csv', table: 'entrasp.s3_import', columns: null };
+
+    this.myPutPostInit.queryStringParameters = { request_type: 'importAdvancedFile', company: company, filename: fileName, table: table };
+    this.myPutPostInit.body = queryString;
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
+  }
+
   deleteImportFileURL(fileName: string): Observable<any> {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { request_type: 'deleteFile', filename: fileName };

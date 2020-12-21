@@ -20,7 +20,7 @@ export interface ImportItem {
 
 export interface ImportList {
     entryName: string;
-    items: ExportItem[]
+    items: ImportItem[]
 };
 
 export interface ExportItem {
@@ -170,7 +170,7 @@ export class ImportExportService {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 _this._console.table(result);
-                _this.performImport(result.tableName, result.files, null, result.allowMultipleFiles);
+                _this.performImport(result.tableName, result.files, false, null, null, result.allowMultipleFiles);
             }
         });
     }
@@ -189,13 +189,19 @@ export class ImportExportService {
             data: { tableName: tableName }
         });
 
-        // Check result to perform import
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                _this._console.table(result);
-                _this.performImport(result.tableName, result.files, label, result.allowMultipleFiles);
-            }
-        });
+        let importItem: ImportItem[] = this._currentImportData.items.filter(x => x.label === label);
+        if(importItem.length){
+            // Check result to perform import
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    _this._console.table(result);
+                    _this.performImport(result.tableName, result.files, true, importItem[0].queryString, label, result.allowMultipleFiles);
+                }
+            });
+        }
+        else{
+            this._dialogService.showErrorDialog("Error","Problem in Import item!");
+        }
     }
 
     downloadCSV(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, advanced_query_label: string = null) {
@@ -351,9 +357,9 @@ export class ImportExportService {
      * @param files files to import, currently only one file supported
      * @param allowMultipleFiles should import single or multiple files
      */
-    performImport(tableName: string, files: any[], label: string = null, allowMultipleFiles: boolean): void {
+    performImport(tableName: string, files: any[], isImportAdvanced: boolean = false, queryString: string = null, label: string = null, allowMultipleFiles: boolean = false): void {
 
-        if (files != null && files.length) {
+if (files != null && files.length) {
             this._dialogService.showLoadingDialog('Uploading', 'Please wait...');
             // Get the S3 Create URL 
             this._backendService.createImportFileURL().subscribe(
@@ -369,96 +375,191 @@ export class ImportExportService {
                                 this._dialogService.showLoadingDialog('Importing', 'Please wait...');
 
                                 // Import CSV in Postgres
-                                this._backendService.importFileFromS3(this._authService.getCurrentCompany(), createURLResponse.fileName, tableName, null).subscribe(
-                                    importFileFromS3Response => {
-                                        this._console.log(importFileFromS3Response);
-                                        if (importFileFromS3Response != null && importFileFromS3Response.result === 'OK') {
+                                if(isImportAdvanced){
+                                    this._backendService.importAdvancedFileFromS3(this._authService.getCurrentCompany(), queryString, createURLResponse.fileName, tableName).subscribe(
+                                        importFileFromS3Response => {
+                                            this._console.log(importFileFromS3Response);
+                                            if (importFileFromS3Response != null && importFileFromS3Response.result === 'OK') {
 
-                                            this._toastService.showSuccessToast('File imported!');
-                                            this._dialogService.showLoadingDialog('Finalizing', 'Please wait...');
+                                                this._toastService.showSuccessToast('File imported!');
+                                                this._dialogService.showLoadingDialog('Finalizing', 'Please wait...');
 
-                                            // Get the S3 Delete URL
-                                            this._backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
-                                                deleteURLResponse => {
-                                                    this._console.log(deleteURLResponse);
-                                                    if (deleteURLResponse != null && deleteURLResponse.result === 'OK') {
-                                                        // Delete file from S3
-                                                        this._httpClient.delete(deleteURLResponse.url).subscribe(
-                                                            responseDelete => {
-                                                                this._console.table(responseDelete);
-                                                                // Success
-                                                                this._toastService.showSuccessToast('File imported!');
-                                                                this._dialogService.closeDialog();
-                                                                this._dialogService.showSuccessDialog('Success', 'Data imported successfully!');
-                                                            },
-                                                            error => {
-                                                                this._console.error(error);
-                                                                this._dialogService.closeDialog();
-                                                                this._dialogService.showErrorDialog('Error', 'Error uploading file!');
-                                                            }
-                                                        );
-                                                    }
-                                                    else {
+                                                // Get the S3 Delete URL
+                                                this._backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
+                                                    deleteURLResponse => {
+                                                        this._console.log(deleteURLResponse);
+                                                        if (deleteURLResponse != null && deleteURLResponse.result === 'OK') {
+                                                            // Delete file from S3
+                                                            this._httpClient.delete(deleteURLResponse.url).subscribe(
+                                                                responseDelete => {
+                                                                    this._console.table(responseDelete);
+                                                                    // Success
+                                                                    this._toastService.showSuccessToast('File imported!');
+                                                                    this._dialogService.closeDialog();
+                                                                    this._dialogService.showSuccessDialog('Success', 'Data imported successfully!');
+                                                                },
+                                                                error => {
+                                                                    this._console.error(error);
+                                                                    this._dialogService.closeDialog();
+                                                                    this._dialogService.showErrorDialog('Error', 'Error uploading file!');
+                                                                }
+                                                            );
+                                                        }
+                                                        else {
+                                                            this._dialogService.closeDialog();
+                                                            this._console.error(createURLResponse.reason);
+                                                            // Show error snackbar
+                                                            this._toastService.showErrorToast(createURLResponse.reason);
+                                                        }
+                                                    }, error => {
+                                                        // Error occured!
                                                         this._dialogService.closeDialog();
-                                                        this._console.error(createURLResponse.reason);
-                                                        // Show error snackbar
-                                                        this._toastService.showErrorToast(createURLResponse.reason);
-                                                    }
-                                                }, error => {
-                                                    // Error occured!
-                                                    this._dialogService.closeDialog();
-                                                    this._toastService.showErrorToast('An error occured!', error);
+                                                        this._toastService.showErrorToast('An error occured!', error);
 
-                                                }
-                                            )
-                                        }
-                                        else {
-                                            // Failure
-                                            this._console.error(importFileFromS3Response.reason);
-                                            this._toastService.showErrorToast('File import error!');
-                                            this._dialogService.showLoadingDialog('Finalizing', 'Please wait...');
-
-                                            // Get the S3 Delete URL
-                                            this._backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
-                                                deleteURLResponse => {
-                                                    this._console.log(deleteURLResponse);
-                                                    if (deleteURLResponse != null && deleteURLResponse.result === 'OK') {
-                                                        // Delete file from S3
-                                                        this._httpClient.delete(deleteURLResponse.url).subscribe(
-                                                            responseDelete => {
-                                                                this._console.table(responseDelete);
-                                                                // Show error
-                                                                this._dialogService.closeDialog();
-                                                                this._dialogService.showErrorDialog('Error', importFileFromS3Response.reason);
-                                                            },
-                                                            error => {
-                                                                this._console.error(error);
-                                                                this._dialogService.closeDialog();
-                                                                this._dialogService.showErrorDialog('Error', 'Error deleting file!');
-                                                            }
-                                                        );
                                                     }
-                                                    else {
+                                                )
+                                            }
+                                            else {
+                                                // Failure
+                                                this._console.error(importFileFromS3Response.reason);
+                                                this._toastService.showErrorToast('File import error!');
+                                                this._dialogService.showLoadingDialog('Finalizing', 'Please wait...');
+
+                                                // Get the S3 Delete URL
+                                                this._backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
+                                                    deleteURLResponse => {
+                                                        this._console.log(deleteURLResponse);
+                                                        if (deleteURLResponse != null && deleteURLResponse.result === 'OK') {
+                                                            // Delete file from S3
+                                                            this._httpClient.delete(deleteURLResponse.url).subscribe(
+                                                                responseDelete => {
+                                                                    this._console.table(responseDelete);
+                                                                    // Show error
+                                                                    this._dialogService.closeDialog();
+                                                                    this._dialogService.showErrorDialog('Error', importFileFromS3Response.reason);
+                                                                },
+                                                                error => {
+                                                                    this._console.error(error);
+                                                                    this._dialogService.closeDialog();
+                                                                    this._dialogService.showErrorDialog('Error', 'Error deleting file!');
+                                                                }
+                                                            );
+                                                        }
+                                                        else {
+                                                            this._dialogService.closeDialog();
+                                                            this._console.error(createURLResponse.reason);
+                                                            // Show error snackbar
+                                                            this._toastService.showErrorToast(createURLResponse.reason);
+                                                        }
+                                                    }, error => {
+                                                        // Error occured!
                                                         this._dialogService.closeDialog();
-                                                        this._console.error(createURLResponse.reason);
-                                                        // Show error snackbar
-                                                        this._toastService.showErrorToast(createURLResponse.reason);
+                                                        this._toastService.showErrorToast('An error occured!', error);
+
                                                     }
-                                                }, error => {
-                                                    // Error occured!
-                                                    this._dialogService.closeDialog();
-                                                    this._toastService.showErrorToast('An error occured!', error);
+                                                )
+                                            }
+                                        }, error => {
+                                            // Error occured!
+                                            console.error(error);
+                                            this._dialogService.closeDialog();
+                                            this._toastService.showErrorToast('An error occured!', error);
 
-                                                }
-                                            )
                                         }
-                                    }, error => {
-                                        // Error occured!
-                                        this._dialogService.closeDialog();
-                                        this._toastService.showErrorToast('An error occured!', error);
+                                    );
+                                }
+                                else{
+                                    this._backendService.importFileFromS3(this._authService.getCurrentCompany(), createURLResponse.fileName, tableName, null).subscribe(
+                                        importFileFromS3Response => {
+                                            this._console.log(importFileFromS3Response);
+                                            if (importFileFromS3Response != null && importFileFromS3Response.result === 'OK') {
 
-                                    }
-                                );
+                                                this._toastService.showSuccessToast('File imported!');
+                                                this._dialogService.showLoadingDialog('Finalizing', 'Please wait...');
+
+                                                // Get the S3 Delete URL
+                                                this._backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
+                                                    deleteURLResponse => {
+                                                        this._console.log(deleteURLResponse);
+                                                        if (deleteURLResponse != null && deleteURLResponse.result === 'OK') {
+                                                            // Delete file from S3
+                                                            this._httpClient.delete(deleteURLResponse.url).subscribe(
+                                                                responseDelete => {
+                                                                    this._console.table(responseDelete);
+                                                                    // Success
+                                                                    this._toastService.showSuccessToast('File imported!');
+                                                                    this._dialogService.closeDialog();
+                                                                    this._dialogService.showSuccessDialog('Success', 'Data imported successfully!');
+                                                                },
+                                                                error => {
+                                                                    this._console.error(error);
+                                                                    this._dialogService.closeDialog();
+                                                                    this._dialogService.showErrorDialog('Error', 'Error uploading file!');
+                                                                }
+                                                            );
+                                                        }
+                                                        else {
+                                                            this._dialogService.closeDialog();
+                                                            this._console.error(createURLResponse.reason);
+                                                            // Show error snackbar
+                                                            this._toastService.showErrorToast(createURLResponse.reason);
+                                                        }
+                                                    }, error => {
+                                                        // Error occured!
+                                                        this._dialogService.closeDialog();
+                                                        this._toastService.showErrorToast('An error occured!', error);
+
+                                                    }
+                                                )
+                                            }
+                                            else {
+                                                // Failure
+                                                this._console.error(importFileFromS3Response.reason);
+                                                this._toastService.showErrorToast('File import error!');
+                                                this._dialogService.showLoadingDialog('Finalizing', 'Please wait...');
+
+                                                // Get the S3 Delete URL
+                                                this._backendService.deleteImportFileURL(createURLResponse.fileName).subscribe(
+                                                    deleteURLResponse => {
+                                                        this._console.log(deleteURLResponse);
+                                                        if (deleteURLResponse != null && deleteURLResponse.result === 'OK') {
+                                                            // Delete file from S3
+                                                            this._httpClient.delete(deleteURLResponse.url).subscribe(
+                                                                responseDelete => {
+                                                                    this._console.table(responseDelete);
+                                                                    // Show error
+                                                                    this._dialogService.closeDialog();
+                                                                    this._dialogService.showErrorDialog('Error', importFileFromS3Response.reason);
+                                                                },
+                                                                error => {
+                                                                    this._console.error(error);
+                                                                    this._dialogService.closeDialog();
+                                                                    this._dialogService.showErrorDialog('Error', 'Error deleting file!');
+                                                                }
+                                                            );
+                                                        }
+                                                        else {
+                                                            this._dialogService.closeDialog();
+                                                            this._console.error(createURLResponse.reason);
+                                                            // Show error snackbar
+                                                            this._toastService.showErrorToast(createURLResponse.reason);
+                                                        }
+                                                    }, error => {
+                                                        // Error occured!
+                                                        this._dialogService.closeDialog();
+                                                        this._toastService.showErrorToast('An error occured!', error);
+
+                                                    }
+                                                )
+                                            }
+                                        }, error => {
+                                            // Error occured!
+                                            this._dialogService.closeDialog();
+                                            this._toastService.showErrorToast('An error occured!', error);
+
+                                        }
+                                    );
+                                }
                             },
                             error => {
                                 this._console.error(error);
