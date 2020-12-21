@@ -761,7 +761,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // tslint:disable-next-line: forin
         for (const key in keys) {
             const toReplace = delimiter + key + delimiter;
-            const replacement = keys[key];
+            let replacement = keys[key];
+            // check if it is an object
+            if (replacement != null && replacement.id != null) {
+                replacement = replacement.id;
+            }
             let newString = functString.replace(toReplace, replacement);
             while (newString !== functString) { // handle multiple occurences
                 functString = newString;
