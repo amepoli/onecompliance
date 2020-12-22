@@ -552,18 +552,44 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "number",
-                "viewType": "input"
+              "comboQuery": "select mvr.id_modello_test_vr as id, mvr.id_modello_test_vr as name from entrasp.modelli_test_vr mvr inner join entrasp.sondaggi snd on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ order by mvr.id_modello_test_vr;",
+              "options": [],
+              "viewType": "combobox"
             },
             "isHidden": false,
+            "outputEvent": {
+              "eventName": "sondaggio_version_change",
+              "eventTrigger": "select"
+            },
             "isPrimary": false,
             "key": "id_modello_test_vr",
-            "label": "Versione Modello Test",
-            "newLine": true,
-            "readOnly": true,
-            "size": 1.5
-        },
-        {
+            "label": "Versione",
+            "sameOrigin": false,
+            "inputEvents": [
+              {
+                "eventName": "sondaggio_version_change",
+                "condition": "none",
+                "values": [],
+                "actionType": "show_message",
+                "outputEventWhenComplete": "survey_reload",
+                "message": {
+                  "messageText": "Sei sicuro di voler aggiornare la versione della soministrazione e di tutte le somministrazioni del sondaggio?",
+                  "actionOnNo": {
+                    "actionType": "query",
+                    "queryFunct": "select 1"
+                  },
+                  "actionOnYes": {
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.sondaggio_versione_update($codice_azienda$, $id_sondaggio$, $id_modello_test_vr$);"
+                  }
+                }
+              }
+            ],
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+          },
+       {
             "format": {
                 "dataType": "text",
                 "viewType": "input"
