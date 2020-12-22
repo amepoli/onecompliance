@@ -3,7 +3,13 @@
   "entryKey": "compiti_rif_bo_keys",
   "origin": "entrasp.compiti_rif_bo_keys",
   "search_keys": [],
-  "predefinedQueries": [{"queryString": "select *, codice_compito as codice_compito_titolo from entrasp.compiti_rif_bo_keys where codice_azienda=$codice_azienda$"}],
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "type": "main",
+      "queryString": "select *, codice_compito as codice_compito_titolo from entrasp.compiti_rif_bo_keys where codice_azienda=$codice_azienda$"
+    }
+  ],
   "inputEvents": [
     {
       "eventName": "to_compiti_from_keys",
@@ -55,7 +61,7 @@
       ],
       "outputEvent": {
         "eventName": "codice_compito_change",
-        "eventTrigger": "change"
+        "eventTrigger": "select"
       },
       "isHidden": false,
       "isPrimary": true,
@@ -93,7 +99,7 @@
           "actionType": "update",
           "updateFunct": "'£codice_compito£'",
           "condition": "none",
-          "values": []
+          "values": [""]
         }
       ],
       "outputEvent": {
