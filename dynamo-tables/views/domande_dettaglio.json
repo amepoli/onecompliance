@@ -41,19 +41,6 @@
       },
       "isHidden": true,
       "isPrimary": true,
-      "key": "id_modello_test",
-      "label": "ID modello di test",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
       "key": "id_modello_test_vr",
       "label": "Versione",
       "newLine": true,
@@ -132,24 +119,40 @@
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "textarea"
+        "comboQuery": "SELECT id_modello_test AS id, titolo AS name  FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$;",
+        "options": [],
+        "viewType": "combobox"
       },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "modello_test",
-      "label": "Modello di test",
-      "newLine": true,
-      "queryFunct": "select concat(mo.descrizione) from entrasp.modelli_test mo join entrasp.domande dm on (mo.id_modello_test=dm.id_modello_test and mo.codice_azienda=dm.codice_azienda and mo.id_modello_test_vr=dm.id_modello_test_vr) where  dm.codice_azienda=$codice_azienda$ and dm.id_modello_test=$id_modello_test$ and dm.id_domanda=$id_domanda$",
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_modello_test",
+      "label": "ID modello di test",
+      "newLine": false,
       "readOnly": true,
-      "size": 10
+      "size": 8
     },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "punteggio",
+      "label": "Punteggio",
+      "newLine": true,
+      "readOnly": true,
+      "size": 2
+    },
+
     {
       "autoGenerate": false,
       "format": {
         "viewType": "textarea",
         "validations": [
           {
-            "message": "Codice mancante",
+            "message": "Definizione domanda mancante",
             "name": "required",
             "validator": "Validators.required"
           }

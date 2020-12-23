@@ -147,10 +147,25 @@
     "formRowProperties": [
         {
             "propertyType": "isHidden",
-            "queryString": "select id_domanda_rif IS NOT NULL as label from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ order by ordinamento;",
+            "queryString": "select case when entrasp.domanda_active(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_somministrazione$)=1 then true else false end from entrasp.domande dm where dm.codice_azienda=$codice_azienda$ and dm.id_modello_test=$id_modello_test$ and dm.id_modello_test_vr=$id_modello_test_vr$ order by dm.ordinamento;",
             "inputEvents": [
                 {
                     "eventName": "toggle_question",
+                    "actionType": "showRow",
+                    "condition": "equalTo",
+                    "keys": [
+                        {
+                            "sender": "id_domanda",
+                            "receiver": "id_domanda_rif"
+                        },
+                        {
+                            "sender": "%value%",
+                            "receiver": "id_risposta_prev_rif"
+                        }
+                    ]
+                },
+                {
+                    "eventName": "toggle_question_mc",
                     "actionType": "showRow",
                     "condition": "equalTo",
                     "keys": [
