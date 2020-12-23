@@ -649,6 +649,8 @@ exports.handler = async (event, context) => {
                 let keyTypes = getKeyTypes(entry_keys);
                 let calculatedWhereCond = [];
 
+                let comma = ''; // first entry has no comma 
+
                 if (isAdvanced) {
                     if (entry_params.exportQueries) {
                         console.log('entry_params.exportQueries', JSON.stringify(entry_params.exportQueries));
@@ -678,7 +680,6 @@ exports.handler = async (event, context) => {
                 else {
 
                     queryString = 'SELECT ';
-                    let comma = ''; // first entry has no comma 
                     // keep track of calculated where conditions, query becomes subqueries. 
                     // See https://stackoverflow.com/questions/47455962/using-function-result-in-where-clause-in-postgresql
 
@@ -726,30 +727,37 @@ exports.handler = async (event, context) => {
                 }
 
                 if (queryString) {
-
                     comma = ' WHERE ';
+                    if (isAdvanced) {
+                        if (queryString.includes('$')) {
+                            comma = ' AND ';
+                            queryString = replaceKeys(queryString, table_keys, keyTypes);
+                        }
+                    }
+                    else {
 
-                    for (const key in table_keys) {
-                        if (table_keys.hasOwnProperty(key)) {
-                            let keyType = keyTypes.find(e => (e.key === key));
-                            let delimiter = (keyType.dataType === 'text') ? '\'' : '';
-                            let element = table_keys[key];
-                            // replace single quotes with double quotes in strings
-                            element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
-                            if (keyType.isCalculated) { // delay and make it part of the query above
-                                calculatedWhereCond.push({ key: key, value: element, delimiter: delimiter })
-                            } else {
-                                let fieldString = comma + key + '=' + delimiter + element + delimiter;
-                                queryString = queryString + fieldString;
-                                comma = ' AND '; // needed only the first time
+                        for (const key in table_keys) {
+                            if (table_keys.hasOwnProperty(key)) {
+                                let keyType = keyTypes.find(e => (e.key === key));
+                                let delimiter = (keyType.dataType === 'text') ? '\'' : '';
+                                let element = table_keys[key];
+                                // replace single quotes with double quotes in strings
+                                element = (keyType.dataType === 'text') ? element.replace(/'/g, "''") : element;
+                                if (keyType.isCalculated) { // delay and make it part of the query above
+                                    calculatedWhereCond.push({ key: key, value: element, delimiter: delimiter })
+                                } else {
+                                    let fieldString = comma + key + '=' + delimiter + element + delimiter;
+                                    queryString = queryString + fieldString;
+                                    comma = ' AND '; // needed only the first time
+                                }
                             }
                         }
                     }
 
+
                     console.log('queryString2', queryString);
 
                     if (search_keys) {
-
                         let search_params = entry_params.search_keys;
                         let search_types = search_params.map(k => {
                             let dataType = k.format.dataType ? k.format.dataType : '';
