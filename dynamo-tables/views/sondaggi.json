@@ -488,7 +488,14 @@
             "format": {
                 "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
                 "options": [],
-                "viewType": "combobox"
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Indicare il centro gestionale!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
@@ -552,44 +559,44 @@
         {
             "autoGenerate": false,
             "format": {
-              "comboQuery": "select mvr.id_modello_test_vr as id, mvr.id_modello_test_vr as name from entrasp.modelli_test_vr mvr inner join entrasp.sondaggi snd on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ order by mvr.id_modello_test_vr;",
-              "options": [],
-              "viewType": "combobox"
+                "comboQuery": "select mvr.id_modello_test_vr as id, mvr.id_modello_test_vr as name from entrasp.modelli_test_vr mvr inner join entrasp.sondaggi snd on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ order by mvr.id_modello_test_vr;",
+                "options": [],
+                "viewType": "combobox"
             },
             "isHidden": false,
             "outputEvent": {
-              "eventName": "sondaggio_version_change",
-              "eventTrigger": "select"
+                "eventName": "sondaggio_version_change",
+                "eventTrigger": "select"
             },
             "isPrimary": false,
             "key": "id_modello_test_vr",
             "label": "Versione",
             "sameOrigin": false,
             "inputEvents": [
-              {
-                "eventName": "sondaggio_version_change",
-                "condition": "none",
-                "values": [],
-                "actionType": "show_message",
-                "outputEventWhenComplete": "survey_reload",
-                "message": {
-                  "messageText": "Sei sicuro di voler aggiornare la versione della soministrazione e di tutte le somministrazioni del sondaggio?",
-                  "actionOnNo": {
-                    "actionType": "query",
-                    "queryFunct": "select 1"
-                  },
-                  "actionOnYes": {
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.sondaggio_versione_update($codice_azienda$, $id_sondaggio$, $id_modello_test_vr$);"
-                  }
+                {
+                    "eventName": "sondaggio_version_change",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show_message",
+                    "outputEventWhenComplete": "survey_reload",
+                    "message": {
+                        "messageText": "Sei sicuro di voler aggiornare la versione della soministrazione e di tutte le somministrazioni del sondaggio?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.sondaggio_versione_update($codice_azienda$, $id_sondaggio$, $id_modello_test_vr$);"
+                        }
+                    }
                 }
-              }
             ],
             "newLine": false,
             "readOnly": false,
             "size": 2
-          },
-       {
+        },
+        {
             "format": {
                 "dataType": "text",
                 "viewType": "input"
@@ -1000,13 +1007,13 @@
         {
             "fieldName": "object_description",
             "format": {
-              "dataType": "text",
-              "viewType": "input"
+                "dataType": "text",
+                "viewType": "input"
             },
             "label": "Oggetto di verifica",
             "newLine": true,
             "queryCond": "snd.id_sondaggio in(select id_sondaggio from entrasp.sondaggi_somministrati ss where UPPER(ss.object_description) like '%'||UPPER('€object_description€')||'%')"
-          }
+        }
     ],
     "subTables": [
         {
@@ -1169,19 +1176,18 @@
             "entryKey": "compiti_rif_bo_keys",
             "isHidden": false,
             "keys": [
-              {
-                "parent": "codice_azienda",
-                "son": "codice_azienda"
-              },
-              {
-                "parent": "id_sondaggio",
-                "son": "id_sondaggio"
-              }
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
             ],
             "label": "Segnalazioni associate",
             "type": "tableForm"
-          }
-      
+        }
     ],
     "table_keys": [
         {
@@ -1507,7 +1513,7 @@
         "tableQueries": [
             {
                 "label": "Sondaggi e risultati",
-                "queryString": "select snd.*, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, cp.risultati_emersi, cp.proposte_formulate, cp.decisioni_assunte, cp.follow_up, entrasp.cpl_giudizi_verifiche_descrizione (cp.codice_azienda, cp.id_giudizio) as giudizio, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_follow_up) as giuzio_follow_up, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_risultato) as risultato, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_livello_1) as giuzio_livello1, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_livello_2) as giuzio_livello2  from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$;"
+                "queryString": "select snd.*, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, cp.risultati_emersi, cp.proposte_formulate, cp.decisioni_assunte, cp.follow_up, entrasp.cpl_giudizi_verifiche_descrizione (cp.codice_azienda, cp.id_giudizio) as giudizio, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_follow_up) as giuzio_follow_up, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_risultato) as risultato, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_livello_1) as giuzio_livello1, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_livello_2) as giuzio_livello2  from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$"
             }
         ]
     },
