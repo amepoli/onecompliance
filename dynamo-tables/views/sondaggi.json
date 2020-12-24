@@ -26,7 +26,7 @@
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select *, entrasp.mdt_codtitolo(codice_azienda, id_modello_test) as descr_modello_test, (select id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$) as id_sondaggio_prec, entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(codice_azienda, id_sondaggio) as flags_sezioni_activate, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.descrizione_risultato_from_sondaggio(codice_azienda, id_sondaggio) as criterio_analisi from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+            "queryString": "select *, entrasp.mdt_codtitolo(codice_azienda, id_modello_test) as descr_modello_test, (select id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$) as id_sondaggio_prec, (select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$) as id_fase_orig,entrasp.sondaggi_flags_sezioni_appsingola(codice_azienda, id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(codice_azienda, id_sondaggio) as flags_sezioni_activate, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da_manuale, codice_azienda) as giudizio_manuale, entrasp.descrizione_risultato_from_sondaggio(codice_azienda, id_sondaggio) as criterio_analisi from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         },
         {
             "operation": "selectForm",
@@ -111,7 +111,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1.4,
+            "size": 1.1,
             "attributeFuncts": [
                 {
                     "attributeType": "style",
@@ -128,6 +128,44 @@
                     "queryString": "select case when stato='C' then false else true end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$;"
                 }
             ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fase_origine_k",
+            "label": "Fase Orig.",
+            "attributeFuncts": [
+                {
+                    "attributeType": "style",
+                    "styleAttribute": "background_color",
+                    "queryString": "select case when id_fase is null then '#698EC2' else '#25599C' end as label from entrasp.progetti_fasi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
+                },
+                {
+                    "attributeType": "style",
+                    "styleAttribute": "font_color",
+                    "queryString": "select case when id_fase is null then '#5b635a' else 'white' end as label from entrasp.progetti_fasi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
+                },
+                {
+                    "attributeType": "readOnly",
+                    "queryString": "select case when id_fase is null then true else false end as label from entrasp.progetti_fasi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
+                }
+            ],
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "to_fase_origine",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
         },
         {
             "autoGenerate": false,
@@ -165,7 +203,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1.3
+            "size": 1
         },
         {
             "autoGenerate": false,
@@ -203,7 +241,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1.4
+            "size": 1
         },
         {
             "autoGenerate": false,
@@ -297,7 +335,7 @@
             "label": "ID Sondaggio",
             "newLine": false,
             "readOnly": true,
-            "size": 1.4,
+            "size": 1.1,
             "inputEvents": [
                 {
                     "eventName": "sondaggi_button_duplica",
@@ -334,6 +372,21 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "id_fase_orig",
+            "label": "ID Fase orig.",
+            "sameOrigin": false,
+            "newLine": false,
+            "size": 1,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "id_sondaggio_succ",
             "inputEvents": [
                 {
@@ -349,7 +402,7 @@
             ],
             "label": "ID Sondaggio Succ.",
             "newLine": false,
-            "size": 1.3,
+            "size": 1,
             "readOnly": true
         },
         {
@@ -364,7 +417,7 @@
             "label": "ID Sondaggio Prec.",
             "sameOrigin": false,
             "newLine": false,
-            "size": 1.4,
+            "size": 1,
             "readOnly": true
         },
         {
@@ -1427,6 +1480,28 @@
             },
             "actionType": "navigate",
             "eventName": "to_sondaggi_replan"
+        },
+        {
+            "actionTarget": {
+                "name": "progetti_fasi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "id_fase_orig",
+                        "destination": "id_fase"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_fase_origine"
         },
         {
             "actionType": "reload",
