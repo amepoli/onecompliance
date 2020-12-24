@@ -807,20 +807,20 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         // If it's %value%, put in values variables
                         if (key.sender.includes('%value%')) {
                             senderValue = value.data;
-                            if (senderValue.length) {  // check if it is an array (checkbox group)
+                            if (senderValue != null && Array.isArray(senderValue)) {  // check if it is an array (checkbox group)
                                 matchingValues = false;
                                 senderValue.forEach(element => { // at least one array value matches
                                      if (element == receiverValue) {
                                          matchingValues = true;
                                      }
                                 });
-                            } else if (senderValue != receiverValue) {
+                            } else if (senderValue == null || senderValue != receiverValue) {
                                 matchingValues = false;
                             }
                         }
                         else {  // compare keys
                             senderValue = value.valueSet[key.sender] ? value.valueSet[key.sender] : key.sender;
-                            if (senderValue !== receiverValue) {
+                            if (senderValue != receiverValue) {
                                 matchingKeys = false;
                             }
                         }
