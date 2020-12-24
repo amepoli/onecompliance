@@ -169,10 +169,14 @@ async function getQuery(entry_name, queryString, keyPrefix, ignorePrefixInSearch
         }
     };
 
+    console.log('DynamoParams', DynamoParams);
     let entry_params = await dynamo.get(DynamoParams).promise();
 
+    console.log('entry_params', entry_params);
     // complete table if inherited
     entry_params = await overrideTable(entry_params.Item);
+
+    console.log('entry_params', entry_params);
 
     let entry_keys = isForm ? entry_params.form_keys : entry_params.table_keys;
 
@@ -201,8 +205,11 @@ async function getQuery(entry_name, queryString, keyPrefix, ignorePrefixInSearch
         }
     }
 
-    if (search_keys && entry_params.Item.search_keys) {
-        let search_params = entry_params.Item.search_keys;
+    console.log(entry_params);
+    console.log('search_keys: ', entry_params.search_keys);
+
+    if (search_keys && entry_params && entry_params.search_keys) {
+        let search_params = entry_params.search_keys;
         let search_types = search_params.map(k => {
             let dataType = k.format.dataType ? k.format.dataType : '';
             return { key: k.fieldName, dataType: dataType };
