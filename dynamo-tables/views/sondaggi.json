@@ -21,7 +21,7 @@
         {
             "operation": "selectForm",
             "type": "preProcessing",
-            "queryString": "update entrasp.sondaggi snd set sondaggio_completato=pfs.sondaggio_completato, pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE snd.codice_azienda=$codice_azienda$ AND snd.id_sondaggio=$id_sondaggio$;"
+            "queryString": "update entrasp.sondaggi snd set codice_part='€global_codice_part€', sondaggio_completato=pfs.sondaggio_completato, pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE snd.codice_azienda=$codice_azienda$ AND snd.id_sondaggio=$id_sondaggio$;"
         },
         {
             "operation": "selectForm",
@@ -41,7 +41,7 @@
         {
             "operation": "insert",
             "type": "postProcessing",
-            "queryString": "update entrasp.sondaggi set codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
+            "queryString": "update entrasp.sondaggi set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
         },
         {
             "operation": "update",
@@ -1064,9 +1064,20 @@
                 "viewType": "input"
             },
             "label": "Oggetto di verifica",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "snd.id_sondaggio in(select id_sondaggio from entrasp.sondaggi_somministrati ss where UPPER(ss.object_description) like '%'||UPPER('€object_description€')||'%')"
-        }
+        },
+        {
+            "fieldName": "no_progect_associated",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Non associati a progetto",
+            "newLine": false,
+            "queryCond": "id_sondaggio not in(select id_sondaggio from entrasp.progetti_fasi where codice_azienda=$codice_azienda$)"
+          }
+          
     ],
     "subTables": [
         {
@@ -1588,7 +1599,7 @@
         "tableQueries": [
             {
                 "label": "Sondaggi e risultati",
-                "queryString": "select snd.*, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, cp.risultati_emersi, cp.proposte_formulate, cp.decisioni_assunte, cp.follow_up, entrasp.cpl_giudizi_verifiche_descrizione (cp.codice_azienda, cp.id_giudizio) as giudizio, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_follow_up) as giuzio_follow_up, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_risultato) as risultato, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_livello_1) as giuzio_livello1, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_livello_2) as giuzio_livello2  from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$"
+                "queryString": "select snd.*, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, cp.risultati_emersi, cp.proposte_formulate, cp.decisioni_assunte, cp.follow_up, entrasp.cpl_giudizi_verifiche_descrizione (cp.codice_azienda, cp.id_giudizio) as giudizio, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_follow_up) as giuzio_follow_up, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_risultato) as risultato, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_livello_1) as giuzio_livello1, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_livello_2) as giuzio_livello2  from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda='€codice_azienda€'"
             }
         ]
     },
