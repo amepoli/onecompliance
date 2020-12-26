@@ -20,7 +20,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT cg.id_contratti_garanzie AS id, co.numero_contratto as name from entrasp.contratti_garanzie cg join  entrasp.contratti co on cg.codice_azienda=co.codice_azienda and cg.id_contratto=co.id_contratto where cg.codice_azienda= $codice_azienda$ and cg.id_valutazione_garanzie = $id_valutazione_garanzie$;",
+				"comboQuery": "SELECT cg.id_contratti_garanzie AS id, co.numero_contratto as name from entrasp.contratti_garanzie cg join  entrasp.contratti co on cg.codice_azienda=co.codice_azienda and cg.id_contratto=co.id_contratto join entrasp.valutazione_garanzie vg on cg.codice_azienda=vg.codice_azienda and cg.id_garanzia=vg.id_garanzia where cg.codice_azienda= $codice_azienda$ and cg.id_garanzia = $id_garanzia$;",
 				"options": [],
 				"viewType": "combobox"
 			},
@@ -56,7 +56,22 @@
 			"isHidden": true,
 			"isPrimary":true,
 			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "id_garanzia",
+			"key": "id_garanzia",
+			"queryFunct": "select id_garanzia from entrasp.valutazioni_garanzie where id_valutazione_garanzie=$id_valutazione_garanzie$",
+			"readOnly": false,
+			"isHidden": true,
+			"isPrimary":true,
+			"newLine": false
 		}
+
 		
 		
 	]
