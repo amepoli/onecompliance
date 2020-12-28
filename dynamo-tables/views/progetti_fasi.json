@@ -12,7 +12,6 @@
 			"eventName": "onLoadProgettiFasi",
 			"eventTrigger": "onReload"
 		}
-
 	],
 	"predefinedQueries": [
 		{
@@ -48,15 +47,50 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "number"
+				"comboQuery": "SELECT id_fase AS id, id_fase||'-'||codice||'-'||titolo AS name  FROM entrasp.progetti_fasi WHERE id_progetto=£id_progetto£ and codice_azienda=$codice_azienda$;",
+				"options": [],
+				"viewType": "combobox"
 			},
 			"label": "id_fase_sup",
 			"key": "id_fase_sup",
 			"readOnly": true,
-			"isHidden": true,
+			"isHidden": false,
 			"isPrimary": false,
 			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "id_progetto",
+			"key": "id_progetto",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "progetto_from_progetti_fasi",
+			"label": "Progetto associato",
+			"newLine": true,
+			"outputEvent": {
+				"eventName": "to_progetto_from_progetti_fasi",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -66,7 +100,7 @@
 			},
 			"label": "Codice",
 			"key": "codice",
-			"readOnly": true,
+			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
@@ -123,19 +157,6 @@
 					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
 				}
 			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "id_progetto",
-			"key": "id_progetto",
-			"readOnly": false,
-			"isHidden": true,
-			"isPrimary": false,
-			"newLine": true
 		},
 		{
 			"autoGenerate": false,
@@ -250,7 +271,6 @@
 					"actionType": "readOnly",
 					"queryFunct": "select id_sondaggio::varchar='' then true else false"
 				}
-
 			],
 			"newLine": false,
 			"outputEvent": {
@@ -507,6 +527,24 @@
 			},
 			"actionType": "navigate",
 			"eventName": "navigate_sotto_fasi_liv3"
+		},
+		{
+			"actionTarget": {
+				"name": "progetti",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_progetto",
+						"destination": "id_progetto"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "to_progetto_from_progetti_fasi"
 		}
 	],
 	"orderBy": {

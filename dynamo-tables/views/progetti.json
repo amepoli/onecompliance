@@ -4,10 +4,10 @@
 	"entryKey": "progetti",
 	"predefinedQueries": [
 		{
-            "operation": "selectForm",
-            "type": "preProcessing",
-            "queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
-        },
+			"operation": "selectForm",
+			"type": "preProcessing",
+			"queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
+		},
 		{
 			"queryString": "select case when count(id_fase)=0 and (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)>0 then 'C' when (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)=0 then 'P' else 'A' end as stato  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and stato='P'",
 			"type": "postProcessing",
@@ -15,23 +15,23 @@
 		}
 	],
 	"messages": [
-        {
-            "viewType": "form",
-            "formMessageType": "delete",
-            "message": {
-                "title": "Cancellazione progetti, fasi e sondaggi",
-                "text": "Sei sicuro di voler cancellare il progetto, tutte le fasi e i sondaggi associati?",
-                "actionOnNo": {
+		{
+			"viewType": "form",
+			"formMessageType": "delete",
+			"message": {
+				"title": "Cancellazione progetti, fasi e sondaggi",
+				"text": "Sei sicuro di voler cancellare il progetto, tutte le fasi e i sondaggi associati?",
+				"actionOnNo": {
 					"actionType": "query",
 					"queryFunct": "select 1"
-                },
-                "actionOnYes": {
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.progetto_delete($codice_azienda$, $id_progetto$)"
-                }
-            }
-        }
-    ],
+				},
+				"actionOnYes": {
+					"actionType": "query",
+					"queryFunct": "select entrasp.progetto_delete($codice_azienda$, $id_progetto$)"
+				}
+			}
+		}
+	],
 	"outputEvents": [
 		{
 			"eventName": "onSaveProgetti",
@@ -48,24 +48,23 @@
 			"actionType": "reload"
 		},
 		{
-            "actionTarget": {
-                "name": "attivita",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "codice_attivita",
-                        "destination": "codice_attivita"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "to_attivita_associata"
-        }
-       
+			"actionTarget": {
+				"name": "attivita",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "codice_attivita",
+						"destination": "codice_attivita"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "to_attivita_associata"
+		}
 	],
 	"form_keys": [
 		{
@@ -470,6 +469,7 @@
 			"key": "stato",
 			"queryFunct": "entrasp.transcodifiche_transcodifica('STATO', stato)",
 			"label": "Stato",
+			"width": "6%",
 			"style": [
 				{
 					"value": "Chiuso",
@@ -495,7 +495,8 @@
 			"isHidden": true,
 			"isPrimary": false,
 			"key": "id_tipo_progetto",
-			"label": "id_tipo_progetto"
+			"label": "id_tipo_progetto",
+			"width": "6%"
 		},
 		{
 			"format": {
@@ -504,7 +505,8 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "codice_attivita",
-			"label": "Codice Attività"
+			"label": "Codice Attività",
+			"width": "6%"
 		},
 		{
 			"format": {
@@ -513,7 +515,8 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "codice_progetto",
-			"label": "Codice Progetto"
+			"label": "Codice Progetto",
+			"width": "6%"
 		},
 		{
 			"format": {
@@ -522,7 +525,8 @@
 			"isHidden": false,
 			"isPrimary": true,
 			"key": "id_progetto",
-			"label": "Id Progetto"
+			"label": "Id Progetto",
+			"width": "6%"
 		},
 		{
 			"format": {
@@ -554,7 +558,7 @@
 		},
 		{
 			"format": {
-			  "dataType": "text"
+				"dataType": "text"
 			},
 			"isHidden": false,
 			"isPrimary": false,
@@ -562,6 +566,6 @@
 			"label": "Cliente",
 			"width": "15%",
 			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente)"
-		  }
+		}
 	]
 }
