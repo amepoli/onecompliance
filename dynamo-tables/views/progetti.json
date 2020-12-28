@@ -4,6 +4,11 @@
 	"entryKey": "progetti",
 	"predefinedQueries": [
 		{
+            "operation": "selectForm",
+            "type": "preProcessing",
+            "queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
+        },
+		{
 			"queryString": "select case when count(id_fase)=0 and (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)>0 then 'C' when (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)=0 then 'P' else 'A' end as stato  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and stato='P'",
 			"type": "postProcessing",
 			"operation": "selectForm"
@@ -545,16 +550,18 @@
 			"isPrimary": false,
 			"key": "titolo",
 			"label": "Titolo",
-			"width": "40%"
+			"width": "32%"
 		},
 		{
 			"format": {
-				"dataType": "number"
+			  "dataType": "text"
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "id_cliente",
-			"label": "Id Cliente"
-		}
+			"key": "descr_cliente",
+			"label": "Cliente",
+			"width": "15%",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente)"
+		  }
 	]
 }
