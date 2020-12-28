@@ -1,0 +1,105 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "copy_valutazione_garanzie_contratti",
+	"origin": "entrasp.aziende",
+	"businessObjectName": "valutazione_garanzie",
+	"form_keys": [
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "codice_azienda",
+			"key": "codice_azienda",
+			"readOnly": false,
+			"isHidden": true,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT distinct data_rif_bil as id, data_rif_bil as name FROM entrasp.valutazione_garanzie WHERE codice_azienda = $codice_azienda$;",
+				"dataType": "date",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Data di riferimento da cui copiare",
+			"key": "data_rif_bil_old",
+			"sameOrigin": false,
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"label": "Nuova data di Riferimento",
+			"key": "data_rif_bil_new",
+			"sameOrigin": false,
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "duplica",
+            "label": "Copia valutazioni",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "valutazioni_garanzie_copy",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "valutazioni_garanzie_copy",
+                    "actionType": "query",
+                    "queryFunct": "valutazioni_garanzie_copy($codice_azienda$, $data_rif_bil_old$, $data_rif_bil_new$)",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#fada5e",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        }
+     
+	],
+	"hideActions": [
+		{
+			"formActionType": "save",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "add",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "delete",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "share",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "import_export",
+			"viewType": "form"
+		}
+
+	]
+}
