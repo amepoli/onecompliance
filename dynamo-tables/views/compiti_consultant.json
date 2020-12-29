@@ -6,7 +6,7 @@
     {
       "type": "main",
       "operation": "insert",
-      "queryString": "select entrasp.compito_insert(codiceazienda=>$codice_azienda$, codice_compito=>$codice_compito$, ute_ins=>$ute_ins$::varchar,  data_ins=>'€data_ins€', id_cliente=>$id_cliente$, data_segnalazione=>'€data_segnalazione€', titolo=>$titolo$,  note=>$note$, id_centro_gest=>$id_centro_gest$, stato=>$stato$, id_responsabile=>$id_responsabile$,  id_tipo_segnalazione=>$id_tipo_segnalazione$);"
+      "queryString": "select entrasp.compito_insert(codiceazienda=>'$codice_azienda$', codice_compito=>$codice_compito$, ute_ins=>$ute_ins$::varchar,  data_ins=>'€data_ins€', id_cliente=>$id_cliente$, data_segnalazione=>'€data_segnalazione€', titolo=>$titolo$,  note=>$note$, id_centro_gest=>$id_centro_gest$, stato=>$stato$, id_responsabile=>$id_responsabile$,  id_tipo_segnalazione=>$id_tipo_segnalazione$);"
     },
     {
       "type": "main",
@@ -18,7 +18,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni where codice_azienda = '$codice_azienda$';",
+        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni where codice_azienda = $codice_azienda$;",
         "options": [],
         "viewType": "combobox"
       },
@@ -142,7 +142,8 @@
       "format": {
         "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende;",
         "options": [],
-        "viewType": "combobox"
+        "viewType": "combobox",
+        "dataType": "text"
       },
       "label": "Azienda",
       "isHidden": false,
@@ -244,7 +245,8 @@
       "format": {
         "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende;",
         "options": [],
-        "viewType": "combobox"
+        "viewType": "combobox",
+        "dataType": "text"
       },
       "label": "Azienda",
       "newLine": false,
@@ -304,7 +306,7 @@
     {
       "fieldName": "id_centro_gest",
       "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$;",
+        "comboQuery": "SELECT id_centro_gest AS id, codice_azienda||'-'||entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.compiti order by codice_azienda;",
         "options": [],
         "viewType": "combobox"
       },
