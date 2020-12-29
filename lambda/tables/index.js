@@ -616,7 +616,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             }
         }
         if (autoGenType == 'text'){ 
-            genString = genString + comma + autoGenKey + " ~ '^-?[0-9]+.?[0-9]*$'";
+            genString = genString + comma + autoGenKey + " ~ '^-?[0-9]+.?[0-9]*$' AND " + autoGenKey + " !~ '\\/'";
         }
     }
 
