@@ -5,11 +5,6 @@
   "predefinedQueries": [
     {
       "type": "main",
-      "operation": "insert",
-      "queryString": "select entrasp.compito_insert(codiceazienda=>'$codice_azienda$', codice_compito=>$codice_compito$, ute_ins=>$ute_ins$::varchar,  data_ins=>'€data_ins€', id_cliente=>$id_cliente$, data_segnalazione=>'€data_segnalazione€', titolo=>$titolo$,  note=>$note$, id_centro_gest=>$id_centro_gest$, stato=>$stato$, id_responsabile=>$id_responsabile$,  id_tipo_segnalazione=>$id_tipo_segnalazione$);"
-    },
-    {
-      "type": "main",
       "operation": "selectTable",
       "queryString": "select *, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti WHERE 1=1"
     }
@@ -18,7 +13,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni where codice_azienda = $codice_azienda$;",
+        "comboQuery": "select id_tipo_segnalazione as id, codice_azienda||'-'||descrizione as name from entrasp.tipi_segnalazioni order by codice_azienda, id_tipo_segnalazione;",
         "options": [],
         "viewType": "combobox"
       },
@@ -143,7 +138,14 @@
         "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende;",
         "options": [],
         "viewType": "combobox",
-        "dataType": "text"
+        "dataType": "text",
+        "validations": [
+          {
+            "message": "Codice azienda necessario",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
       "label": "Azienda",
       "isHidden": false,
@@ -236,7 +238,22 @@
       "newLine": true,
       "readOnly": false,
       "size": 10
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+          "value": "0",
+          "dataType": "text",
+          "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "flag_manuale",
+      "label": "flag_manuale",
+      "newLine": true,
+      "readOnly": false
     }
+   
   ],
   "origin": "entrasp.compiti",
   "search_keys": [
