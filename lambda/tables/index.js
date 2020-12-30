@@ -87,20 +87,26 @@ function replaceKeys(queryString, keys, keyTypes) {
                             newString = queryString.replace(toReplace, replacement);
                         }
                     });
-                } else if (typeof keys[key] !== 'object' || keys[key] == null || (keyType != null && keyType.viewType === 'checkboxgroup')) {  // avoid spourious values like arrays form events - n.b.: null is 'object'
+                } else if (typeof keys[key] !== 'object' || keys[key] == null || (keyType != null && (keyType.viewType === 'checkboxgroup' || keyType.viewType === 'combobox'))) {  // avoid spourious values like arrays form events - n.b.: null is 'object'
                     let bracket = (delimiter === '$' && keyType != null && isDataTypeString(keyType)) ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
                     let valueWithFixedQuotes = keys[key];
                     try {
                         valueWithFixedQuotes = (keys[key] != null && keyType != null && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
-                    } catch(e) {
+                    } catch (e) {
                         console.log("Error on key: ", key, " with value: ", keys[key]);
                     }
-                    let replacement = keys[key] == null ? 'null' : bracket + valueWithFixedQuotes + bracket;
+                    let replacement = keys[key] == null || keys[key] == undefined ? 'null' : bracket + valueWithFixedQuotes + bracket;
                     // handle checkboxgroup, converting array to string
-                    replacement = (keyType != null && keyType.viewType === 'checkboxgroup') ? 
-                        '[' + ((keys[key] != null && keys[key].length > 0) ? keys[key].toString() : '') + ']' 
+                    replacement = (keyType != null && keyType.viewType === 'checkboxgroup') ?
+                        '[' + ((keys[key] != null && keys[key].length > 0) ? keys[key].toString() : '') + ']'
                         : replacement;
+
+                    // handle combobox
+                    if (keyType != null && keyType.viewType === 'combobox') {
+                        replacement = (keys[key] != null && keys[key].length > 0) ? keys[key].toString() : 'null'
+                    }
+
                     //console.log ('toReplace: ', toReplace, ' replacement: ', replacement, ' value: ', keys[key], ' keyType: ', keyType);
                     let newString = queryString.replace(toReplace, replacement);
                     while (newString !== queryString) { // handle multiple occurences
@@ -224,7 +230,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
             additionalQueryCond = " AND " + additionalQueryCond.queryString + ";";
         }
     }
-    
+
     orderBy = entry_params.orderBy;
 
     if (!entry_keys) return '';
@@ -426,7 +432,7 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
         }
         return found;
     };
-    let field_key = findKey(entry_keys, eventInfo.field); 
+    let field_key = findKey(entry_keys, eventInfo.field);
 
     if (field_key != null) {
         if (field_key.inputEvents != null) {
@@ -595,10 +601,10 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
     if (autoGenKey != null && newRecord) {  // retrieve the new ID 
         if (autoGenType == 'number') {
             genString = 'SELECT (COALESCE(MAX(' + autoGenKey + '),0)+1) FROM ' + entry_params.origin;
-        } else if (autoGenType == 'text'){ // string
+        } else if (autoGenType == 'text') { // string
             genString = 'SELECT (COALESCE(MAX(' + autoGenKey + ')::numeric, 0)+1)::varchar FROM ' + entry_params.origin;
         }
-        
+
         comma = ' WHERE ';
         for (const key in keys) {
             if (keys.hasOwnProperty(key)) {
@@ -615,7 +621,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                 comma = ' AND '; // needed only the first time
             }
         }
-        if (autoGenType == 'text'){ 
+        if (autoGenType == 'text') {
             genString = genString + comma + autoGenKey + " ~ '^-?[0-9]+.?[0-9]*$' AND " + autoGenKey + " !~ '\\/'";
         }
     }
@@ -656,10 +662,10 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
 
             let delimiter = isDataTypeString(keyType) ? '\'' : '';
-            if (value.id != null) { // combobox 
+            if (value && value.id) { // combobox 
                 value = value.id;
             }
-            if (keyType.viewType === 'combobox' && value === '') {
+            if (keyType.viewType === 'combobox' && !value) {
                 value = 'null';
             }
             // replace single quotes with double quotes in strings
@@ -675,10 +681,10 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             let keyType = keyTypes.find(e => (e.key === key));
             let delimiter = isDataTypeString(keyType) ? '\'' : '';
             let value = values[key];
-            if (value.id) { // combobox 
+            if (value && value.id) { // combobox 
                 value = value.id;
             }
-            if (keyType.viewType === 'combobox' && value === '') {
+            if (keyType.viewType === 'combobox' && !value) {
                 value = 'null';
             }
             // replace single quotes with double quotes in strings
@@ -773,7 +779,7 @@ function getAttributeFuncts(keys) {
     keys.forEach(key => {
         if (key.key != null && key.attributeFuncts != null && key.attributeFuncts.length > 0) {
             key.attributeFuncts.forEach(attributeFunct => {
-                attributeFuncts.push({key: key.key, attributeFunct: attributeFunct});
+                attributeFuncts.push({ key: key.key, attributeFunct: attributeFunct });
             });
         } else if (key.format != null && key.format.viewType === 'subform' && key.format.subform_keys != null) {
             attributeFuncts = attributeFuncts.concat(getAttributeFuncts(key.format.subform_keys));
@@ -880,7 +886,7 @@ async function processPreMainPost(queryString, client, notFullTable, isGet) {
         let haveMainData = queryData.length > 0;
         // let maxindex = haveMainData ? queryData.length : 1; 
         let maxindex = isGet ? queryData.length : 1; // run the queries once if is insert/update/delete, one per row if get
-        for (let row_index = 0; row_index < maxindex ; row_index++) {
+        for (let row_index = 0; row_index < maxindex; row_index++) {
             local_keys_post = haveMainData ? Object.assign(local_keys_pre, queryData[row_index]) : local_keys_post;
             for (let index = 0; index < queryString.postProcessQueries.length; index++) {
                 let query = queryString.postProcessQueries[index];
@@ -1321,7 +1327,7 @@ exports.handler = async (event, context) => {
         await setGlobalVariables(company, client, userid);
 
         // retrieve additional query conditions from profile (if any)
-        
+
         additionalQueryCond = getAdditionalQueryCond(queryParams.entry_name, profileData);
 
         if (method === 'GET') {
@@ -1353,7 +1359,7 @@ exports.handler = async (event, context) => {
             queryData = await processDashboard(queryString, client);
         } else {
             // process query string(s) 
-            queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'), (method ==='GET'));
+            queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'), (method === 'GET'));
         }
 
         // process comboboxes and/or event queries 
