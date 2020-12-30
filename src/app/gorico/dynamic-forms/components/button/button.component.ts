@@ -53,7 +53,7 @@ export class ButtonComponent implements OnInit {
             const keys = _this.field.value.split('^');
             const file_id = keys[0];
             const filename = keys[1];
-            _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(), {}, file_id).subscribe(
+            _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.field.fullValueSet), {}, file_id).subscribe(
                 url => {
                     if (url != null) {
                         _this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(

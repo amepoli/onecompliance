@@ -212,7 +212,7 @@ export class TableViewComponent implements OnChanges {
         let _this = this;
         _this.resetView();
         _this.isLoading = true;
-        _this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys).subscribe(
+        _this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.tableData.keys).subscribe(
             result => {
                 if (result.result === 'OK' && result.data != null && result.data.table_keys != null) {
                     const params = result.data;
@@ -285,7 +285,7 @@ export class TableViewComponent implements OnChanges {
     loadTable(search_keys: any): void {
         const _this = this;
         _this.isLoading = true;
-        _this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, search_keys, false, false, null, false).subscribe(
+        _this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, search_keys, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
