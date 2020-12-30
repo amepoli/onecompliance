@@ -64,7 +64,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public currentDescription: string;
 
-    private currentTableKeys = {};  // keys set in currently active table/subtable (might be foreing keys of subtable)
+    private currentTableKeys: any;  // keys set in currently active table/subtable (might be foreing keys of subtable)
 
     private currentPrimaryKeys: any[]; // current list of primary keys provided by the table-view
 
@@ -129,12 +129,12 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // Report related subscriptions
         _this.subscriptions.push(_this._reportService.reloadRequested.subscribe((entryName) => {
             if (entryName === _this.tableName) {
-                _this._reportService.getReports(_this.tableName, _this.authService.getCurrentCompany(), _this.currentTableKeys, (_this.tableType === 'form'));
+                _this._reportService.getReports(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), _this.currentTableKeys, (_this.tableType === 'form'));
             }
         }));
 
         _this.subscriptions.push(_this._reportService.getReportRequested.subscribe((alias) => {
-            _this._reportService.getReport(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, alias, (_this.tableType === 'form'), _this.searchKeys);
+            _this._reportService.getReport(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, alias, (_this.tableType === 'form'), _this.searchKeys);
         }));
 
         // Import Export related subscriptions
@@ -151,11 +151,11 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }));
 
         _this.subscriptions.push(_this._importExportService.onGetCSVRequested.subscribe(label => {
-            _this._importExportService.downloadCSV(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', label);
+            _this._importExportService.downloadCSV(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', label);
         }));
 
         _this.subscriptions.push(_this._importExportService.onGetExcelRequested.subscribe(label => {
-            _this._importExportService.downloadExcel(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', label);
+            _this._importExportService.downloadExcel(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', label);
         }));
 
         // subscribe to toolbar requests
@@ -213,7 +213,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     // Show loading Dialog
                     _this._dialogService.showLoadingDialog("Preparing Excel Sheet", "Please wait...");
 
-                    _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys,
+                    _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys,
                         (_this.tableType === 'form'), false, null, true).subscribe(
                             response => {
                                 _this._dialogService.closeDialog();

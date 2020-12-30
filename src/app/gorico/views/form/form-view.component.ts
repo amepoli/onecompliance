@@ -293,7 +293,7 @@ export class FormViewComponent implements OnChanges, OnInit {
             }
 
             _this.savingState = 'saving';
-            _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, [values]).subscribe(   // backend expects an array of data
+            _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, [values]).subscribe(   // backend expects an array of data
                 result => {
                     _this._console.log(result);
                     if (result.result === 'OK') {
@@ -352,7 +352,7 @@ export class FormViewComponent implements OnChanges, OnInit {
         _this._dialogService.showConfimationDialog(deleteMessage.title, deleteMessage.text, "Yes", "No", "warning").then((result) => {
             if (result.value === true) {
                 // User said yes so let's delete form
-                _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys).subscribe(
+                _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys).subscribe(
                     result => {
                         _this._console.log(result);
                         if (result.result === 'OK') {
@@ -393,7 +393,7 @@ export class FormViewComponent implements OnChanges, OnInit {
     getAttachList() {
         let _this = this;
         //console.table(_this.currentKeys);
-        _this.backendService.getAttachList(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys).subscribe(
+        _this.backendService.getAttachList(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys).subscribe(
             result => {
                 _this._console.log(result);
                 if (result.result === 'OK') {
