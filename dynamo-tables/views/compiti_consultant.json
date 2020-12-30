@@ -13,6 +13,28 @@
     {
       "autoGenerate": false,
       "format": {
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text",
+        "validations": [
+          {
+            "message": "Codice azienda necessario",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "label": "Azienda",
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "comboQuery": "select id_tipo_segnalazione as id, codice_azienda||'-'||descrizione as name from entrasp.tipi_segnalazioni order by codice_azienda, id_tipo_segnalazione;",
         "options": [],
         "viewType": "combobox"
@@ -22,20 +44,6 @@
       "key": "id_tipo_segnalazione",
       "label": "Tipo Segnalazione",
       "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "value": "£CURRENT_DATE£",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_segnalazione",
-      "label": "Data segnalazione",
-      "newLine": true,
       "readOnly": false
     },
     {
@@ -79,15 +87,15 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
+        "dataType": "date",
+        "value": "£CURRENT_DATE£",
+        "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "id_responsabile",
-      "label": "ID Responsabile",
-      "newLine": true,
+      "key": "data_segnalazione",
+      "label": "Data segnalazione",
+      "newLine": false,
       "readOnly": false
     },
     {
@@ -99,8 +107,8 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "id_cliente",
-      "label": "Cliente",
+      "key": "id_responsabile",
+      "label": "ID Responsabile",
       "newLine": true,
       "readOnly": false
     },
@@ -135,24 +143,17 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende;",
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
         "options": [],
-        "viewType": "combobox",
-        "dataType": "text",
-        "validations": [
-          {
-            "message": "Codice azienda necessario",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "viewType": "combobox"
       },
-      "label": "Azienda",
       "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "newLine": false,
-      "readOnly": false
+      "isPrimary": false,
+      "key": "id_centro_gest",
+      "label": "Centro Gestionale",
+      "newLine": true,
+      "readOnly": false,
+      "size": 5
     },
     {
       "autoGenerate": false,
@@ -181,21 +182,6 @@
       "label": "Utente_ins",
       "newLine": true,
       "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-      "label": "Centro Gestionale",
-      "newLine": true,
-      "readOnly": false,
-      "size": 5
     },
     {
       "autoGenerate": false,
