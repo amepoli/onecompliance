@@ -1,11 +1,17 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "procedure_aziendali",
+    "businessObjectName": "procedureAziendali",
     "predefinedQueries": [
         {
             "operation": "delete",
             "type": "main",
             "queryString": "select entrasp.procedura_aziendale_delete($codice_azienda$, $id_procedura$);"
+        },
+        {
+            "operation": "selectForm",
+            "type": "preProcessing",
+            "queryString": "update entrasp.procedure_aziendali set codice_part='€global_codice_part€' WHERE codice_azienda=$codice_azienda$ AND id_procedura=$id_procedura$;"
         }
     ],
     "orderBy": {
@@ -297,8 +303,8 @@
             "label": "Senza rischi",
             "newLine": false,
             "queryCond": "id_procedura not in(select id_procedura from entrasp.fonti_rischio where codice_azienda=$codice_azienda$ and id_procedura is not null)"
-          },
-          {
+        },
+        {
             "fieldName": "procedure_with_rischi",
             "format": {
                 "value": "0",
@@ -307,8 +313,8 @@
             "label": "Con rischi",
             "newLine": false,
             "queryCond": "id_procedura in(select id_procedura from entrasp.fonti_rischio where codice_azienda=$codice_azienda$ and id_procedura is not null)"
-          },
-          {
+        },
+        {
             "fieldName": "procedure_with_presidio",
             "format": {
                 "value": "0",
@@ -317,8 +323,8 @@
             "label": "Con presidio",
             "newLine": false,
             "queryCond": "id_procedura in(select distinct id_procedura from entrasp.presidi where codice_azienda=$codice_azienda$ and id_procedura is not null)"
-          },
-          {
+        },
+        {
             "fieldName": "procedure_without_presidio",
             "format": {
                 "value": "0",
@@ -327,8 +333,8 @@
             "label": "Senza presidio",
             "newLine": false,
             "queryCond": "id_procedura not in(select distinct id_procedura from entrasp.presidi where codice_azienda=$codice_azienda$ and id_procedura is not null)"
-          },
-          {
+        },
+        {
             "fieldName": "procedure_without_centro_gest",
             "format": {
                 "value": "0",
@@ -337,7 +343,7 @@
             "label": "Senza centro gestionale",
             "newLine": false,
             "queryCond": "id_centro_gest is null"
-          }        
+        }
     ],
     "subTables": [
         {

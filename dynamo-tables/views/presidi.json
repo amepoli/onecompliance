@@ -2,6 +2,14 @@
     "$schema": "../views.schema.json",
     "origin": "entrasp.presidi",
     "entryKey": "presidi",
+    "businessObjectName": "presidi",
+    "predefinedQueries": [
+        {
+            "operation": "selectForm",
+            "type": "preProcessing",
+            "queryString": "update entrasp.presidi set codice_part='€global_codice_part€' WHERE codice_azienda=$codice_azienda$ AND id_presidio=$id_presidio$;"
+        }
+    ],
     "messages": [
         {
             "viewType": "form",
@@ -67,7 +75,6 @@
             "newLine": false,
             "readOnly": false,
             "size": 6.5
-        
         },
         {
             "autoGenerate": false,
@@ -521,8 +528,8 @@
             "label": "Senza rischi",
             "newLine": false,
             "queryCond": "id_presidio not in(select id_presidio from entrasp.rischi_presidi where codice_azienda=$codice_azienda$)"
-          },
-          {
+        },
+        {
             "fieldName": "presidio_with_rischi",
             "format": {
                 "value": "0",
@@ -531,8 +538,8 @@
             "label": "Con rischi",
             "newLine": false,
             "queryCond": "id_presidio in(select id_presidio from entrasp.rischi_presidi where codice_azienda=$codice_azienda$)"
-          },
-          {
+        },
+        {
             "fieldName": "presidi_with_procedure",
             "format": {
                 "value": "0",
@@ -541,8 +548,8 @@
             "label": "Con procedure",
             "newLine": false,
             "queryCond": "id_presidio in(select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and id_procedura is not null)"
-          },
-          {
+        },
+        {
             "fieldName": "presidi_without_procedure",
             "format": {
                 "value": "0",
@@ -551,8 +558,8 @@
             "label": "Senza procedure",
             "newLine": false,
             "queryCond": "id_presidio not in(select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and id_procedura is not null)"
-          },
-          {
+        },
+        {
             "fieldName": "presidi_without_centro_gest",
             "format": {
                 "value": "0",
@@ -561,9 +568,7 @@
             "label": "Senza centro gestionale",
             "newLine": false,
             "queryCond": "id_centro_gest is null"
-          }
-   
-      
+        }
     ],
     "inputEvents": [
         {
