@@ -3,6 +3,22 @@
   "entryKey": "consuntivazioni_sub",
   "origin": "entrasp.consuntivazioni",
   "businessObjectName": "consuntivazioni",
+  "outputEvents": [
+    {
+      "eventName": "consuntivazioni_sub_reload",
+      "eventTrigger": "onReload"
+    },
+    {
+      "eventName": "consuntivazioni_sub_save",
+      "eventTrigger": "onSave"
+    }
+  ],
+  "inputEvents": [
+    {
+      "actionType": "reload",
+      "eventName": "consuntivazioni_reload"
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -99,6 +115,35 @@
     {
       "autoGenerate": false,
       "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_consuntivazione",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "consuntivazione_delete",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "consuntivazione_delete",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "delete from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$ and id_cons=$id_cons$",
+          "outputEventWhenComplete": "reopen_button"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO';",
         "options": [],
         "viewType": "combobox",
@@ -187,7 +232,8 @@
           "actionType": "readOnly",
           "condition": "none",
           "values": [],
-          "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+          "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+          "outputEventWhenComplete": "compiti_consultant_reload"
         },
         {
           "eventName": "update_button",
@@ -199,6 +245,28 @@
         },
         {
           "eventName": "update_button",
+          "actionType": "query_style",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as chiudi_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
+          "actionType": "readOnly",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
+          "actionType": "query_style",
+          "styleAttribute": "font_color",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then 'grey' else 'white' end as chiudi_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
           "actionType": "query_style",
           "condition": "none",
           "values": [],
@@ -234,17 +302,18 @@
           "condition": "none",
           "values": [],
           "queryFunct": "update entrasp.compiti set stato='A', data_chiusura=null where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
-          "outputEventWhenComplete": "update_button"
+          "outputEventWhenComplete": "reopen_button"
         },
         {
           "eventName": "reopen_button",
           "actionType": "readOnly",
           "condition": "none",
           "values": [],
-          "queryFunct": "select case when stato='C' then false else true end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+          "queryFunct": "select case when stato='C' then false else true end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+          "outputEventWhenComplete": "compiti_consultant_reload"
         },
         {
-          "eventName": "update_button",
+          "eventName": "reopen_button",
           "actionType": "query_style",
           "styleAttribute": "font_color",
           "condition": "none",
@@ -252,7 +321,29 @@
           "queryFunct": "select case when stato='C' then 'white' else 'grey' end as riapri_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
         },
         {
-          "eventName": "update_button",
+          "eventName": "reopen_button",
+          "actionType": "query_style",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as riapri_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
+          "actionType": "readOnly",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then false else true end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
+          "actionType": "query_style",
+          "styleAttribute": "font_color",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then 'white' else 'grey' end as riapri_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
           "actionType": "query_style",
           "condition": "none",
           "values": [],
