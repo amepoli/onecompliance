@@ -28,6 +28,16 @@
 			"operation": "selectForm",
 			"queryString": "select count(id_somministrazione) as n_somministrazioni from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=coalesce(£id_sondaggio£,0);",
 			"type": "postProcessing"
+		},
+		{
+			"operation": "insert",
+			"queryString": "select entrasp.progetti_fasi_order($codice_azienda$, $id_progetto$, $id_fase$);",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "update",
+			"queryString": "select entrasp.progetti_fasi_order($codice_azienda$, $id_progetto$, $id_fase$);",
+			"type": "postProcessing"
 		}
 	],
 	"form_keys": [
@@ -45,15 +55,28 @@
 			"newLine": false
 		},
 		{
+			"autoGenerate": true,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "Ordinamento",
+			"key": "ordinamento",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT id_fase AS id, id_fase||'-'||codice||'-'||titolo AS name  FROM entrasp.progetti_fasi WHERE id_progetto=£id_progetto£ and codice_azienda=$codice_azienda$;",
+				"comboQuery": "SELECT id_fase AS id, id_fase||'-'||codice||'-'||titolo AS name FROM entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$;",
 				"options": [],
 				"viewType": "combobox"
 			},
 			"label": "id_fase_sup",
 			"key": "id_fase_sup",
-			"readOnly": true,
+			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": true
@@ -61,8 +84,9 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "number"
+				"comboQuery": "SELECT id_progetto AS id, id_progetto||'-'||codice_progetto||'-'||titolo AS name FROM entrasp.progetti WHERE codice_azienda=$codice_azienda$;",
+				"options": [],
+				"viewType": "combobox"
 			},
 			"label": "id_progetto",
 			"key": "id_progetto",
@@ -100,6 +124,16 @@
 			},
 			"label": "Codice",
 			"key": "codice",
+			"inputEvents": [
+				{
+					"eventName": "onSaveProgettiFasi",
+					"actionType": "query",
+					"queryFunct": "update entrasp.progetti_fasi set codice=entrasp.progetto_fase_codice(codice_azienda, id_fase, null) where codice_azienda=$codice_azienda$ and id_fase=$id_fase$ and id_progetto=$id_progetto$ returning codice;",
+					"condition": "none",
+					"values": [],
+					"outputEventWhenComplete": "progetti_fasi_Reload"
+				}
+			],
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
@@ -123,15 +157,21 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+				"comboQuery": "SELECT codice AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
 				"options": [],
 				"viewType": "combobox",
 				"dataType": "text",
-				"value": "P"
+				"validations": [
+                    {
+                        "message": "Inserire stato della fase",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
 			},
 			"label": "Stato",
 			"key": "stato",
-			"readOnly": true,
+			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
 			"size": 3.5,
@@ -176,7 +216,7 @@
 			"autoGenerate": false,
 			"format": {
 				"viewType": "combobox",
-				"comboQuery": "select id_sondaggio as id, titolo as name from entrasp.sondaggi where codice_azienda=$codice_azienda$",
+				"comboQuery": "select id_sondaggio as id, id_sondaggio||'-'||titolo as name from entrasp.sondaggi where codice_azienda=$codice_azienda$",
 				"options": []
 			},
 			"inputEvents": [
@@ -453,6 +493,10 @@
 		}
 	],
 	"inputEvents": [
+		{
+		 "actionType": "reload",
+		 "eventName": "progetti_fasi_Reload"	
+		},
 		{
 			"actionTarget": {
 				"name": "sondaggi",

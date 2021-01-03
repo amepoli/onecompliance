@@ -7,7 +7,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT mt.codice_azienda, mt.id_modello_test, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr($codice_azienda$, mt.id_modello_test);"
+            "queryString": "SELECT mt.codice_azienda, mt.id_modello_test, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test);"
         },
         {
             "type": "main",
@@ -565,14 +565,14 @@
             "queryCond": "mt.id_tipo_modello_test= $id_tipo_modello_test$"
         },
         {
-            "fieldName": "titolo",
+            "fieldName": "titolo_search",
             "format": {
                 "dataType": "text",
                 "viewType": "input"
             },
             "label": "Titolo",
             "newLine": true,
-            "queryCond": "upper(mt.titolo) like '%'||upper('€titolo€')||'%'"
+            "queryCond": "upper(mt.titolo) like '%'||upper('€titolo_search€')||'%'"
         }
     ],
     "subTables": [
