@@ -1172,6 +1172,7 @@ async function setGlobalVariables(company, client, userid) {
             companies.forEach(c => {
                 if (c.name === company) { // found user's profile
                     global_variables.global_userid = c.id_anagrafica;
+                    global_variables.global_profile = c.profile;
                 }
             });
         }
