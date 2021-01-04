@@ -988,23 +988,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._console.log(`keyListener: ${keyListener}`);
                             //console.table(result);
                             if (event.actionType === 'query') {
-                                if (targetViewField && targetViewField.format && targetViewField.format.viewType === 'combobox') {   // got combobox options
+                                if (typeof result === 'object' && result.value != null) {   // got combobox/radiobutton/checkboxgroup options
                                     // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
                                     const combobox = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
-                                    combobox.setOptions(result, true);
-                                } else {                                                // got field value
-                                    //     childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
-                                    // Patch all the values we got from query
-                                    for (var k in result[0]) {
-                                        if (result[0].hasOwnProperty(k)) {
-                                            // patch the form
-                                            current_line.form.patchValue({ [k]: result[0][k] });
-                                            // patch the undelying data
-                                            const el = HelperService.findElement(_this.filteredFormData[current_index], k);
-                                            // const el = _this.filteredFormData[current_index].find(field => field.name === k);
-                                            if (el != null && result[0][k]) {
-                                                el.value = result[0][k];
-                                            }
+                                    combobox.setOptions(result.options, true);
+                                    result = result.value;
+                                }
+                                for (var k in result[0]) {
+                                    if (result[0].hasOwnProperty(k)) {
+                                        // patch the form
+                                        current_line.form.patchValue({ [k]: result[0][k] });
+                                        // patch the undelying data
+                                        const el = HelperService.findElement(_this.filteredFormData[current_index], k);
+                                        // const el = _this.filteredFormData[current_index].find(field => field.name === k);
+                                        if (el != null && result[0][k]) {
+                                            el.value = result[0][k];
                                         }
                                     }
                                 }
