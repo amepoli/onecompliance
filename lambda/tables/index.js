@@ -414,6 +414,7 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
 
     let entry_keys = entry_params.form_keys;
     let eventQueries = [];  // exploit preprocess queries to run the event queries
+    let comboQueries = [];
     let table_keys = body;  // keys provided with body
     console.log("Event body: ", body);
     let keyTypes = getKeyTypes(entry_keys);
@@ -444,6 +445,10 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
                             eventQueries.push(queryString);
                         }
                     });
+                // re-run comboQuery if combobox and updating the value
+                if (field_key.format != null && field_key.format.comboQuery != null && eventInfo.type === 'query') {  
+                    comboQueries.push(replaceKeys(field_key.format.comboQuery, table_keys, keyTypes));
+                }
             }
             else {
                 // Message stuff
@@ -483,7 +488,7 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
         }
     }
 
-    return { mainQuery: '', preProcessQueries: [], postProcessQueries: [], comboQueries: [], eventQueries: eventQueries };
+    return { mainQuery: '', preProcessQueries: [], postProcessQueries: [], comboQueries: comboQueries, eventQueries: eventQueries };
 
 }
 
@@ -807,7 +812,7 @@ async function processAttributeQueries(entry_params, keys, client) {
         if (attributeFunct.queryString == null || attributeFunct.attributeType == null || (attributeFunct.attributeType === 'style' && attributeFunct.styleAttribute == null)) {
             continue;
         }
-        for (j = 0; j < keys.length; j++) {
+        for (let j = 0; j < keys.length; j++) {
             console.log('Attribute: ', attributeFunct.queryString, keys[j], keyTypes);
             const query = replaceKeys(attributeFunct.queryString, keys[j], keyTypes);
             console.log('Query attributes: ', query);
@@ -1363,21 +1368,13 @@ exports.handler = async (event, context) => {
             queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'), (method === 'GET'));
         }
 
-        // process comboboxes and/or event queries 
-        if (method === 'GET' && dashboardIndex == null || isEventUpdate) {
+        // process comboboxes 
+        if (method === 'GET' && dashboardIndex == null && !isEventUpdate) {
 
             if (queryData != null && isNewRecord && queryString.defaultValues != null) { // only for new records, merge default values
                 queryData.forEach(item => {
                     Object.assign(item, queryString.defaultValues);
                 });
-            }
-
-            if (queryString.eventQueries != null) {
-                queryData = [];
-                for (let index = 0; index < queryString.eventQueries.length; index++) {
-                    let eventData = await client.query(queryString.eventQueries[index]);
-                    queryData = queryData.concat(eventData.rows);
-                }
             }
 
             let searchOptions = [];
@@ -1413,7 +1410,6 @@ exports.handler = async (event, context) => {
 
             tableProperties = await process_properties(entry_params, table_keys, isFormRecord, client);
         }
-
 
         if (method === 'POST' && !isEventUpdate) {
             let body = JSON.parse(event.body); // production scenario 
@@ -1452,9 +1448,6 @@ exports.handler = async (event, context) => {
             }
         }
 
-        // disconnect from DB
-        await client.release();
-
         // last chance to calculate the keys with an evalFunct and to process attributes
 
         if (method === 'GET' && dashboardIndex == null) {
@@ -1473,6 +1466,30 @@ exports.handler = async (event, context) => {
                 queryData = entry_params.dashboards[dashboardIndex].colors;
             }
         }
+
+        // process events Queries 
+        if (isEventUpdate) {
+            if (queryString.eventQueries != null) {
+                queryData = [];
+                for (let index = 0; index < queryString.eventQueries.length; index++) {
+                    let eventData = await client.query(queryString.eventQueries[index]);
+                    queryData = queryData.concat(eventData.rows);
+                }
+            }
+
+            // we might need to re-run combobox query of the event affected field
+            if (queryString.comboQueries != null && queryString.comboQueries.length) {
+                let query = queryString.comboQueries[0];
+                let comboData = await client.query(query);
+                queryData = {value: queryData, options:comboData.rows}
+            }
+
+        }
+
+
+
+        // disconnect from DB
+        await client.release();
 
         if (isExcel && method === 'GET') {  // returning the Excel
 
