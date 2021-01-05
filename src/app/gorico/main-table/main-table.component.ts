@@ -213,7 +213,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     // Show loading Dialog
                     _this._dialogService.showLoadingDialog("Preparing Excel Sheet", "Please wait...");
 
-                    _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys,
+                    const subscription = _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys,
                         (_this.tableType === 'form'), false, null, true).subscribe(
                             response => {
                                 _this._dialogService.closeDialog();
@@ -221,7 +221,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                                 if (response.result === 'OK') {
                                     // File is okay.
                                     // Let's try to download it using simple window method first
-                                    let downloadWindow = window.open(response.url, "_blank");
+                                    const downloadWindow = window.open(response.url, "_blank");
 
                                     // Check if the browser allowed window.open function
                                     if (downloadWindow) {
@@ -232,7 +232,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                                     else {
                                         // Window did not open so let's try the manual download methond
                                         // Download the file as blob
-                                        _this.httpClient.get(response.url, { responseType: 'blob' }).subscribe(
+                                        const inner_subscription = _this.httpClient.get(response.url, { responseType: 'blob' }).subscribe(
                                             fileData => {
                                                 // File downloaded
                                                 // Get file name
@@ -245,6 +245,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                                                 // Show success toast
                                                 _this._toastService.showSuccessToast("", "Excel sheet downloaded successfully!");
                                             });
+                                        
+                                            _this.subscriptions.push(inner_subscription);
                                     }
                                 }
                                 else {
@@ -257,6 +259,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                                 _this._toastService.showErrorToast("An error occured!", error);
 
                             });
+                    
+                        _this.subscriptions.push(subscription);
                 }
                 // else if (msg.type === 'import') {  // import the excel sheet or csv
                 //     _this._importExportService.importCSV(_this.tableName);

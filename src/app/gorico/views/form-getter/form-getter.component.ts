@@ -201,21 +201,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     ngAfterViewInit() {
         const _this = this;
         // check and in case publish a table event on PubSub
-        _this.formArray.changes.subscribe(
+        let subscription = _this.formArray.changes.subscribe(
             c => { // publish when last element has been shown
                 if (_this.formParams && !_this.formParams.isNew && _this.formArray.length) {
                     _this.runOnReloadEvents();
                 }
             }
         );
+        _this.generalSubscriptions.push(subscription);
 
 
         if (_this.isFormView) {
-            const subcription = _this.pubsubService.subscribe('navigate_on_save_button',
+            subscription = _this.pubsubService.subscribe('navigate_on_save_button',
                 value => {
                     _this.eventCallback(value.data, value, null); // null as keyListener means that the full table is affected
                 });
-            _this.generalSubscriptions.push(subcription);
+            _this.generalSubscriptions.push(subscription);
         }
 
     }
@@ -290,7 +291,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         _this.isLoading = true;
         _this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
     
-        _this.backendService.getView(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.formParams.keys).subscribe(
+        const subscription = _this.backendService.getView(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.formParams.keys).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
@@ -385,15 +386,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._toastService.showErrorToast(results.reason);
                 }
             });
-
+        _this.generalSubscriptions.push(subscription);
     }
 
     sendEmail(data: any) {
-        let _this = this;
+        const _this = this;
 
-        (data.templateKey ?
-            _this.backendService.sendEmailUsingTemplate(data) :
-            _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.to, data.cc))
+        if (data.templateKey) {
+            _this.backendService.sendEmailUsingTemplate(data);
+        } else {
+            const subscription = _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.to, data.cc)
             .subscribe(
                 result => {
                     _this._console.log(result);
@@ -409,6 +411,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                 }
             );
+            _this.generalSubscriptions.push(subscription);
+        }
     }
 
     subscribeFieldInputEvents(viewKeys: formViewKey[]): void {
@@ -456,7 +460,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this; // useful to debug
         _this.isLoading = true;
 
-        _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, true, _this.formParams.isNew, null, false).subscribe(
+        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, true, _this.formParams.isNew, null, false).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
@@ -507,6 +511,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 // Stop loading
                 _this.isLoading = false;
             });
+        
+        _this.generalSubscriptions.push(subscription);
     }
 
     processResults(results): void {
@@ -527,7 +533,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     addRow(default_keys: any): void {
         const _this = this;
-        _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, true, true, null, false).subscribe(
+        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, true, true, null, false).subscribe(
             result => {
                 _this._console.log(result);
                 if (result.result === 'OK') {
@@ -564,6 +570,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._toastService.showErrorToast(result.reason);
                 }
             });
+        _this.generalSubscriptions.push(subscription);
     }
 
     private getFormData(formKeys: formViewKey[], values: any, startingIndex = 0): FieldConfig[][] {
@@ -977,7 +984,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
                 }
-                _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
+                const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
                     result => {
                         if (result.result === 'OK') {
                             if (event.successMessage) {
@@ -1005,7 +1012,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                         // patch the undelying data
                                         const el = HelperService.findElement(_this.filteredFormData[current_index], k);
                                         // const el = _this.filteredFormData[current_index].find(field => field.name === k);
-                                        if (el != null && result[0][k]) {
+                                        if (el != null && result[0][k] != null) {
                                             // If combobox, set the value using the options available
                                             // so cannot add directly
                                             if(combobox){
@@ -1065,6 +1072,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._toastService.showErrorToast(result.reason);
                         }
                     });
+
+                _this.generalSubscriptions.push(subscription);
             }
         } else if ((event.actionType === 'update' || event.actionType === 'update_style') && conditionMet) {
             if (event.updateFunct != null && keyListener != null) {
@@ -1158,7 +1167,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             }
                         }
-                        _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, keyListener, chiavi, event.eventName, action, true).subscribe(
+                        const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, keyListener, chiavi, event.eventName, action, true).subscribe(
                             result => {
                                 if (result.result === 'OK') {
                                     _this._console.table(result);
@@ -1172,6 +1181,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     _this._toastService.showErrorToast(result.reason);
                                 }
                             });
+
+                        _this.generalSubscriptions.push(subscription);
                     }
                 }
             });

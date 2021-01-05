@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FieldConfig } from '../../field.interface';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
@@ -6,6 +6,7 @@ import { DialogService } from 'app/gorico/services/dialog.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'app/gorico/login-page/auth.service';
+import { Subscription } from 'rxjs';
 @Component({
     selector: 'app-button',
     template: `
@@ -32,10 +33,12 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
     }
 })
 
-export class ButtonComponent implements OnInit {
+export class ButtonComponent implements OnInit, OnDestroy {
     field: FieldConfig;
     group: FormGroup;
     readOnlyPage: boolean;  // not used for button
+
+    subscriptions: Subscription[] = [];
 
 
     constructor(private pubsubService: NgxPubSubService,
@@ -53,15 +56,16 @@ export class ButtonComponent implements OnInit {
             const keys = _this.field.value.split('^');
             const file_id = keys[0];
             const filename = keys[1];
-            _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.field.fullValueSet), {}, file_id).subscribe(
+            const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.field.fullValueSet), {}, file_id).subscribe(
                 url => {
                     if (url != null) {
-                        _this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
+                        _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
                             fileData => {
                                 saveAs(fileData, filename);
-                            });
+                            }));
                     }
                 });
+            _this.subscriptions.push(subscription);
         }
         // Confirm first if confirmation is true before performing action
         else if (_this.field.confirmButtonAction) {
@@ -89,5 +93,11 @@ export class ButtonComponent implements OnInit {
         _this.field.style = _this.field.style == null ? { background_color: 'lightblue', font_color: 'black' } : _this.field.style;
         _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'lightblue';
         _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
+    }
+
+    ngOnDestroy() {
+        this.subscriptions.forEach(element => {
+            element.unsubscribe();
+        });
     }
 }

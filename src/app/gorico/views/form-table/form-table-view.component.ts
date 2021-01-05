@@ -9,6 +9,7 @@ import { DialogService } from 'app/gorico/services/dialog.service';
 import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
 import { ScrollService } from 'app/gorico/services/scroll.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { Subscription } from 'rxjs';
 
 
 export interface formTableViewParams {
@@ -23,7 +24,7 @@ export interface formTableViewParams {
   styleUrls: ['./form-table-view.component.scss']
 })
 
-export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit {
+export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit, OnDestroy {
 
   // is Current Tab
   @Input() isTabMode: boolean = false;
@@ -60,6 +61,8 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
   formTableViewToolbarPosition: number = 0;
   @ViewChild('formTableViewToolbar') formTableViewToolbar: ElementRef;
 
+  subscriptions: Subscription[] = [];
+
   constructor(
     private cdRef: ChangeDetectorRef,
     private backendService: BackendService,
@@ -73,14 +76,14 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
 
   ngOnInit() {
     const _this = this;
-    _this.formGetter.sendEvent.subscribe(
+    _this.subscriptions.push(_this.formGetter.sendEvent.subscribe(
       event => {
         if (event.eventType === 'updateData') {   // child downloaded data
 
         } else { // just forward the event to parent
           _this.sendEvent.emit(event);
         }
-      });
+      }));
     this.calculateFormHeight();
   }
 
@@ -112,7 +115,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
     this.updateToolbarOffset();
 
     // Make toolbar sticky based on main-table scroll
-    ScrollService.MainTableScrollEventEmitter.subscribe(scrollInfo => {
+    this.subscriptions.push(ScrollService.MainTableScrollEventEmitter.subscribe(scrollInfo => {
       const windowScroll = scrollInfo.y;
       if (this.formTableViewToolbarPosition < 1) {
         this.updateToolbarOffset();
@@ -122,7 +125,13 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
       } else {
         this.isFormTableViewToolbarSticky = false;
       }
-    });
+    }));
+  }
+
+  ngOnDestroy() {
+      this.subscriptions.forEach(element => {
+          element.unsubscribe();
+      });
   }
 
   fullScreen(): void {
@@ -208,7 +217,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
           }
         }
       });
-      _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.tableData.keys), _this.tableData.keys, values).subscribe(   // backend expects an array of data
+      _this.subscriptions.push(_this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.tableData.keys), _this.tableData.keys, values).subscribe(   // backend expects an array of data
         result => {
           _this._console.log(result);
           if (result.result === 'OK') {
@@ -231,7 +240,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit 
             // Show error snackbar
             _this._toastService.showErrorToast(result.reason);
           }
-        });
+        }));
     }
 
   }
