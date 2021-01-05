@@ -988,9 +988,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._console.log(`keyListener: ${keyListener}`);
                             //console.table(result);
                             if (event.actionType === 'query') {
+                                let combobox: ComboboxComponent = null;
                                 if (typeof result === 'object' && result.value != null) {   // got combobox/radiobutton/checkboxgroup options
+                                    // Old method
                                     // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
-                                    const combobox = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
+                                    combobox = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
+                                    // Set options and make sure we don't cause the onchange selector while
+                                    // changing options
                                     combobox.setOptions(result.options, true);
                                     result = result.value;
                                 }
@@ -1002,7 +1006,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                         const el = HelperService.findElement(_this.filteredFormData[current_index], k);
                                         // const el = _this.filteredFormData[current_index].find(field => field.name === k);
                                         if (el != null && result[0][k]) {
-                                            el.value = result[0][k];
+                                            // If combobox, set the value using the options available
+                                            // so cannot add directly
+                                            if(combobox){
+                                                combobox.setValue(result[0][k]);
+                                            }
+                                            else{
+                                                // It's not a combobox so set value directly
+                                                el.value = result[0][k];
+                                            }
                                         }
                                     }
                                 }
