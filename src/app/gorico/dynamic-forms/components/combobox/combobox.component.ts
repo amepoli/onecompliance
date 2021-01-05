@@ -68,20 +68,21 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
     // filter out null values
 
-    _this.field.options = _this.field.options.filter(x => x.name !== null);
+    _this.setOptions(_this.field.options, false);
 
-    if (_this.field.value != null) {
-      // possibly compare object w/ subkeys value, let's stringify first
-      _this.field.value = _this.field.options.find(x => JSON.stringify(x.id) === JSON.stringify(_this.field.value));
-      // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
-    }
-    else {
-      _this.field.value = '';
-      _this.group.get(_this.field.name).setValue(null);
-    }
+    _this.setValue(_this.field.value);
+    // if (_this.field.value != null) {
+    //   // possibly compare object w/ subkeys value, let's stringify first
+    //   _this.field.value = _this.field.options.find(x => JSON.stringify(x.id) === JSON.stringify(_this.field.value));
+    //   // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
+    // }
+    // else {
+    //   _this.field.value = '';
+    //   _this.group.get(_this.field.name).setValue(null);
+    // }
 
     // load the initial bank list
-    _this.filteredItems.next(_this.field.options.slice());
+    // _this.filteredItems.next(_this.field.options.slice());
 
     // listen for search field value changes
     _this.itemFilterCtrl.valueChanges
@@ -114,9 +115,30 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setOptions(options: any[], skipNextEvent: boolean) {
-    this.field.options = options;
+    this.field.options = options.filter(x => x.name !== null);
+    // this.field.options = options;
+    
+    // load the initial bank list
     this.filteredItems.next(this.field.options.slice());
     this.skipNextEvent = skipNextEvent;
+  }
+
+  setValue(id){
+    const _this = this;
+    if(id){
+      // id = JSON.stringify(id);
+      if(typeof id === 'object'){
+        _this.field.value = _this.field.options.find(x => JSON.stringify(x) == JSON.stringify(id));
+      }
+      else{
+        _this.field.value = _this.field.options.find(x => '' + x.id == '' + id);
+      }
+    }
+    else{
+      _this.field.value = '';
+      _this.group.get(_this.field.name).setValue(null);
+    }
+    console.log(_this.field.value);
   }
 
   onSelection(event: any) {
