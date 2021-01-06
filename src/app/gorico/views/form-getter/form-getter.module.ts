@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGetterComponent } from './form-getter.component';
 import { MatMenuModule, MatToolbarModule, MatTabsModule, MatIconModule, MatButtonModule, MatFormFieldModule, 
-    MatOptionModule, MatSelectModule, MatInputModule, MatCardModule, MatProgressSpinnerModule, MatDialogModule} from '@angular/material';
+    MatOptionModule, MatSelectModule, MatInputModule, MatCardModule, MatProgressSpinnerModule, MatDialogModule, MatProgressBarModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
 
@@ -23,7 +23,8 @@ import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
     MatInputModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressBarModule
   ],
   exports: [
     FormGetterComponent

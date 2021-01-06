@@ -113,6 +113,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     quickAddData: boolean[];
 
     isLoading = false;
+    isAddingNew = false;
 
     isReadOnly = false;
 
@@ -533,6 +534,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     addRow(default_keys: any): void {
         const _this = this;
+        _this.isAddingNew = true;
         const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, true, true, null, false).subscribe(
             result => {
                 _this._console.log(result);
@@ -569,6 +571,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     // Show error snackbar
                     _this._toastService.showErrorToast(result.reason);
                 }
+                _this.isAddingNew = false;
+            },
+            error => {
+                _this._toastService.showErrorToast(error);
+                _this.isAddingNew = false;
             });
         _this.generalSubscriptions.push(subscription);
     }
