@@ -21,7 +21,7 @@ import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive'
   exportAs: 'dynamicForm',
   selector: 'dynamic-form',
   template: `
-  <form style="margin-left: 1%; margin-right: 1%; width: 98%;" [style.background-color]="isQuickAdd? 'lightyellow': 'transparent'" class='dynamic-form' [formGroup]='form' (submit)='onSubmit($event)'>
+  <form style="margin-left: 1%; margin-right: 1%; width: 98%;" [style.background-color]="isQuickAdd? 'lightyellow': 'transparent'" class='dynamic-form' [formGroup]='form' [id]='formName' (submit)='onSubmit($event)'>
   <ng-container *ngFor='let field of fields;' dynamicField [field]='field' [group]='form' [readOnlyPage]='readOnlyPage'>
   </ng-container>
   </form>
