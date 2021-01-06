@@ -16,29 +16,32 @@ export interface ILoggerService {
 export class ConsoleLoggerService implements ILoggerService {
 
     environment = appData.environment;
+    
+    // set to true if you want to remove all console logs.
+    disableAllLogs = false;
 
     info(value: any, ...rest: any[]): void {
-        if (this.environment !== 'production')
+        if (this.environment !== 'production' && !this.disableAllLogs)
             console.info(value, rest);
     }
 
     log(value: any, ...rest: any[]): void {
-        if (this.environment !== 'production')
+        if (this.environment !== 'production' && !this.disableAllLogs)
             console.log(value, rest);
     }
 
     warn(value: any, ...rest: any[]): void {
-        if (this.environment !== 'production')
+        if (this.environment !== 'production' && !this.disableAllLogs)
             console.warn(value, rest);
     }
 
     error(value: any, ...rest: any[]): void {
-        if (this.environment !== 'production')
+        if (this.environment !== 'production' && !this.disableAllLogs)
             console.error(value, rest);
     }
 
     table(value: any, ...rest: any[]): void {
-        if (this.environment !== 'production')
+        if (this.environment !== 'production' && !this.disableAllLogs)
             console.table(value, rest);
     }
 }

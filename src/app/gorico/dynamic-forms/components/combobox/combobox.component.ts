@@ -128,7 +128,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   setValue(id){
     const _this = this;
-    if(id){
+    if(id !== null && id !== undefined){
       // id = JSON.stringify(id);
       if(typeof id === 'object'){
         _this.field.value = _this.field.options.find(x => JSON.stringify(x) == JSON.stringify(id));
@@ -141,7 +141,6 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       _this.field.value = '';
       _this.group.get(_this.field.name).setValue(null);
     }
-    console.log(_this.field.value);
   }
 
   onSelection(event: any) {
