@@ -141,7 +141,6 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       _this.field.value = '';
       _this.group.get(_this.field.name).setValue(null);
     }
-    console.log(_this.field.value);
   }
 
   onSelection(event: any) {

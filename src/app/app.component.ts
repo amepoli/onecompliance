@@ -16,6 +16,7 @@ import { navigation } from 'app/navigation/navigation';
 
 import { Router, NavigationEnd } from '@angular/router';
 import { BackendService } from './gorico/views/backend/backend.service';
+import { ConsoleLoggerService } from './gorico/services/console_logger.service';
 
 @Component({
     selector: 'app',
@@ -51,7 +52,8 @@ export class AppComponent implements OnInit, OnDestroy {
         private _platform: Platform,
         private router: Router,
         private _authService: AuthService,
-        private _backendService: BackendService
+        private _backendService: BackendService,
+        private _console: ConsoleLoggerService
     ) {
         // Add languages
         this._translateService.addLangs(['it', 'en']);
@@ -108,7 +110,7 @@ export class AppComponent implements OnInit, OnDestroy {
             if (e instanceof NavigationEnd) {
                 // Check if not signed in and we are not currently on login or register page
                 if (!this._authService.isSignedIn && !e.url.includes('login') && !e.url.includes('register') && !e.url.includes('forgot-password') && !e.url.includes('mail-confirm')) {
-                    console.log('Redirecting to login page');
+                    this._console.log('Redirecting to login page');
                     // Add redirect path if not home
                     if (e.url.length > 3) {
                         this.router.navigate([`/login/${encodeURIComponent(e.url)}`]);
