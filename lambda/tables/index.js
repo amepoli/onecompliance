@@ -607,7 +607,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         if (autoGenType == 'number') {
             genString = 'SELECT (COALESCE(MAX(' + autoGenKey + '),0)+1) FROM ' + entry_params.origin;
         } else if (autoGenType == 'text') { // string
-            genString = 'SELECT (COALESCE(MAX(' + autoGenKey + ')::numeric, 0)+1)::varchar FROM ' + entry_params.origin;
+            genString = 'SELECT (COALESCE(MAX(' + autoGenKey + '::numeric), 0)+1)::varchar FROM ' + entry_params.origin;
         }
 
         comma = ' WHERE ';
