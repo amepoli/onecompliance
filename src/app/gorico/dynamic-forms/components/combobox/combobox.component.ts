@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FieldConfig, Item } from '../../field.interface';
-import { ReplaySubject, Subject } from 'rxjs';
+import { ReplaySubject, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ValidationsService } from 'app/gorico/services/validations.service';
@@ -44,6 +44,8 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   readOnlyPage: boolean; // field.readonly overridden by page
   isRequired = false; // field is required or not
 
+  subscription: Subscription;
+
   /** control for the MatSelect filter keyword */
   public itemFilterCtrl: FormControl = new FormControl();
 
@@ -85,7 +87,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     // _this.filteredItems.next(_this.field.options.slice());
 
     // listen for search field value changes
-    _this.itemFilterCtrl.valueChanges
+    _this.subscription = _this.itemFilterCtrl.valueChanges
       .pipe(takeUntil(_this._onDestroy))
       .subscribe(() => {
         _this.filterItems();
@@ -110,6 +112,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+    this.subscription.unsubscribe();
     this._onDestroy.next();
     this._onDestroy.complete();
   }
@@ -125,7 +128,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   setValue(id){
     const _this = this;
-    if(id){
+    if(id != null && id !== ''){
       // id = JSON.stringify(id);
       if(typeof id === 'object'){
         _this.field.value = _this.field.options.find(x => JSON.stringify(x) == JSON.stringify(id));
@@ -138,7 +141,6 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       _this.field.value = '';
       _this.group.get(_this.field.name).setValue(null);
     }
-    console.log(_this.field.value);
   }
 
   onSelection(event: any) {

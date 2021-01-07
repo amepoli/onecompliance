@@ -74,7 +74,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
         const _this = this;
 
-        _this.fileService.onFileAdd.subscribe(result => {
+        let subscription = _this.fileService.onFileAdd.subscribe(result => {
 
             // recover attachment types
             for (const key in _this.data.keys) {
@@ -89,25 +89,29 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.attach = true;
         });
 
+        _this.subscriptions.push(subscription);
 
-        _this.fileService.onFileDownload.subscribe(selected => {
+        subscription = _this.fileService.onFileDownload.subscribe(selected => {
             if (_this.listFiles != null) {
                 const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
                     _this.backendService.getFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.data.keys, fileDesc.file_id).subscribe(
                         url => {
                             if (url != null) {
-                                _this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
+                                _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
                                     fileData => {
                                         saveAs(fileData, selected.name);
-                                    });
+                                    })
+                                );
                             }
                         });
                 }
             }
         });
 
-        _this.fileService.onFileDelete.subscribe(selected => {
+        _this.subscriptions.push(subscription);
+
+        subscription = _this.fileService.onFileDelete.subscribe(selected => {
             if (_this.listFiles != null) {
                 const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
@@ -128,6 +132,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         });
 
+        _this.subscriptions.push(subscription);
+
         // prepare the key for the attachment form
         for (const key in _this.data.keys) {
             if (_this.data.keys.hasOwnProperty(key)) {
@@ -146,11 +152,11 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnInit() {
         const _this = this;
         // Subscribe to reload Request
-        _this.fileService.reloadNeeded.subscribe(entryName => {
+        _this.subscriptions.push(_this.fileService.reloadNeeded.subscribe(entryName => {
             if (entryName === _this.data.entryName) {
                 _this.getAttachList();
             }
-        });
+        }));
         // Get Attach list
         _this.getAttachList();
     }
@@ -178,7 +184,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
         _this.subscriptions.push(ext_subscription);
-    };
+    }
 
     ngOnDestroy() {
         this.subscriptions.forEach(subscription => {
@@ -187,7 +193,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     getAttachList() {
-        this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(this.currentKeys), this.data.keys).subscribe(
+        const subscription = this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(this.currentKeys), this.data.keys).subscribe(
             result => {
                 this._console.log(result);
                 if (result.result === 'OK') {
@@ -221,6 +227,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
 
+        this.subscriptions.push(subscription);
+
         this.progress = 0;
     }
 
@@ -230,7 +238,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.attach = false;
         if (_this.file != null) {
             // get the S3 URL 
-            _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.data.keys).subscribe(
+            const subscription = _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.data.keys).subscribe(
                 responseURL => {
                     _this._console.log(responseURL);
                     if (responseURL != null && responseURL.result === 'OK') {
@@ -280,12 +288,14 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                         _this._toastService.showErrorToast(responseURL.reason);
                     }
                 }
-            )
+            );
+
+            this.subscriptions.push(subscription);
         }
     }
 
     onNewType(event: any) {
-        let values = this.newTypeRef.first.formArray.first.form.value; // get the form data
+        const values = this.newTypeRef.first.formArray.first.form.value; // get the form data
         // process the booleans (1/0 instead of true/false)
         for (const value in values) {
             if (values.hasOwnProperty(value)) {
@@ -306,7 +316,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         }
-        this.backendService.updateData(this.newTypeParams.entryName, this.authService.getCurrentCompany(this.currentKeys), this.currentKeys, [values]).subscribe(  // backend expects an array of data
+        const subscription = this.backendService.updateData(this.newTypeParams.entryName, this.authService.getCurrentCompany(this.currentKeys), this.currentKeys, [values]).subscribe(  // backend expects an array of data
             result => {
                 this.newTypeParams.isVisible = false; // hide the view 
                 setTimeout(() => {
@@ -315,6 +325,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 }, 500); // reload the table after having added the new type
             }
         );
+
+        this.subscriptions.push(subscription);
     }
 
 
