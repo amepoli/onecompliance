@@ -3,7 +3,38 @@
   "entryKey": "rischi_associati_sub_of_presidi",
   "origin": "entrasp.rischi_presidi",
   "search_keys": [],
+  "outputEvents": [
+    {
+        "eventName": "onSaveRischi_sub_presidi",
+        "eventTrigger": "onSave"
+    },
+    {
+        "eventName": "onLoadRischi_sub_presidi",
+        "eventTrigger": "onReload"
+    }
+],
   "form_keys": [
+    {
+      "format": {
+        "viewType": "invisible"
+      },
+      "isHidden": true,
+      "key": "invisible",
+      "readOnly": true,
+      "isPrimary": false,
+      "label": "invisible_element",
+      "sameOrigin": false,
+      "inputEvents": [
+        {
+          "actionType": "update",
+          "condition": "none",
+          "values": [],
+          "updateFunct": "",
+          "eventName": "onSaveRischi_sub_presidi",
+          "outputEventWhenComplete": "reloadMaskRischi_sub_presidi"
+        }
+      ]
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -68,11 +99,11 @@
         "dataType": "text",
         "validations": [
           {
-              "message": "Selezionare rischio associato",
-              "name": "required",
-              "validator": "Validators.required"
+            "message": "Selezionare rischio associato",
+            "name": "required",
+            "validator": "Validators.required"
           }
-      ]
+        ]
       },
       "isHidden": false,
       "isPrimary": true,
@@ -81,6 +112,111 @@
       "readOnly": false,
       "newLine": false,
       "size": 5
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0,
+        "validations": [
+          {
+            "message": "Inserire un valore (0 se non si intende valutarlo)",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "label": "% Prob. Mit.",
+      "key": "pct_mitigazione_probabilita",
+      "readOnly": false,
+      "isHidden": false,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0,
+        "validations": [
+          {
+            "message": "Inserire un valore (0 se non si intende valutarlo)",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "label": "% Mit. Int. Sin.",
+      "key": "pct_mitigazione_intensita_singola",
+      "readOnly": false,
+      "isHidden": false,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0,
+        "validations": [
+          {
+            "message": "Inserire un valore (0 se non si intende valutarlo)",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "label": "% Mit. Int. Tot.",
+      "key": "pct_mitigazione_intensita_totale",
+      "readOnly": false,
+      "isHidden": false,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0
+      },
+      "label": "% Mit. Prob. Ret.",
+      "key": "pct_mitigazione_probabilita_rettificata",
+      "readOnly": false,
+      "isHidden": true,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0
+      },
+      "label": "% Mit. Int. Ret.",
+      "key": "pct_mitigazione_intensita_singola_rettificata",
+      "readOnly": false,
+      "isHidden": true,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0
+      },
+      "label": "% Mit. Tot. Ret.",
+      "key": "pct_mitigazione_intensita_totale_rettificata",
+      "readOnly": false,
+      "isHidden": true,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": true
     },
     {
       "autoGenerate": false,
@@ -95,12 +231,12 @@
       "readOnly": false,
       "textareaHeight": "M",
       "newLine": false,
-      "size": 3
+      "size": 9
     },
     {
       "autoGenerate": false,
       "format": {
-          "viewType": "button"
+        "viewType": "button"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -108,17 +244,17 @@
       "label": "Dettaglio",
       "newLine": false,
       "outputEvent": {
-          "eventName": "to_rischio",
-          "eventTrigger": "press"
+        "eventName": "to_rischio",
+        "eventTrigger": "press"
       },
-   "style": {
-          "background_color": "#25599C",
-          "font_color": "white"
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
       },
       "readOnly": false,
       "sameOrigin": false,
       "size": 1
-  }
+    }
   ],
   "inputEvents": [
     {
@@ -126,21 +262,26 @@
       "eventName": "update_rischi_associati_presidi"
     },
     {
+      "actionType": "reload",
+      "eventName": "reloadMaskRischi_sub_presidi"
+    },
+    {
       "actionTarget": {
-          "name": "rischi",
-          "type": "form",
-          "keymap": [
-              {
-                  "source": "codice_azienda",
-                  "destination": "codice_azienda"
-              },
-              {
-                  "source": "codice_rischio",
-                  "destination": "codice_rischio"
-              }
-          ]
+        "name": "rischi",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_rischio",
+            "destination": "codice_rischio"
+          }
+        ]
       },
       "actionType": "navigate",
       "eventName": "to_rischio"
-  }]
+    }
+  ]
 }
