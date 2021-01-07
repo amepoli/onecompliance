@@ -52,12 +52,23 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "combobox",
 				"comboQuery": "SELECT id_contratto as id,numero_contratto as name FROM entrasp.contratti WHERE codice_azienda = $codice_azienda$",
-				"dataType": "number"
+				"options": [],
+				"viewType": "combobox",
+				"validations": [
+					{
+						"message": "Indicare il contratto!",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
 			},
-			"label": "Cliente",
+			"label": "Num.contratto",
 			"key": "id_contratto",
+			"outputEvent": {
+				"eventName": "id_contratto_change",
+				"eventTrigger": "select"
+			},
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
@@ -66,12 +77,23 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "number"
+				"comboQuery": "SELECT id_contratto as id, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part', id_cliente) as name FROM entrasp.contratti WHERE codice_azienda = $codice_azienda$",
+				"options": [],
+				"viewType": "combobox"
 			},
-			"label": "Stato",
-			"key": "id_contratto",
-			"readOnly": false,
+			"label": "Cliente",
+			"key": "id_cliente",
+			"queryFunct": "select id_cliente from entrasp.contratti where id_contratto=$id_contratto$ and codice_azienda=$codice_azienda$",
+			"readOnly": true,
+			"inputEvents": [
+				{
+					"eventName": "id_contratto_change",
+					"updateFunct": "£id_contratto£",
+					"actionType": "update",
+					"condition": "none",
+					"values": []
+				}
+			],
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false
@@ -99,7 +121,6 @@
 			},
 			"label": "N. Contratto",
 			"key": "id_contratto",
-			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": true
