@@ -128,12 +128,12 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part=(select codice_part from entrasp.aziende where codice_azienda='$codice_azienda$');",
         "options": [],
         "viewType": "combobox",
         "validations": [
           {
-            "message": "Codice azienda necessario",
+            "message": "Codice esecutore necessario",
             "name": "required",
             "validator": "Validators.required"
           }
@@ -146,14 +146,14 @@
         {
           "eventName": "change_azienda",
           "actionType": "query",
-          "queryFunct": "select €global_userid€ as id_responsabile;",
+          "queryFunct": "select coalesce($id_responsabile, €global_userid€) as id_responsabile;",
           "condition": "none",
           "values": []
         },
         {
           "eventName": "compiti_consultant_load",
           "actionType": "query",
-          "queryFunct": "select €global_userid€ as id_responsabile;",
+          "queryFunct": "select coalesce($id_responsabile, €global_userid€) as id_responsabile;",
           "condition": "none",
           "values": []
         }
