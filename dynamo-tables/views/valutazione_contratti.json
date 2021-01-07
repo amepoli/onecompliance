@@ -2,6 +2,9 @@
 	"$schema": "../views.schema.json",
 	"entryKey": "valutazione_contratti",
 	"origin": "entrasp.valutazione_contratti",
+	"businessObjectName": "valutazione_contratti",
+	"predefinedQueries": [
+	],
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -52,7 +55,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT id_contratto as id,numero_contratto as name FROM entrasp.contratti WHERE codice_azienda = $codice_azienda$",
+				"comboQuery": "SELECT distinct id_contratto as id,numero_contratto as name FROM entrasp.contratti WHERE codice_azienda = $codice_azienda$",
 				"options": [],
 				"viewType": "combobox",
 				"validations": [
@@ -77,30 +80,6 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT id_contratto as id, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part', id_cliente) as name FROM entrasp.contratti WHERE codice_azienda = $codice_azienda$",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Cliente",
-			"key": "id_cliente",
-			"queryFunct": "select id_cliente from entrasp.contratti where id_contratto=$id_contratto$ and codice_azienda=$codice_azienda$",
-			"readOnly": true,
-			"inputEvents": [
-				{
-					"eventName": "id_contratto_change",
-					"updateFunct": "£id_contratto£",
-					"actionType": "update",
-					"condition": "none",
-					"values": []
-				}
-			],
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
 				"viewType": "input",
 				"dataType": "number"
 			},
@@ -110,20 +89,6 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "combobox",
-				"comboQuery": "SELECT id_contratto as id,numero_contratto as name FROM entrasp.contratti WHERE codice_azienda = $codice_azienda$",
-				"options": [],
-				"dataType": "number"
-			},
-			"label": "N. Contratto",
-			"key": "id_contratto",
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
 		},
 		{
 			"autoGenerate": false,
