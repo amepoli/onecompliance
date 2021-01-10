@@ -38,7 +38,13 @@
 			"operation": "update",
 			"queryString": "select entrasp.progetti_fasi_order($codice_azienda$, $id_progetto$, $id_fase$);",
 			"type": "postProcessing"
+		},
+		{
+			"operation": "selectTable",
+			"queryString": "select pf.*, snd.sondaggio_completato, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio  from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$;",
+			"type": "main"
 		}
+
 	],
 	"form_keys": [
 		{
@@ -187,7 +193,7 @@
 					"values": [],
 					"actionType": "query_style",
 					"styleAttribute": "background_color",
-					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='$stato$'"
+					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
 				},
 				{
 					"eventName": "progetto_change_stato",
@@ -195,7 +201,7 @@
 					"values": [],
 					"actionType": "query_style",
 					"styleAttribute": "font_color",
-					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='$stato$'"
+					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
 				}
 			]
 		},
@@ -490,6 +496,24 @@
 			"isPrimary": false,
 			"key": "id_sondaggio",
 			"label": "Id Sondaggio"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "giudizio",
+			"label": "Giudizio"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "sondaggio_completato",
+			"label": "Completo Sì/No"
 		}
 	],
 	"subTables": [
