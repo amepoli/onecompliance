@@ -104,7 +104,7 @@ function replaceKeys(queryString, keys, keyTypes) {
 
                     // handle combobox
                     if (keyType != null && keyType.viewType === 'combobox') {
-                        replacement = (keys[key] != null && keys[key].length > 0) ? keys[key].toString() : 'null'
+                        replacement = (keys[key] != null && keys[key].length > 0) ? bracket + keys[key].toString() + bracket : 'null';
                     }
 
                     //console.log ('toReplace: ', toReplace, ' replacement: ', replacement, ' value: ', keys[key], ' keyType: ', keyType);
