@@ -654,7 +654,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         } else if (keys[element.key] == null) {  // no value passed for the key
             if (element.format.value) {
                 value = element.format.value; // use default value 
-                keyType.dataType = keyType.viewType = null; // avoid to get further quotes added 
+                //keyType.dataType = keyType.viewType = null; // avoid to get further quotes added 
             } else {
                 return;   // no value passed and no default, skip the key
             }
