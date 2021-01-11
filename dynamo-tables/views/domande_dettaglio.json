@@ -208,7 +208,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_domanda as id, descrizione as name from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test = $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$",
+        "comboQuery": "select id_domanda as id, id_domanda||'-'||descrizione as name from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test = $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$",
         "options": [],
         "viewType": "combobox"
       },
@@ -216,6 +216,10 @@
       "isPrimary": false,
       "key": "id_domanda_rif",
       "label": "Attiva se alla domanda",
+      "outputEvent": {
+        "eventName": "id_domanda_rif_change",
+        "eventTrigger": "select"
+      },
       "newLine": true,
       "size": 10,
       "readOnly": false
@@ -223,7 +227,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_risposta_prev AS id, risposta AS name from entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test= $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$;",
+        "comboQuery": "SELECT id_risposta_prev AS id, id_domanda||'-'||risposta AS name from entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test= $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$;",
         "viewType": "combobox",
         "options": []
       },
@@ -231,6 +235,15 @@
       "isPrimary": false,
       "key": "id_risposta_prev_rif",
       "label": "Viene Risposto",
+      "inputEvents": [
+        {
+          "eventName": "id_domanda_rif_change",
+          "actionType": "query",
+          "queryFunct": "select coalesce(£id_risposta_prev_rif£, 0) as id_risposta_prev_rif",
+          "condition": "none",
+          "values": []
+        }
+      ],
       "newLine": true,
       "size": 10,
       "readOnly": false
@@ -365,8 +378,30 @@
       "isPrimary": false,
       "key": "flag_inversione_pct_efficacia_presidi",
       "label": "Inversione Efficacia Presidi",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "modello_test_from_domanda",
+      "label": "Modello Test Associato",
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "to_modello_test_from_domanda",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 2
     }
   ],
   "subTables": [
@@ -411,6 +446,30 @@
         }
       ],
       "label": "Presidi Associabili"
+    }
+  ],
+  "inputEvents": [
+    {
+      "actionTarget": {
+        "name": "modelli_test_vr",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_modello_test",
+            "destination": "id_modello_test"
+          },
+          {
+            "source": "id_modello_test_vr",
+            "destination": "id_modello_test_vr"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_modello_test_from_domanda"
     }
   ],
   "origin": "entrasp.domande"
