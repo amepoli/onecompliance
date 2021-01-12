@@ -1151,16 +1151,24 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 
 }
 
-async function setGlobalVariables(company, client, userid) {
+async function getCodicePart(company, client) {
 
-    global_variables.global_codice_azienda = company;
-
+    if (company == null) {
+        return null;
+    }
     const queryString = "SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='" + company + "';";
     const response = await client.query(queryString);
     if (response != null) {
-        global_variables.global_codice_part = response.rows[0].codice_part;
-    }
+        return response.rows[0].codice_part;
+    } 
+}
 
+async function setGlobalVariables(company, client, userid) {
+
+    global_variables.global_codice_azienda = company;
+    
+    global_variables.global_codice_part = await getCodicePart(company, client);
+    
     var userParams = {
         TableName: 'USERS_NAME',
         Key: {
@@ -1174,12 +1182,24 @@ async function setGlobalVariables(company, client, userid) {
     if (data != null) {
         let companies = data.companies;
         if (company != null) {
-            companies.forEach(c => {
+            var global_user_companies = '';
+            var global_id_anagrafiche = '';
+            for (let i = 0; i < companies.length ; i++) {
+                let c = companies[i];
+                if (global_user_companies !== '') {
+                    global_user_companies += ',';
+                    global_id_anagrafiche += ',';
+                }
+                global_user_companies += '\'' + c.name + '\'';
+                var codice_part = await getCodicePart(c.name, client); 
+                global_id_anagrafiche += '\'' + codice_part + '-' + c.id_anagrafica + '\'';
                 if (c.name === company) { // found user's profile
                     global_variables.global_userid = c.id_anagrafica;
                     global_variables.global_profile = c.profile;
                 }
-            });
+            };
+            global_variables.global_user_companies = global_user_companies;
+            global_variables.global_id_anagrafiche = global_id_anagrafiche;
         }
     }
 
