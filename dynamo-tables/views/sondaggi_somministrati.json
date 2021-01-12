@@ -1150,6 +1150,11 @@
           "font_weight": "500"
         },
         {
+          "value": "Medio-basso",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
           "value": "Parzialmente favorevole",
           "font_color": "#D97F02",
           "font_weight": "500"
@@ -1157,6 +1162,11 @@
         {
           "value": "Parzialmente sfavorevole",
           "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Medio-alto",
+          "font_color": "red",
           "font_weight": "500"
         },
         {
@@ -1331,7 +1341,7 @@
     "tableQueries": [
       {
         "label": "Estrazione somministrazioni",
-        "queryString": "SELECT * FROM entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio where ss.codice_azienda=$codice_azienda$"
+        "queryString": "SELECT *, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_sondaggio, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, ss.pct_da, snd.codice_azienda) as giudizio_somministrazione FROM entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where ss.codice_azienda=$codice_azienda$"
       }
     ]
   }
