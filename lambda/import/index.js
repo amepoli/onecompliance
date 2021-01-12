@@ -663,7 +663,7 @@ function replaceKeys(queryString, keys, keyTypes) {
             delimiters.forEach(delimiter => {
                 let keyType = keyTypes.find(e => (e.key === key));
 
-                if (typeof keys[key] === 'object' && Array.isArray(keyType.dataType) && keys[key] != null) { // key with multiple subkeys
+                if (typeof keys[key] === 'object' && keyType && keyType.dataType && Array.isArray(keyType.dataType) && keys[key] != null) { // key with multiple subkeys
                     console.log(keys[key], keyType);
                     // tslint:disable-next-line:forin
                     for (var subkey in keys[key]) {
@@ -738,7 +738,7 @@ function data2csv(data, keys = null) {
             columns = Object.keys(row);
             result += columns.join('CSV_DELIMITER') + '\n';
         }
-        result += columns.map(c => row[c]).join('CSV_DELIMITER') + '\n';
+        result += columns.map(c => (row[c] && typeof row[c] === 'object' && row[c]["value"]) ? row[c]["value"] : row[c]).join('CSV_DELIMITER') + '\n';
     });
     return result;
 }
@@ -810,7 +810,7 @@ function data2xls(data, title, keys = null) {
 
         var value = {};
         columns.forEach(c => {
-            value[c] = row[c];
+            value[c] = (row[c] && typeof row[c] === 'object' && row[c]["value"]) ? row[c]["value"] : row[c];
         });
         dataset.push(value);
     });
@@ -1434,7 +1434,9 @@ exports.handler = async (event, context) => {
                         attributes = await processAttributeQueries(entry_params, queryData, client);
                     }
 
-                    queryData = queryData["table_data"];
+                    if (!isForm) {
+                        queryData = queryData["table_data"];
+                    }
 
                     //queryData["anonymous"]["calcolo_risultato_log"] = null;
                     console.log('queryData', queryData);
