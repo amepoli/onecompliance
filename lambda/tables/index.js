@@ -1158,9 +1158,11 @@ async function getCodicePart(company, client) {
     }
     const queryString = "SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='" + company + "';";
     const response = await client.query(queryString);
-    if (response != null) {
+    if (response != null && response.rows != null && response.rows[0] != null) {
         return response.rows[0].codice_part;
-    } 
+    } else {
+        return null;
+    }
 }
 
 async function setGlobalVariables(company, client, userid) {
