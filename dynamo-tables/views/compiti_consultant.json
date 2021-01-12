@@ -12,7 +12,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select *, entrasp.tipo_segnalazione_descr(id_tipo_segnalazione, codice_azienda) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti WHERE 1=1"
+      "queryString": "select *, entrasp.tipo_segnalazione_descr(id_tipo_segnalazione, codice_azienda) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato, (select count(cmp2.codice_compito) from entrasp.compiti cmp2 where cmp2.codice_azienda=cmp.codice_azienda and cmp2.codice_compito_parent=cmp.codice_compito and cmp2.stato!='C')as compiti_aperti from entrasp.compiti cmp WHERE 1=1 and cmp.codice_compito_parent is null"
     },
     {
       "operation": "selectForm",
@@ -180,7 +180,21 @@
       "label": "Codice Segnalazione",
       "newLine": false,
       "readOnly": true,
-      "size": 3
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_compito_parent",
+      "label": "Codice Segnalazione Parent",
+      "newLine": false,
+      "readOnly": false,
+      "size": 2
     },
     {
       "autoGenerate": false,
@@ -199,6 +213,20 @@
     {
       "autoGenerate": false,
       "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_competenza",
+      "label": "Data Competenza",
+      "newLine": false,
+      "readOnly": false,
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
         "options": [],
         "viewType": "combobox"
@@ -209,7 +237,7 @@
       "label": "Centro Gestionale",
       "newLine": true,
       "readOnly": false,
-      "size": 5
+      "size": 2
     },
     {
       "autoGenerate": false,
