@@ -173,14 +173,13 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
   }
 
-  importAdvancedFileFromS3(company: string, queryString: string, fileName: string, table: string): Observable<any> {
+  importAdvancedFileFromS3(entryName: string, company: string, keys: any, fileName: string, is_form: boolean, advanced_query_label: string = null): Observable<any> {
     this.amplifyService.auth();
 
     // Test data:
     // this.myPutPostInit.queryStringParameters = { request_type: 'importFile', company: 'DEMO', queryString: '', filename: 's3test.csv', table: 'entrasp.s3_import', columns: null };
 
-    this.myPutPostInit.queryStringParameters = { request_type: 'importAdvancedFile', company: company, filename: fileName, table: table };
-    this.myPutPostInit.body = queryString;
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, request_type: 'importAdvancedFile', company: company, keys: JSON.stringify(keys), filename: fileName, is_form: is_form ? 1 : 0, advanced_query_label: advanced_query_label  };
     return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
   }
 
@@ -190,9 +189,9 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
   }
 
-  downloadTemplate(table: string): Observable<any> {
+  downloadTemplate(entryName: string): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { request_type: 'downloadTemplate', table: table };
+    this.myPutPostInit.queryStringParameters = { request_type: 'downloadTemplate', entry_name: entryName };
     return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
   }
 

@@ -170,7 +170,7 @@ export class ImportExportService {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 _this._console.table(result);
-                _this.performImport(result.tableName, result.files, false, null, null, result.allowMultipleFiles);
+                _this.performImport(result.tableName, null, result.files, false, null, null, result.allowMultipleFiles);
             }
         });
     }
@@ -180,7 +180,7 @@ export class ImportExportService {
      * @param tableName table to import into
      * @param label label of the import item
      */
-    importAdvancedCSV(tableName: string, label: string): void {
+    importAdvancedCSV(tableName: string, keys: any[], label: string, isForm): void {
         const _this = this;
 
         // Open dialog
@@ -195,7 +195,7 @@ export class ImportExportService {
             dialogRef.afterClosed().subscribe(result => {
                 if (result) {
                     _this._console.table(result);
-                    _this.performImport(result.tableName, result.files, true, importItem[0].queryString, label, result.allowMultipleFiles);
+                    _this.performImport(result.tableName, keys, result.files, true, label, isForm, result.allowMultipleFiles);
                 }
             });
         }
@@ -357,9 +357,8 @@ export class ImportExportService {
      * @param files files to import, currently only one file supported
      * @param allowMultipleFiles should import single or multiple files
      */
-    performImport(tableName: string, files: any[], isImportAdvanced: boolean = false, queryString: string = null, label: string = null, allowMultipleFiles: boolean = false): void {
-
-if (files != null && files.length) {
+    performImport(tableName: string, keys: any[], files: any[], isImportAdvanced: boolean = false, label: string = null, isForm: boolean = false, allowMultipleFiles: boolean = false): void {
+        if (files != null && files.length) {
             this._dialogService.showLoadingDialog('Uploading', 'Please wait...');
             // Get the S3 Create URL 
             this._backendService.createImportFileURL().subscribe(
@@ -376,7 +375,7 @@ if (files != null && files.length) {
 
                                 // Import CSV in Postgres
                                 if(isImportAdvanced){
-                                    this._backendService.importAdvancedFileFromS3(this._authService.getCurrentCompany(), queryString, createURLResponse.fileName, tableName).subscribe(
+                                    this._backendService.importAdvancedFileFromS3(tableName, this._authService.getCurrentCompany(), keys, createURLResponse.fileName, isForm, label).subscribe(
                                         importFileFromS3Response => {
                                             this._console.log(importFileFromS3Response);
                                             if (importFileFromS3Response != null && importFileFromS3Response.result === 'OK') {
