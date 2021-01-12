@@ -486,14 +486,90 @@ exports.handler = async (event, context) => {
                 }
             }
             else if (requestType === 'importAdvancedFile') {
+                const company = queryParams['company'];
+                const table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null;
+                const isForm = queryParams['is_form'] != null ? parseInt(queryParams['is_form']) : 0;
+                const advancedQueryLabel = queryParams['advanced_query_label'];
+                const fileName = queryParams['filename'];
+                const table = queryParams['entry_name'];
 
                 console.log("Importing advanced file...");
+                console.log(queryParams);
+                console.log(table_keys);
                 body = { result: 'OK', reason: 'Done!' };
 
                 // Load mandatory query params
-                let fileName = queryParams['filename'];
-                let table = queryParams['table'];
-                let queryString = JSON.parse(event.body);
+
+                const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+
+                const DynamoParams = {
+                    TableName: 'VIEWS_NAME',
+                    Key: {
+                        entryKey: table
+                    }
+                };
+
+                let entry_params = await dynamo.get(DynamoParams).promise();
+
+                // complete table if inherited
+                entry_params = await overrideTable(entry_params.Item);
+
+                await addCodiceAzienda(table_keys, company, entry_params, client, isForm);
+                await setGlobalVariables(company, client, userid);
+
+                let comboQueries = [];
+                let preProcessQueries = [];
+                let postProcessQueries = [];
+
+                let orderBy;
+
+                let entry_keys;
+                console.log('entry_params', entry_params);
+
+                if (isForm) {
+                    entry_keys = entry_params.form_keys;
+                } else {
+                    entry_keys = entry_params.table_keys;
+                }
+                console.log('entry_keys', entry_keys);
+
+
+                orderBy = entry_params.orderBy;
+
+                // if (!entry_keys) return '';
+
+                let queryString = null;
+
+                // queryString = 'SELECT * FROM entrasp.grc_riepilogo_risposte';
+                let keyTypes = getKeyTypes(entry_keys);
+                let calculatedWhereCond = [];
+
+                let comma = ''; // first entry has no comma 
+
+                if (entry_params.importQueries) {
+                    console.log('entry_params.importQueries', JSON.stringify(entry_params.importQueries));
+
+                    let importQueries = null;
+                    if (isForm) {
+                        importQueries = entry_params.importQueries.formQueries;
+                        console.log('entry_params.importQueries.formQueries', entry_params.importQueries.formQueries);
+                    }
+                    else {
+                        importQueries = entry_params.importQueries.tableQueries;
+                        console.log('entry_params.importQueries.tableQueries', entry_params.importQueries.tableQueries);
+
+                    }
+                    console.log('importQueries', importQueries);
+
+                    if (importQueries) {
+                        advancedQuery = importQueries.filter(x => x.label === advancedQueryLabel);
+                        if (advancedQuery.length > 0) {
+                            queryString = advancedQuery[0].queryString;
+                        }
+                    }
+                }
+
+                console.log('queryString1', queryString);
 
                 // Check if mandatory query params provided
                 if (!fileName || !table || !queryString) {
@@ -501,23 +577,33 @@ exports.handler = async (event, context) => {
                     body = { result: 'KO', reason: 'Check File, table and queryString are correct!' };
                 }
                 else {
-                    // Load file from S3
-                    const s3ParamsGetList = {
-                        Bucket: bucket,
-                        Key: fileName
-                    };
+                    // Import CSV from S3 to Postgres
+                    queryString = queryString.replace('$nome_file$', `'${fileName}'`);
 
-                    // Added schema if table does not contain
-                    if (!table.includes('.')) {
-                        table = `${schema}.${table}`;
+                    comma = ' WHERE ';
+                    if (queryString.includes('$')) {
+                        comma = ' AND ';
+                        queryString = replaceKeys(queryString, table_keys, keyTypes);
                     }
 
+                    console.log('queryString2', queryString);
 
-                    // Import CSV from S3 to Postgres
-                    query = queryString.replace(new RegExp('$file$', 'g'), fileName);;
+                    console.log('queryString3', queryString);
+
+                    console.log('queryString4', queryString);
+
+                    // add order by if present (for table view only
+                    if (orderBy != null && orderBy.key != null) {
+                        let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
+                        queryString = queryString + ' ORDER BY ' + orderBy.key + order;
+                    }
+
+                    queryString = queryString + ';';
+
+                    console.log('queryString5', queryString);
 
                     // Data prepared:
-                    console.table({ "fileName": fileName, "query": query, "table": table });
+                    console.table({ "fileName": fileName, "query": queryString, "table": table });
 
                     // Try to run query 5 times on failure
                     let queryResponse = null;
@@ -525,7 +611,7 @@ exports.handler = async (event, context) => {
                     while (!queryResponse && tries < 5) {
                         console.log(`Trying to run query [${tries}]`);
                         try {
-                            queryResponse = await client.query(query);
+                            queryResponse = await client.query(queryString);
                         }
                         catch (e) {
                             console.log(e);
@@ -558,7 +644,7 @@ exports.handler = async (event, context) => {
             }
             else if (requestType === 'downloadTemplate') {
                 // Load mandatory query params
-                let table = queryParams['table'];
+                let table = queryParams['entry_name'];
 
                 console.log("Table: " + table);
                 // Check if mandatory query params provided
