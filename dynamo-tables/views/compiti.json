@@ -5,15 +5,10 @@
   "entryKey": "compiti",
   "predefinedQueries": [
     {
-      "type": "main",
-      "operation": "selectTable",
-      "queryString": "select cmp.codice_codifica_stato, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato)as stato, cmp.codice_azienda, cmp.codice_compito, cmp.data_segnalazione, cmp.titolo, cmp.id_tipo_segnalazione, cmp.id_centro_gest, cmp.data_competenza,(select count(cmp2.codice_compito) from entrasp.compiti cmp2 where cmp2.codice_azienda=cmp.codice_azienda and cmp2.codice_compito_parent=cmp.codice_compito and cmp2.stato!='C')as compiti_aperti from entrasp.compiti cmp where cmp.codice_azienda='€global_codice_azienda€' and cmp.id_tipo_segnalazione!=0"
-    },
-    {
       "operation": "selectForm",
       "type": "preProcessing",
       "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda=az.codice_azienda and codice_compito=$codice_compito$;"
-    } 
+    }
   ],
   "form_keys": [
     {
@@ -136,7 +131,8 @@
       "format": {
         "comboQuery": "SELECT codice_compito AS id, codice_compito||' - '||titolo AS name  FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$ and codice_compito!=$codice_compito$;",
         "options": [],
-        "viewType": "combobox"
+        "viewType": "combobox",
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -283,7 +279,7 @@
       },
       "label": "Stato",
       "newLine": true,
-      "queryCond": "cmp.stato='€stato€'"
+      "queryCond": "stato='€stato€'"
     },
     {
       "fieldName": "note_search",
@@ -303,7 +299,7 @@
       },
       "label": "Codice Compito",
       "newLine": false,
-      "queryCond": "cmp.codice_compito=$codice_compito$"
+      "queryCond": "codice_compito=$codice_compito$"
     },
     {
       "fieldName": "titolo",
@@ -313,7 +309,7 @@
       },
       "label": "Titolo",
       "newLine": true,
-      "queryCond": "cmp.titolo=$titolo$"
+      "queryCond": "titolo=$titolo$"
     },
     {
       "fieldName": "id_tipo_segnalazione",
@@ -323,7 +319,7 @@
       },
       "label": "ID Tipo Segnal.",
       "newLine": false,
-      "queryCond": "cmp.id_tipo_segnalazione=$id_tipo_segnalazione$"
+      "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione$"
     },
     {
       "fieldName": "id_centro_gest",
@@ -334,7 +330,7 @@
       },
       "label": "Centro Gestionale",
       "newLine": false,
-      "queryCond": "cmp.id_centro_gest=$id_centro_gest$"
+      "queryCond": "id_centro_gest=$id_centro_gest$"
     },
     {
       "fieldName": "flag_compiti_aperti",
@@ -343,7 +339,7 @@
       },
       "label": "Solo Principali",
       "newLine": false,
-      "queryCond": "cmp.codice_compito_parent IS null"
+      "queryCond": "codice_compito_parent IS null"
   }
   ],
   "subTables": [
@@ -376,7 +372,7 @@
       "label": "Fonti Rischio"
     },
     {
-      "entryKey": "compiti_sub_of_compiti",
+      "entryKey": "compiti",
       "keys": [
         {
           "parent": "codice_azienda",
@@ -455,6 +451,17 @@
       "isPrimary": false,
       "key": "codice_compito_parent",
       "label": "Codice Compito Parent"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_aperti",
+      "queryFunct": "entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito)",
+      "width": "5%",
+      "label": "N. compiti aperti"
     },
     {
       "format": {
