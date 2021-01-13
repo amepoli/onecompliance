@@ -1,0 +1,173 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "aziende_tasks",
+	"businessObjectName": "aziende",
+	"origin": "entrasp.aziende",
+	"predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"queryString": "select codice_azienda, codice_part, entrasp.count_sondaggi_open_azienda(codice_azienda) as sondaggi_aperti, entrasp.compiti_count_open_azienda_to_do(codice_azienda) as compiti_aperti_to_do, entrasp.compiti_count_open_azienda(codice_azienda) as compiti_aperti from entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda",
+			"type": "main"
+		}
+	],
+	"form_keys": [
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "codice_azienda",
+			"key": "codice_azienda",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "codice_part",
+			"key": "codice_part",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Numero Compiti Aperti",
+			"key": "compiti_aperti",
+			"queryFunct": "entrasp.compiti_count_open_azienda(codice_azienda)",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Numero To Do Aperti",
+			"key": "compiti_aperti_to_do",
+			"queryFunct": "entrasp.compiti_count_open_azienda_to_do(codice_azienda)",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false
+		}
+	],
+	"subTables": [
+		{
+			"entryKey": "compiti_aperti_to_do",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				}
+			],
+			"label": "To do aperti"
+		},
+		{
+			"entryKey": "compiti_aperti",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				}
+			],
+			"label": "Segnalazioni aperte"
+		},
+		{
+			"entryKey": "compiti_chiusi",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				}
+			],
+			"label": "To Do e chiuse"
+		},
+		{
+			"entryKey": "sondaggi_open",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				}
+			],
+			"label": "Sondaggi aperti"
+		},
+		{
+			"entryKey": "sondaggi_closed",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				}
+			],
+			"label": "Sondaggi chiusi"
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "15%",
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "Azienda"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "15%",
+			"key": "codice_part",
+			"label": "Partizione"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "compiti_aperti_to_do",
+			"width": "15%",
+			"label": "N.to do aperti"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "compiti_aperti",
+			"width": "15%",
+			"label": "N.compiti aperti"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "sondaggi_aperti",
+			"width": "15%",
+			"label": "N.sondaggi aperti"
+		}
+	]
+}
