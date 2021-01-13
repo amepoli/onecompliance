@@ -6,7 +6,7 @@
 	"predefinedQueries": [
 		{
 			"operation": "selectTable",
-			"queryString": "select codice_azienda, codice_part, entrasp.count_sondaggi_open_azienda(codice_azienda) as sondaggi_aperti, entrasp.compiti_count_open_azienda_to_do(codice_azienda) as compiti_aperti_to_do, entrasp.compiti_count_open_azienda(codice_azienda) as compiti_aperti from entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda",
+			"queryString": "select codice_azienda, codice_part, entrasp.count_sondaggi_open_azienda(codice_azienda) as sondaggi_aperti, entrasp.count_my_sondaggi_open_azienda(codice_azienda, €global_userid€) as my_sondaggi_aperti, entrasp.compiti_count_open_azienda_to_do(codice_azienda) as compiti_aperti_to_do, entrasp.compiti_count_open_azienda(codice_azienda) as compiti_aperti from entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda",
 			"type": "main"
 		}
 	],
@@ -98,6 +98,16 @@
 			"label": "To Do e chiuse"
 		},
 		{
+			"entryKey": "sondaggi_open_mine",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				}
+			],
+			"label": "Miei Sondaggi Aperti"
+		},
+		{
 			"entryKey": "sondaggi_open",
 			"keys": [
 				{
@@ -158,6 +168,28 @@
 			"key": "compiti_aperti",
 			"width": "15%",
 			"label": "N.compiti aperti"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "my_sondaggi_aperti",
+			"width": "15%",
+			"label": "N. miei sondaggi aperti",
+			"style": [
+                {
+                    "value": 0,
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": ">0",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
+            ]
 		},
 		{
 			"format": {
