@@ -2,6 +2,7 @@
 	"$schema": "../views.schema.json",
 	"origin": "entrasp.progetti",
 	"entryKey": "progetti",
+	"businessObjectName": "progetti",
 	"predefinedQueries": [
 		{
 			"operation": "selectForm",
@@ -12,6 +13,11 @@
 			"queryString": "select case when count(id_fase)=0 and (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)>0 then 'C' when (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)=0 then 'P' else 'A' end as stato  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and stato='P'",
 			"type": "postProcessing",
 			"operation": "selectForm"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "update entrasp.progetti prg set codice_part=az.codice_part from entrasp.aziende az where prg.codice_azienda=az.codice_azienda and prg.codice_part is null and prg.codice_azienda=$codice_azienda$ and prg.id_progetto=$id_progetto$",
+			"type": "postProcessing"
 		},
 		{
 			"operation": "selectForm",
@@ -592,7 +598,7 @@
 			"isPrimary": false,
 			"key": "titolo",
 			"label": "Titolo",
-			"width": "32%"
+			"width": "30%"
 		},
 		{
 			"format": {
@@ -602,8 +608,19 @@
 			"isPrimary": false,
 			"key": "descr_cliente",
 			"label": "Cliente",
-			"width": "15%",
+			"width": "13%",
 			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente)"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "centro_gest",
+			"label": "Centro gestionale",
+			"width": "13%",
+			"queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
 		}
 	]
 }
