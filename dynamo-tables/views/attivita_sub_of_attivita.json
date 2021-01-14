@@ -2,85 +2,16 @@
     "$schema": "../views.schema.json",
     "entryKey": "attivita_sub_of_attivita",
     "inheritsFrom": "attivita",
-    "table_keys": [
+    "predefinedQueries": [
         {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "label": "codice_azienda"
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select *, entrasp.attivita_descr(codice_attivita_parent,codice_azienda) as codice_attivita_parent_trans from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent=$codice_attivita$;"
         },
         {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_attivita",
-            "label": "Cod. attività (PK)"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "isLevel": true,
-            "hasLevel": true,
-            "key": "codice",
-            "label": "Codice",
-            "width": "15%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "hasLevel": true,
-            "isPrimary": false,
-            "key": "descrizione",
-            "label": "Descrizione",
-            "width": "30%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "queryFunct": "entrasp.grc_codice_attivita_parent_ver2(codice_azienda, codice_attivita)",
-            "key": "codice_attivita_origine",
-            "label": "codice_attivita_origine"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "codice_attivita_parent",
-            "label": "Codice livello superiore"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_procedura",
-            "label": "id_procedura"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_attivita_parent_trans",
-            "queryFunct": "entrasp.attivita_descr(codice_attivita_parent,$codice_azienda$)",
-            "label": "Descrizione livello superiore"
+            "type": "main",
+            "operation": "selectForm",
+            "queryString": "select *, entrasp.grc_max_id_mdt_vr(codice_azienda, id_modello_test) as id_modello_test_vr from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita=$codice_attivita$;"
         }
-    ]
+    ]    
 }

@@ -46,11 +46,6 @@
             "type": "main",
             "operation": "selectTable",
             "queryString": "select * from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent is null;"
-        },
-        {
-            "type": "main",
-            "operation": "selectForm",
-            "queryString": "select *, entrasp.grc_max_id_mdt_vr(codice_azienda, id_modello_test) as id_modello_test_vr from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita=$codice_attivita$;"
         }
     ],
     "form_keys": [
@@ -214,7 +209,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_modello_test_vr",
-            "queryFunct": "select max(id_modello_test_vr) from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",          
+            "queryFunct": "entrasp.grc_max_id_mdt_vr(codice_azienda, id_modello_test)",          
             "label": "Ver.",
             "newLine": false,
             "readOnly": false,
@@ -417,7 +412,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "codice_attivita_parent_trans",
-            "queryFunct": "entrasp.attivita_descr(codice_attivita_parent,$codice_azienda$)",
+            "queryFunct": "entrasp.attivita_descr(codice_attivita_parent,codice_azienda)",
             "label": "Descrizione livello superiore"
         }
     ]
