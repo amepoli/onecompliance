@@ -3,7 +3,13 @@
   "entryKey": "consuntivazioni_sub",
   "origin": "entrasp.consuntivazioni",
   "businessObjectName": "consuntivazioni",
-  "predefinedQueries": [],
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$ and cn.id_cons=$id_cons$",
+      "type": "postProcessing"
+    }
+  ],
   "outputEvents": [
     {
       "eventName": "consuntivazioni_sub_reload",
@@ -36,8 +42,6 @@
           }
         ]
       }
-
-
     }
   ],
   "form_keys": [
@@ -423,7 +427,7 @@
       },
       "readOnly": false,
       "sameOrigin": false
-    }, 
+    },
     {
       "autoGenerate": false,
       "format": {
