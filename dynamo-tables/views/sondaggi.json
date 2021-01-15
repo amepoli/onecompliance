@@ -11,6 +11,7 @@
             "eventName": "onLoadSondaggio",
             "eventTrigger": "onReload"
         }
+       
     ],
     "predefinedQueries": [
         {
@@ -361,7 +362,25 @@
                     "condition": "none",
                     "values": [],
                     "queryFunct": "select max(id_sondaggio) as id_sondaggio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
-                }
+                },
+                {
+                    "eventName": "onDeleteSondaggio",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler cancellare il sondaggio?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.sondaggio_delete($codice_azienda$, $id_sondaggio$)"
+                        }
+                    },
+                    "outputEventWhenComplete": "navigate_to_sondaggi"
+                  }
             ]
         },
         {
@@ -456,7 +475,15 @@
                     "actionType": "query_style",
                     "styleAttribute": "background_color",
                     "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-                }
+                },
+                {
+                    "eventName": "navigate_to_sondaggi",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                } 
             ],
             "isHidden": false,
             "isPrimary": false,
@@ -1561,6 +1588,20 @@
             },
             "actionType": "navigate",
             "eventName": "to_riepilogo_risultati"
+        },
+        {
+            "actionTarget": {
+                "name": "sondaggi",
+                "type": "table",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    } 
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "navigate_to_sondaggi"
         },
         {
             "actionTarget": {
