@@ -407,15 +407,16 @@
 	],
 	"search_keys": [
 		{
-			"label": "Stato",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"fieldName": "stato",
-			"newLine": false,
-			"queryCond": "stato=$stato$"
-		},
+            "fieldName": "stato",
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Stato",
+            "newLine": false,
+            "queryCond": "stato='€stato€'"
+        },
 		{
 			"label": "Id Progetto",
 			"format": {
@@ -433,19 +434,51 @@
 				"viewType": "input"
 			},
 			"fieldName": "codice_progetto",
-			"newLine": false,
+			"newLine": true,
 			"queryCond": "codice_progetto=$codice_progetto$"
 		},
 		{
-			"label": "Id Cliente",
-			"format": {
-				"dataType": "number",
-				"viewType": "input"
-			},
+            "fieldName": "id_centro_gest",
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Centro Gestionale",
+            "newLine": false,
+            "queryCond": "id_centro_gest=$id_centro_gest$"
+		},
+		{
 			"fieldName": "id_cliente",
-			"newLine": true,
+			"format": {
+			  "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+			  "options": [],
+			  "viewType": "combobox"
+			},
+			"label": "Cliente",
+			"newLine": false,
 			"queryCond": "id_cliente=$id_cliente$"
-		}
+		  },
+		  {
+            "fieldName": "data_ins_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Inserimento dopo il",
+            "newLine": false,
+            "queryCond": "data_inserimento>='€data_ins_min€'"
+        },
+        {
+            "fieldName": "data_ins_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Inserimento entro il",
+            "newLine": false,
+            "queryCond": "data_inserimento<='€data_ins_max€'"
+        }
 	],
 	"subTables": [
 		{
