@@ -13,10 +13,10 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="132"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="863"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -26,12 +26,12 @@
 	</parameter>
 	<parameter name="id_procedura" class="java.math.BigDecimal"/>
 	<queryString>
-		<![CDATA[select id_procedura,codice_azienda,id_presidio,codice,descrizione_breve,id_centro_gest,stato_attuazione,entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE',stato_attuazione) as stato_attuazione_trans,entrasp.centri_gestionali_descr(codice_part, id_centro_gest)as cg_descr from entrasp.presidi where id_procedura=$P{id_procedura} and codice_azienda=$P{codice_azienda}]]>
+		<![CDATA[select pp.id_procedura, pr.codice_azienda,pr.id_presidio,pr.codice,pr.descrizione_breve,pr.id_centro_gest,pr.stato_attuazione,entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE',pr.stato_attuazione) as stato_attuazione_trans,entrasp.centri_gestionali_descr(pr.codice_part, pr.id_centro_gest)as cg_descr from entrasp.presidi pr inner join entrasp.procedure_aziendali_presidi pp on pr.codice_azienda=pp.codice_azienda and pr.id_presidio=pp.id_presidio where pp.id_procedura=$P{id_procedura} and pp.codice_azienda=$P{codice_azienda} ]]>
 	</queryString>
 	<field name="id_procedura" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="id_procedura"/>
 		<property name="com.jaspersoft.studio.field.label" value="id_procedura"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="presidi"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali_presidi"/>
 	</field>
 	<field name="codice_azienda" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
