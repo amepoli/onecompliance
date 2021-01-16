@@ -1,0 +1,95 @@
+{
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.procedure_aziendali_presidi",
+    "entryKey": "procedure_sub_of_presidi",
+    "inheritsFrom": "presidi_sub_of_procedure",
+     "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "8%",
+            "key": "id_presidio",
+            "label": "ID Presidio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "8%",
+            "key": "descr_presidio",
+            "queryFunct": "entrasp.procedure_aziendali_descr($id_procedura$,$codice_azienda$)",
+            "label": "Presidio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_procedura",
+            "label": "id_procedura"
+        },
+      {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "30%",
+            "isPrimary": false,
+            "key": "descrizione_breve",
+            "label": "Titolo"
+        }
+ ],
+  "inputEvents": [
+        {
+            "actionTarget": {
+                "name": "procedure_aziendali",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "navigate_to_procedura_aziendale"
+        },
+        {
+            "actionTarget": {
+                "name": "presidi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "navigate_to_presidio"
+        }
+    ]
+}

@@ -10,17 +10,7 @@
             "queryString": "update entrasp.presidi set codice_part='€global_codice_part€' WHERE codice_azienda=$codice_azienda$ AND id_presidio=$id_presidio$;"
         }
     ],
-    "messages": [
-        {
-            "viewType": "form",
-            "formMessageType": "delete",
-            "message": {
-                "title": "Cancellazione presidio",
-                "text": "Sei sicuro di voler cancellare il presidio?"
-            }
-        }
-    ],
-    "form_keys": [
+     "form_keys": [
         {
             "autoGenerate": false,
             "format": {
@@ -60,21 +50,6 @@
             "newLine": false,
             "size": 1.5,
             "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_presidio AS id, id_presidio||' - '||codice||' - '||descrizione_breve AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$ and id_presidio!=£id_presidio£;",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_presidio_parent",
-            "label": "Presidio parent",
-            "newLine": false,
-            "readOnly": false,
-            "size": 6.5
         },
         {
             "autoGenerate": false,
@@ -345,6 +320,20 @@
                 }
             ],
             "label": "Sotto presidi"
+        },
+        {
+            "entryKey": "procedure_sub_of_presidi",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_presidio",
+                    "son": "id_presidio"
+                }
+            ],
+            "label": "Presidi associati"
         }
     ],
     "table_keys": [
