@@ -74,7 +74,7 @@
       "label": "Codice",
       "newLine": false,
       "readOnly": false,
-      "size": 2
+      "size": 1.5
     },
     {
       "autoGenerate": true,
@@ -87,8 +87,51 @@
       "key": "codice_rischio",
       "label": "Codice Rischio (PK)",
       "newLine": false,
+      "readOnly": true,
+      "size": 1.5,
+      "inputEvents": [
+        {
+          "eventName": "rischio_button_duplica",
+          "actionType": "show_message",
+          "condition": "none",
+          "values": [],
+          "successMessage": "Duplicazione effettuata!",
+          "message": {
+            "messageText": "Sei sicuro di voler duplicare questo rischio? (attenzione NON si verrà trasferiti al nuovo rischio)",
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select £codice_rischio£ as codice_rischio"
+            },
+            "actionOnYes": {
+              "actionType": "query",
+              "queryFunct": "select codice_rischio_new as codice_rischio from entrasp.rischio_duplica($codice_azienda$, '£codice_rischio£');"
+            }
+          },
+          "outputEventWhenComplete": "navigate_to_rischio_new"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "duplica_rischio",
+      "label": "Duplica Rischio",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "rischio_button_duplica",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
       "readOnly": false,
-      "size": 2
+      "sameOrigin": false,
+      "size": 1.5
     },
     {
       "autoGenerate": false,
@@ -115,7 +158,7 @@
       "label": "Titolo",
       "newLine": true,
       "readOnly": false,
-      "size": 6
+      "size": 5.5
     },
     {
       "format": {
@@ -150,7 +193,8 @@
             "message": "Breve descrizione necessaria",
             "name": "required",
             "validator": "Validators.required"
-          }]
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -774,8 +818,8 @@
     {
       "fieldName": "rischi_without_procedure",
       "format": {
-          "value": "0",
-          "viewType": "checkbox"
+        "value": "0",
+        "viewType": "checkbox"
       },
       "label": "Senza processi",
       "newLine": false,
@@ -784,8 +828,8 @@
     {
       "fieldName": "rischi_with_procedure",
       "format": {
-          "value": "0",
-          "viewType": "checkbox"
+        "value": "0",
+        "viewType": "checkbox"
       },
       "label": "Con processi",
       "newLine": false,
@@ -794,8 +838,8 @@
     {
       "fieldName": "rischi_without_presidi",
       "format": {
-          "value": "0",
-          "viewType": "checkbox"
+        "value": "0",
+        "viewType": "checkbox"
       },
       "label": "Senza presidi",
       "newLine": false,
@@ -804,8 +848,8 @@
     {
       "fieldName": "id_rischio",
       "format": {
-          "value": "0",
-          "viewType": "checkbox"
+        "value": "0",
+        "viewType": "checkbox"
       },
       "label": "rischi_with_presidi",
       "newLine": false,
@@ -972,14 +1016,14 @@
       "label": "Rischio Inerente",
       "style": [
         {
-            "value": "Immateriale",
-            "font_color": "green",
-            "font_weight": "500"
+          "value": "Immateriale",
+          "font_color": "green",
+          "font_weight": "500"
         },
         {
-            "value": "Basso",
-            "font_color": "green",
-            "font_weight": "500"
+          "value": "Basso",
+          "font_color": "green",
+          "font_weight": "500"
         },
         {
           "value": "Rilevante",
@@ -987,11 +1031,11 @@
           "font_weight": "500"
         },
         {
-            "value": "Alto",
-            "font_color": "red",
-            "font_weight": "500"
+          "value": "Alto",
+          "font_color": "red",
+          "font_weight": "500"
         }
-    ],
+      ],
       "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_pre)"
     },
     {
@@ -1004,14 +1048,14 @@
       "label": "Rischio Residuo",
       "style": [
         {
-            "value": "Immateriale",
-            "font_color": "green",
-            "font_weight": "500"
+          "value": "Immateriale",
+          "font_color": "green",
+          "font_weight": "500"
         },
         {
-            "value": "Basso",
-            "font_color": "green",
-            "font_weight": "500"
+          "value": "Basso",
+          "font_color": "green",
+          "font_weight": "500"
         },
         {
           "value": "Rilevante",
@@ -1019,9 +1063,9 @@
           "font_weight": "500"
         },
         {
-            "value": "Alto",
-            "font_color": "red",
-            "font_weight": "500"
+          "value": "Alto",
+          "font_color": "red",
+          "font_weight": "500"
         }
       ],
       "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_post)"
@@ -1036,14 +1080,14 @@
       "label": "Rischio Residuo Rettificato",
       "style": [
         {
-            "value": "Immateriale",
-            "font_color": "green",
-            "font_weight": "500"
+          "value": "Immateriale",
+          "font_color": "green",
+          "font_weight": "500"
         },
         {
-            "value": "Basso",
-            "font_color": "green",
-            "font_weight": "500"
+          "value": "Basso",
+          "font_color": "green",
+          "font_weight": "500"
         },
         {
           "value": "Rilevante",
@@ -1051,9 +1095,9 @@
           "font_weight": "500"
         },
         {
-            "value": "Alto",
-            "font_color": "red",
-            "font_weight": "500"
+          "value": "Alto",
+          "font_color": "red",
+          "font_weight": "500"
         }
       ],
       "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_post)"
@@ -1077,6 +1121,26 @@
       "key": "impatto",
       "label": "Impatto",
       "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I',intensita_singola_post)"
+    }
+  ],
+  "inputEvents": [
+    {
+      "actionTarget": {
+        "name": "rischi",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_rischio",
+            "destination": "codice_rischio"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "navigate_to_rischio_new"
     }
   ]
 }
