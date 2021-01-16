@@ -25,6 +25,16 @@
             "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
         },
         {
+            "fieldName": "nome_rs",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Nome/ Ragione Sociale",
+            "newLine": true,
+            "queryCond": "(UPPER(an.nome) like '%'||UPPER('€nome_rs€')||'%' or UPPER(an.cognome) like '%'||UPPER('€nome_rs€')||'%' or UPPER(avr.ragione_sociale) like '%'||UPPER('€nome_rs€')||'%')"
+        },
+        {
             "fieldName": "nome_s",
             "format": {
                 "dataType": "text",
@@ -373,6 +383,7 @@
                 "viewType": "checkbox"
             },
             "key": "flag_dipendente",
+            "newLine": false,
             "label": "Dip./collab.",
             "queryFunct": "select entrasp.ruolo_anagrafica($codice_part$,'RSRSA',$id_anagrafica$)",
             "readOnly": false,
@@ -386,7 +397,29 @@
          
             "isHidden": false,
             "isPrimary": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "key": "flag_fondo",
+            "label": "Fondo",
+            "queryFunct": "select entrasp.ruolo_anagrafica($codice_part$,'FONDO',$id_anagrafica$)",
+            "readOnly": false,
+            "sameOrigin": false,
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when $id_anagrafica$ is null or $id_anagrafica$::varchar ='' then true else false end as label"
+                }
+            ],
+         
+            "isHidden": false,
+            "isPrimary": false
         }
+  
     ],
     "predefinedQueries": [
         {
@@ -396,12 +429,12 @@
         },
         {
             "operation": "insert",
-            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceruolo=>'CLI', codiceanagrafica=>$codice$, nome=>'€nome€',surname=>'€cognome€', ragionesociale=>'€ragione_sociale€', codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€');",
+            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceruolo=>'CLI', codiceanagrafica=>$codice$, nome=>'€nome€',surname=>'€cognome€', ragionesociale=>'€ragione_sociale€', codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€');",
             "type": "main"
         },
         {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€');",
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€');",
             "type": "main"
         },
         {
