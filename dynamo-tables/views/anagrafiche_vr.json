@@ -63,6 +63,18 @@
             "label": "Ragione Sociale",
             "newLine": false,
             "queryCond": "UPPER(avr.ragione_sociale) like '%'||UPPER('€ragione_sociale_s€')||'%'"
+        },
+        {
+            "fieldName": "ruolo_s",
+            "format": {
+                "comboQuery": "SELECT codice_ruolo AS id, descrizione AS name  FROM entrasp.ruoli order by descrizione;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Ruolo",
+            "newLine": false,
+            "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='€ruolo_s€' and ra.codice_azienda='€global_codice_azienda€')"
         }    
     ],
     "form_keys": [
