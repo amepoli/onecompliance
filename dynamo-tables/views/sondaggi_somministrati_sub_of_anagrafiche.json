@@ -3,11 +3,12 @@
   "origin": "entrasp.sondaggi_somministrati",
   "businessObjectName": "sondaggiSomministrati",
   "entryKey": "sondaggi_somministrati_sub_of_anagrafiche",
+  "inheritsFrom": "sondaggi_soministrati",
   "predefinedQueries": [
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select * from sondaggi_somministrati_extended where codice_part=$codice_part$ and id_anagrafica_somministrazione=$id_anagrafica_somministrazione$"
+      "queryString": "select * from entrasp.sondaggi_somministrati_extended where codice_part=$codice_part$ and id_anagrafica_somministrazione=$id_anagrafica_somministrazione$"
     },
     {
       "operation": "selectForm",
@@ -24,6 +25,5 @@
       "type": "postProcessing",
       "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$);"
     }
-  ],
-  "inheritsFrom": "sondaggi_soministrati"
+  ]
 }
