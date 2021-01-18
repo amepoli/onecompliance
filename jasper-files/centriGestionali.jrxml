@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="procedureAziendali" pageWidth="565" pageHeight="842" columnWidth="535" leftMargin="15" rightMargin="15" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="376ede0d-23cd-4d7b-a1bf-664463cad42c">
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports5.2.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="centriGestionali" pageWidth="565" pageHeight="842" columnWidth="535" leftMargin="15" rightMargin="15" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="376ede0d-23cd-4d7b-a1bf-664463cad42c">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
 	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
@@ -14,7 +14,6 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -24,12 +23,15 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="329"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="666"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select pa1.descrizione_breve as uno_db, entrasp.centri_gestionali_descr(pa1.codice_part, pa1.id_centro_gest), pa2.descrizione_breve as due_db, pa3.descrizione_breve as tre_db, pa1.codice as uno_c, pa2.codice as due_c, pa3.codice as tre_c, pa1.id_procedura as uno_id_proc, pa2.id_procedura as due_id_proc, pa3.id_procedura as tre_id_proc, pa1.descrizione as uno_d, pa2.descrizione as due_d, pa3.descrizione as tre_d, pa1.codice_azienda as uno_ca,pa2.codice_azienda as due_ca, pa3.codice_azienda as tre_ca, pa1.id_procedura_parent as uno_id_pp, pa2.id_procedura_parent as due_id_pp,pa3.id_procedura_parent as tre_id_pp, pa4.id_procedura as quattro_id_proc from entrasp.procedure_aziendali pa1 left join entrasp.procedure_aziendali pa2 on pa1.id_procedura=pa2.id_procedura_parent and pa1.codice_azienda=pa2.codice_azienda left join entrasp.procedure_aziendali pa3 on pa2.id_procedura=pa3.id_procedura_parent and pa2.codice_azienda=pa3.codice_azienda left join entrasp.procedure_aziendali pa4 on pa3.id_procedura=pa4.id_procedura and pa3.codice_azienda=pa4.codice_azienda where pa1.codice_azienda ='DEMO' and pa1.id_procedura = 33 and pa1.id_procedura_parent is null"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select *, entrasp.anagrafiche_id_codcognnome(codice_part,id_responsabile) as responsabile_descr, entrasp.centri_gestionali_descr(codice_part,id_centro_gest_parent) as cg_parent_descr from entrasp.centri_gestionali where codice_part='FININT'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -37,482 +39,86 @@
 	<queryString>
 		<![CDATA[$P!{mainQuery}]]>
 	</queryString>
-	<field name="uno_db" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="uno_db"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_db"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="codice_part" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_part"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_part"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="centri_gestionali_descr" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="centri_gestionali_descr"/>
-		<property name="com.jaspersoft.studio.field.label" value="centri_gestionali_descr"/>
+	<field name="id_centro_gest" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_centro_gest"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_centro_gest"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="due_db" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="due_db"/>
-		<property name="com.jaspersoft.studio.field.label" value="due_db"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="codice" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="tre_db" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="tre_db"/>
-		<property name="com.jaspersoft.studio.field.label" value="tre_db"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="uno_c" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="uno_c"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_c"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="id_centro_gest_parent" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_centro_gest_parent"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_centro_gest_parent"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="due_c" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="due_c"/>
-		<property name="com.jaspersoft.studio.field.label" value="due_c"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="id_responsabile" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_responsabile"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_responsabile"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="tre_c" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="tre_c"/>
-		<property name="com.jaspersoft.studio.field.label" value="tre_c"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="tree_path_referente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tree_path_referente"/>
+		<property name="com.jaspersoft.studio.field.label" value="tree_path_referente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="uno_id_proc" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="uno_id_proc"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_id_proc"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="id_gruppo_lavoro" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_gruppo_lavoro"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_gruppo_lavoro"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="due_id_proc" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="due_id_proc"/>
-		<property name="com.jaspersoft.studio.field.label" value="due_id_proc"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="tree_path" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="tree_path"/>
+		<property name="com.jaspersoft.studio.field.label" value="tree_path"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="tre_id_proc" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="tre_id_proc"/>
-		<property name="com.jaspersoft.studio.field.label" value="tre_id_proc"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="ute_ref" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ute_ref"/>
+		<property name="com.jaspersoft.studio.field.label" value="ute_ref"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="uno_d" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="uno_d"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_d"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="flag_grc_controller" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="flag_grc_controller"/>
+		<property name="com.jaspersoft.studio.field.label" value="flag_grc_controller"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="due_d" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="due_d"/>
-		<property name="com.jaspersoft.studio.field.label" value="due_d"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="flag_grc_gestore" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="flag_grc_gestore"/>
+		<property name="com.jaspersoft.studio.field.label" value="flag_grc_gestore"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="tre_d" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="tre_d"/>
-		<property name="com.jaspersoft.studio.field.label" value="tre_d"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="descrizione_estesa" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione_estesa"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione_estesa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="uno_ca" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="uno_ca"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_ca"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="responsabile_descr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="responsabile_descr"/>
+		<property name="com.jaspersoft.studio.field.label" value="responsabile_descr"/>
 	</field>
-	<field name="due_ca" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="due_ca"/>
-		<property name="com.jaspersoft.studio.field.label" value="due_ca"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	<field name="cg_parent_descr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cg_parent_descr"/>
+		<property name="com.jaspersoft.studio.field.label" value="cg_parent_descr"/>
 	</field>
-	<field name="tre_ca" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="tre_ca"/>
-		<property name="com.jaspersoft.studio.field.label" value="tre_ca"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
-	</field>
-	<field name="uno_id_pp" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="uno_id_pp"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_id_pp"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
-	</field>
-	<field name="due_id_pp" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="due_id_pp"/>
-		<property name="com.jaspersoft.studio.field.label" value="due_id_pp"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
-	</field>
-	<field name="tre_id_pp" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="tre_id_pp"/>
-		<property name="com.jaspersoft.studio.field.label" value="tre_id_pp"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
-	</field>
-	<field name="quattro_id_proc" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="quattro_id_proc"/>
-		<property name="com.jaspersoft.studio.field.label" value="quattro_id_proc"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
-	</field>
-	<sortField name="uno_c"/>
-	<sortField name="due_c"/>
-	<sortField name="tre_c"/>
-	<group name="Gruppo1">
-		<groupExpression><![CDATA[$F{uno_id_proc}]]></groupExpression>
-		<groupHeader>
-			<band height="138">
-				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{uno_id_pp} == null]]></printWhenExpression>
-				<textField textAdjust="StretchHeight">
-					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="110" y="34" width="425" height="20" backcolor="#FFFFFF" uuid="877b4a22-b792-4943-b0bc-6ceb48c0e425">
-						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-						<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<box>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Justified" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-						<paragraph leftIndent="5" rightIndent="5"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{uno_db}]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="0" y="34" width="100" height="20" backcolor="#FFFFFF" uuid="2464d46d-beee-4e63-bbeb-fa6d202e3902">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<box>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{uno_c}]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="0" y="84" width="535" height="20" isRemoveLineWhenBlank="true" uuid="6ad74109-1734-4f82-a1c8-ceeb6252ef0c">
-						<property name="com.jasperassistant.designer.GridHeight" value="12"/>
-						<property name="com.jasperassistant.designer.GridWidth" value="12"/>
-						<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
-						<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
-						<property name="com.jasperassistant.designer.Units" value="Pixels"/>
-						<property name="com.jasperassistant.designer.Grid" value="false"/>
-						<property name="ireport.scriptlethandling" value="0"/>
-						<property name="ireport.encoding" value="UTF-8"/>
-						<property name="businessObjectName" value="procedureAziendali"/>
-						<property name="ireport.zoom" value="1.0"/>
-						<property name="ireport.x" value="0"/>
-						<property name="ireport.y" value="0"/>
-						<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-						<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
-						<property name="com.jaspersoft.studio.unit." value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
-						<property name="com.jaspersoft.studio.unit.spacingAfter" value="px"/>
-					</reportElement>
-					<box>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Justified" verticalAlignment="Middle">
-						<paragraph leftIndent="5" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{uno_d}]]></textFieldExpression>
-				</textField>
-				<line>
-					<reportElement x="0" y="10" width="535" height="1" uuid="d8502813-b711-4106-98ab-738e8f1b7e8b">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<graphicElement>
-						<pen lineWidth="2.0"/>
-					</graphicElement>
-				</line>
-				<staticText>
-					<reportElement mode="Opaque" x="0" y="14" width="100" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="43130e1f-ca36-49fb-9856-3b21ee59ae75">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box>
-						<pen lineColor="#000000"/>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-					</textElement>
-					<text><![CDATA[  Codice]]></text>
-				</staticText>
-				<staticText>
-					<reportElement mode="Opaque" x="110" y="14" width="425" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="86a25b84-5de4-4d1f-b1ba-1f2c6f58db54">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
-					<box>
-						<pen lineColor="#000000"/>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Procedura]]></text>
-				</staticText>
-				<staticText>
-					<reportElement positionType="Float" mode="Opaque" x="0" y="64" width="535" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="29e43962-a1c6-4a9f-b2cd-9c4f9e9aa1fe">
-						<property name="com.jasperassistant.designer.GridHeight" value="12"/>
-						<property name="com.jasperassistant.designer.GridWidth" value="12"/>
-						<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
-						<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
-						<property name="com.jasperassistant.designer.Units" value="Pixels"/>
-						<property name="com.jasperassistant.designer.Grid" value="false"/>
-						<property name="ireport.scriptlethandling" value="0"/>
-						<property name="ireport.encoding" value="UTF-8"/>
-						<property name="businessObjectName" value="procedureAziendali"/>
-						<property name="ireport.zoom" value="1.0"/>
-						<property name="ireport.x" value="0"/>
-						<property name="ireport.y" value="0"/>
-						<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-						<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
-						<property name="com.jaspersoft.studio.unit." value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<box>
-						<pen lineColor="#000000"/>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Descrizione]]></text>
-				</staticText>
-				<textField>
-					<reportElement positionType="Float" x="125" y="113" width="410" height="20" uuid="81ca7bfd-0c08-4964-9f67-e7691c5823c3">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-					</reportElement>
-					<box>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement verticalAlignment="Middle">
-						<paragraph leftIndent="5"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{centri_gestionali_descr}]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement positionType="Float" mode="Opaque" x="0" y="113" width="115" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="bc5f2e63-49de-4577-bd77-887e7ac66d63">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box>
-						<pen lineColor="#000000"/>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Centro Gestionale]]></text>
-				</staticText>
-			</band>
-		</groupHeader>
-	</group>
-	<group name="Gruppo2">
-		<groupExpression><![CDATA[$F{due_id_proc}]]></groupExpression>
-		<groupHeader>
-			<band height="30">
-				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{due_c} != null && ($F{quattro_id_proc}!=$F{due_id_proc})]]></printWhenExpression>
-				<staticText>
-					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="15" y="5" width="100" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="Gruppo1" forecolor="#FFFFFF" backcolor="#0AADFF" uuid="d7fe501b-fc5e-40b6-b0cd-4ea0b1cfd5de">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<box>
-						<pen lineColor="#000000"/>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-					</textElement>
-					<text><![CDATA[  Codice]]></text>
-				</staticText>
-				<staticText>
-					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="125" y="5" width="410" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="Gruppo1" forecolor="#FFFFFF" backcolor="#0AADFF" uuid="f9662327-579a-4c45-8df0-4646cd75f8b2">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<box>
-						<pen lineColor="#000000"/>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Procedura di II Livello]]></text>
-				</staticText>
-			</band>
-			<band height="20">
-				<printWhenExpression><![CDATA[$F{due_c} != null]]></printWhenExpression>
-				<textField>
-					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="15" y="0" width="100" height="20" backcolor="#FFFFFF" uuid="36b4538e-fdf8-4c7b-9ab8-827692976122">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<box>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{due_c}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="125" y="0" width="410" height="20" backcolor="#FFFFFF" uuid="6eba9479-6ee4-4cac-b5af-ee7b35af81bb">
-						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<box>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-						<paragraph leftIndent="5"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{due_db}]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
-	</group>
-	<group name="Gruppo3">
-		<groupExpression><![CDATA[$F{tre_id_proc}]]></groupExpression>
-		<groupHeader>
-			<band height="30">
-				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{tre_c} != null]]></printWhenExpression>
-				<staticText>
-					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="30" y="5" width="100" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="Gruppo2" forecolor="#000000" backcolor="#C0F0FC" uuid="217bb31c-a3dd-4327-9a84-1607c84479aa">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<box>
-						<pen lineColor="#000000"/>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-					</textElement>
-					<text><![CDATA[  Codice]]></text>
-				</staticText>
-				<staticText>
-					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="140" y="5" width="395" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="Gruppo2" forecolor="#000000" backcolor="#C0F0FC" uuid="664f2dcf-fc8f-48cc-bf94-697a81a24d5c">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<box>
-						<pen lineColor="#000000"/>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-					</textElement>
-					<text><![CDATA[Procedura di III Livello]]></text>
-				</staticText>
-			</band>
-			<band height="20">
-				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{tre_c} != null]]></printWhenExpression>
-				<textField>
-					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="30" y="0" width="100" height="20" backcolor="#FFFFFF" uuid="22f2fabd-bc04-4c13-988a-1038e4b4af06">
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<box>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{tre_c}]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="140" y="0" width="395" height="20" backcolor="#FFFFFF" uuid="56c12882-f6a7-4405-be53-157ad0d76588">
-						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-						<property name="com.jaspersoft.studio.unit.y" value="px"/>
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-						<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					</reportElement>
-					<box>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Bold_arial" isBold="true"/>
-						<paragraph leftIndent="5"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{tre_db}]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupHeader>
-	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="99" splitType="Stretch">
 			<image onErrorType="Blank">
-				<reportElement key="image" positionType="Float" stretchType="ContainerHeight" x="167" y="10" width="245" height="50" uuid="91091dc5-beb8-41fa-873f-a0a1a9944b9d">
+				<reportElement key="image" positionType="Float" stretchType="RelativeToBandHeight" x="167" y="10" width="245" height="50" uuid="91091dc5-beb8-41fa-873f-a0a1a9944b9d">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -570,13 +176,13 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bold_arial" size="16" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Processi e sotto-processi]]></text>
+				<text><![CDATA[Centri gestionali, processi, presidi e rischi associati ]]></text>
 			</staticText>
 		</band>
 	</title>
 	<pageHeader>
 		<band height="18">
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="372" y="6" width="163" height="10" isRemoveLineWhenBlank="true" uuid="33cbd1cd-576a-4884-89a2-7c59c205708c">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -590,10 +196,128 @@
 				<textElement textAlignment="Center">
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{uno_c}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
+	<detail>
+		<band height="73">
+			<textField>
+				<reportElement positionType="Float" x="270" y="6" width="265" height="20" uuid="b9190d0b-b559-4e0a-aada-59b257672a01">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="170" y="6" width="95" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="d57c670f-786d-415d-9b8d-a09e5b4079f1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Centro Gestionale]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="60" y="6" width="100" height="20" uuid="afd26636-1990-481e-b31b-7203e0dcb020"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{codice}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="6" width="50" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="78d309bb-d78b-49e9-a008-d042b7224437"/>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Codice]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="90" y="40" width="100" height="20" uuid="29aa2227-2e51-4d3d-9889-661df1273b20">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{responsabile_descr}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="40" width="85" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="38ca4050-dcd9-43ae-9a25-9f1f6f552a6f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Responsabile]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="310" y="40" width="225" height="20" uuid="2cea67f1-d2a0-4be7-b920-a131506b3ca3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{cg_parent_descr}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="210" y="40" width="90" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="a1c4f887-c594-44cc-965f-28d757ba58bd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Centro liv. sup.]]></text>
+			</staticText>
+		</band>
+	</detail>
 	<columnFooter>
 		<band splitType="Stretch"/>
 	</columnFooter>
@@ -606,12 +330,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<line>
-				<reportElement x="0" y="5" width="535" height="1" uuid="54a13e49-05fd-451c-a3b5-f06dbc30cdea">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-				</reportElement>
-			</line>
 		</band>
 	</pageFooter>
 	<summary>
