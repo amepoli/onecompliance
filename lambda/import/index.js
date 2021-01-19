@@ -899,63 +899,52 @@ exports.handler = async (event, context) => {
 
     console.log('queryParams: ', queryParams);
 
-    const DynamoParams = {
-        TableName: 'VIEWS_NAME',
-        Key: {
-            entryKey: queryParams['entry_name']
-        }
-    };
-
-    var search_keys = queryParams['search_keys'];
-    if (search_keys) {
-        search_keys = JSON.parse(search_keys); // production scenario only
-    }
-
-    var isSearchRequest = search_keys ? true : false;
+    // const DynamoParams = {
+    //     TableName: 'VIEWS_NAME',
+    //     Key: {
+    //         entryKey: queryParams['entry_name']
+    //     }
+    // };
 
     var isFormRecord = (queryParams['is_form'] === '1');
 
-    var isEventUpdate = (queryParams['event'] != null);
 
-    var dashboardIndex = queryParams['dashboard_index'];
+    const company = queryParams['company'] ? queryParams['company'] : null;
 
-    var isExcel = (queryParams['excel'] === '1');
+    const profile = company ? await getProfile(userid, company) : null;
 
-    //var table_keys = queryParams['keys']; // test scenario
-    var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
+    const profileData = profile ? await getProfileData(profile) : null;
 
-    var company = queryParams['company'];
+    if (queryParams['entry_name'] && profileData) {
+        let authorized = isAuthorized(queryParams['entry_name'], profileData);
 
-    const profile = await getProfile(userid, company);
+        if (!authorized) {
+            console.log(method, ' request for ', queryParams['entry_name'], ' not authorized!');
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 403,
+                "error": "Not Authorized"
+            };
+        } else {
+            console.log(method, ' request for ', queryParams['entry_name'], ' authorized!');
+        }
 
-    const profileData = await getProfileData(profile);
+        var readOnly = isReadOnly(queryParams.entry_name, profileData);
 
-    var authorized = isAuthorized(queryParams.entry_name, profileData);
-
-    if (!authorized) {
-        console.log(method, ' request for ', queryParams.entry_name, ' not authorized!');
-        return {
-            "isBase64Encoded": false,
-            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            "statusCode": 403,
-            "error": "Not Authorized"
-        };
-    } else {
-        console.log(method, ' request for ', queryParams.entry_name, ' authorized!');
+        // avoid update, insert or delete if read only
+        if (readOnly && (method === 'DELETE')) {
+            console.log(queryParams.entry_name, ' Not Authorized!');
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 403,
+                "error": "Not Authorized"
+            };
+        }
     }
 
-    var readOnly = isReadOnly(queryParams.entry_name, profileData);
 
-    // avoid update, insert or delete if read only
-    if (readOnly && (method === 'DELETE' || (method === 'POST' && !isEventUpdate))) {
-        console.log(queryParams.entry_name, ' Not Authorized!');
-        return {
-            "isBase64Encoded": false,
-            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            "statusCode": 403,
-            "error": "Not Authorized"
-        };
-    }
 
     var flags = { readOnly: readOnly }; // if this is a get signal to frontend this is a readonly table
 
@@ -994,11 +983,14 @@ exports.handler = async (event, context) => {
 
             if (requestType === 'createNewFile') {
                 const fileName = context.awsRequestId + ".csv"; // generate a 'unique' UUID as fileName
+                console.log(fileName);
 
                 const s3ParamsInsert = {
                     Bucket: bucket,
-                    Key: fileName
+                    Key: "CSV/" + fileName
                 };
+
+                console.log(s3ParamsInsert);
 
                 // create a temporary signed URL for the object 
                 const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
@@ -1010,7 +1002,7 @@ exports.handler = async (event, context) => {
             else if (requestType === 'importFile') {
                 // Load mandatory query params
                 let fileName = queryParams['filename'];
-                let table = queryParams['table'];
+                let table = queryParams['entry_name'];
 
                 // Check if mandatory query params provided
                 if (!fileName || !table) {
@@ -1021,7 +1013,7 @@ exports.handler = async (event, context) => {
                     // Load file from S3
                     const s3ParamsGetList = {
                         Bucket: bucket,
-                        Key: fileName
+                        Key: "CSV/" + fileName
                     };
 
                     const csvFile = await s3.getObject(s3ParamsGetList).promise();
@@ -1241,7 +1233,7 @@ exports.handler = async (event, context) => {
 
                 const s3ParamsDelete = {
                     Bucket: bucket,
-                    Key: fileName
+                    Key: "CSV/" + fileName
                 };
 
                 const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsDelete);
