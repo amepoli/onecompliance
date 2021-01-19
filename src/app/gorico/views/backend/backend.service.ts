@@ -159,17 +159,18 @@ export class BackendService {
   /* Import Related functions */
   createImportFileURL(): Observable<any> {
     this.amplifyService.auth();
+    this.myPutPostInit.body = {};
     this.myPutPostInit.queryStringParameters = { request_type: 'createNewFile' };
     return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
   }
 
-  importFileFromS3(company: string, fileName: string, table: string, columns: string): Observable<any> {
+  importFileFromS3(company: string, fileName: string, entryName: string, columns: string): Observable<any> {
     this.amplifyService.auth();
 
     // Test data:
     // this.myPutPostInit.queryStringParameters = { request_type: 'importFile', company: 'DEMO', filename: 's3test.csv', table: 'entrasp.s3_import', columns: null };
 
-    this.myPutPostInit.queryStringParameters = { request_type: 'importFile', company: company, filename: fileName, table: table, columns: columns };
+    this.myPutPostInit.queryStringParameters = { request_type: 'importFile', company: company, filename: fileName, entry_name: entryName, columns: columns };
     return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
   }
 
