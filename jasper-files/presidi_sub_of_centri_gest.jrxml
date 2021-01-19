@@ -30,10 +30,14 @@
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
-	<parameter name="codice_part" class="java.lang.String"/>
-	<parameter name="id_centro_gest" class="java.math.BigDecimal"/>
+	<parameter name="codice_part" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["FININT"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id_centro_gest" class="java.math.BigDecimal" isForPrompting="false">
+		<defaultValueExpression><![CDATA[1.00]]></defaultValueExpression>
+	</parameter>
 	<queryString>
-		<![CDATA[select pr.codice, pr.descrizione_breve, pr.descrizione, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione  from entrasp.presidi pr where pr.codice_part=$P{codice_part} and pr.id_centro_gest=$P{id_centro_gest}]]>
+		<![CDATA[select pr.codice_part, pr.id_centro_gest, pr.codice, pr.descrizione_breve, pr.descrizione, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione  from entrasp.presidi pr where pr.codice_part=$P{codice_part} and pr.id_centro_gest=$P{id_centro_gest}]]>
 	</queryString>
 	<field name="codice" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice"/>
