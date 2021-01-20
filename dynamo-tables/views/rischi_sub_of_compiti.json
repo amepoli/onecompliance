@@ -1,0 +1,123 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "rischi_sub_of_compiti",
+  "origin": "entrasp.compiti_rischi",
+  "businessObjectName": "compitiRischi",
+  "inputEvents": [
+    {
+      "eventName": "update_compiti_rischi",
+      "actionType": "reload"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_rischio_compito",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "cancella_compito_rischio",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "cancella_compito_rischio",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "delete from entrasp.compiti_rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$ and codice_compito=$codice_compito$",
+          "outputEventWhenComplete": "update_compiti_rischi"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT codice_rischio AS id, entrasp.rischi_cod_tit(codice_azienda, codice_rischio) AS name  FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_rischio",
+      "label": "Rischio",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "label": "Codice Segnalazione",
+      "newLine": false,
+      "readOnly": false
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_rischio",
+      "label": "Codice Rischio"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Descrizione",
+      "queryFunct": "select descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$$codice_rischio$$"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "label": "Codice Compito"
+    }
+  ]
+}
