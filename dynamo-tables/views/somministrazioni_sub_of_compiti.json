@@ -1,0 +1,104 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "somministrazioni_sub_of_compiti",
+  "origin": "entrasp.compiti_somministrazioni",
+  "businessObjectName": "compitiSomministrazioni",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select id_sondaggio as id from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$"
+    }
+  ],
+  "inputEvents": [
+    {
+      "eventName": "update_compiti_somministrazioni",
+      "actionType": "reload"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_somministrazioni_compito",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "cancella_compito_somministrazione",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "cancella_compito_somministrazione",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "delete from entrasp.compiti_sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and codice_compito=$codice_compito$ and id_somministrazione =$id_somministrazione$",
+          "outputEventWhenComplete": "update_compiti_somministrazioni"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_somministrazione AS id, object_description AS name FROM entrasp.sondaggi_somministrati WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_somministrazione",
+      "label": "Somministrazione",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_sondaggio",
+      "label": "id_sondaggio",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "label": "Codice Segnalazione",
+      "newLine": false,
+      "readOnly": true
+    }
+  ]  
+}
