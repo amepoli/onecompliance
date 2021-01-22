@@ -15,6 +15,7 @@ import { NavigationService, HideAction } from 'app/gorico/services/navigation.se
 import { MessageView } from 'app/gorico/services/messages.service';
 import { HelperService } from 'app/gorico/services/helper.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { isArray } from 'lodash';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -920,20 +921,27 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
         } else if (event.actionType === 'navigate' && conditionMet) {
             const formLine = _this.filteredFormData[value.index];
-            const keys = formLine.reduce((outputKeys, key) => {
-                outputKeys[key.name] = key.value;
-                return outputKeys;
-            }, {});
-            let filteredKeys = {};
+            var navigationKeys = {};
+            formLine.forEach(key => navigationKeys[key.name] = key.value);
+            // formLine.reduce((outputKeys, key) => {
+            //     outputKeys[key.name] = key.value;
+            //     return outputKeys;
+            // }, {});
+            var filteredKeys = {};
             if (event.actionTarget.keymap != null && event.actionTarget.keymap.length) { // explicit key map between tables
                 event.actionTarget.keymap.forEach(element => {
                     if (element.source != null && element.destination != null) {
+
+                        // If we came from show_message event, the keys must be in value.data
+                        if(typeof(value.data) === 'object' && value.data['keys'] && value.data['keys'][element.source]){
+                            filteredKeys[element.destination] = value.data['keys'][element.source] != null ? value.data['keys'][element.source]: null;
+                        }
                         // Check if event contains values in case of manually generated event
-                        if (event.values != null) {
+                        else if (event.values != null) {
                             filteredKeys[element.destination] = event.values[element.source] != null ? event.values[element.source] : null;
                         }
-                        else if (keys != null) {
-                            filteredKeys[element.destination] = keys[element.source] != null ? keys[element.source].id != null ? keys[element.source].id : keys[element.source] : null;
+                        else if (navigationKeys != null) {
+                            filteredKeys[element.destination] = navigationKeys[element.source] != null ? navigationKeys[element.source].id != null ? navigationKeys[element.source].id : navigationKeys[element.source] : null;
                         }
                     }
 
@@ -941,8 +949,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
             else {
                 const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
-                filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
+                filteredKeys = _this.getCurrentKeys(primaryKeys, navigationKeys);
             }
+
+            
             // destroy current subscriptions before moving to a new view
             _this.formSubscriptions.forEach(subscription => {
                 subscription.unsubscribe();
@@ -1178,7 +1188,23 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             result => {
                                 if (result.result === 'OK') {
                                     _this._console.table(result);
-                                    _this._toastService.showSuccessToast("Success!");
+                                    if(result.data ){
+                                        if(isArray(result.data)){
+                                            // I am hoping that the result contains keys for the next event
+                                            value.data = {};
+                                            value.data['keys'] = result.data[0];
+                                        }
+                                        else{
+                                            value.data = result.data;
+                                        }
+                                    }
+                                    
+                                    if(event.successMessage){
+                                        _this._toastService.showSuccessToast(event.successMessage);
+                                    }
+                                    else{
+                                        _this._toastService.showSuccessToast("Success!");
+                                    }
                                     if (event.outputEventWhenComplete != null) {
                                         _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
                                     }
