@@ -436,7 +436,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "SELECT an.codice_part, an.id_anagrafica, an.nome,  an.cognome, avr.ragione_sociale, avr.denominazione, avr.prog_vr, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica);",
+            "queryString": "SELECT an.codice_part, an.id_anagrafica, coalesce(an.nome||' '||an.cognome, avr.ragione_sociale) as nmrs, avr.denominazione, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica);",
             "type": "main"
         },
         {
@@ -555,7 +555,7 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "id_anagrafica",
-            "width": "3%",
+            "width": "5%",
             "label": "ID"
         },
         {
@@ -565,7 +565,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "codice",
-            "width": "7%",
+            "width": "8%",
             "label": "Codice"
         },
         {
@@ -574,29 +574,9 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "nome",
+            "key": "nmrs",
             "width": "18%",
-            "label": "Nome"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "cognome",
-            "width": "18%",
-            "label": "Cognome"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "ragione_sociale",
-            "width": "25%",
-            "label": "Ragione sociale"
+            "label": "Denominazione"
         },
         {
             "format": {
@@ -625,7 +605,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "ruolo_s",
-            "width": "9%",
+            "width": "20%",
             "label": "Ruolo"
         }
     ]
