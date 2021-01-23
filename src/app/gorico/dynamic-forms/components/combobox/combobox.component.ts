@@ -131,7 +131,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     if(id != null && id !== ''){
       // id = JSON.stringify(id);
       if(typeof id === 'object'){
-        _this.field.value = _this.field.options.find(x => JSON.stringify(x) == JSON.stringify(id));
+        _this.field.value = _this.field.options.find(x => JSON.stringify(x.id) == JSON.stringify(id));
       }
       else{
         _this.field.value = _this.field.options.find(x => '' + x.id == '' + id);

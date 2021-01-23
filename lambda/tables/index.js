@@ -92,7 +92,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                     let toReplace = delimiter + key + delimiter;
                     let valueWithFixedQuotes = keys[key];
                     try {
-                        valueWithFixedQuotes = (keys[key] != null && keyType != null && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
+                        valueWithFixedQuotes = (keys[key] != null && keyType != null && keyType.viewType !== 'combobox' && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
                     } catch (e) {
                         console.log("Error on key: ", key, " with value: ", keys[key]);
                     }

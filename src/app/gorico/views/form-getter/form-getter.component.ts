@@ -601,7 +601,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         try {
             const subKeysArray = commaSeparatedValues.split('(')[1].split(')')[0].split(',');
             subKeys.forEach((subKey, sub_index) => {
-                outputObject[subKey.key] = subKeysArray[sub_index];
+                outputObject[subKey.key] = subKey.dataType === 'number' ? parseInt(subKeysArray[sub_index]) : subKeysArray[sub_index];
             });
         } catch (e) {
             this._console.log('something wrong with subkeys');
