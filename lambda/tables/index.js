@@ -592,7 +592,12 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                     preProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
                 } else if (query.type === "postProcessing") {
                     postProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
-                } else if (query.type === "preInsertingCheck") {
+                }
+            }
+
+            // Preinserting check queries
+            if ((newRecord && query.operation === "insert")) {
+                if (query.type === "preInsertingCheck") {
                     preInsertingCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
                 }
             }
