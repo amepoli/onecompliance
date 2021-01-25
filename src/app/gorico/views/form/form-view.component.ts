@@ -129,6 +129,15 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
             }
         }));
 
+        // _this.backendService.sendEmailUsingTemplate('email').subscribe(
+        //     result => {
+        //         console.log(result);
+        //     },
+        //     error => {
+        //         console.log(error);
+        //     }
+        // );
+
         const subscription = _this.formGetter.sendEvent.subscribe(
             event => {
                 if (event.eventType === 'formData') {   // child received the view Info
@@ -327,10 +336,22 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         }, 1000);
                     }
                     else {
-                        // Show error snackbar
-                        _this._toastService.showErrorToast(result.reason);
+                        // Check if error occured during preInserting check
+                        if(result.preInsertingErrors){
+                            _this._dialogService.showErrorDialog("Error", result.preInsertingErrors.join('\n'));
+                        }
+                        else{
+                            // Show error snackbar
+                            _this._toastService.showErrorToast(result.reason);
+                        }
                         _this.savingState = 'save';
                     }
+                },
+                error =>{
+                    // Show error snackbar
+                    _this._toastService.showErrorToast(error);
+                    
+                    _this.savingState = 'save';
                 }
             );
 
