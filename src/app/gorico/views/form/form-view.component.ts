@@ -340,6 +340,10 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         if(result.preInsertingErrors){
                             _this._dialogService.showErrorDialog("Error", result.preInsertingErrors.join('\n'));
                         }
+                        // Check if error occured during preUpdatingErrors check
+                        else if(result.preUpdatingErrors){
+                            _this._dialogService.showErrorDialog("Error", result.preUpdatingErrors.join('\n'));
+                        }
                         else{
                             // Show error snackbar
                             _this._toastService.showErrorToast(result.reason);
