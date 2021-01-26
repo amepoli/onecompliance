@@ -206,8 +206,6 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     let comboQueries = [];
 
-    let preInsertingCheckQueries = [];
-
     let preProcessQueries = [];
 
     let postProcessQueries = [];
@@ -262,8 +260,14 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
             }
         });
         if (mainQuery) { // no need to further build main query, stop here
-            return { mainQuery: mainQuery, comboQueries: comboQueries, preInsertingCheckQueries: preInsertingCheckQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
-
+            return {
+                mainQuery: mainQuery,
+                comboQueries: comboQueries,
+                preInsertingCheckQueries: [],
+                preUpdatingCheckQueries: [],
+                preProcessQueries: preProcessQueries,
+                postProcessQueries: postProcessQueries
+            };
         }
     }
 
@@ -304,7 +308,14 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
         if (entry_params.origin) {
             queryString = queryString + ' FROM ' + entry_params.origin;
         } else {  // no underlying table, skip building of main query, still there might be some combos
-            return { mainQuery: null, comboQueries: comboQueries, preInsertingCheckQueries: preInsertingCheckQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+            return {
+                mainQuery: null,
+                comboQueries: comboQueries,
+                preInsertingCheckQueries: [],
+                preUpdatingCheckQueries: [],
+                preProcessQueries: preProcessQueries,
+                postProcessQueries: postProcessQueries
+            };
         }
 
         comma = ' WHERE ';
@@ -380,7 +391,14 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     queryString = replaceKeys(addQueryCond(queryString, additionalQueryCond), table_keys, keyTypes);
 
-    return { mainQuery: queryString, comboQueries: comboQueries, preInsertingCheckQueries: preInsertingCheckQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+    return {
+        mainQuery: queryString,
+        comboQueries: comboQueries,
+        preInsertingCheckQueries: [],
+        preUpdatingCheckQueries: [],
+        preProcessQueries: preProcessQueries,
+        postProcessQueries: postProcessQueries
+    };
 
 }
 
@@ -490,7 +508,15 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
         }
     }
 
-    return { mainQuery: '', preInsertingCheckQueries: [], preProcessQueries: [], postProcessQueries: [], comboQueries: comboQueries, eventQueries: eventQueries };
+    return {
+        mainQuery: '',
+        preInsertingCheckQueries: [],
+        preUpdatingCheckQueries: [],
+        preProcessQueries: [],
+        postProcessQueries: [],
+        comboQueries: comboQueries,
+        eventQueries: eventQueries
+    };
 
 }
 
@@ -553,7 +579,15 @@ function getNewQuery(entry_params, table_keys) {
         }
     });
 
-    return { mainQuery: null, comboQueries: comboQueries, preInsertingCheckQueries: [], preProcessQueries: [], postProcessQueries: [], defaultValues: defaultValues };
+    return {
+        mainQuery: null,
+        comboQueries: comboQueries,
+        preInsertingCheckQueries: [],
+        preUpdatingCheckQueries: [],
+        preProcessQueries: [],
+        postProcessQueries: [],
+        defaultValues: defaultValues
+    };
 }
 
 function getInsertUpdateQuery(entry_params, keys, newRecord) {
@@ -564,6 +598,8 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
     if (entry_keys == null) return '';
 
     let preInsertingCheckQueries = [];
+
+    let preUpdatingCheckQueries = [];
 
     let preProcessQueries = [];
 
@@ -601,9 +637,23 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                     preInsertingCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
                 }
             }
+
+            // Preupdating check queries
+            if ((query.operation === "update")) {
+                if (query.type === "preUpdatingCheck") {
+                    preUpdatingCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
+                }
+            }
         });
         if (mainQuery) { // no need to further build main query, stop here
-            return { mainQuery: mainQuery, comboQueries: [], preInsertingCheckQueries: preInsertingCheckQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+            return {
+                mainQuery: mainQuery,
+                comboQueries: [],
+                preInsertingCheckQueries: preInsertingCheckQueries,
+                preUpdatingCheckQueries: preUpdatingCheckQueries,
+                preProcessQueries: preProcessQueries,
+                postProcessQueries: postProcessQueries
+            };
         }
     }
 
@@ -732,13 +782,17 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
     queryString += ';';
 
-    return { mainQuery: queryString, comboQueries: [], preInsertingCheckQueries: preInsertingCheckQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
-
+    return {
+        mainQuery: queryString,
+        comboQueries: [],
+        preInsertingCheckQueries: preInsertingCheckQueries,
+        preUpdatingCheckQueries: preUpdatingCheckQueries,
+        preProcessQueries: preProcessQueries,
+        postProcessQueries: postProcessQueries
+    };
 }
 
 function getDeleteQuery(entry_params, table_keys) {
-
-    let preInsertingCheckQueries = [];
 
     let preProcessQueries = [];
 
@@ -765,7 +819,13 @@ function getDeleteQuery(entry_params, table_keys) {
             }
         });
         if (mainQuery) { // no need to further build main query, stop here
-            return { mainQuery: mainQuery, preInsertingCheckQueries: preInsertingCheckQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+            return {
+                mainQuery: mainQuery,
+                preInsertingCheckQueries: [],
+                preUpdatingCheckQueries: [],
+                preProcessQueries: preProcessQueries,
+                postProcessQueries: postProcessQueries
+            };
         }
     }
 
@@ -788,7 +848,14 @@ function getDeleteQuery(entry_params, table_keys) {
         }
     }
 
-    return { mainQuery: queryString, comboQueries: [], preInsertingCheckQueries: preInsertingCheckQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+    return {
+        mainQuery: queryString,
+        comboQueries: [],
+        preInsertingCheckQueries: [],
+        preUpdatingCheckQueries: [],
+        preProcessQueries: preProcessQueries,
+        postProcessQueries: postProcessQueries
+    };
 
 }
 
@@ -898,6 +965,49 @@ function returnPreInsertingCheckResult(preInsertingErrors) {
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
         "body": JSON.stringify({ result: 'KO', preInsertingErrors: preInsertingErrors })
+    };
+}
+
+async function processPreUpdatingCheck(queryString, client) {
+
+    let local_keys = {}; // additional keys generated with pre-processing  
+    console.log('queryString : ', queryString);
+
+    let preUpdatingErrors = [];
+
+    if (queryString == null) {
+        return preUpdatingErrors;
+    }
+
+    // pre-insertion check
+    if (queryString.preUpdatingCheckQueries != null && queryString.preUpdatingCheckQueries.length) {
+        for (let index = 0; index < queryString.preUpdatingCheckQueries.length; index++) {
+            let query = queryString.preUpdatingCheckQueries[index].query;
+            let message = queryString.preUpdatingCheckQueries[index].message;
+            query = replaceLocalKeys(query, local_keys);
+            let result = await client.query(query);
+            if (result) {
+                if (Array.isArray(result.rows)) {
+                    if (result.rows.length > 0) {
+                        preUpdatingErrors.push(message);
+                    }
+                }
+                else if (result.rows) {
+                    preUpdatingErrors.push(message);
+                }
+            }
+        }
+    }
+    console.log("PreUpdating errors: ", preUpdatingErrors);
+    return preUpdatingErrors;
+}
+
+function returnPreUpdatingCheckResult(preUpdatingErrors) {
+    return {
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "statusCode": 200,
+        "body": JSON.stringify({ result: 'KO', preUpdatingErrors: preUpdatingErrors })
     };
 }
 
@@ -1451,6 +1561,14 @@ exports.handler = async (event, context) => {
                 return returnPreInsertingCheckResult(preInsertingErrors);
             }
 
+            // Check if there are errors in the update data
+            let preUpdatingErrors = await processPreUpdatingCheck(queryString, client);
+            // Return if there are errors in insertion
+            if (preUpdatingErrors.length > 0) {
+                await client.release();
+                return returnPreUpdatingCheckResult(preUpdatingErrors);
+            }
+
             // process query string(s) 
             queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'), (method === 'GET'));
         }
@@ -1527,6 +1645,14 @@ exports.handler = async (event, context) => {
                         return returnPreInsertingCheckResult(preInsertingErrors);
                     }
 
+                    // Check if there are errors in the update data
+                    let preUpdatingErrors = await processPreUpdatingCheck(queryString, client);
+                    // Return if there are errors in insertion
+                    if (preUpdatingErrors.length > 0) {
+                        await client.release();
+                        return returnPreUpdatingCheckResult(preUpdatingErrors);
+                    }
+
                     queryData = await processPreMainPost(queryString, client, true, false);
                     // perform insert or update depending on previous query
                     newRecord = queryData.length ? false : true;
@@ -1546,6 +1672,14 @@ exports.handler = async (event, context) => {
                 if (preInsertingErrors.length > 0) {
                     await client.release();
                     return returnPreInsertingCheckResult(preInsertingErrors);
+                }
+
+                // Check if there are errors in the update data
+                let preUpdatingErrors = await processPreUpdatingCheck(queryString, client);
+                // Return if there are errors in insertion
+                if (preUpdatingErrors.length > 0) {
+                    await client.release();
+                    return returnPreUpdatingCheckResult(preUpdatingErrors);
                 }
 
                 let data = await processPreMainPost(queryStrings[index], client, true, false);
