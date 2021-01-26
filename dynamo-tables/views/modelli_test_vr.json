@@ -28,7 +28,13 @@
             "operation": "insert",
             "type": "preInsertingCheck",
             "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and codice='£codice£'",
-            "messageNotNull": "Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"     
+            "messageNotNull": "Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+        },
+        {
+            "operation": "update",
+            "type": "preUpdatingCheck",
+            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and codice='£codice£'",
+            "messageNotNull": "Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
         }
     ],
     "messages": [
@@ -38,7 +44,6 @@
             "message": {
                 "title": "Cancellazione modello di test",
                 "text": "Sei sicuro di voler cancellare il modello di test e tutte le domande collegate?"
-               
             }
         }
     ],
@@ -67,6 +72,10 @@
             "key": "new_id_sondaggio",
             "label": "new_id_sondaggio",
             "newLine": false,
+            "outputEvent": {
+                "eventName": "sondaggio_new_change",
+                "eventTrigger": "change"
+            },
             "inputEvents": [
                 {
                     "eventName": "sondaggio_new",
@@ -75,11 +84,45 @@
                     "values": [],
                     "queryFunct": "select sondaggio_insert as new_id_sondaggio from entrasp.sondaggio_insert(codiceazienda=>$codice_azienda$, titolo=>$titolo$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, documentazione=>$documentazione_necessaria$, descrizione=>$descrizione$, idcentrogest=>$id_centro_gest$);",
                     "outputEventWhenComplete": "navigate_to_sondaggio"
+                },
+                {
+                    "eventName": "somministrazione_new",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select sondaggio_insert as new_id_sondaggio from entrasp.sondaggio_insert(codiceazienda=>$codice_azienda$, titolo=>$titolo$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, documentazione=>$documentazione_necessaria$, descrizione=>$descrizione$, idcentrogest=>$id_centro_gest$);",
+                    "outputEventWhenComplete": "calculate_new_id_somministrazione"
                 }
             ],
             "readOnly": false,
             "sameOrigin": false
         },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "new_id_somministrazione",
+            "label": "new_id_somministrazione",
+            "newLine": false,
+            "inputEvents": [
+                {
+                    "eventName": "calculate_new_id_somministrazione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select id_somministrazione as new_id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=entrasp.evaluate_given_field_bis('new_id_sondaggio','£new_id_sondaggio£') limit 1",
+                    "outputEventWhenComplete": "navigate_to_somministrazione"
+                    }
+                ]
+                ,
+            "readOnly": false,
+            "sameOrigin": false
+        },
+
         {
             "autoGenerate": false,
             "format": {
@@ -400,7 +443,7 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "size": 2,
+            "size": 1.3,
             "attributeFuncts": [
                 {
                     "attributeType": "style",
@@ -426,9 +469,19 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_sondaggio_new",
+            "key": "id_sondaggio_new_button",
             "label": "Crea Sondaggio",
-            "newLine": true,
+            "newLine": false,
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "flag_applicazione_singola",
+                    "condition": "equalTo",
+                    "values": [
+                        "0"
+                    ]
+                }
+            ],
             "outputEvent": {
                 "eventName": "sondaggio_new",
                 "eventTrigger": "press"
@@ -438,8 +491,53 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "size": 2,
+            "size": 1.3,
             "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_somministrazione_new_button",
+            "label": "Crea Somministrazione",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "somministrazione_new",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "flag_applicazione_singola",
+                    "condition": "equalTo",
+                    "values": [
+                        "0"
+                    ]
+                }
+            ],
+            "readOnly": false,
+            "size": 1.4,
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "key": "new_line",
+            "label": "new_line",
+            "newLine": true,
+            "size": 0.1
         },
         {
             "autoGenerate": false,
@@ -847,6 +945,28 @@
         },
         {
             "actionTarget": {
+                "name": "sondaggi_somministrati",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "new_id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "new_id_somministrazione",
+                        "destination": "id_somministrazione"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "navigate_to_somministrazione"
+        },
+        {
+            "actionTarget": {
                 "name": "modelli_test_risultati",
                 "type": "form",
                 "keymap": [
@@ -885,7 +1005,6 @@
             "actionType": "reload",
             "eventName": "modelli_test_vr_reload"
         }
-
     ],
     "exportQueries": {
         "formQueries": [
