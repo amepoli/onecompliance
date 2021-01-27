@@ -26,10 +26,10 @@ import { Subscription } from 'rxjs';
     styles: [],
     host: {
         '[style.padding-top.px]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "14": "0"',
-        '[style.margin-right]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "1%": "8px"',
-        '[style.margin-left]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "1%": "8px"',
-        '[style.width]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? field.width + "%": "32px"',
-        '[style.height.px]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "96": "32"',
+        '[style.margin-right]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "1%": "0"',
+        '[style.margin-left]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "1%": "0"',
+        '[style.width]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? field.width + "%": "0"',
+        '[style.height.px]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "96": "0"',
     }
 })
 
