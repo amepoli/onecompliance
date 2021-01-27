@@ -22,7 +22,7 @@ import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive'
   selector: 'dynamic-form',
   template: `
   <form style="margin-left: 1%; margin-right: 1%; width: 98%;" [style.background-color]="isQuickAdd? 'lightyellow': 'transparent'" class='dynamic-form' [formGroup]='form' [id]='formName' (submit)='onSubmit($event)'>
-  <ng-container *ngFor='let field of fields;' dynamicField [field]='field' [group]='form' [readOnlyPage]='readOnlyPage'>
+  <ng-container *ngFor='let field of visibleFields;' dynamicField [field]='field' [group]='form' [readOnlyPage]='readOnlyPage'>
   </ng-container>
   </form>
   `,
@@ -32,6 +32,9 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() isQuickAdd: boolean = false;
 
   @Input() fields: FieldConfig[] = [];
+
+  // Filter out fields which have isVisible true
+  visibleFields: FieldConfig[] = [];
 
   @Input() formName: string;
 
@@ -69,7 +72,9 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   createControl() {
     const group = this.fb.group({});
 
-    this.fields.forEach(field => {
+    this.visibleFields = this.fields.filter( field => field.isVisible);
+
+    this.visibleFields.forEach(field => {
       if (field.type === 'button') return;
       let control = null;
       try {
