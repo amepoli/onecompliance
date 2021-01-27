@@ -2,6 +2,17 @@
 	"$schema": "../views.schema.json",
 	"entryKey": "progetti_fasi",
 	"origin": "entrasp.progetti_fasi",
+	"businessObjectName": "progettiFasi",
+	"outputEvents": [
+		{
+			"eventName": "onSaveProgettiFasi",
+			"eventTrigger": "onSave"
+		},
+		{
+			"eventName": "onLoadProgettiFasi",
+			"eventTrigger": "onReload"
+		}
+	],
 	"predefinedQueries": [
 		{
 			"operation": "selectForm",
@@ -17,6 +28,21 @@
 			"operation": "selectForm",
 			"queryString": "select count(id_somministrazione) as n_somministrazioni from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=coalesce(£id_sondaggio£,0);",
 			"type": "postProcessing"
+		},
+		{
+			"operation": "insert",
+			"queryString": "select entrasp.progetti_fasi_order($codice_azienda$, $id_progetto$, $id_fase$);",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "update",
+			"queryString": "select entrasp.progetti_fasi_order($codice_azienda$, $id_progetto$, $id_fase$);",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "selectTable",
+			"queryString": "select pf.*, entrasp.transcodifiche_transcodifica('STATO', pf.stato) as stato_trans, snd.sondaggio_completato, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio  from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$ order by pf.codice limit 100;",
+			"type": "main"
 		}
 	],
 	"form_keys": [
@@ -34,17 +60,66 @@
 			"newLine": false
 		},
 		{
-			"autoGenerate": false,
+			"autoGenerate": true,
 			"format": {
 				"viewType": "input",
 				"dataType": "number"
 			},
+			"label": "Ordinamento",
+			"key": "ordinamento",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT id_fase AS id, id_fase||'-'||codice||'-'||titolo AS name FROM entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$;",
+				"options": [],
+				"viewType": "combobox"
+			},
 			"label": "id_fase_sup",
 			"key": "id_fase_sup",
-			"readOnly": true,
-			"isHidden": true,
+			"readOnly": false,
+			"isHidden": false,
 			"isPrimary": false,
 			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT id_progetto AS id, id_progetto||'-'||codice_progetto||'-'||titolo AS name FROM entrasp.progetti WHERE codice_azienda=$codice_azienda$;",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "id_progetto",
+			"key": "id_progetto",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "progetto_from_progetti_fasi",
+			"label": "Progetto associato",
+			"newLine": true,
+			"outputEvent": {
+				"eventName": "to_progetto_from_progetti_fasi",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -54,7 +129,17 @@
 			},
 			"label": "Codice",
 			"key": "codice",
-			"readOnly": true,
+			"inputEvents": [
+				{
+					"eventName": "onSaveProgettiFasi",
+					"actionType": "query",
+					"queryFunct": "update entrasp.progetti_fasi set codice=entrasp.progetto_fase_codice(codice_azienda, id_fase, null) where codice_azienda=$codice_azienda$ and id_fase=$id_fase$ and id_progetto=$id_progetto$ returning codice;",
+					"condition": "none",
+					"values": [],
+					"outputEventWhenComplete": "progetti_fasi_Reload"
+				}
+			],
+			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
@@ -77,14 +162,21 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+				"comboQuery": "SELECT codice AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
 				"options": [],
 				"viewType": "combobox",
-				"dataType": "text"
+				"dataType": "text",
+				"validations": [
+					{
+						"message": "Inserire stato della fase",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
 			},
 			"label": "Stato",
 			"key": "stato",
-			"readOnly": true,
+			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
 			"size": 3.5,
@@ -116,19 +208,6 @@
 			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "id_progetto",
-			"key": "id_progetto",
-			"readOnly": false,
-			"isHidden": true,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
 				"dataType": "text"
 			},
 			"label": "codice_azienda",
@@ -142,7 +221,7 @@
 			"autoGenerate": false,
 			"format": {
 				"viewType": "combobox",
-				"comboQuery": "select id_sondaggio as id, titolo as name from entrasp.sondaggi where codice_azienda=$codice_azienda$",
+				"comboQuery": "select id_sondaggio as id, id_sondaggio||'-'||titolo as name from entrasp.sondaggi where codice_azienda=$codice_azienda$",
 				"options": []
 			},
 			"inputEvents": [
@@ -153,6 +232,10 @@
 					"values": []
 				}
 			],
+			"outputEvent": {
+				"eventName": "sondaggio_associato_changed",
+				"eventTrigger": "change"
+			},
 			"label": "id_sondaggio",
 			"key": "id_sondaggio",
 			"readOnly": false,
@@ -219,10 +302,20 @@
 			"isPrimary": false,
 			"key": "sondaggio_from_progetti_fasi",
 			"label": "Sondaggio",
-			"attributeFuncts": [
+			"inputEvents": [
 				{
-					"attributeType": "isHidden",
-					"queryString": "select case when (id_sondaggio is null) or ($n_somministrazioni$=1) then 1 else 0 end as label from entrasp.progetti_fasi where id_fase=$id_fase$ and codice_azienda=$codice_azienda$;"
+					"eventName": "sondaggio_associato_changed",
+					"condition": "none",
+					"values": [],
+					"actionType": "readOnly",
+					"queryFunct": "select id_sondaggio::varchar='' then true else false"
+				},
+				{
+					"eventName": "onLoadProgettiFasi",
+					"condition": "none",
+					"values": [],
+					"actionType": "readOnly",
+					"queryFunct": "select id_sondaggio::varchar='' then true else false"
 				}
 			],
 			"newLine": false,
@@ -321,7 +414,7 @@
 				"dataType": "number"
 			},
 			"isHidden": true,
-			"isPrimary": false,
+			"isPrimary": true,
 			"key": "id_progetto",
 			"label": "id_progetto"
 		},
@@ -353,7 +446,7 @@
 			"isPrimary": false,
 			"key": "codice",
 			"label": "Codice",
-			"width": "8%"
+			"width": "10%"
 		},
 		{
 			"format": {
@@ -372,8 +465,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "stato",
-			"queryFunct": "entrasp.transcodifiche_transcodifica('STATO', stato)",
+			"key": "stato_trans",
 			"label": "Stato",
 			"width": "8%",
 			"style": [
@@ -402,9 +494,118 @@
 			"isPrimary": false,
 			"key": "id_sondaggio",
 			"label": "Id Sondaggio"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "giudizio",
+			"width": "12%",
+			"label": "Giudizio",
+			"style": [
+				{
+					"value": "Favorevole",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Parzialmente favorevole",
+					"font_color": "yellow",
+					"font_weight": "500"
+				},
+				{
+					"value": "Parzialmente sfavorevole",
+					"font_color": "orange",
+					"font_weight": "500"
+				},
+				{
+					"value": "Sfavorevole",
+					"font_color": "red",
+					"font_weight": "500"
+				},
+				{
+					"value": "Irrilevante",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Medio",
+					"font_color": "#D97F02",
+					"font_weight": "500"
+				},
+				{
+					"value": "Alto",
+					"font_color": "red",
+					"font_weight": "500"
+				},
+				{
+					"value": "Non significativo",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Poco significativo",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Abbastanza significativo",
+					"font_color": "#D97F02",
+					"font_weight": "500"
+				},
+				{
+					"value": "Molto significativo",
+					"font_color": "red",
+					"font_weight": "500"
+				}
+			]
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "10%",
+			"key": "sondaggio_completato",
+			"label": "Completo Sì/No",
+			"style": [
+				{
+					"value": "Completo",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Incompleto",
+					"font_color": "red",
+					"font_weight": "500"
+				}
+			]
+		}
+	],
+	"subTables": [
+		{
+			"entryKey": "consuntivazioni_sub_of_progetti_fasi",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_fase",
+					"son": "id_fase"
+				}
+			],
+			"label": "Time Report"
 		}
 	],
 	"inputEvents": [
+		{
+			"actionType": "reload",
+			"eventName": "progetti_fasi_Reload"
+		},
 		{
 			"actionTarget": {
 				"name": "sondaggi",
@@ -480,6 +681,24 @@
 			},
 			"actionType": "navigate",
 			"eventName": "navigate_sotto_fasi_liv3"
+		},
+		{
+			"actionTarget": {
+				"name": "progetti",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_progetto",
+						"destination": "id_progetto"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "to_progetto_from_progetti_fasi"
 		}
 	],
 	"orderBy": {

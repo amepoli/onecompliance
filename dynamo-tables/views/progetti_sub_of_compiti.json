@@ -1,0 +1,84 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "progetti_sub_of_compiti",
+  "origin": "entrasp.compiti_progetti",
+  "businessObjectName": "compitiProgetti",
+  "inputEvents": [
+    {
+      "eventName": "update_compiti_progetti",
+      "actionType": "reload"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_progetto_compito",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "cancella_compito_progetto",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "cancella_compito_progetto",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "delete from entrasp.compiti_progetti where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and codice_compito=$codice_compito$",
+          "outputEventWhenComplete": "update_compiti_progetti"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_progetto AS id, titolo AS name  FROM entrasp.progetti WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_progetto",
+      "label": "Progetto",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "label": "Codice Segnalazione",
+      "newLine": false,
+      "readOnly": true
+    }
+  ]  
+}

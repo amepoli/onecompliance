@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FieldConfig, Item } from '../../field.interface';
-import { ReplaySubject, Subject } from 'rxjs';
+import { ReplaySubject, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ValidationsService } from 'app/gorico/services/validations.service';
@@ -44,6 +44,8 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   readOnlyPage: boolean; // field.readonly overridden by page
   isRequired = false; // field is required or not
 
+  subscription: Subscription;
+
   /** control for the MatSelect filter keyword */
   public itemFilterCtrl: FormControl = new FormControl();
 
@@ -68,23 +70,24 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
     // filter out null values
 
-    _this.field.options = _this.field.options.filter(x => x.name !== null);
+    _this.setOptions(_this.field.options, false);
 
-    if (_this.field.value != null) {
-      // possibly compare object w/ subkeys value, let's stringify first
-      _this.field.value = _this.field.options.find(x => JSON.stringify(x.id) === JSON.stringify(_this.field.value));
-      // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
-    }
-    else {
-      _this.field.value = '';
-      _this.group.get(_this.field.name).setValue(null);
-    }
+    _this.setValue(_this.field.value);
+    // if (_this.field.value != null) {
+    //   // possibly compare object w/ subkeys value, let's stringify first
+    //   _this.field.value = _this.field.options.find(x => JSON.stringify(x.id) === JSON.stringify(_this.field.value));
+    //   // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
+    // }
+    // else {
+    //   _this.field.value = '';
+    //   _this.group.get(_this.field.name).setValue(null);
+    // }
 
     // load the initial bank list
-    _this.filteredItems.next(_this.field.options.slice());
+    // _this.filteredItems.next(_this.field.options.slice());
 
     // listen for search field value changes
-    _this.itemFilterCtrl.valueChanges
+    _this.subscription = _this.itemFilterCtrl.valueChanges
       .pipe(takeUntil(_this._onDestroy))
       .subscribe(() => {
         _this.filterItems();
@@ -109,14 +112,35 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+    this.subscription.unsubscribe();
     this._onDestroy.next();
     this._onDestroy.complete();
   }
 
   setOptions(options: any[], skipNextEvent: boolean) {
-    this.field.options = options;
+    this.field.options = options.filter(x => x.name !== null);
+    // this.field.options = options;
+    
+    // load the initial bank list
     this.filteredItems.next(this.field.options.slice());
     this.skipNextEvent = skipNextEvent;
+  }
+
+  setValue(id){
+    const _this = this;
+    if(id != null && id !== ''){
+      // id = JSON.stringify(id);
+      if(typeof id === 'object'){
+        _this.field.value = _this.field.options.find(x => JSON.stringify(x.id) == JSON.stringify(id));
+      }
+      else{
+        _this.field.value = _this.field.options.find(x => '' + x.id == '' + id);
+      }
+    }
+    else{
+      _this.field.value = '';
+      _this.group.get(_this.field.name).setValue(null);
+    }
   }
 
   onSelection(event: any) {

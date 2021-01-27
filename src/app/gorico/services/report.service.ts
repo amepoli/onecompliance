@@ -107,38 +107,53 @@ export class ReportService // implements Resolve<any>
 
     getReports(entryName: string, company: string, keys: any, isForm: boolean) {
         let _this = this;
-        _this._backendService.getReportList(entryName, company, keys, isForm).subscribe(
-            response => {
-                _this._console.log(response);
-                if (response.result === 'OK') {
-                    // Store data locally
-                    _this._currentData = {
-                        entryName: entryName,
-                        reports: response.list
-                    };
 
-                    // now give results back to the requester
-                    _this.onReportsLoaded.next(_this._currentData);
+        if(entryName == 'dashboard'){
+            // Reset stored data
+            _this._currentData = {
+                entryName: entryName,
+                reports: []
+            };
+
+            // now give results back to the requester
+            _this.onReportsLoaded.next(_this._currentData);
+        }
+        else{
+            _this._backendService.getReportList(entryName, company, keys, isForm).subscribe(
+                response => {
+                    _this._console.log(response);
+                    if (response.result === 'OK') {
+                        // Store data locally
+                        _this._currentData = {
+                            entryName: entryName,
+                            reports: response.list
+                        };
+
+                        // now give results back to the requester
+                        _this.onReportsLoaded.next(_this._currentData);
+                    }
+                    else {
+                        // Reset stored data
+                        _this._currentData = {
+                            entryName: entryName,
+                            reports: []
+                        };
+
+                        // now give results back to the requester
+                        _this.onReportsLoaded.next(_this._currentData);
+
+                        // Show error snackbar
+                        _this._toastService.showErrorToast(response.reason);
+                    }
+                },
+                error => {
+                    // Error occured!
+                    _this._dialogService.closeDialog();
+                    _this._toastService.showErrorToast("An error occured!", error);
+
                 }
-                else {
-                    // Reset stored data
-                    _this._currentData = {
-                        entryName: entryName,
-                        reports: []
-                    };
-
-                    // now give results back to the requester
-                    _this.onReportsLoaded.next(_this._currentData);
-
-                    // Show error snackbar
-                    _this._toastService.showErrorToast(response.reason);
-                }
-            }, error => {
-                // Error occured!
-                _this._dialogService.closeDialog();
-                _this._toastService.showErrorToast("An error occured!", error);
-
-            });
+            );
+        }
     }
 
     requestReload(entryName) {

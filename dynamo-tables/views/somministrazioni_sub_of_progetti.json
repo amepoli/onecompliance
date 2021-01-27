@@ -1,0 +1,228 @@
+{
+    "$schema": "../views.schema.json",
+    "inheritsFrom": "sondaggi_somministrati",
+    "entryKey": "somministrazioni_sub_of_progetti",
+    "predefinedQueries": [
+        {
+			"operation": "selectTable",
+			"queryString": "select pf.*, entrasp.transcodifiche_transcodifica('STATO', pf.stato) as stato_trans, snd.sondaggio_completato, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1) as id_somministrazione from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$ order by pf.codice limit 100;",
+			"type": "main"
+        },
+        {
+          "operation": "selectForm",
+          "type": "preProcessing",
+          "queryString": "update entrasp.sondaggi_somministrati set somministrazione_completata=entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
+        },
+        {
+          "operation": "selectForm",
+          "type": "preProcessing",
+          "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+        },
+        {
+          "operation": "selectForm",
+          "type": "postProcessing",
+          "queryString": "select round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+          "operation": "selectForm",
+          "type": "postProcessing",
+          "queryString": "select id_somministrazione as id_somm_prec from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione_succ=$id_somministrazione$;"
+        },
+        {
+          "operation": "selectForm",
+          "type": "postProcessing",
+          "queryString": "select data_prevista from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+        },
+        {
+          "operation": "selectForm",
+          "type": "postProcessing",
+          "queryString": "select id_sondaggio as id_sondaggio_prec from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$"
+        }
+    ],
+    "table_keys": [
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_progetto",
+        "label": "id_progetto"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_fase",
+        "label": "id_fase"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isLevel": true,
+        "hasLevel": true,
+        "isPrimary": false,
+        "key": "codice",
+        "label": "Codice",
+        "width": "10%"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "titolo",
+        "hasLevel": true,
+        "label": "Titolo",
+        "width": "30%"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "stato_trans",
+        "label": "Stato",
+        "width": "8%",
+        "style": [
+          {
+            "value": "Chiuso",
+            "font_color": "green",
+            "font_weight": "500"
+          },
+          {
+            "value": "Provvisorio",
+            "font_color": "#D97F02",
+            "font_weight": "500"
+          },
+          {
+            "value": "Attivo",
+            "font_color": "red",
+            "font_weight": "500"
+          }
+        ]
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "id_sondaggio",
+        "label": "Id Sondaggio"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "id_somministrazione",
+        "label": "id_somministrazione"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "giudizio",
+        "width": "12%",
+        "label": "Giudizio",
+        "style": [
+          {
+            "value": "Favorevole",
+            "font_color": "green",
+            "font_weight": "500"
+          },
+          {
+            "value": "Parzialmente favorevole",
+            "font_color": "yellow",
+            "font_weight": "500"
+          },
+          {
+            "value": "Parzialmente sfavorevole",
+            "font_color": "orange",
+            "font_weight": "500"
+          },
+          {
+            "value": "Sfavorevole",
+            "font_color": "red",
+            "font_weight": "500"
+          },
+          {
+            "value": "Irrilevante",
+            "font_color": "green",
+            "font_weight": "500"
+          },
+          {
+            "value": "Medio",
+            "font_color": "#D97F02",
+            "font_weight": "500"
+          },
+          {
+            "value": "Alto",
+            "font_color": "red",
+            "font_weight": "500"
+          },
+          {
+            "value": "Non significativo",
+            "font_color": "green",
+            "font_weight": "500"
+          },
+          {
+            "value": "Poco significativo",
+            "font_color": "green",
+            "font_weight": "500"
+          },
+          {
+            "value": "Abbastanza significativo",
+            "font_color": "#D97F02",
+            "font_weight": "500"
+          },
+          {
+            "value": "Molto significativo",
+            "font_color": "red",
+            "font_weight": "500"
+          }
+        ]
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "width": "10%",
+        "key": "sondaggio_completato",
+        "label": "Completo Sì/No",
+        "style": [
+          {
+            "value": "Completo",
+            "font_color": "green",
+            "font_weight": "500"
+          },
+          {
+            "value": "Incompleto",
+            "font_color": "red",
+            "font_weight": "500"
+          }
+        ]
+      }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "../views.schema.json",
+  "inheritsFrom": "compiti_consultant",
+  "entryKey": "compiti_consultant_sub_of_compiti_consultant",
+  "predefinedQueries": [
+    {
+      "type": "main",
+      "operation": "selectTable",
+      "queryString": "select *, entrasp.tipo_segnalazione_descr(cmp.id_tipo_segnalazione, cmp.codice_azienda) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as compiti_aperti from entrasp.compiti cmp WHERE cmp.codice_compito_parent=$codice_compito$ and cmp.codice_azienda=$codice_azienda$"
+    },
+    {
+      "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda=az.codice_azienda and codice_compito=$codice_compito$;"
+    } 
+  ]
+}

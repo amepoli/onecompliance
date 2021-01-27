@@ -3,11 +3,21 @@
   "origin": "entrasp.sondaggi_somministrati",
   "businessObjectName": "sondaggiSomministrati",
   "entryKey": "sondaggi_somministrati",
+  "outputEvents": [
+    {
+      "eventName": "onSaveSomministrazione",
+      "eventTrigger": "onSave"
+    },
+    {
+      "eventName": "onLoadSomministrazione",
+      "eventTrigger": "onReload"
+    }
+  ],
   "predefinedQueries": [
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select ss.*, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and snd.id_modello_test_vr=mt.id_modello_test_vr where ss.codice_azienda=$codice_azienda$"
+      "queryString": "select distinct ss.*, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and snd.id_modello_test_vr=mt.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
     },
     {
       "operation": "selectForm",
@@ -22,7 +32,22 @@
     {
       "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "select colore_somministrazione_completa, codice_colore, round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+      "queryString": "select round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+    },
+    {
+      "operation": "selectForm",
+      "type": "postProcessing",
+      "queryString": "select id_somministrazione as id_somm_prec from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione_succ=$id_somministrazione$;"
+    },
+    {
+      "operation": "selectForm",
+      "type": "postProcessing",
+      "queryString": "select data_prevista from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+    },
+    {
+      "operation": "selectForm",
+      "type": "postProcessing",
+      "queryString": "select id_sondaggio as id_sondaggio_prec from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$"
     }
   ],
   "form_keys": [
@@ -52,22 +77,38 @@
       "key": "stato",
       "label": "Stato",
       "newLine": false,
-      "size": 2,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
+      "size": 3,
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "close_associated_sondaggio_combo",
+        "eventTrigger": "select"
       },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_sondaggio",
-      "label": "ID Sondaggio",
-      "newLine": false,
-      "readOnly": true,
-      "size": 2
+      "inputEvents": [
+        {
+          "eventName": "somm_change_stato",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+        },
+        {
+          "eventName": "onSaveSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+        },
+        {
+          "eventName": "onLoadSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+        }
+      ]
     },
     {
       "autoGenerate": true,
@@ -81,7 +122,21 @@
       "label": "ID Somministrazione",
       "newLine": false,
       "readOnly": true,
-      "size": 4
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_sondaggio",
+      "label": "ID Sondaggio",
+      "newLine": false,
+      "readOnly": true,
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -92,7 +147,7 @@
       "isPrimary": false,
       "key": "sondaggi_from_sondaggi_somministrati",
       "label": "Sondaggio",
-      "newLine": true,
+      "newLine": false,
       "outputEvent": {
         "eventName": "to_sondaggi_from_sondaggi_somministrati",
         "eventTrigger": "press"
@@ -103,7 +158,134 @@
       },
       "readOnly": false,
       "sameOrigin": false,
-      "size": 1.75
+      "size": 1.3
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "close_associated_sondaggio_button_key",
+      "label": "Chiudi Sondaggio",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "close_associated_sondaggio_button",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1.3
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "somm_successiva_k",
+      "label": "Somm. Successiva",
+      "attributeFuncts": [
+        {
+          "attributeType": "style",
+          "styleAttribute": "background_color",
+          "queryString": "select case when id_somministrazione_succ is null then '#698EC2' else '#25599C' end as label from entrasp.sondaggi_somministrati where id_somministrazione=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
+        },
+        {
+          "attributeType": "style",
+          "styleAttribute": "font_color",
+          "queryString": "select case when id_somministrazione_succ is null then '#5b635a' else 'white' end as label from entrasp.sondaggi_somministrati where id_somministrazione=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
+        },
+        {
+          "attributeType": "readOnly",
+          "queryString": "select case when id_somministrazione_succ is null then true else false end as label from entrasp.sondaggi_somministrati where id_somministrazione=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
+        }
+      ],
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "to_somm_successiva",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1.2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "somm_precedente_k",
+      "label": "Somm Precedente",
+      "attributeFuncts": [
+        {
+          "attributeType": "style",
+          "styleAttribute": "background_color",
+          "queryString": "select case when count(id_somministrazione)=0 then '#698EC2' else '#25599C' end as label from entrasp.sondaggi_somministrati where id_somministrazione_succ=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
+        },
+        {
+          "attributeType": "style",
+          "styleAttribute": "font_color",
+          "queryString": "select case when count(id_somministrazione)=0 then '#5b635a' else 'white' end as label from entrasp.sondaggi_somministrati where id_somministrazione_succ=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
+        },
+        {
+          "attributeType": "readOnly",
+          "queryString": "select case when count(id_somministrazione)=0 then true else false end as label from entrasp.sondaggi_somministrati where id_somministrazione_succ=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
+        }
+      ],
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "to_somm_precedente",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1.2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_prevista",
+      "label": "Data prevista",
+      "newLine": false,
+      "sameOrigin": false,
+      "readOnly": true,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_esecuzione",
+      "label": "Data esecuzione",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
     },
     {
       "autoGenerate": false,
@@ -119,23 +301,48 @@
       "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
-      "size": 4
+      "size": 1
     },
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "number",
-        "viewType": "input"
+        "comboQuery": "select mvr.id_modello_test_vr as id, mvr.id_modello_test_vr as name from entrasp.modelli_test_vr mvr inner join entrasp.sondaggi snd on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ order by mvr.id_modello_test_vr;",
+        "options": [],
+        "viewType": "combobox"
       },
       "isHidden": false,
+      "outputEvent": {
+        "eventName": "somministrazione_version_change",
+        "eventTrigger": "select"
+      },
       "isPrimary": false,
       "queryFunct": "select id_modello_test_vr from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$",
       "key": "id_modello_test_vr",
       "label": "Versione",
       "sameOrigin": false,
+      "inputEvents": [
+        {
+          "eventName": "somministrazione_version_change",
+          "condition": "none",
+          "values": [],
+          "actionType": "show_message",
+          "outputEventWhenComplete": "sondaggi_somministrati_reload",
+          "message": {
+            "messageText": "Sei sicuro di voler aggiornare la versione della soministrazione e di tutte le somministrazioni del sondaggio?",
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select 1"
+            },
+            "actionOnYes": {
+              "actionType": "query",
+              "queryFunct": "select entrasp.sondaggio_versione_update($codice_azienda$, $id_sondaggio$, $id_modello_test_vr$);"
+            }
+          }
+        }
+      ],
       "newLine": false,
-      "readOnly": true,
-      "size": 4
+      "readOnly": false,
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -146,7 +353,7 @@
       "isPrimary": false,
       "key": "modello_test_from_sondaggi_somministrati",
       "label": "Modello test",
-      "newLine": true,
+      "newLine": false,
       "outputEvent": {
         "eventName": "to_modello_test_from_sondaggi_somministrati",
         "eventTrigger": "press"
@@ -157,7 +364,56 @@
       },
       "readOnly": false,
       "sameOrigin": false,
-      "size": 1.75
+      "size": 2.6
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_somministrazione_succ",
+      "label": "ID Somm Succ.",
+      "newLine": false,
+      "size": 1.2,
+      "readOnly": true,
+      "inputEvents": [
+        {
+          "eventName": "close_associated_sondaggio_button",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
+          "outputEventWhenComplete": "sondaggi_somministrati_reload"
+        },
+        {
+          "eventName": "close_associated_sondaggio_combo",
+          "condition": "equalTo",
+          "values": [
+            "C"
+          ],
+          "actionType": "query",
+          "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
+          "outputEventWhenComplete": "sondaggi_somministrati_reload"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_somm_prec",
+      "label": "ID Somm. Prec.",
+      "sameOrigin": false,
+      "newLine": true,
+      "size": 1.2,
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -167,10 +423,9 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "queryFunct": "SELECT mdt.titolo from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$",
-      "key": "titolo",
+      "queryFunct": "SELECT mdt.titolo as titolo_modello_test from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$",
+      "key": "titolo_modello_test",
       "label": "Titolo Modello Test",
-      "sameOrigin": false,
       "newLine": true,
       "readOnly": true
     },
@@ -185,7 +440,6 @@
       "queryFunct": "select titolo from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$",
       "key": "titolo",
       "label": "Titolo Sondaggio",
-      "sameOrigin": false,
       "newLine": false,
       "readOnly": true
     },
@@ -209,7 +463,7 @@
       ],
       "label": "Somministrazione su/di",
       "newLine": true,
-      "readOnly": true
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -228,7 +482,7 @@
       },
       "label": "Somministrazione su/di",
       "newLine": true,
-      "readOnly": true
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -264,55 +518,6 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "pct_da",
-      "label": "pct_da",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_colore",
-      "outputEvent": {
-        "eventName": "codice_colore_change",
-        "eventTrigger": "change"
-      },
-      "label": "codice_colore",
-      "sameOrigin": false,
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "colore_somministrazione_completa",
-      "outputEvent": {
-        "eventName": "colore_somministrazione_completa_change",
-        "eventTrigger": "change"
-      },
-      "label": "codice_colore",
-      "sameOrigin": false,
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
         "dataType": "text",
         "viewType": "input"
       },
@@ -324,7 +529,7 @@
       "queryFunct": "entrasp.descrizione_risultato_from_sondaggio($codice_azienda$, $id_sondaggio$)",
       "newLine": false,
       "readOnly": true,
-      "size": 2.25
+      "size": 2
     },
     {
       "autoGenerate": false,
@@ -339,18 +544,39 @@
       "label": "Completo sì/no",
       "inputEvents": [
         {
-          "eventName": "colore_somministrazione_completa_change",
+          "eventName": "onSaveSomministrazione",
           "condition": "none",
           "values": [],
-          "actionType": "update_style",
+          "actionType": "query_style",
           "styleAttribute": "background_color",
-          "updateFunct": "'£colore_somministrazione_completa£'"
+          "queryFunct": "SELECT colore_somministrazione_completa as somministrazione_completata_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+          "eventName": "onLoadSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "SELECT colore_somministrazione_completa as somministrazione_completata_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+          "eventName": "onSaveSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "SELECT sondaggio_completato as somministrazione_completata FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+          "eventName": "onLoadSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "SELECT sondaggio_completato as somministrazione_completata FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
         }
       ],
-      "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
-      "size": 1.5
+      "size": 1.25
     },
     {
       "autoGenerate": false,
@@ -365,6 +591,22 @@
       "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
+      "inputEvents": [
+        {
+          "eventName": "onSaveSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "select punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+          "eventName": "onLoadSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "select punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        }
+      ],
       "size": 1.25
     },
     {
@@ -380,29 +622,67 @@
       "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
+      "inputEvents": [
+        {
+          "eventName": "onSaveSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "select round(percentuale,2) as ris_percentuale from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+          "eventName": "onLoadSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "select round(percentuale,2) as ris_percentuale from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        }
+      ],
       "size": 0.75
     },
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "input"
+        "viewType": "input",
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "giudizio",
-      "sameOrigin": false,
       "label": "Giudizio",
+      "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
       "inputEvents": [
         {
-          "eventName": "codice_colore_change",
+          "eventName": "onLoadSomministrazione",
           "condition": "none",
           "values": [],
-          "actionType": "update_style",
+          "actionType": "query_style",
           "styleAttribute": "background_color",
-          "updateFunct": "'£codice_colore£'"
+          "queryFunct": "SELECT codice_colore as giudizio_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+          "eventName": "onSaveSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "SELECT codice_colore as giudizio_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+          "eventName": "onSaveSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "SELECT giudizio FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+        },
+        {
+          "eventName": "onLoadSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "SELECT giudizio FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
         }
       ],
       "size": 1.5
@@ -430,7 +710,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "riepilogo_risultati",
-      "label": "Riepilogo Risultati",
+      "label": "Riepilogo Risultati Somm.",
       "newLine": true,
       "outputEvent": {
         "eventName": "check_existence_riepilogo_risultati",
@@ -467,6 +747,33 @@
       ],
       "readOnly": false,
       "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_sondaggio_succ",
+      "label": "id_sondaggio_succ",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_sondaggio_prec",
+      "label": "ID Sondaggio Prec.",
+      "sameOrigin": false,
+      "newLine": false,
+      "readOnly": true
     }
   ],
   "search_keys": [
@@ -520,6 +827,56 @@
       "label": "Data Competenza",
       "newLine": true,
       "queryCond": "snd.data_comp='€data_comp€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista>='€data_esec_prevista_min€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista entro il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista<='€data_esec_prevista_max€'"
+    },
+    {
+      "fieldName": "data_esec_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_esecuzione>='€data_esec_min€'"
+    },
+    {
+      "fieldName": "data_esec_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione entro il",
+      "newLine": true,
+      "queryCond": "snd.data_esecuzione<='€data_esec_max€'"
+    },
+    {
+      "fieldName": "object_description",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Oggetto di verifica",
+      "newLine": true,
+      "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
     }
   ],
   "subTables": [
@@ -590,6 +947,26 @@
       ],
       "label": "Domande e Risposte - Sezioni",
       "type": "table"
+    },
+    {
+      "entryKey": "compiti_rif_bo_keys",
+      "isHidden": false,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        },
+        {
+          "parent": "id_sondaggio",
+          "son": "id_sondaggio"
+        }
+      ],
+      "label": "Segnalazioni associate",
+      "type": "tableForm"
     }
   ],
   "table_keys": [
@@ -640,6 +1017,16 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "key": "data_prevista",
+      "label": "Data Prevista",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
       "key": "data_esecuzione",
       "label": "Data Esecuzione",
       "width": "8%"
@@ -652,7 +1039,7 @@
       "isPrimary": false,
       "key": "titolo_sondaggio",
       "label": "Titolo",
-      "width": "35%"
+      "width": "28%"
     },
     {
       "format": {
@@ -662,7 +1049,7 @@
       "isPrimary": false,
       "key": "object_description",
       "label": "Oggetto di Verifica",
-      "width": "15%"
+      "width": "16%"
     },
     {
       "format": {
@@ -699,7 +1086,7 @@
       "isPrimary": false,
       "key": "somministrazione_completata",
       "label": "Completo Sì/No",
-      "width": "12%",
+      "width": "8%",
       "style": [
         {
           "value": "Completo",
@@ -716,7 +1103,88 @@
       "isPrimary": false,
       "key": "giudizio",
       "label": "Giudizio automatico",
-      "width": "8%"
+      "width": "8%",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center"
+        },
+        {
+          "value": "Basso",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Favorevole",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Irrilevante",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Non significativo",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Poco significativo",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Medio-Basso",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Abbastanza significativo",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Medio",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Medio-basso",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Parzialmente favorevole",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Parzialmente sfavorevole",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Medio-alto",
+          "font_color": "red",
+          "font_weight": "500"
+        },
+        {
+          "value": "Molto significativo",
+          "font_color": "red",
+          "font_weight": "500"
+        },
+        {
+          "value": "Alto",
+          "font_color": "red",
+          "font_weight": "500"
+        },
+        {
+          "value": "Sfavorevole",
+          "font_color": "red",
+          "font_weight": "500"
+        }
+      ]
     },
     {
       "format": {
@@ -734,8 +1202,19 @@
       },
       "isHidden": true,
       "isPrimary": false,
+      "sameOrigin": false,
       "key": "id_anagrafica",
-      "label": "Titolo"
+      "label": "id_anagrafica"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "sameOrigin": false,
+      "key": "id_anagrafica_somministrazione",
+      "label": "id_anagrafica_somministrazione"
     },
     {
       "format": {
@@ -748,6 +1227,10 @@
     }
   ],
   "inputEvents": [
+    {
+      "eventName": "sondaggi_somministrati_reload",
+      "actionType": "reload"
+    },
     {
       "actionTarget": {
         "name": "cpl_risultati",
@@ -809,6 +1292,50 @@
       },
       "actionType": "navigate",
       "eventName": "to_modello_test_from_sondaggi_somministrati"
+    },
+    {
+      "actionTarget": {
+        "name": "sondaggi_somministrati",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_somministrazione_succ",
+            "destination": "id_somministrazione"
+          },
+          {
+            "source": "id_sondaggio_succ",
+            "destination": "id_sondaggio"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_somm_successiva"
+    },
+    {
+      "actionTarget": {
+        "name": "sondaggi_somministrati",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_somm_prec",
+            "destination": "id_somministrazione"
+          },
+          {
+            "source": "id_sondaggio_prec",
+            "destination": "id_sondaggio"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_somm_precedente"
     }
   ],
   "hideActions": [
@@ -820,5 +1347,19 @@
       "tableActionType": "add",
       "viewType": "table"
     }
-  ]
+  ],
+  "exportQueries": {
+    "tableQueries": [
+      {
+        "label": "Estrazione somministrazioni",
+        "queryString": "SELECT *, entrasp.field_value_from_key(ss.object_key, 'anagraficheId', 'id_anagrafica','|')::numeric as id_anagrafica_somministrazione, (select codice_fiscale from entrasp.anagrafiche_vr avr where id_anagrafica=entrasp.field_value_from_key(ss.object_key, 'anagraficheId', 'id_anagrafica','|')::numeric and codice_part='€global_codice_part€' and prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', id_anagrafica)), entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_sondaggio, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, ss.pct_da, snd.codice_azienda) as giudizio_somministrazione FROM entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where ss.codice_azienda=$codice_azienda$"
+      }
+    ],
+    "formQueries": [
+      {
+        "label": "Risposte punteggio diverso da 0",
+        "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.peso from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$  ri.peso!= 0"
+      } 
+    ]
+  }
 }

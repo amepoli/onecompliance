@@ -13,7 +13,7 @@
         {
             "autoGenerate": false,
             "format": {
-              "viewType": "button"
+                "viewType": "button"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -22,32 +22,32 @@
             "buttonIcon": "delete",
             "newLine": false,
             "outputEvent": {
-              "eventName": "cancella_presidi_rischi",
-              "eventTrigger": "press"
+                "eventName": "cancella_presidi_rischi",
+                "eventTrigger": "press"
             },
             "inputEvents": [
-              {
-                "eventName": "cancella_presidi_rischi",
-                "actionType": "query",
-                "condition": "none",
-                "values": [],
-                "successMessage": "Done",
-                "queryFunct": "delete from entrasp.rischi_presidi where codice_azienda = $codice_azienda$ and codice_rischio=$codice_rischio$ and id_presidio=$id_presidio$",
-                "outputEventWhenComplete": "update_rischi_articoli_normativi"
-              } 
+                {
+                    "eventName": "cancella_presidi_rischi",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "successMessage": "Done",
+                    "queryFunct": "delete from entrasp.rischi_presidi where codice_azienda = $codice_azienda$ and codice_rischio=$codice_rischio$ and id_presidio=$id_presidio$",
+                    "outputEventWhenComplete": "update_rischi_articoli_normativi"
+                }
             ],
             "readOnly": false,
             "sameOrigin": false,
             "size": 1
-          },
+        },
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_presidio AS id, descrizione AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$;",
+                "comboQuery": "SELECT id_presidio AS id, descrizione_breve AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$;",
                 "options": [],
                 "viewType": "combobox"
             },
-            "label": "ID presidio",
+            "label": "Presidio",
             "key": "id_presidio",
             "readOnly": false,
             "isHidden": false,
@@ -58,7 +58,15 @@
         {
             "format": {
                 "viewType": "input",
-                "dataType": "number"
+                "dataType": "number",
+                "value": 0,
+                "validations": [
+                    {
+                        "message": "Inserire un valore (0 se non si intende valutarlo)",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "label": "% Prob. Mit.",
             "key": "pct_mitigazione_probabilita",
@@ -71,7 +79,15 @@
         {
             "format": {
                 "viewType": "input",
-                "dataType": "number"
+                "dataType": "number",
+                "value": 0,
+                "validations": [
+                    {
+                        "message": "Inserire un valore (0 se non si intende valutarlo)",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "label": "% Mit. Int. Sin.",
             "key": "pct_mitigazione_intensita_singola",
@@ -84,14 +100,78 @@
         {
             "format": {
                 "viewType": "input",
-                "dataType": "text"
+                "dataType": "number",
+                "value": 0,
+                "validations": [
+                    {
+                        "message": "Inserire un valore (0 se non si intende valutarlo)",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "% Mit. Int. Tot.",
+            "key": "pct_mitigazione_intensita_totale",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 1,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "value": 0
+            },
+            "label": "% Mit. Prob. Ret.",
+            "key": "pct_mitigazione_probabilita_rettificata",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "size": 1,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "value": 0
+            },
+            "label": "% Mit. Int. Ret.",
+            "key": "pct_mitigazione_intensita_singola_rettificata",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "size": 1,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "value": 0               
+            },
+            "label": "% Mit. Tot. Ret.",
+            "key": "pct_mitigazione_intensita_totale_rettificata",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "size": 1,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "text",
+                "value": "-"
             },
             "label": "Note",
             "key": "annotazioni",
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
-            "size": 2.5,
+            "size": 1.5,
             "newLine": false
         },
         {
@@ -132,7 +212,7 @@
                 "eventName": "to_presidio",
                 "eventTrigger": "press"
             },
-         "style": {
+            "style": {
                 "background_color": "#25599C",
                 "font_color": "white"
             },
@@ -143,8 +223,8 @@
     ],
     "inputEvents": [
         {
-          "eventName": "update_rischi_articoli_normativi",
-          "actionType": "reload"
+            "eventName": "update_rischi_articoli_normativi",
+            "actionType": "reload"
         },
         {
             "actionTarget": {
@@ -164,12 +244,12 @@
             "actionType": "navigate",
             "eventName": "to_presidio"
         }
-      ],
-      "outputEvents": [
+    ],
+    "outputEvents": [
         {
-          "eventName": "savedForm",
-          "eventTrigger": "onSave"
+            "eventName": "savedForm",
+            "eventTrigger": "onSave"
         }
-      ],
+    ],
     "search_keys": []
 }

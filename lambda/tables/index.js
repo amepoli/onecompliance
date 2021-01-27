@@ -87,20 +87,26 @@ function replaceKeys(queryString, keys, keyTypes) {
                             newString = queryString.replace(toReplace, replacement);
                         }
                     });
-                } else if (typeof keys[key] !== 'object' || keys[key] == null || (keyType != null && keyType.viewType === 'checkboxgroup')) {  // avoid spourious values like arrays form events - n.b.: null is 'object'
+                } else if (typeof keys[key] !== 'object' || keys[key] == null || (keyType != null && (keyType.viewType === 'checkboxgroup' || keyType.viewType === 'combobox'))) {  // avoid spourious values like arrays form events - n.b.: null is 'object'
                     let bracket = (delimiter === '$' && keyType != null && isDataTypeString(keyType)) ? '\'' : '';
                     let toReplace = delimiter + key + delimiter;
                     let valueWithFixedQuotes = keys[key];
                     try {
-                        valueWithFixedQuotes = (keys[key] != null && keyType != null && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
-                    } catch(e) {
+                        valueWithFixedQuotes = (keys[key] != null && keyType != null && keyType.viewType !== 'combobox' && (keyType.dataType === 'text' || keyType.viewType === 'textarea')) ? keys[key].replace(/'/g, "''") : keys[key];
+                    } catch (e) {
                         console.log("Error on key: ", key, " with value: ", keys[key]);
                     }
-                    let replacement = keys[key] == null ? 'null' : bracket + valueWithFixedQuotes + bracket;
+                    let replacement = keys[key] == null || keys[key] == undefined ? 'null' : bracket + valueWithFixedQuotes + bracket;
                     // handle checkboxgroup, converting array to string
-                    replacement = (keyType != null && keyType.viewType === 'checkboxgroup') ? 
-                        '[' + ((keys[key] != null && keys[key].length > 0) ? keys[key].toString() : '') + ']' 
+                    replacement = (keyType != null && keyType.viewType === 'checkboxgroup') ?
+                        '[' + ((keys[key] != null && keys[key].length > 0) ? keys[key].toString() : '') + ']'
                         : replacement;
+
+                    // handle combobox
+                    if (keyType != null && keyType.viewType === 'combobox') {
+                        replacement = (keys[key] != null && keys[key].length > 0) ? bracket + keys[key].toString() + bracket : 'null';
+                    }
+
                     //console.log ('toReplace: ', toReplace, ' replacement: ', replacement, ' value: ', keys[key], ' keyType: ', keyType);
                     let newString = queryString.replace(toReplace, replacement);
                     while (newString !== queryString) { // handle multiple occurences
@@ -224,7 +230,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
             additionalQueryCond = " AND " + additionalQueryCond.queryString + ";";
         }
     }
-    
+
     orderBy = entry_params.orderBy;
 
     if (!entry_keys) return '';
@@ -254,8 +260,14 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
             }
         });
         if (mainQuery) { // no need to further build main query, stop here
-            return { mainQuery: mainQuery, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
-
+            return {
+                mainQuery: mainQuery,
+                comboQueries: comboQueries,
+                preInsertingCheckQueries: [],
+                preUpdatingCheckQueries: [],
+                preProcessQueries: preProcessQueries,
+                postProcessQueries: postProcessQueries
+            };
         }
     }
 
@@ -296,7 +308,14 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
         if (entry_params.origin) {
             queryString = queryString + ' FROM ' + entry_params.origin;
         } else {  // no underlying table, skip building of main query, still there might be some combos
-            return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+            return {
+                mainQuery: null,
+                comboQueries: comboQueries,
+                preInsertingCheckQueries: [],
+                preUpdatingCheckQueries: [],
+                preProcessQueries: preProcessQueries,
+                postProcessQueries: postProcessQueries
+            };
         }
 
         comma = ' WHERE ';
@@ -372,7 +391,14 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     queryString = replaceKeys(addQueryCond(queryString, additionalQueryCond), table_keys, keyTypes);
 
-    return { mainQuery: queryString, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+    return {
+        mainQuery: queryString,
+        comboQueries: comboQueries,
+        preInsertingCheckQueries: [],
+        preUpdatingCheckQueries: [],
+        preProcessQueries: preProcessQueries,
+        postProcessQueries: postProcessQueries
+    };
 
 }
 
@@ -408,6 +434,7 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
 
     let entry_keys = entry_params.form_keys;
     let eventQueries = [];  // exploit preprocess queries to run the event queries
+    let comboQueries = [];
     let table_keys = body;  // keys provided with body
     console.log("Event body: ", body);
     let keyTypes = getKeyTypes(entry_keys);
@@ -426,7 +453,7 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
         }
         return found;
     };
-    let field_key = findKey(entry_keys, eventInfo.field); 
+    let field_key = findKey(entry_keys, eventInfo.field);
 
     if (field_key != null) {
         if (field_key.inputEvents != null) {
@@ -438,6 +465,10 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
                             eventQueries.push(queryString);
                         }
                     });
+                // re-run comboQuery if combobox and updating the value
+                if (field_key.format != null && field_key.format.comboQuery != null && eventInfo.type === 'query') {
+                    comboQueries.push(replaceKeys(field_key.format.comboQuery, table_keys, keyTypes));
+                }
             }
             else {
                 // Message stuff
@@ -477,7 +508,15 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
         }
     }
 
-    return { mainQuery: '', preProcessQueries: [], postProcessQueries: [], comboQueries: [], eventQueries: eventQueries };
+    return {
+        mainQuery: '',
+        preInsertingCheckQueries: [],
+        preUpdatingCheckQueries: [],
+        preProcessQueries: [],
+        postProcessQueries: [],
+        comboQueries: comboQueries,
+        eventQueries: eventQueries
+    };
 
 }
 
@@ -540,14 +579,27 @@ function getNewQuery(entry_params, table_keys) {
         }
     });
 
-    return { mainQuery: null, comboQueries: comboQueries, preProcessQueries: [], postProcessQueries: [], defaultValues: defaultValues };
+    return {
+        mainQuery: null,
+        comboQueries: comboQueries,
+        preInsertingCheckQueries: [],
+        preUpdatingCheckQueries: [],
+        preProcessQueries: [],
+        postProcessQueries: [],
+        defaultValues: defaultValues
+    };
 }
 
 function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
+    console.log('entry_params: ', entry_params);
     let entry_keys = entry_params.form_keys;
 
     if (entry_keys == null) return '';
+
+    let preInsertingCheckQueries = [];
+
+    let preUpdatingCheckQueries = [];
 
     let preProcessQueries = [];
 
@@ -578,9 +630,30 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                     postProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
                 }
             }
+
+            // Preinserting check queries
+            if ((newRecord && query.operation === "insert")) {
+                if (query.type === "preInsertingCheck") {
+                    preInsertingCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
+                }
+            }
+
+            // Preupdating check queries
+            if ((query.operation === "update")) {
+                if (query.type === "preUpdatingCheck") {
+                    preUpdatingCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
+                }
+            }
         });
         if (mainQuery) { // no need to further build main query, stop here
-            return { mainQuery: mainQuery, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+            return {
+                mainQuery: mainQuery,
+                comboQueries: [],
+                preInsertingCheckQueries: preInsertingCheckQueries,
+                preUpdatingCheckQueries: preUpdatingCheckQueries,
+                preProcessQueries: preProcessQueries,
+                postProcessQueries: postProcessQueries
+            };
         }
     }
 
@@ -595,10 +668,10 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
     if (autoGenKey != null && newRecord) {  // retrieve the new ID 
         if (autoGenType == 'number') {
             genString = 'SELECT (COALESCE(MAX(' + autoGenKey + '),0)+1) FROM ' + entry_params.origin;
-        } else if (autoGenType == 'text'){ // string
-            genString = 'SELECT (COALESCE(MAX(' + autoGenKey + ')::numeric, 0)+1)::varchar FROM ' + entry_params.origin;
+        } else if (autoGenType == 'text') { // string
+            genString = 'SELECT (COALESCE(MAX(' + autoGenKey + '::numeric), 0)+1)::varchar FROM ' + entry_params.origin;
         }
-        
+
         comma = ' WHERE ';
         for (const key in keys) {
             if (keys.hasOwnProperty(key)) {
@@ -615,8 +688,8 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                 comma = ' AND '; // needed only the first time
             }
         }
-        if (autoGenType == 'text'){ 
-            genString = genString + comma + autoGenKey + " ~ '^-?[0-9]+.?[0-9]*$'";
+        if (autoGenType == 'text') {
+            genString = genString + comma + autoGenKey + " ~ '^-?[0-9]+.?[0-9]*$' AND " + autoGenKey + " !~ '\\/'";
         }
     }
 
@@ -643,7 +716,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         } else if (keys[element.key] == null) {  // no value passed for the key
             if (element.format.value) {
                 value = element.format.value; // use default value 
-                keyType.dataType = keyType.viewType = null; // avoid to get further quotes added 
+                //keyType.dataType = keyType.viewType = null; // avoid to get further quotes added 
             } else {
                 return;   // no value passed and no default, skip the key
             }
@@ -656,10 +729,10 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
 
             let delimiter = isDataTypeString(keyType) ? '\'' : '';
-            if (value.id != null) { // combobox 
+            if (value && value.id) { // combobox 
                 value = value.id;
             }
-            if (keyType.viewType === 'combobox' && value === '') {
+            if (keyType.viewType === 'combobox' && !value) {
                 value = 'null';
             }
             // replace single quotes with double quotes in strings
@@ -675,10 +748,10 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             let keyType = keyTypes.find(e => (e.key === key));
             let delimiter = isDataTypeString(keyType) ? '\'' : '';
             let value = values[key];
-            if (value.id) { // combobox 
+            if (value && value.id) { // combobox 
                 value = value.id;
             }
-            if (keyType.viewType === 'combobox' && value === '') {
+            if (keyType.viewType === 'combobox' && !value) {
                 value = 'null';
             }
             // replace single quotes with double quotes in strings
@@ -709,8 +782,14 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
     queryString += ';';
 
-    return { mainQuery: queryString, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
-
+    return {
+        mainQuery: queryString,
+        comboQueries: [],
+        preInsertingCheckQueries: preInsertingCheckQueries,
+        preUpdatingCheckQueries: preUpdatingCheckQueries,
+        preProcessQueries: preProcessQueries,
+        postProcessQueries: postProcessQueries
+    };
 }
 
 function getDeleteQuery(entry_params, table_keys) {
@@ -740,7 +819,13 @@ function getDeleteQuery(entry_params, table_keys) {
             }
         });
         if (mainQuery) { // no need to further build main query, stop here
-            return { mainQuery: mainQuery, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+            return {
+                mainQuery: mainQuery,
+                preInsertingCheckQueries: [],
+                preUpdatingCheckQueries: [],
+                preProcessQueries: preProcessQueries,
+                postProcessQueries: postProcessQueries
+            };
         }
     }
 
@@ -763,7 +848,14 @@ function getDeleteQuery(entry_params, table_keys) {
         }
     }
 
-    return { mainQuery: queryString, comboQueries: [], preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
+    return {
+        mainQuery: queryString,
+        comboQueries: [],
+        preInsertingCheckQueries: [],
+        preUpdatingCheckQueries: [],
+        preProcessQueries: preProcessQueries,
+        postProcessQueries: postProcessQueries
+    };
 
 }
 
@@ -773,7 +865,7 @@ function getAttributeFuncts(keys) {
     keys.forEach(key => {
         if (key.key != null && key.attributeFuncts != null && key.attributeFuncts.length > 0) {
             key.attributeFuncts.forEach(attributeFunct => {
-                attributeFuncts.push({key: key.key, attributeFunct: attributeFunct});
+                attributeFuncts.push({ key: key.key, attributeFunct: attributeFunct });
             });
         } else if (key.format != null && key.format.viewType === 'subform' && key.format.subform_keys != null) {
             attributeFuncts = attributeFuncts.concat(getAttributeFuncts(key.format.subform_keys));
@@ -801,7 +893,7 @@ async function processAttributeQueries(entry_params, keys, client) {
         if (attributeFunct.queryString == null || attributeFunct.attributeType == null || (attributeFunct.attributeType === 'style' && attributeFunct.styleAttribute == null)) {
             continue;
         }
-        for (j = 0; j < keys.length; j++) {
+        for (let j = 0; j < keys.length; j++) {
             console.log('Attribute: ', attributeFunct.queryString, keys[j], keyTypes);
             const query = replaceKeys(attributeFunct.queryString, keys[j], keyTypes);
             console.log('Query attributes: ', query);
@@ -833,7 +925,93 @@ async function processAttributeQueries(entry_params, keys, client) {
     return attributes;
 }
 
-async function processPreMainPost(queryString, client, notFullTable) {
+async function processPreInsertingCheck(queryString, client) {
+
+    let local_keys = {}; // additional keys generated with pre-processing  
+    console.log('queryString : ', queryString);
+
+    let preInsertingErrors = [];
+
+    if (queryString == null) {
+        return preInsertingErrors;
+    }
+
+    // pre-insertion check
+    if (queryString.preInsertingCheckQueries != null && queryString.preInsertingCheckQueries.length) {
+        for (let index = 0; index < queryString.preInsertingCheckQueries.length; index++) {
+            let query = queryString.preInsertingCheckQueries[index].query;
+            let message = queryString.preInsertingCheckQueries[index].message;
+            query = replaceLocalKeys(query, local_keys);
+            let result = await client.query(query);
+            if (result) {
+                if (Array.isArray(result.rows)) {
+                    if (result.rows.length > 0) {
+                        preInsertingErrors.push(message);
+                    }
+                }
+                else if (result.rows) {
+                    preInsertingErrors.push(message);
+                }
+            }
+        }
+    }
+    console.log("PreInserting errors: ", preInsertingErrors);
+    return preInsertingErrors;
+}
+
+function returnPreInsertingCheckResult(preInsertingErrors) {
+    return {
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "statusCode": 200,
+        "body": JSON.stringify({ result: 'KO', preInsertingErrors: preInsertingErrors })
+    };
+}
+
+async function processPreUpdatingCheck(queryString, client) {
+
+    let local_keys = {}; // additional keys generated with pre-processing  
+    console.log('queryString : ', queryString);
+
+    let preUpdatingErrors = [];
+
+    if (queryString == null) {
+        return preUpdatingErrors;
+    }
+
+    // pre-insertion check
+    if (queryString.preUpdatingCheckQueries != null && queryString.preUpdatingCheckQueries.length) {
+        for (let index = 0; index < queryString.preUpdatingCheckQueries.length; index++) {
+            let query = queryString.preUpdatingCheckQueries[index].query;
+            let message = queryString.preUpdatingCheckQueries[index].message;
+            query = replaceLocalKeys(query, local_keys);
+            let result = await client.query(query);
+            if (result) {
+                if (Array.isArray(result.rows)) {
+                    if (result.rows.length > 0) {
+                        preUpdatingErrors.push(message);
+                    }
+                }
+                else if (result.rows) {
+                    preUpdatingErrors.push(message);
+                }
+            }
+        }
+    }
+    console.log("PreUpdating errors: ", preUpdatingErrors);
+    return preUpdatingErrors;
+}
+
+function returnPreUpdatingCheckResult(preUpdatingErrors) {
+    return {
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "statusCode": 200,
+        "body": JSON.stringify({ result: 'KO', preUpdatingErrors: preUpdatingErrors })
+    };
+}
+
+async function processPreMainPost(queryString, client, notFullTable, isGet) {
 
     let local_keys_pre = {}; // additional keys generated with pre-processing  
     let local_keys_post = {}; // additional keys generated with post-processing
@@ -878,9 +1056,9 @@ async function processPreMainPost(queryString, client, notFullTable) {
     // post-processing, exclude table view
     if (queryString.postProcessQueries != null && queryString.postProcessQueries.length) { // post-processing 
         let haveMainData = queryData.length > 0;
-        // let maxindex = haveMainData ? queryData.length : 1; // run the queries once if e.g. is insert/update or no rows
-        let maxindex = queryData.length;
-        for (let row_index = 0; row_index < maxindex ; row_index++) {
+        // let maxindex = haveMainData ? queryData.length : 1; 
+        let maxindex = isGet ? queryData.length : 1; // run the queries once if is insert/update/delete, one per row if get
+        for (let row_index = 0; row_index < maxindex; row_index++) {
             local_keys_post = haveMainData ? Object.assign(local_keys_pre, queryData[row_index]) : local_keys_post;
             for (let index = 0; index < queryString.postProcessQueries.length; index++) {
                 let query = queryString.postProcessQueries[index];
@@ -1140,15 +1318,25 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 
 }
 
+async function getCodicePart(company, client) {
+
+    if (company == null) {
+        return null;
+    }
+    const queryString = "SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='" + company + "';";
+    const response = await client.query(queryString);
+    if (response != null && response.rows != null && response.rows[0] != null) {
+        return response.rows[0].codice_part;
+    } else {
+        return null;
+    }
+}
+
 async function setGlobalVariables(company, client, userid) {
 
     global_variables.global_codice_azienda = company;
 
-    const queryString = "SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='" + company + "';";
-    const response = await client.query(queryString);
-    if (response != null) {
-        global_variables.global_codice_part = response.rows[0].codice_part;
-    }
+    global_variables.global_codice_part = await getCodicePart(company, client);
 
     var userParams = {
         TableName: 'USERS_NAME',
@@ -1163,11 +1351,24 @@ async function setGlobalVariables(company, client, userid) {
     if (data != null) {
         let companies = data.companies;
         if (company != null) {
-            companies.forEach(c => {
+            var global_user_companies = '';
+            var global_id_anagrafiche = '';
+            for (let i = 0; i < companies.length; i++) {
+                let c = companies[i];
+                if (global_user_companies !== '') {
+                    global_user_companies += ',';
+                    global_id_anagrafiche += ',';
+                }
+                global_user_companies += '\'' + c.name + '\'';
+                var codice_part = await getCodicePart(c.name, client);
+                global_id_anagrafiche += '\'' + codice_part + '-' + c.id_anagrafica + '\'';
                 if (c.name === company) { // found user's profile
                     global_variables.global_userid = c.id_anagrafica;
+                    global_variables.global_profile = c.profile;
                 }
-            });
+            };
+            global_variables.global_user_companies = global_user_companies;
+            global_variables.global_id_anagrafiche = global_id_anagrafiche;
         }
     }
 
@@ -1185,6 +1386,34 @@ function getAdditionalQueryCond(entry_name, profileData) {
     }
 
     return queryConds;
+}
+
+async function overrideTable(son) {
+
+    if (son.inheritsFrom == null) {
+        return son;
+    }
+
+    const DynamoParams = {
+        TableName: 'VIEWS_NAME',
+        Key: {
+            entryKey: son.inheritsFrom
+        }
+    };
+
+    var father = await dynamo.get(DynamoParams).promise();
+
+    father = father.Item;
+    if (father == null) {
+        return son;
+    }
+
+    for (const field in son) {
+        if (son.hasOwnProperty(field) && field != "inheritsFrom" && field != "$schema") {
+            father[field] = son[field];
+        }
+    }
+    return father;
 }
 
 // main function starts here
@@ -1283,7 +1512,8 @@ exports.handler = async (event, context) => {
         // read the entry params from DynamoDB view table
         let entry_params = await dynamo.get(DynamoParams).promise();
 
-        entry_params = entry_params.Item;
+        // complete table if inherited
+        entry_params = await overrideTable(entry_params.Item);
 
         // retrieve codice_azienda and codice_part from company if needed
 
@@ -1292,7 +1522,7 @@ exports.handler = async (event, context) => {
         await setGlobalVariables(company, client, userid);
 
         // retrieve additional query conditions from profile (if any)
-        
+
         additionalQueryCond = getAdditionalQueryCond(queryParams.entry_name, profileData);
 
         if (method === 'GET') {
@@ -1323,25 +1553,33 @@ exports.handler = async (event, context) => {
             // process dashboard queries
             queryData = await processDashboard(queryString, client);
         } else {
+            // Check if there are errors in the insertion data
+            let preInsertingErrors = await processPreInsertingCheck(queryString, client);
+            // Return if there are errors in insertion
+            if (preInsertingErrors.length > 0) {
+                await client.release();
+                return returnPreInsertingCheckResult(preInsertingErrors);
+            }
+
+            // Check if there are errors in the update data
+            let preUpdatingErrors = await processPreUpdatingCheck(queryString, client);
+            // Return if there are errors in insertion
+            if (preUpdatingErrors.length > 0) {
+                await client.release();
+                return returnPreUpdatingCheckResult(preUpdatingErrors);
+            }
+
             // process query string(s) 
-            queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'));
+            queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'), (method === 'GET'));
         }
 
-        // process comboboxes and/or event queries 
-        if (method === 'GET' && dashboardIndex == null || isEventUpdate) {
+        // process comboboxes 
+        if (method === 'GET' && dashboardIndex == null && !isEventUpdate) {
 
             if (queryData != null && isNewRecord && queryString.defaultValues != null) { // only for new records, merge default values
                 queryData.forEach(item => {
                     Object.assign(item, queryString.defaultValues);
                 });
-            }
-
-            if (queryString.eventQueries != null) {
-                queryData = [];
-                for (let index = 0; index < queryString.eventQueries.length; index++) {
-                    let eventData = await client.query(queryString.eventQueries[index]);
-                    queryData = queryData.concat(eventData.rows);
-                }
             }
 
             let searchOptions = [];
@@ -1378,7 +1616,6 @@ exports.handler = async (event, context) => {
             tableProperties = await process_properties(entry_params, table_keys, isFormRecord, client);
         }
 
-
         if (method === 'POST' && !isEventUpdate) {
             let body = JSON.parse(event.body); // production scenario 
             console.log('BODY values: ', body);
@@ -1399,7 +1636,24 @@ exports.handler = async (event, context) => {
                 if (!newRecord) {
                     // have to check if the record exists (update) or is new (insert), so try to recover it
                     queryString = getTableQuery(entry_params, primaryKeys, true, null, additionalQueryCond);
-                    queryData = await processPreMainPost(queryString, client, true);
+
+                    // Check if there are errors in the insertion data
+                    let preInsertingErrors = await processPreInsertingCheck(queryString, client);
+                    // Return if there are errors in insertion
+                    if (preInsertingErrors.length > 0) {
+                        await client.release();
+                        return returnPreInsertingCheckResult(preInsertingErrors);
+                    }
+
+                    // Check if there are errors in the update data
+                    let preUpdatingErrors = await processPreUpdatingCheck(queryString, client);
+                    // Return if there are errors in insertion
+                    if (preUpdatingErrors.length > 0) {
+                        await client.release();
+                        return returnPreUpdatingCheckResult(preUpdatingErrors);
+                    }
+
+                    queryData = await processPreMainPost(queryString, client, true, false);
                     // perform insert or update depending on previous query
                     newRecord = queryData.length ? false : true;
                 }
@@ -1410,14 +1664,28 @@ exports.handler = async (event, context) => {
             // process insert/update query string(s)
             console.log('Insert/update queries: ', queryStrings);
             queryData = [];
+
             for (let index = 0; index < queryStrings.length; index++) {
-                let data = await processPreMainPost(queryStrings[index], client, true);
+                // Check if there are errors in the insertion data
+                let preInsertingErrors = await processPreInsertingCheck(queryString, client);
+                // Return if there are errors in insertion
+                if (preInsertingErrors.length > 0) {
+                    await client.release();
+                    return returnPreInsertingCheckResult(preInsertingErrors);
+                }
+
+                // Check if there are errors in the update data
+                let preUpdatingErrors = await processPreUpdatingCheck(queryString, client);
+                // Return if there are errors in insertion
+                if (preUpdatingErrors.length > 0) {
+                    await client.release();
+                    return returnPreUpdatingCheckResult(preUpdatingErrors);
+                }
+
+                let data = await processPreMainPost(queryStrings[index], client, true, false);
                 queryData.push(data);
             }
         }
-
-        // disconnect from DB
-        await client.release();
 
         // last chance to calculate the keys with an evalFunct and to process attributes
 
@@ -1437,6 +1705,30 @@ exports.handler = async (event, context) => {
                 queryData = entry_params.dashboards[dashboardIndex].colors;
             }
         }
+
+        // process events Queries 
+        if (isEventUpdate) {
+            if (queryString.eventQueries != null) {
+                queryData = [];
+                for (let index = 0; index < queryString.eventQueries.length; index++) {
+                    let eventData = await client.query(queryString.eventQueries[index]);
+                    queryData = queryData.concat(eventData.rows);
+                }
+            }
+
+            // we might need to re-run combobox query of the event affected field
+            if (queryString.comboQueries != null && queryString.comboQueries.length) {
+                let query = queryString.comboQueries[0];
+                let comboData = await client.query(query);
+                queryData = { value: queryData, options: comboData.rows }
+            }
+
+        }
+
+
+
+        // disconnect from DB
+        await client.release();
 
         if (isExcel && method === 'GET') {  // returning the Excel
 

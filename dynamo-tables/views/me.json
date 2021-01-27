@@ -1,0 +1,216 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "me",
+	"businessObjectName": "aziende",
+	"origin": "entrasp.aziende",
+	"predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"queryString": "select codice_azienda, €global_userid€ as id_utente, entrasp.anagrafiche_id_codcognnome(codice_part, €global_userid€) as nome, codice_part, entrasp.count_sondaggi_open_azienda(codice_azienda) as sondaggi_aperti, entrasp.count_my_sondaggi_open_azienda(codice_azienda, €global_userid€) as my_sondaggi_aperti, entrasp.count_my_progetti_open_azienda(codice_azienda, €global_userid€) as my_progetti_aperti, entrasp.compiti_count_open_azienda_to_do(codice_azienda) as compiti_aperti_to_do, entrasp.compiti_count_open_azienda(codice_azienda) as compiti_aperti from entrasp.aziende where codice_azienda=$codice_azienda$",
+			"type": "main"
+		}
+	],
+	"form_keys": [
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "Utente",
+			"key": "id_utente",
+			"readOnly": true,
+			"queryFunct": "€global_userid€",
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 2
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Nome",
+			"key": "nome",
+			"readOnly": true,
+			"queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part, €global_userid€)",
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "codice_azienda",
+			"key": "codice_azienda",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "codice_part",
+			"key": "codice_part",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Numero Compiti Aperti",
+			"key": "compiti_aperti",
+			"queryFunct": "entrasp.compiti_count_open_azienda(codice_azienda)",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Numero To Do Aperti",
+			"key": "compiti_aperti_to_do",
+			"queryFunct": "entrasp.compiti_count_open_azienda_to_do(codice_azienda)",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		}
+	],
+	"subTables": [
+		{
+			"entryKey": "sondaggi_open_mine",
+			"keys": [
+				{
+					"parent": "codice_part",
+					"son": "codice_part"
+				}
+			],
+			"label": "Miei Sondaggi Aperti"
+		},
+		{
+			"entryKey": "progetti_mine",
+			"keys": [
+				{
+					"parent": "codice_part",
+					"son": "codice_part"
+				}
+			],
+			"label": "I Miei Progetti"
+		},
+		{
+			"entryKey": "centri_gestionali_sub_of_me",
+			"keys": [
+				{
+					"parent": "codice_part",
+					"son": "codice_part"
+				}
+			
+			],
+			"label": "I Miei Centri Gestionali"
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "15%",
+			"isPrimary": false,
+			"key": "nome",
+			"label": "nome"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"width": "15%",
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "Azienda"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"width": "15%",
+			"key": "codice_part",
+			"label": "Partizione"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "compiti_aperti",
+			"width": "15%",
+			"label": "N.compiti aperti"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "my_sondaggi_aperti",
+			"width": "15%",
+			"label": "N. miei sondaggi aperti",
+			"style": [
+                {
+                    "value": "0",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": ">0",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
+            ]
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "sondaggi_aperti",
+			"width": "15%",
+			"label": "N.sondaggi aperti"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "my_progetti_aperti",
+			"width": "15%",
+			"label": "N.progetti aperti"
+		}
+	
+	]
+}

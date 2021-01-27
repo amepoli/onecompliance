@@ -13,6 +13,10 @@
             "type": "string",
             "description": "M: DynamoDB primary key (entry)"
         },
+        "inheritsFrom": {
+            "type": "string",
+            "description": "?: Derive from a father table, father's fields are overwritten if specified here (no merging)"
+        },
         "origin": {
             "type": "string",
             "description": "?: Postgresql underlying table"
@@ -53,9 +57,15 @@
                         "description": "M: Attention! Only one main query allowed at most for each kinf of operation",
                         "enum": [
                             "main",
+                            "preInsertingCheck",
+                            "preUpdatingCheck",
                             "preProcessing",
                             "postProcessing"
                         ]
+                    },
+                    "messageNotNull": {
+                        "type": "string",
+                        "description": "?: Message if there is an error in data for insertion or update"
                     }
                 }
             }
@@ -201,6 +211,7 @@
                     "message": {
                         "type": "object",
                         "description": "M: message",
+                        "additionalProperties": false,
                         "properties": {
                             "title": {
                                 "type": "string",
@@ -651,6 +662,10 @@
                     "queryFunct": {
                         "type": "string",
                         "description": "?: postgresql query format for the column, can be a function or a full query. $field$ means that field is replaced by actual value"
+                    },
+                    "sameOrigin": {
+                        "type": "boolean",
+                        "description": "Indicates that the key is not part of the origin table. If not provided defaults to 'false'"
                     },
                     "width": {
                         "type": "string",

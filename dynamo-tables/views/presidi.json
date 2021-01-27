@@ -2,14 +2,12 @@
     "$schema": "../views.schema.json",
     "origin": "entrasp.presidi",
     "entryKey": "presidi",
-    "messages": [
+    "businessObjectName": "presidi",
+    "predefinedQueries": [
         {
-            "viewType": "form",
-            "formMessageType": "delete",
-            "message": {
-                "title": "Cancellazione presidio",
-                "text": "Sei sicuro di voler cancellare il presidio?"
-            }
+            "operation": "selectForm",
+            "type": "preProcessing",
+            "queryString": "update entrasp.presidi set codice_part='€global_codice_part€' WHERE codice_azienda=$codice_azienda$ AND id_presidio=$id_presidio$;"
         }
     ],
     "form_keys": [
@@ -48,7 +46,7 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "id_presidio",
-            "label": "ID",
+            "label": "ID Presidio (PK)",
             "newLine": false,
             "size": 1.5,
             "readOnly": true
@@ -56,18 +54,17 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_presidio AS id, id_presidio||' - '||codice||' - '||descrizione_breve AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$;",
+                "comboQuery": "SELECT id_presidio AS id, descrizione_breve AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$ and id_presidio!=£id_presidio£;",
                 "options": [],
                 "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "id_presidio_parent",
-            "label": "Presidio parent",
+            "label": "Presidio superiore",
             "newLine": false,
-            "readOnly": false,
-            "size": 6.5
-        
+            "size": 4,
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -163,7 +160,7 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
-                "viewType": "input"
+                "viewType": "textarea"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -230,83 +227,6 @@
             "textareaHeight": "M",
             "newLine": true,
             "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_procedura AS id, id_procedura||'-'||codice||'-'||descrizione_breve AS name FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$;",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_procedura",
-            "label": "Procedura associata",
-            "newLine": false,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "create_proc_aziendale",
-            "label": "Crea procedura aziendale associata",
-            "newLine": true,
-            "outputEvent": {
-                "eventName": "procedura_aziendale_create",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "queryFunct": "select entrasp.procedura_aziendale_create_from_presidio($codice_azienda$, $id_presidio$)",
-                    "eventName": "procedura_aziendale_create",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": []
-                }
-            ],
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when id_procedura is null then 0 else 1 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
-                }
-            ],
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "navigate_to_procedura_aziendale_k",
-            "label": "Procedura aziendale associata",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "navigate_to_procedura_aziendale",
-                "eventTrigger": "press"
-            },
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when id_procedura is null then 1 else 0 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
-                }
-            ],
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false
         }
     ],
     "subTables": [
@@ -338,6 +258,20 @@
                 }
             ],
             "label": "Sotto presidi"
+        },
+        {
+            "entryKey": "procedure_sub_of_presidi",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_presidio",
+                    "son": "id_presidio"
+                }
+            ],
+            "label": "Procedure associate"
         }
     ],
     "table_keys": [
@@ -369,15 +303,6 @@
             "width": "8%",
             "key": "codice",
             "label": "Codice"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_procedura",
-            "label": "id_procedura"
         },
         {
             "format": {
@@ -483,14 +408,14 @@
             "queryCond": "id_presidio=$id_presidio$"
         },
         {
-            "fieldName": "descrizione_breve",
+            "fieldName": "descrizione_s",
             "format": {
                 "dataType": "text",
                 "viewType": "input"
             },
             "label": "Descrizione",
             "newLine": false,
-            "queryCond": "descrizione_breve='%€descrizione_breve€%'"
+            "queryCond": "(UPPER(descrizione) like '%'||UPPER('€descrizione_s€')||'%' OR UPPER(descrizione_breve) like '%'||UPPER('€descrizione_s€')||'%')" 
         },
         {
             "fieldName": "codice",
@@ -501,6 +426,18 @@
             "label": "Codice",
             "newLine": true,
             "queryCond": "codice=$codice$"
+        },
+        {
+            "fieldName": "stato_attuazione",
+            "format": {
+                    "comboQuery": "SELECT codice::character AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE';",
+                    "options": [],
+                    "viewType": "combobox",
+                    "dataType": "text"
+            },
+            "label": "Statp attuazione",
+            "newLine": false,
+            "queryCond": "stato_attuazione=$stato_attuazione$"
         },
         {
             "fieldName": "flag_principali",
@@ -521,8 +458,8 @@
             "label": "Senza rischi",
             "newLine": false,
             "queryCond": "id_presidio not in(select id_presidio from entrasp.rischi_presidi where codice_azienda=$codice_azienda$)"
-          },
-          {
+        },
+        {
             "fieldName": "presidio_with_rischi",
             "format": {
                 "value": "0",
@@ -531,8 +468,8 @@
             "label": "Con rischi",
             "newLine": false,
             "queryCond": "id_presidio in(select id_presidio from entrasp.rischi_presidi where codice_azienda=$codice_azienda$)"
-          },
-          {
+        },
+        {
             "fieldName": "presidi_with_procedure",
             "format": {
                 "value": "0",
@@ -540,9 +477,9 @@
             },
             "label": "Con procedure",
             "newLine": false,
-            "queryCond": "id_presidio in(select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and id_procedura is not null)"
-          },
-          {
+            "queryCond": "id_presidio in(select id_presidio from entrasp.procedure_aziendali_presidi where codice_azienda=$codice_azienda$)"
+        },
+        {
             "fieldName": "presidi_without_procedure",
             "format": {
                 "value": "0",
@@ -550,9 +487,9 @@
             },
             "label": "Senza procedure",
             "newLine": false,
-            "queryCond": "id_presidio not in(select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and id_procedura is not null)"
-          },
-          {
+            "queryCond": "id_presidio not in(select id_presidio from entrasp.procedure_aziendali_presidi where codice_azienda=$codice_azienda$)"
+        },
+        {
             "fieldName": "presidi_without_centro_gest",
             "format": {
                 "value": "0",
@@ -561,29 +498,9 @@
             "label": "Senza centro gestionale",
             "newLine": false,
             "queryCond": "id_centro_gest is null"
-          }
-   
-      
+        }
     ],
     "inputEvents": [
-        {
-            "actionTarget": {
-                "name": "procedure_aziendali",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_procedura",
-                        "destination": "id_procedura"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "navigate_to_procedura_aziendale"
-        },
         {
             "actionTarget": {
                 "name": "presidi",

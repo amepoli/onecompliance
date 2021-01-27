@@ -14,13 +14,18 @@
   "predefinedQueries": [
     {
       "operation": "insert",
-      "queryString": "SELECT entrasp.domande_insert_update(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idmodellotestvr=>$id_modello_test_vr$::numeric, iddomanda=>$id_domanda$::numeric, descrizione_=>$descrizione$::text, note_=>$note$::text, punteggio_=>$punteggio$::numeric, flagrispostamultipla=>'€flag_risposta_multipla€'::character, ord=> coalesce($ordinamento$, -1)::numeric, idtemplaterp=>$risposte$, idsezione=>$id_sezione$);",
-      "type": "main"
+      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, £id_domanda£, $ordinamento$, $id_sezione$, $id_template_rp$)",
+      "type": "postProcessing"
     },
     {
       "operation": "update",
-      "queryString": "SELECT entrasp.domande_insert_update(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idmodellotestvr=>$id_modello_test_vr$::numeric, iddomanda=>$id_domanda$::numeric, descrizione_=>$descrizione$::text, note_=>$note$::text, punteggio_=>$punteggio$::numeric, flagrispostamultipla=>'€flag_risposta_multipla€'::character, ord=> coalesce($ordinamento$, -1)::numeric, idtemplaterp=>$risposte$, idsezione=>$id_sezione$);",
-      "type": "main"
+      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$, $id_template_rp$)",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.risposte rp set punteggio = dm.punteggio from entrasp.domande dm where rp.codice_azienda= dm.codice_azienda and rp.id_domanda = dm.id_domanda and rp.id_modello_test = dm.id_modello_test and rp.id_modello_test_vr = dm.id_modello_test_vr and rp.punteggio!=dm.punteggio and rp.codice_azienda = $codice_azienda$ and rp.id_modello_test =$id_modello_test$ and rp.id_domanda =$id_domanda$ and rp.id_modello_test_vr = $id_modello_test_vr$;",
+      "type": "postProcessing"
     }
   ],
   "entryKey": "domande",
@@ -29,6 +34,27 @@
     "order": "ascending"
   },
   "form_keys": [
+    {
+      "format": {
+        "viewType": "invisible"
+      },
+      "isHidden": true,
+      "key": "invisible",
+      "readOnly": true,
+      "isPrimary": false,
+      "label": "invisible_element",
+      "sameOrigin": false,
+      "inputEvents": [
+        {
+          "actionType": "update",
+          "condition": "none",
+          "values": [],
+          "updateFunct": "",
+          "eventName": "onSaveDomande",
+          "outputEventWhenComplete": "reloadMask"
+        }
+      ]
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -177,7 +203,7 @@
     {
       "autoGenerate": false,
       "format": {
-          "viewType": "invisible"
+        "viewType": "invisible"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -187,7 +213,7 @@
       "newLine": false,
       "readOnly": true,
       "size": 0.3
-  },
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -207,11 +233,12 @@
       "format": {
         "comboQuery": "SELECT id_template_rp AS id, descrizione AS name from entrasp.template_risposte_previste WHERE codice_azienda=$codice_azienda$;",
         "viewType": "combobox",
-        "options": []
+        "options": [],
+        "value": 0
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "risposte",
+      "key": "id_template_rp",
       "label": "Template Risposte",
       "newLine": false,
       "size": 3.5,
@@ -219,8 +246,7 @@
         "eventName": "combobox_risposte",
         "eventTrigger": "select"
       },
-      "readOnly": false,
-      "sameOrigin": false
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -234,7 +260,7 @@
           "eventName": "combobox_risposte",
           "condition": "none",
           "values": [],
-          "queryFunct": "select  string_agg(concat(ordinamento,') ',risposta,' (',peso,'%)'), E'\n') as mostra_risposte from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$risposte$;"
+          "queryFunct": "select string_agg(concat(ordinamento,') ',risposta,' (',peso,'%)'), E'\n') as mostra_risposte from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$id_template_rp$;"
         },
         {
           "actionType": "query",
@@ -296,7 +322,7 @@
       "readOnly": false,
       "size": 1,
       "sameOrigin": false
-    }    
+    }
   ],
   "inputEvents": [
     {
@@ -304,7 +330,7 @@
       "actionType": "reload"
     },
     {
-      "eventName": "onSaveDomande",
+      "eventName": "reloadMask",
       "actionType": "reload"
     },
     {

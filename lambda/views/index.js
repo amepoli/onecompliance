@@ -76,6 +76,34 @@ function processPermissions(data, profile, entry_name) {
     return data;
 }
 
+async function overrideTable(son) {
+
+    if (son.inheritsFrom == null) {
+        return son;
+    }
+
+    const DynamoParams = {
+        TableName: 'VIEWS_NAME',
+        Key: {
+            entryKey: son.inheritsFrom
+        }
+    };
+
+    var father = await dynamo.get(DynamoParams).promise();
+
+    father = father.Item;
+    if (father == null) {
+        return son;
+    }
+
+    for (const field in son) {
+        if (son.hasOwnProperty(field) && field != "inheritsFrom" && field != "$schema") {
+            father[field] = son[field];
+        }
+    }
+    return father;
+}
+
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
@@ -114,7 +142,9 @@ exports.handler = async (event, context) => {
 
         data = await dynamo.get(DynamoParams).promise();
 
-        data = processPermissions(data.Item, profile, entry_name);
+        data = await overrideTable(data.Item);
+
+        data = processPermissions(data, profile, entry_name);
 
     } catch (e) {
         console.log(e);

@@ -2,6 +2,9 @@
 	"$schema": "../views.schema.json",
 	"entryKey": "valutazione_contratti",
 	"origin": "entrasp.valutazione_contratti",
+	"businessObjectName": "valutazione_contratti",
+	"predefinedQueries": [
+	],
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -15,6 +18,26 @@
 			"isHidden": true,
 			"isPrimary": true,
 			"newLine": false
+		},
+		{
+			"format": {
+				"dataType": "text",
+				"viewType": "label"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "contratti",
+			"label": "Pronto Realizzo e Realizzo Coattivo",
+			"style": {
+				"background_color": "#03a9f4",
+				"font_color": "white",
+				"font_size": "1.3em",
+				"font_style": "italic",
+				"font_weight": "400"
+			},
+			"newLine": true,
+			"readOnly": true,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": true,
@@ -32,10 +55,35 @@
 		{
 			"autoGenerate": false,
 			"format": {
+				"comboQuery": "SELECT distinct id_contratto as id,numero_contratto as name FROM entrasp.contratti WHERE codice_azienda = $codice_azienda$",
+				"options": [],
+				"viewType": "combobox",
+				"validations": [
+					{
+						"message": "Indicare il contratto!",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
+			},
+			"label": "Num.contratto",
+			"key": "id_contratto",
+			"outputEvent": {
+				"eventName": "id_contratto_change",
+				"eventTrigger": "select"
+			},
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
 				"viewType": "input",
 				"dataType": "number"
 			},
-			"label": "ID Contratto",
+			"label": "Tipo Contratto",
 			"key": "id_contratto",
 			"readOnly": false,
 			"isHidden": false,
@@ -98,19 +146,6 @@
 			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Note Valore Nominale",
-			"key": "note_valore_nominale",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
 				"validations": [
 					{
 						"message": "Campo necessario",
@@ -125,18 +160,33 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false
+			"newLine": true
 		},
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
+				"viewType": "textarea",
 				"dataType": "text"
 			},
-			"label": "Note",
+			"label": "Note Valore Nominale",
+			"key": "note_valore_nominale",
+			"readOnly": false,
+			"isHidden": false,
+			"textareaHeight": "M",
+			"isPrimary": false,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "textarea",
+				"dataType": "text"
+			},
+			"label": "Note sul valore netto del credito",
 			"key": "note",
 			"readOnly": false,
 			"isHidden": false,
+			"textareaHeight": "M",
 			"isPrimary": false,
 			"newLine": true
 		},

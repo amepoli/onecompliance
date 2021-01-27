@@ -5,13 +5,18 @@
   "predefinedQueries": [
     {
       "operation": "insert",
-      "queryString": "SELECT entrasp.domande_insert(codiceazienda=>$codice_azienda$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, descrizione_=>$descrizione$, datafinevalidita=>$data_fine_validita$, idsezione=>$id_sezione$, note_=>$note$, punteggio_=>$punteggio$, pesorispostedefault=>$peso_risposte_default$, iddomandarif=>$id_domanda_rif$, idrispostaprevrif=>$id_risposta_prev_rif$, idfiltroselezione=>$id_filtro_selezione$, tipopunteggiorispostamultipla=>$tipo_punteggio_risposta_multipla$, iddb=>$id_db$, queryrisultato=>$query_risultato$, bindrisultato=>$bind_risultato$, queryallegato=>$query_allegato$, bindallegato=>$bind_allegato$, idtipoallegato=>$id_tipo_allegato$, flaginversionepctefficaciapresidi=>'€flag_inversione_pct_efficacia_presidi€', datainiziovalidita=>data_inizio_validita, flagrispostamultipla=>flag_risposta_multipla, flagnonapplicabilerispostanull=>flag_non_applicabile_risposta_null, ord=> coalesce($ordinamento$, -1));",
-      "type": "main"
+      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$)",
+      "type": "postProcessing"
     },
     {
       "operation": "update",
-      "queryString": "SELECT entrasp.domande_update(codiceazienda=>$codice_azienda$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, iddomanda=>$id_domanda$, descrizione_=>$descrizione$, datafinevalidita=>$data_fine_validita$, idsezione=>$id_sezione$, note_=>$note$, punteggio_=>$punteggio$, pesorispostedefault=>$peso_risposte_default$, iddomandarif=>$id_domanda_rif$, idrispostaprevrif=>$id_risposta_prev_rif$, idfiltroselezione=>$id_filtro_selezione$, tipopunteggiorispostamultipla=>$tipo_punteggio_risposta_multipla$, iddb=>$id_db$, queryrisultato=>$query_risultato$, bindrisultato=>$bind_risultato$, queryallegato=>$query_allegato$, bindallegato=>$bind_allegato$, idtipoallegato=>$id_tipo_allegato$, flaginversionepctefficaciapresidi=>'€flag_inversione_pct_efficacia_presidi€', datainiziovalidita=>$data_inizio_validita$, flagrispostamultipla=>'€flag_risposta_multipla€', flagnonapplicabilerispostanull=>'€flag_non_applicabile_risposta_null€', ord=> coalesce($ordinamento$, -1));",
-      "type": "main"
+      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$)",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.risposte rp set punteggio = dm.punteggio from entrasp.domande dm where rp.codice_azienda= dm.codice_azienda and rp.id_domanda = dm.id_domanda and rp.id_modello_test = dm.id_modello_test and rp.id_modello_test_vr = dm.id_modello_test_vr and rp.punteggio!=dm.punteggio and rp.codice_azienda = $codice_azienda$ and rp.id_modello_test =$id_modello_test$ and rp.id_domanda =$id_domanda$ and rp.id_modello_test_vr = $id_modello_test_vr$;",
+      "type": "postProcessing"
     }
   ],
   "form_keys": [
@@ -25,19 +30,6 @@
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "codice_azienda",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_modello_test",
-      "label": "ID modello di test",
       "newLine": true,
       "readOnly": true
     },
@@ -127,16 +119,31 @@
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "textarea"
+        "comboQuery": "SELECT id_modello_test AS id, titolo AS name  FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_modello_test",
+      "label": "ID modello di test",
+      "newLine": false,
+      "readOnly": true,
+      "size": 8
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "modello_test",
-      "label": "Modello di test",
+      "key": "punteggio",
+      "label": "Punteggio",
       "newLine": true,
-      "queryFunct": "select concat(mo.descrizione) from entrasp.modelli_test mo join entrasp.domande dm on (mo.id_modello_test=dm.id_modello_test and mo.codice_azienda=dm.codice_azienda and mo.id_modello_test_vr=dm.id_modello_test_vr) where  dm.codice_azienda=$codice_azienda$ and dm.id_modello_test=$id_modello_test$ and dm.id_domanda=$id_domanda$",
-      "readOnly": true,
-      "size": 10
+      "readOnly": false,
+      "size": 2
     },
     {
       "autoGenerate": false,
@@ -144,7 +151,7 @@
         "viewType": "textarea",
         "validations": [
           {
-            "message": "Codice mancante",
+            "message": "Definizione domanda mancante",
             "name": "required",
             "validator": "Validators.required"
           }
@@ -192,20 +199,6 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "punteggio",
-      "label": "Punteggio",
-      "newLine": false,
-      "readOnly": false,
-      "size": 3
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
       "key": "peso_risposte_default",
       "label": "Peso Attribuito con Risposta Assente (%)",
       "newLine": true,
@@ -215,7 +208,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_domanda as id, descrizione as name from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test = $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$",
+        "comboQuery": "select id_domanda as id, id_domanda||'-'||descrizione as name from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test = $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$",
         "options": [],
         "viewType": "combobox"
       },
@@ -223,6 +216,10 @@
       "isPrimary": false,
       "key": "id_domanda_rif",
       "label": "Attiva se alla domanda",
+      "outputEvent": {
+        "eventName": "id_domanda_rif_change",
+        "eventTrigger": "select"
+      },
       "newLine": true,
       "size": 10,
       "readOnly": false
@@ -230,7 +227,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_risposta_prev AS id, risposta AS name from entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test= $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$;",
+        "comboQuery": "SELECT id_risposta_prev AS id, id_domanda||'-'||risposta AS name from entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test= $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$;",
         "viewType": "combobox",
         "options": []
       },
@@ -238,6 +235,15 @@
       "isPrimary": false,
       "key": "id_risposta_prev_rif",
       "label": "Viene Risposto",
+      "inputEvents": [
+        {
+          "eventName": "id_domanda_rif_change",
+          "actionType": "query",
+          "queryFunct": "select coalesce(£id_risposta_prev_rif£, 0) as id_risposta_prev_rif",
+          "condition": "none",
+          "values": []
+        }
+      ],
       "newLine": true,
       "size": 10,
       "readOnly": false
@@ -372,8 +378,30 @@
       "isPrimary": false,
       "key": "flag_inversione_pct_efficacia_presidi",
       "label": "Inversione Efficacia Presidi",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "modello_test_from_domanda",
+      "label": "Modello Test Associato",
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "to_modello_test_from_domanda",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 2
     }
   ],
   "subTables": [
@@ -388,6 +416,10 @@
         {
           "parent": "codice_azienda",
           "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
         },
         {
           "parent": "id_modello_test_vr",
@@ -414,6 +446,30 @@
         }
       ],
       "label": "Presidi Associabili"
+    }
+  ],
+  "inputEvents": [
+    {
+      "actionTarget": {
+        "name": "modelli_test_vr",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_modello_test",
+            "destination": "id_modello_test"
+          },
+          {
+            "source": "id_modello_test_vr",
+            "destination": "id_modello_test_vr"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_modello_test_from_domanda"
     }
   ],
   "origin": "entrasp.domande"

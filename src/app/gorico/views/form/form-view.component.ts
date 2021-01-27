@@ -1,4 +1,4 @@
-import { Component, ViewChild, Input, Output, EventEmitter, OnChanges, OnInit } from '@angular/core';
+import { Component, ViewChild, Input, Output, EventEmitter, OnChanges, OnInit, OnDestroy } from '@angular/core';
 
 import 'rxjs/add/operator/filter';
 import { BackendService } from '../backend/backend.service';
@@ -16,6 +16,7 @@ import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { HideAction, NavigationService } from 'app/gorico/services/navigation.service';
 import { MessageView, MessagesService, MessageElement, MessageItem } from 'app/gorico/services/messages.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { Subscription } from 'rxjs';
 
 type tabViewType = 'table' | 'tableForm';
 
@@ -61,7 +62,7 @@ type savingStateType = 'save' | 'saving' | 'done';
     templateUrl: './form-view.component.html',
     styleUrls: ['./form-view.component.scss']
 })
-export class FormViewComponent implements OnChanges, OnInit {
+export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
     @Input() isQuickAdd: boolean = false;
     @Input() tableData: formViewParams;
@@ -86,6 +87,8 @@ export class FormViewComponent implements OnChanges, OnInit {
     getterParams: formGetterParams; // params for the child formGetter form view
 
     savingState: savingStateType = 'save';
+
+    subscriptions: Subscription[] = [];
 
     hideActions: string[] = []; // Hide actions
     @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
@@ -120,13 +123,22 @@ export class FormViewComponent implements OnChanges, OnInit {
         }
 
         // Subscribe to Reload Request
-        _this._fileService.reloadNeeded.subscribe(entryName => {
+        _this.subscriptions.push(_this._fileService.reloadNeeded.subscribe(entryName => {
             if (entryName === _this.tableData.entryName) {
                 _this.getAttachList();
             }
-        });
+        }));
 
-        _this.formGetter.sendEvent.subscribe(
+        // _this.backendService.sendEmailUsingTemplate('email').subscribe(
+        //     result => {
+        //         console.log(result);
+        //     },
+        //     error => {
+        //         console.log(error);
+        //     }
+        // );
+
+        const subscription = _this.formGetter.sendEvent.subscribe(
             event => {
                 if (event.eventType === 'formData') {   // child received the view Info
                     _this.currentKeys = event.viewKeys;
@@ -160,11 +172,19 @@ export class FormViewComponent implements OnChanges, OnInit {
             }
         );
 
+        _this.subscriptions.push(subscription);
+
     }
 
     ngOnChanges() {
         this.loadData();
 
+    }
+
+    ngOnDestroy() {
+        this.subscriptions.forEach(element => {
+            element.unsubscribe();
+        });
     }
 
     public loadData() {
@@ -293,7 +313,7 @@ export class FormViewComponent implements OnChanges, OnInit {
             }
 
             _this.savingState = 'saving';
-            _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, [values]).subscribe(   // backend expects an array of data
+            const subscription = _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, [values]).subscribe(   // backend expects an array of data
                 result => {
                     _this._console.log(result);
                     if (result.result === 'OK') {
@@ -316,12 +336,30 @@ export class FormViewComponent implements OnChanges, OnInit {
                         }, 1000);
                     }
                     else {
-                        // Show error snackbar
-                        _this._toastService.showErrorToast(result.reason);
+                        // Check if error occured during preInserting check
+                        if(result.preInsertingErrors){
+                            _this._dialogService.showErrorDialog("Error", result.preInsertingErrors.join('\n'));
+                        }
+                        // Check if error occured during preUpdatingErrors check
+                        else if(result.preUpdatingErrors){
+                            _this._dialogService.showErrorDialog("Error", result.preUpdatingErrors.join('\n'));
+                        }
+                        else{
+                            // Show error snackbar
+                            _this._toastService.showErrorToast(result.reason);
+                        }
                         _this.savingState = 'save';
                     }
+                },
+                error =>{
+                    // Show error snackbar
+                    _this._toastService.showErrorToast(error);
+                    
+                    _this.savingState = 'save';
                 }
             );
+
+            _this.subscriptions.push(subscription);
         }
         else {
             _this._toastService.showErrorToast("Form is not valid!");
@@ -352,7 +390,7 @@ export class FormViewComponent implements OnChanges, OnInit {
         _this._dialogService.showConfimationDialog(deleteMessage.title, deleteMessage.text, "Yes", "No", "warning").then((result) => {
             if (result.value === true) {
                 // User said yes so let's delete form
-                _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys).subscribe(
+                const subscription = _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys).subscribe(
                     result => {
                         _this._console.log(result);
                         if (result.result === 'OK') {
@@ -368,6 +406,8 @@ export class FormViewComponent implements OnChanges, OnInit {
                         }
                     }
                 );
+
+                _this.subscriptions.push(subscription);
             }
         });
     }
@@ -383,17 +423,17 @@ export class FormViewComponent implements OnChanges, OnInit {
             data: { entryName: this.tableData.entryName, keys: this.currentKeys }
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
             if (result) {
 
             }
-        });
+        }));
     }
 
     getAttachList() {
-        let _this = this;
+        const _this = this;
         //console.table(_this.currentKeys);
-        _this.backendService.getAttachList(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys).subscribe(
+        const subscription = _this.backendService.getAttachList(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys).subscribe(
             result => {
                 _this._console.log(result);
                 if (result.result === 'OK') {
@@ -425,6 +465,7 @@ export class FormViewComponent implements OnChanges, OnInit {
                     _this._toastService.showErrorToast(result.reason);
                 }
             });
+        _this.subscriptions.push(subscription);
     }
 
     getReportList() {

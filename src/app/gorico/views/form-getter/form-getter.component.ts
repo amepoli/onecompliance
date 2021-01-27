@@ -15,6 +15,7 @@ import { NavigationService, HideAction } from 'app/gorico/services/navigation.se
 import { MessageView } from 'app/gorico/services/messages.service';
 import { HelperService } from 'app/gorico/services/helper.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { isArray } from 'lodash';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -113,6 +114,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     quickAddData: boolean[];
 
     isLoading = false;
+    isAddingNew = false;
 
     isReadOnly = false;
 
@@ -140,11 +142,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     attributes: any[] = null;
 
-    private firstRefresh = true;
-
     private addingNew = false;   // avoid to trigger a refresh (with related events) when adding a row  
 
     private margins = 2; // % of margins, considering left and right
+
+    private pagination = {
+        curPage: 1,
+        curRecords: [],
+        totalPages: 1
+    };
+
+    private recordsPerPage = 10000;
 
     constructor(
         private cdRef: ChangeDetectorRef,
@@ -176,6 +184,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         if (changes.formParams && this.formParams) {
             if (!this.addingNew) {
                 if (!changes.formParams.previousValue || (JSON.stringify(changes.formParams.previousValue) !== JSON.stringify(changes.formParams.currentValue))) {
+                    // unsubscribe and then subscribe again
+                    this.formSubscriptions.forEach(subscription => {
+                        subscription.unsubscribe();
+                    });
                     this.refreshView(true);
                 }
             }
@@ -191,21 +203,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     ngAfterViewInit() {
         const _this = this;
         // check and in case publish a table event on PubSub
-        _this.formArray.changes.subscribe(
+        let subscription = _this.formArray.changes.subscribe(
             c => { // publish when last element has been shown
                 if (_this.formParams && !_this.formParams.isNew && _this.formArray.length) {
                     _this.runOnReloadEvents();
                 }
             }
         );
+        _this.generalSubscriptions.push(subscription);
 
 
         if (_this.isFormView) {
-            const subcription = _this.pubsubService.subscribe('navigate_on_save_button',
+            subscription = _this.pubsubService.subscribe('navigate_on_save_button',
                 value => {
                     _this.eventCallback(value.data, value, null); // null as keyListener means that the full table is affected
                 });
-            _this.generalSubscriptions.push(subcription);
+            _this.generalSubscriptions.push(subscription);
         }
 
     }
@@ -218,6 +231,41 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         this.formSubscriptions.forEach(subscription => {
             subscription.unsubscribe();
         });
+    }
+
+    public resetPagination(){
+        if(this.filteredFormData && this.filteredFormData.length){
+            this.pagination = {
+                curPage: 1,
+                curRecords: [],
+                totalPages: Math.ceil(this.filteredFormData.length / this.recordsPerPage)
+            };
+            this.updatePagination(0);
+        }
+        else{
+            this.pagination = {
+                curPage: 1,
+                curRecords: [],
+                totalPages: 1
+            };
+        }
+    }
+
+    public updatePagination(pageInc: number = 0){
+        let curPage = (this.pagination.curPage+pageInc > 0 && this.pagination.curPage+pageInc <= this.pagination.totalPages)? this.pagination.curPage+pageInc: this.pagination.curPage;
+
+        let start = (curPage-1) * this.recordsPerPage;
+        let end = Math.min( this.filteredFormData.length, start + this.recordsPerPage);
+
+        let curRecords = [];
+        for(let i = start; i < end; i++){
+            curRecords = [...curRecords, i];
+        }
+        
+        //let curRecords = Array(Math.min(this.recordsPerPage,  + ).map((v, i) => ((this.pagination.curPage -1) * this.pagination.recordsPerPage) + i);
+        this.pagination.curPage = curPage;
+        this.pagination.curRecords = curRecords;
+    
     }
 
     public runOnReloadEvents() {
@@ -245,8 +293,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     refreshView(reloadEvents: boolean = true) {
         const _this = this;
         _this.isLoading = true;
-
-        _this.backendService.getView(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.formParams.keys).subscribe(
+        _this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
+    
+        const subscription = _this.backendService.getView(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.formParams.keys).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
@@ -318,8 +367,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
                     _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables });
                     // handle input events
-                    if (_this.firstRefresh || reloadEvents) {
-                        _this.firstRefresh = false;     // avoid to subscribe to events again when refreshed
+                    if (reloadEvents) {
                         if (params.inputEvents != null) {  // subscribe to global table events
                             for (let i=0; i < params.inputEvents.length; i++) {
                                 const event = params.inputEvents[i];
@@ -345,15 +393,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._toastService.showErrorToast(results.reason);
                 }
             });
-
+        _this.generalSubscriptions.push(subscription);
     }
 
     sendEmail(data: any) {
-        let _this = this;
+        const _this = this;
 
-        (data.templateKey ?
-            _this.backendService.sendEmailUsingTemplate(data) :
-            _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.to, data.cc))
+        if (data.templateKey) {
+            _this.backendService.sendEmailUsingTemplate(data);
+        } else {
+            const subscription = _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.to, data.cc)
             .subscribe(
                 result => {
                     _this._console.log(result);
@@ -369,6 +418,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                 }
             );
+            _this.generalSubscriptions.push(subscription);
+        }
     }
 
     subscribeFieldInputEvents(viewKeys: formViewKey[]): void {
@@ -397,11 +448,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (inputKeys.hasOwnProperty(key)) {
                 const element = inputKeys[key];
                 if (validKeysArray != null && validKeysArray.find(e => e.key === key)) {
-                    if (element == null || element.id == null) {
+                    if (element == null || (element.id == null && element.value == null)) {
                         outputKeys[key] = element;
                     }
                     else if (element.id != null) {
                         outputKeys[key] = element.id;
+                    } 
+                    else if (element.value != null){
+                        outputKeys[key] = element.value;
                     }
                 }
             }
@@ -415,7 +469,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this; // useful to debug
         _this.isLoading = true;
 
-        _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, null, true, _this.formParams.isNew, null, false).subscribe(
+        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, true, _this.formParams.isNew, null, false).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
@@ -466,6 +520,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 // Stop loading
                 _this.isLoading = false;
             });
+        
+        _this.generalSubscriptions.push(subscription);
     }
 
     processResults(results): void {
@@ -475,6 +531,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // prepare the form
         _this.filteredFormData = _this.numRows === 0 ? [] : JSON.parse(JSON.stringify(_this.getFormData(_this.viewKeys, results)));
         _this.quickAddData = _this.filteredFormData.map(x => false);
+        _this.resetPagination();
 
         // process the form
         _this.process_form(_this.filteredFormData);
@@ -485,7 +542,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     addRow(default_keys: any): void {
         const _this = this;
-        _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, null, true, true, null, false).subscribe(
+        _this.isAddingNew = true;
+        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, true, true, null, false).subscribe(
             result => {
                 _this._console.log(result);
                 if (result.result === 'OK') {
@@ -505,17 +563,30 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.process_form(filteredFormData);
 
                     _this._console.log('filteredFormData[0]', filteredFormData[0]);
+                    
+                    if(_this.filteredFormData && _this.filteredFormData.length){
+                        _this.filteredFormData.unshift(filteredFormData[0]);
+                        _this.quickAddData.unshift(true);
+                    }
+                    else{
+                        _this.filteredFormData = filteredFormData;
+                        _this.quickAddData = [true];
+                    }
                     // add it to the top of the list
-                    _this.filteredFormData.unshift(filteredFormData[0]);
-                    _this.quickAddData.unshift(true);
-
+                    _this.resetPagination();
 
                 }
                 else {
                     // Show error snackbar
                     _this._toastService.showErrorToast(result.reason);
                 }
+                _this.isAddingNew = false;
+            },
+            error => {
+                _this._toastService.showErrorToast(error);
+                _this.isAddingNew = false;
             });
+        _this.generalSubscriptions.push(subscription);
     }
 
     private getFormData(formKeys: formViewKey[], values: any, startingIndex = 0): FieldConfig[][] {
@@ -537,10 +608,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // field is of type '(key1,key2)', get the array
         try {
             const subKeysArray = commaSeparatedValues.split('(')[1].split(')')[0].split(',');
-            for (let i=0; i < subKeys.length; i++) {
-                const subKey = subKeys[i];
-                outputObject[subKey.key] = subKeysArray[i];
-            }
+            subKeys.forEach((subKey, sub_index) => {
+                outputObject[subKey.key] = subKey.dataType === 'number' ? parseInt(subKeysArray[sub_index]) : subKeysArray[sub_index];
+            });
         } catch (e) {
             this._console.log('something wrong with subkeys');
         }
@@ -719,7 +789,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // tslint:disable-next-line: forin
         for (const key in keys) {
             const toReplace = delimiter + key + delimiter;
-            const replacement = keys[key];
+            let replacement = keys[key];
+            // check if it is an object
+            if (replacement != null && replacement.id != null) {
+                replacement = replacement.id;
+            }
             let newString = functString.replace(toReplace, replacement);
             while (newString !== functString) { // handle multiple occurences
                 functString = newString;
@@ -763,13 +837,20 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         // If it's %value%, put in values variables
                         if (key.sender.includes('%value%')) {
                             senderValue = value.data;
-                            if (senderValue !== receiverValue) {
+                            if (senderValue != null && Array.isArray(senderValue)) {  // check if it is an array (checkbox group)
+                                matchingValues = false;
+                                senderValue.forEach(element => { // at least one array value matches
+                                     if (element == receiverValue) {
+                                         matchingValues = true;
+                                     }
+                                });
+                            } else if (senderValue == null || senderValue != receiverValue) {
                                 matchingValues = false;
                             }
                         }
                         else {  // compare keys
                             senderValue = value.valueSet[key.sender] ? value.valueSet[key.sender] : key.sender;
-                            if (senderValue !== receiverValue) {
+                            if (senderValue != receiverValue) {
                                 matchingKeys = false;
                             }
                         }
@@ -852,21 +933,28 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
         } else if (event.actionType === 'navigate' && conditionMet) {
             const formLine = _this.filteredFormData[value.index];
-            const keys = formLine.reduce((outputKeys, key) => {
-                outputKeys[key.name] = key.value;
-                return outputKeys;
-            }, {});
-            let filteredKeys = {};
+            var navigationKeys = {};
+            formLine.forEach(key => navigationKeys[key.name] = key.value);
+            // formLine.reduce((outputKeys, key) => {
+            //     outputKeys[key.name] = key.value;
+            //     return outputKeys;
+            // }, {});
+            var filteredKeys = {};
             if (event.actionTarget.keymap != null && event.actionTarget.keymap.length) { // explicit key map between tables
                 for (let i=0; i < event.actionTarget.keymap.length; i++) {
                     const element = event.actionTarget.keymap[i];
                     if (element.source != null && element.destination != null) {
+
+                        // If we came from show_message event, the keys must be in value.data
+                        if(typeof(value.data) === 'object' && value.data['keys'] && value.data['keys'][element.source]){
+                            filteredKeys[element.destination] = value.data['keys'][element.source] != null ? value.data['keys'][element.source]: null;
+                        }
                         // Check if event contains values in case of manually generated event
-                        if (event.values != null) {
+                        else if (event.values != null) {
                             filteredKeys[element.destination] = event.values[element.source] != null ? event.values[element.source] : null;
                         }
-                        else if (keys != null) {
-                            filteredKeys[element.destination] = keys[element.source] != null ? keys[element.source].id != null ? keys[element.source].id : keys[element.source] : null;
+                        else if (navigationKeys != null) {
+                            filteredKeys[element.destination] = navigationKeys[element.source] != null ? navigationKeys[element.source].id != null ? navigationKeys[element.source].id : navigationKeys[element.source] : null;
                         }
                     }
 
@@ -874,8 +962,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
             else {
                 const primaryKeys = _this.viewKeys.filter(key => key.isPrimary);
-                filteredKeys = _this.getCurrentKeys(primaryKeys, keys);
+                filteredKeys = _this.getCurrentKeys(primaryKeys, navigationKeys);
             }
+
+            
             // destroy current subscriptions before moving to a new view
             _this.formSubscriptions.forEach(subscription => {
                 subscription.unsubscribe();
@@ -924,7 +1014,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
                 }
-                _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
+                const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
                     result => {
                         if (result.result === 'OK') {
                             if (event.successMessage) {
@@ -935,21 +1025,31 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._console.log(`keyListener: ${keyListener}`);
                             //console.table(result);
                             if (event.actionType === 'query') {
-                                if (targetViewField && targetViewField.format && targetViewField.format.viewType === 'combobox') {   // got combobox options
+                                let combobox: ComboboxComponent = null;
+                                if (typeof result === 'object' && result.value != null) {   // got combobox/radiobutton/checkboxgroup options
+                                    // Old method
                                     // _this.formArray[value.index].form.patchValue({ [keyListener]['options']: result});
-                                    const combobox = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
-                                    combobox.setOptions(result, true);
-                                } else {                                                // got field value
-                                    //     childrenArray[current_index].form.patchValue({ [keyListener]: result[0][keyListener] });
-                                    // Patch all the values we got from query
-                                    for (var k in result[0]) {
-                                        if (result[0].hasOwnProperty(k)) {
-                                            // patch the form
-                                            current_line.form.patchValue({ [k]: result[0][k] });
-                                            // patch the undelying data
-                                            const el = HelperService.findElement(_this.filteredFormData[current_index], k);
-                                            // const el = _this.filteredFormData[current_index].find(field => field.name === k);
-                                            if (el != null && result[0][k]) {
+                                    combobox = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
+                                    // Set options and make sure we don't cause the onchange selector while
+                                    // changing options
+                                    combobox.setOptions(result.options, true);
+                                    result = result.value;
+                                }
+                                for (var k in result[0]) {
+                                    if (result[0].hasOwnProperty(k)) {
+                                        // patch the form
+                                        current_line.form.patchValue({ [k]: result[0][k] });
+                                        // patch the undelying data
+                                        const el = HelperService.findElement(_this.filteredFormData[current_index], k);
+                                        // const el = _this.filteredFormData[current_index].find(field => field.name === k);
+                                        if (el != null && result[0][k] != null) {
+                                            // If combobox, set the value using the options available
+                                            // so cannot add directly
+                                            if(combobox){
+                                                combobox.setValue(result[0][k]);
+                                            }
+                                            else{
+                                                // It's not a combobox so set value directly
                                                 el.value = result[0][k];
                                             }
                                         }
@@ -1002,6 +1102,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._toastService.showErrorToast(result.reason);
                         }
                     });
+
+                _this.generalSubscriptions.push(subscription);
             }
         } else if ((event.actionType === 'update' || event.actionType === 'update_style') && conditionMet) {
             if (event.updateFunct != null && keyListener != null) {
@@ -1034,11 +1136,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 // Initialize with No action info
                 var actionType = event.message.actionOnNo.actionType;
                 var queryFunct = event.message.actionOnNo.queryFunct;
+                var action = 'actionNo';
 
                 // If user clicked yes, load yes action info 
                 if (result.value === true) {
                     actionType = event.message.actionOnYes.actionType;
                     queryFunct = event.message.actionOnYes.queryFunct;
+                    action = 'actionYes'
                 }
 
                 // Let's perform Yes Action
@@ -1093,11 +1197,27 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             }
                         }
-                        _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, keyListener, chiavi, event.eventName, result ? 'actionYes' : 'actionNo', true).subscribe(
+                        const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, keyListener, chiavi, event.eventName, action, true).subscribe(
                             result => {
                                 if (result.result === 'OK') {
                                     _this._console.table(result);
-                                    _this._toastService.showSuccessToast("Success!");
+                                    if(result.data ){
+                                        if(isArray(result.data)){
+                                            // I am hoping that the result contains keys for the next event
+                                            value.data = {};
+                                            value.data['keys'] = result.data[0];
+                                        }
+                                        else{
+                                            value.data = result.data;
+                                        }
+                                    }
+                                    
+                                    if(event.successMessage){
+                                        _this._toastService.showSuccessToast(event.successMessage);
+                                    }
+                                    else{
+                                        _this._toastService.showSuccessToast("Success!");
+                                    }
                                     if (event.outputEventWhenComplete != null) {
                                         _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
                                     }
@@ -1107,6 +1227,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     _this._toastService.showErrorToast(result.reason);
                                 }
                             });
+
+                        _this.generalSubscriptions.push(subscription);
                     }
                 }
             });

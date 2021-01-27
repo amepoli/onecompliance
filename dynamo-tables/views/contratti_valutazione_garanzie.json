@@ -1,0 +1,84 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "contratti_valutazione_garanzie",
+	"origin": "entrasp.contratti_valutazione_garanzie",
+	"businessObjectName": "contratti_valutazione_garanzie",
+	"predefinedQueries": [{
+		"operation": "selectForm",
+		"type": "main",
+		"queryString": "select cvg.*, vg.id_garanzia from entrasp.contratti_valutazione_garanzie cvg inner join entrasp.valutazione_garanzie vg on cvg.codice_azienda=vg.codice_azienda and cvg.id_valutazione_garanzie=vg.id_valutazione_garanzie where cvg.codice_azienda=$codice_azienda$ and cvg.id_valutazione_garanzie=$id_valutazione_garanzie$ and vg.id_garanzia=$id_garanzia$ "
+	}],
+	"form_keys": [
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "codice_azienda",
+			"key": "codice_azienda",
+			"readOnly": false,
+			"isHidden": true,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT cg.id_contratti_garanzie AS id, co.numero_contratto as name from entrasp.contratti_garanzie cg join  entrasp.contratti co on cg.codice_azienda=co.codice_azienda and cg.id_contratto=co.id_contratto where cg.codice_azienda= $codice_azienda$ and cg.id_garanzia = $id_garanzia$;",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "id_contratti_garanzie",
+			"key": "Codice Contratto",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary":true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "percentuale_gar_dedicata",
+			"key": "percentuale_gar_dedicata",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary":false,
+			"newLine": false
+		},	
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "id_valutazione_garanzie",
+			"key": "id_valutazione_garanzie",
+			"readOnly": false,
+			"isHidden": true,
+			"isPrimary":true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "id_garanzia",
+			"key": "id_garanzia",
+			"sameOrigin": false,
+			"readOnly": false,
+			"isHidden": true,
+			"isPrimary":true,
+			"newLine": false
+		}
+
+		
+		
+	]
+	
+}

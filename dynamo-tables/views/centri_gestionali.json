@@ -45,19 +45,19 @@
       "autoGenerate": false,
       "format": {
         "dataType": "text",
-        "viewType": "textarea"
+        "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "descrizione",
-      "label": "Descrizione",
+      "label": "Titolo",
       "newLine": false,
       "readOnly": false
     },
-    {
+        {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part=$codice_part$;",
+        "comboQuery": "SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part=$codice_part$ and id_centro_gest!=£id_centro_gest£;",
         "options": [],
         "viewType": "combobox"
       },
@@ -65,6 +65,20 @@
       "isPrimary": false,
       "key": "id_centro_gest_parent",
       "label": "Centro Gestionale Superiore",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "textarea"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione_estesa",
+      "label": "Descrizione",
+      "textareaHeight": "M",
       "newLine": true,
       "readOnly": false
     },
@@ -122,7 +136,7 @@
   "predefinedQueries": [
     {
       "operation": "insert",
-      "queryString": "SELECT MAX(id_gruppo_lavoro)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
+      "queryString": "SELECT coalesce(MAX(id_gruppo_lavoro),0)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
       "type": "preProcessing"
     },
     {
@@ -132,7 +146,7 @@
     },
     {
       "operation": "insert",
-      "queryString": "SELECT MAX(id_centro_gest)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+      "queryString": "SELECT coalesce(MAX(id_centro_gest),0)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
       "type": "preProcessing"
     },
     {
@@ -319,6 +333,16 @@
       "label": "ID"
     },
     {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "id_anagrafica",
+        "label": "ID Anagrafica",
+        "sameOrigin": false
+    },
+    {
       "format": {
         "dataType": "text"
       },
@@ -354,7 +378,7 @@
       "isPrimary": false,
       "key": "parente",
       "label": "Centro Superiore",
-      "queryFunct": " entrasp.centri_gestionali_descr(codice_part,id_centro_gest_parent)"
+      "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest_parent)"
     }
   ]
 }

@@ -176,8 +176,11 @@ export class AuthService {
 
   }
 
-  public getCurrentCompany(): string {
+  public getCurrentCompany(currentKeys: any = null): string {
     const _this = this;
+    if (currentKeys != null && currentKeys.codice_azienda != null) {
+        return currentKeys.codice_azienda;
+    }
     return _this.currentCompany;
   }
 

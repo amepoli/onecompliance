@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FieldConfig } from '../../field.interface';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
@@ -6,6 +6,7 @@ import { HelperService } from 'app/gorico/services/helper.service';
 import { Moment } from 'moment';
 import { ValidationsService } from 'app/gorico/services/validations.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-input',
   template: `
@@ -40,11 +41,13 @@ import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service
     '[style.height.px]': 'field.isVisible? "96": "0"',
   }
 })
-export class InputComponent implements OnInit, AfterViewInit {
+export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   field: FieldConfig;
   group: FormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
   isRequired = false; // field is required or not
+
+  subscription: Subscription;
 
   // For future use
   // @HostBinding('style.margin-right') marginRight = '1%';
@@ -57,7 +60,7 @@ export class InputComponent implements OnInit, AfterViewInit {
     _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'transparent';
     _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
-      _this.group.get(_this.field.name).valueChanges.subscribe(value => {
+      _this.subscription = _this.group.get(_this.field.name).valueChanges.subscribe(value => {
         _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: value, type: 'change' });
       });
     }
@@ -86,6 +89,12 @@ export class InputComponent implements OnInit, AfterViewInit {
         _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
       }, 500);
     }
+  }
+
+  ngOnDestroy(): void {
+      if (this.subscription != null) {
+        this.subscription.unsubscribe();
+      }
   }
 
   onBlur(): void {

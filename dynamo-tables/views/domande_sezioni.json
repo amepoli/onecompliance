@@ -72,13 +72,23 @@
         "eventTrigger": "press"
       },
       "inputEvents": [
-   
         {
           "eventName": "sezioni_cancella",
-          "actionType": "query",
+          "actionType": "show_message",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.sezioni_domande_delete ($codice_azienda$, $id_sezione$, $id_modello_test$, $id_modello_test_vr$)"
+          "message": {
+            "messageText": "Sei sicuro di voler cancellare questa sezione? (le domande presenti saranno spostate nell'ultima sezione)",
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select id_modello_test from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test_vr=$id_modello_test_vr$"
+            },
+            "actionOnYes": {
+              "actionType": "query",
+              "queryFunct": "select entrasp.sezioni_domande_delete ($codice_azienda$, $id_sezione$, $id_modello_test$, $id_modello_test_vr$);"
+            }
+          },
+          "outputEventWhenComplete": "reLoad_form_domande_sezioni"
         }
       ],
       "readOnly": false,
@@ -157,6 +167,72 @@
       "sameOrigin": false
     }
   ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_sezione",
+      "label": "ID Sezione"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_modello_test",
+      "label": "ID Modello di Test"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_modello_test_vr",
+      "label": "Versione"
+    },
+     {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "ordinamento",
+      "label": "N.",
+      "width": "4%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+        },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Sezione"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "peso",
+      "label": "Peso sezione (%)"
+    }
+  ],
   "orderBy": {
     "key": "ordinamento",
     "order": "ascending"
@@ -187,6 +263,10 @@
       },
       "actionType": "navigate",
       "eventName": "navigate_to_sezioni_detail"
+    },
+    {
+      "actionType": "reload",
+      "eventName": "reLoad_form_domande_sezioni"
     }
   ]
 }

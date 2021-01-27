@@ -14,6 +14,34 @@ const pool = new Pool({
 });
 const request = require('sync-request');
 
+async function overrideTable(son) {
+
+    if (son.inheritsFrom == null) {
+        return son;
+    }
+
+    const DynamoParams = {
+        TableName: 'VIEWS_NAME',
+        Key: {
+            entryKey: son.inheritsFrom
+        }
+    };
+
+    var father = await dynamo.get(DynamoParams).promise();
+
+    father = father.Item;
+    if (father == null) {
+        return son;
+    }
+
+    for (const field in son) {
+        if (son.hasOwnProperty(field) && field != "inheritsFrom" && field != "$schema") {
+            father[field] = son[field];
+        }
+    }
+    return father;
+}
+
 async function tableName2BusinessObject(table_name) {
 
     if (table_name == null) {
@@ -29,7 +57,10 @@ async function tableName2BusinessObject(table_name) {
 
     let entry_params = await dynamo.get(DynamoParams).promise();
 
-    let business_object = entry_params.Item.businessObjectName;
+    // complete table if inherited
+    entry_params = await overrideTable(entry_params.Item);
+
+    let business_object = entry_params.businessObjectName;
 
     if (business_object != null) {
         return business_object;
@@ -124,7 +155,7 @@ function getURLFromServer(mainQuery, company, username, idAnagrafica) {
 
 }
 
-async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, isForm) {
+async function getQuery(entry_name, queryString, keyPrefix, ignorePrefixInSearchKey, keys, search_keys, isForm) {
     let query = queryString;
 
     if (query == null || query === '') {
@@ -138,9 +169,16 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
         }
     };
 
+    console.log('DynamoParams', DynamoParams);
     let entry_params = await dynamo.get(DynamoParams).promise();
 
-    let entry_keys = isForm ? entry_params.Item.form_keys : entry_params.Item.table_keys;
+    console.log('entry_params', entry_params);
+    // complete table if inherited
+    entry_params = await overrideTable(entry_params.Item);
+
+    console.log('entry_params', entry_params);
+
+    let entry_keys = isForm ? entry_params.form_keys : entry_params.table_keys;
 
     let keyTypes = entry_keys.map(k => {
         let dataType = k.subKeys ? k.subKeys : (k.format.dataType ? k.format.dataType : '');
@@ -167,7 +205,10 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
         }
     }
 
-    if (search_keys) {
+    console.log(entry_params);
+    console.log('search_keys: ', entry_params.search_keys);
+
+    if (search_keys && entry_params && entry_params.search_keys) {
         let search_params = entry_params.search_keys;
         let search_types = search_params.map(k => {
             let dataType = k.format.dataType ? k.format.dataType : '';
@@ -179,7 +220,7 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
                 let search_param = search_params.find(s => (s.fieldName === key));
                 if (search_param != null && search_param.queryCond != null) {
                     let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
-                    query = query + comma + keyPrefix + fieldString;
+                    query = query + comma + (!ignorePrefixInSearchKey ? keyPrefix : '') + fieldString;
                     comma = ' AND '; // needed only the first time if no table_keys
                 }
             }
@@ -187,6 +228,9 @@ async function getQuery(entry_name, queryString, keyPrefix, keys, search_keys, i
     }
 
     query = query + ';';
+
+    console.log(query);
+
     return query;
 }
 
@@ -324,7 +368,8 @@ exports.handler = async (event, context) => {
         // read the entry params from DynamoDB view table
         let entry_params = await dynamo.get(viewDynamoParams).promise();
 
-        entry_params = entry_params.Item;
+        // complete table if inherited
+        entry_params = await overrideTable(entry_params.Item);
 
         // retrieve codice_azienda and codice_part from company if needed
 
@@ -339,8 +384,9 @@ exports.handler = async (event, context) => {
         } else if (requestType === 'getReport') {
             reportDynamoParams.Key.name = reportName;
             var data = await dynamo.get(reportDynamoParams).promise();
-            const keyPrefix = data.Item.tableNickname != null ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
-            const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, keys, search_keys, isFormRecord);
+            const keyPrefix = data.Item.tableNickname ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
+            const ignorePrefixInSearchKey = data.Item.ignorePrefixInSearchKey ? true : false;
+            const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, ignorePrefixInSearchKey, keys, search_keys, isFormRecord);
             const mainQuery = { name: reportName, query: queryString };
             const userId = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
 

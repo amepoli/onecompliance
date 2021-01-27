@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener, ViewEncapsulation } from '@angular/core';
+import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 import { FieldConfig } from '../../dynamic-forms/field.interface';
@@ -12,6 +12,7 @@ import { NavigationService, HideAction } from 'app/gorico/services/navigation.se
 import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
 import { HelperService } from 'app/gorico/services/helper.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { Subscription } from 'rxjs';
 
 export interface tableViewParams {
     entryName: string;
@@ -67,7 +68,7 @@ export interface searchViewKey { // as per API specification
 
 
 
-export class TableViewComponent implements OnChanges {
+export class TableViewComponent implements OnChanges, OnDestroy {
 
     private margins = 2; // % of margins, considering left and right
 
@@ -138,6 +139,8 @@ export class TableViewComponent implements OnChanges {
     subMsgCmdTopic = '/toolbar/out/cmd';
     pubMsgCmdTopic = '/toolbar/in/cmd';
 
+    subscriptions: Subscription[] = [];
+
     constructor(
         private backendService: BackendService,
         private authService: AuthService,
@@ -190,6 +193,12 @@ export class TableViewComponent implements OnChanges {
         }
     }
 
+    ngOnDestroy() {
+        this.subscriptions.forEach(element => {
+            element.unsubscribe();
+        });
+    }
+
     public resetView() {
         this.showQuickAdd = false;
         this.showAdvSearch = false;
@@ -203,13 +212,16 @@ export class TableViewComponent implements OnChanges {
         this.searchData = null;
         this.dataSource = null;
 
+        this.searchKeys = null;
+        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
+    
     }
 
     public loadData() {
         let _this = this;
         _this.resetView();
         _this.isLoading = true;
-        _this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.tableData.keys).subscribe(
+        _this.subscriptions.push(_this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.tableData.keys).subscribe(
             result => {
                 if (result.result === 'OK' && result.data != null && result.data.table_keys != null) {
                     const params = result.data;
@@ -274,7 +286,7 @@ export class TableViewComponent implements OnChanges {
                 // Show error snackbar
                 _this._toastService.showErrorToast(error);
             }
-        );
+        ));
         // Calculate table height
         _this.calculateTableHeight();
     }
@@ -282,7 +294,7 @@ export class TableViewComponent implements OnChanges {
     loadTable(search_keys: any): void {
         const _this = this;
         _this.isLoading = true;
-        _this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(), _this.currentKeys, search_keys, false, false, null, false).subscribe(
+        _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, search_keys, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
@@ -297,7 +309,7 @@ export class TableViewComponent implements OnChanges {
                     _this.dataSource.sort = _this.sort;
                     _this.dataSource.paginator = _this.paginator;
                     // triggers any change in displayed datasource, setting the array of primary keys
-                    _this.dataSource.connect().subscribe(source => {
+                    _this.subscriptions.push(_this.dataSource.connect().subscribe(source => {
                         _this.keysArray = source.map(row => {
                             const key_values = {};
                             const primaryKeys = _this.viewKeys.filter(entry => {
@@ -308,7 +320,7 @@ export class TableViewComponent implements OnChanges {
                             }
                             return key_values;
                         });
-                    });
+                    }));
                     _this.isLoading = false;
                 }
                 else {
@@ -321,7 +333,7 @@ export class TableViewComponent implements OnChanges {
             error => {
                 _this.isLoading = false;
                 _this._toastService.showErrorToast(error);
-            });
+            }));
 
         // Calculate table height
         this.calculateTableHeight();

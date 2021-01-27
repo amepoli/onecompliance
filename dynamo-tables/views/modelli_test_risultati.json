@@ -1,6 +1,19 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "modelli_test_risultati",
+  "predefinedQueries": [
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "select entrasp.modelli_test_risultati_righe_insert($codice_azienda$, $id_tipo_risultato$, $id_risultato$);"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "select entrasp.modelli_test_risultati_righe_insert($codice_azienda$, $id_tipo_risultato$, $id_risultato$);"
+    }
+
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -21,12 +34,13 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
       "key": "id_risultato",
       "label": "ID",
-      "newLine": true,
-      "readOnly": true
+      "newLine": false,
+      "readOnly": true,
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -39,8 +53,8 @@
       "key": "descrizione",
       "label": "Descrizione",
       "newLine": false,
-      "readOnly": true,
-      "size": 5.5
+      "readOnly": false,
+      "size": 4.5
     },
     {
       "autoGenerate": false,
@@ -81,14 +95,28 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT cast(codice as numeric) as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CALCOLO_RISULTATO_SINTETICO'",
+        "comboQuery": "SELECT id_tipo_risultato as id, descrizione as name FROM entrasp.tipi_modelli_test_risultati WHERE codice_azienda=$codice_azienda$",
         "options": [],
         "viewType": "combobox"
       },
+      "outputEvent": {
+        "eventName": "change_id_tipo_risultato",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "eventName": "change_id_tipo_risultato",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "relaod_modelli_test_risultati",
+          "queryFunct": "select entrasp.modelli_test_risultati_righe_insert($codice_azienda$, entrasp.evaluate_given_field('id_tipo_risultato', $id_tipo_risultato$), $id_risultato$) as id_tipo_risultato"
+        }
+      ],
       "isHidden": false,
       "isPrimary": false,
       "key": "id_tipo_risultato",
-      "label": "Tipo",
+      "label": "Criterio di analisi",
       "newLine": true,
       "readOnly": false
     },
@@ -176,8 +204,6 @@
       "newLine": false,
       "queryCond": "id_tipo_risultato=$id_tipo_risultato$"
     }
-
-
   ],
   "subTables": [
     {
@@ -225,7 +251,6 @@
       "label": "Sondaggi associati",
       "type": "table"
     }
-
   ],
   "table_keys": [
     {
@@ -256,7 +281,6 @@
       "queryFunct": "entrasp.tipo_modello_test_risultato_descr(id_tipo_risultato, codice_azienda)",
       "label": "Criterio analisi",
       "width": "20%"
-    
     },
     {
       "format": {
@@ -316,6 +340,10 @@
       },
       "actionType": "navigate",
       "eventName": "navigate_to_tipi_modelli_test_risultati"
+    },
+    {
+      "actionType": "reload",
+      "eventName": "relaod_modelli_test_risultati"
     }
   ]
 }

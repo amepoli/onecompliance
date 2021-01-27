@@ -1,4 +1,4 @@
-import { Component, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ViewChild, Input, Output, EventEmitter, AfterViewInit, OnDestroy } from '@angular/core';
 import { default as italiano } from './it.json';
 import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4.js';
 import { BackendService } from '../backend/backend.service';
@@ -7,6 +7,8 @@ import { _MatChipListMixinBase } from '@angular/material';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { ReportService } from 'app/gorico/services/report.service';
+import { Subscription } from 'rxjs';
 
 
 export interface DashboardParams {
@@ -32,12 +34,13 @@ export interface DashboardCellEvent {
 })
 
 
-export class DashboardComponent {
+export class DashboardComponent implements AfterViewInit, OnDestroy {
 
     constructor(private backendService: BackendService,
         private authService: AuthService,
         private _toastService: ToastService,
-        private _console: ConsoleLoggerService) { }
+        private _console: ConsoleLoggerService,
+        private _reportService: ReportService) { }
 
     @ViewChild('pivot1') child: WebDataRocksPivot;
 
@@ -47,6 +50,19 @@ export class DashboardComponent {
 
     @Output() cellClick = new EventEmitter<DashboardCellEvent>();
 
+    subscriptions: Subscription[] = [];
+
+
+    ngAfterViewInit(){
+        this._reportService.getReports('dashboard', null, null, true);
+    }
+
+    ngOnDestroy() {
+        this.subscriptions.forEach(element => {
+            element.unsubscribe();
+        });
+    }
+    
     onPivotReady(pivot: WebDataRocks.Pivot): void {
         this._console.log('pivot table ready');
     }
@@ -65,20 +81,20 @@ export class DashboardComponent {
         const company = _this.authService.getCurrentCompany();
         _this.child.webDataRocks.off('reportcomplete');
 
-        _this.backendService.getView(_this.tableParams.entryName, company, _this.tableParams.keys).subscribe(
+        const subscription = _this.backendService.getView(_this.tableParams.entryName, company, _this.tableParams.keys).subscribe(
             viewResults => {
                 if (viewResults.result === 'OK' && viewResults.data.table_keys != null) {
                     viewResults = viewResults.data;
                     // keep only relevant global keys
                     _this.tableParams.keys = _this.getCurrentKeys(viewResults.table_keys, _this.tableParams.keys);
                     // recover the dashboard labels
-                    _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex, false).subscribe(
+                    const inner_subscription = _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex, false).subscribe(
                         response => {
                             _this._console.log(response);
                             if (response.result === 'OK') {
                                 const labels = response.data;
                                 // now recover the dashboard data
-                                _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, null, false).subscribe(
+                                const inner_subscription2 = _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, null, false).subscribe(
                                     results => {
                                         _this._console.log(results);
                                         if (results.result === 'OK') {
@@ -91,6 +107,7 @@ export class DashboardComponent {
                                             _this._toastService.showErrorToast(results.reason);
                                         }
                                     });
+                                _this.subscriptions.push(inner_subscription2);
                             }
                             else {
                                 // Show error snackbar
@@ -101,12 +118,16 @@ export class DashboardComponent {
                             _this._toastService.showErrorToast("An error occured!", error);
 
                         });
+
+                    _this.subscriptions.push(inner_subscription);
                 }
                 else {
                     // Show error snackbar
                     _this._toastService.showErrorToast(viewResults.reason);
                 }
             });
+
+        _this.subscriptions.push(subscription);
     }
 
     getCurrentKeys(validKeysArray: tableViewKey[], inputKeys: any): any {

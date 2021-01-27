@@ -2,6 +2,23 @@
   "$schema": "../views.schema.json",
   "entryKey": "risposte_previste",
   "origin": "entrasp.risposte_previste",
+  "predefinedQueries": [
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "select entrasp.risposte_previste_ordinamento_update($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $id_risposta_prev$, $ordinamento$)"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "update entrasp.risposte rp set peso= rpr.peso from entrasp.risposte_previste rpr where rp.codice_azienda= rpr.codice_azienda and rp.id_domanda = rpr.id_domanda and rp.id_risposta_prev = rpr.id_risposta_prev and rp.id_modello_test = rpr.id_modello_test and rp.id_modello_test_vr = rpr.id_modello_test_vr and rp.peso!=rpr.peso and rp.id_risposta_prev=$id_risposta_prev$ and rp.id_domanda=$id_domanda$ and rp.codice_azienda=$codice_azienda$"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "select entrasp.risposte_previste_ordinamento_update($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $id_risposta_prev$, $ordinamento$)"
+    }
+  ],
   "orderBy": {
     "key": "ordinamento",
     "order": "ascending"
@@ -70,7 +87,7 @@
       "newLine": false
     },
     {
-      "autoGenerate": false,
+      "autoGenerate": true,
       "format": {
         "viewType": "input",
         "dataType": "number"
@@ -121,20 +138,6 @@
       "isPrimary": false,
       "key": "ordinamento",
       "label": "Ordinamento",
-      "readOnly": false,
-      "newLine": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "punteggio",
-      "label": "Punteggio",
       "readOnly": false,
       "newLine": false,
       "size": 1

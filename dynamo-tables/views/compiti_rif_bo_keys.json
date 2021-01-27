@@ -1,0 +1,225 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "compiti_rif_bo_keys",
+  "origin": "entrasp.compiti_rif_bo_keys",
+  "search_keys": [],
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "type": "main",
+      "queryString": "select *, codice_compito as codice_compito_titolo from entrasp.compiti_rif_bo_keys where codice_azienda=$codice_azienda$"
+    }
+  ],
+  "inputEvents": [
+    {
+      "eventName": "to_compiti_from_keys",
+      "actionType": "navigate",
+      "actionTarget": {
+        "name": "compiti",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          }
+        ]
+      }
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "inputEvents": [
+        {
+          "eventName": "titolo_change",
+          "actionType": "update",
+          "updateFunct": "'£codice_compito_titolo£'",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "outputEvent": {
+        "eventName": "codice_compito_change",
+        "eventTrigger": "select"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "label": "Codice Compito",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_segnalazione",
+      "label": "Data",
+      "newLine": false,
+      "readOnly": true,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT codice_compito AS id, codice_compito||'-'||titolo AS name FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$ order by titolo;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "inputEvents": [
+        {
+          "eventName": "codice_compito_change",
+          "actionType": "update",
+          "updateFunct": "'£codice_compito£'",
+          "condition": "none",
+          "values": [""]
+        }
+      ],
+      "outputEvent": {
+        "eventName": "titolo_change",
+        "eventTrigger": "select"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_compito_titolo",
+      "label": "Titolo",
+      "newLine": false,
+      "sameOrigin": false,
+      "readOnly": false,
+      "size": 6
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "compiti_dettaglio",
+      "label": "Compiti",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "to_compiti_from_keys",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_sondaggio",
+      "label": "id_sondaggio",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_anagrafica",
+      "label": "id_anagrafica",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_somministrazione",
+      "label": "id_somministrazione",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_domanda",
+      "label": "id_domanda",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test",
+      "label": "id_modello_test",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test_vr",
+      "label": "id_modello_test_vr",
+      "newLine": false,
+      "readOnly": true
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "share",
+      "viewType": "form"
+    }
+  ]
+}

@@ -13,8 +13,10 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="209"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="791"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -24,36 +26,142 @@
 	</parameter>
 	<parameter name="id_sondaggio" class="java.math.BigDecimal"/>
 	<queryString>
-		<![CDATA[SELECT s.codice_azienda,s.id_modello_test, s.id_modello_test_vr, mtst.codice AS codice_modello_test, mtst.descrizione AS modello_test, s.id_sondaggio, s.data_esecuzione, ss.id_somministrazione, ss.object_name, ss.object_key, ss.object_description AS oggetto, ss.note, ds.descrizione AS descrizione_sezione, d.id_domanda, d.descrizione AS domanda, COALESCE(r.id_risposta, 0::numeric) AS idrisposta, COALESCE(r.id_risposta_prev, 0::numeric) AS idrispostaprev, COALESCE(rp.id_risposta_prev, 0::numeric) AS rp_idrispostaprev, CASE WHEN r.id_risposta_prev=rp.id_risposta_prev THEN true else false END as checked, rp.risposta as rp_risposta, r.risposta as r_risposta, replace(COALESCE(rp.risposta, r.risposta), ' '::text, '-'::text) AS descrizione_risposta, replace(COALESCE(r.note, 'Nessuna'::text), ' '::text, '-'::text) AS note_risposta, COALESCE(d.punteggio, ds.punteggio_domande_default, mt.punteggio_domande_default) AS punteggio, COALESCE(r.peso, ds.peso_risposte_default, mt.peso_risposte_default) AS peso, COALESCE(r.punteggio_risposta, 0::numeric) AS punt_risposta, COALESCE(prg.codice_progetto, '000'::character varying) AS cod_progetto, replace(prg.titolo::text, ' '::text, '-'::text) AS titolo_prog FROM entrasp.sondaggi s JOIN entrasp.sondaggi_somministrati ss ON ss.codice_azienda::text = s.codice_azienda::text AND ss.id_sondaggio = s.id_sondaggio JOIN entrasp.modelli_test_vr mt ON mt.codice_azienda::text = s.codice_azienda::text AND mt.id_modello_test = s.id_modello_test AND mt.id_modello_test_vr = s.id_modello_test_vr JOIN entrasp.modelli_test mtst ON mt.codice_azienda::text = mtst.codice_azienda::text AND mt.id_modello_test = mtst.id_modello_test LEFT JOIN entrasp.domande d ON mt.codice_azienda::text = d.codice_azienda::text AND mt.id_modello_test = d.id_modello_test AND mt.id_modello_test_vr = d.id_modello_test_vr LEFT JOIN entrasp.domande_sezioni ds ON d.codice_azienda::text = ds.codice_azienda::text AND d.id_modello_test = ds.id_modello_test AND d.id_modello_test_vr = ds.id_modello_test_vr AND d.id_sezione = ds.id_sezione LEFT JOIN entrasp.risposte r ON d.codice_azienda::text = r.codice_azienda::text AND d.id_modello_test = r.id_modello_test AND d.id_modello_test_vr = r.id_modello_test_vr AND d.id_domanda = r.id_domanda AND ss.id_sondaggio = r.id_sondaggio AND ss.id_somministrazione = r.id_somministrazione LEFT JOIN entrasp.risposte_previste rp ON d.codice_azienda::text = rp.codice_azienda::text AND d.id_modello_test = rp.id_modello_test AND d.id_modello_test_vr = rp.id_modello_test_vr AND d.id_domanda = rp.id_domanda LEFT JOIN entrasp.progetti_fasi pf ON s.id_sondaggio = pf.id_sondaggio AND s.codice_azienda::text = pf.codice_azienda::text LEFT JOIN entrasp.progetti prg ON pf.id_progetto = prg.id_progetto AND pf.codice_azienda::text = prg.codice_azienda::text where d.codice_azienda=$P{codice_azienda} and ss.id_sondaggio=$P{id_sondaggio} ORDER BY s.codice_azienda, s.id_sondaggio, ds.ordinamento, d.ordinamento,ss.object_key;]]>
+		<![CDATA[SELECT d.note as note_domanda,s.codice_azienda,s.id_modello_test, s.id_modello_test_vr, mtst.codice AS codice_modello_test, mtst.descrizione AS modello_test, s.id_sondaggio, s.data_esecuzione, ss.id_somministrazione, ss.object_name, ss.object_key, ss.object_description AS oggetto, ss.note, ds.descrizione AS descrizione_sezione, d.id_domanda, d.descrizione AS domanda, COALESCE(r.id_risposta, 0::numeric) AS idrisposta, COALESCE(r.id_risposta_prev, 0::numeric) AS idrispostaprev, COALESCE(rp.id_risposta_prev, 0::numeric) AS rp_idrispostaprev, CASE WHEN r.id_risposta_prev=rp.id_risposta_prev THEN true else false END as checked, rp.risposta as rp_risposta, r.risposta as r_risposta, replace(COALESCE(rp.risposta, r.risposta), ' '::text, '-'::text) AS descrizione_risposta, replace(COALESCE(r.note, 'Nessuna'::text), ' '::text, '-'::text) AS note_risposta, COALESCE(d.punteggio, ds.punteggio_domande_default, mt.punteggio_domande_default) AS punteggio, COALESCE(r.peso, ds.peso_risposte_default, mt.peso_risposte_default) AS peso, COALESCE(r.punteggio_risposta, 0::numeric) AS punt_risposta, COALESCE(prg.codice_progetto, '000'::character varying) AS cod_progetto, replace(prg.titolo::text, ' '::text, '-'::text) AS titolo_prog FROM entrasp.sondaggi s JOIN entrasp.sondaggi_somministrati ss ON ss.codice_azienda::text = s.codice_azienda::text AND ss.id_sondaggio = s.id_sondaggio JOIN entrasp.modelli_test_vr mt ON mt.codice_azienda::text = s.codice_azienda::text AND mt.id_modello_test = s.id_modello_test AND mt.id_modello_test_vr = s.id_modello_test_vr JOIN entrasp.modelli_test mtst ON mt.codice_azienda::text = mtst.codice_azienda::text AND mt.id_modello_test = mtst.id_modello_test LEFT JOIN entrasp.domande d ON mt.codice_azienda::text = d.codice_azienda::text AND mt.id_modello_test = d.id_modello_test AND mt.id_modello_test_vr = d.id_modello_test_vr LEFT JOIN entrasp.domande_sezioni ds ON d.codice_azienda::text = ds.codice_azienda::text AND d.id_modello_test = ds.id_modello_test AND d.id_modello_test_vr = ds.id_modello_test_vr AND d.id_sezione = ds.id_sezione LEFT JOIN entrasp.risposte r ON d.codice_azienda::text = r.codice_azienda::text AND d.id_modello_test = r.id_modello_test AND d.id_modello_test_vr = r.id_modello_test_vr AND d.id_domanda = r.id_domanda AND ss.id_sondaggio = r.id_sondaggio AND ss.id_somministrazione = r.id_somministrazione LEFT JOIN entrasp.risposte_previste rp ON d.codice_azienda::text = rp.codice_azienda::text AND d.id_modello_test = rp.id_modello_test AND d.id_modello_test_vr = rp.id_modello_test_vr AND d.id_domanda = rp.id_domanda LEFT JOIN entrasp.progetti_fasi pf ON s.id_sondaggio = pf.id_sondaggio AND s.codice_azienda::text = pf.codice_azienda::text LEFT JOIN entrasp.progetti prg ON pf.id_progetto = prg.id_progetto AND pf.codice_azienda::text = prg.codice_azienda::text where d.codice_azienda=$P{codice_azienda} and ss.id_sondaggio=$P{id_sondaggio} and entrasp.domanda_active($P{codice_azienda}, d.id_modello_test,d.id_modello_test_vr,d.id_domanda,ss.id_somministrazione)=1 ORDER BY s.codice_azienda, s.id_sondaggio, ds.ordinamento, d.ordinamento,ss.object_key;]]>
 	</queryString>
-	<field name="codice_azienda" class="java.lang.String"/>
-	<field name="id_modello_test" class="java.math.BigDecimal"/>
-	<field name="id_modello_test_vr" class="java.math.BigDecimal"/>
-	<field name="codice_modello_test" class="java.lang.String"/>
-	<field name="modello_test" class="java.lang.String"/>
-	<field name="id_sondaggio" class="java.math.BigDecimal"/>
-	<field name="data_esecuzione" class="java.sql.Date"/>
-	<field name="id_somministrazione" class="java.math.BigDecimal"/>
-	<field name="object_name" class="java.lang.String"/>
-	<field name="object_key" class="java.lang.String"/>
-	<field name="oggetto" class="java.lang.String"/>
-	<field name="note" class="java.lang.String"/>
-	<field name="descrizione_sezione" class="java.lang.String"/>
-	<field name="id_domanda" class="java.math.BigDecimal"/>
-	<field name="domanda" class="java.lang.String"/>
-	<field name="idrisposta" class="java.math.BigDecimal"/>
-	<field name="idrispostaprev" class="java.math.BigDecimal"/>
-	<field name="rp_idrispostaprev" class="java.math.BigDecimal"/>
-	<field name="checked" class="java.lang.Boolean"/>
-	<field name="descrizione_risposta" class="java.lang.String"/>
-	<field name="note_risposta" class="java.lang.String"/>
-	<field name="punteggio" class="java.math.BigDecimal"/>
-	<field name="peso" class="java.math.BigDecimal"/>
-	<field name="rp_risposta" class="java.lang.String"/>
-	<field name="r_risposta" class="java.lang.String"/>
-	<field name="punt_risposta" class="java.math.BigDecimal"/>
-	<field name="cod_progetto" class="java.lang.String"/>
-	<field name="titolo_prog" class="java.lang.String"/>
+	<field name="note_domanda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="note_domanda"/>
+		<property name="com.jaspersoft.studio.field.label" value="note_domanda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="domande"/>
+	</field>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="id_modello_test" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_modello_test"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_modello_test"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="id_modello_test_vr" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_modello_test_vr"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_modello_test_vr"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="codice_modello_test" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_modello_test"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_modello_test"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="modelli_test"/>
+	</field>
+	<field name="modello_test" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="modello_test"/>
+		<property name="com.jaspersoft.studio.field.label" value="modello_test"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="modelli_test"/>
+	</field>
+	<field name="id_sondaggio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="data_esecuzione" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="data_esecuzione"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_esecuzione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="id_somministrazione" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_somministrazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_somministrazione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi_somministrati"/>
+	</field>
+	<field name="object_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="object_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="object_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi_somministrati"/>
+	</field>
+	<field name="object_key" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="object_key"/>
+		<property name="com.jaspersoft.studio.field.label" value="object_key"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi_somministrati"/>
+	</field>
+	<field name="oggetto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="oggetto"/>
+		<property name="com.jaspersoft.studio.field.label" value="oggetto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi_somministrati"/>
+	</field>
+	<field name="note" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="note"/>
+		<property name="com.jaspersoft.studio.field.label" value="note"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi_somministrati"/>
+	</field>
+	<field name="descrizione_sezione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione_sezione"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione_sezione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="domande_sezioni"/>
+	</field>
+	<field name="id_domanda" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_domanda"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_domanda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="domande"/>
+	</field>
+	<field name="domanda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="domanda"/>
+		<property name="com.jaspersoft.studio.field.label" value="domanda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="domande"/>
+	</field>
+	<field name="idrisposta" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="idrisposta"/>
+		<property name="com.jaspersoft.studio.field.label" value="idrisposta"/>
+	</field>
+	<field name="idrispostaprev" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="idrispostaprev"/>
+		<property name="com.jaspersoft.studio.field.label" value="idrispostaprev"/>
+	</field>
+	<field name="rp_idrispostaprev" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="rp_idrispostaprev"/>
+		<property name="com.jaspersoft.studio.field.label" value="rp_idrispostaprev"/>
+	</field>
+	<field name="checked" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="checked"/>
+		<property name="com.jaspersoft.studio.field.label" value="checked"/>
+	</field>
+	<field name="rp_risposta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="rp_risposta"/>
+		<property name="com.jaspersoft.studio.field.label" value="rp_risposta"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="risposte_previste"/>
+	</field>
+	<field name="r_risposta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="r_risposta"/>
+		<property name="com.jaspersoft.studio.field.label" value="r_risposta"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="risposte"/>
+	</field>
+	<field name="descrizione_risposta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione_risposta"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione_risposta"/>
+	</field>
+	<field name="note_risposta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="note_risposta"/>
+		<property name="com.jaspersoft.studio.field.label" value="note_risposta"/>
+	</field>
+	<field name="punteggio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="punteggio"/>
+		<property name="com.jaspersoft.studio.field.label" value="punteggio"/>
+	</field>
+	<field name="peso" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="peso"/>
+		<property name="com.jaspersoft.studio.field.label" value="peso"/>
+	</field>
+	<field name="punt_risposta" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="punt_risposta"/>
+		<property name="com.jaspersoft.studio.field.label" value="punt_risposta"/>
+	</field>
+	<field name="cod_progetto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cod_progetto"/>
+		<property name="com.jaspersoft.studio.field.label" value="cod_progetto"/>
+	</field>
+	<field name="titolo_prog" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="titolo_prog"/>
+		<property name="com.jaspersoft.studio.field.label" value="titolo_prog"/>
+	</field>
 	<sortField name="id_somministrazione"/>
 	<group name="Gruppo1">
 		<groupExpression><![CDATA[$F{id_somministrazione}]]></groupExpression>
@@ -74,50 +182,11 @@
 				</textField>
 			</band>
 		</groupHeader>
-		<groupFooter>
-			<band height="30">
-				<line>
-					<reportElement positionType="Float" x="0" y="28" width="507" height="1" uuid="c9e3dd8e-3f81-45d2-b77a-e68a77cba118">
-						<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					</reportElement>
-				</line>
-				<staticText>
-					<reportElement mode="Opaque" x="0" y="3" width="84" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="5dc64634-089f-4077-a6c3-e044b3a59638">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					</reportElement>
-					<box>
-						<pen lineColor="#000000"/>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle"/>
-					<text><![CDATA[Note:]]></text>
-				</staticText>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement x="84" y="3" width="423" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="99ecc991-c7c1-4c55-9845-edf448282053">
-						<property name="com.jaspersoft.studio.unit.height" value="px"/>
-						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-					</reportElement>
-					<box>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement verticalAlignment="Middle">
-						<paragraph leftIndent="5"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{note_risposta}]]></textFieldExpression>
-				</textField>
-			</band>
-		</groupFooter>
 	</group>
 	<group name="Gruppo2">
 		<groupExpression><![CDATA[$F{id_domanda}]]></groupExpression>
 		<groupHeader>
-			<band height="24">
+			<band height="42">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				<textField textAdjust="StretchHeight">
 					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="0" y="2" width="507" height="17" isRemoveLineWhenBlank="true" printWhenGroupChanges="Gruppo2" backcolor="#C0F0FC" uuid="938fd0cf-77df-4a53-955e-81938c30b373">
@@ -137,14 +206,66 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{domanda}]]></textFieldExpression>
 				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="10" y="19" width="497" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="119170af-3b12-41a9-b7c2-d2ea5895cf19">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font isItalic="true"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{note_domanda}]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupHeader>
+		<groupFooter>
+			<band height="45">
+				<staticText>
+					<reportElement positionType="Float" mode="Opaque" x="24" y="0" width="483" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="5d364230-d7f1-43b6-b601-920b5c7888a3">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<printWhenExpression><![CDATA[$F{note_risposta}!=null]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<text><![CDATA[Note risposta:]]></text>
+				</staticText>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="24" y="16" width="482" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="c125bcc7-5d41-45fe-8555-6a5fed56f29d">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{note_risposta}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
 	</group>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="18" splitType="Stretch">
+		<band height="21" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="53" y="2" width="416" height="8" uuid="d9aadd20-6068-42d7-988f-7b2f13cd737c"/>
