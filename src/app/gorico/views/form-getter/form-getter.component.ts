@@ -234,7 +234,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
 
     public resetPagination(){
-        if(this.filteredFormData && this.filteredFormData.length){
+        if (this.filteredFormData && this.filteredFormData.length){
             this.pagination = {
                 curPage: 1,
                 curRecords: [],
@@ -252,13 +252,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
 
     public updatePagination(pageInc: number = 0){
-        let curPage = (this.pagination.curPage+pageInc > 0 && this.pagination.curPage+pageInc <= this.pagination.totalPages)? this.pagination.curPage+pageInc: this.pagination.curPage;
+        let curPage = (this.pagination.curPage + pageInc > 0 && this.pagination.curPage + pageInc <= this.pagination.totalPages) ? this.pagination.curPage + pageInc : this.pagination.curPage;
 
-        let start = (curPage-1) * this.recordsPerPage;
+        let start = (curPage - 1) * this.recordsPerPage;
         let end = Math.min( this.filteredFormData.length, start + this.recordsPerPage);
 
         let curRecords = [];
-        for(let i = start; i < end; i++){
+        for (let i = start; i < end; i++){
             curRecords = [...curRecords, i];
         }
         
@@ -270,7 +270,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     public runOnReloadEvents() {
         if (this.outputEvents != null && this.outputEvents.length) {
-            for (let i=0; i < this.outputEvents.length; i++) {
+            for (let i = 0; i < this.outputEvents.length; i++) {
                 const outputEvent = this.outputEvents[i];
                 if (!outputEvent.eventTrigger || outputEvent.eventTrigger === 'onReload') {
                     this.pubsubService.publishEvent(outputEvent.eventName, { origin: 'table', index: 0, data: this.filteredFormData, type: 'page' });
@@ -281,7 +281,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     public runOnSaveEvents() {
         if (this.outputEvents != null && this.outputEvents.length) {
-            for (let i=0; i < this.outputEvents.length; i++) {
+            for (let i = 0; i < this.outputEvents.length; i++) {
                 const outputEvent = this.outputEvents[i];
                 if (!outputEvent.eventTrigger || outputEvent.eventTrigger === 'onSave') {
                     this.pubsubService.publishEvent(outputEvent.eventName, { origin: 'table', index: 0, data: this.filteredFormData, type: 'page' });
@@ -348,11 +348,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     // Get View properties if exist
                     _this.formRowProperties = params.formRowProperties;
                     if (_this.formRowProperties && _this.formRowProperties.length) {
-                        for (let i=0; i < _this.formRowProperties.length; i++) {
+                        for (let i = 0; i < _this.formRowProperties.length; i++) {
                             const formRowProperty = _this.formRowProperties[i];
                             // Subscribe to all the input Events
                             if (formRowProperty.inputEvents && formRowProperty.inputEvents.length) {
-                                for (let j=0; j < formRowProperty.inputEvents.length; j++) {
+                                for (let j = 0; j < formRowProperty.inputEvents.length; j++) {
                                     const event = formRowProperty.inputEvents[j];
                                     const subcription = _this.pubsubService.subscribe(event.eventName,
                                         value => {
@@ -369,7 +369,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     // handle input events
                     if (reloadEvents) {
                         if (params.inputEvents != null) {  // subscribe to global table events
-                            for (let i=0; i < params.inputEvents.length; i++) {
+                            for (let i = 0; i < params.inputEvents.length; i++) {
                                 const event = params.inputEvents[i];
                                 const subcription = _this.pubsubService.subscribe(event.eventName,
                                     value => {
@@ -424,11 +424,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     subscribeFieldInputEvents(viewKeys: formViewKey[]): void {
         const _this = this;
-        for (let i=0; i < viewKeys.length; i++) { // subscribe to single field events
+        for (let i = 0; i < viewKeys.length; i++) { // subscribe to single field events
             const key = viewKeys[i];
             if (key.inputEvents != null) {
-                for (let i=0; i < key.inputEvents.length; i++) {
-                    const event = key.inputEvents[i];
+                for (let j = 0; j < key.inputEvents.length; j++) {
+                    const event = key.inputEvents[j];
                     const subscription = _this.pubsubService.subscribe(event.eventName, value => {
                         _this.eventCallback(event, value, key.key);
                     });
@@ -550,7 +550,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     result = result.data;
                     // add passed keys, if any - useful to valorize father's keys in subtables
                     if (default_keys != null) {
-                        for (let i=0; i < result.length; i++) {
+                        for (let i = 0; i < result.length; i++) {
                             let element = result[i];
                             element = Object.assign(element, default_keys);
                         }
@@ -564,7 +564,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     _this._console.log('filteredFormData[0]', filteredFormData[0]);
                     
-                    if(_this.filteredFormData && _this.filteredFormData.length){
+                    if (_this.filteredFormData && _this.filteredFormData.length){
                         _this.filteredFormData.unshift(filteredFormData[0]);
                         _this.quickAddData.unshift(true);
                     }
@@ -608,9 +608,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // field is of type '(key1,key2)', get the array
         try {
             const subKeysArray = commaSeparatedValues.split('(')[1].split(')')[0].split(',');
-            subKeys.forEach((subKey, sub_index) => {
-                outputObject[subKey.key] = subKey.dataType === 'number' ? parseInt(subKeysArray[sub_index]) : subKeysArray[sub_index];
-            });
+            for (let i = 0; i < subKeys.length; i++) {
+                const subKey = subKeys[i];
+                outputObject[subKey.key] = subKey.dataType === 'number' ? parseInt(subKeysArray[i], 10) : subKeysArray[i];
+            }
         } catch (e) {
             this._console.log('something wrong with subkeys');
         }
@@ -620,14 +621,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     private getFieldValues(formKeys: formViewKey[], values: any, index: number): FieldConfig[] {
         const _this = this;
         const fieldValues = new Array();
-        for (let i=0; i < formKeys.length; i++) {
+        for (let i = 0; i < formKeys.length; i++) {
             const field = formKeys[i];
             if (field != null) {
                 const element = values[index][field.key];
                 // process subkeys of combos/radiobuttons/etc.
                 if (field.subKeys != null && field.subKeys.length > 0) {
                     if (element.options != null) {
-                        for (let j=0; j < element.options.length; j++) {
+                        for (let j = 0; j < element.options.length; j++) {
                             const option = element.options[j];
                             if (option.id != null) {
                                 option.id = _this.getSubKeysObject(field.subKeys, option.id);
@@ -820,14 +821,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             // Check if formRowProperties contains keys 
             if (event.keys != null) {
                 // Check each form table line to see if the condition is met
-                for (let i=0; i < _this.filteredFormData.length; i++) {
+                for (let i = 0; i < _this.filteredFormData.length; i++) {
                     const formKeys = _this.filteredFormData[i];
 
                     let matchingKeys = true;
                     let matchingValues = true;
 
                     // Run for each key
-                    for (let j=0; j < event.keys.length; j++) {
+                    for (let j = 0; j < event.keys.length; j++) {
                         const key = event.keys[j];
 
                         let senderValue;
@@ -839,11 +840,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             senderValue = value.data;
                             if (senderValue != null && Array.isArray(senderValue)) {  // check if it is an array (checkbox group)
                                 matchingValues = false;
-                                senderValue.forEach(element => { // at least one array value matches
+                                for (let k = 0; k < senderValue.length; k++) { // at least one array value matches
+                                    const element = senderValue[k];
                                      if (element == receiverValue) {
                                          matchingValues = true;
                                      }
-                                });
+                                }
                             } else if (senderValue == null || senderValue != receiverValue) {
                                 matchingValues = false;
                             }
@@ -933,21 +935,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
         } else if (event.actionType === 'navigate' && conditionMet) {
             const formLine = _this.filteredFormData[value.index];
-            var navigationKeys = {};
-            formLine.forEach(key => navigationKeys[key.name] = key.value);
+            const navigationKeys = {};
+            for (let j = 0; j < formLine.length; j++) {
+                const key = formLine[j];
+                navigationKeys[key.name] = key.value;
+            }
             // formLine.reduce((outputKeys, key) => {
             //     outputKeys[key.name] = key.value;
             //     return outputKeys;
             // }, {});
-            var filteredKeys = {};
+            let filteredKeys = {};
             if (event.actionTarget.keymap != null && event.actionTarget.keymap.length) { // explicit key map between tables
-                for (let i=0; i < event.actionTarget.keymap.length; i++) {
+                for (let i = 0; i < event.actionTarget.keymap.length; i++) {
                     const element = event.actionTarget.keymap[i];
                     if (element.source != null && element.destination != null) {
 
                         // If we came from show_message event, the keys must be in value.data
-                        if(typeof(value.data) === 'object' && value.data['keys'] && value.data['keys'][element.source]){
-                            filteredKeys[element.destination] = value.data['keys'][element.source] != null ? value.data['keys'][element.source]: null;
+                        if (typeof(value.data) === 'object' && value.data['keys'] && value.data['keys'][element.source]){
+                            filteredKeys[element.destination] = value.data['keys'][element.source] != null ? value.data['keys'][element.source] : null;
                         }
                         // Check if event contains values in case of manually generated event
                         else if (event.values != null) {
@@ -1045,7 +1050,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                         if (el != null && result[0][k] != null) {
                                             // If combobox, set the value using the options available
                                             // so cannot add directly
-                                            if(combobox){
+                                            if (combobox){
                                                 combobox.setValue(result[0][k]);
                                             }
                                             else{
@@ -1201,8 +1206,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             result => {
                                 if (result.result === 'OK') {
                                     _this._console.table(result);
-                                    if(result.data ){
-                                        if(isArray(result.data)){
+                                    if (result.data ){
+                                        if (isArray(result.data)){
                                             // I am hoping that the result contains keys for the next event
                                             value.data = {};
                                             value.data['keys'] = result.data[0];
@@ -1212,7 +1217,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                         }
                                     }
                                     
-                                    if(event.successMessage){
+                                    if (event.successMessage){
                                         _this._toastService.showSuccessToast(event.successMessage);
                                     }
                                     else{

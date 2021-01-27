@@ -158,21 +158,22 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
   isFormValid() {
     let isValid = true;
     if (this.formGetter.formArray && this.formGetter.formArray.length) {
-      this.formGetter.formArray.forEach(form => {
+      for (let i = 0; i < this.formGetter.formArray.length; i++) {
+          const form = this.formGetter.formArray[i];
         // Old method in which we check the whole form at once
         // This is not good because it also checks invisible fields
         // if (!form.form.valid) {
         //     isValid = false;
         // }
-
-        form.fields.forEach(field => {
-          if (field.isVisible) {
-            if (form.form.get(field.name) && !form.form.get(field.name).valid) {
-              form.form.get(field.name).markAsTouched({ onlySelf: false });
-              isValid = false;
+        for (let j = 0; j < form.fields.length; j++) {
+            const field = form.fields[j];
+            if (field.isVisible) {
+                if (form.form.get(field.name) && !form.form.get(field.name).valid) {
+                    form.form.get(field.name).markAsTouched({ onlySelf: false });
+                    isValid = false;
+                }
             }
-          }
-        });
+        }
 
         // if (!isValid) {
         //     // Highlight all empty required fields
@@ -181,18 +182,19 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
         //         control.markAsTouched({ onlySelf: false });
         //     });
         // }
-      });
+      }
     }
 
     return isValid;
   }
 
   saveChanges(): void {
-    let _this = this;
+    const _this = this;
     if (_this.isFormValid()) {
       const values = _this.formGetter.formArray.map(form => form.form.value);
       // process the booleans (1/0 instead of true/false)
-      values.forEach(entry => {
+      for (let i = 0; i < values.length; i++) {
+        const entry = values[i];
         for (const value in entry) {
           if (entry.hasOwnProperty(value)) {
             let element = entry[value];
@@ -216,7 +218,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
             }
           }
         }
-      });
+      }
       _this.subscriptions.push(_this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.tableData.keys), _this.tableData.keys, values).subscribe(   // backend expects an array of data
         result => {
           _this._console.log(result);
