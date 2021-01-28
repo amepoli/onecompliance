@@ -164,6 +164,8 @@ export class AuthService {
       return;
     }
     _this.currentCompany = company;
+    // Save company to local storage
+    _this.setLastCompany(_this.currentCompany);
     // reset the left menu
     _this.navigationService.setCurrentNavigation('main');
     _this.navigationService.unregister('usermenu');
@@ -203,7 +205,18 @@ export class AuthService {
           }
           _this.userinfo.next(ud.userdata); // signal a value change to subscribers
           if (_this.currentCompany == null) {  // do not get default company if reloading because of user chose a different company
-            _this.currentCompany = ud.userdata.companies[0];
+            // Check if last company is stored in local storage
+            let lastCompany: string = _this.getLastCompany();
+            if(lastCompany && ud.userdata.companies.includes(lastCompany)){
+              // Set last company from local storage
+              _this.currentCompany = lastCompany;
+            }
+            else{
+              // Select first compnay from companies list 
+              _this.currentCompany = ud.userdata.companies[0];
+              // Save company to local storage
+              _this.setLastCompany(_this.currentCompany);
+            }
           }
           _this._console.log(ud.userdata);
 
@@ -280,6 +293,18 @@ export class AuthService {
       // console.log(localStorage.key(i), localStorage.getItem(localStorage.key(i)));
     });
     return result;
+  }
+
+  /** Check if local storage contains company */
+  public getLastCompany(): string {
+    let lastCompany: string = localStorage.getItem('lastCompany');
+    console.log('lastCompany', lastCompany);
+    return lastCompany;
+  }
+
+  /** Set last Company in local storage */
+  public setLastCompany(lastCompany: string) {
+    localStorage.setItem('lastCompany', lastCompany);
   }
 
   /** Load Session */
