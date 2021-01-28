@@ -17,7 +17,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select distinct ss.*, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and snd.id_modello_test_vr=mt.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
+      "queryString": "select distinct ss.*, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and snd.id_modello_test_vr=mt.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
     },
     {
       "operation": "selectForm",
@@ -37,19 +37,9 @@
     {
       "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "select id_somministrazione as id_somm_prec from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione_succ=$id_somministrazione$;"
-    },
-    {
-      "operation": "selectForm",
-      "type": "postProcessing",
       "queryString": "select data_prevista from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
-    },
-    {
-      "operation": "selectForm",
-      "type": "postProcessing",
-      "queryString": "select id_sondaggio as id_sondaggio_prec from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_succ=$id_sondaggio$"
     }
-  ],
+   ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -182,83 +172,7 @@
       "sameOrigin": false,
       "size": 1.3
     },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "somm_successiva_k",
-      "label": "Somm. Successiva",
-      "attributeFuncts": [
-        {
-          "attributeType": "style",
-          "styleAttribute": "background_color",
-          "queryString": "select case when id_somministrazione_succ is null then '#698EC2' else '#25599C' end as label from entrasp.sondaggi_somministrati where id_somministrazione=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
-        },
-        {
-          "attributeType": "style",
-          "styleAttribute": "font_color",
-          "queryString": "select case when id_somministrazione_succ is null then '#5b635a' else 'white' end as label from entrasp.sondaggi_somministrati where id_somministrazione=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
-        },
-        {
-          "attributeType": "readOnly",
-          "queryString": "select case when id_somministrazione_succ is null then true else false end as label from entrasp.sondaggi_somministrati where id_somministrazione=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
-        }
-      ],
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "to_somm_successiva",
-        "eventTrigger": "press"
-      },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1.2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "somm_precedente_k",
-      "label": "Somm Precedente",
-      "attributeFuncts": [
-        {
-          "attributeType": "style",
-          "styleAttribute": "background_color",
-          "queryString": "select case when count(id_somministrazione)=0 then '#698EC2' else '#25599C' end as label from entrasp.sondaggi_somministrati where id_somministrazione_succ=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
-        },
-        {
-          "attributeType": "style",
-          "styleAttribute": "font_color",
-          "queryString": "select case when count(id_somministrazione)=0 then '#5b635a' else 'white' end as label from entrasp.sondaggi_somministrati where id_somministrazione_succ=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
-        },
-        {
-          "attributeType": "readOnly",
-          "queryString": "select case when count(id_somministrazione)=0 then true else false end as label from entrasp.sondaggi_somministrati where id_somministrazione_succ=$id_somministrazione$ and codice_azienda=$codice_azienda$ limit 1;"
-        }
-      ],
-      "newLine": true,
-      "outputEvent": {
-        "eventName": "to_somm_precedente",
-        "eventTrigger": "press"
-      },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1.2
-    },
-    {
+   {
       "autoGenerate": false,
       "format": {
         "dataType": "date",
@@ -271,7 +185,7 @@
       "newLine": false,
       "sameOrigin": false,
       "readOnly": true,
-      "size": 1.5
+      "size": 1.2
     },
     {
       "autoGenerate": false,
@@ -283,9 +197,9 @@
       "isPrimary": false,
       "key": "data_esecuzione",
       "label": "Data esecuzione",
-      "newLine": false,
+      "newLine": true,
       "readOnly": false,
-      "size": 1.5
+      "size": 1.2
     },
     {
       "autoGenerate": false,
@@ -364,56 +278,7 @@
       },
       "readOnly": false,
       "sameOrigin": false,
-      "size": 2.6
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_somministrazione_succ",
-      "label": "ID Somm Succ.",
-      "newLine": false,
-      "size": 1.2,
-      "readOnly": true,
-      "inputEvents": [
-        {
-          "eventName": "close_associated_sondaggio_button",
-          "condition": "none",
-          "values": [],
-          "actionType": "query",
-          "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
-          "outputEventWhenComplete": "sondaggi_somministrati_reload"
-        },
-        {
-          "eventName": "close_associated_sondaggio_combo",
-          "condition": "equalTo",
-          "values": [
-            "C"
-          ],
-          "actionType": "query",
-          "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
-          "outputEventWhenComplete": "sondaggi_somministrati_reload"
-        }
-      ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_somm_prec",
-      "label": "ID Somm. Prec.",
-      "sameOrigin": false,
-      "newLine": true,
-      "size": 1.2,
-      "readOnly": true
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -427,7 +292,8 @@
       "key": "titolo_modello_test",
       "label": "Titolo Modello Test",
       "newLine": true,
-      "readOnly": true
+      "readOnly": true,
+      "size": 4
     },
     {
       "autoGenerate": false,
@@ -481,8 +347,68 @@
         "eventTrigger": "change"
       },
       "label": "Somministrazione su/di",
-      "newLine": true,
-      "readOnly": false
+      "newLine": false,
+      "readOnly": false,
+      "size": 4.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "select ss2.id_somministrazione as id, ss2.id_somministrazione||'-'||snd2.data_esecuzione as name from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join  entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join  entrasp.sondaggi snd2 on snd2.codice_azienda=mt.codice_azienda and snd2.id_modello_test=mt.id_modello_test inner join  entrasp.sondaggi_somministrati ss2 on  ss2.codice_azienda=snd2.codice_azienda and ss2.id_sondaggio=snd2.id_sondaggio where ss2.object_key=ss.object_key and ss.id_somministrazione=$id_somministrazione$ and ss.codice_azienda=$codice_azienda$ and ss2.id_somministrazione!=$id_somministrazione$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "sameOrigin": false,
+      "key": "id_somm_to_copy_from",
+      "label": "Copia da somministrazione",
+      "newLine": false,
+      "readOnly": false,
+      "size": 3.25
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "sondaggi_from_sondaggi_somministrati",
+      "label": "Copia",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "change_id_somm_to_copy_from",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "change_id_somm_to_copy_from",
+          "actionType": "show_message",
+          "condition": "none",
+          "values": [],
+          "message": {
+              "messageText": "Sei sicuro di voler copiare o sovrascrivere le risposte copiandole dalla precedente somministrazione? (Saranno cancellate tutte le risposte attualmente date)",
+              "actionOnNo": {
+                  "actionType": "query",
+                  "queryFunct": "select 1"
+              },
+              "actionOnYes": {
+                  "actionType": "query",
+                  "queryFunct": "select entrasp.accoda_risposte_somministrazione($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$, $id_somm_to_copy_from$);"
+                  }
+          },
+          "outputEventWhenComplete": "aggiorna_id_sondaggio"
+      }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1.5
     },
     {
       "autoGenerate": false,
@@ -967,7 +893,27 @@
       ],
       "label": "Segnalazioni associate",
       "type": "tableForm"
+    },
+    {
+      "entryKey": "sondaggi_somministrati_sub_of_sondaggi_somministrati",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        },
+        {
+          "parent": "object_key",
+          "son": "object_key"
+        }
+      ],
+      "label": "Somministrazioni collegate",
+      "type": "table"
     }
+   
   ],
   "table_keys": [
     {
@@ -1050,6 +996,14 @@
       "key": "object_description",
       "label": "Oggetto di Verifica",
       "width": "16%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "object_key"
     },
     {
       "format": {
@@ -1224,6 +1178,15 @@
       "isPrimary": false,
       "key": "codice_part",
       "label": "codice_part"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test",
+      "label": "id_modello_test"
     }
   ],
   "inputEvents": [
@@ -1292,50 +1255,6 @@
       },
       "actionType": "navigate",
       "eventName": "to_modello_test_from_sondaggi_somministrati"
-    },
-    {
-      "actionTarget": {
-        "name": "sondaggi_somministrati",
-        "type": "form",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_somministrazione_succ",
-            "destination": "id_somministrazione"
-          },
-          {
-            "source": "id_sondaggio_succ",
-            "destination": "id_sondaggio"
-          }
-        ]
-      },
-      "actionType": "navigate",
-      "eventName": "to_somm_successiva"
-    },
-    {
-      "actionTarget": {
-        "name": "sondaggi_somministrati",
-        "type": "form",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_somm_prec",
-            "destination": "id_somministrazione"
-          },
-          {
-            "source": "id_sondaggio_prec",
-            "destination": "id_sondaggio"
-          }
-        ]
-      },
-      "actionType": "navigate",
-      "eventName": "to_somm_precedente"
     }
   ],
   "hideActions": [
