@@ -17,7 +17,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select distinct ss.*, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mt.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and snd.id_modello_test_vr=mt.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
+      "queryString": "select distinct ss.*, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
     },
     {
       "operation": "selectForm",
@@ -37,8 +37,9 @@
     {
       "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "select data_prevista from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+      "queryString": "SELECT mdt.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
     }
+
    ],
   "form_keys": [
     {
@@ -123,6 +124,26 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_sondaggio",
+      "inputEvents": [
+        {
+          "eventName": "close_associated_sondaggio_button",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
+          "outputEventWhenComplete": "sondaggi_somministrati_reload"
+        },
+        {
+          "eventName": "close_associated_sondaggio_combo",
+          "condition": "equalTo",
+          "values": [
+            "C"
+          ],
+          "actionType": "query",
+          "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
+          "outputEventWhenComplete": "sondaggi_somministrati_reload"
+        }
+      ],
       "label": "ID Sondaggio",
       "newLine": false,
       "readOnly": true,
@@ -164,6 +185,12 @@
         "eventName": "close_associated_sondaggio_button",
         "eventTrigger": "press"
       },
+      "attributeFuncts": [
+        {
+            "attributeType": "isHidden",
+            "queryString": "select case when £flag_applicazione_singola£='1' then true else false end as label"
+        }
+      ],
       "style": {
         "background_color": "#25599C",
         "font_color": "white"
@@ -209,7 +236,6 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "queryFunct": "select id_modello_test from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$",
       "key": "id_modello_test",
       "label": "ID Modello Test",
       "sameOrigin": false,
@@ -230,7 +256,6 @@
         "eventTrigger": "select"
       },
       "isPrimary": false,
-      "queryFunct": "select id_modello_test_vr from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$",
       "key": "id_modello_test_vr",
       "label": "Versione",
       "sameOrigin": false,
@@ -288,11 +313,11 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "queryFunct": "SELECT mdt.titolo as titolo_modello_test from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$",
       "key": "titolo_modello_test",
       "label": "Titolo Modello Test",
       "newLine": true,
       "readOnly": true,
+      "sameOrigin": false,
       "size": 4
     },
     {
@@ -303,7 +328,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "queryFunct": "select titolo from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$",
+      "sameOrigin": false,
       "key": "titolo",
       "label": "Titolo Sondaggio",
       "newLine": false,
@@ -363,7 +388,7 @@
       "isPrimary": false,
       "sameOrigin": false,
       "key": "id_somm_to_copy_from",
-      "label": "Copia da somministrazione",
+      "label": "Selez. somm. da copiare",
       "newLine": false,
       "readOnly": false,
       "size": 3.25
@@ -376,7 +401,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "sondaggi_from_sondaggi_somministrati",
-      "label": "Copia",
+      "label": "Copia somministraz.",
       "newLine": false,
       "outputEvent": {
         "eventName": "change_id_somm_to_copy_from",
@@ -416,7 +441,7 @@
         "value": "0",
         "viewType": "checkbox"
       },
-      "queryFunct": "SELECT mdt.flag_sezioni from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$",
+      "sameOrigin": false,
       "isHidden": true,
       "isPrimary": false,
       "key": "flag_sezioni",
@@ -425,6 +450,23 @@
         "eventTrigger": "change"
       },
       "label": "Gestione domande a sezioni",
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "sameOrigin": false,
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "flag_applicazione_singola",
+      "outputEvent": {
+        "eventName": "somministrazioni_flags_sezioni",
+        "eventTrigger": "change"
+      },
+      "label": "Applicazione singola",
       "readOnly": true
     },
     {
