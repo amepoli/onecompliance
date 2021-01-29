@@ -25,11 +25,13 @@ import { Subscription } from 'rxjs';
 `,
     styles: [],
     host: {
-        '[style.padding-top.px]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "14": "0"',
-        '[style.margin-right]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "1%": "0"',
-        '[style.margin-left]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "1%": "0"',
-        '[style.width]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? field.width + "%": "0"',
-        '[style.height.px]': 'field.isVisible && !field.buttonIcon && !field.isDownloadButton? "96": "0"',
+        '[style.padding-top.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "24": "14": "0"',
+        '[style.margin-right]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "8px": "1%": "0"',
+        '[style.margin-left]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "8px": "1%": "0"',
+        '[style.width]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "32px": field.width + "%": "0"',
+        '[style.height.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "32": "96": "0"',
+        // I want to use this in the future :p
+        // '[style.display]': 'field.isVisible? "unset": "none"'
     }
 })
 
