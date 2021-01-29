@@ -16,7 +16,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select snd.*, entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as sondaggio_su, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$ and (data_prevista<=CURRENT_DATE or data_esecuzione<=CURRENT_DATE)"
+            "queryString": "select snd.*, entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as sondaggio_su, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$ and (data_prevista<=CURRENT_DATE+365 or data_esecuzione<=CURRENT_DATE+100)"
         },
         {
             "operation": "selectForm",
@@ -489,7 +489,14 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
-                "viewType": "input"
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Inserire una data pianificata di esecuzione!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
@@ -998,18 +1005,6 @@
     "subTables": [
         {
             "entryKey": "seleziona_campione",
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "eventName": "sondaggi_flags_sezioni_singola",
-                    "condition": "equalTo",
-                    "values": [
-                        "*",
-                        "0"
-                    ]
-                }
-            ],
-            "isHidden": true,
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -1211,7 +1206,7 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "width": "25%"
+            "width": "23%"
         },
         {
             "format": {
@@ -1221,7 +1216,7 @@
             "isPrimary": false,
             "key": "sondaggio_su",
             "label": "Oggetto",
-            "width": "14%"
+            "width": "12%"
         },
         {
             "format": {
@@ -1349,7 +1344,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "6%",
+            "width": "5%",
             "key": "stato",
             "label": "Stato",
             "style": [
@@ -1376,7 +1371,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "8%",
+            "width": "6%",
             "key": "sondaggio_completato",
             "label": "Completato",
             "style": [
