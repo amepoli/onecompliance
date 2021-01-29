@@ -157,9 +157,11 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
 
   isFormValid() {
     let isValid = true;
+    
     if (this.formGetter.formArray && this.formGetter.formArray.length) {
-      for (let i = 0; i < this.formGetter.formArray.length; i++) {
-          const form = this.formGetter.formArray[i];
+      let formArray = this.formGetter.formArray.toArray();
+      for (let i = 0; i < formArray.length; i++) {
+          const form = formArray[i];
         // Old method in which we check the whole form at once
         // This is not good because it also checks invisible fields
         // if (!form.form.valid) {
