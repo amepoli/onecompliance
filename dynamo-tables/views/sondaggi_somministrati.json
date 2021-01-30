@@ -17,7 +17,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select distinct ss.*, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
+      "queryString": "select ss.codice_azienda, ss.id_somministrazione, ss.object_description, ss.object_key, ss.stato, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
     },
     {
       "operation": "selectForm",
@@ -39,8 +39,7 @@
       "type": "postProcessing",
       "queryString": "SELECT mdt.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
     }
-
-   ],
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -187,8 +186,8 @@
       },
       "attributeFuncts": [
         {
-            "attributeType": "isHidden",
-            "queryString": "select case when £flag_applicazione_singola£='1' then true else false end as label"
+          "attributeType": "isHidden",
+          "queryString": "select case when £flag_applicazione_singola£='1' then true else false end as label"
         }
       ],
       "style": {
@@ -199,7 +198,7 @@
       "sameOrigin": false,
       "size": 1.3
     },
-   {
+    {
       "autoGenerate": false,
       "format": {
         "dataType": "date",
@@ -359,7 +358,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select objectkey as id, objectdescription as name from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '|');",
+        "comboQuery": "select distinct objectkey as id, objectdescription as name from entrasp.survey_population($codice_azienda$, $id_sondaggio$, '|') order by objectdescription;",
         "options": [],
         "viewType": "combobox",
         "dataType": "text"
@@ -414,18 +413,18 @@
           "condition": "none",
           "values": [],
           "message": {
-              "messageText": "Sei sicuro di voler copiare o sovrascrivere le risposte copiandole dalla precedente somministrazione? (Saranno cancellate tutte le risposte attualmente date)",
-              "actionOnNo": {
-                  "actionType": "query",
-                  "queryFunct": "select 1"
-              },
-              "actionOnYes": {
-                  "actionType": "query",
-                  "queryFunct": "select entrasp.accoda_risposte_somministrazione($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$, $id_somm_to_copy_from$);"
-                  }
+            "messageText": "Sei sicuro di voler copiare o sovrascrivere le risposte copiandole dalla precedente somministrazione? (Saranno cancellate tutte le risposte attualmente date)",
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select 1"
+            },
+            "actionOnYes": {
+              "actionType": "query",
+              "queryFunct": "select entrasp.accoda_risposte_somministrazione($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$, $id_somm_to_copy_from$);"
+            }
           },
           "outputEventWhenComplete": "aggiorna_id_sondaggio"
-      }
+        }
       ],
       "style": {
         "background_color": "#25599C",
@@ -955,7 +954,6 @@
       "label": "Somministrazioni collegate",
       "type": "table"
     }
-   
   ],
   "table_keys": [
     {
@@ -1317,7 +1315,7 @@
       {
         "label": "Risposte punteggio diverso da 0",
         "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.peso from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$  ri.peso!= 0"
-      } 
+      }
     ]
   }
 }
