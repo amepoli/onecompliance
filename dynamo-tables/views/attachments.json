@@ -1,0 +1,232 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "attachments",
+  "origin": "entrasp.views_attachments",
+  "predefinedQueries": [],
+  "businessObjectName": "cdms_risorse",
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_part",
+      "label": "codice_part",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_risorsa",
+      "label": "id_risorsa",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_anagrafica",
+      "label": "id_anagrafica",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "stringa",
+      "label": "Download",
+      "isDownloadButton": true,
+      "newLine": false,
+      "size": 0.5,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "client_file_name",
+      "label": "Nome file",
+      "newLine": false,
+      "size": 5.5,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_allegato",
+      "label": "Tipo Allegato",
+      "newLine": true,
+      "size": 4,
+      "readOnly": true
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_part",
+      "label": "codice_part"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_risorsa",
+      "label": "id_risorsa"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_anagrafica",
+      "label": "id_anagrafica"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "client_file_name",
+      "label": "Nome file"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_allegato",
+      "label": "Tipo Allegato"
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "id_sondaggio_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "id Sondaggio",
+      "newLine": false,
+      "queryCond": "snd.id_sondaggio=$id_sondaggio_s$"
+    },
+    {
+      "fieldName": "id_somministrazione_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "id Somministrazione",
+      "newLine": false,
+      "queryCond": "snd.id_somministrazione=$id_somministrazione_s$"
+    },
+    {
+      "fieldName": "id_tipo_allegato_s",
+      "format": {
+        "comboQuery": "SELECT id_tipo_allegato AS id, descrizione as name from entrasp.tipi_allegati an WHERE codice_azienda='€global_codice_azienda€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Tipo Allegato",
+      "newLine": true,
+      "queryCond": "id_tipo_allegato=$id_tipo_allegato_s$"
+    },
+ 
+    {
+      "fieldName": "id_anagrafica_s",
+      "format": {
+        "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Cliente",
+      "newLine": false,
+      "queryCond": "id_anagrafica=$id_anagrafica_s$"
+    },
+    {
+      "fieldName": "id_anagrafica_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Anagrafica",
+      "newLine": false,
+      "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "save",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "delete",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "share",
+      "viewType": "form"
+    }
+  ]
+}
