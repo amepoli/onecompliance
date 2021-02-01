@@ -217,7 +217,14 @@
       "autoGenerate": false,
       "format": {
         "dataType": "date",
-        "viewType": "input"
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Inserire una data esecuzione!",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -348,7 +355,7 @@
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "select objectdescription as object_description from entrasp.sondaggio_popolazione($codice_azienda$, $id_sondaggio$, '|');"
+          "queryFunct": "select objectdescription as object_description from entrasp.survey_population($codice_azienda$, $id_sondaggio$, '|') where objectkey='£object_key£';"
         }
       ],
       "label": "Somministrazione su/di",
@@ -368,7 +375,7 @@
       "key": "object_key",
       "outputEvent": {
         "eventName": "ObjectKeyChange",
-        "eventTrigger": "change"
+        "eventTrigger": "select"
       },
       "label": "Somministrazione su/di",
       "newLine": false,
