@@ -858,12 +858,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
 
-                    // Perform action based on conditions check above
-                    if (!matchingKeys) {
-                        return; // the message is not for this row
-                    }
+                    // // Perform action based on conditions check above
+                    // if (!matchingKeys) {
+                    //     return; // the message is not for this row
+                    // }
 
-                    _this.hiddenRows[i] = !matchingValues;
+                    // Zee change: Perform action based on conditions check above
+                    // return is causing issue as it goes out of for loop prematurely
+                    if (matchingKeys) {
+                        _this.hiddenRows[i] = !matchingValues;
+                    }
 
                 }
             }
