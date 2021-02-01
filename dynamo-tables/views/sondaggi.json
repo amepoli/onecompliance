@@ -516,6 +516,23 @@
             "isPrimary": false,
             "key": "data_esecuzione",
             "label": "Data Esecuzione",
+            "inputEvents": [
+                {
+                  "eventName": "onSaveSondaggio",
+                  "actionType": "query",
+                  "queryFunct": "select 1",
+                  "condition": "none",
+                  "values": [],
+                  "outputEventWhenComplete": "data_esecuzione_update"
+                },
+                {
+                  "eventName": "data_esecuzione_update",
+                  "actionType": "query",
+                  "condition": "none",
+                  "values": [],
+                  "queryFunct": "update entrasp.sondaggi_somministrati ss set data_esecuzione=snd.data_esecuzione from entrasp.sondaggi snd, entrasp.modelli_test mt where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
+                }
+              ],
             "newLine": false,
             "size": 1.5,
             "readOnly": false
