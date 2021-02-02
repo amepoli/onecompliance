@@ -1,0 +1,253 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "indicators_sub_of_reports",
+  "origin": "entrasp.indicatori_report",
+  "search_keys": [],
+  "outputEvents": [
+    {
+        "eventName": "onSaveRischiIndicatorsReports",
+        "eventTrigger": "onSave"
+    },
+    {
+        "eventName": "onLoadIndicatosReports",
+        "eventTrigger": "onReload"
+    }
+],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_indicatore",
+      "label": "ID Indicatore",
+      "readOnly": true,
+      "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_rischio_presidio_k",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "cancella_rischio_presidio",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "cancella_rischio_presidio",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "delete from entrasp.indicatori_rischi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$ and codice_rischio=$codice_rischio$",
+          "outputEventWhenComplete": "update_rischi_associati_presidi"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT codice_rischio AS id, entrasp.rischi_cod_tit(codice_azienda, codice_rischio) AS name  FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text",
+        "validations": [
+          {
+            "message": "Selezionare rischio associato",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_rischio",
+      "label": "Rischio",
+      "readOnly": false,
+      "newLine": false,
+      "size": 5
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0,
+        "validations": [
+          {
+            "message": "Inserire un valore (0 se non si intende valutarlo)",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "label": "% Prob. Mit.",
+      "key": "pct_mitigazione_probabilita",
+      "readOnly": false,
+      "isHidden": false,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0,
+        "validations": [
+          {
+            "message": "Inserire un valore (0 se non si intende valutarlo)",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "label": "% Mit. Int. Sin.",
+      "key": "pct_mitigazione_intensita_singola",
+      "readOnly": false,
+      "isHidden": false,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0,
+        "validations": [
+          {
+            "message": "Inserire un valore (0 se non si intende valutarlo)",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "label": "% Mit. Int. Tot.",
+      "key": "pct_mitigazione_intensita_totale",
+      "readOnly": false,
+      "isHidden": false,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0
+      },
+      "label": "% Mit. Prob. Ret.",
+      "key": "pct_mitigazione_probabilita_rettificata",
+      "readOnly": false,
+      "isHidden": true,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0
+      },
+      "label": "% Mit. Int. Ret.",
+      "key": "pct_mitigazione_intensita_singola_rettificata",
+      "readOnly": false,
+      "isHidden": true,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": 0
+      },
+      "label": "% Mit. Tot. Ret.",
+      "key": "pct_mitigazione_intensita_totale_rettificata",
+      "readOnly": false,
+      "isHidden": true,
+      "isPrimary": false,
+      "size": 1,
+      "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "textarea",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "annotazioni",
+      "label": "Annotazioni",
+      "readOnly": false,
+      "textareaHeight": "M",
+      "newLine": false,
+      "size": 9
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "rischio_associato",
+      "label": "Dettaglio",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "to_rischio",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+    }
+  ],
+  "inputEvents": [
+    {
+      "actionType": "reload",
+      "eventName": "update_rischi_associati_presidi"
+    },
+    {
+      "actionType": "reload",
+      "eventName": "reloadMaskRischi_sub_presidi"
+    },
+    {
+      "actionTarget": {
+        "name": "rischi",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_rischio",
+            "destination": "codice_rischio"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_rischio"
+    }
+  ]
+}
