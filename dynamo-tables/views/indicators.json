@@ -3,6 +3,13 @@
 	"entryKey": "indicators",
 	"businessObjectName": "indicatori",
 	"origin": "entrasp.indicatori",
+	"predefinedQueries": [
+		{
+			"type": "main",
+			"operation": "selectTable",
+			"queryString": "select * from entrasp.indicatori where codice_azienda is null or codice_azienda='€global_codice_azienda€'"
+		}
+	],
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -101,27 +108,38 @@
 			"newLine": true
 		},
 		{
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ricalcola_indicatore",
+            "label": "Calcola indicatore",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "calcola_indicatore",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "size": 1.4,
+            "sameOrigin": false
+        },
+    
+		{
 			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
-				"dataType": "date",
-				"validations": [
-					{
-					  "message": "Inserire una data da!",
-					  "name": "required",
-					  "validator": "Validators.required"
-					}
-				  ]
-
+				"dataType": "date"
 			},
 			"label": "Data esecuzione da",
-			"key": "Data esecuzione da",
+			"key": "data_esec_da",
 			"readOnly": false,
 			"outputEvent": {
 				"eventName": "change_data_da",
 				"eventTrigger": "change"
 			},
-			"sameOrigin": false,
+			"queryFunct": "select CURRENT_DATE",
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false
@@ -130,23 +148,16 @@
 			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
-				"dataType": "date",
-				"validations": [
-					{
-					  "message": "Inserire una data a!",
-					  "name": "required",
-					  "validator": "Validators.required"
-					}
-				  ]
+				"dataType": "date"
 			},
 			"label": "Data esecuzione a",
-			"key": "Data esecuzione a",
+			"key": "data_esec_a",
 			"outputEvent": {
-				"eventName": "change_data_da",
+				"eventName": "change_data_a",
 				"eventTrigger": "change"
 			},
 			"readOnly": false,
-			"sameOrigin": false,
+			"queryFunct": "select CURRENT_DATE",
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false
@@ -159,7 +170,15 @@
 			},
 			"label": "Valore indicatore",
 			"key": "valore_indicatore",
-			"queryFunct": "entrasp.calcola_indicatore(id_indicatore, codice_azienda, codice_part, data_da, data_a)",
+			"inputEvents": [
+				{
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select valore_indicatore from entrasp.calcola_indicatore(id_indicatore, codice_azienda, codice_part, data_da, data_a)",
+					"eventName": "calcola_indicatore"
+				}
+			],
 			"readOnly": false,
 			"sameOrigin": false,
 			"isHidden": false,
