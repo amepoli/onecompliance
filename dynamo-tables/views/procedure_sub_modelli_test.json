@@ -3,6 +3,12 @@
     "entryKey": "procedure_sub_modelli_test",
     "origin": "entrasp.procedure_modelli_test",
     "businessObjectName": "procedure_modelli_test",
+    "inputEvents": [
+        {
+            "eventName": "update_procedure_modelli_test",
+            "actionType": "reload"
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -20,16 +26,45 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "number",
-                "viewType": "input"
+                "viewType": "button"
             },
             "isHidden": false,
-            "isPrimary": true,
-            "key": "id_procedura",
-            "label": "Id Procedura",
+            "isPrimary": false,
+            "key": "cancella_procedure_mdt",
+            "label": "delete",
+            "buttonIcon": "delete",
             "newLine": false,
-            "readOnly": true
-        },
+            "outputEvent": {
+                "eventName": "procedure_mdt_cancella",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "procedure_mdt_cancella",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "delete from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$ and id_procedura=$id_procedura$ and id_modello_test=$id_modello_test$",
+                    "outputEventWhenComplete": "update_procedure_modelli_test"
+                }],
+                "readOnly": false,
+                "sameOrigin": false,
+                "size": 0.5
+            },
+            {
+                "autoGenerate": false,
+                "format": {
+                    "comboQuery": "SELECT id_procedura AS id, descrizione_breve AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$",
+                    "options": [],
+                    "viewType": "combobox"
+                },
+                "isHidden": false,
+                "isPrimary": true,
+                "key": "id_procedura",
+                "label": "Procedura",
+                "newLine": false,
+                "readOnly": false
+            },
         {
             "autoGenerate": false,
             "format": {

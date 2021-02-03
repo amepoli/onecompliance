@@ -3,6 +3,12 @@
     "entryKey": "modelli_test_sub_procedure",
     "origin": "entrasp.procedure_modelli_test",
     "businessObjectName": "procedure_modelli_test",
+    "inputEvents": [
+        {
+            "eventName": "update_modelli_test_procedure",
+            "actionType": "reload"
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -17,6 +23,34 @@
             "newLine": true,
             "readOnly": true
         },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cancella_mdt_procedure",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "mdt_procedure_cancella",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "mdt_procedure_cancella",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "delete from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$ and id_procedura=$id_procedura$ and id_modello_test=$id_modello_test$",
+                    "outputEventWhenComplete": "update_modelli_test_procedure"
+                }],
+                "readOnly": false,
+                "sameOrigin": false,
+                "size": 0.5
+            },
         {
             "autoGenerate": false,
             "format": {
