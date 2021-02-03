@@ -32,6 +32,13 @@ export interface tableViewKey { // as per API specification
     key: string;
     label: string;
     queryFunct?: string;
+    isButton?: boolean;
+    buttonAction?: {
+        confirmAction?: boolean,
+        actionType: string,
+        target: string,
+        type: string
+    },                            
     format: {
         dataType: tableDataType,
         value?: any
