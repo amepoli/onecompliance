@@ -1,0 +1,120 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "reports",
+	"businessObjectName": "report",
+	"origin": "entrasp.report",
+	"form_keys": [
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "id_report",
+			"key": "id_report",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false,
+			"size": 2
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"label": "Azienda",
+			"key": "codice_azienda",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice_part AS id, codice_part AS name FROM entrasp.partizioni;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"label": "Partizione",
+			"key": "codice_part",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Report",
+			"key": "descrizione",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true
+		}
+	],
+	"subTables": [
+		{
+			"entryKey": "indicators_sub_of_reports",
+			"keys": [
+				{
+					"parent": "id_report",
+					"son": "id_report"
+				}
+			],
+			"label": "Indicatori associati",
+			"type": "tableForm"
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"width": "10%",
+			"isPrimary": true,
+			"key": "id_report",
+			"label": "ID Report"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "10%",
+			"isPrimary": false,
+			"key": "codice_azienda",
+			"label": "Azienda"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "10%",
+			"key": "codice_part",
+			"label": "Partizione"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "40%",
+			"isPrimary": false,
+			"key": "descrizione",
+			"label": "Report"
+		}
+	]
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "report_sub_of_indicators",
+  "origin": "entrasp.indicatori_report",
+  "inputEvents": [
+    {
+        "eventName": "update_reports_indicatori",
+        "actionType": "reload"
+    }
+],
+  "search_keys": [],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+          "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_reports_indicatori",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+          "eventName": "reports_indicatori_cancella",
+          "eventTrigger": "press"
+      },
+      "inputEvents": [
+          {
+              "eventName": "reports_indicatori_cancella",
+              "actionType": "query",
+              "condition": "none",
+              "values": [],
+              "queryFunct": "delete from entrasp.indicatori_report where id_indicatore=$id_indicatore$ and id_report=$id_report$",
+              "outputEventWhenComplete": "update_reports_indicatori"
+          }],
+          "readOnly": false,
+          "sameOrigin": false,
+          "size": 0.5
+      },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_report AS id, descrizione AS name FROM entrasp.report where codice_azienda is null or codice_azienda = '€global_codice_azienda€'",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_report",
+      "label": "Report",
+      "readOnly": false,
+      "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_indicatore",
+      "label": "ID",
+      "readOnly": true,
+      "newLine": true
+    }
+    
+
+  ]
+ 
+}
