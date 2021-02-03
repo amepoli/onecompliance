@@ -28,6 +28,22 @@
 		{
 			"autoGenerate": false,
 			"format": {
+				"comboQuery": "SELECT id_indicatore AS id, titolo AS name FROM entrasp.indicatori where codice_azienda='€global_codice_azienda€' or codice_azienda is null and id_indicatore!=£id_indicatore£;",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Indicatore padre",
+			"key": "id_indicatore_parent",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 2
+		},
+		
+		{
+			"autoGenerate": false,
+			"format": {
 				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende;",
 				"options": [],
 				"viewType": "combobox",
@@ -59,6 +75,26 @@
 			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
+				"dataType": "text",
+				"validations": [
+                    {
+                        "message": "Inserire un titolo!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+			},
+			"label": "Nome",
+			"key": "titolo",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "textarea",
 				"dataType": "text"
 			},
 			"label": "Indicatore",
@@ -71,9 +107,10 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
+				"comboQuery": "SELECT id_modello_test AS id, id_modello_test||'-'||titolo  AS name  FROM entrasp.modelli_test WHERE codice_azienda='€global_codice_azienda€' order by id_modello_test;",
+				"options": [],
+				"viewType": "combobox"
+			  },
 			"label": "Id Modello Test",
 			"key": "id_modello_test",
 			"readOnly": false,
@@ -92,16 +129,31 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT id_domanda AS id, id_domanda||'-'||descrizione  AS name  FROM entrasp.domande WHERE codice_azienda='€global_codice_azienda€' and id_modello_test=entrasp.evaluate_given_field_bis('id_modello_test', '£id_modello_test£') order by descrizione;",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Id domanda",
+			"key": "id_domanda",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
 			"newLine": false
 		},
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "number"
+				"comboQuery": "SELECT id_risposta_prev AS id, id_risposta_prev||'-'||risposta  AS name  FROM entrasp.risposte_previste WHERE codice_azienda='€global_codice_azienda€' and id_modello_test=entrasp.evaluate_given_field_bis('id_modello_test','£id_modello_test£') and id_domanda=entrasp.evaluate_given_field_bis('£id_domanda£', '£id_domanda£') order by risposta;",
+				"options": [],
+				"viewType": "combobox"
 			},
-			"label": "Id domanda",
-			"key": "id_domanda",
+			"label": "Id Risposta",
+			"key": "id_risposta_prev",
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
@@ -184,6 +236,29 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "textarea",
+				"dataType": "text"
+			},
+			"label": "Valore indicatore",
+			"key": "valore_indicatore",
+			"inputEvents": [
+				{
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select stringa_indicatore from entrasp.calcola_indicatore(id_indicatore, codice_azienda, codice_part, data_da, data_a)",
+					"eventName": "calcola_indicatore"
+				}
+			],
+			"readOnly": false,
+			"sameOrigin": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
 		}
 	],
 	"subTables": [
@@ -237,7 +312,7 @@
 			"isHidden": false,
 			"width": "40%",
 			"isPrimary": false,
-			"key": "descrizione",
+			"key": "titolo",
 			"label": "Indicatore"
 		}
 	]

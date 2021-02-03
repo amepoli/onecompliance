@@ -3,6 +3,18 @@
 	"entryKey": "reports",
 	"businessObjectName": "report",
 	"origin": "entrasp.report",
+	"predefinedQueries": [
+		{
+			"type": "main",
+			"operation": "selectTable",
+			"queryString": "select * from entrasp.report where codice_azienda is null or codice_azienda='€global_codice_azienda€'"
+		},
+		{
+			"operation": "insert",
+			"type": "main",
+			"queryString": "insert into entrasp.report (descrizione, codice_azienda, id_report_parent) values ($descrizione$, entrasp.evaluate_given_field('codice_azienda', $codice_azienda$::varchar, id_report_parent) returning id_report"
+		}
+	],
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -17,6 +29,20 @@
 			"isPrimary": true,
 			"newLine": false,
 			"size": 2
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT id_report AS id, descrizione AS name FROM entrasp.report where codice_azienda='€global_codice_azienda€' or codice_azienda is null and id_report!=£id_report£;",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Report padre",
+			"key": "id_report_parent",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
 		},
 		{
 			"autoGenerate": false,
