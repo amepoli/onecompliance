@@ -23,7 +23,7 @@
 			"isHidden": false,
 			"isPrimary": true,
 			"newLine": false,
-			"size": 2
+			"size": 1.5
 		},
 		{
 			"autoGenerate": false,
@@ -38,9 +38,8 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 2
+			"size": 5.5
 		},
-		
 		{
 			"autoGenerate": false,
 			"format": {
@@ -54,7 +53,8 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false
+			"newLine": false,
+			"size": 1.5
 		},
 		{
 			"autoGenerate": false,
@@ -69,7 +69,8 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true
+			"newLine": true,
+			"size": 1.5
 		},
 		{
 			"autoGenerate": false,
@@ -134,7 +135,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT id_domanda AS id, id_domanda||'-'||descrizione  AS name  FROM entrasp.domande WHERE codice_azienda='€global_codice_azienda€' and id_modello_test=entrasp.evaluate_given_field_bis('id_modello_test', '£id_modello_test£') order by descrizione;",
+				"comboQuery": "SELECT id_domanda AS id, id_domanda||'-'||descrizione  AS name  FROM entrasp.domande WHERE codice_azienda='€global_codice_azienda€' order by descrizione;",
 				"options": [],
 				"viewType": "combobox"
 			},
@@ -148,7 +149,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT id_risposta_prev AS id, id_risposta_prev||'-'||risposta  AS name  FROM entrasp.risposte_previste WHERE codice_azienda='€global_codice_azienda€' and id_modello_test=entrasp.evaluate_given_field_bis('id_modello_test','£id_modello_test£') and id_domanda=entrasp.evaluate_given_field_bis('£id_domanda£', '£id_domanda£') order by risposta;",
+				"comboQuery": "SELECT id_risposta_prev AS id, id_risposta_prev||'-'||risposta  AS name  FROM entrasp.risposte_previste WHERE codice_azienda='€global_codice_azienda€' order by risposta;",
 				"options": [],
 				"viewType": "combobox"
 			},
@@ -176,8 +177,7 @@
             "readOnly": false,
             "size": 1.4,
             "sameOrigin": false
-        },
-    
+        },  
 		{
 			"autoGenerate": false,
 			"format": {
@@ -235,7 +235,7 @@
 			"sameOrigin": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false
+			"newLine": true
 		},
 		{
 			"autoGenerate": false,
@@ -243,8 +243,8 @@
 				"viewType": "textarea",
 				"dataType": "text"
 			},
-			"label": "Valore indicatore",
-			"key": "valore_indicatore",
+			"label": "SQL indicatore",
+			"key": "SQL indicator",
 			"inputEvents": [
 				{
 					"actionType": "query",
@@ -261,7 +261,39 @@
 			"newLine": false
 		}
 	],
+	"search_keys": [
+		{
+            "fieldName": "flag_principali",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Solo Principali",
+            "newLine": false,
+            "queryCond": "id_indicatore_parent IS null"
+		},
+		{
+            "fieldName": "testo_ricerca",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Nome/ Descrizione",
+            "newLine": true,
+            "queryCond": "(UPPER(titolo) like '%'||UPPER('€testo_ricerca€')||'%' or UPPER(descrizione) like '%'||UPPER('€testo_ricerca€')||'%)"
+        } 
+	],
 	"subTables": [
+		{
+			"entryKey": "indicators_sub_of_indicators",
+			"keys": [
+				{
+					"parent": "id_indicatore",
+					"son": "id_indicatore_parent"
+				}
+			],
+			"label": "Sotto indicatori"
+		},
 		{
 			"entryKey": "reports_sub_of_indicators",
 			"keys": [
@@ -284,6 +316,16 @@
 			"isPrimary": true,
 			"key": "id_indicatore",
 			"label": "ID Indicatore"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"width": "10%",
+			"isPrimary": false,
+			"key": "id_indicatore_parent",
+			"label": "ID Indicatore parent"
 		},
 		{
 			"format": {
