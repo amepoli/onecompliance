@@ -1053,7 +1053,7 @@ exports.handler = async (event, context) => {
                             '${table}',
                             '${columns}', 
                             '(FORMAT CSV, DELIMITER E''CSV_DELIMITER'', HEADER true)',
-                            aws_commons.create_s3_uri('${bucket}', '${fileName}','${region}')
+                            aws_commons.create_s3_uri('${bucket}', 'CSV/${fileName}','${region}')
                         );`;
                         // ,aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
 
