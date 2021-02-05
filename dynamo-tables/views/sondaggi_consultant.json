@@ -48,6 +48,11 @@
             "operation": "update",
             "type": "postProcessing",
             "queryString": "update entrasp.progetti_fasi set stato=$stato$, pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)"
+        },
+        {
+            "operation": "delete",
+            "type": "main",
+            "queryString": "select entrasp.sondaggio_delete($codice_azienda$, $id_sondaggio$)"
         }
     ],
     "messages": [
@@ -56,15 +61,8 @@
             "formMessageType": "delete",
             "message": {
                 "title": "Cancellazione sondaggio, somministrazioni e risposte",
-                "text": "Sei sicuro di voler cancellare il sondaggio e tutte le somministrazioni, domande e oggetti collegati?",
-                "actionOnNo": {
-                    "actionType": "reload"
-                },
-                "actionOnYes": {
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.sondaggio_delete($codice_azienda$, $id_sondaggio$)"
-                }
-            }
+                "text": "Sei sicuro di voler cancellare il sondaggio e tutte le somministrazioni, domande e oggetti collegati?"
+               }
         }
     ],
     "form_keys": [
@@ -89,7 +87,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "reopen_sondaggio_k",
-            "label": "Riapri sondaggio",
+            "label": "Riapri Verifica",
             "newLine": false,
             "outputEvent": {
                 "eventName": "sondaggi_reopen",
@@ -137,7 +135,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "sondaggio_successivo_k",
-            "label": "Sondaggio Riprogr.",
+            "label": "Verifica Riprogr.",
             "attributeFuncts": [
                 {
                     "attributeType": "style",
@@ -175,7 +173,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "sondaggio_precedente_k",
-            "label": "Sondaggio Origine",
+            "label": "Verifica Origine",
             "attributeFuncts": [
                 {
                     "attributeType": "style",
@@ -213,7 +211,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "duplica_sondaggio",
-            "label": "Duplica Sondaggio",
+            "label": "Duplica Verifica",
             "newLine": false,
             "outputEvent": {
                 "eventName": "sondaggi_button_duplica",
@@ -294,7 +292,7 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "id_sondaggio",
-            "label": "ID Sondaggio",
+            "label": "ID Verifica",
             "newLine": false,
             "readOnly": true,
             "size": 1.4,
@@ -346,7 +344,7 @@
                     "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$, $titolo$, $id_modello_test$, $id_modello_test_vr$, $data_esecuzione$::date, (select case when coalesce(entrasp.modelli_test_risultati_righe_gg($id_risultato$, $pct_da$, $codice_azienda$),0)=0 then false else true end));"
                 }
             ],
-            "label": "ID Sondaggio Succ.",
+            "label": "ID Verifica Succ.",
             "newLine": false,
             "size": 1.3,
             "readOnly": true
@@ -360,7 +358,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_sondaggio_prec",
-            "label": "ID Sondaggio Prec.",
+            "label": "ID Verifica Prec.",
             "sameOrigin": false,
             "newLine": false,
             "size": 1.4,
@@ -477,7 +475,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
-            "label": "Titolo Sondaggio",
+            "label": "Titolo Verifica",
             "newLine": false,
             "size": 7,
             "readOnly": false
@@ -883,7 +881,7 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "label": "id Sondaggio",
+            "label": "ID Verifica",
             "newLine": false,
             "queryCond": "snd.id_sondaggio=$id_sondaggio$"
         },
@@ -1086,7 +1084,7 @@
                     "son": "id_modello_test"
                 }
             ],
-            "label": "Sondaggi Serie"
+            "label": "Verifiche Serie"
         }
     ],
     "table_keys": [
@@ -1394,7 +1392,7 @@
     "exportQueries": {
         "tableQueries": [
             {
-                "label": "Sondaggi_e_modelli_test",
+                "label": "Verifiche e modelli di verifiche",
                 "queryString": "select * from entrasp.temp"
             }
         ]
