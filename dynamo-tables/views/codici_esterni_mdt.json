@@ -20,7 +20,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT codice_mdt AS id, titolo AS name FROM entrasp.codici_esterni_mdt and codice_mdt!='£codice_mdt£';",
+				"comboQuery": "SELECT codice_mdt AS id, titolo AS name FROM entrasp.codici_esterni_mdt WHERE codice_mdt!='£codice_mdt£';",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text"
@@ -46,6 +46,18 @@
 			"newLine": true
 		}
 	],
+	"subTables": [
+		{
+		  "entryKey": "modelli_test_vr_sub_of_codici_esterni",
+		  "label": "Modelli test associati",
+		  "keys": [
+			{
+			  "parent": "codice_mdt",
+			  "son": "codice_esterno"
+			}
+		  ]
+		}
+	  ],	
 	"search_keys": [
 		{
             "fieldName": "parola_search",
@@ -57,19 +69,6 @@
             "newLine": true,
 			"queryCond": "(upper(titolo) like '%'||upper('€parola_search€')||'%'" 
 		}
-
-	],
-	"subTables": [
-		{
-			"entryKey": "modelli_test_vr_sub_of_codici_esterni",
-			"keys": [
-				{
-					"parent": "codice_mdt",
-					"son": "codice_esterno"
-				}
-			],
-			"label": "Modelli Test Associati"
-		}
 	],
 	"table_keys": [
 		{
@@ -79,7 +78,8 @@
 			"label": "codice_mdt",
 			"key": "codice_mdt",
 			"isHidden": false,
-			"isPrimary": true
+			"isPrimary": true,
+			"width": "10%"
 		},
 		{
 			"format": {
@@ -88,7 +88,9 @@
 			"label": "codice_mdt_parent",
 			"key": "codice_mdt_parent",
 			"isHidden": false,
-			"isPrimary": false
+			"isPrimary": false,
+			"width": "10%"
+
 		},
 		{
 			"format": {
@@ -97,7 +99,8 @@
 			"label": "Titolo",
 			"key": "titolo",
 			"isHidden": false,
-			"isPrimary": false
+			"isPrimary": false,
+			"width": "80%"
 		}		
 	]
 }

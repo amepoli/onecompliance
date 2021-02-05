@@ -1,8 +1,7 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "modelli_test_vr_sub_of_codici_esterni",
-    "origin": "entrasp.modelli_test_vr",
-    "businessObjectName": "modelliTest",
+    "inheritsFrom": "modelli_test_vr",
     "predefinedQueries": [
         {
             "type": "main",
@@ -37,6 +36,7 @@
             "messageNotNull": "Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
         }
     ],
+<<<<<<< HEAD
     "messages": [
         {
             "viewType": "form",
@@ -861,12 +861,14 @@
             "type": "tableForm"
         }
     ],
+=======
+>>>>>>> fe2b9fda94a50e9ffe04f27091396e24bedbe86f
     "table_keys": [
         {
             "format": {
                 "dataType": "text"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda"
@@ -953,103 +955,6 @@
             "key": "id_risultato",
             "label": "id_risultato"
         }
-    ],
-    "inputEvents": [
-        {
-            "actionTarget": {
-                "name": "sondaggi",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "new_id_sondaggio",
-                        "destination": "id_sondaggio"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "navigate_to_sondaggio"
-        },
-        {
-            "actionTarget": {
-                "name": "sondaggi_somministrati",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "new_id_sondaggio",
-                        "destination": "id_sondaggio"
-                    },
-                    {
-                        "source": "new_id_somministrazione",
-                        "destination": "id_somministrazione"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "navigate_to_somministrazione"
-        },
-        {
-            "actionTarget": {
-                "name": "modelli_test_risultati",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_risultato",
-                        "destination": "id_risultato"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "navigate_to_criterio_analisi"
-        },
-        {
-            "actionTarget": {
-                "name": "modelli_test_risultati",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "£id_modello_test£",
-                        "destination": "id_modello_test"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "navigate_to_modello_test_vr_new"
-        },
-        {
-            "actionType": "reload",
-            "eventName": "modelli_test_vr_reload"
-        }
-    ],
-    "exportQueries": {
-        "formQueries": [
-            {
-                "label": "Esporta domande (per successivo import)",
-                "queryString": "select dm.ordinamento, dm.punteggio, dm.descrizione, ds.ordinamento, ds.descrizione_sezione,  rp.ordinamento, rp.peso, rp.risposta  from entrasp.domande dm left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda left join entrasp.domande_sezioni on dm.codice_azienda=ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where dm.codice_azienda=$codice_azienda$ and dm.id_modello_test=$id_modello_test$ and dm.id_modello_test_vr=$id_modello_test_vr$"
-            }
-        ]
-    },
-    "importQueries": {
-        "formQueries": [
-            {
-                "label": "Importa domande",
-                "queryString": "select entrasp.domande_import($codice_azienda$, $id_modello_test$ , $id_modello_test_vr$, $nome_file$)"
-            }
-        ]
-    }
+    ]
+   
 }
