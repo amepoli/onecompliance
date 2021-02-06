@@ -81,8 +81,45 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"label": "Data esecuzione da",
+			"key": "data_esec_da",
+			"sameOrigin": false,
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"label": "Data esecuzione a",
+			"key": "data_esec_a",
+			"readOnly": false,
+			"isHidden": false,
+			"sameOrigin": false,
+			"isPrimary": false,
+			"newLine": false
 		}
+
 	],
+	"exportQueries": {
+		"formQueries": [
+		  {
+			"label": "Valore indicatori",
+			"queryString": "select ind.id_indicatore, ind.descrizione as Descrizione_Indicatore, entrasp.calcola_indicatore(ind.id_indicatore, '€data_esec_da€', '2021-02-01') as Valore_Indicatore from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore and ir.id_report=$id_report$"
+		  }
+		]
+	}, 
 	"subTables": [
 		{
 			"entryKey": "indicators_sub_of_reports",
