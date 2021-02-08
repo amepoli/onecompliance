@@ -173,7 +173,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "duplica_sondaggio",
-            "label": "Duplica Verifica",
+            "label": "Duplica Sondaggio",
             "newLine": false,
             "outputEvent": {
                 "eventName": "sondaggi_button_duplica",
@@ -239,7 +239,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "ulteriori_elementi",
-            "label": "Ulteriori Elementi",
+            "label": "Dati Accessori",
             "newLine": false,
             "outputEvent": {
                 "eventName": "sondaggi_ulteriori_elementi",
@@ -312,7 +312,7 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "id_sondaggio",
-            "label": "ID Verifica",
+            "label": "ID Sondaggio",
             "newLine": false,
             "readOnly": true,
             "size": 1.1,
@@ -574,7 +574,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
-            "label": "Titolo Verifica",
+            "label": "Titolo Sondaggio",
             "newLine": false,
             "size": 7,
             "readOnly": false
@@ -708,7 +708,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "sondaggio_completato",
-            "label": "Completo sì/no",
+            "label": "Completamento Verifica Generale",
             "newLine": false,
             "readOnly": true,
             "inputEvents": [
@@ -754,7 +754,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "ris_percentuale",
-            "label": "Percentuale",
+            "label": "% Complessiva",
             "sameOrigin": false,
             "newLine": false,
             "readOnly": true,
@@ -778,7 +778,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "giudizio",
-            "label": "Giudizio",
+            "label": "Giudizio Complessivo",
             "sameOrigin": false,
             "newLine": false,
             "readOnly": true,
@@ -912,7 +912,7 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "label": "ID Verifica",
+            "label": "ID Sondaggio",
             "newLine": false,
             "queryCond": "snd.id_sondaggio=$id_sondaggio$"
         },
@@ -1089,7 +1089,7 @@
                     "son": "id_sondaggio_rif"
                 }
             ],
-            "label": "Verifiche Associate"
+            "label": "Sondaggi Associati"
         }
     ],
     "table_keys": [
@@ -1512,7 +1512,7 @@
     "exportQueries": {
         "tableQueries": [
             {
-                "label": "Verifiche e risultati",
+                "label": "Sondaggi e risultati",
                 "queryString": "select snd.*, entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as sondaggio_su, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_automatico, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, cp.risultati_emersi, cp.proposte_formulate, cp.decisioni_assunte, cp.follow_up, entrasp.cpl_giudizi_verifiche_descrizione (cp.codice_azienda, cp.id_giudizio) as giudizio, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_follow_up) as giuzio_follow_up, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_risultato) as risultato, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_livello_1) as giuzio_livello1, entrasp.cpl_giudizi_verifiche_descrizione(cp.codice_azienda, cp.id_giudizio_livello_2) as giudizio_livello2  from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$"
             }
         ],
