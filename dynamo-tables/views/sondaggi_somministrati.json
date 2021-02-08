@@ -37,7 +37,7 @@
     {
       "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "SELECT mdt.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+      "queryString": "SELECT mdt.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
     },
     {
       "operation": "delete",
@@ -378,8 +378,17 @@
       "sameOrigin": false,
       "key": "titolo",
       "label": "Titolo Verifica",
+      "inputEvents":[
+        {
+          "eventName": "data_esecuzione_update",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "update entrasp.sondaggi snd set titolo=$titolo$ from entrasp.sondaggi_somministrati ss, entrasp.modelli_test mt where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$",
+          "outputEventWhenComplete": "data_prevista_update"
+        }],
       "newLine": false,
-      "readOnly": true
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -497,6 +506,22 @@
         "eventTrigger": "change"
       },
       "label": "Gestione domande a sezioni",
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "checkbox"
+      },
+      "sameOrigin": false,
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "flag_no_domande",
+      "outputEvent": {
+        "eventName": "flag_no_domande_change",
+        "eventTrigger": "change"
+      },
+      "label": "flag_no_domande",
       "readOnly": true
     },
     {
