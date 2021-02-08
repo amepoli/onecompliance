@@ -110,16 +110,15 @@
 			"isPrimary": false,
 			"newLine": false
 		}
-
 	],
 	"exportQueries": {
 		"formQueries": [
-		  {
-			"label": "Valore indicatori",
-			"queryString": "select ind.id_indicatore, ind.descrizione as Descrizione_Indicatore, entrasp.calcola_indicatore(ind.id_indicatore, '€data_esec_da€', '2021-02-01') as Valore_Indicatore from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore and ir.id_report=$id_report$"
-		  }
+			{
+				"label": "Valore indicatori",
+				"queryString": "select ind.id_indicatore, ind.descrizione as Descrizione_Indicatore, entrasp.calcola_indicatore(ind.id_indicatore, '€data_esec_da€', '2021-02-01') as Valore_Indicatore from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore and ir.id_report=$id_report$"
+			}
 		]
-	}, 
+	},
 	"subTables": [
 		{
 			"entryKey": "indicators_sub_of_reports",
@@ -130,7 +129,17 @@
 				}
 			],
 			"label": "Indicatori associati"
+		},
+		{
+			"entryKey": "reports_sub_of_reports",
+			"keys": [
+				{
+					"parent": "id_report",
+					"son": "id_report_parent"
 				}
+			],
+			"label": "Sotto Reports"
+		}
 	],
 	"table_keys": [
 		{
@@ -172,6 +181,16 @@
 			"isPrimary": false,
 			"key": "descrizione",
 			"label": "Report"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"width": "10%",
+			"isPrimary": false,
+			"key": "id_report_parent",
+			"label": "ID Report"
 		}
 	]
 }
