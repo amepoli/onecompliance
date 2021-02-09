@@ -34,11 +34,11 @@
 			"autoGenerate": false,
 			"format": {
 				"comboQuery": "SELECT SELECT id_codice_esterno_mdt AS id, codice_mdt||'-'||titolo AS name FROM entrasp.codici_esterni_mdt; AS id, titolo AS name FROM entrasp.codici_esterni_mdt WHERE id_codice_esterno_mdt!='id_codice_esterno_mdt£';",
-                "options": [],
-                "viewType": "combobox"
-    	},
-			"label": "id_codice_mdt_parent",
-			"key": "id_codice_mdt_parent",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Codice parent",
+			"key": "id_codice_esterno_mdt_parent",
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
@@ -60,26 +60,36 @@
 	],
 	"subTables": [
 		{
-		  "entryKey": "modelli_test_vr_sub_of_codici_esterni",
-		  "label": "Modelli di verifiche associati",
-		  "keys": [
-			{
-			  "parent": "id_codice_esterno_mdt",
-			  "son": "id_codice_esterno_mdt"
-			}
-		  ]
+			"entryKey": "modelli_test_vr_sub_of_codici_esterni",
+			"label": "Modelli di verifiche associati",
+			"keys": [
+				{
+					"parent": "id_codice_esterno_mdt",
+					"son": "id_codice_esterno_mdt"
+				}
+			]
+		},
+		{
+			"entryKey": "codici_esterni_mdt_sub_of_codice_esterni_mdt",
+			"label": "Sotto codici esterni",
+			"keys": [
+				{
+					"parent": "id_codice_esterno_mdt",
+					"son": "id_codice_esterno_mdt_parent"
+				}
+			]
 		}
-	  ],	
+	],
 	"search_keys": [
 		{
-            "fieldName": "parola_search",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "Parola chiave",
-            "newLine": true,
-			"queryCond": "upper(titolo) like '%'||upper('€parola_search€')||'%'" 
+			"fieldName": "parola_search",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Parola chiave",
+			"newLine": true,
+			"queryCond": "upper(titolo) like '%'||upper('€parola_search€')||'%'"
 		}
 	],
 	"table_keys": [
@@ -108,7 +118,7 @@
 				"dataType": "text"
 			},
 			"label": "Codice Mdt Parent",
-			"key": "id_codice_mdt_parent",
+			"key": "id_codice_esterno_mdt_parent",
 			"isHidden": false,
 			"isPrimary": false,
 			"width": "10%"
@@ -122,6 +132,6 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"width": "80%"
-		}		
+		}
 	]
 }

@@ -6,17 +6,17 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT mt.codice_azienda, mt.codice_esterno, mt.id_modello_test, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_esterno=$codice_esterno$;"
+            "queryString": "SELECT mt.codice_azienda, mt.id_codice_esterno_mdt, mt.id_modello_test, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.id_codice_esterno_mdt=$id_codice_esterno_mdt$;"
         },
         {
             "type": "main",
             "operation": "insert",
-            "queryString": "select id_modello_test, id_modello_test_vr from entrasp.modello_test_insert(codiceazienda=>$codice_azienda$::varchar, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>'€flag_applicazione_singola€', id_filtro_selezione=>coalesce($id_filtro_selezione$,0), documentazione_necessaria=>$documentazione_necessaria$, flag_sezioni=>'€flag_sezioni€', giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$, codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, codice_esterno=>$codice_esterno$, idmodellotestvr=>$id_modello_test_vr$, flag_mostra_punteggi=>'€flag_mostra_punteggi€', id_risultato=>$id_risultato$);"
+            "queryString": "select id_modello_test, id_modello_test_vr from entrasp.modello_test_insert(codiceazienda=>$codice_azienda$::varchar, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>'€flag_applicazione_singola€', id_filtro_selezione=>coalesce($id_filtro_selezione$,0), documentazione_necessaria=>$documentazione_necessaria$, flag_sezioni=>'€flag_sezioni€', giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$, codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_codice_esterno_mdt=>$id_codice_esterno_mdt$, idmodellotestvr=>$id_modello_test_vr$, flag_mostra_punteggi=>'€flag_mostra_punteggi€', id_risultato=>$id_risultato$);"
         },
         {
             "type": "main",
             "operation": "update",
-            "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>'€flag_applicazione_singola€', id_filtro_selezione=>coalesce($id_filtro_selezione$,0), documentazione_necessaria=>$documentazione_necessaria$, flag_sezioni=>'€flag_sezioni€', giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$,codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, codice_esterno=>$codice_esterno$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>'€flag_mostra_punteggi€', id_risultato=>$id_risultato$);"
+            "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>'€flag_applicazione_singola€', id_filtro_selezione=>coalesce($id_filtro_selezione$,0), documentazione_necessaria=>$documentazione_necessaria$, flag_sezioni=>'€flag_sezioni€', giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$,codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_codice_esterno_mdt=>$id_codice_esterno_mdt$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>'€flag_mostra_punteggi€', id_risultato=>$id_risultato$);"
         },
         {
             "type": "main",
@@ -76,17 +76,6 @@
             "label": "Codice",
             "width": "10%",
             "queryFunct": "select codice from entrasp.modello_test_fields(codice_azienda, id_modello_test)"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_esterno",
-            "queryFunct": "select codice_esterno from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
-            "width": "10%",
-            "label": "Codice esterno"
         },
         {
             "format": {
