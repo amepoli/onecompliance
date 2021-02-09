@@ -3,6 +3,64 @@
   "origin": "entrasp.sondaggi_somministrati",
   "businessObjectName": "sondaggiSomministrati",
   "entryKey": "sondaggi_somministrati",
+  "dashboards": [
+    {
+      "conditions": [
+        {
+          "format": {
+            "backgroundColor": "white",
+            "color": "blak",
+            "fontFamily": "Arial",
+            "fontSize": "14px"
+          },
+          "formula": "!isNaN(#value)"
+        }
+      ],
+      "dataSource": {
+        "data": [
+
+        ]
+      },
+      "labels": {
+        "colorsQuery": {
+          "query": "",
+          "type": "full"
+        },
+        "columnsQuery": {
+          "key": "stato",
+          "query": "select distinct(entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', stato)) as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$;"
+        }
+      },
+      "localization": "it",
+      "options": {
+        "drillThrough": false,
+        "grid": {
+          "showHeaders": false
+        }
+      },
+      "slice": {
+        "columns": [
+          {
+            "uniqueName": "Measures"
+          },
+          {
+            "uniqueName": "Stato"
+          }
+        ],
+        "measures": [
+          {
+            "aggregation": "count",
+            "availableAggregations": [
+              "count",
+              "distinctcount"
+            ],
+            "uniqueName": "Stato"
+          }
+        ]
+      }
+    }
+  ] ,
+
   "outputEvents": [
     {
       "eventName": "onSaveSomministrazione",
@@ -880,17 +938,6 @@
       "label": "Id Verifica",
       "newLine": true,
       "queryCond": "ss.id_somministrazione=$id_somministrazione$"
-    },
-    {
-      "fieldName": "stato",
-      "format": {
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Stato",
-      "newLine": false,
-      "queryCond": "ss.stato='€stato€'"
     },
     {
       "fieldName": "data_comp",

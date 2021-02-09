@@ -24,8 +24,8 @@
           "type": "full"
         },
         "columnsQuery": {
-          "key": "conta",
-          "query": "select stato as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ group by stato"
+          "key": "stato",
+          "query": "select codice as label from entrasp.transcodifiche where tipo_dato = 'STATO_SONDAGGI'"
         }
       },
       "localization": "it",
@@ -41,7 +41,7 @@
             "uniqueName": "Measures"
           },
           {
-            "uniqueName": "Conta"
+            "uniqueName": "Stato"
           }
         ],
         "measures": [
@@ -51,13 +51,21 @@
               "count",
               "distinctcount"
             ],
-            "uniqueName": "Conta"
+            "uniqueName": "Stato"
           }
         ]
       }
     }
   ] ,
   "inheritsFrom": "sondaggi_somministrati",
-  "entryKey": "dashboard_sondaggi_somministrati"
+  "entryKey": "dashboard_sondaggi_somministrati",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select stato from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$"
+    }
+      
+  ]
 
 }
