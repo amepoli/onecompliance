@@ -1,0 +1,178 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "presidi_sub_of_modelli_test",
+    "origin": "entrasp.domande_presidi",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select distinct codice_azienda, id_modello_test, id_modello_test_vr, id_presidio, entrasp.presidi_descr(id_presidio, codice_azienda)  from entrasp.domande_presidi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
+        },
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": "select entrasp.domande_presidi_insert_update($codice_azienda$, $id_presidio$, $id_modello_test$, $id_modello_test_vr$"
+        },
+        {
+            "operation": "update",
+            "type": "main",
+            "queryString": "select entrasp.domande_presidi_insert_update($codice_azienda$, $id_presidio$, $id_modello_test$, $id_modello_test_vr$"
+        }
+ 
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cancella_presidio",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "cancella_presidi_domande",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "cancella_presidi_domande",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "successMessage": "Done",
+                    "queryFunct": "delete from entrasp.domande_presidi where codice_azienda = $codice_azienda$ and id_presidio=$id_presidio$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$",
+                    "outputEventWhenComplete": "update_rischi_articoli_normativi"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_presidio AS id, descrizione_breve AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Presidio",
+            "key": "id_presidio",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 4.5
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "id_modello_test",
+            "key": "id_modello_test",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "id_modello_test_vr",
+            "key": "id_modello_test_vr",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "Presidio",
+            "key": "id_presidio",
+            "isHidden": false,
+            "isPrimary": true,
+            "queryFunct": ""
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Modello Test",
+            "key": "id_modello_test",
+            "isHidden": true,
+            "isPrimary": true,
+            "queryFunct": ""
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Modello Test Vr",
+            "key": "id_modello_test_vr",
+            "isHidden": true,
+            "isPrimary": true,
+            "queryFunct": ""
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "key": "codice_azienda",
+            "isHidden": true,
+            "isPrimary": true
+        }
+    ],
+    "inputEvents": [
+        {
+            "eventName": "update_rischi_articoli_normativi",
+            "actionType": "reload"
+        },
+        {
+            "actionTarget": {
+                "name": "presidi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_presidio"
+        }
+    ],
+    "outputEvents": [
+        {
+            "eventName": "savedForm",
+            "eventTrigger": "onSave"
+        }
+    ],
+    "search_keys": []
+}
