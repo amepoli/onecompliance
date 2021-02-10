@@ -8,6 +8,11 @@
 			"type": "main",
 			"operation": "selectTable",
 			"queryString": "select * from entrasp.indicatori where codice_azienda is null or codice_azienda='€global_codice_azienda€'"
+		},
+		{
+			"type": "postProcessing",
+			"operation": "selectForm",
+			"queryString": "select id_domanda as id_domanda_temp, id_risposta_prev as id_risposta_prev_temp from entrasp.indicatori where id_indicatore=$id_indicatore$"
 		}
 	],
 	"form_keys": [
@@ -135,9 +140,38 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT id_domanda AS id, id_domanda||'-'||descrizione  AS name  FROM entrasp.domande WHERE codice_azienda='€global_codice_azienda€' order by descrizione;",
+				"comboQuery": "SELECT id_domanda AS id, id_modello_test||'-'||id_domanda||'-'||descrizione  AS name  FROM entrasp.domande WHERE codice_azienda='€global_codice_azienda€' order by descrizione;",
 				"options": [],
 				"viewType": "combobox"
+			},
+			"label": "Id domanda",
+			"key": "id_domanda_temp",
+			"sameOrigin": false,
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT id_risposta_prev AS id, id_domanda||'-'||id_risposta_prev||'-'||risposta  AS name  FROM entrasp.risposte_previste WHERE codice_azienda='€global_codice_azienda€' order by risposta;",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Id Risposta",
+			"key": "id_risposta_prev_temp",
+		    "sameOrigin": false,
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
 			},
 			"label": "Id domanda",
 			"key": "id_domanda",
@@ -149,9 +183,8 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT id_risposta_prev AS id, id_risposta_prev||'-'||risposta  AS name  FROM entrasp.risposte_previste WHERE codice_azienda='€global_codice_azienda€' order by risposta;",
-				"options": [],
-				"viewType": "combobox"
+				"viewType": "input",
+				"dataType": "number"
 			},
 			"label": "Id Risposta",
 			"key": "id_risposta_prev",
