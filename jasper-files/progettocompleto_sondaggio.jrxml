@@ -20,7 +20,7 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select pr.codice_azienda, pr.id_progetto,pr.codice_progetto, pr.titolo , pr.id_tipo_progetto, pr.id_cliente, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pr.stato) as stato,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_cliente),prf.titolo as prf_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prd_idfase,prf.id_sondaggio as prf_idsond,prf2.titolo as prf_titolo2, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf2.stato) as prf2_stato,prf2.id_fase as prf2_idfase,prf2.id_sondaggio as prf2_idson,s1.titolo as s1_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s1.stato) as stato_sondaggio1,s2.titolo as s2_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s2.stato) as stato_sondaggio2 from entrasp.progetti pr left join entrasp.progetti_fasi prf on pr.codice_azienda=prf.codice_azienda and pr.id_progetto=prf.id_progetto left join entrasp.sondaggi s1 on prf.codice_azienda=s1.codice_azienda and prf.id_sondaggio=s1.id_sondaggio left join entrasp.progetti_fasi prf2 on prf.codice_azienda=prf2.codice_azienda and prf.id_fase=prf2.id_fase_sup left join entrasp.sondaggi s2 on prf2.codice_azienda=s2.codice_azienda and prf2.id_sondaggio=s2.id_sondaggio WHERE pr.codice_azienda='DEMO' and prf.id_fase_sup is null"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select funct1.giudizio as giudizio_trans1,funct2.giudizio as giudizio_trans2,pr.codice_azienda, pr.id_progetto,pr.codice_progetto, pr.titolo , pr.id_tipo_progetto, pr.id_cliente, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pr.stato) as stato,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_cliente),prf.titolo as prf_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prd_idfase,prf.id_sondaggio as prf_idsond,prf2.titolo as prf_titolo2, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf2.stato) as prf2_stato,prf2.id_fase as prf2_idfase,prf2.id_sondaggio as prf2_idson,s1.titolo as s1_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s1.stato) as stato_sondaggio1,s2.titolo as s2_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s2.stato) as stato_sondaggio2 from entrasp.progetti pr left join entrasp.progetti_fasi prf on pr.codice_azienda=prf.codice_azienda and pr.id_progetto=prf.id_progetto left join entrasp.sondaggi s1 on prf.codice_azienda=s1.codice_azienda and prf.id_sondaggio=s1.id_sondaggio  left join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(s1.codice_azienda, s1.id_sondaggio) funct1 on s1.id_sondaggio=funct1.idsondaggio and s1.codice_azienda=funct1.codiceazienda left join entrasp.progetti_fasi prf2 on prf.codice_azienda=prf2.codice_azienda and prf.id_fase=prf2.id_fase_sup left join entrasp.sondaggi s2 on prf2.codice_azienda=s2.codice_azienda and prf2.id_sondaggio=s2.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(s2.codice_azienda, s2.id_sondaggio) funct2 on s2.id_sondaggio=funct2.idsondaggio and s2.codice_azienda=funct2.codiceazienda WHERE pr.codice_azienda='DEMO' and prf.id_fase_sup is null"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -28,6 +28,14 @@
 	<queryString>
 		<![CDATA[$P!{mainQuery}]]>
 	</queryString>
+	<field name="giudizio_trans1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="giudizio_trans1"/>
+		<property name="com.jaspersoft.studio.field.label" value="giudizio_trans1"/>
+	</field>
+	<field name="giudizio_trans2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="giudizio_trans2"/>
+		<property name="com.jaspersoft.studio.field.label" value="giudizio_trans2"/>
+	</field>
 	<field name="codice_azienda" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
 		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
@@ -378,7 +386,7 @@
 					<text><![CDATA[Titolo]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" mode="Opaque" x="15" y="49" width="522" height="20" forecolor="#FFFFFF" backcolor="#0AADFF" uuid="dcde742b-1758-4ba1-82f2-eee8bdf77d92">
+					<reportElement positionType="Float" mode="Opaque" x="15" y="49" width="405" height="20" forecolor="#FFFFFF" backcolor="#0AADFF" uuid="dcde742b-1758-4ba1-82f2-eee8bdf77d92">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
@@ -408,10 +416,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bold_arial" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{stato_sondaggio1}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{giudizio_trans1}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" mode="Opaque" x="15" y="69" width="422" height="20" backcolor="#FFFFFF" uuid="d93c8035-6287-4985-8450-af58092906dd">
+					<reportElement positionType="Float" mode="Opaque" x="15" y="69" width="405" height="20" backcolor="#FFFFFF" uuid="d93c8035-6287-4985-8450-af58092906dd">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
@@ -440,6 +448,23 @@
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<subreportExpression><![CDATA["Domande_risposte_per_somministrazione.jasper"]]></subreportExpression>
 				</subreport>
+				<staticText>
+					<reportElement mode="Opaque" x="437" y="50" width="100" height="20" forecolor="#FFFFFF" backcolor="#0AADFF" uuid="c0df560a-55a2-4d11-b860-fd834acc8717">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Giudizio]]></text>
+				</staticText>
 			</band>
 		</groupHeader>
 	</group>
@@ -531,7 +556,7 @@
 					<text><![CDATA[Titolo]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" mode="Opaque" x="30" y="48" width="507" height="20" forecolor="#000000" backcolor="#C0F0FC" uuid="96eb017d-00c4-45f7-8c70-1fac14318a66">
+					<reportElement positionType="Float" mode="Opaque" x="30" y="48" width="390" height="20" forecolor="#000000" backcolor="#C0F0FC" uuid="96eb017d-00c4-45f7-8c70-1fac14318a66">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
@@ -561,10 +586,10 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bold_arial" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{stato_sondaggio2}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{giudizio_trans2}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" mode="Opaque" x="30" y="68" width="407" height="20" backcolor="#FFFFFF" uuid="f092a5b2-aaa6-4829-a218-af4e1294bb56">
+					<reportElement positionType="Float" mode="Opaque" x="30" y="68" width="390" height="20" backcolor="#FFFFFF" uuid="f092a5b2-aaa6-4829-a218-af4e1294bb56">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
@@ -594,6 +619,23 @@
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<subreportExpression><![CDATA["Domande_risposte_per_somministrazione.jasper"]]></subreportExpression>
 				</subreport>
+				<staticText>
+					<reportElement mode="Opaque" x="437" y="49" width="100" height="20" forecolor="#000000" backcolor="#C0F0FC" uuid="b5416081-40c8-4286-b73e-7e2c69e87b53">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Giudizio]]></text>
+				</staticText>
 			</band>
 		</groupHeader>
 	</group>
