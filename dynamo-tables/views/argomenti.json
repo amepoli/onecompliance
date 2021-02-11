@@ -1,6 +1,8 @@
 {
     "$schema": "../views.schema.json",
-    "entryKey": "argomenti",
+    "entryKey": "argomenti",  
+    "origin": "entrasp.argomenti",
+    "businessObjectName": "argomenti",
     "form_keys": [
       {
         "autoGenerate": false,
@@ -12,8 +14,9 @@
         "isPrimary": true,
         "key": "id_argomento",
         "label": "ID",
-        "newLine": true,
-        "readOnly": false
+        "newLine": false,
+        "readOnly": false,
+        "size": 1.5
       },
       {
         "autoGenerate": false,
@@ -25,21 +28,9 @@
         "isPrimary": false,
         "key": "codice",
         "label": "Codice",
-        "newLine": true,
-        "readOnly": false
-      },
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "descrizione",
-        "label": "Descrizione",
-        "newLine": true,
-        "readOnly": false
+        "newLine": false,
+        "readOnly": false,
+        "size": 1.5
       },
       {
         "autoGenerate": false,
@@ -52,26 +43,10 @@
         "key": "descrizione_breve",
         "label": "Descrizione breve",
         "newLine": true,
-        "readOnly": false
-      },
-      {
-        "autoGenerate": false,
-        "format": {
-          "comboQuery": "SELECT id_argomento AS id, entrasp.argomenti_cb(id_argomento) AS name  FROM entrasp.argomenti;",
-          "options": [
-  
-          ],
-          "viewType": "combobox"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "id_argomento_parent",
-        "label": "ID argomento superiore",
-        "newLine": true,
-        "readOnly": false
+        "readOnly": false,
+        "size": 1.5
       }
     ],
-    "origin": "entrasp.argomenti",
     "search_keys": [
       {
         "fieldName": "id_argomento",
@@ -86,14 +61,24 @@
     ],
     "subTables": [
       {
-        "entryKey": "argomenti_sub",
+        "entryKey": "argomenti_sub_of_argomenti_son",
         "keys": [
           {
-            "parent": "id_argomento_parent",
-            "son": "id_argomento"
+            "parent": "id_argomento",
+            "son": "id_argomento_father"
           }
         ],
-        "label": "Argomenti"
+        "label": "Argomenti figli"
+      },
+      {
+        "entryKey": "argomenti_sub_of_argomenti_father",
+        "keys": [
+          {
+            "parent": "id_argomento",
+            "son": "id_argomento_son"
+          }
+        ],
+        "label": "Argomenti padre"
       },
       {
         "entryKey": "compiti_argomenti_sub",
@@ -106,7 +91,7 @@
         "label": "Compiti Argomenti"
       },
       {
-        "entryKey": "modelli_test_argomenti_sub",
+        "entryKey": "modelli_test_sub_of_argomenti",
         "keys": [
           {
             "parent": "id_argomento",
