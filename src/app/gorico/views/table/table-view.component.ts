@@ -13,6 +13,7 @@ import { MessageView, MessageElement, MessagesService } from 'app/gorico/service
 import { HelperService } from 'app/gorico/services/helper.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 import { Subscription } from 'rxjs';
+import { DialogService } from 'app/gorico/services/dialog.service';
 
 export interface tableViewParams {
     entryName: string;
@@ -34,11 +35,20 @@ export interface tableViewKey { // as per API specification
     queryFunct?: string;
     isButton?: boolean;
     buttonAction?: {
-        confirmAction?: boolean,
-        actionType: string,
+        action: "navigate" | "delete",
         target: string,
-        type: string
-    },                            
+        viewType: string,
+        onSuccessAction?: "reload",
+        confirmAction?: boolean,
+        confirmMessage?: {
+            title: string,
+            text: string
+        },
+        keymap?:{
+            source: string,
+            destination: string
+        }[]
+    },
     format: {
         dataType: tableDataType,
         value?: any
@@ -157,9 +167,9 @@ export class TableViewComponent implements OnChanges, OnDestroy {
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
         private _messagesService: MessagesService,
+        private _dialogService: DialogService,
         private _console: ConsoleLoggerService
     ) {
-
         this.calculateTableHeight();
     }
 
@@ -246,24 +256,28 @@ export class TableViewComponent implements OnChanges, OnDestroy {
                     _this.loadStyle(params.table_keys);
                     _this.loadLevel(params.table_keys);
 
-                    // Load Import Queries list if available
-                    if (params.importQueries && params.importQueries.tableQueries) {
-                        _this._console.log('importQueries', params.importQueries);
-                        _this._importExportService.updateImportList(_this.tableData.entryName, params.importQueries.tableQueries);
-                    }
-                    else {
-                        _this._importExportService.updateImportList(_this.tableData.entryName, []);
+                    if(!_this.isTabMode){
+                        // Load Import Queries list if available
+                        if (params.importQueries && params.importQueries.tableQueries) {
+                            _this._console.log('importQueries', params.importQueries);
+                            _this._importExportService.updateImportList(_this.tableData.entryName, params.importQueries.tableQueries);
+                        }
+                        else {
+                            _this._importExportService.updateImportList(_this.tableData.entryName, []);
+                        }
+
+                        // Load Export Queries list if available
+                        if (params.exportQueries && params.exportQueries.tableQueries) {
+                            _this._console.log('exportQueries', params.exportQueries);
+                            _this._importExportService.updateExportList(_this.tableData.entryName, params.exportQueries.tableQueries);
+                        }
+                        else {
+                            _this._importExportService.updateExportList(_this.tableData.entryName, []);
+                        }
+
                     }
 
-                    // Load Export Queries list if available
-                    if (params.exportQueries && params.exportQueries.tableQueries) {
-                        _this._console.log('exportQueries', params.exportQueries);
-                        _this._importExportService.updateExportList(_this.tableData.entryName, params.exportQueries.tableQueries);
-                    }
-                    else {
-                        _this._importExportService.updateExportList(_this.tableData.entryName, []);
-                    }
-
+                    
                     // Load Hide Actions if available
                     if (params.hideActions) {
                         _this.hideActions = _this._navigationService.getTableHideActions(params.hideActions);
@@ -502,9 +516,65 @@ export class TableViewComponent implements OnChanges, OnDestroy {
     getRecord(index: number, row: MatRow) {
         this.selectedRow = row;
         const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: this.keysArray, index: index + 1, total: this.keysArray.length };
-        setTimeout(() => { this.sendEvent.emit({ eventType: 'navigate', queryParams: mergedParams }); }, 50);
+        this.navigate(mergedParams);
     }
 
+    onButtonClick(key: string, index: number, row: MatRow) {
+        this.selectedRow = row;
+        let selectedViewKey: tableViewKey = this.viewKeys.filter(x => x.key == key)[0];
+
+        let keys = {};
+        if(selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0){
+            selectedViewKey.buttonAction.keymap.forEach( map => {
+                keys[map.destination] = row[map.source];
+            })
+        }
+
+        if(selectedViewKey.buttonAction.action == 'navigate'){
+            let mergedParams = { entry: { name: selectedViewKey.buttonAction.target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };            
+            this.navigate(mergedParams);    
+        }
+        else if(selectedViewKey.buttonAction.action == 'delete'){
+            this.deleteRow(selectedViewKey, keys);
+        }
+    }
+
+    navigate(params){
+        setTimeout(() => { this.sendEvent.emit({ eventType: "navigate", queryParams: params }); }, 50);
+    }
+
+    deleteRow(selectedViewKey: tableViewKey, keys: any) {
+        var _this = this;
+        let deleteMessage: {title: string, text: string} = {
+            title: "",
+            text: ""
+        };
+
+        if(selectedViewKey.buttonAction && selectedViewKey.buttonAction.confirmMessage ){
+            deleteMessage = selectedViewKey.buttonAction.confirmMessage;
+        }
+        
+        // Show confirmation dialog to make sure user wants to delete
+        _this._dialogService.showConfimationDialog(deleteMessage.title, deleteMessage.text, "Yes", "No", "warning").then((result) => {
+            if (result.value === true) {
+                // User said yes so let's delete form
+                const subscription = _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), [keys]).subscribe(
+                    result => {
+                        _this._console.log(result);
+                        if (result.result === 'OK') {
+                            // Show success toast
+                            _this._toastService.showSuccessToast("Table row Deleted");
+
+                        }
+                        else {
+                            // Show error snackbar
+                            _this._toastService.showErrorToast(result.reason);
+                        }
+                    }
+                );
+            }
+        });
+    }
 
     getColumnLabels(viewKeys: tableViewKey[]) {
         let colLabels = viewKeys.map(c => c.key);
