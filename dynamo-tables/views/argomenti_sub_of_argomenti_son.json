@@ -41,7 +41,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "codice",
-      
+      "queryFunct": "select codice from entrasp.argomenti where id_argomento=$id_argomento_son$",
       "label": "Codice",
       "newLine": false,
       "readOnly": false,
@@ -57,9 +57,32 @@
       "isPrimary": false,
       "key": "descrizione_breve",
       "label": "Descrizione breve",
+      "queryFunct": "select descrizione_breve from entrasp.argomenti where id_argomento=$id_argomento_son$",
       "newLine": true,
       "readOnly": false,
       "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "dettaglio",
+      "label": "Dettaglio",
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "argomenti_dettaglio",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "size": 1,
+      "sameOrigin": false
     }
   ],
   "table_keys": [
@@ -102,5 +125,21 @@
       "key": "argomento",
       "label": "Argomento Padre"
     }
+  ],
+  "inputEvents": [
+    {
+      "actionTarget": {
+        "name": "argomenti",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "id_argomento_son",
+            "destination": "id_argomento"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "argomenti_dettaglio"
+    }
   ]
-}   
+}

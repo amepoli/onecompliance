@@ -1,6 +1,6 @@
 {
   "$schema": "../views.schema.json",
-  "entryKey": "argomenti_sub_of_argomenti_son",
+  "entryKey": "argomenti_sub_of_argomenti_father",
   "origin": "entrasp.argomenti_argomenti",
   "businessObjectName": "argomenti_argomenti",
   "form_keys": [
@@ -41,7 +41,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "codice",
-      
+      "queryFunct": "select codice from entrasp.argomenti where id_argomento=$id_argomento_father$",
       "label": "Codice",
       "newLine": false,
       "readOnly": false,
@@ -57,9 +57,32 @@
       "isPrimary": false,
       "key": "descrizione_breve",
       "label": "Descrizione breve",
-      "newLine": true,
+      "queryFunct": "select descrizione_breve from entrasp.argomenti where id_argomento=$id_argomento_father$",
+      "newLine": false,
       "readOnly": false,
       "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "dettaglio",
+      "label": "Dettaglio",
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "argomenti_dettaglio",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "size": 1,
+      "sameOrigin": false
     }
   ],
   "table_keys": [
@@ -99,9 +122,24 @@
       "isHidden": false,
       "isPrimary": false,
       "queryFunct": "entrasp.argomenti_descr(id_argomento_father)",
-
       "key": "argomento",
       "label": "Argomento Padre"
+    }
+  ],
+  "inputEvents": [
+    {
+      "actionTarget": {
+        "name": "argomenti",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "id_argomento_father",
+            "destination": "id_argomento"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "argomenti_dettaglio"
     }
   ]
 }
