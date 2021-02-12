@@ -380,6 +380,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                         _this.subscribeFieldInputEvents(_this.viewKeys);
                     }
+                    // subscribe combobox lazy loading events
+                    const lazy_subscription = _this.pubsubService.subscribe(_this.formParams.entryName + '_combo_lazy_loading',
+                    value => {
+                        _this.eventCallback({actionType: 'combo_lazy_loading'}, value, value.data); 
+                    });
+                    _this.formSubscriptions.push(lazy_subscription);
                     // load output events if any
                     if (params.outputEvents != null) {
                         _this.outputEvents = params.outputEvents;
@@ -671,6 +677,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
         if (field != null) {
             fieldValue = {
+                table: _this.formParams.entryName,
                 label: field.label,
                 name: field.key,
                 type: field.format.viewType,
@@ -688,6 +695,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 style: attributeStyle != null ? Object.assign(field.style, attributeStyle) : (field.style != null) ? field.style : null,
                 width: (field.size != null) ? (field.size * 10) : null, // leave a 1% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],
+                lazyLoading: (element != null && element.lazyLoading) ? true : false,
                 validations: (field.format.validations != null) ? field.format.validations : [],
                 eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null,  // output events are directly handled by the target field component
                 eventTrigger: (field.outputEvent != null) ? field.outputEvent.eventTrigger : null, // at the moment only implemented by input element for focus/blur
@@ -983,7 +991,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (event.outputEventWhenComplete != null) {
                 _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
             }
-        } else if ((event.actionType === 'query' || event.actionType === 'query_style') && conditionMet) {
+        } else if ((event.actionType === 'query' || event.actionType === 'query_style' || event.actionType === 'combo_lazy_loading') && conditionMet) {
             let chiavi = {};
             const target_index = (value.type !== 'page') ? value.index : null;  // null means the event comes from the full table
             let index = (target_index == null) ? _this.formArray.length : 1;
@@ -1063,6 +1071,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                             }
                                         }
                                     }
+                                }
+                            } else if (event.actionType === 'combo_lazy_loading') {
+                                let combobox: ComboboxComponent = null;
+                                combobox = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
+                                const comboValue = combobox.field.value != null ? combobox.field.value.id : null;
+                                combobox.setOptions(result, true);
+                                if (comboValue != null) {
+                                    combobox.setValue(comboValue);
                                 }
                             } else {  // query_style
                                 const filterFormData = (dataset, param) => {

@@ -11,7 +11,7 @@ import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service
   template: `
 <mat-form-field [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" appearance="outline">
 <mat-label>{{field.label}}</mat-label>
-<mat-select [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)"
+<mat-select [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)" (click)="onOpen()" (closed)="onClose()"
 [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
 <mat-option value="" [style.color]="'grey'">Seleziona</mat-option>
@@ -166,6 +166,20 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.field.eventName != null && this.field.eventTrigger === 'select') {
       // this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
       this.sendEvent();
+    }
+  }
+
+  onOpen(): void {
+    if (this.field.lazyLoading) {
+        this.pubsubService.publishEvent(this.field.table + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
+    }
+
+  }
+
+  onClose(): void {
+    // purge all 
+    if (this.field.lazyLoading && this.field.value != null) {
+        this.setOptions([this.field.value], false);
     }
   }
 

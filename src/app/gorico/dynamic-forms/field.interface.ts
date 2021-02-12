@@ -49,6 +49,7 @@ export interface FieldInputEvent {
 }
 
 export interface FieldConfig {
+  table?: string;
   label?: string;
   name?: string;
   index?: number;
@@ -74,5 +75,5 @@ export interface FieldConfig {
   subform?: FieldConfig[];
   fullValueSet?: any;
   inputEvents?: FieldInputEvent[];
-
+  lazyLoading?: boolean;
 }

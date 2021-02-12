@@ -98,6 +98,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
                                     results => {
                                         _this._console.log(results);
                                         if (results.result === 'OK') {
+                                            if (results.data != null && results.data.table_data != null) {
+                                                results.data = results.data.table_data;
+                                            }
                                             results = _this.setOrder(results.data, labels);
                                             const report = _this.setReport(viewResults, _this.tableParams.entryIndex, results, lang, labels);
                                             _this.child.webDataRocks.setReport(report);

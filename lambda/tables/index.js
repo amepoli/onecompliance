@@ -52,7 +52,7 @@ function replaceLocalKeys(queryString, keys) {
 
 function replaceKeys(queryString, keys, keyTypes) {
 
-    console.log(keys);
+    //console.log(keys);
     var delimiters = ['$', '€', '£'];
     if (queryString) {
         // first replace the global variables, must be €-contoured
@@ -72,7 +72,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                 let keyType = keyTypes.find(e => (e.key === key));
 
                 if (keyType != null && keyType.subKeys != null) { // key with multiple subkeys
-                    console.log('Key with subkeys: ', keys[key], keyType);
+                    //console.log('Key with subkeys: ', keys[key], keyType);
                     // tslint:disable-next-line:forin
                     keyType.subKeys.forEach(subkey => {
                         // console.log(subKey)
@@ -357,7 +357,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
             return { key: k.fieldName, dataType: dataType };
         });
 
-        console.log("Query so far: ", queryString);
+        //console.log("Query so far: ", queryString);
 
         for (const key in search_keys) {
             if (search_keys.hasOwnProperty(key)) {
@@ -402,6 +402,28 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
 }
 
+function getLazyComboQuery(entry_keys, table_keys, keyTypes, lazy_key) {
+
+    let comboQueries = [];
+
+    getComboFuncts(comboQueries, entry_keys, table_keys, keyTypes);
+
+    let comboQuery = comboQueries.find(q => (q.key === lazy_key));
+
+    comboQuery = comboQuery.comboQuery;
+
+    console.log('ComboQuery: ', comboQuery);
+
+    if (comboQuery != null) {
+        return {
+            mainQuery: comboQuery
+        }
+    } else {
+        return null;
+    }
+
+}
+
 function getSearchCombos(entry_params, table_keys, isForm, comboQueries) {
 
     let entry_keys;
@@ -436,8 +458,12 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
     let eventQueries = [];  // exploit preprocess queries to run the event queries
     let comboQueries = [];
     let table_keys = body;  // keys provided with body
-    console.log("Event body: ", body);
+    //console.log("Event body: ", body);
     let keyTypes = getKeyTypes(entry_keys);
+
+    if (eventInfo.type === 'combo_lazy_loading') {
+        return getLazyComboQuery(entry_keys, table_keys, keyTypes, eventInfo.field);
+    }
 
     const findKey = (dataset, param) => {
         let found = dataset.find(field => field.key === param);
@@ -592,7 +618,7 @@ function getNewQuery(entry_params, table_keys) {
 
 function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
-    console.log('entry_params: ', entry_params);
+    //console.log('entry_params: ', entry_params);
     let entry_keys = entry_params.form_keys;
 
     if (entry_keys == null) return '';
@@ -884,7 +910,7 @@ async function processAttributeQueries(entry_params, keys, client) {
 
     let attributeFunctArray = getAttributeFuncts(entry_keys);
 
-    console.log('Attribute Array:  ', attributeFunctArray);
+    //console.log('Attribute Array:  ', attributeFunctArray);
 
     for (let i = 0; i < attributeFunctArray.length; i++) {
         const attributeFunctEl = attributeFunctArray[i];
@@ -894,12 +920,12 @@ async function processAttributeQueries(entry_params, keys, client) {
             continue;
         }
         for (let j = 0; j < keys.length; j++) {
-            console.log('Attribute: ', attributeFunct.queryString, keys[j], keyTypes);
+            //console.log('Attribute: ', attributeFunct.queryString, keys[j], keyTypes);
             const query = replaceKeys(attributeFunct.queryString, keys[j], keyTypes);
-            console.log('Query attributes: ', query);
+            //console.log('Query attributes: ', query);
             let result = await client.query(query);
             result = result.rows[0];
-            console.log('Query attributes result: ', result);
+            //console.log('Query attributes result: ', result);
             if (result == null) {
                 continue;
             }
@@ -928,7 +954,7 @@ async function processAttributeQueries(entry_params, keys, client) {
 async function processPreInsertingCheck(queryString, client) {
 
     let local_keys = {}; // additional keys generated with pre-processing  
-    console.log('queryString : ', queryString);
+    //console.log('queryString : ', queryString);
 
     let preInsertingErrors = [];
 
@@ -955,7 +981,7 @@ async function processPreInsertingCheck(queryString, client) {
             }
         }
     }
-    console.log("PreInserting errors: ", preInsertingErrors);
+    //console.log("PreInserting errors: ", preInsertingErrors);
     return preInsertingErrors;
 }
 
@@ -971,7 +997,7 @@ function returnPreInsertingCheckResult(preInsertingErrors) {
 async function processPreUpdatingCheck(queryString, client) {
 
     let local_keys = {}; // additional keys generated with pre-processing  
-    console.log('queryString : ', queryString);
+    //console.log('queryString : ', queryString);
 
     let preUpdatingErrors = [];
 
@@ -998,7 +1024,7 @@ async function processPreUpdatingCheck(queryString, client) {
             }
         }
     }
-    console.log("PreUpdating errors: ", preUpdatingErrors);
+    //console.log("PreUpdating errors: ", preUpdatingErrors);
     return preUpdatingErrors;
 }
 
@@ -1018,7 +1044,7 @@ async function processPreMainPost(queryString, client, notFullTable, isGet) {
 
     let queryData = [{}];
 
-    console.log('queryString : ', queryString);
+    //console.log('queryString : ', queryString);
 
     if (queryString == null) {
         return queryData;
@@ -1314,7 +1340,7 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
         }
     }
 
-    console.log('Keys: ', keys);
+    //console.log('Keys: ', keys);
 
 }
 
@@ -1372,7 +1398,7 @@ async function setGlobalVariables(company, client, userid) {
         }
     }
 
-    console.log(global_variables);
+    console.log("Global vars: ", global_variables);
 
 }
 
@@ -1591,13 +1617,20 @@ exports.handler = async (event, context) => {
                         // search for local keys
                         query = replaceLocalKeys(query, queryData[qd_index]);
                         let comboData = await client.query(query);
-                        console.log('Combo query: ', query, ' Result: ', comboData.rows);
+                        //console.log('Combo query: ', query, ' Result: ', comboData.rows);
                         if (isFormRecord || isNewRecord) { // form/new record, add combobox options to relevant field
                             let comboEntry = new Object;
                             comboEntry[element.key] = new Object;
-                            comboEntry[element.key]['value'] = queryData[qd_index][element.key];
-                            comboEntry[element.key]['options'] = comboData.rows;
+                            let comboValue = comboEntry[element.key]['value'] = queryData[qd_index][element.key];
+                            if (comboData.rows != null && comboData.rows.length <= 16) {
+                                comboEntry[element.key]['options'] = comboData.rows;
+                            } else {
+                                comboEntry[element.key]['options'] = [];
+                                comboEntry[element.key]['options'].push(comboData.rows.find(e => (e.id == comboValue)));
+                                comboEntry[element.key]['lazyLoading'] = true;
+                            }
                             Object.assign(queryData[qd_index], comboEntry);
+                            //console.log("Combo Data: value->", queryData[qd_index], " key->", element.key, " options->",comboData.rows);
                         }
                         else { // table view, add search combobox to search_combos field's array
                             qd_index = queryData.length;  // bad trick, make it exit from loop on rows
@@ -1618,7 +1651,7 @@ exports.handler = async (event, context) => {
 
         if (method === 'POST' && !isEventUpdate) {
             let body = JSON.parse(event.body); // production scenario 
-            console.log('BODY values: ', body);
+            //console.log('BODY values: ', body);
             //let body = event.body; // test scenario
             let queryStrings = [];
             for (let index = 0; index < body.length; index++) { // process all body rows
