@@ -55,15 +55,22 @@
 
         <table class="table-view-content" mat-table [hidden]="isLoading" [dataSource]="dataSource" matSort>
             <ng-container [matColumnDef]="entry.key" *ngFor="let entry of viewKeys">
-                <mat-header-cell class="table-column" [style.width]="entry.width? entry.width: ''"
+                <mat-header-cell class="table-column"
+                    [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
                     [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matHeaderCellDef mat-sort-header
                     [hidden]="entry.isHidden">
                     {{entry.label}}
                 </mat-header-cell>
-                <mat-cell class="table-column" [style.width]="entry.width? entry.width: ''"
-                    [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matCellDef="let row"
+                <mat-cell class="table-column" [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
+                    [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matCellDef="let row; let i = index;"
                     [style.border-radius.px]="'24'" [hidden]="entry.isHidden">
-                    <p style="width: 100%; text-align: left;" [style.padding-left.px]="getLevel(row, entry.key)"
+
+                    <button *ngIf="entry.isButton && row[entry.key]" style="width: 128px;" mat-button
+                        (click)="onButtonClick(entry.key, i, row)">
+                        <mat-icon>cloud_download</mat-icon>{{entry.label}}
+                    </button>
+                    <p *ngIf="!entry.isButton" style="width: 100%; text-align: left;"
+                        [style.padding-left.px]="getLevel(row, entry.key)"
                         [ngStyle]="getElementStyle(entry.key, row[entry.key])">
                         {{entry.format.dataType === 'date' ? (row[entry.key] | date: 'dd/MM/yyyy') : row[entry.key]}}
                     </p>
