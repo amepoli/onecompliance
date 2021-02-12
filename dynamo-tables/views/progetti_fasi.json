@@ -41,9 +41,14 @@
 		},
 		{
 			"operation": "selectTable",
-			"queryString": "select pf.*, entrasp.transcodifiche_transcodifica('STATO', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio  from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$ order by pf.codice limit 250;",
+			"queryString": "select pf.*, entrasp.transcodifiche_transcodifica('STATO', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio  from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$;",
 			"type": "main"
-		}
+		},
+		{
+			"operation": "selectTable",
+			"queryString": "select id_somministrazione, case when id_somministrazione is null then false else true end as visible_button_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=coalesce(£id_sondaggio£,0) limit 1;",
+			"type": "postProcessing"
+		}		
 	],
 	"form_keys": [
 		{
@@ -388,25 +393,59 @@
 	],
 	"search_keys": [
 		{
-			"label": "stato",
+			"label": "Stato",
 			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"fieldName": "stato",
-			"newLine": true,
-			"queryCond": "stato=$stato$"
+				"comboQuery": "SELECT codice AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+			"fieldName": "stato_s",
+			"newLine": false,
+			"queryCond": "stato=$stato_s$"
 		},
 		{
-			"label": "titolo",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"fieldName": "titolo",
-			"newLine": false,
-			"queryCond": "titolo=$titolo$"
-		}
+            "fieldName": "flag_principali",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Solo Principali",
+            "newLine": false,
+            "queryCond": "pf.id_fase_sup IS null"
+        },
+		{
+            "fieldName": "dt_competenza",
+            "format": {
+				"comboQuery": "SELECT distinct data_competenza AS id, data_competenza AS name FROM entrasp.sondaggi WHERE tipo_dato='STATO_SONDAGGI';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "date"
+            },
+            "label": "Data competenza DA",
+            "newLine": false,
+            "queryCond": "snd.data_competenza = $dt_competenza$"
+        },
+		{
+            "fieldName": "dt_competenza_da",
+            "format": {
+                "viewType": "input",
+				"dataType": "date"
+            },
+            "label": "Data competenza DA",
+            "newLine": false,
+            "queryCond": "snd.data_competenza >= $dt_competenza_da$"
+        },
+		{
+            "fieldName": "dt_competenza_a",
+            "format": {
+                "viewType": "input",
+				"dataType": "date"
+            },
+            "label": "Data competenza A",
+            "newLine": false,
+            "queryCond": "snd.data_competenza <= $dt_competenza_a$"
+        }
 	],
 	"table_keys": [
 		{
@@ -496,6 +535,16 @@
 			"hasLevel": true,
 			"label": "ID Sondaggio",
 			"width": "5%"
+		},
+		{
+			"format": {
+				"dataType": "boolean"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "visible_button_somministrazione",
+			"hasLevel": true,
+			"label": "visible_button_somministrazione"
 		},
 		{
 			"format": {
