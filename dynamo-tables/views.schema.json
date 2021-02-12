@@ -674,33 +674,82 @@
                         "type": "object",
                         "description": "?: Action to perform if button",
                         "required": [
-                            "actionType",
+                            "action",
                             "target",
-                            "type"
+                            "viewType",
+                            "keymap"
                         ],
                         "additionalProperties": false,
                         "properties": {
-                            "confirmAction": {
-                                "type": "boolean",
-                                "description": "?: Confirm before performing action"
-                            },
-                            "actionType": {
+                            "action": {
                                 "type": "string",
                                 "description": "M: Action Type",
                                 "enum":[
-                                    "navigate"
+                                    "navigate", "delete"
                                 ]
                             },
                             "target": {
                                 "type": "string",
                                 "description": "M: Target"
                             },
-                            "type": {
+                            "viewType": {
                                 "type": "string",
-                                "description": "M: Type",
+                                "description": "M: View Type",
                                 "enum": [
                                     "form", "table"
                                 ]
+                            },
+                            "onSuccessAction": {
+                                "type": "string",
+                                "description": "M: Post Action Type",
+                                "enum":[
+                                    "reload"
+                                ]
+                            },
+                            "confirmAction": {
+                                "type": "boolean",
+                                "description": "?: Confirm before performing action"
+                            },
+                            "confirmMessage": {
+                                "type": "object",
+                                "description": "?: Action to perform if button",
+                                "required": [
+                                    "title",
+                                    "text"
+                                ],
+                                "additionalProperties": false,
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "description": "M: Confirmation message title"
+                                    },
+                                    "text": {
+                                        "type": "string",
+                                        "description": "M: Confirmation message text"
+                                    }
+                                }
+                            },
+                            "keymap": {
+                                "type": "array",
+                                "description": "M: Keymap for mapping keys",
+                                "items": {
+                                    "type": "object",
+                                    "required": [
+                                        "source",
+                                        "destination"
+                                    ],
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "source": {
+                                            "type": "string",
+                                            "description": "M: Source key"
+                                        },
+                                        "destination": {
+                                            "type": "string",
+                                            "description": "M: Destination key"
+                                        }
+                                    }
+                                }
                             }
                         }
                     },
