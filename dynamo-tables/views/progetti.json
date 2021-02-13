@@ -393,35 +393,7 @@
 					"actionType": "query",
 					"condition": "none",
 					"values": [],
-					"queryFunct": "update entrasp.progetti_fasi set codice=entrasp.progetto_fase_codice(codice_azienda, id_fase, null) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;",
-					"outputEventWhenComplete": "formReload"
-				}
-			],
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1.3
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "allinea_progetto",
-			"label": "Allinea progetto",
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "allinea_progetto",
-				"eventTrigger": "press"
-			},
-			"inputEvents": [
-				{
-					"eventName": "allinea_progetto",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.progetti_allinea($codice_azienda$, $id_progetto$, $id_cliente$)",
+					"queryFunct": "select entrasp.progetti_fasi_order(codice_azienda, id_progetto, id_fase) from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$; update entrasp.progetti_fasi set codice=entrasp.calculate_progetto_fase_codice(codice_azienda, id_progetto, id_fase) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;",
 					"outputEventWhenComplete": "formReload"
 				}
 			],

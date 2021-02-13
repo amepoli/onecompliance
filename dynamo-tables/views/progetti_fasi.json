@@ -16,6 +16,11 @@
 	"predefinedQueries": [
 		{
 			"operation": "selectForm",
+			"queryString": "select * from entrasp.progetti_fasi pf where pf.codice_azienda=$codice_azienda$ and pf.id_fase=$id_fase$;",
+			"type": "main"
+		},
+		{
+			"operation": "selectForm",
 			"queryString": "select stato, data_prevista from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=coalesce(£id_sondaggio£,0);",
 			"type": "postProcessing"
 		},
@@ -138,13 +143,13 @@
 				{
 					"eventName": "onSaveProgettiFasi",
 					"actionType": "query",
-					"queryFunct": "update entrasp.progetti_fasi set codice=entrasp.progetto_fase_codice(codice_azienda, id_fase, null) where codice_azienda=$codice_azienda$ and id_fase=$id_fase$ and id_progetto=$id_progetto$ returning codice;",
+					"queryFunct": "select entrasp.progetti_fasi_order(codice_azienda, id_progetto, id_fase) from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$; update entrasp.progetti_fasi set codice=entrasp.calculate_progetto_fase_codice(codice_azienda, id_progetto, id_fase) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and id_fase=$id_fase$ returning codice;",
 					"condition": "none",
 					"values": [],
 					"outputEventWhenComplete": "progetti_fasi_Reload"
 				}
 			],
-			"readOnly": false,
+			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
@@ -405,6 +410,18 @@
 			"queryCond": "snd.stato=$stato_s$"
 		},
 		{
+			"label": "Fase padre",
+			"format": {
+				"comboQuery": "SELECT id_fase AS id, titolo AS name FROM entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+			"fieldName": "id_fase_s",
+			"newLine": false,
+			"queryCond": "(pf.id_fase=$id_fase_s$ or pf.id_fase_sup=$id_fase_s$)" 
+		},
+		{
             "fieldName": "flag_principali",
             "format": {
                 "value": "0",
@@ -462,6 +479,15 @@
 			"isPrimary": true,
 			"key": "id_fase",
 			"label": "id_fase"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_fase_sup",
+			"label": "id_fase_sup"
 		},
 		{
 			"format": {
@@ -689,7 +715,22 @@
 				}
 			],
 			"label": "Time Report"
+		},
+		{
+			"entryKey": "progetti_fasi_sub_of_progetti_fasi",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_fase",
+					"son": "id_fase_sup"
+				}
+			],
+			"label": "Sotto fasi"
 		}
+	
 	],
 	"inputEvents": [
 		{
