@@ -171,7 +171,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onOpen(): void {
     if (this.field.lazyLoading) {
-        this.pubsubService.publishEvent(this.field.table + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
+        this.pubsubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
     }
 
   }

@@ -31,12 +31,18 @@ function isDataTypeString(type) {
 
 function replaceLocalKeys(queryString, keys) {
 
-    // Â£ to fix problems with Windows clients pushing the tables
-    let delimiters = ['£', 'Â£'];
+    let delimiters = ['£'];
     for (var key in keys) {
         delimiters.forEach(delimiter => {
             let toReplace = delimiter + key + delimiter;
             let replacement = keys[key];
+            if (replacement != null && typeof(replacement) === 'object') {
+                replacement = replacement.value;
+            }
+            if (replacement == null) {
+                toReplace = '=' + toReplace;
+                replacement = ' IS NULL';
+            }
             //replacement = (typeof replacement === 'string') ? '\'' + replacement.replace(/'/g, "''") + '\'' : replacement;
             //console.log('toReplace: ', toReplace, ', replacement: ', replacement);
             let newString = queryString.replace(toReplace, replacement);
@@ -47,6 +53,7 @@ function replaceLocalKeys(queryString, keys) {
             }
         });
     }
+    //console.log('Local replace queryString: ', queryString);
     return queryString;
 }
 
@@ -177,7 +184,7 @@ function getComboFuncts(comboQueries, entry_keys, table_keys, keyTypes) {
             let comboQuery = element.format.comboQuery;
             if (comboQuery != null) {
                 comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
-                comboQueries.push({ key: element.key, comboQuery: comboQuery });
+                comboQueries.push({ key: element.key, comboQuery: comboQuery, type: element.format.viewType});
             }
         } else if (element.format.viewType === 'subform') {
             getComboFuncts(comboQueries, element.format.subform_keys, table_keys, keyTypes);
@@ -447,7 +454,7 @@ function getSearchCombos(entry_params, table_keys, isForm, comboQueries) {
         let comboQuery = element.format.comboQuery;
         if (comboQuery != null) {
             comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
-            comboQueries.push({ key: element.fieldName, comboQuery: comboQuery });
+            comboQueries.push({ key: element.fieldName, comboQuery: comboQuery, type: element.format.viewType });
         }
     });
 }
@@ -493,7 +500,7 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
                     });
                 // re-run comboQuery if combobox and updating the value
                 if (field_key.format != null && field_key.format.comboQuery != null && eventInfo.type === 'query') {
-                    comboQueries.push(replaceKeys(field_key.format.comboQuery, table_keys, keyTypes));
+                    comboQueries.push({ key: field_key.fieldName, comboQuery: replaceKeys(field_key.format.comboQuery, table_keys, keyTypes), type: field_key.format.viewType });
                 }
             }
             else {
@@ -601,7 +608,7 @@ function getNewQuery(entry_params, table_keys) {
         let comboQuery = element.format.comboQuery;
         if (comboQuery) {
             comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
-            comboQueries.push({ key: element.key, comboQuery: comboQuery });
+            comboQueries.push({ key: element.key, comboQuery: comboQuery, type: element.format.viewType });
         }
     });
 
@@ -1622,13 +1629,19 @@ exports.handler = async (event, context) => {
                             let comboEntry = new Object;
                             comboEntry[element.key] = new Object;
                             let comboValue = comboEntry[element.key]['value'] = queryData[qd_index][element.key];
-                            if (comboData.rows != null && comboData.rows.length <= 16) {
+                            if (element.type !== 'combobox') {
                                 comboEntry[element.key]['options'] = comboData.rows;
                             } else {
-                                comboEntry[element.key]['options'] = [];
-                                comboEntry[element.key]['options'].push(comboData.rows.find(e => (e.id == comboValue)));
+                                if (comboData.rows == null) {
+                                    comboEntry[element.key]['options'] = [null];
+                                } else {
+                                    comboEntry[element.key]['options'] = [];
+                                    comboEntry[element.key]['options'].push(comboData.rows.find(e => (e.id == comboValue)));
+                                }
+                                // set always lazy loading to trigger reload of combos whose query is parametric with the page values
                                 comboEntry[element.key]['lazyLoading'] = true;
                             }
+
                             Object.assign(queryData[qd_index], comboEntry);
                             //console.log("Combo Data: value->", queryData[qd_index], " key->", element.key, " options->",comboData.rows);
                         }
@@ -1751,9 +1764,21 @@ exports.handler = async (event, context) => {
 
             // we might need to re-run combobox query of the event affected field
             if (queryString.comboQueries != null && queryString.comboQueries.length) {
-                let query = queryString.comboQueries[0];
+                let element = queryString.comboQueries[0];
+                let query = element.comboQuery;
                 let comboData = await client.query(query);
-                queryData = { value: queryData, options: comboData.rows }
+                let comboValue = queryData[0][element.key];
+                let options = [];
+                if (element.type !== 'combobox') {
+                    options = comboData.rows;
+                } else {
+                    if (comboData.rows == null) {
+                        options = [null];
+                    } else {
+                        options = [comboData.rows.find(e => (e.id == comboValue))];
+                    }
+                }
+                queryData = { value: queryData, options: options }
             }
 
         }

@@ -34,7 +34,7 @@ export interface formViewKey { // as per API specification
     isLevel?: boolean;
     hasLevel?: boolean;
     newLine: boolean;
-    textareaHeight?: "S" | "M" | "L" | "XL";
+    textareaHeight?: 'S' | 'M' | 'L' | 'XL';
     buttonIcon?: string;
     confirmButtonAction?: boolean;
     isDownloadButton?: boolean;
@@ -81,8 +81,8 @@ export interface formViewKey { // as per API specification
 }
 
 export interface OutputEvent {
-    "eventName": string,
-    "eventTrigger": "onSave" | "onReload"
+    'eventName': string,
+    'eventTrigger': 'onSave' | 'onReload'
 }
 
 export interface formGetterParams {
@@ -380,12 +380,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                         _this.subscribeFieldInputEvents(_this.viewKeys);
                     }
-                    // subscribe combobox lazy loading events
-                    const lazy_subscription = _this.pubsubService.subscribe(_this.formParams.entryName + '_combo_lazy_loading',
-                    value => {
-                        _this.eventCallback({actionType: 'combo_lazy_loading'}, value, value.data); 
-                    });
-                    _this.formSubscriptions.push(lazy_subscription);
                     // load output events if any
                     if (params.outputEvents != null) {
                         _this.outputEvents = params.outputEvents;
@@ -432,6 +426,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this;
         for (let i = 0; i < viewKeys.length; i++) { // subscribe to single field events
             const key = viewKeys[i];
+            // subscribe to input events
             if (key.inputEvents != null) {
                 for (let j = 0; j < key.inputEvents.length; j++) {
                     const event = key.inputEvents[j];
@@ -440,6 +435,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     });
                     _this.formSubscriptions.push(subscription);
                 }
+            }
+            // subscribe to combos
+            if (key.format.viewType === 'combobox') {
+                // subscribe combobox lazy loading events
+                const lazy_subscription = _this.pubsubService.subscribe(_this.formParams.entryName + '_' + key.key + '_combo_lazy_loading',
+                    value => {
+                        _this.eventCallback({actionType: 'combo_lazy_loading'}, value, value.data); 
+                    });
+                _this.formSubscriptions.push(lazy_subscription);
             }
             if (key.format.viewType === 'subform' && key.format.subform_keys != null) {
                 _this.subscribeFieldInputEvents(key.format.subform_keys);
@@ -688,7 +692,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 readonly: (attribute != null && attribute.readOnly != null && attribute.readOnly[index] != null) ? attribute.readOnly[index] : _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
                 isVisible: (attribute != null && attribute.isHidden != null && attribute.isHidden[index] != null) ? !attribute.isHidden[index] : field.isHidden != null ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,
-                textareaHeight: (field.textareaHeight != null) ? field.textareaHeight : "S",
+                textareaHeight: (field.textareaHeight != null) ? field.textareaHeight : 'S',
                 buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
                 confirmButtonAction: (field.confirmButtonAction != null) ? field.confirmButtonAction : false,
                 isDownloadButton: (field.isDownloadButton != null) ? field.isDownloadButton : false,
@@ -1157,7 +1161,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
         else if (event.actionType === 'show_message' && conditionMet && event.message) {
             // Show confirmation dialog
-            _this._dialogService.showConfimationDialog("Confirm", event.message.messageText, "Yes", "No", "info").then((result) => {
+            _this._dialogService.showConfimationDialog('Confirm', event.message.messageText, 'Yes', 'No', 'info').then((result) => {
                 // Initialize with No action info
                 var actionType = event.message.actionOnNo.actionType;
                 var queryFunct = event.message.actionOnNo.queryFunct;
@@ -1241,7 +1245,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                         _this._toastService.showSuccessToast(event.successMessage);
                                     }
                                     else{
-                                        _this._toastService.showSuccessToast("Success!");
+                                        _this._toastService.showSuccessToast('Success!');
                                     }
                                     if (event.outputEventWhenComplete != null) {
                                         _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
