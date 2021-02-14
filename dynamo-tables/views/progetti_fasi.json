@@ -14,25 +14,16 @@
 		}
 	],
 	"predefinedQueries": [
+		
 		{
 			"operation": "selectForm",
-			"queryString": "select * from entrasp.progetti_fasi pf where pf.codice_azienda=$codice_azienda$ and pf.id_fase=$id_fase$;",
+			"queryString": "update entrasp.progetti_fasi pf set stato=snd.stato from entrasp.sondaggi snd where pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio and id_fase=$id_fase$",
+			"type": "preProcessing"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "select pf.*, snd.data_prevista, ss.id_somministrazione from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio  where pf.codice_azienda=$codice_azienda$ and pf.id_fase=$id_fase$;",
 			"type": "main"
-		},
-		{
-			"operation": "selectForm",
-			"queryString": "select stato, data_prevista from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=coalesce(£id_sondaggio£,0);",
-			"type": "postProcessing"
-		},
-		{
-			"operation": "selectForm",
-			"queryString": "select id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=coalesce(£id_sondaggio£,0) limit 1;",
-			"type": "postProcessing"
-		},
-		{
-			"operation": "selectForm",
-			"queryString": "select count(id_somministrazione) as n_somministrazioni from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=coalesce(£id_sondaggio£,0);",
-			"type": "postProcessing"
 		},
 		{
 			"operation": "insert",
@@ -46,13 +37,8 @@
 		},
 		{
 			"operation": "selectTable",
-			"queryString": "select pf.*, entrasp.transcodifiche_transcodifica('STATO', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio  from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$;",
+			"queryString": "select pf.*, (select case when id_somministrazione is null then false else true end as visible_button_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), entrasp.transcodifiche_transcodifica('STATO', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio  from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$;",
 			"type": "main"
-		},
-		{
-			"operation": "selectTable",
-			"queryString": "select id_somministrazione, case when id_somministrazione is null then false else true end as visible_button_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=coalesce(£id_sondaggio£,0) limit 1;",
-			"type": "postProcessing"
 		}		
 	],
 	"form_keys": [
@@ -352,7 +338,7 @@
 			"attributeFuncts": [
 				{
 					"attributeType": "isHidden",
-					"queryString": "select case when ($n_somministrazioni$!=1) then 1 else 0 end as label from entrasp.progetti_fasi where id_fase=$id_fase$ and codice_azienda=$codice_azienda$;"
+					"queryString": "select case when £id_somministrazione£ is null then 1 else 0 end as label;"
 				}
 			],
 			"newLine": true,
@@ -375,20 +361,6 @@
 			},
 			"label": "id_somministrazione",
 			"key": "id_somministrazione",
-			"readOnly": true,
-			"sameOrigin": false,
-			"isHidden": true,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "n_somministrazioni",
-			"key": "n_somministrazioni",
 			"readOnly": true,
 			"sameOrigin": false,
 			"isHidden": true,
@@ -820,6 +792,6 @@
 	],
 	"orderBy": {
 		"key": "pf.codice",
-		"order": "ascending"
+		"order": "descending"
 	}
 }
