@@ -229,7 +229,19 @@
             },
             "label": "Id Processo",
             "newLine": false,
+            "size": 2,
             "queryCond": "id_tipo_processo=$id_tipo_processo$"
+        },
+        {
+            "fieldName": "id_procedura",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Id Procedura",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "id_procedura=$id_procedura$"
         },
         {
             "fieldName": "id_centro_gest",
@@ -254,24 +266,15 @@
             "queryCond": "id_procedura_parent=$id_procedura_parent$"
         },
         {
-            "fieldName": "id_procedura",
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "label": "Id Procedura",
-            "newLine": false,
-            "queryCond": "id_procedura=$id_procedura$"
-        },
-        {
-            "fieldName": "descrizione_breve",
+            "fieldName": "parola_search",
             "format": {
                 "dataType": "text",
                 "viewType": "input"
             },
-            "label": "Descrizione",
+            "label": "Parola Chiave",
             "newLine": false,
-            "queryCond": "descrizione_breve='%€descrizione_breve€%'"
+            "size": 5,
+            "queryCond": "(upper(descrizione_breve) like '%'||upper('€parola_search€')||'%' or upper(descrizione) like '%'||upper('€parola_search€')||'%')"
         },
         {
             "fieldName": "codice",
@@ -280,8 +283,31 @@
                 "viewType": "input"
             },
             "label": "Codice",
-            "newLine": true,
+            "newLine": false,
+            "size": 1,
             "queryCond": "codice=$codice$"
+        },
+        {
+            "fieldName": "data_comp_prevista_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Sondaggi con data competenza dal",
+            "newLine": false,
+            "size": 2,
+            "queryCond": "id_procedura in (select pmt.id_procedura from entrasp.sondaggi snd inner join entrasp.procedure_modelli_test pmt on snd.id_modello_test = pmt.id_modello_test and snd.codice_azienda=pmt.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.data_comp>='€data_comp_prevista_min€')"
+        },
+        {
+            "fieldName": "data_comp_prevista_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Sondaggi con data competenza fino al",
+            "newLine": true,
+            "size": 2,
+            "queryCond": "id_procedura in (select pmt.id_procedura from entrasp.sondaggi snd inner join entrasp.procedure_modelli_test pmt on snd.id_modello_test = pmt.id_modello_test and snd.codice_azienda=pmt.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.data_comp<='€data_comp_prevista_max€')"
         },
         {
             "fieldName": "flag_principali",
@@ -292,6 +318,26 @@
             "label": "Solo Principali",
             "newLine": false,
             "queryCond": "id_procedura_parent IS null"
+        },
+        {
+            "fieldName": "no_verif",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Mai verificati",
+            "newLine": false,
+            "queryCond": "id_procedura not in(select pmt.id_procedura from entrasp.sondaggi snd inner join entrasp.procedure_modelli_test pmt on snd.id_modello_test = pmt.id_modello_test and snd.codice_azienda=pmt.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
+        },
+        {
+            "fieldName": "verificati",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Già verificati",
+            "newLine": false,
+            "queryCond": "id_procedura in(select pmt.id_procedura from entrasp.sondaggi snd inner join entrasp.procedure_modelli_test pmt on snd.id_modello_test = pmt.id_modello_test and snd.codice_azienda=pmt.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
         },
         {
             "fieldName": "procedure_without_rischi",
@@ -310,7 +356,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con rischi",
-            "newLine": false,
+            "newLine": true,
             "queryCond": "id_procedura in(select id_procedura from entrasp.fonti_rischio where codice_azienda=$codice_azienda$ and id_procedura is not null)"
         },
         {
@@ -320,7 +366,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con presidio",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "id_procedura in(select distinct id_procedura from entrasp.presidi where codice_azienda=$codice_azienda$ and id_procedura is not null)"
         },
         {
@@ -349,30 +395,20 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Senza modelli test",
+            "label": "Senza modelli di verifica",
             "newLine": false,
             "queryCond": "id_procedura not in(select distinct id_procedura from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$)"
         },
         {
-            "fieldName": "no_verif",
+            "fieldName": "with_mdt",
             "format": {
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Mai verificati",
+            "label": "Con modelli di verifica",
             "newLine": false,
-            "queryCond": "id_procedura not in(select pmt.id_procedura from entrasp.sondaggi snd inner join entrasp.procedure_modelli_test pmt on snd.id_modello_test = pmt.id_modello_test and snd.codice_azienda=pmt.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
-        },
-        {
-            "fieldName": "verificati",
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "label": "Già verificati",
-            "newLine": false,
-            "queryCond": "id_procedura in(select pmt.id_procedura from entrasp.sondaggi snd inner join entrasp.procedure_modelli_test pmt on snd.id_modello_test = pmt.id_modello_test and snd.codice_azienda=pmt.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
-        }
+            "queryCond": "id_procedura in(select distinct id_procedura from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$)"
+        }               
     ],
     "subTables": [
         {
