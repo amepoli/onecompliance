@@ -2,21 +2,22 @@
     "$schema": "../views.schema.json",
     "entryKey": "presidi_sub_of_modelli_test",
     "origin": "entrasp.domande_presidi",
+    "businessObjectName": "domande_presidi",
     "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select distinct codice_azienda, id_modello_test, id_modello_test_vr, id_presidio, entrasp.presidi_descr(id_presidio, codice_azienda)  from entrasp.domande_presidi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
+            "queryString": "select distinct codice_azienda, id_modello_test, id_modello_test_vr, id_presidio, entrasp.presidi_descr(id_presidio, codice_azienda) as descr_presidio from entrasp.domande_presidi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
         },
         {
             "operation": "insert",
             "type": "main",
-            "queryString": "select entrasp.domande_presidi_insert_update($codice_azienda$, $id_presidio$, $id_modello_test$, $id_modello_test_vr$"
+            "queryString": "select entrasp.domande_presidi_insert_update($codice_azienda$, $id_presidio$, $id_modello_test$, $id_modello_test_vr$)"
         },
         {
             "operation": "update",
             "type": "main",
-            "queryString": "select entrasp.domande_presidi_insert_update($codice_azienda$, $id_presidio$, $id_modello_test$, $id_modello_test_vr$"
+            "queryString": "select entrasp.domande_presidi_insert_update($codice_azienda$, $id_presidio$, $id_modello_test$, $id_modello_test_vr$)"
         }
  
     ],
@@ -109,10 +110,18 @@
                 "dataType": "text"
             },
             "label": "Presidio",
-            "key": "id_presidio",
+            "key": "descr_presidio",
             "isHidden": false,
-            "isPrimary": true,
-            "queryFunct": ""
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Presidio",
+            "key": "id_presidio",
+            "isHidden": true,
+            "isPrimary": true
         },
         {
             "format": {
@@ -121,8 +130,7 @@
             "label": "Modello Test",
             "key": "id_modello_test",
             "isHidden": true,
-            "isPrimary": true,
-            "queryFunct": ""
+            "isPrimary": true
         },
         {
             "format": {
@@ -131,8 +139,7 @@
             "label": "Modello Test Vr",
             "key": "id_modello_test_vr",
             "isHidden": true,
-            "isPrimary": true,
-            "queryFunct": ""
+            "isPrimary": true
         },
         {
             "format": {
