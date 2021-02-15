@@ -1251,6 +1251,31 @@ exports.handler = async (event, context) => {
                     body = { result: 'KO', reason: 'Table not provided!' };
                 }
                 else {
+
+                    const DynamoParams = {
+                        TableName: 'VIEWS_NAME',
+                        Key: {
+                            entryKey: queryParams['entry_name']
+                        }
+                    };
+
+                    // read the entry params from DynamoDB view table
+                    let entry_params = await dynamo.get(DynamoParams).promise();
+
+                    // complete table if inherited
+                    entry_params = await overrideTable(entry_params.Item);
+                    if (entry_params.origin) {
+                        if (entry_params.origin.includes(".")) {
+                            table = entry_params.origin.split(".")[1];
+                        }
+                        else {
+                            table = entry_params.origin;
+                        }
+                    }
+
+                    console.log("entry_params", entry_params);
+                    console.log("table", table);
+
                     // Get columns for the table
                     query = `select entrasp.grc_listacampiditabella(
                         '${table}'

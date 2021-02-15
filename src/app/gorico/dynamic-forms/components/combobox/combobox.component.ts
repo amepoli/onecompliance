@@ -112,13 +112,16 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    if(this.subscription != null) {
+      this.subscription.unsubscribe();
+    }
+
     this._onDestroy.next();
     this._onDestroy.complete();
   }
 
   setOptions(options: any[], skipNextEvent: boolean) {
-    this.field.options = options.filter(x => x.name !== null);
+    this.field.options = options.filter(x =>  x && x.name !== null);
     // this.field.options = options;
     
     // load the initial bank list
