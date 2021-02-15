@@ -40,8 +40,7 @@ function replaceLocalKeys(queryString, keys) {
                 replacement = replacement.value;
             }
             if (replacement == null) {
-                toReplace = '=' + toReplace;
-                replacement = ' IS NULL';
+                replacement = 'null';
             }
             //replacement = (typeof replacement === 'string') ? '\'' + replacement.replace(/'/g, "''") + '\'' : replacement;
             //console.log('toReplace: ', toReplace, ', replacement: ', replacement);
