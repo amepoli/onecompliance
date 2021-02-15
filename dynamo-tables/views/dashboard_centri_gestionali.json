@@ -1,0 +1,105 @@
+{
+  "$schema": "../views.schema.json",
+  "dashboards": [
+    {
+      "conditions": [
+        {
+          "format": {
+            "backgroundColor": "white",
+            "color": "blak",
+            "fontFamily": "Arial",
+            "fontSize": "14px"
+          },
+          "formula": "!isNaN(#value)"
+        }
+      ],
+      "dataSource": {
+        "data": [
+
+        ]
+      },
+      "labels": {
+        "colorsQuery": {
+          "query": "select background_color as color from entrasp.transcodifiche where tipo_dato='STATO_RETTIFICATO' order by transcodifica",
+          "type": "column"
+        },
+        "columnsQuery": {
+          "key": "dashboard",
+          "query": "select distinct entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO', codice) as label from entrasp.transcodifiche order by label"
+        },
+        "rowsQuery": {
+          "key": "centro_gest",
+          "query": "select distinct entrasp.centri_gestionali_descr($codice_azienda$,snd.id_centro_gest) as label from entrasp.sondaggi snd"
+        }
+      },
+      "localization": "it",
+      "options": {
+        "drillThrough": false,
+        "grid": {
+          "showHeaders": false
+        }
+      },
+      "slice": {
+        "columns": [
+          {
+            "uniqueName": "Measures"
+          },
+          {
+            "uniqueName": "Dashboard"
+          }
+        ],
+        "measures": [
+          {
+            "aggregation": "count",
+            "availableAggregations": [
+              "count",
+              "distinctcount"
+            ],
+            "uniqueName": "Centro_gest"
+          }
+        ],
+        "rows": [
+          {
+            "uniqueName": "Centro_gest"
+          }
+        ]
+      }
+    }
+  ] ,
+  "inheritsFrom": "centri_gestionali",
+  "entryKey": "dashboard_centri_gestionali",
+  "search_keys": [],
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "SELECT coalesce(MAX(id_gruppo_lavoro),0)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
+      "type": "main"
+    },
+    {
+      "operation": "insert",
+      "queryString": "SELECT coalesce(MAX(id_gruppo_lavoro),0)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
+      "type": "preProcessing"
+    },
+    {
+      "operation": "insert",
+      "queryString": "INSERT INTO entrasp.gruppi_lavoro(codice_part, id_gruppo_lavoro, descrizione, flag_ufficiale) values ('€global_codice_part€',£next_id_gruppo£, $descrizione$, 0);",
+      "type": "preProcessing"
+    },
+    {
+      "operation": "insert",
+      "queryString": "SELECT coalesce(MAX(id_centro_gest),0)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+      "type": "preProcessing"
+    },
+    {
+      "operation": "insert",
+      "queryString": "INSERT INTO entrasp.centri_gestionali (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro) VALUES ('€global_codice_part€', £next_id£, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, £next_id_gruppo£) returning id_centro_gest;",
+      "type": "main"
+    },
+    {
+      "operation": "delete",
+      "queryString": "select entrasp.centro_gestionale_delete('€global_codice_part€', $id_centro_gest$);",
+      "type": "main"
+    }
+  ]
+
+}
