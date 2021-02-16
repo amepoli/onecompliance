@@ -61,7 +61,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_presidio_parent",
-            "label": "Presidio superiore",
+            "label": "Presidio Superiore",
             "newLine": false,
             "size": 4,
             "readOnly": true
@@ -272,7 +272,23 @@
                 }
             ],
             "label": "Processi associati"
+        },
+        {
+            "entryKey": "domande_presidi",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_presidio",
+                    "son": "id_presidio"
+                }
+            ],
+            "label": "Domande Associate al Presidio"
+            
         }
+
     ],
     "table_keys": [
         {
@@ -435,7 +451,7 @@
                     "viewType": "combobox",
                     "dataType": "text"
             },
-            "label": "Statp attuazione",
+            "label": "Stato attuazione",
             "newLine": false,
             "queryCond": "stato_attuazione=$stato_attuazione$"
         },
@@ -498,7 +514,48 @@
             "label": "Senza centro gestionale",
             "newLine": false,
             "queryCond": "id_centro_gest is null"
+        },
+        {
+            "fieldName": "senza_mdt",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza Modelli di Verifica",
+            "newLine": false,
+            "queryCond": "id_presidio not in (select id_presidio from entrasp.domande_presidi where codice_azienda = $codice_azienda$)"
+        },
+        {
+            "fieldName": "with_mdt",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con Modelli di Verifica",
+            "newLine": false,
+            "queryCond": "id_presidio in(select id_presidio from entrasp.domande_presidi where codice_azienda = $codice_azienda$)"
+        },
+        {
+            "fieldName": "senza_snd",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza Sondaggi",
+            "newLine": true,
+            "queryCond": "id_presidio not in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C'"
+        },
+        {
+            "fieldName": "with_snd",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con Sondaggi",
+            "newLine": false,
+            "queryCond": "id_presidio in(select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
         }
+
     ],
     "inputEvents": [
         {
