@@ -716,7 +716,7 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Senza domande",
+            "label": "Senza Domande",
             "newLine": false,
             "queryCond": "mt.id_modello_test not in(select distinct dm.id_modello_test from entrasp.domande dm where codice_azienda=$codice_azienda$)"
         },
@@ -726,7 +726,7 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Senza verifiche",
+            "label": "Senza Verifiche",
             "newLine": false,
             "queryCond": "mt.id_modello_test not in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$)"
         },
@@ -736,10 +736,40 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Senza procedure",
+            "label": "Senza Processi",
             "newLine": false,
             "queryCond": "mt.id_modello_test not in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=$codice_azienda$)"
-        }
+        },
+        {
+            "fieldName": "no_procedure",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con Processi",
+            "newLine": false,
+            "queryCond": "mt.id_modello_test in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=$codice_azienda$)"
+        },
+        {
+            "fieldName": "with_presidi",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con Presidi",
+            "newLine": false,
+            "queryCond": "mt.id_modello_test in(select distinct pmt.id_modello_test from entrasp.domande_presidi pmt where codice_azienda=$codice_azienda$)"
+        },
+        {
+            "fieldName": "no_presidi",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza Presidi",
+            "newLine": false,
+            "queryCond": "mt.id_modello_test not in(select distinct pmt.id_modello_test from entrasp.domande_presidi pmt where codice_azienda=$codice_azienda$)"
+        } 
     ],
     "subTables": [
         {
