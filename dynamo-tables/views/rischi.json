@@ -826,6 +826,28 @@
       "queryCond": "codice_rischio in(select codice_rischio from entrasp.rischi_tipi where codice_azienda=$codice_azienda$ and id_tipo_rischio= $id_tipo_rischio_s$)"
     },
     {
+      "fieldName": "data_comp_prevista_min",
+      "format": {
+          "dataType": "date",
+          "viewType": "input"
+      },
+      "label": "Sondaggi con data competenza dal",
+      "newLine": false,
+      "size": 2,
+      "queryCond": "codice_rischio in (select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp>='€data_comp_prevista_min€')"
+  },
+  {
+      "fieldName": "data_comp_prevista_max",
+      "format": {
+          "dataType": "date",
+          "viewType": "input"
+      },
+      "label": "Sondaggi con data competenza fino al",
+      "newLine": true,
+      "size": 2,
+      "queryCond":"codice_rischio in (select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp>='€data_comp_prevista_max€')"
+  },
+    {
       "fieldName": "rischi_without_procedure",
       "format": {
         "value": "0",
@@ -862,8 +884,48 @@
         "viewType": "checkbox"
       },
       "label": "Con Presidi",
-      "newLine": false,
+      "newLine": true,
       "queryCond": "codice_rischio in(select codice_rischio from entrasp.rischi_presidi where codice_azienda=$codice_azienda$)"
+    },
+    {
+      "fieldName": "with_snd",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Verificati",
+      "newLine": false,
+      "queryCond": "codice_rischio in(select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
+    },
+    {
+      "fieldName": "no_snd",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Mai Verificati",
+      "newLine": false,
+      "queryCond": "codice_rischio not in(select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
+    },
+    {
+      "fieldName": "with_mdt",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Con Modelli di Verifica",
+      "newLine": false,
+      "queryCond": "codice_rischio in(select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.modelli_test snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$)"
+    },
+    {
+      "fieldName": "no_mdt",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Senza Modelli di Verifica",
+      "newLine": false,
+      "queryCond": "codice_rischio not in(codice_rischio in(select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.modelli_test snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$)"
     }
   ],
   "subTables": [

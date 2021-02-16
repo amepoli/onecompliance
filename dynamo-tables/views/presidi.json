@@ -440,7 +440,7 @@
                 "viewType": "input"
             },
             "label": "Codice",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "codice=$codice$"
         },
         {
@@ -452,8 +452,30 @@
                     "dataType": "text"
             },
             "label": "Stato attuazione",
-            "newLine": false,
+            "newLine": true,
             "queryCond": "stato_attuazione=$stato_attuazione$"
+        },
+        {
+            "fieldName": "data_comp_prevista_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Sondaggi con data competenza dal",
+            "newLine": false,
+            "size": 2,
+            "queryCond": "id_presidio in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp>='€data_comp_prevista_min€')"
+        },
+        {
+            "fieldName": "data_comp_prevista_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Sondaggi con data competenza fino al",
+            "newLine": true,
+            "size": 2,
+            "queryCond":"id_presidio in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp<='€data_comp_prevista_max€')"
         },
         {
             "fieldName": "flag_principali",
@@ -502,7 +524,7 @@
                 "viewType": "checkbox"
             },
             "label": "Senza procedure",
-            "newLine": false,
+            "newLine": true,
             "queryCond": "id_presidio not in(select id_presidio from entrasp.procedure_aziendali_presidi where codice_azienda=$codice_azienda$)"
         },
         {
@@ -541,9 +563,9 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Senza Sondaggi",
-            "newLine": true,
-            "queryCond": "id_presidio not in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C'"
+            "label": "Mai Verificati",
+            "newLine": false,
+            "queryCond": "id_presidio not in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
         },
         {
             "fieldName": "with_snd",
@@ -551,7 +573,7 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Con Sondaggi",
+            "label": "Già Verificati",
             "newLine": false,
             "queryCond": "id_presidio in(select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
         }
