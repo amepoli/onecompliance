@@ -396,17 +396,31 @@ export class TableViewComponent implements OnChanges, OnDestroy {
     }
 
     loadStyle(table_keys) {
-        this.styles = {};
+        let _this = this;
+        _this.styles = {};
         table_keys.forEach(key => {
             if (key.style && key.style.length) {
                 key.style.forEach(style => {
-                    if (!this.styles[key.key]) {
-                        this.styles[key.key] = {};
+                    if (!_this.styles[key.key]) {
+                        _this.styles[key.key] = {};
                     }
-                    this.styles[key.key][style.value] = style;
+                    if(style.button_icon) {
+                        _this.styles[key.key] = style;
+                    }
+                    else {
+                        _this.styles[key.key][style.value] = style;
+                    }
                 });
             }
         });
+    }
+
+    doesButtonIconExist(key: string) {
+        return (this.styles[key] && this.styles[key]['button_icon']);
+    }
+
+    getButtonIcon(key: string) {
+        return this.styles[key]['button_icon'];
     }
 
     getElementStyle(column, value) {
