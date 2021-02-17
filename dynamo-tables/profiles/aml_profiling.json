@@ -1,0 +1,87 @@
+{
+  "$schema": "../profiles.schema.json",
+  "menu": {
+    "allow": [
+      "*"
+    ],
+    "deny": [
+      "classification",
+      "configuration",
+      "credit_evaluation",
+      "consultant",
+      "indicators",
+      "reports",
+      "codici_esterni_mdt"
+    ]
+  },
+  "name": "aml_profiling",
+  "tables": {
+    "allow": [
+      "*"
+    ],
+    "deny": [
+      "sondaggi_consultant",
+      "modelli_test_vr_consultant",
+      "compiti_consultant",
+      "prodotti",
+      "progetti_advanced",
+      "indicatori",
+      "report",
+      "indicatori_report",
+      "codici_esterni_mdt"
+    ],
+    "form_keys": [
+      {
+        "entry": "modelli_test_vr",
+        "hide": [
+          "allinea_codici_esterni",
+          "codice_esterno"
+        ]
+      }
+    ],
+    "readOnly": [],
+    "table_keys": [],
+    "queryCond": [
+      {
+        "entry": "attachments",
+        "viewType": "table",
+        "queryString": "1=1 limit 100"
+      },
+      {
+        "entry": "modelli_test_vr",
+        "viewType": "table",
+        "queryString": "id_centro_gest in(select id_centro_gest from entrasp.centri_gestionali where id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri where id_anagrafica=€global_userid€ and codice_part='€global_codice_part€') and codice_part='€global_codice_part€') order by mt.id_modello_test desc limit 100"
+      },
+      {
+        "entry": "progetti",
+        "viewType": "table",
+        "queryString": "1=1 limit 100"
+      },
+      {
+        "entry": "progetti_advanced",
+        "viewType": "table",
+        "queryString": "1=1 limit 100"
+      },
+      {
+        "entry": "risposte",
+        "viewType": "table",
+        "queryString": "1=1 limit 100"
+      },
+      {
+        "entry": "sondaggi",
+        "viewType": "table",
+        "queryString": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€') order by snd.id_sondaggio desc limit 100"
+      },
+      {
+        "entry": "sondaggi_somministrati",
+        "viewType": "table",
+        "queryString": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€') order by ss.id_somministrazione desc limit 100"
+      },
+      {
+        "entry": "sondaggi_sub_of_modelli_test",
+        "viewType": "table",
+        "queryString": "1=1 limit 20"
+      }
+    ]
+  }
+}
