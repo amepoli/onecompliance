@@ -14,7 +14,6 @@
 		}
 	],
 	"predefinedQueries": [
-		
 		{
 			"operation": "selectForm",
 			"queryString": "update entrasp.progetti_fasi pf set stato=snd.stato from entrasp.sondaggi snd where pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio and id_fase=$id_fase$",
@@ -39,7 +38,7 @@
 			"operation": "selectTable",
 			"queryString": "select pf.*, (select case when id_somministrazione is null then false else true end as visible_button_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select case when id_somministrazione is null then false else true end as visible_button_modello_test from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), entrasp.transcodifiche_transcodifica('STATO', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio  from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$;",
 			"type": "main"
-		}		
+		}
 	],
 	"form_keys": [
 		{
@@ -373,10 +372,10 @@
 			"label": "Stato",
 			"format": {
 				"comboQuery": "SELECT codice AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
-                "options": [],
-                "viewType": "combobox",
-                "dataType": "text"
-            },
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
 			"fieldName": "stato_s",
 			"newLine": false,
 			"queryCond": "snd.stato=$stato_s$"
@@ -385,44 +384,44 @@
 			"label": "Fase padre",
 			"format": {
 				"comboQuery": "SELECT id_fase AS id, titolo AS name FROM entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$;",
-                "options": [],
-                "viewType": "combobox",
-                "dataType": "text"
-            },
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
 			"fieldName": "id_fase_s",
 			"newLine": false,
-			"queryCond": "(pf.id_fase=$id_fase_s$ or pf.id_fase_sup=$id_fase_s$)" 
+			"queryCond": "(pf.id_fase=$id_fase_s$ or pf.id_fase_sup=$id_fase_s$)"
 		},
 		{
-            "fieldName": "flag_principali",
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "label": "Solo Principali",
-            "newLine": false,
-            "queryCond": "pf.id_fase_sup IS null"
-        },
+			"fieldName": "flag_principali",
+			"format": {
+				"value": "0",
+				"viewType": "checkbox"
+			},
+			"label": "Solo Principali",
+			"newLine": false,
+			"queryCond": "pf.id_fase_sup IS null"
+		},
 		{
-            "fieldName": "dt_competenza_da",
-            "format": {
-                "viewType": "input",
+			"fieldName": "dt_competenza_da",
+			"format": {
+				"viewType": "input",
 				"dataType": "date"
-            },
-            "label": "Data competenza DA",
-            "newLine": false,
-            "queryCond": "snd.data_comp >= $dt_competenza_da$"
-        },
+			},
+			"label": "Data competenza DA",
+			"newLine": false,
+			"queryCond": "snd.data_comp >= $dt_competenza_da$"
+		},
 		{
-            "fieldName": "dt_competenza_a",
-            "format": {
-                "viewType": "input",
+			"fieldName": "dt_competenza_a",
+			"format": {
+				"viewType": "input",
 				"dataType": "date"
-            },
-            "label": "Data competenza A",
-            "newLine": false,
-            "queryCond": "snd.data_comp <= $dt_competenza_a$"
-        }
+			},
+			"label": "Data competenza A",
+			"newLine": false,
+			"queryCond": "snd.data_comp <= $dt_competenza_a$"
+		}
 	],
 	"table_keys": [
 		{
@@ -601,7 +600,7 @@
 			"key": "data_esecuzione",
 			"width": "6%",
 			"label": "Data esecuzione"
-		},	
+		},
 		{
 			"format": {
 				"dataType": "number"
@@ -694,20 +693,6 @@
 	],
 	"subTables": [
 		{
-			"entryKey": "consuntivazioni_sub_of_progetti_fasi",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_fase",
-					"son": "id_fase"
-				}
-			],
-			"label": "Time Report"
-		},
-		{
 			"entryKey": "progetti_fasi_sub_of_progetti_fasi",
 			"keys": [
 				{
@@ -720,8 +705,21 @@
 				}
 			],
 			"label": "Sotto fasi"
+		},
+		{
+			"entryKey": "consuntivazioni_sub_of_progetti_fasi",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_fase",
+					"son": "id_fase"
+				}
+			],
+			"label": "Time Report"
 		}
-	
 	],
 	"inputEvents": [
 		{
