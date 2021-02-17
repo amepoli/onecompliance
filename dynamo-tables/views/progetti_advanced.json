@@ -10,6 +10,11 @@
 			"queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
 		},
 		{
+			"operation": "selectForm",
+			"type": "postProcessing",
+			"queryString": "select entrasp.automatic_progetti_fasi_order($codicea_azienda$, £id_progetto£, $idfase$)"	
+		},
+		{
 			"queryString": "select case when count(id_fase)=0 and (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)>0 then 'C' when (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)=0 then 'P' else 'A' end as stato  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and stato='P'",
 			"type": "postProcessing",
 			"operation": "selectForm"
