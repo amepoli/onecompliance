@@ -20,16 +20,16 @@
       },
       "labels": {
         "colorsQuery": {
-          "query": "select background_color as color from entrasp.transcodifiche where tipo_dato='STATO_RETTIFICATO' order by transcodifica",
-          "type": "column"
+          "query": "",
+          "type": "full"
         },
         "columnsQuery": {
-          "key": "dashboard",
-          "query": "select distinct entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO', codice) as label from entrasp.transcodifiche order by label"
+          "key": "fascia",
+          "query": "select distinct entrasp.transcodifiche_transcodifica('FASCIA_TEMPORALE', codice) as label from entrasp.transcodifiche order by label"
         },
         "rowsQuery": {
           "key": "centro_gest",
-          "query": "select distinct entrasp.centri_gestionali_descr($codice_azienda$,snd.id_centro_gest) as label from entrasp.sondaggi snd"
+          "query": "select distinct entrasp.centri_gestionali_descr($codice_azienda$,cg.id_centro_gest) as label from entrasp.centri_gestionali cg"
         }
       },
       "localization": "it",
@@ -45,7 +45,7 @@
             "uniqueName": "Measures"
           },
           {
-            "uniqueName": "Dashboard"
+            "uniqueName": "Fascia"
           }
         ],
         "measures": [
@@ -72,7 +72,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "SELECT coalesce(MAX(id_gruppo_lavoro),0)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
+      "queryString": "SELECT select distinct entrasp.centri_gestionali_descr($codice_azienda$,cg.id_centro_gest) as centro_gest,entrasp.transcodifiche_transcodifica('FASCIA_TEMPORALE',entrasp.stato_rettificato(snd.data_prevista,ss.stato)) as dashboard,codice_part,entrasp.saturazione_cg_fascia_temporale(id_centro_gest, $codice_azienda$, 'tutti','A') AS next_id_gruppo FROM entrasp.centri_gestionali cg WHERE codice_part='€global_codice_part€';",
       "type": "main"
     },
     {
