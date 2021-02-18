@@ -36,6 +36,7 @@
       "options": {
         "drillThrough": false,
         "grid": {
+          "showGrandTotals": "rows",
           "showHeaders": false
         }
       },
@@ -59,7 +60,12 @@
           }
         ],
         "rows": [
-          {
+          {  "filter": {
+            "members": [
+              "Rischio_inerente.Catastrofico"
+            ],
+            "negation": true
+          },
             "uniqueName": "Centro_gest"
           }
         ]
@@ -68,7 +74,98 @@
   ] ,
   "inheritsFrom": "sondaggi_somministrati",
   "entryKey": "dashboard_sondaggi_somministrati",
-  "search_keys": [],
+  "search_keys": [
+    {
+      "fieldName": "id_modello_test",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Modello di Verifica",
+      "newLine": false,
+      "queryCond": "snd.id_modello_test=$id_modello_test$"
+    },
+    {
+      "fieldName": "id_sondaggio",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Sondaggio",
+      "newLine": false,
+      "queryCond": "ss.id_sondaggio=$id_sondaggio$"
+    },
+    {
+      "fieldName": "id_somministrazione",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Verifica",
+      "newLine": true,
+      "queryCond": "ss.id_somministrazione=$id_somministrazione$"
+    },
+    {
+      "fieldName": "data_comp",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Competenza",
+      "newLine": true,
+      "queryCond": "snd.data_comp='€data_comp€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista>='€data_esec_prevista_min€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista entro il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista<='€data_esec_prevista_max€'"
+    },
+    {
+      "fieldName": "data_esec_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_esecuzione>='€data_esec_min€'"
+    },
+    {
+      "fieldName": "data_esec_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione entro il",
+      "newLine": true,
+      "queryCond": "snd.data_esecuzione<='€data_esec_max€'"
+    },
+    {
+      "fieldName": "object_description",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Oggetto di verifica",
+      "newLine": true,
+      "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+    }
+  ],
   "predefinedQueries": [
     {
       "operation": "selectTable",
