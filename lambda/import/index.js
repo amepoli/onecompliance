@@ -1033,7 +1033,7 @@ exports.handler = async (event, context) => {
                         if (!columns) {
                             // Let's search CSV header for columns
                             // First line contains headers, replace all extra characters
-                            columns = csvFile.Body.toString().split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/CSV_DELIMITER/g, ',');
+                            columns = csvFile.Body.toString().split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/﻿/g, '').replace(/CSV_DELIMITER/g, ',');
                         }
 
                         // Added schema if table does not contain
