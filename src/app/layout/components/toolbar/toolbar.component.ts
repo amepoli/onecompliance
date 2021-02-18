@@ -53,6 +53,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     currentCompany: string;
 
+    dashboardTable: string;
+
     hideActions: string[] = []; // Hide Actions
 
     messages: MessageElement[] = []; // Messages
@@ -176,6 +178,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
             _this.hideActions = hideActions;
         });
 
+        _this._navigationService.onDashboardTableLoad.subscribe(dashboardData => {
+            const url = _this.router.url;
+            const currentTable = url.substring(url.lastIndexOf('/') + 1);
+            if (dashboardData.origin === currentTable) {
+                _this.dashboardTable = dashboardData.dashboardTable;
+            }
+        });
+
         // Old method using pubsubservice
         // _this._pubSubService.subscribe(_this.subMsgCmdTopic,
         //     msg => {
@@ -281,6 +291,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     gotoList(): void {
         this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'list' });
+    }
+
+    gotoDashboard(): void {
+        this.router.navigate(['/gorico/dashboard'], {queryParams: {table: this.dashboardTable}});
     }
 
     getReportList(): void {

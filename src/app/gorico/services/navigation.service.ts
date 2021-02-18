@@ -30,6 +30,8 @@ export class NavigationService {
     // Event Emitter for hide actions
     public onToolbarHideActionsChanged: EventEmitter<string[]> = new EventEmitter();
 
+    public onDashboardTableLoad: EventEmitter<{origin: string, dashboardTable: string}> = new EventEmitter();
+
     /**
      * Update Tooblar Hide Actions
      * @param hideActions Hide Actions

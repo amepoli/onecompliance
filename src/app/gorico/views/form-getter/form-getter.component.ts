@@ -345,6 +345,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.onMessagesUpdated.emit([]);
                     }
 
+                    // signal toolbar about a dashboard 
+                    _this._navigationService.onDashboardTableLoad.emit({origin: _this.formParams.entryName, dashboardTable: params.dashboardTable});
+
                     // Get View properties if exist
                     _this.formRowProperties = params.formRowProperties;
                     if (_this.formRowProperties && _this.formRowProperties.length) {

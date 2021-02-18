@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BackendService } from '../views/backend/backend.service';
 import { DashboardCellEvent } from '../views/dashboard/dashboard.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-dashboards',
@@ -11,14 +11,22 @@ import { Router } from '@angular/router';
 export class MainDashboardsComponent implements OnInit {
 
   keys: any;
+  table: string;
 
   constructor(
       private backendService: BackendService,
-      private router: Router) { }
+      private router: Router,
+      private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     const _this = this;
     _this.keys = {};
+    _this.route.queryParams
+    .filter(params => params.table)
+    .subscribe(params => {
+      _this.table = params.table;
+    }
+  );
   }
 
   onCellClick(event: DashboardCellEvent): void{

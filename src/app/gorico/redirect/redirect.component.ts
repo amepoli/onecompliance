@@ -11,7 +11,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class RedirectComponent implements OnInit {
     // Url used to return to after successfully logging in
-    returnUrl = '/gorico/dashboard';
+    returnUrl = '/gorico/main-table/me';
 
     /**
      * Constructor

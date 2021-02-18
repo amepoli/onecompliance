@@ -256,7 +256,10 @@ export class TableViewComponent implements OnChanges, OnDestroy {
                     _this.loadStyle(params.table_keys);
                     _this.loadLevel(params.table_keys);
 
-                    if(!_this.isTabMode){
+                    // signal toolbar about a dashboard 
+                    _this._navigationService.onDashboardTableLoad.emit({origin: _this.tableData.entryName, dashboardTable: params.dashboardTable});
+
+                    if (!_this.isTabMode){
                         // Load Import Queries list if available
                         if (params.importQueries && params.importQueries.tableQueries) {
                             _this._console.log('importQueries', params.importQueries);
@@ -276,7 +279,6 @@ export class TableViewComponent implements OnChanges, OnDestroy {
                         }
 
                     }
-
                     
                     // Load Hide Actions if available
                     if (params.hideActions) {

@@ -26,7 +26,7 @@ export class LoginPageComponent implements OnInit {
     loginButtonText = 'LOGIN';
 
     // Url used to return to after successfully logging in
-    returnUrl = '/gorico/dashboard';
+    returnUrl = '/gorico/main-table/me';
 
     /**
      * Constructor
