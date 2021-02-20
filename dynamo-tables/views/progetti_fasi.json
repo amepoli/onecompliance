@@ -49,6 +49,33 @@
 			},
 			"label": "id_fase",
 			"key": "id_fase",
+			"inputEvents": [
+				{
+					"eventName": "fasi_button_duplica",
+					"actionType": "show_message",
+					"condition": "none",
+					"values": [],
+					"message": {
+						"messageText": "Sei sicuro di voler duplicare questa fase e relativo sondaggo? (si verrà automaticamente trasferiti nella nuova)",
+						"actionOnNo": {
+							"actionType": "query",
+							"queryFunct": "select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase=$id_fase$"
+						},
+						"actionOnYes": {
+							"actionType": "query",
+							"queryFunct": "select id_fase from entrasp.progetti_fasi_duplica($codice_azienda$, $id_fase$);"
+						}
+					},
+					"outputEventWhenComplete": "aggiorna_id_fase"
+				},
+				{
+					"eventName": "aggiorna_id_fase",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select max(id_fase) as id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase=$id_fase$"
+				}
+			],
 			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": true,
@@ -353,53 +380,26 @@
 			"sameOrigin": false
 		},
 		{
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "duplica_fasi",
-            "label": "Duplica fase",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "fasi_button_duplica",
-                "eventTrigger": "press"
-            },
-			"inputEvents": [
-				{
-                    "eventName": "fasi_button_duplica",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageText": "Sei sicuro di voler duplicare questa fase e relativo sondaggo? (si verrà automaticamente trasferiti nella nuova)",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase=$id_fase$"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select id_fase from entrasp.progetti_fasi_duplica($codice_azienda$, $id_fase$);"
-                        }
-                    },
-                    "outputEventWhenComplete": "aggiorna_id_fase"
-                },
-				{
-                    "eventName": "aggiorna_id_fase",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select max(id_fase) as id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase=$id_fase$"
-                }
-			],
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false
-        },
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "duplica_fasi",
+			"label": "Duplica fase",
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "fasi_button_duplica",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
 		{
 			"autoGenerate": false,
 			"format": {
