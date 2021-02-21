@@ -266,6 +266,13 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
             }
         });
         if (mainQuery) { // no need to further build main query, stop here
+            if (orderBy != null && orderBy.key != null) {
+                if (mainQuery.slice(-1) === ';') {
+                    mainQuery = mainQuery.slice(0, -1);  // remove the final ';'
+                }
+                let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
+                mainQuery = mainQuery + ' ORDER BY ' + orderBy.key + order + ';';
+            }
             return {
                 mainQuery: mainQuery,
                 comboQueries: comboQueries,
