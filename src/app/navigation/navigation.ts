@@ -7,12 +7,12 @@ export const navigation: FuseNavigation[] = [
         type     : 'group',
         children : [
             {
-                id       : 'dashboards',
-                title    : 'Dashboards',
-                translate: 'NAV.DASHBOARDS',
+                id       : 'me',
+                title    : 'Me',
+                translate: 'NAV.ME',
                 type     : 'item',
-                icon     : 'dashboard',
-                url      : '/gorico/dashboard'
+                icon     : 'account_circle',
+                url      : '/gorico/main-table/me'
             }
         ]
     }

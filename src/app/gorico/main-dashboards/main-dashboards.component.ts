@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BackendService } from '../views/backend/backend.service';
 import { DashboardCellEvent } from '../views/dashboard/dashboard.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../login-page/auth.service';
 
 @Component({
   selector: 'app-main-dashboards',
@@ -11,22 +12,32 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class MainDashboardsComponent implements OnInit {
 
   keys: any;
-  table: string;
+  tables: string[];
+  dashboardData = {};
 
   constructor(
       private backendService: BackendService,
       private router: Router,
-      private route: ActivatedRoute) { }
+      private route: ActivatedRoute,
+      private authService: AuthService) { }
 
   ngOnInit(): void {
     const _this = this;
     _this.keys = {};
-    _this.route.queryParams
-    .filter(params => params.table)
+    _this.route.paramMap
     .subscribe(params => {
-      _this.table = params.table;
-    }
-  );
+      const tables = params.get('table');
+      _this.tables = tables.split(',');
+      _this.tables.forEach(table => {
+      const subscription = _this.backendService.getView(table, _this.authService.getCurrentCompany(null), {}).subscribe(
+        result => {
+            if (result.result === 'OK' && result.data != null) {
+                const data = result.data;
+                _this.dashboardData[table] = data.dashboards;
+            }
+        });
+        });
+    });
   }
 
   onCellClick(event: DashboardCellEvent): void{

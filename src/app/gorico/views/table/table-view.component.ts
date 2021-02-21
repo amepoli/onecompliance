@@ -257,7 +257,7 @@ export class TableViewComponent implements OnChanges, OnDestroy {
                     _this.loadLevel(params.table_keys);
 
                     // signal toolbar about a dashboard 
-                    _this._navigationService.onDashboardTableLoad.emit({origin: _this.tableData.entryName, dashboardTable: params.dashboardTable});
+                    _this._navigationService.onDashboardTableLoad.emit({origin: _this.tableData.entryName, dashboardTables: params.dashboardTables});
 
                     if (!_this.isTabMode){
                         // Load Import Queries list if available

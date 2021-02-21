@@ -53,7 +53,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     currentCompany: string;
 
-    dashboardTable: string;
+    dashboardTables: string[];
 
     hideActions: string[] = []; // Hide Actions
 
@@ -182,7 +182,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
             const url = _this.router.url;
             const currentTable = url.substring(url.lastIndexOf('/') + 1);
             if (dashboardData.origin === currentTable) {
-                _this.dashboardTable = dashboardData.dashboardTable;
+                _this.dashboardTables = dashboardData.dashboardTables;
             }
         });
 
@@ -294,7 +294,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     }
 
     gotoDashboard(): void {
-        this.router.navigate(['/gorico/dashboard'], {queryParams: {table: this.dashboardTable}});
+        this.router.navigate(['/gorico/dashboard', {table: this.dashboardTables}]);
     }
 
     getReportList(): void {

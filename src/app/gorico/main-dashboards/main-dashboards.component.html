@@ -1,44 +1,13 @@
 <div class="card">
-    <mat-card style="width: 650px; height: 340px; text-align: center;">
-            <mat-card-title style="font-size: medium; font-weight: bold;">RISCHI: PROBABILITA' E IMPATTO</mat-card-title>
-            <dashboard [height]="242" [viewHeader]="false" (cellClick)="onCellClick($event)"
-            [tableParams]="{entryName: 'rischi_rettificati', entryIndex: 0, keys: keys}">
-            </dashboard>
-    </mat-card>
-    <br><br>
-    <mat-card style="width: 650px; height: 300px; text-align: center;">
-            <mat-card-title style="font-size: medium; font-weight: bold;">RISCHI: PROBABILITA' PER IMPATTO</mat-card-title>
-            <dashboard [height]="96" [viewHeader]="false" (cellClick)="onCellClick($event)"
-            [tableParams]="{entryName: 'rischi_rettificati', entryIndex: 1, keys: keys}">
-            </dashboard>
-    </mat-card>
-    <br><br>
-    <mat-card style="width: 792px; height: 320px; text-align: center;">
-            <mat-card-title style="font-size: medium; font-weight: bold;">RISCHIO INERENTE E RISCHIO RESIDUO</mat-card-title>
-            <dashboard [height]="212" [viewHeader]="false" (cellClick)="onCellClick($event)"
-            [tableParams]="{entryName: 'rischi_rettificati', entryIndex: 2, keys: keys}">
-            </dashboard>
-    </mat-card> 
-    <br><br>
-    <mat-card style="width: 792px; height: 320px; text-align: center;">
-        <mat-card-title style="font-size: medium; font-weight: bold;">DASH STATO SOMMINISTRAZIONI</mat-card-title>
-        <dashboard [height]="212" [viewHeader]="false" (cellClick)="onCellClick($event)"
-        [tableParams]="{entryName: 'dashboard_sondaggi_somministrati', entryIndex: 0,  keys: keys}">
-        </dashboard>
-   </mat-card> 
-   <br><br>
-   <mat-card style="width: 792px; height: 320px; text-align: center;">
-        <mat-card-title style="font-size: medium; font-weight: bold;">STATO SOMMINISTRAZIONI</mat-card-title>
-        <dashboard [height]="212" [viewHeader]="false" (cellClick)="onCellClick($event)"
-        [tableParams]="{entryName: 'sondaggi_somministrati', entryIndex: 0,  keys: keys}">
-        </dashboard>
-   </mat-card> 
-   <br><br>
-   <mat-card style="width: 792px; height: 320px; text-align: center;">
-        <mat-card-title style="font-size: medium; font-weight: bold;">SATURAZIONE CENTRI GESTIONALI</mat-card-title>
-        <dashboard [height]="212" [viewHeader]="false" (cellClick)="onCellClick($event)"
-        [tableParams]="{entryName: 'dashboard_centri_gestionali', entryIndex: 0,  keys: keys}">
-        </dashboard>
-   </mat-card> 
-   <br><br>
+    <div *ngFor="let table of tables" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div *ngFor="let card of dashboardData[table]; let i = index">
+            <mat-card [style.width]="card.width" [style.height]="card.height" style="text-align: center;">
+                <mat-card-title style="font-size: medium; font-weight: bold;">{{card.title}}</mat-card-title>
+                <dashboard [height]="card.dashboardHeight" [viewHeader]="false" (cellClick)="onCellClick($event)"
+                    [tableParams]="{entryName: table, entryIndex: i, keys: keys}">
+                </dashboard>
+            </mat-card>
+            <br><br>
+        </div>
+    </div>
 </div> 
