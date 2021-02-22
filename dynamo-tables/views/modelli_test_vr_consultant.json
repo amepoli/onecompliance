@@ -131,19 +131,18 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT codice_mdt AS id, titolo AS name FROM entrasp.codici_esterni_mdt;",
+                "comboQuery": "SELECT id_argomento AS id, descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=45 order by descrizione",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text"
-             },
+            },
             "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_esterno",
-            "label": "Codice esterno",
-            "queryFunct": "SELECT codice_esterno from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "newLine": false,
-            "size": 2,
-            "readOnly": false
+            "isPrimary": true,
+            "key": "id_argomento",
+            "queryFunct": "SELECT id_argomento from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "label": "Argomento",
+            "readOnly": false,
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -578,7 +577,6 @@
             "newLine": false,
             "queryCond": "mt.id_tipo_modello_test= $id_tipo_modello_test$"
         },
-        
         {
             "fieldName": "titolo_search",
             "format": {
