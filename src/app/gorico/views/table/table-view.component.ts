@@ -35,9 +35,10 @@ export interface tableViewKey { // as per API specification
     queryFunct?: string;
     isButton?: boolean;
     buttonAction?: {
-        action: "navigate" | "delete",
+        action: "navigate" | "delete" | "query",
         target: string,
         viewType: string,
+        query?: string,
         onSuccessAction?: "reload",
         confirmAction?: boolean,
         confirmMessage?: {
@@ -529,13 +530,20 @@ export class TableViewComponent implements OnChanges, OnDestroy {
         }
     }
 
+    skipGetRecord = false;
     getRecord(index: number, row: MatRow) {
-        this.selectedRow = row;
-        const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: this.keysArray, index: index + 1, total: this.keysArray.length };
-        this.navigate(mergedParams);
+        if(!this.skipGetRecord){
+            this.selectedRow = row;
+            const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: this.keysArray, index: index + 1, total: this.keysArray.length };
+            this.navigate(mergedParams);
+        }
+        else {
+            this.skipGetRecord = false;
+        }
     }
 
     onButtonClick(key: string, index: number, row: MatRow) {
+        this.skipGetRecord = true;
         this.selectedRow = row;
         let selectedViewKey: tableViewKey = this.viewKeys.filter(x => x.key == key)[0];
 
@@ -553,6 +561,10 @@ export class TableViewComponent implements OnChanges, OnDestroy {
         else if(selectedViewKey.buttonAction.action == 'delete'){
             this.deleteRow(selectedViewKey, keys);
         }
+        else if(selectedViewKey.buttonAction.action == 'query'){
+            this.runCustomQuery(selectedViewKey, keys);
+        }
+        
     }
 
     navigate(params){
@@ -590,6 +602,18 @@ export class TableViewComponent implements OnChanges, OnDestroy {
                 );
             }
         });
+    }
+
+    runCustomQuery(selectedViewKey: tableViewKey, keys: any) {
+        let _this = this;
+        _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
+            result => {
+                console.log(result);
+            },
+            error => {
+                console.error(error);
+            }
+        )
     }
 
     getColumnLabels(viewKeys: tableViewKey[]) {
