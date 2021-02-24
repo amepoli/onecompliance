@@ -29,6 +29,23 @@ function isDataTypeString(type) {
     return (type.dataType === 'text' || type.dataType === 'date' || type.viewType === 'textarea')
 }
 
+function replaceGlobalkeys(queryString) {
+    if (queryString) {
+        // first replace the global variables, must be €-contoured
+        for (var key in global_variables) {
+            let toReplace = '€' + key + '€';
+            let replacement = global_variables[key];
+            let newString = queryString.replace(toReplace, replacement);
+            while (newString !== queryString) { // handle multiple occurrences
+                queryString = newString;
+                newString = queryString.replace(toReplace, replacement);
+            }
+        }
+    }
+
+    return queryString;
+}
+
 function replaceLocalKeys(queryString, keys) {
 
     let delimiters = ['£'];
@@ -36,7 +53,7 @@ function replaceLocalKeys(queryString, keys) {
         delimiters.forEach(delimiter => {
             let toReplace = delimiter + key + delimiter;
             let replacement = keys[key];
-            if (replacement != null && typeof(replacement) === 'object') {
+            if (replacement != null && typeof (replacement) === 'object') {
                 replacement = replacement.value;
             }
             if (replacement == null) {
@@ -62,15 +79,7 @@ function replaceKeys(queryString, keys, keyTypes) {
     var delimiters = ['$', '€', '£'];
     if (queryString) {
         // first replace the global variables, must be €-contoured
-        for (var key in global_variables) {
-            let toReplace = '€' + key + '€';
-            let replacement = global_variables[key];
-            let newString = queryString.replace(toReplace, replacement);
-            while (newString !== queryString) { // handle multiple occurrences
-                queryString = newString;
-                newString = queryString.replace(toReplace, replacement);
-            }
-        }
+        queryString = replaceGlobalkeys(queryString);
 
         for (var key in keys) {
             // console.table(key);
@@ -183,7 +192,7 @@ function getComboFuncts(comboQueries, entry_keys, table_keys, keyTypes) {
             let comboQuery = element.format.comboQuery;
             if (comboQuery != null) {
                 comboQuery = replaceKeys(comboQuery, table_keys, keyTypes);
-                comboQueries.push({ key: element.key, comboQuery: comboQuery, type: element.format.viewType});
+                comboQueries.push({ key: element.key, comboQuery: comboQuery, type: element.format.viewType });
             }
         } else if (element.format.viewType === 'subform') {
             getComboFuncts(comboQueries, element.format.subform_keys, table_keys, keyTypes);
@@ -413,6 +422,19 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
         postProcessQueries: postProcessQueries
     };
 
+}
+
+function getCustomQuery(entry_params, table_keys, customQueryButtonKey) {
+    if (entry_params.table_keys != null && entry_params.table_keys.length > 0) {
+        let buttonTableKey = entry_params.table_keys.filter(el => el.key == customQueryButtonKey);
+        if (buttonTableKey != null && buttonTableKey.length > 0) {
+            buttonTableKey = buttonTableKey[0];
+            if (buttonTableKey.buttonAction && buttonTableKey.buttonAction.action == 'query') {
+                return buttonTableKey.buttonAction.query;
+            }
+        }
+    }
+    return null;
 }
 
 function getLazyComboQuery(entry_keys, table_keys, keyTypes, lazy_key) {
@@ -1152,6 +1174,31 @@ async function processDashboard(queryString, client) {
     return queryData;
 }
 
+async function processCustomQuery(queryString, keys, client) {
+    if (queryString != null) {
+        queryString = replaceGlobalkeys(queryString);
+        queryString = replaceLocalKeys(queryString, keys);
+        try {
+            let result = await client.query(queryString);
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 200,
+                "body": JSON.stringify({ result: 'OK', response: result, queryString: queryString })
+            };
+        }
+        catch (e) {
+            console.log('Custom Query Error: ', e);
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 200,
+                "body": JSON.stringify({ result: 'KO', error: e, queryString: queryString })
+            };
+        }
+    }
+}
+
 async function getProfile(userid, company) {
 
     var userParams = {
@@ -1495,6 +1542,9 @@ exports.handler = async (event, context) => {
 
     var isExcel = (queryParams['excel'] === '1');
 
+    var isCustomQuery = (queryParams['custom_query'] === '1');;
+    var customQueryButtonKey = queryParams['custom_query_key'];
+
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
 
@@ -1567,6 +1617,8 @@ exports.handler = async (event, context) => {
         if (method === 'GET') {
             if (dashboardIndex != null) {
                 queryString = getDashboardQuery(entry_params, table_keys, dashboardIndex);
+            } else if (isCustomQuery) {
+                queryString = getCustomQuery(entry_params, table_keys, customQueryButtonKey);
             } else if (isSearchRequest) {
                 queryString = getTableQuery(entry_params, table_keys, false, search_keys, additionalQueryCond);
             } else if (isNewRecord) {
@@ -1591,6 +1643,11 @@ exports.handler = async (event, context) => {
         if (dashboardIndex != null) {
             // process dashboard queries
             queryData = await processDashboard(queryString, client);
+        } else if (isCustomQuery) {
+            let response = await processCustomQuery(queryString, table_keys, client);
+            console.log(response);
+            await client.release();
+            return response;
         } else {
             // Check if there are errors in the insertion data
             let preInsertingErrors = await processPreInsertingCheck(queryString, client);
@@ -1613,7 +1670,7 @@ exports.handler = async (event, context) => {
         }
 
         // process comboboxes 
-        if (method === 'GET' && dashboardIndex == null && !isEventUpdate) {
+        if (method === 'GET' && dashboardIndex == null && !isEventUpdate && !isCustomQuery) {
 
             if (queryData != null && isNewRecord && queryString.defaultValues != null) { // only for new records, merge default values
                 queryData.forEach(item => {
@@ -1741,7 +1798,7 @@ exports.handler = async (event, context) => {
 
         // last chance to calculate the keys with an evalFunct and to process attributes
 
-        if (method === 'GET' && dashboardIndex == null) {
+        if (method === 'GET' && dashboardIndex == null && !isCustomQuery) {
             queryData = getCalculatedParams(entry_params, queryData, isFormRecord);
             // process attributeFuncts
             if (isFormRecord) {
@@ -1749,10 +1806,8 @@ exports.handler = async (event, context) => {
             }
 
         }
-
         // return colors if dashboard and colors array is defined
-
-        if (method === 'GET' && dashboardIndex != null) {
+        else if (method === 'GET' && dashboardIndex != null) {
             if (entry_params.dashboards[dashboardIndex].colors != null) {
                 queryData = entry_params.dashboards[dashboardIndex].colors;
             }
