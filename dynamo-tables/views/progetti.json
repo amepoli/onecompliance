@@ -17,7 +17,7 @@
 		{
 			"operation": "selectForm",
 			"type": "postProcessing",
-			"queryString": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"	
+			"queryString": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
 		},
 		{
 			"queryString": "select case when count(id_fase)=0 and (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)>0 then 'C' when (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)=0 then 'P' else 'A' end as stato  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and stato='P'",
@@ -38,6 +38,18 @@
 			"operation": "delete",
 			"type": "preProcessing",
 			"queryString": "select entrasp.progetto_delete($codice_azienda$, $id_progetto$);"
+		},
+		{
+			"operation": "insert",
+			"type": "preInsertingCheck",
+			"queryString": "select codice_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£'",
+			"messageNotNull": "Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+		},
+		{
+			"operation": "update",
+			"type": "preUpdatingCheck",
+			"queryString": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£' and id_progetto!=$id_progetto$",
+			"messageNotNull": "Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
 		}
 	],
 	"messages": [
@@ -162,6 +174,19 @@
 			},
 			"label": "Codice Progetto",
 			"key": "codice_progetto",
+			"outputEvent": {
+				"eventName": "codice_progetto_change",
+				"eventTrigger": "change"
+			},
+			"inputEvents": [
+				{
+					"eventName": "codice_progetto_change",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
+				}	
+			],
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
@@ -329,6 +354,19 @@
 			},
 			"label": "Id Cliente",
 			"key": "id_cliente",
+			"outputEvent": {
+				"eventTrigger": "select",
+				"eventName": "change_id_cliente"
+			},
+			"inputEvents": [
+				{
+					"eventName": "change_id_cliente",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.aggiorna_cliente_progetto($codice_azienda$, $id_progetto$,$id_cliente$)"
+				}
+			],
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
@@ -375,7 +413,7 @@
 					"actionType": "query",
 					"condition": "none",
 					"values": [],
-					"queryFunct": "select entrasp.progetti_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', idcliente=> $id_cliente$);",
+					"queryFunct": "select entrasp.progetti_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
 					"outputEventWhenComplete": "formReload"
 				}
 			],
@@ -454,9 +492,9 @@
 				"dataType": "text",
 				"viewType": "input"
 			},
-			"fieldName": "codice_progetto",
+			"fieldName": "codice_progetto_s",
 			"newLine": true,
-			"queryCond": "codice_progetto=$codice_progetto$"
+			"queryCond": "codice_progetto=$codice_progetto_s$"
 		},
 		{
 			"fieldName": "id_centro_gest",
@@ -685,6 +723,5 @@
 			"key": "id_cliente",
 			"label": "Cliente"
 		}
-
 	]
 }
