@@ -3,7 +3,9 @@
   "origin": "entrasp.sondaggi_somministrati",
   "businessObjectName": "sondaggiSomministrati",
   "entryKey": "sondaggi_somministrati",
-  "dashboardTables": ["dashboard_sondaggi_somministrati"],
+  "dashboardTables": [
+    "dashboard_sondaggi_somministrati"
+  ],
   "outputEvents": [
     {
       "eventName": "onSaveSomministrazione",
@@ -32,6 +34,11 @@
     },
     {
       "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.sondaggi snd set codice_part='€global_codice_part€', sondaggio_completato=pfs.sondaggio_completato, pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE snd.codice_azienda=$codice_azienda$ AND snd.id_sondaggio=$id_sondaggio$;"
+    },
+    {
+      "operation": "selectForm",
       "type": "postProcessing",
       "queryString": "select round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
     },
@@ -48,14 +55,14 @@
   ],
   "messages": [
     {
-        "viewType": "form",
-        "formMessageType": "delete",
-        "message": {
-            "title": "Cancellazione sondaggio, somministrazioni e risposte",
-            "text": "Si conferma la cancellazione di somministrazione, domande e oggetti collegati (ed in caso di sondaggio mono somministrazione anche lo stesso)?"
-        }
+      "viewType": "form",
+      "formMessageType": "delete",
+      "message": {
+        "title": "Cancellazione sondaggio, somministrazioni e risposte",
+        "text": "Si conferma la cancellazione di somministrazione, domande e oggetti collegati (ed in caso di sondaggio mono somministrazione anche lo stesso)?"
+      }
     }
-],
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -271,7 +278,6 @@
           "queryFunct": "update entrasp.sondaggi snd set data_prevista=$data_prevista$ from entrasp.sondaggi_somministrati ss, entrasp.modelli_test mt where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
         }
       ],
-
       "newLine": false,
       "readOnly": false,
       "size": 1.2
@@ -311,7 +317,6 @@
           "queryFunct": "update entrasp.sondaggi snd set data_comp=$data_comp$ from entrasp.modelli_test mt where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
         }
       ],
-
       "newLine": true,
       "readOnly": false,
       "size": 1.2
@@ -418,7 +423,7 @@
       "sameOrigin": false,
       "key": "titolo",
       "label": "Titolo Verifica",
-      "inputEvents":[
+      "inputEvents": [
         {
           "eventName": "data_esecuzione_update",
           "actionType": "query",
@@ -426,7 +431,8 @@
           "values": [],
           "queryFunct": "update entrasp.sondaggi snd set titolo=$titolo$ from entrasp.sondaggi_somministrati ss, entrasp.modelli_test mt where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$",
           "outputEventWhenComplete": "data_prevista_update"
-        }],
+        }
+      ],
       "newLine": false,
       "readOnly": false
     },
@@ -1074,18 +1080,18 @@
     {
       "entryKey": "seleziona_campione",
       "keys": [
-          {
-              "parent": "codice_azienda",
-              "son": "codice_azienda"
-          },
-          {
-              "parent": "id_sondaggio",
-              "son": "id_sondaggio"
-          }
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_sondaggio",
+          "son": "id_sondaggio"
+        }
       ],
       "label": "Seleziona Campione",
       "type": "tableForm"
-  }
+    }
   ],
   "table_keys": [
     {
