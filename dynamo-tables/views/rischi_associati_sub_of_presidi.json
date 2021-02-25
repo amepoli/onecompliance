@@ -256,6 +256,144 @@
       "size": 1
     }
   ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+          "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_presidio",
+      "label": "ID Presidio"
+  },
+  {
+    "format": {
+      "dataType": "number"
+    },
+    "isHidden": false,
+    "isPrimary": false,
+    "width": "4%",
+    "queryFunct": "select true",
+    "key": "delete_rischi_presidi",
+    "label": "",
+    "style": [
+      {
+        "button_icon": "delete",
+        "value": "delete_icon"
+      }
+    ],
+    "isButton": true,
+    "buttonAction": {
+      "target": "rischi_Associati_sub_of_presidi",
+      "viewType": "form",
+      "query": "delete from entrasp.rischi_presidi where codice_azienda='£codice_azienda£' AND codice_rischio='£codice_rischio£' AND id_presidio=£id_presidio£",
+      "action": "query",
+      "keymap": [
+        {
+          "source": "codice_azienda",
+          "destination": "codice_azienda"
+        },
+        {
+          "source": "id_presidio",
+          "destination": "id_presidio"
+        },
+        {
+          "source": "codice_rischio",
+          "destination": "codice_rischio"
+        }
+      ],
+      "onSuccessAction": "reload"
+    }
+  },
+  {
+    "format": {
+      "dataType": "text"
+    },
+    "isHidden": true,
+    "isPrimary": true,
+    "key": "codice_rischio",
+    "label": "Rischio"
+  },
+  {
+    "format": {
+      "dataType": "text"
+    },
+    "isHidden": false,
+    "isPrimary": false,
+    "queryFunct": "entrasp.rischi_descrizione(codice_rischio, codice_azienda)",
+    "key": "desc_codice_rischio",
+    "label": "Rischio"
+  },
+  {
+    "format": {
+        "dataType": "number",
+        "value": 0
+    },
+    "label": "% Prob. Mit.",
+    "key": "pct_mitigazione_probabilita",
+    "isHidden": false,
+    "width": "14%",
+    "isPrimary": false
+},
+{
+  "format": {
+      "dataType": "number",
+      "value": 0
+  },
+  "label": "% Mit. Int. Sin.",
+  "key": "pct_mitigazione_intensita_singola",
+  "isHidden": false,
+  "width": "14%",
+  "isPrimary": false
+},
+{
+  "format": {
+      "dataType": "number",
+      "value": 0
+  },
+  "label": "% Mit. Int. Tot.",
+  "key": "pct_mitigazione_intensita_totale",
+  "isHidden": false,
+  "width": "14%",
+  "isPrimary": false
+},
+{
+  "format": {
+      "dataType": "number"
+  },
+  "isHidden": false,
+  "isPrimary": false,
+  "width": "7.5%",
+  "key": "visible_button_rischio",
+  "label": "Rischio",
+  "queryFunct": "select true",
+  "isButton": true,
+  "buttonAction": {
+      "target": "rischi",
+      "viewType": "form",
+      "action": "navigate",
+      "keymap": [
+          {
+              "source": "codice_azienda",
+              "destination": "codice_azienda"
+          },
+          {
+              "source": "codice_rischio",
+              "destination": "codice_rischio"
+          }
+      ]
+  }
+}
+  ],
   "inputEvents": [
     {
       "actionType": "reload",
