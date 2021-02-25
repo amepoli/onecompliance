@@ -1180,6 +1180,9 @@ async function processCustomQuery(queryString, keys, client) {
         queryString = replaceLocalKeys(queryString, keys);
         try {
             let result = await client.query(queryString);
+            if (result.rows != null && result.rows.length > 0) {
+                result = result.rows[0];
+            }
             return {
                 "isBase64Encoded": false,
                 "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
