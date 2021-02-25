@@ -39,7 +39,7 @@ export interface tableViewKey { // as per API specification
         target: string,
         viewType: string,
         query?: string,
-        onSuccessAction?: "reload",
+        onSuccessAction?: "reload" | "navigate",
         confirmAction?: boolean,
         confirmMessage?: {
             title: string,
@@ -543,10 +543,36 @@ export class TableViewComponent implements OnChanges, OnDestroy {
     }
 
     onButtonClick(key: string, index: number, row: MatRow) {
-        this.skipGetRecord = true;
-        this.selectedRow = row;
-        let selectedViewKey: tableViewKey = this.viewKeys.filter(x => x.key == key)[0];
+        let _this = this;
+        _this.skipGetRecord = true;
+        let selectedViewKey: tableViewKey = _this.viewKeys.filter(x => x.key == key)[0];
 
+        if(selectedViewKey && selectedViewKey.buttonAction) {
+            if(selectedViewKey.buttonAction.confirmAction) {
+                let confirmMessage: {title: string, text: string} = {
+                    title: selectedViewKey.buttonAction.action,
+                    text: "Are you sure?"
+                };
+
+                if(selectedViewKey.buttonAction.confirmMessage ){
+                    confirmMessage = selectedViewKey.buttonAction.confirmMessage;
+                }
+                
+                // Show confirmation dialog to make sure user wants to perform action
+                _this._dialogService.showConfimationDialog(confirmMessage.title, confirmMessage.text, "Yes", "No", "warning").then((result) => {
+                    if (result.value === true) {
+                        _this.performButtonAction(selectedViewKey, row);
+                    }
+                });
+            }
+            else {
+                _this.performButtonAction(selectedViewKey, row);
+            }
+        }
+        
+    }
+
+    performButtonAction(selectedViewKey: tableViewKey, row: MatRow) {
         let keys = {};
         if(selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0){
             selectedViewKey.buttonAction.keymap.forEach( map => {
@@ -564,7 +590,6 @@ export class TableViewComponent implements OnChanges, OnDestroy {
         else if(selectedViewKey.buttonAction.action == 'query'){
             this.runCustomQuery(selectedViewKey, keys);
         }
-        
     }
 
     navigate(params){
@@ -573,42 +598,49 @@ export class TableViewComponent implements OnChanges, OnDestroy {
 
     deleteRow(selectedViewKey: tableViewKey, keys: any) {
         var _this = this;
-        let deleteMessage: {title: string, text: string} = {
-            title: "",
-            text: ""
-        };
+        const subscription = _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), [keys]).subscribe(
+            result => {
+                _this._console.log(result);
+                if (result.result === 'OK') {
+                    // Show success toast
+                    _this._toastService.showSuccessToast("Table row Deleted");
 
-        if(selectedViewKey.buttonAction && selectedViewKey.buttonAction.confirmMessage ){
-            deleteMessage = selectedViewKey.buttonAction.confirmMessage;
-        }
-        
-        // Show confirmation dialog to make sure user wants to delete
-        _this._dialogService.showConfimationDialog(deleteMessage.title, deleteMessage.text, "Yes", "No", "warning").then((result) => {
-            if (result.value === true) {
-                // User said yes so let's delete form
-                const subscription = _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), [keys]).subscribe(
-                    result => {
-                        _this._console.log(result);
-                        if (result.result === 'OK') {
-                            // Show success toast
-                            _this._toastService.showSuccessToast("Table row Deleted");
-
-                        }
-                        else {
-                            // Show error snackbar
-                            _this._toastService.showErrorToast(result.reason);
-                        }
-                    }
-                );
+                }
+                else {
+                    // Show error snackbar
+                    _this._toastService.showErrorToast(result.reason);
+                }
+            },
+            error => {
+                console.log(error);
+                _this._toastService.showErrorToast("An error occured!", error);
             }
-        });
+        );
     }
 
     runCustomQuery(selectedViewKey: tableViewKey, keys: any) {
         let _this = this;
         _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
-            result => {
-                console.log(result);
+            response => {
+                console.log(response);
+                if(response.result == 'OK') {
+                    let responseKeys = response.response;
+                    let action = selectedViewKey.buttonAction.onSuccessAction;
+                    if(action == 'reload') {
+                        // reload
+                        _this.loadData();
+                    }
+                    else if(action == 'navigate') {
+                        // navigate
+                        let newKeys = JSON.parse(JSON.stringify(keys));
+                        Object.keys(responseKeys).forEach( key => {
+                            newKeys[key] = responseKeys[key];
+                        });
+                        let mergedParams = { entry: { name: selectedViewKey.buttonAction.target, type: selectedViewKey.buttonAction.viewType }, keys: [newKeys], index: 1, total: 1 };            
+                        _this.navigate(mergedParams);    
+        
+                    }
+                }
             },
             error => {
                 console.error(error);
