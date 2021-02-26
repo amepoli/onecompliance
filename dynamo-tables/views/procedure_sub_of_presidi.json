@@ -100,6 +100,45 @@
         },
         {
             "format": {
+              "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_procedure_presidi",
+            "label": "",
+            "style": [
+              {
+                "button_icon": "delete",
+                "value": "delete_icon"
+              }
+            ],
+            "isButton": true,
+            "buttonAction": {
+              "target": "procedure_sub_of_presidi",
+              "viewType": "form",
+              "query": "delete from entrasp.entrasp.procedure_aziendali_presidi where codice_azienda='£codice_azienda£' AND id_procedura='£id_procedura£' AND id_presidio=£id_presidio£",
+              "action": "query",
+              "keymap": [
+                {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+                },
+                {
+                  "source": "id_presidio",
+                  "destination": "id_presidio"
+                },
+                {
+                  "source": "id_procedura",
+                  "destination": "id_procedura"
+                }
+              ],
+              "onSuccessAction": "reload"
+            }
+          },
+        {
+            "format": {
                 "dataType": "number"
             },
             "isHidden": false,
@@ -114,8 +153,8 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "40%",
-            "key": "descr_presidio",
+            "width": "72%",
+            "key": "descr_procedura",
             "queryFunct": "entrasp.procedure_aziendali_descr(id_procedura ,codice_azienda)",
             "label": "Procedura"
         },
@@ -127,7 +166,34 @@
             "isPrimary": true,
             "key": "id_presidio",
             "label": "id_presidio"
-        }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "visible_button_procedura",
+            "label": "Processo",
+            "queryFunct": "select true",
+            "isButton": true,
+            "buttonAction": {
+                "target": "procedure_aziendali",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    }
+                ]
+            }
+          }
     ],
     "inputEvents": [
         {
