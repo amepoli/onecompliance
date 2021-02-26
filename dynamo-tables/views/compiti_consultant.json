@@ -24,7 +24,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende;",
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende order by codice_azienda;",
         "options": [],
         "viewType": "combobox",
         "dataType": "text",
@@ -70,7 +70,7 @@
         {
           "eventName": "change_azienda",
           "actionType": "query",
-          "queryFunct": "select coalesce(£id_tipo_segnalazione£, 0) as id_tipo_segnalazione",
+          "queryFunct": "select coalesce(£id_tipo_segnalazione£, 0)",
           "condition": "none",
           "values": []
         }
@@ -84,7 +84,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€);",
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
         "options": [],
         "viewType": "combobox",
         "dataType": "text",
@@ -154,6 +154,7 @@
       "isPrimary": false,
       "key": "data_segnalazione",
       "label": "Data segnalazione",
+      "insertUpdateFunct": "select coalesce('£data_segnalazione£', CURRENT_DATE)",
       "newLine": true,
       "readOnly": false,
       "size": 1
@@ -163,23 +164,17 @@
       "format": {
         "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part=(select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$);",
         "options": [],
-        "viewType": "combobox",
-        "validations": [
-          {
-            "message": "Codice esecutore necessario",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "id_responsabile",
+      "insertUpdateFunct": "select coalesce(£id_responsabile£, €global_userid€)",
       "inputEvents": [
         {
           "eventName": "change_azienda",
           "actionType": "query",
-          "queryFunct": "select coalesce(£id_responsabile£, €global_userid€) as id_responsabile;",
+          "queryFunct": "select coalesce(£id_responsabile£, €global_userid€);",
           "condition": "none",
           "values": []
         },
@@ -234,6 +229,7 @@
       "isPrimary": false,
       "key": "data_competenza",
       "label": "Data Competenza",
+      "insertUpdateFunct": "select date_trunc('year', current_date::date) + interval '12 month' - interval '1 day'",
       "newLine": false,
       "readOnly": false,
       "size": 1.5
@@ -257,12 +253,12 @@
       "autoGenerate": false,
       "format": {
         "dataType": "date",
-        "value": "£CURRENT_DATE£",
         "viewType": "input"
       },
       "isHidden": true,
       "isPrimary": false,
       "key": "data_ins",
+      "insertUpdateFunct": "select current_date",
       "label": "Data Inserimento",
       "newLine": true,
       "readOnly": false
@@ -300,6 +296,10 @@
           }
         ]
       },
+      "outputEvent": {
+        "eventName": "change_titolo",
+        "eventTrigger": "blur"
+      },
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo",
@@ -312,19 +312,22 @@
       "autoGenerate": false,
       "format": {
         "dataType": "text",
-        "viewType": "textarea",
-        "validations": [
-          {
-            "message": "Descrizione necessaria",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "viewType": "textarea"
       },
       "isHidden": false,
       "textareaHeight": "L",
       "isPrimary": false,
       "key": "note",
+      "insertUpdateFunct": "select coalesce('£note£', '£titolo£')",
+      "inputEvents": [
+        {
+          "eventName": "change_titolo",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select coalesce('£note£', '£titolo£')"
+        }
+      ],
       "label": "Descrizione estesa",
       "newLine": true,
       "readOnly": false,
@@ -350,7 +353,7 @@
     {
       "fieldName": "codice_azienda",
       "format": {
-        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€);",
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
         "options": [],
         "viewType": "combobox",
         "dataType": "text"
