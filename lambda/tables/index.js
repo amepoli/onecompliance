@@ -227,6 +227,8 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     let orderBy;
 
+    let querySuffixes;
+
     let additionalQueryCond;
 
     let entry_keys;
@@ -247,6 +249,8 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
     }
 
     orderBy = entry_params.orderBy;
+
+    querySuffixes = entry_params.querySuffixes;
 
     if (!entry_keys) return '';
 
@@ -281,6 +285,17 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
                 }
                 let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
                 mainQuery = mainQuery + ' ORDER BY ' + orderBy.key + order + ';';
+            }
+            if (querySuffixes != null) {
+                let querySuffix = isForm && querySuffixes.formViewSuffix != null ? querySuffixes.formViewSuffix 
+                                : !isForm && querySuffixes.tableViewSuffix != null ? querySuffixes.tableViewSuffix 
+                                : null;
+                if (querySuffix != null) {
+                    if (mainQuery.slice(-1) === ';') {
+                        mainQuery = mainQuery.slice(0, -1);  // remove the final ';'
+                    }
+                    mainQuery += ' ' + querySuffix + ';';
+                }
             }
             return {
                 mainQuery: mainQuery,
@@ -407,6 +422,16 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
     if (orderBy != null && orderBy.key != null) {
         let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
         queryString = queryString + ' ORDER BY ' + orderBy.key + order;
+    }
+
+    // add suffix if present
+    if (querySuffixes != null) {
+        let querySuffix = isForm && querySuffixes.formViewSuffix != null ? querySuffixes.formViewSuffix 
+                        : !isForm && querySuffixes.tableViewSuffix != null ? querySuffixes.tableViewSuffix 
+                        : null;
+        if (querySuffix != null) {
+            queryString += ' ' + querySuffix;
+        }
     }
 
     queryString = queryString + ';';
