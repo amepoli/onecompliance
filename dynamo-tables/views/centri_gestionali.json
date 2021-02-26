@@ -2,7 +2,9 @@
   "$schema": "../views.schema.json",
   "businessObjectName": "centriGestionali",
   "entryKey": "centri_gestionali",
-  "dashboardTables": ["dashboard_centri_gestionali"],
+  "dashboardTables": [
+    "dashboard_centri_gestionali"
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -55,7 +57,7 @@
       "newLine": false,
       "readOnly": false
     },
-        {
+    {
       "autoGenerate": false,
       "format": {
         "comboQuery": "SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part=$codice_part$ and id_centro_gest!=£id_centro_gest£;",
@@ -95,6 +97,21 @@
       "key": "id_responsabile",
       "label": "Responsabile",
       "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=349 order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "Codice esterno centro gestionale",
+      "readOnly": false,
+      "newLine": true
     },
     {
       "autoGenerate": false,
@@ -200,7 +217,7 @@
         "viewType": "combobox"
       },
       "label": "Responsabile",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "id_responsabile=$id_responsabile$"
     },
     {
@@ -304,14 +321,14 @@
       "entryKey": "centri_gestionali_attachments",
       "isHidden": false,
       "keys": [
-          {
-              "parent": "id_centro_gest",
-              "son": "id_centro_gest"
-          }
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest"
+        }
       ],
       "label": "Allegati Associati",
       "type": "tableForm"
-  }
+    }
   ],
   "table_keys": [
     {
@@ -334,14 +351,14 @@
       "label": "ID"
     },
     {
-        "format": {
-          "dataType": "number"
-        },
-        "isHidden": true,
-        "isPrimary": false,
-        "key": "id_anagrafica",
-        "label": "ID Anagrafica",
-        "sameOrigin": false
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_anagrafica",
+      "label": "ID Anagrafica",
+      "sameOrigin": false
     },
     {
       "format": {
