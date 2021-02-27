@@ -5,8 +5,51 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select * from entrasp.argomenti where id_argomento=349",
+      "queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento =aa.id_argomento_son  where id_argomento_father=349",
       "type": "main"
+    },
+    {
+      "operation": "insert",
+      "queryString": "select entrasp.argomenti_classification_insert($descrizione_breve$, $descrizione$, $codice$, 349) as id_argomento;",
+      "type": "main"
+    },
+    {
+      "operation": "delete",
+      "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=349 and id_argomento_son=$id_argomento$;",
+      "type": "preProcessing"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "argomenti_sub_of_argomenti_son",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento_father"
+        }
+      ],
+      "label": "Argomenti figli"
+    },
+    {
+      "entryKey": "argomenti_sub_of_argomenti_father",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento_son"
+        }
+      ],
+      "label": "Argomenti padre"
+    },
+    {
+      "entryKey": "modelli_test_vr_sub_of_argomenti",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento"
+        }
+      ],
+      "label": "Modelli test associati"
     }
   ]
+
 }
