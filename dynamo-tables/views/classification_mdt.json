@@ -5,8 +5,18 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select * from entrasp.argomenti where id_argomento=45",
+      "queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento =aa.id_argomento_son  where id_argomento_father=45",
       "type": "main"
+    },
+    {
+      "operation": "insert",
+      "queryString": "select entrasp.argomenti_classification_insert($descrizione_breve$, $descrizione$, $codice$, 45) as id_argomento;",
+      "type": "main"
+    },
+    {
+      "operation": "delete",
+      "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=45 and id_argomento_son=$id_argomento$;",
+      "type": "preProcessing"
     }
   ],
   "subTables": [
