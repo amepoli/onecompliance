@@ -106,12 +106,50 @@
         },
         {
             "format": {
+              "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_mdt_processi",
+            "label": "",
+            "style": [
+              {
+                "button_icon": "delete",
+                "value": "delete_icon"
+              }
+            ],
+            "isButton": true,
+            "buttonAction": {
+              "target": "procedure_modelli_test",
+              "viewType": "form",
+              "query": "delete from entrasp.procedure_modelli_test where codice_azienda='£codice_azienda£' AND id_modello_test=£id_modello_test£ AND id_procedura=£id_procedura£",
+              "action": "query",
+              "keymap": [
+                {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+                },
+                {
+                  "source": "id_procedura",
+                  "destination": "id_procedura"
+                },
+                {
+                  "source": "id_modello_test",
+                  "destination": "id_modello_test"
+                }
+              ],
+              "onSuccessAction": "reload"
+            }
+          },
+        {
+            "format": {
                 "dataType": "number"
             },
             "isHidden": true,
             "isPrimary": true,
             "key": "id_procedura",
-            "width": "10%",
             "label": "Id Procedura"
         },
         {
@@ -121,7 +159,17 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "id_modello_test",
-            "width": "5%",
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test_descr",
+            "queryFunct": "entrasp.mdt_codtitolo(codice_azienda, id_modello_test)",
+            "width": "50%",
             "label": "Modello di Verifica"
         },
         {
@@ -131,9 +179,10 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "note",
-            "width": "8%",
+            "width": "36%",
             "label": "Note"
         }
+        
     ]
    
 }
