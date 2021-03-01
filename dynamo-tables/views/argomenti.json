@@ -1,177 +1,183 @@
 {
-    "$schema": "../views.schema.json",
-    "entryKey": "argomenti",  
-    "origin": "entrasp.argomenti",
-    "businessObjectName": "argomenti",
-    "form_keys": [
-      {
-        "autoGenerate": true,
-        "format": {
-          "dataType": "number",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": true,
-        "key": "id_argomento",
-        "label": "ID",
-        "newLine": false,
-        "readOnly": false,
-        "size": 1.5
+  "$schema": "../views.schema.json",
+  "entryKey": "argomenti",
+  "origin": "entrasp.argomenti",
+  "businessObjectName": "argomenti",
+  "form_keys": [
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
       },
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "codice",
-        "label": "Codice",
-        "newLine": false,
-        "readOnly": false,
-        "size": 1.5
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_argomento",
+      "label": "ID",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Inserire una data pianificata di esecuzione!",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "descrizione_breve",
-        "label": "Descrizione breve",
-        "newLine": true,
-        "readOnly": false,
-        "size": 1.5
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
+      "label": "Codice",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
       },
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "descrizione",
-        "label": "Descrizione",
-        "newLine": true,
-        "readOnly": false,
-        "size": 1.5
-      }
-    ],
-    "search_keys": [
-      {
-        "fieldName": "id_argomento",
-        "format": {
-          "dataType": "number",
-          "viewType": "input"
-        },
-        "label": "ID",
-        "newLine": false,
-        "queryCond": "id_argomento=$id_argomento$"
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione_breve",
+      "label": "Descrizione breve",
+      "newLine": true,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
       },
-      {
-        "fieldName": "descr_rs",
-        "format": {
-            "dataType": "text",
-            "viewType": "input"
-        },
-        "label": "Descrizione",
-        "newLine": true,
-        "queryCond": "(UPPER(descrizione) like '%'||UPPER('€descr_rs')||'%' or UPPER(descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')"
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Descrizione",
+      "newLine": true,
+      "readOnly": false,
+      "size": 1.5
     }
-
-    ],
-    "subTables": [
-      {
-        "entryKey": "argomenti_sub_of_argomenti_son",
-        "keys": [
-          {
-            "parent": "id_argomento",
-            "son": "id_argomento_father"
-          }
-        ],
-        "label": "Argomenti figli"
+  ],
+  "search_keys": [
+    {
+      "fieldName": "id_argomento",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
       },
-      {
-        "entryKey": "argomenti_sub_of_argomenti_father",
-        "keys": [
-          {
-            "parent": "id_argomento",
-            "son": "id_argomento_son"
-          }
-        ],
-        "label": "Argomenti padre"
+      "label": "ID",
+      "newLine": false,
+      "queryCond": "id_argomento=$id_argomento$"
+    },
+    {
+      "fieldName": "descr_rs",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
       },
-      {
-        "entryKey": "compiti_argomenti_sub",
-        "keys": [
-          {
-            "parent": "id_argomento",
-            "son": "id_argomento"
-          }
-        ],
-        "label": "Compiti Argomenti"
+      "label": "Descrizione",
+      "newLine": true,
+      "queryCond": "(UPPER(descrizione) like '%'||UPPER('€descr_rs')||'%' or UPPER(descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "argomenti_sub_of_argomenti_son",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento_father"
+        }
+      ],
+      "label": "Argomenti figli"
+    },
+    {
+      "entryKey": "argomenti_sub_of_argomenti_father",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento_son"
+        }
+      ],
+      "label": "Argomenti padre"
+    },
+    {
+      "entryKey": "compiti_argomenti_sub",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento"
+        }
+      ],
+      "label": "Compiti Argomenti"
+    },
+    {
+      "entryKey": "modelli_test_sub_of_argomenti",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento"
+        }
+      ],
+      "label": "Modelli Verifica"
+    },
+    {
+      "entryKey": "rischi_argomenti_sub",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento"
+        }
+      ],
+      "label": "Rischi Argomenti"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
       },
-      {
-        "entryKey": "modelli_test_sub_of_argomenti",
-        "keys": [
-          {
-            "parent": "id_argomento",
-            "son": "id_argomento"
-          }
-        ],
-        "label": "Modelli Verifica"
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_argomento",
+      "label": "ID"
+    },
+    {
+      "format": {
+        "dataType": "text"
       },
-      {
-        "entryKey": "rischi_argomenti_sub",
-        "keys": [
-          {
-            "parent": "id_argomento",
-            "son": "id_argomento"
-          }
-        ],
-        "label": "Rischi Argomenti"
-      }
-    ],
-    "table_keys": [
-      {
-        "format": {
-          "dataType": "number"
-        },
-        "isHidden": false,
-        "isPrimary": true,
-        "key": "id_argomento",
-        "label": "ID"
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
+      "label": "Codice"
+    },
+    {
+      "format": {
+        "dataType": "text"
       },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "codice",
-        "label": "Codice"
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Descrizione"
+    },
+    {
+      "format": {
+        "dataType": "text"
       },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "descrizione",
-        "label": "Descrizione"
-      },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "descrizione_breve",
-        "label": "Descrizione breve"
-      }
-    ]
-  }
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione_breve",
+      "label": "Descrizione breve"
+    }
+  ]
+}
