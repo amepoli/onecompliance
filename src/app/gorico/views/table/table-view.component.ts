@@ -684,7 +684,8 @@ export class TableViewComponent implements OnChanges, OnDestroy {
             this.showQuickAdd = false; // hide quick add
             this._toastService.showSuccessToast("Saved successfully!"); // show success toast
             this.loadTable(null); // reload the table to visualize the record
-        } else { // forward to parent
+        }
+        else { // forward to parent
             this.sendEvent.emit(event);
         }
     }

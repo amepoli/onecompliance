@@ -322,17 +322,21 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         _this.savingState = 'done';
                         setTimeout(() => {
                             _this.savingState = 'save';
-                            if (_this.isQuickAdd || (_this.tableData && _this.tableData.isNew)) {
+                            if (_this.isQuickAdd) {
                                 _this.isQuickAdd = false;
+                                _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+                            }
+                            else if (_this.tableData && _this.tableData.isNew) {
                                 _this.navigationToViewHome(values, result.data);
                             }
                             else if (_this.refreshOnSave) {
+                                _this.isQuickAdd = false;
                                 _this.refreshView();
                             }
                             else {
                                 _this.formGetter.runOnSaveEvents();
                             }
-                            // _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+                            
                         }, 1000);
                     }
                     else {
