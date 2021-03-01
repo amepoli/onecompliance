@@ -33,7 +33,7 @@
         },
         "rowsQuery": {
           "key": "centro_gest",
-          "query": "select distinct entrasp.centri_gestionali_descr($codice_azienda$,cg.id_centro_gest) as label from entrasp.centri_gestionali cg"
+          "query": "select distinct entrasp.centri_gestionali_descr(codice_part,cg.id_centro_gest) as label from entrasp.centri_gestionali cg where codice_part =$codice_part$"
         }
       },
       "localization": "it",
@@ -76,7 +76,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "SELECT select distinct entrasp.centri_gestionali_descr($codice_azienda$,cg.id_centro_gest) as centro_gest,entrasp.transcodifiche_transcodifica('FASCIA_TEMPORALE',entrasp.stato_rettificato(snd.data_prevista,ss.stato)) as dashboard,codice_part,entrasp.saturazione_cg_fascia_temporale(id_centro_gest, $codice_azienda$, 'tutti','A') AS next_id_gruppo FROM entrasp.centri_gestionali cg WHERE codice_part='€global_codice_part€';",
+      "queryString": "SELECT distinct entrasp.centri_gestionali_descr(cg.codice_part,cg.id_centro_gest) as centro_gest,entrasp.transcodifiche_transcodifica('FASCIA_TEMPORALE',entrasp.stato_rettificato(snd.data_prevista,snd.stato)) as dashboard,cg.codice_part,entrasp.saturazione_cg_fascia_temporale(cg.id_centro_gest, snd.codice_azienda, 'tutti','A') AS next_id_gruppo FROM entrasp.centri_gestionali cg inner join entrasp.sondaggi snd on snd.codice_part=cg.codice_part and snd.id_centro_gest = cg.id_centro_gest WHERE snd.codice_azienda='DEMO';",
       "type": "main"
     },
     {
