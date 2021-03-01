@@ -7,7 +7,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT mt.codice_azienda, mt.id_modello_test, mt.id_argomento, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$;"
+            "queryString": "SELECT mt.codice_azienda, mt.id_modello_test, mt.id_argomento, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select id_sondaggio from entrasp.sondaggi snd where codice_azienda=codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1)FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$;"
         },
         {
             "type": "main",
@@ -1015,6 +1015,62 @@
             "width": "10%",
             "label": "Tipo"
         },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione"
+        },
+        {
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "6%",
+			"key": "create_somministrazione",
+			"queryFunct": "select true",
+            "label": "Crea verifica",
+			"isButton": true,
+            "buttonAction": {
+				"target": "sondaggi_somministrati",
+				"viewType": "form",
+				"action": "query",
+				"query": "select codice_azienda, id_sondaggio, id_somministrazione from entrasp.sondaggio_insert_from_list('£codice_azienda£', £id_sondaggio£)",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_sondaggio",
+						"destination": "id_sondaggio"
+					},
+					{
+						"source": "id_somministrazione",
+						"destination": "id_somministrazione"
+					}
+				],
+				"confirmAction": true,
+				"confirmMessage": {
+					"title": "Nuova verifica",
+					"text": "Si vuole creare una nuova verifica?"
+				},
+				"onSuccessAction": "navigate"
+			}
+		},
         {
             "format": {
                 "dataType": "number"
