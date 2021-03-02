@@ -2,30 +2,7 @@
     "$schema": "../views.schema.json",
     "entryKey": "rischi_sub_of_trattamenti_dati",
     "origin": "entrasp.fonti_rischio",
-    "inputEvents": [
-      {
-        "eventName": "update_fonti_rischio",
-        "actionType": "reload"
-      },
-      {
-        "actionTarget": {
-            "name": "rischi",
-            "type": "form",
-            "keymap": [
-                {
-                    "source": "codice_azienda",
-                    "destination": "codice_azienda"
-                },
-                {
-                    "source": "codice_rischio",
-                    "destination": "codice_rischio"
-                }
-            ]
-        },
-        "actionType": "navigate",
-        "eventName": "to_rischio"
-    }
-    ],
+    "businessObjectName": "fonti_rischio",
     "form_keys": [
       {
         "autoGenerate": true,
@@ -48,7 +25,7 @@
           "value": "TD"
         },
         "isHidden": true,
-        "isPrimary": true,
+        "isPrimary": false,
         "key": "codice_tipo_fonte_rischio",
         "label": "codice_tipo_fonte_rischio",
         "readOnly": false,
@@ -83,35 +60,6 @@
       {
         "autoGenerate": false,
         "format": {
-          "viewType": "button"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "cancella_fonte_rischio",
-        "label": "delete",
-        "buttonIcon": "delete",
-        "newLine": false,
-        "outputEvent": {
-          "eventName": "cancella_fonte_rischio",
-          "eventTrigger": "press"
-        },
-        "inputEvents": [
-          {
-            "eventName": "cancella_fonte_rischio",
-            "actionType": "query",
-            "condition": "none",
-            "values": [],
-            "queryFunct": "delete from entrasp.fonti_rischio where codice_azienda=$codice_azienda$ and id_procedura=$id_procedura$ and codice_rischio=$codice_rischio$",
-            "outputEventWhenComplete": "update_fonti_rischio"
-          }
-        ],
-        "readOnly": false,
-        "sameOrigin": false,
-        "size": 1
-      },
-      {
-        "autoGenerate": false,
-        "format": {
           "comboQuery": "SELECT codice_rischio AS id, entrasp.rischi_cod_tit(codice_azienda, codice_rischio) AS name  FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$;",
           "options": [],
           "viewType": "combobox",
@@ -131,29 +79,7 @@
         "readOnly": false,
         "newLine": false,
         "size": 8
-      },
-      {
-        "autoGenerate": false,
-        "format": {
-            "viewType": "button"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "rischio_associato",
-        "label": "Dettaglio",
-        "newLine": false,
-        "outputEvent": {
-            "eventName": "to_rischio",
-            "eventTrigger": "press"
-        },
-     "style": {
-            "background_color": "#25599C",
-            "font_color": "white"
-        },
-        "readOnly": false,
-        "sameOrigin": false,
-        "size": 1
-    }
+      }
     ],
     "table_keys": [
       {
@@ -221,16 +147,12 @@
         "buttonAction": {
           "target": "rischi_sub_of_trattamenti_dati",
           "viewType": "form",
-          "query": "delete from entrasp.fonti_rischio where codice_azienda='£codice_azienda£' AND id_fonte_rischio=£id_fonte_rischio£ AND id_trattamento_dati=£id_trattamento_dati£ and codice_rischio='£codice_rischio£",
+          "query": "delete from entrasp.fonti_rischio where codice_azienda='£codice_azienda£' AND id_trattamento_dati=£id_trattamento_dati£ and codice_rischio='£codice_rischio£'",
           "action": "query",
           "keymap": [
             {
               "source": "codice_azienda",
               "destination": "codice_azienda"
-            },
-            {
-              "source": "id_fonte_rischio",
-              "destination": "id_fonte_rischio"
             },
             {
               "source": "codice_rischio",
@@ -253,6 +175,33 @@
         "key": "codice_rischio_desc",
         "queryFunct": "entrasp.rischi_cod_tit(codice_azienda, codice_rischio)",
         "label": "Rischio Associato"
+      },
+      {
+        "format": {
+            "dataType": "number"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "width": "7.5%",
+        "key": "visible_button_rischio_trattamento",
+        "label": "Rischio",
+        "queryFunct": "select true",
+        "isButton": true,
+        "buttonAction": {
+            "target": "rischi",
+            "viewType": "form",
+            "action": "navigate",
+            "keymap": [
+                {
+                    "source": "codice_azienda",
+                    "destination": "codice_azienda"
+                },
+                {
+                    "source": "codice_rischio",
+                    "destination": "codice_rischio"
+                }
+            ]
+        }
       }
     ]
   }
