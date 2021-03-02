@@ -48,6 +48,10 @@ export interface tableViewKey { // as per API specification
         keymap?:{
             source: string,
             destination: string
+        }[],
+        onSuccessActionKeymap?:{
+            source: string,
+            destination: string
         }[]
     },
     format: {
@@ -592,6 +596,39 @@ export class TableViewComponent implements OnChanges, OnDestroy {
         }
     }
 
+    performOnSuccessAction(selectedViewKey: tableViewKey, initialKeys: any, responseKeys: any) {
+        let _this = this;
+        let action = selectedViewKey.buttonAction.onSuccessAction;
+        if(action == 'reload') {
+            // reload
+            _this.loadData();
+        }
+        else if(action == 'navigate') {
+            // navigate
+            //Create complete keys lists by combining both initial and response keys
+            let allKeys = JSON.parse(JSON.stringify(initialKeys));
+            if(responseKeys != null){
+            Object.keys(responseKeys).forEach( key => {
+                allKeys[key] = responseKeys[key];
+            });
+            }
+
+            let keys = {};
+            if(selectedViewKey.buttonAction.onSuccessActionKeymap && selectedViewKey.buttonAction.onSuccessActionKeymap.length > 0){
+                selectedViewKey.buttonAction.onSuccessActionKeymap.forEach( map => {
+                    keys[map.destination] = allKeys[map.source];
+                })
+            }
+            else {
+                keys = allKeys;
+            }
+
+            let mergedParams = { entry: { name: selectedViewKey.buttonAction.target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };            
+            _this.navigate(mergedParams);    
+
+        }
+    }
+
     navigate(params){
         setTimeout(() => { this.sendEvent.emit({ eventType: "navigate", queryParams: params }); }, 50);
     }
@@ -624,21 +661,8 @@ export class TableViewComponent implements OnChanges, OnDestroy {
             response => {
                 console.log(response);
                 if(response.result == 'OK') {
-                    let responseKeys = response.response;
-                    let action = selectedViewKey.buttonAction.onSuccessAction;
-                    if(action == 'reload') {
-                        // reload
-                        _this.loadData();
-                    }
-                    else if(action == 'navigate') {
-                        // navigate
-                        let newKeys = JSON.parse(JSON.stringify(keys));
-                        Object.keys(responseKeys).forEach( key => {
-                            newKeys[key] = responseKeys[key];
-                        });
-                        let mergedParams = { entry: { name: selectedViewKey.buttonAction.target, type: selectedViewKey.buttonAction.viewType }, keys: [newKeys], index: 1, total: 1 };            
-                        _this.navigate(mergedParams);    
-        
+                    if(selectedViewKey.buttonAction.onSuccessAction != null) {
+                        _this.performOnSuccessAction(selectedViewKey, keys, response.response);
                     }
                 }
             },
