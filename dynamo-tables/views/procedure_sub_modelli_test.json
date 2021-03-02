@@ -46,25 +46,26 @@
                     "values": [],
                     "queryFunct": "delete from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$ and id_procedura=$id_procedura$ and id_modello_test=$id_modello_test$",
                     "outputEventWhenComplete": "update_procedure_modelli_test"
-                }],
-                "readOnly": false,
-                "sameOrigin": false,
-                "size": 0.5
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_procedura AS id, descrizione_breve AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$",
+                "options": [],
+                "viewType": "combobox"
             },
-            {
-                "autoGenerate": false,
-                "format": {
-                    "comboQuery": "SELECT id_procedura AS id, descrizione_breve AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$",
-                    "options": [],
-                    "viewType": "combobox"
-                },
-                "isHidden": false,
-                "isPrimary": true,
-                "key": "id_procedura",
-                "label": "Procedura",
-                "newLine": false,
-                "readOnly": false
-            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_procedura",
+            "label": "Procedura",
+            "newLine": false,
+            "readOnly": false
+        },
         {
             "autoGenerate": false,
             "format": {
@@ -92,7 +93,7 @@
             "readOnly": true
         }
     ],
-   "table_keys": [
+    "table_keys": [
         {
             "format": {
                 "dataType": "text"
@@ -112,11 +113,12 @@
             "width": "5%",
             "label": "Modello di Verifica"
         },
+
         {
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": true,
             "key": "id_procedura",
             "width": "5%",
@@ -124,14 +126,53 @@
         },
         {
             "format": {
-                "dataType": "text"
+              "dataType": "number"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "note",
-            "width": "8%",
-            "label": "Note"
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_procedure_mdt",
+            "label": "",
+            "style": [
+              {
+                "button_icon": "delete",
+                "value": "delete_icon"
+              }
+            ],
+            "isButton": true,
+            "buttonAction": {
+              "target": "procedure_sub_modelli_test",
+              "viewType": "form",
+              "query": "delete from entrasp.procedure_modelli_test where codice_azienda='£codice_azienda£' AND id_procedura=£id_procedura£ AND id_modello_test=£id_modello_test£",
+              "action": "query",
+              "keymap": [
+                {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+                },
+                {
+                  "source": "id_modello_test",
+                  "destination": "id_modello_test"
+                },
+                {
+                  "source": "id_procedura",
+                  "destination": "id_procedura"
+                }
+              ],
+              "onSuccessAction": "reload"
+            }
+          },
+          {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "72%",
+            "key": "descr_procedura",
+            "queryFunct": "entrasp.procedure_aziendali_descr(id_procedura ,codice_azienda)",
+            "label": "Procedura"
         }
     ]
-   
 }
