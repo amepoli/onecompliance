@@ -203,23 +203,25 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
   }
 
-  getCSV(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, is_advanced: boolean, advanced_query_label: string = null): Observable<any> {
+  getCSV(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, is_advanced: boolean, formValues: any, advanced_query_label: string = null): Observable<any> {
     this.amplifyService.auth();
 
     this.myPutPostInit.queryStringParameters = { entry_name: entryName, request_type: 'getCSV', company: company, keys: JSON.stringify(keys), is_form: is_form ? 1 : 0, is_csv: 1, is_advanced: is_advanced ? 1 : 0, advanced_query_label: advanced_query_label };
     if (search_keys != null) {
       this.myPutPostInit.queryStringParameters['search_keys'] = JSON.stringify(search_keys);
     }
+    this.myPutPostInit.body = JSON.parse(JSON.stringify(formValues, this.replacer));
     return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
   }
 
-  getExcel(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, is_advanced: boolean, advanced_query_label: string = null): Observable<any> {
+  getExcel(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, is_advanced: boolean, formValues: any, advanced_query_label: string = null): Observable<any> {
     this.amplifyService.auth();
 
     this.myPutPostInit.queryStringParameters = { entry_name: entryName, request_type: 'getCSV', company: company, keys: JSON.stringify(keys), is_form: is_form ? 1 : 0, is_csv: 0, is_advanced: is_advanced ? 1 : 0, advanced_query_label: advanced_query_label };
     if (search_keys != null) {
       this.myPutPostInit.queryStringParameters['search_keys'] = JSON.stringify(search_keys);
     }
+    this.myPutPostInit.body = JSON.parse(JSON.stringify(formValues, this.replacer));
     return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
   }
 

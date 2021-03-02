@@ -149,7 +149,7 @@ function getAdditionalQueryCond(entry_name, profileData) {
 }
 
 // build the Postgresql query from parameters
-function getTableQuery(entry_params, table_keys, isForm, search_keys, additionalQueryConds) {
+function getTableQuery(entry_params, table_keys, full_keys_set, isForm, search_keys, additionalQueryConds) {
 
     let comboQueries = [];
 
@@ -185,7 +185,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
     let keyTypes = getKeyTypes(entry_keys);
 
     if (isForm) { // check if we have comboboxes, then save query fields for later processing
-        getComboFuncts(comboQueries, entry_keys, table_keys, keyTypes);
+        getComboFuncts(comboQueries, entry_keys, full_keys_set, keyTypes);
     }
 
     // process pre-defined queries for table/form view, if any
@@ -196,13 +196,13 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
         entry_params.predefinedQueries.forEach(query => {
             if ((isForm && query.operation === "selectForm") || (!isForm && query.operation === "selectTable")) {
                 if (query.type === "main" && search_keys == null) {
-                    mainQuery = replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes); // only one main query allowed
+                    mainQuery = replaceKeys(addQueryCond(query.queryString, additionalQueryCond), full_keys_set, keyTypes); // only one main query allowed
                 } else if (query.type === "main" && search_keys != null) {
                     searchQuery = replaceKeys(query.queryString, table_keys, keyTypes); // only one main query allowed
                 } else if (query.type === "preProcessing") {
-                    preProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
+                    preProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), full_keys_set, keyTypes));
                 } else if (query.type === "postProcessing") {
-                    postProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
+                    postProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), full_keys_set, keyTypes));
                 }
             }
         });
@@ -239,7 +239,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
             let fieldString = comma + element.key;
             if (element.hasOwnProperty('queryFunct')) { // overridden by funct
-                fieldString = comma + '(' + replaceKeys(element.queryFunct, table_keys, keyTypes) + ') AS ' + element.key;
+                fieldString = comma + '(' + replaceKeys(element.queryFunct, full_keys_set, keyTypes) + ') AS ' + element.key;
             }
             comma = ','; // needed only the first time
             queryString = queryString + fieldString;
@@ -323,7 +323,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     queryString = queryString + ';';
 
-    queryString = replaceKeys(addQueryCond(queryString, additionalQueryCond), table_keys, keyTypes);
+    queryString = replaceKeys(addQueryCond(queryString, additionalQueryCond), full_keys_set, keyTypes);
 
     return { mainQuery: queryString, comboQueries: comboQueries, preProcessQueries: preProcessQueries, postProcessQueries: postProcessQueries };
 
@@ -1315,6 +1315,9 @@ exports.handler = async (event, context) => {
                 const advancedQueryLabel = queryParams['advanced_query_label'];
                 const entry_name = queryParams['entry_name'];
 
+                const fullValueSet = JSON.parse(event.body);
+
+                console.log('Full value set: ', fullValueSet);
 
                 const DynamoParams = {
                     TableName: 'VIEWS_NAME',
@@ -1392,7 +1395,7 @@ exports.handler = async (event, context) => {
                     comma = ' WHERE ';
                     if (queryString.includes('$')) {
                         comma = ' AND ';
-                        queryString = replaceKeys(queryString, table_keys, keyTypes);
+                        queryString = replaceKeys(queryString, fullValueSet, keyTypes);
                     }
 
                     console.log('queryString2', queryString);
@@ -1402,11 +1405,11 @@ exports.handler = async (event, context) => {
 
                 }
                 else {
-                    queryString = getTableQuery(entry_params, table_keys, isForm, search_keys, additionalQueryCond);
+                    queryString = getTableQuery(entry_params, table_keys, fullValueSet, isForm, search_keys, additionalQueryCond);
 
                     if (!isForm) {
                         // add the search combos if any
-                        getSearchCombos(entry_params, table_keys, false, queryString.comboQueries);
+                        getSearchCombos(entry_params, fullValueSet, false, queryString.comboQueries);
                     }
 
                     // process query string(s) 

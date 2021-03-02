@@ -204,13 +204,13 @@ export class ImportExportService {
         }
     }
 
-    downloadCSV(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, advanced_query_label: string = null) {
-        let _this = this;
+    downloadCSV(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, formValues: any, advanced_query_label: string = null) {
+        const _this = this;
 
         // Show loading Dialog
         _this._dialogService.showLoadingDialog('Preparing CSV', 'Please wait...');
 
-        _this._backendService.getCSV(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, advanced_query_label)
+        _this._backendService.getCSV(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, formValues, advanced_query_label)
             .subscribe(
                 response => {
                     _this._dialogService.closeDialog();
@@ -258,13 +258,13 @@ export class ImportExportService {
 
     }
 
-    downloadExcel(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, advanced_query_label: string = null) {
-        let _this = this;
+    downloadExcel(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, formValues: any, advanced_query_label: string = null) {
+        const _this = this;
 
         // Show loading Dialog
         _this._dialogService.showLoadingDialog('Preparing Excel sheet', 'Please wait...');
 
-        _this._backendService.getExcel(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, advanced_query_label)
+        _this._backendService.getExcel(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, formValues, advanced_query_label)
             .subscribe(
                 response => {
                     _this._dialogService.closeDialog();

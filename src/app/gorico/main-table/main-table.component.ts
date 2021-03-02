@@ -151,11 +151,13 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }));
 
         _this.subscriptions.push(_this._importExportService.onGetCSVRequested.subscribe(label => {
-            _this._importExportService.downloadCSV(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', label);
+            const formValues = _this.getFormValues();
+            _this._importExportService.downloadCSV(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', formValues, label);
         }));
 
         _this.subscriptions.push(_this._importExportService.onGetExcelRequested.subscribe(label => {
-            _this._importExportService.downloadExcel(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', label);
+            const formValues = _this.getFormValues();
+            _this._importExportService.downloadExcel(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys, _this.tableType === 'form', formValues, label);
         }));
 
         // subscribe to toolbar requests
@@ -478,4 +480,35 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     updateMessages(messageViews: MessageView[], viewType: string) {
     }
+
+    getFormValues(): any {
+        const _this = this;
+        let formValues = {};
+        if (_this.tableType === 'form' && _this.formView != null) {
+            formValues = _this.formView.formGetter.formArray.first.form.value;
+            // process the booleans (1/0 instead of true/false)
+            for (const value in formValues) {
+                if (formValues.hasOwnProperty(value)) {
+                    const element = formValues[value];
+                    _this._console.log(element);
+                    if (element == null) {
+                        continue; // skip null entries
+                    }
+                    // decode combos
+                    if (element['id'] != null) {
+                        formValues[value] = element['id'];
+                    }
+                    // encode boolean
+                    else if (element === true) {
+                        formValues[value] = '1';
+                    }
+                    else if (element === false) {
+                        formValues[value] = '0';
+                    }
+                }
+            }
+        }
+        return formValues;
+    }
+
 }
