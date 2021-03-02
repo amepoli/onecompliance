@@ -2,12 +2,6 @@
     "$schema": "../views.schema.json",
     "entryKey": "cpl_trattamenti_dati_categorie_dati_personali_sub",
     "origin": "entrasp.cpl_trattamenti_dati_categorie_dati_personali",
-    "inputEvents": [
-      {
-          "eventName": "update_categorie_dati",
-          "actionType": "reload"
-      }
-  ],
     "form_keys": [
       {
         "autoGenerate": false,
@@ -15,41 +9,13 @@
                 "viewType": "input",
                 "dataType": "text"
             },
-            "label": "ID presidio",
+            "label": "codice_azienda",
             "key": "codice_azienda",
             "readOnly": false,
             "isHidden": true,
             "isPrimary": true,
             "newLine": false
       },
-      {
-        "autoGenerate": false,
-        "format": {
-            "viewType": "button"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "cancella_categorie_dati",
-        "label": "delete",
-        "buttonIcon": "delete",
-        "newLine": false,
-        "outputEvent": {
-            "eventName": "categorie_dati_cancella",
-            "eventTrigger": "press"
-        },
-        "inputEvents": [
-            {
-                "eventName": "categorie_dati_cancella",
-                "actionType": "query",
-                "condition": "none",
-                "values": [],
-                "queryFunct": "delete from entrasp.cpl_trattamenti_dati_categorie_dati_personali where codice_azienda=$codice_azienda$ and id_trattamento_dati=$id_trattamento_dati$ and id_trattamenti_dati_categorie_dati_personali=$id_trattamenti_dati_categorie_dati_personali$",
-                "outputEventWhenComplete": "update_categorie_dati"
-            }],
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 0.5
-        },
       {
         "autoGenerate": false,
         "format": {
@@ -88,6 +54,85 @@
         "label": "Categorie Dati Personali",
         "readOnly": false,
         "newLine": false
+      }
+    ],
+    "table_keys": [
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_trattamento_dati",
+        "width": "5%",
+        "label": "ID"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_trattamenti_dati_categorie_dati_personali",
+        "width": "5%",
+        "label": "ID"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "width": "4%",
+        "queryFunct": "select true",
+        "key": "delete_trattamenti_dati_categorie",
+        "label": "",
+        "style": [
+          {
+            "button_icon": "delete",
+            "value": "delete_icon"
+          }
+        ],
+        "isButton": true,
+        "buttonAction": {
+          "target": "cpl_trattamenti_dati_categorie_dati_personali",
+          "viewType": "form",
+          "query": "delete from entrasp.cpl_trattamenti_dati_categorie_dati_personali where codice_azienda='£codice_azienda£' AND id_trattamenti_dati_categorie_dati_personali=£id_trattamenti_dati_categorie_dati_personali£ AND id_trattamento_dati=£id_trattamento_dati£",
+          "action": "query",
+          "keymap": [
+            {
+              "source": "codice_azienda",
+              "destination": "codice_azienda"
+            },
+            {
+              "source": "id_trattamenti_dati_categorie_dati_personali",
+              "destination": "id_trattamenti_dati_categorie_dati_personali"
+            },
+            {
+              "source": "id_trattamento_dati",
+              "destination": "id_trattamento_dati"
+            }
+          ],
+          "onSuccessAction": "reload"
+        }
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "categorie_dati_personali",
+        "label": "Categorie Dati Personali"
       }
     ]
   }
