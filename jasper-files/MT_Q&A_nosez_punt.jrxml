@@ -32,7 +32,7 @@
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[]]></parameterDescription>
-		<defaultValueExpression><![CDATA["select m.*, m_vr.*, entrasp.centri_gestionali_descr(m.codice_part,m.id_centro_gest) as cg_descr, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test, m.codice_azienda) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='1' and m.codice_azienda = 'DEMO' and m.id_modello_test = 71"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select m.*, m_vr.*, entrasp.centri_gestionali_descr(m.codice_part,m.id_centro_gest) as cg_descr, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test, m.codice_azienda) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='1' and m.codice_azienda = 'INVESTIRE' and m.id_modello_test = 145"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -269,7 +269,7 @@
 		</band>
 	</title>
 	<detail>
-		<band height="210" splitType="Stretch">
+		<band height="224" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="157" width="537" height="20" uuid="7ff531dc-7cbf-44fa-8efe-ff94688a877b">
@@ -458,6 +458,19 @@
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["modelliTestQA_nosez_punt.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="30" y="209" width="507" height="11" uuid="9c3dadad-2c27-419e-8aef-128e5d118afc">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<subreportParameter name="codice_azienda">
+					<subreportParameterExpression><![CDATA[$F{codice_azienda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id_modello_test">
+					<subreportParameterExpression><![CDATA[$F{id_modello_test}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["procedure_sub_MT.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
