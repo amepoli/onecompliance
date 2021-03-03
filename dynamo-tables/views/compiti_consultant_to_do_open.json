@@ -5,8 +5,106 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select *, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato, entrasp.tipo_segnalazione_descr(id_tipo_segnalazione, codice_azienda) as tipo_segnalazione from entrasp.compiti WHERE stato='A' and id_tipo_segnalazione=0 and codice_azienda in(€global_user_companies€)"
+      "queryString": "select cmp.*, cns.*, entrasp.anagrafiche_id_codcognnome(cns.codice_part, cns.id_risorsa) as esecutore, substring(cns.note from 1 for 100) as note_restricted, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr(cmp.id_tipo_segnalazione, cmp.codice_azienda) as tipo_segnalazione from entrasp.compiti cmp inner join entrasp.consuntivazioni cns on cmp.codice_azienda=cns.codice_azienda and cmp.codice_compito=cns.codice_compito WHERE cmp.stato='A' and cmp.codice_azienda in(€global_user_companies€) and entrasp.consuntivazione_belongs_user((€global_id_anagrafiche€)::text, cns.id_cons, cns.codice_azienda)"
     }
   ],
-  "inheritsFrom": "compiti_consultant"
+  "inheritsFrom": "consuntivazioni_consultant_list",
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_cons",
+      "label": "id_cons"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda",
+      "width": "7%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_segnalazione",
+      "label": "Tipo",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "stato",
+      "label": "Stato",
+      "width": "5%",
+      "style": [
+        {
+          "value": "Chiuso",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Provvisorio",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Aperto",
+          "font_color": "red",
+          "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_compito",
+      "width": "5%",
+      "label": "Codice Compito"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_segnalazione",
+      "width": "8%",
+      "label": "Data Segnalazione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "width": "30%",
+      "label": "Titolo"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "width": "30%",
+      "label": "Note"
+    }
+  ]
 }
