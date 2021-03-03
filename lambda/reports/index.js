@@ -378,7 +378,7 @@ exports.handler = async (event, context) => {
         const business_object = await tableName2BusinessObject(entryName);
 
         if (requestType === 'getList') {
-            const query = `select * from entrasp.object_reports where context_object='${business_object}';`;
+            const query = `select * from entrasp.object_reports where (context_object='${business_object}' and position('${company}' in aziende_list)!=0) or (aziende_list is null and context_object='${business_object}')`;
             const response = await client.query(query);
             body = { result: 'OK', list: response.rows.map(row => ({ "alias": row.alias, "descrizione": row.descrizione })) };
         } else if (requestType === 'getReport') {
