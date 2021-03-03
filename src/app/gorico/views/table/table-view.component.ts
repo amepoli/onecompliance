@@ -607,10 +607,10 @@ export class TableViewComponent implements OnChanges, OnDestroy {
             // navigate
             //Create complete keys lists by combining both initial and response keys
             let allKeys = JSON.parse(JSON.stringify(initialKeys));
-            if(responseKeys != null){
-            Object.keys(responseKeys).forEach( key => {
-                allKeys[key] = responseKeys[key];
-            });
+                if(responseKeys != null){
+                Object.keys(responseKeys).forEach( key => {
+                    allKeys[key] = responseKeys[key];
+                });
             }
 
             let keys = {};

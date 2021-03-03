@@ -32,12 +32,21 @@
                 <span> Add</span>
             </button>
 
-            <button mat-button (click) ="gotoDashboard()" [disabled]="dashboardTables == null">
+            <button mat-button (click)="gotoDashboard()" [disabled]="dashboardTables == null">
                 <mat-icon>dashboard</mat-icon>
                 <span> Dashboard</span>
             </button>
 
+            <button [disabled]="!reportList || !reportList.length" mat-button [matMenuTriggerFor]="report_menu"
+                (click)="getReportList()">
+                <mat-icon>print</mat-icon>
+            </button>
 
+            <mat-menu #report_menu="matMenu">
+                <ng-container *ngFor="let item of reportList">
+                    <button mat-menu-item (click)="getReport(item)">{{item.descrizione}}</button>
+                </ng-container>
+            </mat-menu>
 
         </div>
 
@@ -53,17 +62,6 @@
         </mat-menu>
 
         <div class="toolbar-separator"></div>
-
-        <button [disabled]="!reportList || !reportList.length" mat-button [matMenuTriggerFor]="report_menu"
-            (click)="getReportList()">
-            <mat-icon>print</mat-icon>
-        </button>
-
-        <mat-menu #report_menu="matMenu">
-            <ng-container *ngFor="let item of reportList">
-                <button mat-menu-item (click)="getReport(item)">{{item.descrizione}}</button>
-            </ng-container>
-        </mat-menu>
 
         <button *ngIf="false" mat-button (click)="getExcel()">
             <mat-icon svgIcon="excel"></mat-icon>
