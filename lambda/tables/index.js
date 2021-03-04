@@ -287,9 +287,9 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
                 mainQuery = mainQuery + ' ORDER BY ' + orderBy.key + order + ';';
             }
             if (querySuffixes != null) {
-                let querySuffix = isForm && querySuffixes.formViewSuffix != null ? querySuffixes.formViewSuffix 
-                                : !isForm && querySuffixes.tableViewSuffix != null ? querySuffixes.tableViewSuffix 
-                                : null;
+                let querySuffix = isForm && querySuffixes.formViewSuffix != null ? querySuffixes.formViewSuffix
+                    : !isForm && querySuffixes.tableViewSuffix != null ? querySuffixes.tableViewSuffix
+                        : null;
                 if (querySuffix != null) {
                     if (mainQuery.slice(-1) === ';') {
                         mainQuery = mainQuery.slice(0, -1);  // remove the final ';'
@@ -426,9 +426,9 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     // add suffix if present
     if (querySuffixes != null) {
-        let querySuffix = isForm && querySuffixes.formViewSuffix != null ? querySuffixes.formViewSuffix 
-                        : !isForm && querySuffixes.tableViewSuffix != null ? querySuffixes.tableViewSuffix 
-                        : null;
+        let querySuffix = isForm && querySuffixes.formViewSuffix != null ? querySuffixes.formViewSuffix
+            : !isForm && querySuffixes.tableViewSuffix != null ? querySuffixes.tableViewSuffix
+                : null;
         if (querySuffix != null) {
             queryString += ' ' + querySuffix;
         }
@@ -449,7 +449,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
 }
 
-function getCustomQuery(entry_params, table_keys, customQueryButtonKey) {
+function getCustomQuery(entry_params, customQueryButtonKey) {
     if (entry_params.table_keys != null && entry_params.table_keys.length > 0) {
         let buttonTableKey = entry_params.table_keys.filter(el => el.key == customQueryButtonKey);
         if (buttonTableKey != null && buttonTableKey.length > 0) {
@@ -945,6 +945,19 @@ function getDeleteQuery(entry_params, table_keys) {
 
 }
 
+function getShareQuery(entry_params) {
+    if (entry_params.predefinedQueries != null && entry_params.predefinedQueries.length > 0) {
+        let shareElement = entry_params.predefinedQueries.filter(el => el.operation == 'share');
+        if (shareElement != null && shareElement.length > 0) {
+            shareElement = shareElement[0];
+            if (shareElement.queryString) {
+                return shareElement.queryString;
+            }
+        }
+    }
+    return null;
+}
+
 function getAttributeFuncts(keys) {
 
     let attributeFuncts = [];
@@ -1217,6 +1230,41 @@ async function processCustomQuery(queryString, keys, client) {
         }
         catch (e) {
             console.log('Custom Query Error: ', e);
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 200,
+                "body": JSON.stringify({ result: 'KO', error: e, queryString: queryString })
+            };
+        }
+    }
+}
+
+async function processShareQuery(queryString, keys, client) {
+    if (queryString != null) {
+        console.log('Running shared query');
+        console.log('keys: ', keys);
+
+        console.log('queryString: ', queryString);
+        queryString = replaceKeys(queryString, keys, []);
+        console.log('queryString: ', queryString);
+
+        // queryString = replaceGlobalkeys(queryString);
+        // queryString = replaceLocalKeys(queryString, keys);
+        try {
+            let result = await client.query(queryString);
+            if (result.rows != null && result.rows.length > 0) {
+                result = result.rows[0];
+            }
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 200,
+                "body": JSON.stringify({ result: 'OK', response: result, queryString: queryString })
+            };
+        }
+        catch (e) {
+            console.log('Share Query Error: ', e);
             return {
                 "isBase64Encoded": false,
                 "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -1573,6 +1621,8 @@ exports.handler = async (event, context) => {
     var isCustomQuery = (queryParams['custom_query'] === '1');;
     var customQueryButtonKey = queryParams['custom_query_key'];
 
+    var isShareEvent = (queryParams['share'] === '1');;
+
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
 
@@ -1645,8 +1695,10 @@ exports.handler = async (event, context) => {
         if (method === 'GET') {
             if (dashboardIndex != null) {
                 queryString = getDashboardQuery(entry_params, table_keys, dashboardIndex);
+            } else if (isShareEvent) {
+                queryString = getShareQuery(entry_params);
             } else if (isCustomQuery) {
-                queryString = getCustomQuery(entry_params, table_keys, customQueryButtonKey);
+                queryString = getCustomQuery(entry_params, customQueryButtonKey);
             } else if (isSearchRequest) {
                 queryString = getTableQuery(entry_params, table_keys, false, search_keys, additionalQueryCond);
             } else if (isNewRecord) {
@@ -1676,6 +1728,11 @@ exports.handler = async (event, context) => {
             console.log(response);
             await client.release();
             return response;
+        } else if (isShareEvent) {
+            let response = await processShareQuery(queryString, table_keys, client);
+            console.log(response);
+            await client.release();
+            return response;
         } else {
             // Check if there are errors in the insertion data
             let preInsertingErrors = await processPreInsertingCheck(queryString, client);
@@ -1698,7 +1755,7 @@ exports.handler = async (event, context) => {
         }
 
         // process comboboxes 
-        if (method === 'GET' && dashboardIndex == null && !isEventUpdate && !isCustomQuery) {
+        if (method === 'GET' && dashboardIndex == null && !isEventUpdate && !isCustomQuery && !isShareEvent) {
 
             if (queryData != null && isNewRecord && queryString.defaultValues != null) { // only for new records, merge default values
                 queryData.forEach(item => {
@@ -1826,7 +1883,7 @@ exports.handler = async (event, context) => {
 
         // last chance to calculate the keys with an evalFunct and to process attributes
 
-        if (method === 'GET' && dashboardIndex == null && !isCustomQuery) {
+        if (method === 'GET' && dashboardIndex == null && !isCustomQuery && !isShareEvent) {
             queryData = getCalculatedParams(entry_params, queryData, isFormRecord);
             // process attributeFuncts
             if (isFormRecord) {

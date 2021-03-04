@@ -39,12 +39,21 @@
             <button mat-button *ngIf="!formView.hideActions.includes('delete')" (click)="formView.delElement()">
                 <mat-icon>delete</mat-icon>
             </button>
-            <button mat-button *ngIf="!formView.hideActions.includes('attachments')" (click)="formView.showAttachments()">
-                <mat-icon  [matBadge]="formView.n_attach">attach_file</mat-icon>
+            <button mat-button *ngIf="!formView.hideActions.includes('attachments')"
+                (click)="formView.showAttachments()">
+                <mat-icon [matBadge]="formView.n_attach">attach_file</mat-icon>
             </button>
-            <button mat-button *ngIf="!formView.hideActions.includes('share')">
+
+            <button mat-button [matMenuTriggerFor]="companyMenu" *ngIf="!formView.hideActions.includes('share')">
                 <mat-icon>share</mat-icon>
             </button>
+
+            <mat-menu #companyMenu="matMenu">
+                <ng-container *ngFor="let item of userCompanies">
+                    <button mat-menu-item (click)="formView.shareElement(item)">{{item}}</button>
+                </ng-container>
+            </mat-menu>
+
         </div>
 
     </mat-toolbar>

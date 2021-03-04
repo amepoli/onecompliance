@@ -84,6 +84,12 @@ export class BackendService {
     return from(this.amplifyService.api().del(this.apiName, '/' + this.tablesApiName, this.myGetInit));
   }
 
+  shareData(entryName: string, company: string, keys: any): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { entry_name: entryName, 'share': 1, company: company, keys: JSON.stringify(keys) };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
+  }
+
   updateData(entryName: string, company: string, keys: any, data: any): Observable<any> {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, form: 1, keys: JSON.stringify(keys) };
