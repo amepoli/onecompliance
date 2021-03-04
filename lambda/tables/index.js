@@ -19,11 +19,9 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const excel = require('node-excel-export');
 const readXlsxFile = require('read-excel-file/node');
 
-const global_variables = {
-    global_codice_azienda: '',
-    global_codice_part: '',
-    global_userid: 0
-};
+const helperFuncts = require('./helperFuncts');
+
+var global_variables = {};
 
 function isDataTypeString(type) {
     return (type.dataType === 'text' || type.dataType === 'date' || type.viewType === 'textarea')
@@ -1480,63 +1478,6 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 
 }
 
-async function getCodicePart(company, client) {
-
-    if (company == null) {
-        return null;
-    }
-    const queryString = "SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='" + company + "';";
-    const response = await client.query(queryString);
-    if (response != null && response.rows != null && response.rows[0] != null) {
-        return response.rows[0].codice_part;
-    } else {
-        return null;
-    }
-}
-
-async function setGlobalVariables(company, client, userid) {
-
-    global_variables.global_codice_azienda = company;
-
-    global_variables.global_codice_part = await getCodicePart(company, client);
-
-    var userParams = {
-        TableName: 'USERS_NAME',
-        Key: {
-            userid: userid
-        }
-    };
-
-    var data = await dynamo.get(userParams).promise();
-    data = data.Item;
-
-    if (data != null) {
-        let companies = data.companies;
-        if (company != null) {
-            var global_user_companies = '';
-            var global_id_anagrafiche = '';
-            for (let i = 0; i < companies.length; i++) {
-                let c = companies[i];
-                if (global_user_companies !== '') {
-                    global_user_companies += ',';
-                    global_id_anagrafiche += ',';
-                }
-                global_user_companies += '\'' + c.name + '\'';
-                var codice_part = await getCodicePart(c.name, client);
-                global_id_anagrafiche += '\'' + codice_part + '-' + c.id_anagrafica + '\'';
-                if (c.name === company) { // found user's profile
-                    global_variables.global_userid = c.id_anagrafica;
-                    global_variables.global_profile = c.profile;
-                }
-            };
-            global_variables.global_user_companies = global_user_companies;
-            global_variables.global_id_anagrafiche = global_id_anagrafiche;
-        }
-    }
-
-    console.log("Global vars: ", global_variables);
-
-}
 
 function getAdditionalQueryCond(entry_name, profileData) {
 
@@ -1686,7 +1627,7 @@ exports.handler = async (event, context) => {
 
         await addCodiceAzienda(table_keys, company, entry_params, client, isFormRecord || isNewRecord || isEventUpdate);
 
-        await setGlobalVariables(company, client, userid);
+        global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
 
         // retrieve additional query conditions from profile (if any)
 

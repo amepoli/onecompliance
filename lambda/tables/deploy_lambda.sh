@@ -36,8 +36,11 @@ sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
 sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
 sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js
 
-
 rm index.js-e
+
+#copy modules
+cp ../modules/helperFuncts.js .
+sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" helperFuncts.js
 
 #push zip to AWS
 
@@ -45,10 +48,12 @@ rm ./nodejs.zip
 
 npm install
 
-zip -r nodejs.zip node_modules index.js package.json
+zip -r nodejs.zip node_modules index.js package.json helperFuncts.js
 
 aws lambda update-function-code --function-name $LAMBDANAME --zip-file fileb://./nodejs.zip
 
 #restore the original file
 
 mv index.js.ori index.js
+
+rm helperFuncts.js helperFuncts.js-e

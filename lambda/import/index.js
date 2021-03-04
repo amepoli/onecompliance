@@ -3,6 +3,7 @@ const excel = require('node-excel-export');
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'REGION' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+const helperFuncts = require('./helperFuncts');
 
 const bucket = 'BUCKET_NAME';
 const region = 'REGION';
@@ -26,11 +27,7 @@ const pool = new Pool({
     connectionTimeoutMillis: 1000
 });
 
-const global_variables = {
-    global_codice_azienda: '',
-    global_codice_part: '',
-    global_userid: 0
-};
+var global_variables = {};
 
 function getDateFormat() {
     var d = new Date();
@@ -584,41 +581,6 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 
 }
 
-async function setGlobalVariables(company, client, userid) {
-
-    global_variables.global_codice_azienda = company;
-
-    const queryString = "SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='" + company + "';";
-    const response = await client.query(queryString);
-    if (response != null) {
-        global_variables.global_codice_part = response.rows[0].codice_part;
-    }
-
-    var userParams = {
-        TableName: 'USERS_NAME',
-        Key: {
-            userid: userid
-        }
-    };
-
-    var data = await dynamo.get(userParams).promise();
-    data = data.Item;
-
-    if (data != null) {
-        let companies = data.companies;
-        if (company != null) {
-            companies.forEach(c => {
-                if (c.name === company) { // found user's profile
-                    global_variables.global_userid = c.id_anagrafica;
-                }
-            });
-        }
-    }
-
-    console.log('global_variables', global_variables);
-
-}
-
 function isDataTypeString(type) {
     return (type.dataType === 'text' || type.dataType === 'date' || type.viewType === 'textarea')
 }
@@ -1113,7 +1075,7 @@ exports.handler = async (event, context) => {
                 entry_params = await overrideTable(entry_params.Item);
 
                 await addCodiceAzienda(table_keys, company, entry_params, client, isForm);
-                await setGlobalVariables(company, client, userid);
+                global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
 
                 let comboQueries = [];
                 let preProcessQueries = [];
@@ -1332,7 +1294,7 @@ exports.handler = async (event, context) => {
                 entry_params = await overrideTable(entry_params.Item);
 
                 await addCodiceAzienda(table_keys, company, entry_params, client, isForm);
-                await setGlobalVariables(company, client, userid);
+                global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
 
                 additionalQueryCond = getAdditionalQueryCond(entry_name, profileData);
 
