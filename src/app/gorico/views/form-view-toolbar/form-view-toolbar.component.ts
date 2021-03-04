@@ -3,6 +3,7 @@ import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, A
 import 'rxjs/add/operator/filter';
 import { FormViewComponent } from '../form/form-view.component';
 import { NavigationService } from 'app/gorico/services/navigation.service';
+import { AuthService } from 'app/gorico/login-page/auth.service';
 
 @Component({
     selector: 'form-view-toolbar',
@@ -14,11 +15,19 @@ export class FormViewToolbarComponent implements DoCheck {
 
     @Input("formView") formView: FormViewComponent;
 
-    constructor(private cdr: ChangeDetectorRef) {
+    userCompanies: string[] = [];
+    userdata: any;
+    
+    constructor(private cdr: ChangeDetectorRef, private _authService: AuthService) {
+        // get user data after login
+        this.userdata = this._authService.userinfo.getValue();
+        
+        // set the company set
+        this.userCompanies = this.userdata.companies;
+
     }
 
     ngDoCheck() {
         this.cdr.detectChanges();
     }
-
 }
