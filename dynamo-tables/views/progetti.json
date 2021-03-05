@@ -20,7 +20,7 @@
 			"queryString": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
 		},
 		{
-			"queryString": "select case when count(id_fase)=0 and (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)>0 then 'C' when (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)=0 then 'P' else 'A' end as stato  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and stato='P'",
+			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
 			"type": "postProcessing",
 			"operation": "selectForm"
 		},
