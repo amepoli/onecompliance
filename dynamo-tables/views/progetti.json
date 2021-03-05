@@ -5,6 +5,11 @@
 	"businessObjectName": "progetti",
 	"predefinedQueries": [
 		{
+			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+			"type": "preProcessing",
+			"operation": "selectForm"
+		},
+		{
 			"operation": "selectForm",
 			"type": "preProcessing",
 			"queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
@@ -18,11 +23,6 @@
 			"operation": "selectForm",
 			"type": "postProcessing",
 			"queryString": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
-		},
-		{
-			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
-			"type": "postProcessing",
-			"operation": "selectForm"
 		},
 		{
 			"operation": "selectForm",
