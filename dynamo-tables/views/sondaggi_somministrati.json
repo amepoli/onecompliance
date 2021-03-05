@@ -179,7 +179,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "sondaggi_from_sondaggi_somministrati",
-      "label": "Dati Ulteriori",
+      "label": "Sondaggio",
       "newLine": false,
       "outputEvent": {
         "eventName": "to_sondaggi_from_sondaggi_somministrati",
@@ -604,22 +604,6 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "criterio_analisi",
-      "label": "Criterio di Analisi",
-      "sameOrigin": false,
-      "queryFunct": "entrasp.descrizione_risultato_from_sondaggio(codice_azienda, id_sondaggio)",
-      "newLine": false,
-      "readOnly": true,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
       "key": "somministrazione_completata",
       "queryFunct": "select entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$) as somministrazione_completata",
       "label": "Completamento singola verifica",
@@ -792,7 +776,7 @@
       "isPrimary": false,
       "key": "riepilogo_risultati",
       "label": "Riepilogo Risultati",
-      "newLine": true,
+      "newLine": false,
       "outputEvent": {
         "eventName": "check_existence_riepilogo_risultati",
         "eventTrigger": "press"
@@ -802,9 +786,31 @@
         "font_color": "white"
       },
       "readOnly": false,
-      "size": 1.75,
+      "size": 1.7,
       "sameOrigin": false
     },
+    {
+      "autoGenerate": false,
+      "format": {
+          "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "ulteriori_elementi",
+      "label": "Dati Accessori",
+      "newLine": true,
+      "outputEvent": {
+          "eventName": "sondaggi_ulteriori_elementi",
+          "eventTrigger": "press"
+      },
+      "style": {
+          "background_color": "#25599C",
+          "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1.7
+  },
     {
       "autoGenerate": false,
       "format": {
@@ -1372,6 +1378,24 @@
       "eventName": "sondaggi_somministrati_reload",
       "actionType": "reload"
     },
+    {
+      "actionTarget": {
+          "name": "sondaggi_ulteriori_elementi",
+          "type": "form",
+          "keymap": [
+              {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+              },
+              {
+                  "source": "id_sondaggio",
+                  "destination": "id_sondaggio"
+              }
+          ]
+      },
+      "actionType": "navigate",
+      "eventName": "sondaggi_ulteriori_elementi"
+  },
     {
       "actionTarget": {
         "name": "cpl_risultati_sondaggi",
