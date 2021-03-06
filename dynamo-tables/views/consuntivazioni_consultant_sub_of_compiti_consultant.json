@@ -1,0 +1,17 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "consuntivazioni_consultant_sub_of_compiti_consultant",
+  "inheritsFrom": "consuntivazioni_consultant_list",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select *, entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa) as esecutore, substring(note from 1 for 100) as note_restricted from entrasp.consuntivazioni WHERE codice_azienda in(€global_user_companies€) and entrasp.consuntivazione_belongs_user((€global_id_anagrafiche€)::text, id_cons, codice_azienda) and codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+      "type": "main"
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$ and cn.id_cons=$id_cons$",
+      "type": "postProcessing"
+    }
+  ]
+}
