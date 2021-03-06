@@ -5,7 +5,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select cmp.*, cns.*, entrasp.anagrafiche_id_codcognnome(cns.codice_part, cns.id_risorsa) as esecutore, substring(cns.note from 1 for 100) as note_restricted, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr(cmp.id_tipo_segnalazione, cmp.codice_azienda) as tipo_segnalazione from entrasp.compiti cmp inner join entrasp.consuntivazioni cns on cmp.codice_azienda=cns.codice_azienda and cmp.codice_compito=cns.codice_compito WHERE cmp.stato='A' and cmp.codice_azienda in(€global_user_companies€) and entrasp.consuntivazione_belongs_user((€global_id_anagrafiche€)::text, cns.id_cons, cns.codice_azienda)"
+      "queryString": "select (€global_user_companies€)::text as user_companies, entrasp.time_report_stop_active((€global_user_companies€)::text, codice_compito, codice_azienda) as time_report_stop, true as time_report_play, cmp.codice_compito, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr(cmp.id_tipo_segnalazione, cmp.codice_azienda) as tipo_segnalazione from entrasp.compiti cmp WHERE cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)"
     }
   ],
   "inheritsFrom": "consuntivazioni_consultant_list",
@@ -37,7 +37,7 @@
       "isPrimary": false,
       "key": "tipo_segnalazione",
       "label": "Tipo",
-      "width": "6%"
+      "width": "12%"
     },
     {
       "format": {
@@ -98,13 +98,90 @@
     },
     {
       "format": {
-        "dataType": "text"
+        "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "note",
-      "width": "30%",
-      "label": "Note"
-    }
+      "width": "3%",
+      "key": "time_report_play",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "play_arrow",
+          "value": "play_arrow"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "compiti_consultant_to_do_open",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.time_report_play(('£user_companies£')::text, '£codice_compito£', '£codice_azienda£')",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          },
+          {
+            "source": "user_companies",
+            "destination": "user_companies"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "3%",
+      "key": "time_report_stop",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "stop",
+          "value": "stop"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "compiti_consultant_to_do_open",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.time_report_stop('£user_companies£', '£codice_compito£', '£codice_azienda£')",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          },
+          {
+            "source": "user_companies",
+            "destination": "user_companies"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "user_companies",
+      "label": "user_companies"
+    } 
   ]
 }
