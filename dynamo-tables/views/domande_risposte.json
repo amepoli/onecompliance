@@ -584,7 +584,15 @@
                                 "actionType": "query_style",
                                 "styleAttribute": "background_color",
                                 "queryFunct": "select codice_colore as peso_rb_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select peso from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_radio', '$id_risposta_prev_radio$') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
+                            },
+                            {
+                                "eventName": "toggle_question",
+                                "actionType": "readOnly",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when flag_risposta_aperta='1' then false else true end  from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_radio', '£id_risposta_prev_radio£') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
                             }
+                        
                         ],
                         "sameOrigin": false,
                         "label": "Risultato %",

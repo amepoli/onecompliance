@@ -5,17 +5,17 @@
 	"businessObjectName": "progetti",
 	"predefinedQueries": [
 		{
-			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
-			"type": "preProcessing",
-			"operation": "selectForm"
-		},
-		{
 			"operation": "selectForm",
 			"type": "preProcessing",
 			"queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
 		},
 		{
 			"queryString": "select case when count(id_fase) >0 then true else false end as disable_button_attiva_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+			"type": "postProcessing",
+			"operation": "selectForm"
+		},
+		{
+			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
 			"type": "postProcessing",
 			"operation": "selectForm"
 		},
