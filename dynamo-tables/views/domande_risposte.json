@@ -96,12 +96,12 @@
     "predefinedQueries": [
         {
             "operation": "selectForm",
-            "queryString": "select flag_risposta_multipla from entrasp.domande where codice_azienda=$codice_azienda$ and id_domanda=£id_domanda£",
+            "queryString": "select id_tipo_domanda::varchar from entrasp.domande where codice_azienda=$codice_azienda$ and id_domanda=£id_domanda£",
             "type": "postProcessing"
         },
         {
             "operation": "selectForm",
-            "queryString": "select case when '£flag_risposta_multipla£'='1' then array(select id_risposta_prev from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$) else array[null::numeric] end as risposta_multipla",
+            "queryString": "select case when £id_tipo_domanda£='2' then array(select id_risposta_prev from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$) else array[null::numeric] end as risposta_multipla",
             "type": "postProcessing"
         },
         {
@@ -145,9 +145,9 @@
             "type": "main"
         }
     ],
-    "orderBy": {
-        "key": "ordinamento",
-        "order": "ascending"
+    "querySuffixes": {
+        "tableViewSuffix": "order by ordinamento asc",
+        "formViewSuffix": "order by ordinamento asc"
     },
     "formRowProperties": [
         {
@@ -204,8 +204,12 @@
             "isHidden": true,
             "readOnly": true,
             "isPrimary": false,
-            "key": "flag_risposta_multipla",
-            "label": "flag_risposta_multipla",
+            "key": "id_tipo_domanda",
+            "label": "id_tipo_domanda",
+            "outputEvent": {
+                "eventName": "domande_risposte_multipla_aperta",
+                "eventTrigger": "change"
+            },
             "sameOrigin": false,
             "newLine": true,
             "format": {
@@ -522,22 +526,6 @@
         },
         {
             "isHidden": true,
-            "readOnly": true,
-            "isPrimary": false,
-            "key": "multipla_aperta",
-            "label": "multipla_aperta",
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "queryFunct": "entrasp.risposte_previste_multipla_aperta(codice_azienda,id_modello_test,id_modello_test_vr,id_domanda)",
-            "outputEvent": {
-                "eventName": "domande_risposte_multipla_aperta",
-                "eventTrigger": "change"
-            }
-        },
-        {
-            "isHidden": true,
             "readOnly": false,
             "isPrimary": false,
             "key": "risposte_radiobutton",
@@ -550,8 +538,7 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "values": [
-                        "0",
-                        "0"
+                        "1"
                     ]
                 }
             ],
@@ -657,8 +644,7 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "values": [
-                        "*",
-                        "1"
+                        "3"
                     ]
                 }
             ],
@@ -745,8 +731,7 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "values": [
-                        "1",
-                        "0"
+                        "2"
                     ]
                 }
             ],
