@@ -5,17 +5,17 @@
 	"businessObjectName": "progetti",
 	"predefinedQueries": [
 		{
-			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
-			"type": "preProcessing",
-			"operation": "selectForm"
-		},
-		{
 			"operation": "selectForm",
 			"type": "preProcessing",
 			"queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
 		},
 		{
 			"queryString": "select case when count(id_fase) >0 then true else false end as disable_button_attiva_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+			"type": "postProcessing",
+			"operation": "selectForm"
+		},
+		{
+			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
 			"type": "postProcessing",
 			"operation": "selectForm"
 		},
@@ -94,6 +94,24 @@
 			},
 			"actionType": "navigate",
 			"eventName": "to_attivita_associata"
+		},
+		{
+			"actionTarget": {
+				"name": "progetti_fasi",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_progetto",
+						"destination": "id_progetto"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "navigate_to_new_progetto"
 		}
 	],
 	"form_keys": [
@@ -201,6 +219,26 @@
 			},
 			"label": "Id Progetto",
 			"key": "id_progetto",
+			"inputEvents": [
+				{
+					"eventName": "progetto_duplica",
+					"actionType": "show_message",
+					"condition": "none",
+					"values": [],
+					"message": {
+						"messageText": "Sei sicuro di voler duplicare questo progetto e relativi sondaggo? (si verrà automaticamente trasferiti nel nuovo)",
+						"actionOnNo": {
+							"actionType": "query",
+							"queryFunct": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;"
+						},
+						"actionOnYes": {
+							"actionType": "query",
+							"queryFunct": "select id_progetto from entrasp.progetti_duplica($codice_azienda$, $id_progetto$);"
+						}
+					},
+					"outputEventWhenComplete": "navigate_to_new_progetto"
+				}	
+			],
 			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": true,
@@ -419,7 +457,41 @@
 			],
 			"readOnly": true,
 			"sameOrigin": false,
-			"size": 2
+			"size": 1.3
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "duplica_progetto",
+			"label": "Duplica progetto",
+			"attributeFuncts": [
+				{
+					"attributeType": "style",
+					"styleAttribute": "background_color",
+					"queryString": "select case when count(id_progetto) = 0 then '#698EC2' else '#25599C' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+				},
+				{
+					"attributeType": "style",
+					"styleAttribute": "font_color",
+					"queryString": "select case when count(id_progetto) = 0 then '#5b635a' else 'white'  end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+				}
+			],
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "progetto_duplica",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#698EC2",
+				"font_color": "#5b635a"
+			},
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 1.3
 		},
 		{
 			"autoGenerate": false,
@@ -447,7 +519,7 @@
 			],
 			"readOnly": false,
 			"sameOrigin": false,
-			"size": 2
+			"size": 1.4
 		},
 		{
 			"autoGenerate": false,
@@ -482,9 +554,9 @@
 				"dataType": "number",
 				"viewType": "input"
 			},
-			"fieldName": "id_progetto",
+			"fieldName": "id_progetto_s",
 			"newLine": false,
-			"queryCond": "id_progetto=$id_progetto$"
+			"queryCond": "id_progetto=$id_progetto_s$"
 		},
 		{
 			"label": "Codice progetto",

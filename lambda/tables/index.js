@@ -1638,8 +1638,6 @@ exports.handler = async (event, context) => {
                 queryString = getDashboardQuery(entry_params, table_keys, dashboardIndex);
             } else if (isShareEvent) {
                 queryString = getShareQuery(entry_params);
-            } else if (isCustomQuery) {
-                queryString = getCustomQuery(entry_params, customQueryButtonKey);
             } else if (isSearchRequest) {
                 queryString = getTableQuery(entry_params, table_keys, false, search_keys, additionalQueryCond);
             } else if (isNewRecord) {
@@ -1654,6 +1652,8 @@ exports.handler = async (event, context) => {
         } else if (method === 'POST') {
             if (isEventUpdate) {
                 queryString = getEventQuery(entry_params, JSON.parse(event.body), JSON.parse(queryParams['event']), queryParams);
+            } else if (isCustomQuery) {
+                queryString = getCustomQuery(entry_params, customQueryButtonKey);
             } else {
                 // process later
             }
@@ -1665,7 +1665,7 @@ exports.handler = async (event, context) => {
             // process dashboard queries
             queryData = await processDashboard(queryString, client);
         } else if (isCustomQuery) {
-            let response = await processCustomQuery(queryString, table_keys, client);
+            let response = await processCustomQuery(queryString, JSON.parse(event.body), client);
             console.log(response);
             await client.release();
             return response;

@@ -19,6 +19,50 @@
       "type": "preProcessing"
     }
   ],
+  "search_keys": [
+    {
+      "fieldName": "id_argomento",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID",
+      "newLine": false,
+      "queryCond": "arg.id_argomento=$id_argomento$"
+    },
+    {
+      "fieldName": "descr_rs",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Descrizione",
+      "newLine": true,
+      "queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€descr_rs')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')"
+    },
+    {
+      "fieldName": "no_modello_test",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Senza modelli di test",
+      "newLine": true,
+      "size": 1,
+      "queryCond": "arg.id_argomento not in(select mt.id_argomento from entrasp.modelli_test mt)"
+    },
+    {
+      "fieldName": "no_modello_test",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Con modelli di test",
+      "newLine": true,
+      "size": 1,
+      "queryCond": "arg.id_argomento in(select mt.id_argomento from entrasp.modelli_test mt)"
+    }
+  ],
   "subTables": [
     {
       "entryKey": "argomenti_sub_of_argomenti_son",

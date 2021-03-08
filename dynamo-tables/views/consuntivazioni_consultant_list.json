@@ -2,6 +2,7 @@
   "$schema": "../views.schema.json",
   "entryKey": "consuntivazioni_consultant_list",
   "businessObjectName": "consuntivazioni",
+  "origin": "entrasp.consuntivazioni",
   "predefinedQueries": [
     {
       "operation": "selectTable",
@@ -193,161 +194,42 @@
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "button"
+        "dataType": "date",
+        "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "chiudi_compito",
-      "label": "Chiudi Segnalazione",
-      "newLine": false,
-      "size": 2,
-      "outputEvent": {
-        "eventName": "chiudi_segnalazione",
-        "eventTrigger": "press"
-      },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "inputEvents": [
-        {
-          "eventName": "chiudi_segnalazione",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "update entrasp.compiti set stato='C', data_chiusura=CURRENT_DATE where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
-          "outputEventWhenComplete": "update_button"
-        },
-        {
-          "eventName": "update_button",
-          "actionType": "readOnly",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
-          "outputEventWhenComplete": "compiti_consultant_reload"
-        },
-        {
-          "eventName": "update_button",
-          "actionType": "query_style",
-          "styleAttribute": "font_color",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then 'grey' else 'white' end as chiudi_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "update_button",
-          "actionType": "query_style",
-          "condition": "none",
-          "values": [],
-          "styleAttribute": "background_color",
-          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as chiudi_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "actionType": "readOnly",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "actionType": "query_style",
-          "styleAttribute": "font_color",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then 'grey' else 'white' end as chiudi_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "styleAttribute": "background_color",
-          "actionType": "query_style",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as chiudi_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        }
-      ],
+      "key": "date_time_begin",
+      "label": "Inizio",
       "readOnly": false,
-      "sameOrigin": false
+      "newLine": false
     },
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "button"
+        "dataType": "date",
+        "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "riapri_compito",
-      "label": "Riapri Segnalazione",
-      "newLine": true,
-      "size": 2,
-      "outputEvent": {
-        "eventName": "riapri_segnalazione",
-        "eventTrigger": "press"
-      },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "inputEvents": [
-        {
-          "eventName": "riapri_segnalazione",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "update entrasp.compiti set stato='A', data_chiusura=null where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
-          "outputEventWhenComplete": "reopen_button"
-        },
-        {
-          "eventName": "reopen_button",
-          "actionType": "readOnly",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then false else true end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
-          "outputEventWhenComplete": "compiti_consultant_reload"
-        },
-        {
-          "eventName": "reopen_button",
-          "actionType": "query_style",
-          "styleAttribute": "font_color",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then 'white' else 'grey' end as riapri_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "reopen_button",
-          "styleAttribute": "background_color",
-          "actionType": "query_style",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as riapri_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "actionType": "readOnly",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then false else true end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "actionType": "query_style",
-          "styleAttribute": "font_color",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then 'white' else 'grey' end as riapri_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "styleAttribute": "background_color",
-          "actionType": "query_style",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as riapri_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        }
-      ],
+      "key": "date_time_end",
+      "label": "Fine",
       "readOnly": false,
-      "sameOrigin": false
+      "newLine": false
     },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "durata_interval",
+      "label": "Durata",
+      "readOnly": false,
+      "newLine": true
+    }, 
     {
       "autoGenerate": false,
       "format": {
@@ -519,11 +401,173 @@
       "isPrimary": false,
       "key": "codice_attivita",
       "label": "Modello di progetto",
-      "newLine": false,
+      "newLine": true,
       "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "chiudi_compito",
+      "label": "Chiudi Segnalazione",
+      "newLine": false,
+      "size": 5,
+      "outputEvent": {
+        "eventName": "chiudi_segnalazione",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "inputEvents": [
+        {
+          "eventName": "chiudi_segnalazione",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "update entrasp.compiti set stato='C', data_chiusura=CURRENT_DATE where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+          "outputEventWhenComplete": "update_button"
+        },
+        {
+          "eventName": "update_button",
+          "actionType": "readOnly",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+          "outputEventWhenComplete": "compiti_consultant_reload"
+        },
+        {
+          "eventName": "update_button",
+          "actionType": "query_style",
+          "styleAttribute": "font_color",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then 'grey' else 'white' end as chiudi_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "update_button",
+          "actionType": "query_style",
+          "condition": "none",
+          "values": [],
+          "styleAttribute": "background_color",
+          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as chiudi_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
+          "actionType": "readOnly",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
+          "actionType": "query_style",
+          "styleAttribute": "font_color",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then 'grey' else 'white' end as chiudi_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
+          "styleAttribute": "background_color",
+          "actionType": "query_style",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as chiudi_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "riapri_compito",
+      "label": "Riapri Segnalazione",
+      "newLine": true,
+      "size": 5,
+      "outputEvent": {
+        "eventName": "riapri_segnalazione",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "inputEvents": [
+        {
+          "eventName": "riapri_segnalazione",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "update entrasp.compiti set stato='A', data_chiusura=null where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+          "outputEventWhenComplete": "reopen_button"
+        },
+        {
+          "eventName": "reopen_button",
+          "actionType": "readOnly",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then false else true end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+          "outputEventWhenComplete": "compiti_consultant_reload"
+        },
+        {
+          "eventName": "reopen_button",
+          "actionType": "query_style",
+          "styleAttribute": "font_color",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then 'white' else 'grey' end as riapri_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "reopen_button",
+          "styleAttribute": "background_color",
+          "actionType": "query_style",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as riapri_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
+          "actionType": "readOnly",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then false else true end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
+          "actionType": "query_style",
+          "styleAttribute": "font_color",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then 'white' else 'grey' end as riapri_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "consuntivazioni_sub_reload",
+          "styleAttribute": "background_color",
+          "actionType": "query_style",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as riapri_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false
     }
+ 
   ],
   "subTables": [],
+  "querySuffixes": {
+    "tableViewSuffix": "order by data_intervento desc limit 100"
+  },
   "table_keys": [
     {
       "format": {
@@ -596,6 +640,16 @@
     },
     {
       "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "durata_interval",
+      "label": "Durata",
+      "width": "10%"
+    },
+    {
+      "format": {
         "dataType": "text"
       },
       "isHidden": false,
@@ -603,7 +657,7 @@
       "key": "note_restricted",
       "queryFunct": "substring(note from 1 for 100)",
       "label": "Note",
-      "width": "60%"
+      "width": "30%"
     },
     {
       "format": {
