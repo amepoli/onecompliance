@@ -119,7 +119,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         const _this = this; // useful to debug
 
         if (_this.tableData.navBarMode === 'add') {
-            _this.isQuickAdd = true;
+            _this.isQuickAdd = false;
         }
 
         // Subscribe to Reload Request
