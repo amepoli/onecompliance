@@ -12,7 +12,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select *, entrasp.tipo_segnalazione_descr(cmp.id_tipo_segnalazione, cmp.codice_azienda) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as compiti_aperti from entrasp.compiti cmp WHERE cmp.codice_compito_parent is null and cmp.codice_azienda in(€global_user_companies€)"
+      "queryString": "select cmp.codice_azienda, cmp.codice_compito, cmp.titolo, sustring(cmp.note from 1 to 239) as note, cmp.data_segnalazione, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, entrasp.tipo_segnalazione_descr(cmp.id_tipo_segnalazione, cmp.codice_azienda) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as compiti_aperti from entrasp.compiti cmp WHERE cmp.codice_compito_parent is null and cmp.codice_azienda in(€global_user_companies€)"
     },
     {
       "operation": "selectForm",
@@ -530,7 +530,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo",
-      "width": "30%",
+      "width": "20%",
       "label": "Titolo"
     },
     {
@@ -540,7 +540,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "note",
-      "width": "30%",
+      "width": "20%",
       "label": "Note"
     },
     {
@@ -561,6 +561,54 @@
       "isPrimary": true,
       "key": "codice_compito_parent",
       "label": "Codice Compito"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "3%",
+      "key": "time_report_play",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "play_arrow",
+          "value": "play_arrow"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "compiti_consultant_to_do_open",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.time_report_play(('£user_companies£')::text, '£codice_compito£', '£codice_azienda£')",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          },
+          {
+            "source": "user_companies",
+            "destination": "user_companies"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "user_companies",
+      "label": "user_companies"
     }
   ],
   "inputEvents": [
@@ -571,12 +619,15 @@
   ],
   "messages": [
     {
-        "viewType": "form",
-        "formMessageType": "delete",
-        "message": {
-            "title": "Cancellazione compito",
-            "text": "Sei sicuro di voler cancellare il compito?"
-        }
+      "viewType": "form",
+      "formMessageType": "delete",
+      "message": {
+        "title": "Cancellazione compito",
+        "text": "Sei sicuro di voler cancellare il compito?"
+      }
     }
-]
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by time_report_stop_active desc"
+  }
 }

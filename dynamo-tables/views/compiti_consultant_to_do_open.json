@@ -5,17 +5,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, codice_compito, codice_azienda), true as time_report_play, cmp.codice_compito, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr(cmp.id_tipo_segnalazione, cmp.codice_azienda) as tipo_segnalazione from entrasp.compiti cmp WHERE cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and (id_centro_gest is not null or id_responsabile is not null)"
-    },
-    {
-      "operation": "insert",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part='€global_codice_part€' where cn.codice_azienda=$codice_azienda$ and cn.id_cons=$id_cons$",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "update",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part='€global_codice_part€' where cn.codice_azienda=$codice_azienda$ and cn.id_cons=$id_cons$",
-      "type": "postProcessing"
+      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, codice_compito, codice_azienda), true as time_report_play, cmp.codice_compito, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr(cmp.id_tipo_segnalazione, cmp.codice_azienda) as tipo_segnalazione, data_segnalazione from entrasp.compiti cmp WHERE cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and (id_centro_gest is not null or id_responsabile is not null)"
     }
   ],
   "inheritsFrom": "compiti_consultant",
@@ -184,5 +174,6 @@
       "key": "user_companies",
       "label": "user_companies"
     }
-  ]
+  ],
+  "querySuffixes": {"tableViewSuffix": "order by time_report_stop_active desc"}
 }
