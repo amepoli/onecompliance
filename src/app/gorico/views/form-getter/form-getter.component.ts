@@ -122,6 +122,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     readonlyRows: boolean[] = [];
 
+    profileHideActions: string[] = [];
+
     numRows = 1;
 
     @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
@@ -300,13 +302,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 _this._console.log(results);
                 if (results.result === 'OK') {
                     const params = results.data;
-
                     _this.viewKeys = params.form_keys;
                     if (_this.viewKeys == null) {
                         return;                         // no formKeys defined for the table, stop here
                     }
 
                     if (_this.isFormView) {
+                        // Profile hide actions
+                        _this.profileHideActions = params.profileHideActions;
+                    
                         // Load Import Queries list if available
                         if (params.importQueries && params.importQueries.formQueries) {
                             _this._console.log('importQueries', params.importQueries);
