@@ -45,7 +45,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select * from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent is null;"
+            "queryString": "select *,true as create_progetto  from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent is null;"
         }
     ],
     "form_keys": [
@@ -447,7 +447,51 @@
             "key": "codice_attivita_parent_trans",
             "queryFunct": "entrasp.attivita_descr(codice_attivita_parent,codice_azienda)",
             "label": "Descrizione livello superiore"
-        }
+        },
+        {
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "8%",
+            "sameOrigin": false,
+            "key": "create_progetto",
+		    "label": "Nuovo Progetto",
+			"isButton": true,
+            "buttonAction": {
+				"target": "progetti",
+				"viewType": "form",
+				"action": "query",
+                "query": "select entrasp.progetti_insert(codice_azienda, codice_attivita)",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+                    {
+						"source": "codice_attivita",
+						"destination": "codice_attivita"
+					}
+				],
+				"confirmAction": true,
+				"confirmMessage": {
+					"title": "Nuovo Progetto",
+					"text": "Si vuole creare un nuovo progetto?"
+				},
+				"onSuccessAction": "navigate",
+                "onSuccessActionKeymap": [
+                    {
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_progetto",
+						"destination": "id_progetto"
+					}
+                ]
+			}
+		}
     ],
     "exportQueries": {
         "tableQueries": [
