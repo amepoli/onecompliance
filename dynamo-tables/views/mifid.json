@@ -34,7 +34,7 @@
     {
       "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "SELECT mdt.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+      "queryString": "SELECT mdt.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.id_sondaggio_parent, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
     },
     {
       "operation": "delete",
@@ -802,28 +802,6 @@
     {
       "autoGenerate": false,
       "format": {
-          "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "ulteriori_elementi",
-      "label": "Dati Accessori",
-      "newLine": true,
-      "outputEvent": {
-          "eventName": "sondaggi_ulteriori_elementi",
-          "eventTrigger": "press"
-      },
-      "style": {
-          "background_color": "#25599C",
-          "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1.7
-  },
-    {
-      "autoGenerate": false,
-      "format": {
         "dataType": "number",
         "viewType": "input"
       },
@@ -872,5 +850,115 @@
       "newLine": false,
       "readOnly": true
     }
+  ],
+  "subTables": [
+    {
+      "entryKey": "domande_risposte",
+      "label": "Domande e Risposte",
+      "type": "tableForm",
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "somministrazioni_flags_sezioni",
+          "condition": "equalTo",
+          "values": [
+            "0"
+          ]
+        }
+      ],
+      "isHidden": true,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        },
+        {
+          "parent": "id_modello_test_vr",
+          "son": "id_modello_test_vr"
+        },
+        {
+          "parent": "id_sondaggio",
+          "son": "id_sondaggio"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
+      ]
+    },
+    {
+      "entryKey": "domande_sezioni_sub_of_somministrazioni",
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "somministrazioni_flags_sezioni",
+          "condition": "equalTo",
+          "values": [
+            "1"
+          ]
+        }
+      ],
+      "isHidden": true,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_sondaggio",
+          "son": "id_sondaggio"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
+      ],
+      "label": "Domande e Risposte - Sezioni",
+      "type": "table"
+    },
+    {
+      "entryKey": "sondaggi_somministrati_attachments",
+      "isHidden": false,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_sondaggio",
+          "son": "id_sondaggio"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
+      ],
+      "label": "Allegati Associati",
+      "type": "tableForm"
+    },
+    {
+      "entryKey": "sondaggi_somministrati_sub_of_sondaggi_somministrati",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        },
+        {
+          "parent": "object_key",
+          "son": "object_key"
+        }
+      ],
+      "label": "Verifiche collegate",
+      "type": "table"
+    }
+    
   ]
 }
