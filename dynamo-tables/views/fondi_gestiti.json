@@ -53,8 +53,7 @@
             "key": "id_anagrafica",
             "label": "ID",
             "newLine": false,
-            "readOnly": true,
-            "size": 1
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -68,14 +67,13 @@
             "label": "Codice",
             "newLine": false,
             "queryFunct": "SELECT codice from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-            "readOnly": false,
-            "size": 2
+            "readOnly": false
         },
         {
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
-                "value": "£CURRENT_DATE£",
+                "value": "CURRENT_DATE",
                 "viewType": "input"
             },
             "isHidden": false,
@@ -83,8 +81,7 @@
             "key": "data_upd",
             "label": "Data Aggiunta",
             "newLine": true,
-            "readOnly": false,
-            "size": 2
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -189,7 +186,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "SELECT an.codice_part, an.id_anagrafica, avr.ragione_sociale, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and codice_ruolo = 'FONDO';",
+            "queryString": "SELECT an.codice_part, an.id_anagrafica,avr.data_upd, avr.liv_min_toll_rischio_per_sottoscrizione, avr.ragione_sociale, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and codice_ruolo = 'FONDO';",
             "type": "main"
         },
         {
@@ -199,7 +196,7 @@
         },
         {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, ragionesociale=>$ragione_sociale$, flagfondo=>'€flag_fondo€', annotazioniinterne=>$annotazioni_interne$);",
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, ragionesociale=>$ragione_sociale$, flagfondo=>'€flag_fondo€', annotazioniinterne=>$annotazioni_interne$, livmintoll=>$liv_min_toll_rischio_per_sottoscrizione$);",
             "type": "main"
         },
         {
@@ -295,20 +292,20 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": true,
-            "key": "prog_vr",
-            "label": "vr"
+            "key": "id_anagrafica",
+            "label": "ID"
         },
         {
             "format": {
-                "dataType": "number"
+                "dataType": "date"
             },
             "isHidden": false,
-            "isPrimary": true,
-            "key": "id_anagrafica",
-            "width": "5%",
-            "label": "ID"
+            "isPrimary": false,
+            "key": "data_upd",
+            "width": "10%",
+            "label": "Data di Aggiunta"
         },
         {
             "format": {
@@ -327,8 +324,28 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "ragione_sociale",
-            "width": "30%",
+            "width": "50%",
             "label": "Denominazione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "prog_vr",
+            "label": "Versione",
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "liv_min_toll_rischio_per_sottoscrizione",
+            "label": "Liv. Minimo",
+            "width": "6%"
         },
         {
             "format": {
@@ -337,18 +354,61 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "ruolo_s",
-            "width": "20%",
+            "width": "10%",
             "label": "Ruolo"
+        }
+        
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID",
+            "newLine": false,
+            "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
         },
         {
+            "fieldName": "nome_rs",
             "format": {
-                "dataType": "text"
+                "dataType": "text",
+                "viewType": "input"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "tipo_soggetto",
-            "width": "10%",
-            "label": "Tipo"
+            "label": "Nome/Cognome/Ragione Sociale",
+            "newLine": true,
+            "queryCond": "(UPPER(an.nome) like '%'||UPPER('€nome_rs€')||'%' or UPPER(an.cognome) like '%'||UPPER('€nome_rs€')||'%' or UPPER(avr.ragione_sociale) like '%'||UPPER('€nome_rs€')||'%')"
+        },
+        {
+            "fieldName": "codice_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Codice",
+            "newLine": false,
+            "queryCond": "(avr.codice = $codice_s$ or an.codice = $codice_s$)"
+        },
+        {
+            "fieldName": "liv_min",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Livello da",
+            "newLine": false,
+            "queryCond": "avr.liv_min_toll_rischio_per_sottoscrizione>=$liv_min$"
+        },
+        {
+            "fieldName": "liv_max",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Livello a",
+            "newLine": false,
+            "queryCond": "avr.liv_min_toll_rischio_per_sottoscrizione<=$liv_max$"
         }
         
     ]
