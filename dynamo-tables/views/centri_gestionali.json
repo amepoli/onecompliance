@@ -199,7 +199,19 @@
       "operation": "insert",
       "type": "postProcessing",
       "queryString": "UPDATE entrasp.centri_gestionali cge set codice_part=az.codice_part from entrasp.aziende az where cge.codice_azienda=az.codice_azienda"
-    }
+    },
+    {
+			"operation": "insert",
+			"type": "preInsertingCheck",
+			"queryString": "select codice from entrasp.centri_gestionali where codice_azienda=$codice_azienda$ and id_centro_gest='£id_centro_gest£'",
+			"messageNotNull": "Il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+		},
+		{
+			"operation": "update",
+			"type": "preUpdatingCheck",
+			"queryString": "select codice from entrasp.centri_gestionali where codice_azienda=$codice_azienda$ and id_centro_gest='£id_centro_gest£'",
+			"messageNotNull": "Il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+		}
   ],
   "search_keys": [
     {
