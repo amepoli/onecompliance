@@ -1,7 +1,7 @@
 {
     "$schema": "../views.schema.json",
-    "inheritsFrom": "anagrafiche_vr",
     "entryKey": "fondi_gestiti",
+    "inheritsFrom": "anagrafiche_vr",
     "outputEvents": [
         {
             "eventName": "onSaveAnagrafichevr",
@@ -12,6 +12,7 @@
             "eventTrigger": "onReload"
         }
     ],
+    
     "form_keys": [
         {
             "autoGenerate": false,
@@ -34,14 +35,10 @@
             },
             "isHidden": true,
             "isPrimary": false,
-            "key": "tipo_soggetto_bis",
+            "key": "tipo_soggetto",
             "label": "Tipo soggetto bis",
             "newLine": true,
-            "outputEvent": {
-                "eventName": "tipo_soggetto_load",
-                "eventTrigger": "change"
-            },
-            "queryFunct": "SELECT tipo_soggetto as tipo_soggetto_bis from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "queryFunct": "SELECT tipo_soggetto from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
             "readOnly": false,
             "sameOrigin": false
         },
@@ -86,7 +83,7 @@
             "key": "data_upd",
             "label": "Data Aggiunta",
             "newLine": true,
-            "readOnly": true,
+            "readOnly": false,
             "size": 2
         },
         {
@@ -192,17 +189,17 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "SELECT an.codice_part, an.id_anagrafica, coalesce(an.nome||' '||an.cognome, avr.ragione_sociale) as nmrs, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and codice_ruolo = 'FONDO';",
+            "queryString": "SELECT an.codice_part, an.id_anagrafica, avr.ragione_sociale, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and codice_ruolo = 'FONDO';",
             "type": "main"
         },
         {
             "operation": "insert",
-            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceruolo=>'FONDO', codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>$ragione_sociale$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$);",
+            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceruolo=>'FONDO', codiceanagrafica=>$codice$, ragionesociale=>$ragione_sociale$::varchar, flagfondo=>'€flag_fondo€', annotazioniinterne=>$annotazioni_interne$);",
             "type": "main"
         },
         {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$);",
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, ragionesociale=>$ragione_sociale$, flagfondo=>'€flag_fondo€', annotazioniinterne=>$annotazioni_interne$);",
             "type": "main"
         },
         {
@@ -283,5 +280,76 @@
             ],
             "label": "Versioni"
         }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "prog_vr",
+            "label": "vr"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_anagrafica",
+            "width": "5%",
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "width": "12%",
+            "label": "Codice"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ragione_sociale",
+            "width": "30%",
+            "label": "Denominazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ruolo_s",
+            "width": "20%",
+            "label": "Ruolo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_soggetto",
+            "width": "10%",
+            "label": "Tipo"
+        }
+        
     ]
 }
