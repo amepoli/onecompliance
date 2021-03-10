@@ -96,12 +96,7 @@
     "predefinedQueries": [
         {
             "operation": "selectForm",
-            "queryString": "select id_tipo_domanda::varchar from entrasp.domande where codice_azienda=$codice_azienda$ and id_domanda=£id_domanda£",
-            "type": "postProcessing"
-        },
-        {
-            "operation": "selectForm",
-            "queryString": "select case when £id_tipo_domanda£='2' then array(select id_risposta_prev from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$) else array[null::numeric] end as risposta_multipla",
+            "queryString": "select case when £id_tipo_domanda£=2 then array(select id_risposta_prev from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$) else array[null::numeric] end as risposta_multipla",
             "type": "postProcessing"
         },
         {
@@ -210,11 +205,10 @@
                 "eventName": "domande_risposte_multipla_aperta",
                 "eventTrigger": "change"
             },
-            "sameOrigin": false,
             "newLine": true,
             "format": {
                 "viewType": "input",
-                "dataType": "text"
+                "dataType": "number"
             }
         },
         {
@@ -538,7 +532,7 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "values": [
-                        "1"
+                        1
                     ]
                 }
             ],
@@ -652,7 +646,7 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "values": [
-                        "3"
+                       3
                     ]
                 }
             ],
@@ -739,7 +733,7 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "values": [
-                        "2"
+                        2
                     ]
                 }
             ],
