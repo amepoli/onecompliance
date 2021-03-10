@@ -899,7 +899,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             // normalize if boolean conditions
             let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v);
             let msgData = Array.isArray(value.data) ? value.data : [value.data];
-            msgData = msgData.map(m => m === true || m === 1 || m === 'true' || m === 't' ? '1' : m === false || m === 0 || m === 'false' || m === 'f' ? '0' : m);
+            msgData = msgData.map(m => m === true || m === 'true' || m === 't' ? '1' : m === false || m === 'false' || m === 'f' ? '0' : m);
             // handle jolly chars 
             eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
             // tricky way to compare two arrays
