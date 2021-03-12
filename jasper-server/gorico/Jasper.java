@@ -43,6 +43,8 @@ import java.io.IOException;
 
 import java.nio.file.Paths;
 
+import net.sf.jasperreports.functions.standard.TextFunctions.*;
+
 import gorico.*;
 
 public class Jasper {
