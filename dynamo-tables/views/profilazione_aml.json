@@ -960,5 +960,19 @@
       "type": "table"
     }
     
-  ]
+  ],
+  "exportQueries": {
+    "tableQueries": [
+      {
+        "label": "Estrazione somministrazioni",
+        "queryString": "SELECT ss.id_somministrazione, snd.id_sondaggio, ss.codice_azienda, ss.data_esecuzione, snd.id_modello_test, ss.object_description, ss.stato, ss.somministrazione_completata, snd.descrizione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, 'anagraficheId', 'id_anagrafica','|')::numeric as id_anagrafica_somministrazione, (select codice_fiscale from entrasp.anagrafiche_vr avr where id_anagrafica=entrasp.field_value_from_key(ss.object_key, 'anagraficheId', 'id_anagrafica','|')::numeric and codice_part='€global_codice_part€' and prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', id_anagrafica)), entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_sondaggio, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, ss.pct_da, snd.codice_azienda) as giudizio_somministrazione FROM entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where ss.codice_azienda=$codice_azienda$"
+      }
+    ],
+    "formQueries": [
+      {
+        "label": "Risposte punteggio diverso da 0",
+        "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.peso from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$  ri.peso!= 0"
+      }
+    ]
+  }
 }
