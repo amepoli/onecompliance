@@ -10,7 +10,7 @@ import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { ValidationsService } from 'app/gorico/services/validations.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
-import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
+import { NavigationService } from 'app/gorico/services/navigation.service';
 
 import { MessageView } from 'app/gorico/services/messages.service';
 import { HelperService } from 'app/gorico/services/helper.service';
@@ -99,6 +99,9 @@ export interface formGetterParams {
 })
 export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy {
 
+    // Is form-getter inside a tab
+    @Input() isTabMode: boolean = false;
+  
     // Is form-getter part of form-view
     @Input() isFormView: boolean = false;
 
@@ -123,10 +126,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     readonlyRows: boolean[] = [];
 
     profileHideActions: string[] = [];
+    hideActions: string[] = [];
 
     numRows = 1;
 
-    @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
     viewKeys: formViewKey[]; // view form fields as specified by the backend
@@ -215,7 +218,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         _this.generalSubscriptions.push(subscription);
 
 
-        if (_this.isFormView) {
+        if (_this.isFormView && !_this.isTabMode) {
             subscription = _this.pubsubService.subscribe('navigate_on_save_button',
                 value => {
                     _this.eventCallback(value.data, value, null); // null as keyListener means that the full table is affected
@@ -307,7 +310,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         return;                         // no formKeys defined for the table, stop here
                     }
 
-                    if (_this.isFormView) {
+                    // Load Hide actions if available
+                    _this.hideActions = _this._navigationService.getFormHideActions(params.hideActions);
+                    if(params.profileHideActions) {
+                        _this.hideActions = _this.hideActions.concat(params.profileHideActions);
+                    }
+
+                    if (_this.isFormView && !_this.isTabMode) {
                         // Profile hide actions
                         _this.profileHideActions = params.profileHideActions;
                     
@@ -329,25 +338,19 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._importExportService.updateExportList(_this.formParams.entryName, []);
                         }
 
+                        // Load Hide actions if available
+                        _this._navigationService.updateToolbarHideActions(_this.hideActions);
+                        
+                        // Load Messages if available
+                        if (params.messages) {
+                            _this._console.log(params.messages);
+                            _this.onMessagesUpdated.emit(params.messages);
+                        }
+                        else {
+                            _this.onMessagesUpdated.emit([]);
+                        }
                     }
 
-
-                    // Load Hide actions if available
-                    if (params.hideActions) {
-                        _this.onHideActionsUpdated.emit(params.hideActions);
-                    }
-                    else {
-                        _this.onHideActionsUpdated.emit([]);
-                    }
-
-                    // Load Messages if available
-                    if (params.messages) {
-                        _this._console.log(params.messages);
-                        _this.onMessagesUpdated.emit(params.messages);
-                    }
-                    else {
-                        _this.onMessagesUpdated.emit([]);
-                    }
 
                     // signal toolbar about a dashboard 
                     _this._navigationService.onDashboardTableLoad.emit({origin: _this.formParams.entryName, dashboardTables: params.dashboardTables});

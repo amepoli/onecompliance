@@ -13,7 +13,7 @@ import { FileManagerService } from 'app/main/apps/file-manager/file-manager.serv
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ReportService } from 'app/gorico/services/report.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
-import { HideAction, NavigationService } from 'app/gorico/services/navigation.service';
+import { NavigationService } from 'app/gorico/services/navigation.service';
 import { MessageView, MessagesService, MessageElement, MessageItem } from 'app/gorico/services/messages.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 import { Subscription } from 'rxjs';
@@ -91,8 +91,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     subscriptions: Subscription[] = [];
 
     hideActions: string[] = []; // Hide actions
-    @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
-
+    
     messages: MessageElement[] = []; // Messages
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
@@ -108,7 +107,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         private _pubSubService: NgxPubSubService,
         private _reportService: ReportService,
         private _importExportService: ImportExportService,
-        private _navigationServce: NavigationService,
+        private _navigationService: NavigationService,
         private _messagesService: MessagesService,
         private _console: ConsoleLoggerService
     ) {
@@ -173,7 +172,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         );
 
         _this.subscriptions.push(subscription);
-
+        
     }
 
     ngOnChanges() {
@@ -525,11 +524,6 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     getExportList() {
         // Request to load advanced export list
         // this._importExportService.requestReload(this.tableData.entryName);
-    }
-
-    updateHideActions(hideActions: HideAction[]) {
-        this.hideActions = this._navigationServce.getFormHideActions(hideActions);
-        this.onHideActionsUpdated.emit(hideActions);
     }
 
     updateMessages(messageViews: MessageView[]) {
