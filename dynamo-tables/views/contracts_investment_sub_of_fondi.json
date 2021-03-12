@@ -1,0 +1,12 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "contracts_investment_sub_of_fondi",
+	"inheritsFrom": "contracts_investment",
+	"predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select cnt.id_contratto, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.tipi_contratto_descr(cnt.codice_azienda, cnt.id_tipo_contratto) as tipo_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_strumento_finanziario) from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.id_strumento_finanziario=$id_strumento_finanziario$;"
+		}
+	]
+}
