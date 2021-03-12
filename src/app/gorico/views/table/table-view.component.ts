@@ -8,7 +8,7 @@ import { ToastService } from 'app/gorico/services/toast.service';
 import { ReportService } from 'app/gorico/services/report.service';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
-import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
+import { NavigationService } from 'app/gorico/services/navigation.service';
 import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
 import { HelperService } from 'app/gorico/services/helper.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
@@ -133,8 +133,7 @@ export class TableViewComponent implements OnChanges, OnDestroy {
     isFullScreen = false;
 
     hideActions: string[] = []; // Hide actions
-    @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
-
+    
     messages: MessageElement[] = []; // Messages
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
@@ -264,6 +263,21 @@ export class TableViewComponent implements OnChanges, OnDestroy {
                     // signal toolbar about a dashboard 
                     _this._navigationService.onDashboardTableLoad.emit({origin: _this.tableData.entryName, dashboardTables: params.dashboardTables});
 
+                    // Load Messages if available
+                    if (params.messages) {
+                        _this.messages = _this._messagesService.getTableMessages(params.messages);
+                    }
+                    else {
+                        _this.messages = [];
+                    }
+
+                    // Load Hide Actions if available
+                    _this.hideActions = _this._navigationService.getTableHideActions(params.hideActions);
+                    if(params.profileHideActions) {
+                        _this.hideActions = _this.hideActions.concat(params.profileHideActions);
+                    }
+
+                    
                     if (!_this.isTabMode){
                         // Load Import Queries list if available
                         if (params.importQueries && params.importQueries.tableQueries) {
@@ -283,25 +297,12 @@ export class TableViewComponent implements OnChanges, OnDestroy {
                             _this._importExportService.updateExportList(_this.tableData.entryName, []);
                         }
 
-                    }
-                    
-                    // Load Hide Actions if available
-                    if (params.hideActions) {
-                        _this.hideActions = _this._navigationService.getTableHideActions(params.hideActions);
-                    }
-                    else {
-                        _this.hideActions = [];
-                    }
-                    _this.onHideActionsUpdated.emit(params.hideActions);
+                        // Load Hide actions if available
+                        _this._navigationService.updateToolbarHideActions(_this.hideActions);
+                        
+                        _this.onMessagesUpdated.emit(params.messages);
 
-                    // Load Messages if available
-                    if (params.messages) {
-                        _this.messages = _this._messagesService.getTableMessages(params.messages);
                     }
-                    else {
-                        _this.messages = [];
-                    }
-                    _this.onMessagesUpdated.emit(params.messages);
                 }
                 else {
                     _this.isLoading = false;

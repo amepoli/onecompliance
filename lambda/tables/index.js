@@ -1339,6 +1339,22 @@ function isReadOnly(entry_name, profileData) {
     return readonly;
 }
 
+function getProfileHideActions(entry_name, profileData) {
+    let profileHideActions = [];
+    if (profileData != null && profileData.tables.table_actions != null) {
+        let tableActions = profileData.tables.table_actions;
+        let entryTableActions = tableActions.filter(x => x.entry == entry_name);
+        if (entryTableActions != null && entryTableActions.length > 0) {
+            entryTableActions = entryTableActions[0];
+            if (entryTableActions.hide) {
+                profileHideActions = entryTableActions.hide;
+            }
+        }
+    }
+    return profileHideActions;
+}
+
+
 function data2xls(data, title, viewKeys) {
     const styles = {
         headerDark: {
@@ -1915,6 +1931,7 @@ exports.handler = async (event, context) => {
         };
     }
 
+    queryData['profileHideActions'] = getProfileHideActions(queryParams.entry_name, profileData);
     console.log(queryData);
 
     return {

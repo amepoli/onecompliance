@@ -20,13 +20,11 @@
         [ngStyle]="{'margin-top': navigationHistory.length > 0? tableType=='form' && !fullScreenTab? '111px': '47px': '0px',
                     'height': navigationHistory.length > 0? tableType=='form' && !fullScreenTab? (formHeight-111) + 'px': (formHeight-47) +'px': '100%'}">
         <table-view #tableView *ngIf="tableType=='table'" [tableData]="tableParams" (sendEvent)='onEvent($event)'
-            (onHideActionsUpdated)="updateHideActions($event, 'table')"
             (onMessagesUpdated)="updateMessages($event, 'table')" class="">
         </table-view>
 
         <form-view #formView *ngIf="tableType=='form' && !fullScreenTab" [tableData]="formParams"
-            (sendEvent)='onEvent($event)' (onHideActionsUpdated)="updateHideActions($event, 'form')"
-            (onMessagesUpdated)="updateMessages($event, 'table')">
+            (sendEvent)='onEvent($event)' (onMessagesUpdated)="updateMessages($event, 'table')">
         </form-view>
 
         <bottom-tabs *ngIf="tableType=='form' && showTabs" [Tabs]='tabs' [SaveData]='tabsSaveData'

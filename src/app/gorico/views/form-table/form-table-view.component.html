@@ -9,11 +9,11 @@
             <mat-icon>refresh</mat-icon>
             Reload
         </button>
-        <button mat-button (click)="saveChanges()" *ngIf="!hideActions.includes('save')">
+        <button mat-button (click)="saveChanges()" *ngIf="!formGetter.hideActions.includes('save')">
             <mat-icon>save</mat-icon>
             Save
         </button>
-        <button mat-button (click)="addNew()" *ngIf="!hideActions.includes('add')">
+        <button mat-button (click)="addNew()" *ngIf="!formGetter.hideActions.includes('add')">
             <mat-icon>add</mat-icon>
             Quick Add
         </button>
@@ -29,9 +29,9 @@
 
     </div>
 
-    <form-getter [class.form-table-view-content]="!isFormTableViewToolbarSticky"
+    <form-getter #formGetter [class.form-table-view-content]="!isFormTableViewToolbarSticky"
         [class.form-table-view-content-sticky]="isFormTableViewToolbarSticky" [filter]="filter"
-        [formParams]='getterParams' (onReload)="reload()" (onHideActionsUpdated)="updateHideActions($event)"
+        [formParams]='getterParams' (onReload)="reload()" [isTabMode]="isTabMode"
         (onMessagesUpdated)="updateMessages($event)">
     </form-getter>
 </div>

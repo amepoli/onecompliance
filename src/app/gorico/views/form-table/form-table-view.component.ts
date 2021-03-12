@@ -4,7 +4,7 @@ import { BackendService } from '../backend/backend.service';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { formViewParams } from '../form/form-view.component';
-import { NavigationService, HideAction } from 'app/gorico/services/navigation.service';
+import { NavigationService } from 'app/gorico/services/navigation.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
 import { ScrollService } from 'app/gorico/services/scroll.service';
@@ -51,8 +51,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
   formHeight = 1000;
 
   hideActions: string[] = []; // Hide actions
-  @Output() onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
-
+  
   messages: MessageElement[] = []; // Messages
   @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
@@ -69,7 +68,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
     private authService: AuthService,
     private _dialogService: DialogService,
     private _toastService: ToastService,
-    private _navigationServce: NavigationService,
+    private _navigationService: NavigationService,
     private _messagesService: MessagesService,
     private _console: ConsoleLoggerService
   ) { }
@@ -112,20 +111,22 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
   }
 
   ngAfterViewInit() {
-    this.updateToolbarOffset();
+    let _this = this;
+    _this.updateToolbarOffset();
 
     // Make toolbar sticky based on main-table scroll
-    this.subscriptions.push(ScrollService.MainTableScrollEventEmitter.subscribe(scrollInfo => {
+    _this.subscriptions.push(ScrollService.MainTableScrollEventEmitter.subscribe(scrollInfo => {
       const windowScroll = scrollInfo.y;
-      if (this.formTableViewToolbarPosition < 1) {
-        this.updateToolbarOffset();
+      if (_this.formTableViewToolbarPosition < 1) {
+        _this.updateToolbarOffset();
       }
-      if (windowScroll >= this.formTableViewToolbarPosition) {
-        this.isFormTableViewToolbarSticky = true;
+      if (windowScroll >= _this.formTableViewToolbarPosition) {
+        _this.isFormTableViewToolbarSticky = true;
       } else {
-        this.isFormTableViewToolbarSticky = false;
+        _this.isFormTableViewToolbarSticky = false;
       }
     }));
+
   }
 
   ngOnDestroy() {
@@ -290,11 +291,6 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
   clearForm() {
     this.getterParams = null;
     this.cdRef.detectChanges();
-  }
-
-  updateHideActions(hideActions: HideAction[]) {
-    this.hideActions = this._navigationServce.getFormHideActions(hideActions);
-    this.onHideActionsUpdated.emit(hideActions);
   }
 
   updateMessages(messageViews: MessageView[]) {

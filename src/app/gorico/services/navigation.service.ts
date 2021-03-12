@@ -20,7 +20,7 @@ export class NavigationService {
     //#region Toolbar Hide actions
 
     // Toolbar Hide actions data
-    private _toolbarHideActions: HideAction[] = [];
+    private _toolbarHideActions: string[] = [];
 
     // get current data
     public getToolbarHideActions() {
@@ -30,6 +30,8 @@ export class NavigationService {
     // Event Emitter for hide actions
     public onToolbarHideActionsChanged: EventEmitter<string[]> = new EventEmitter();
 
+    // public onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
+
     public onDashboardTableLoad: EventEmitter<{origin: string, dashboardTables: string[]}> = new EventEmitter();
 
     /**
@@ -38,10 +40,8 @@ export class NavigationService {
      * @param viewType The parent view containing hide actions
      * @emits onToolbarHideActionsChanged Toolbar hide Actions as string[]
      */
-    updateToolbarHideActions(hideActions: HideAction[], viewType: string) {
-        viewType === 'table'
-            ? this.onToolbarHideActionsChanged.emit(this.getTableHideActions(hideActions))
-            : this.onToolbarHideActionsChanged.emit(this.getFormHideActions(hideActions));
+    updateToolbarHideActions(hideActions: string[]) {
+        this.onToolbarHideActionsChanged.emit(hideActions);
     }
 
     //#endregion

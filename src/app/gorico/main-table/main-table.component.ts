@@ -16,7 +16,7 @@ import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from '../services/dialog.service';
 import { ImportExportService } from '../services/import_export.service';
 import { ReportService } from '../services/report.service';
-import { NavigationService, HideAction } from '../services/navigation.service';
+import { NavigationService } from '../services/navigation.service';
 import { MessageView } from '../services/messages.service';
 import { ScrollService } from '../services/scroll.service';
 import { ConsoleLoggerService } from '../services/console_logger.service';
@@ -472,10 +472,6 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
     reload() {
         this._console.log('onReload: main-table');
         this.formView.refreshView();
-    }
-
-    updateHideActions(hideActions: HideAction[], viewType: string) {
-        this._navigationService.updateToolbarHideActions(hideActions, viewType);
     }
 
     updateMessages(messageViews: MessageView[], viewType: string) {
