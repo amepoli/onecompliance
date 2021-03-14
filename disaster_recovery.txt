@@ -1,0 +1,40 @@
+See also http://d0.awsstatic.com/whitepapers/aws-migrate-resources-to-new-region.pdf?refid=70138000001adyu 
+
+Services:
+
+1) Source code (DONE):
+    Already replicated on GitHub and AWS CodeCommit
+
+2) Cognito (DONE) 
+    Taken the tool from @ https://www.npmjs.com/package/cognito-backup-restore 
+    Backup the user pool in the backup folder of the project. Restored it into the AWS auth pool in new region
+    That requires the users to reset the password to enable the new login (no password storage)
+    
+3) EC2 (TODO):
+    AWS Backup (now supporting cross-region backups) should be used: https://aws.amazon.com/it/backup/ 
+
+4) RDS Aurora (TODO):
+    Here we have two options. Either we copy the DB backup on S3 to another region (see S3 point), or we use again AWS Backup 
+
+5) DynamoDB (To Test):
+    Should be already done, as we are pushing table from the local environment. To be tested with another region
+
+6) Lambda (To Test):
+    Same as DynamoDB
+
+7) Cloudfront (TODO):
+    ???
+
+8) API GW and Amplify (TODO):
+    Seems not trivial, to study more in depth
+
+...
+
+Amplify notes:
+
+    - Our setup is only compatible with amplify v0.1.x (0.1.45 is ok).
+    - Must be installed using "npm install -g @aws-amplify/cli@0.1.45"
+    - The region can be changed using "aws configure" or editing the file ~/.aws/config 
+    - To correctly push a new auth file amplify -> backend -> auth -> cognito -> cognito cloudformation must be edited 
+        - replacing node6.10 with node12.x
+    - To import/update the user pool use cbr command (see above)
