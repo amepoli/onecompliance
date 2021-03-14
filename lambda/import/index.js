@@ -1277,9 +1277,7 @@ exports.handler = async (event, context) => {
                 const advancedQueryLabel = queryParams['advanced_query_label'];
                 const entry_name = queryParams['entry_name'];
 
-                const fullValueSet = JSON.parse(event.body);
-
-                console.log('Full value set: ', fullValueSet);
+                var fullValueSet = JSON.parse(event.body);
 
                 const DynamoParams = {
                     TableName: 'VIEWS_NAME',
@@ -1294,6 +1292,11 @@ exports.handler = async (event, context) => {
                 entry_params = await overrideTable(entry_params.Item);
 
                 await addCodiceAzienda(table_keys, company, entry_params, client, isForm);
+
+                fullValueSet = Object.assign(fullValueSet,table_keys);
+
+                console.log('Full value set: ', fullValueSet);
+
                 global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
 
                 additionalQueryCond = getAdditionalQueryCond(entry_name, profileData);
@@ -1402,9 +1405,9 @@ exports.handler = async (event, context) => {
                         }
                     }
 
-                    if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
-                        queryData = { table_data: queryData, search_options: searchOptions };
-                    }
+//                    if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
+//                        queryData = { table_data: queryData, search_options: searchOptions };
+//                    }
 
                     // process properties query
 
@@ -1416,9 +1419,9 @@ exports.handler = async (event, context) => {
                         attributes = await processAttributeQueries(entry_params, queryData, client);
                     }
 
-                    if (!isForm) {
-                        queryData = queryData["table_data"];
-                    }
+ //                   if (!isForm) {
+ //                       queryData = queryData["table_data"];
+ //                   }
 
                     //queryData["anonymous"]["calcolo_risultato_log"] = null;
                     console.log('queryData', queryData);
