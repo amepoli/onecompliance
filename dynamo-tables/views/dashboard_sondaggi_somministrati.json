@@ -3,9 +3,9 @@
   "dashboards": [
     {
       "width": "792px",
-      "height": "320px",
+      "height": "720px",
       "dashboardHeight": "212",
-      "title": "VERIFICHE PER STATO RETTIFICATO",
+      "title": "DASH STATO SOMMINISTRAZIONI",
       "conditions": [
         {
           "format": {
@@ -28,7 +28,7 @@
           "type": "column"
         },
         "columnsQuery": {
-          "key": "scadenze",
+          "key": "stato_rettificato",
           "query": "select distinct entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO', codice) as label from entrasp.transcodifiche order by label"
         },
         "rowsQuery": {
@@ -50,7 +50,7 @@
             "uniqueName": "Measures"
           },
           {
-            "uniqueName": "Scadenze"
+            "uniqueName": "Stato_rettificato"
           }
         ],
         "measures": [
@@ -60,87 +60,116 @@
               "count",
               "distinctcount"
             ],
-            "uniqueName": "Id_somministrazione"
+            "uniqueName": "Stato_rettificato"
           }
         ],
         "rows": [
-          {
-            "filter": {
-              "members": [
-              ],
-              "negation": true
-            },
-            "uniqueName": "centro_gest"
-          }
-        ]
-      }
-    },
-    {
-      "width": "792px",
-      "height": "320px",
-      "dashboardHeight": "212",
-      "title": "STATO SOMMINISTRAZIONI",
-      "conditions": [
-        {
-          "format": {
-            "backgroundColor": "white",
-            "color": "black",
-            "fontFamily": "Arial",
-            "fontSize": "14px"
-          },
-          "formula": "!isNaN(#value)"
-        }
-      ],
-      "dataSource": {
-        "data": []
-      },
-      "labels": {
-        "colorsQuery": {
-          "query": "select background_color as color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' order by transcodifica",
-          "type": "column"
-        },
-        "columnsQuery": {
-          "key": "Stato",
-          "query": "select distinct(entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', stato)) as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$;"
-        }
-      },
-      "localization": "it",
-      "options": {
-        "drillThrough": false,
-        "grid": {
-          "showHeaders": false
-        }
-      },
-      "slice": {
-        "columns": [
-          {
-            "uniqueName": "Measures"
-          },
-          {
-            "uniqueName": "Stato"
-          }
-        ],
-        "measures": [
-          {
-            "aggregation": "count",
-            "availableAggregations": [
-              "count",
-              "distinctcount"
+          {  "filter": {
+            "members": [
             ],
-            "uniqueName": "Id_somministrazione"
+            "negation": true
+          },
+            "uniqueName": "Centro_gest"
           }
         ]
       }
     }
-  ],
+  ] ,
   "inheritsFrom": "sondaggi_somministrati",
   "entryKey": "dashboard_sondaggi_somministrati",
-  "predefinedQueries": [
+  "search_keys": [
     {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select entrasp.centri_gestionali_descr(snd.codice_azienda, snd.id_centro_gest) as Centro_gest, entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', ss.stato) as Stato, ss.codice_azienda, ss.id_somministrazione, entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO',entrasp.stato_rettificato(snd.data_prevista,ss.stato)) as Scadenze, ss.id_sondaggio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
+      "fieldName": "id_modello_test",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Modello di Verifica",
+      "newLine": false,
+      "queryCond": "snd.id_modello_test=$id_modello_test$"
     },
+    {
+      "fieldName": "id_sondaggio",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Sondaggio",
+      "newLine": false,
+      "queryCond": "ss.id_sondaggio=$id_sondaggio$"
+    },
+    {
+      "fieldName": "id_somministrazione",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Verifica",
+      "newLine": true,
+      "queryCond": "ss.id_somministrazione=$id_somministrazione$"
+    },
+    {
+      "fieldName": "data_comp",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Competenza",
+      "newLine": true,
+      "queryCond": "snd.data_comp='€data_comp€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista>='€data_esec_prevista_min€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista entro il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista<='€data_esec_prevista_max€'"
+    },
+    {
+      "fieldName": "data_esec_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_esecuzione>='€data_esec_min€'"
+    },
+    {
+      "fieldName": "data_esec_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione entro il",
+      "newLine": true,
+      "queryCond": "snd.data_esecuzione<='€data_esec_max€'"
+    },
+    {
+      "fieldName": "object_description",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Oggetto di verifica",
+      "newLine": true,
+      "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+    }
+  ],
+  "predefinedQueries": [
     {
       "operation": "selectForm",
       "type": "preProcessing",
@@ -167,7 +196,6 @@
       "queryString": "select entrasp.somministrazione_delete($codice_azienda$, $id_somministrazione$)"
     }
   ],
-  "search_keys": [],
   "table_keys": [
     {
       "format": {
@@ -177,15 +205,6 @@
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "codice_azienda"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "scadenze",
-      "label": "scadenze"
     },
     {
       "format": {
@@ -210,7 +229,7 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_somministrazione",
-      "label": "id_somministrazione",
+      "label": "ID Verifica",
       "width": "5%",
       "style": [
         {
@@ -225,24 +244,14 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "stato",
-      "width": "8%",
-      "label": "stato",
+      "key": "centro_gest",
+      "queryFunct": "entrasp.centri_gestionali_descr(snd.codice_azienda, snd.id_centro_gest)",
+      "label": "centro_gest",
+      "width": "5%",
       "style": [
         {
-          "value": "Chiuso",
-          "font_color": "green",
-          "font_weight": "500"
-        },
-        {
-          "value": "Provvisorio",
-          "font_color": "#D97F02",
-          "font_weight": "500"
-        },
-        {
-          "value": "Confermato",
-          "font_color": "red",
-          "font_weight": "500"
+          "value": "*",
+          "text_align": "center"
         }
       ]
     },
@@ -252,18 +261,17 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "centro_gest",
-      "label": "centro_gest",
-      "width": "8%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part"
+      "key": "stato_rettificato",
+      "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO',entrasp.stato_rettificato(snd.data_prevista,ss.stato))",
+      "label": "stato_rettificato",
+      "width": "5%",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center"
+        }
+      ]
     }
   ]
+
 }
