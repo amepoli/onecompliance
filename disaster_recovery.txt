@@ -8,10 +8,18 @@ Services:
 2) Cognito (DONE) 
     Taken the tool from @ https://www.npmjs.com/package/cognito-backup-restore 
     Backup the user pool in the backup folder of the project. Restored it into the AWS auth pool in new region
-    That requires the users to reset the password to enable the new login (no password storage)
+    That requires the users to reset the password to enable the new login (no password storage).
+    Users pool backup is in /backup folder and must be periodically updated using cbr tool  
     
-3) EC2 (TODO):
-    AWS Backup (now supporting cross-region backups) should be used: https://aws.amazon.com/it/backup/ 
+3) EC2 (DONE - to test the overall integration once all services are migrated):
+    AWS Backup (now supporting cross-region backups) must be used: https://aws.amazon.com/it/backup/ 
+    Setup a weekly backup (Sunday @5am UTC) from eu-central-1 to eu-west-1.
+    Then a restore operation restores into eu-west-1 --> to recover, select "No IAM role" as an option.
+    Also the ec2-s3 role must be assigned to the instance.
+    The instance starts in run state. Hd to add a couple of inbound rules (for ports 22 and 5222) on the security group
+    to get access from ssh. WE CAN REUSE the usual server_amedeo.pem private key to get access.
+    First time the ftp docker container exited --> had to restart it (guess was due to missing 5222 port rule in security group)
+    Istance tested as working as standalone, then terminated (i.e. all resources deleted by AWS) 
 
 4) RDS Aurora (TODO):
     Here we have two options. Either we copy the DB backup on S3 to another region (see S3 point), or we use again AWS Backup 
@@ -25,8 +33,11 @@ Services:
 7) Cloudfront (TODO):
     ???
 
-8) API GW and Amplify (TODO):
-    Seems not trivial, to study more in depth
+8) API GW and Amplify (Partially done):
+    See Amplify notes, created the auth endpoint, still to add all APIs
+
+9) VPC (To Test):
+    Created a default VPC, no elastic IP yet
 
 ...
 

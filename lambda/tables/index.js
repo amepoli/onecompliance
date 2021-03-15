@@ -242,7 +242,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
         }
 
         if (additionalQueryCond != null) {
-            additionalQueryCond = " AND " + additionalQueryCond.queryString + ";";
+            additionalQueryCond = " AND " + additionalQueryCond.queryString;
         }
     }
 
