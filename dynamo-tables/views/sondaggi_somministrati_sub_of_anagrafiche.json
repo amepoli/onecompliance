@@ -8,32 +8,38 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select ss.codice_azienda, ss.id_sondaggio, ss.somministrazione_completata, ss.id_somministrazione, ss.object_description, ss.object_key, ss.stato, snd.data_prevista, az.codice_part, entrasp.field_value_from_key(ss.object_key, 'anagraficheId', 'id_anagrafica','|')::numeric as id_anagrafica_somministrazione, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(ss.codice_azienda, ss.id_sondaggio), ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(ss.codice_azienda, ss.id_sondaggio), ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato from entrasp.sondaggi_somministrati ss inner join  entrasp.aziende az on ss.codice_azienda=az.codice_azienda inner join entrasp.sondaggi snd on ss.codice_azienda = snd.codice_azienda and ss.id_sondaggio = snd.id_sondaggio where az.codice_part=$codice_part$ and entrasp.field_value_from_key(ss.object_key, 'anagraficheId', 'id_anagrafica','|')::numeric=$id_anagrafica_somministrazione$"
+      "queryString": "select ss.codice_azienda, ss.id_somministrazione, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, snd.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica_somministrazione, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.aziende az on ss.codice_azienda=az.codice_azienda where az.codice_part=$codice_part$ and entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric=$id_anagrafica_somministrazione$"
+    },
+    {
+      "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.sondaggi_somministrati set somministrazione_completata=entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
+    },
+    {
+      "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+    },
+    {
+      "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.sondaggi snd set codice_part='€global_codice_part€', sondaggio_completato=pfs.sondaggio_completato, pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE snd.codice_azienda=$codice_azienda$ AND snd.id_sondaggio=$id_sondaggio$;"
     },
     {
       "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "select colore_somministrazione_completa, codice_colore, round(percentuale,2) as ris_percentuale, sondaggio_completato, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
-    },
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$);"
-    },
-    {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$);"
+      "queryString": "select round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
     },
     {
       "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "SELECT mdt.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+      "queryString": "SELECT mdt.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
     },
     {
       "operation": "delete",
       "type": "main",
       "queryString": "select entrasp.somministrazione_delete($codice_azienda$, $id_somministrazione$)"
-    } 
-  ]
+    }
+  ],
+  "querySuffixes": { "tableViewSuffix": "limit 100"}
 }
