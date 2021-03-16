@@ -3,6 +3,21 @@
   "entryKey": "argomenti",
   "origin": "entrasp.argomenti",
   "businessObjectName": "argomenti",
+  "predefinedQueries": [
+    {
+      "operation": "insert",
+      "type": "preInsertingCheck",
+      "queryString": "select id_argomento from entrasp.argomento codice='£codice£'",
+      "messageNotNull": "Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+  },
+  {
+      "operation": "update",
+      "type": "preUpdatingCheck",
+      "queryString": "select id_argomento from entrasp.argomento where codice='£codice£' and id_argomento!=$id_argomento$",
+      "messageNotNull": "Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+  }
+
+  ],
   "form_keys": [
     {
       "autoGenerate": true,
