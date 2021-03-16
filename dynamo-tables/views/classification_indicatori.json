@@ -17,6 +17,18 @@
       "operation": "delete",
       "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=697 and id_argomento_son=$id_argomento$;",
       "type": "preProcessing"
+    },
+    {
+      "operation": "insert",
+      "type": "preInsertingCheck",
+      "queryString": "select id_argomento from entrasp.argomenti codice='£codice£'",
+      "messageNotNull": "Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+    },
+    {
+      "operation": "update",
+      "type": "preUpdatingCheck",
+      "queryString": "select id_argomento from entrasp.argomenti where codice='£codice£' and id_argomento!=$id_argomento$",
+      "messageNotNull": "Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
     }
   ],
   "search_keys": [
