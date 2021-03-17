@@ -125,7 +125,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     readonlyRows: boolean[] = [];
 
-    profileHideActions: string[] = [];
     hideActions: string[] = [];
 
     numRows = 1;
@@ -312,14 +311,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     // Load Hide actions if available
                     _this.hideActions = _this._navigationService.getFormHideActions(params.hideActions);
+                    
+                    // Profile hide actions
                     if(params.profileHideActions) {
                         _this.hideActions = _this.hideActions.concat(params.profileHideActions);
                     }
 
                     if (_this.isFormView && !_this.isTabMode) {
-                        // Profile hide actions
-                        _this.profileHideActions = params.profileHideActions;
-                    
+                        
                         // Load Import Queries list if available
                         if (params.importQueries && params.importQueries.formQueries) {
                             _this._console.log('importQueries', params.importQueries);
