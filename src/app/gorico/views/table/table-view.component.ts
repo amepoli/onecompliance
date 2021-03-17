@@ -102,8 +102,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
 
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     quickAddFormParams: formViewParams = {
         entryName: '',

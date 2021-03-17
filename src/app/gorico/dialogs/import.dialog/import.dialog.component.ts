@@ -15,8 +15,8 @@ import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service
 
 export class ImportDialogComponent {
 
-    @ViewChild('singleFileInput') singleFileInput: ElementRef;
-    @ViewChild('multipleFilesInput') multipleFilesInput: ElementRef;
+    @ViewChild('singleFileInput', { static: true }) singleFileInput: ElementRef;
+    @ViewChild('multipleFilesInput', { static: true }) multipleFilesInput: ElementRef;
 
     // Store table name, just to pass back to import service
     tableName: string = null;

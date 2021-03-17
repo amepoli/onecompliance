@@ -30,7 +30,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
   @Input() isTabMode: boolean = false;
   @Input() isCurTab: boolean = false;
 
-  @ViewChild(FormGetterComponent) formGetter: FormGetterComponent;
+  @ViewChild(FormGetterComponent, { static: true }) formGetter: FormGetterComponent;
 
   @Input() tableData: formTableViewParams;
   @Input() SaveData: boolean;
@@ -58,7 +58,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
   // Form table view toolbar 
   isFormTableViewToolbarSticky: boolean = false;
   formTableViewToolbarPosition: number = 0;
-  @ViewChild('formTableViewToolbar') formTableViewToolbar: ElementRef;
+  @ViewChild('formTableViewToolbar', { static: true }) formTableViewToolbar: ElementRef;
 
   subscriptions: Subscription[] = [];
 

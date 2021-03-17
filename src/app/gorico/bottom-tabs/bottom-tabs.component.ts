@@ -29,7 +29,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
 
-    @ViewChild("tabsGroup") tabsGroup: MatTabGroup;
+    @ViewChild("tabsGroup", { static: true }) tabsGroup: MatTabGroup;
 
     tableParams: tableViewParams;
 

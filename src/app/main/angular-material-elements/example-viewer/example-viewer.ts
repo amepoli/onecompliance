@@ -31,7 +31,7 @@ export class ExampleViewerComponent implements AfterViewInit, OnDestroy
     previewRef: ComponentRef<any>;
     selectedIndex: number;
 
-    @ViewChild('previewContainer', {read: ViewContainerRef})
+    @ViewChild('previewContainer', { read: ViewContainerRef, static: true })
     private _previewContainer: ViewContainerRef;
 
     /**

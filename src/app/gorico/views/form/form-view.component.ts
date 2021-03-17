@@ -68,7 +68,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     @Input() tableData: formViewParams;
     @Output() sendEvent = new EventEmitter<any>();
 
-    @ViewChild(FormGetterComponent) formGetter: FormGetterComponent;
+    @ViewChild(FormGetterComponent, { static: true }) formGetter: FormGetterComponent;
 
     // toolbar pub/sub topics
     subMsgCmdTopic = '/toolbar/out/cmd';

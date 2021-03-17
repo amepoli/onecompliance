@@ -42,7 +42,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         private _console: ConsoleLoggerService,
         private _reportService: ReportService) { }
 
-    @ViewChild('pivot1') child: WebDataRocksPivot;
+    @ViewChild('pivot1', { static: true }) child: WebDataRocksPivot;
 
     @Input() height = 500;
     @Input() viewHeader = false;

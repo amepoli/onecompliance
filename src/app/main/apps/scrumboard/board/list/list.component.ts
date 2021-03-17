@@ -25,7 +25,7 @@ export class ScrumboardBoardListComponent implements OnInit, OnDestroy
     @Input()
     list;
 
-    @ViewChild(FusePerfectScrollbarDirective)
+    @ViewChild(FusePerfectScrollbarDirective, { static: true })
     listScroll: FusePerfectScrollbarDirective;
 
     confirmDialogRef: MatDialogRef<FuseConfirmDialogComponent>;

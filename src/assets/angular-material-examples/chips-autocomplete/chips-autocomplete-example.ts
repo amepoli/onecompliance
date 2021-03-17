@@ -37,7 +37,7 @@ export class ChipsAutocompleteExample {
     'Strawberry'
   ];
 
-  @ViewChild('fruitInput') fruitInput: ElementRef;
+  @ViewChild('fruitInput', { static: true }) fruitInput: ElementRef;
 
   constructor() {
     this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
