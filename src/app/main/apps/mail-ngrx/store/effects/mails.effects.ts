@@ -78,7 +78,7 @@ export class MailsEffect
      * @type {Observable<any>}
      */
     @Effect()
-    updateMail: Observable<MailsActions.MailsActionsAll> =
+    updateMail =
         this.actions
             .pipe(
                 ofType<MailsActions.UpdateMail>(MailsActions.UPDATE_MAIL),
@@ -206,13 +206,10 @@ export class MailsEffect
                     let mailsToUpdate = [];
                     state.selectedMailIds
                          .map(id => {
-                             mailsToUpdate = [
-                                 ...mailsToUpdate,
-                                 entities[id] = {
+                             mailsToUpdate = mailsToUpdate.concat(entities[id] = {
                                      ...entities[id],
                                      folder: action.payload
-                                 }
-                             ];
+                                 });
                          });
                     return new MailsActions.UpdateMails(mailsToUpdate);
                 })
@@ -236,20 +233,19 @@ export class MailsEffect
                     state.selectedMailIds
                          .map(id => {
 
-                             let labels = [...entities[id].labels];
+                             let labels = [].concat(entities[id].labels);
 
                              if ( !entities[id].labels.includes(action.payload) )
                              {
-                                 labels = [...labels, action.payload];
+                                 labels = labels.concat(action.payload);
                              }
 
-                             mailsToUpdate = [
-                                 ...mailsToUpdate,
+                             mailsToUpdate = mailsToUpdate.concat(
                                  entities[id] = {
                                      ...entities[id],
                                      labels
                                  }
-                             ];
+                            );
                          });
 
                     return new MailsActions.UpdateMails(mailsToUpdate);

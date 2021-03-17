@@ -1,5 +1,4 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgForm } from '@angular/forms/src/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatMenuTrigger } from '@angular/material';
 import { Subject } from 'rxjs';
 
@@ -8,6 +7,7 @@ import { FuseUtils } from '@fuse/utils';
 
 import { ScrumboardService } from 'app/main/apps/scrumboard/scrumboard.service';
 import { takeUntil } from 'rxjs/operators';
+import { NgForm } from '@angular/forms';
 
 @Component({
     selector     : 'scrumboard-board-card-dialog',
