@@ -2,7 +2,7 @@
     <mat-toolbar *ngIf="formView.tableData.showNavBar" class="p-0 mat-elevation-z1 form-view-toolbar">
 
         <div class="div1"
-            *ngIf="formView.tableData.navBarMode === 'detail' && !formView.hideActions.includes('navigate')">
+            *ngIf="formView.tableData.navBarMode === 'detail' && !formView.formGetter.hideActions.includes('navigate')">
             <button mat-button (click)="formView.toElement('first')">
                 <mat-icon>first_page</mat-icon>
             </button>
@@ -18,7 +18,7 @@
             </button>
         </div>
 
-        <div class="div2" *ngIf="!formView.hideActions.includes('save')">
+        <div class="div2" *ngIf="!formView.formGetter.hideActions.includes('save')">
             <button *ngIf="!formView.readOnly && formView.savingState === 'save'" mat-button (click)="formView.onSave()"
                 form="formView.element_form">
                 <mat-icon>save</mat-icon>
@@ -36,15 +36,17 @@
             </button>
         </div>
         <div class="div2" *ngIf="formView.tableData.navBarMode === 'detail'">
-            <button mat-button *ngIf="!formView.hideActions.includes('delete')" (click)="formView.delElement()">
+            <button mat-button *ngIf="!formView.formGetter.hideActions.includes('delete')"
+                (click)="formView.delElement()">
                 <mat-icon>delete</mat-icon>
             </button>
-            <button mat-button *ngIf="!formView.hideActions.includes('attachments')"
+            <button mat-button *ngIf="!formView.formGetter.hideActions.includes('attachments')"
                 (click)="formView.showAttachments()">
                 <mat-icon [matBadge]="formView.n_attach">attach_file</mat-icon>
             </button>
 
-            <button mat-button [matMenuTriggerFor]="companyMenu" *ngIf="!formView.hideActions.includes('share')">
+            <button mat-button [matMenuTriggerFor]="companyMenu"
+                *ngIf="!formView.formGetter.hideActions.includes('share')">
                 <mat-icon>share</mat-icon>
             </button>
 
