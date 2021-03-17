@@ -127,6 +127,14 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
       }
     }));
 
+    if(_this.isTabMode){
+        _this.subscriptions.push(_this._navigationService.onBottomTabRefreshRequested.subscribe( (value) => {
+            if(_this.isCurTab) {
+                _this.saveChanges();
+                // _this.formGetter.refreshView();
+            }
+        }));
+    }
   }
 
   ngOnDestroy() {
@@ -300,6 +308,6 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
 
   updateToolbarOffset() {
     let offset = ScrollService.cumulativeOffset(this.formTableViewToolbar.nativeElement);
-    this.formTableViewToolbarPosition = offset.top - 100;
+    this.formTableViewToolbarPosition = offset.top - 150;
   }
 }
