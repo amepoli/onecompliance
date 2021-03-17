@@ -32,6 +32,10 @@ export class NavigationService {
 
     // public onHideActionsUpdated: EventEmitter<HideAction[]> = new EventEmitter();
 
+    // Event Emitter for 
+    public onBottomTabRefreshRequested: EventEmitter<boolean> = new EventEmitter();
+
+
     public onDashboardTableLoad: EventEmitter<{origin: string, dashboardTables: string[]}> = new EventEmitter();
 
     /**
@@ -72,6 +76,13 @@ export class NavigationService {
         return hideActions
             .filter(a => a.viewType === "table")
             .map(a => a.tableActionType);
+    }
+
+    /**
+     * Ruest Bottom tabs refresh
+     */
+    requestBottomTabRefresh() {
+        this.onBottomTabRefreshRequested.emit(true);
     }
 
 }

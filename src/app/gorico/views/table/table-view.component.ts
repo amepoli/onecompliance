@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener, ViewEncapsulation, OnDestroy, AfterViewInit } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
 import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
 import { FieldConfig } from '../../dynamic-forms/field.interface';
@@ -90,7 +90,7 @@ export interface searchViewKey { // as per API specification
 
 
 
-export class TableViewComponent implements OnChanges, OnDestroy {
+export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     private margins = 2; // % of margins, considering left and right
 
@@ -211,6 +211,18 @@ export class TableViewComponent implements OnChanges, OnDestroy {
                 this.loadData();
             }
 
+        }
+    }
+
+    ngAfterViewInit() {
+        let _this = this;
+        
+        if(_this.isTabMode){
+            _this.subscriptions.push(_this._navigationService.onBottomTabRefreshRequested.subscribe( (value) => {
+                if(_this.isCurTab) {
+                    _this.loadData();
+                }
+            }));
         }
     }
 

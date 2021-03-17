@@ -331,9 +331,11 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                             else if (_this.refreshOnSave) {
                                 _this.isQuickAdd = false;
                                 _this.refreshView();
+                                _this._navigationService.requestBottomTabRefresh();
                             }
                             else {
                                 _this.formGetter.runOnSaveEvents();
+                                _this._navigationService.requestBottomTabRefresh();
                             }
                             
                         }, 1000);
