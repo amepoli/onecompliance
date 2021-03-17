@@ -67,6 +67,8 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 
 // Add global to window, assigning the value of window itself.
 (window as any).global = window;
+global.Buffer = global.Buffer || require('buffer').Buffer;
+global.process = require('process');
 
 /**
  * Fix for ngx-chart to work on ie11
