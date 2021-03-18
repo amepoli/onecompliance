@@ -89,7 +89,7 @@ const routes: Routes = [
         MatToolbarModule,
         MatTooltipModule,
 
-        NgxDnDModule,
+        NgxDnDModule.forRoot(),
 
         FuseSharedModule,
         FuseConfirmDialogModule,

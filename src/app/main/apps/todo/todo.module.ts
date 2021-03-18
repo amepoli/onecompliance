@@ -91,7 +91,7 @@ const routes: Routes = [
         MatRippleModule,
         MatSelectModule,
 
-        NgxDnDModule,
+        NgxDnDModule.forRoot(),
 
         FuseSharedModule,
         FuseSidebarModule
