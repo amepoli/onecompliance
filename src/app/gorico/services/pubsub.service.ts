@@ -11,17 +11,28 @@ export class PubSubService {
     constructor() {
     }
 
-    // Event Emitter for hide actions
+    // Event Observable mapping
     public eventObservableMapping$: { [eventName: string]: EventEmitter<any> } = {}; 
     
+    /**
+     * publishEvent
+     * @param eventName Name of event
+     * @param data Data to emit
+     */
     public publishEvent(eventName: string, data?: any) {
         if(this.eventObservableMapping$[eventName]) {
             this.eventObservableMapping$[eventName].emit(data);
         }
     }
 
+    /**
+     * subscribe
+     * @param eventName Name of event
+     * @param next Function to run on next
+     * @param error Function to run on error
+     */
     subscribe(eventName: string, next?: (value: any) => void, error?: (error: any) => any, complete?: () => void) {
-        if(this.eventObservableMapping$[eventName]) {
+        if(!this.eventObservableMapping$[eventName]) {
             this.eventObservableMapping$[eventName] = new EventEmitter();
         }
         return this.eventObservableMapping$[eventName].subscribe(next, error);

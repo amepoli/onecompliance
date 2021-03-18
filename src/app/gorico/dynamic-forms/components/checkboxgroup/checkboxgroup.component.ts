@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { FieldConfig } from "../../field.interface";
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 
 @Component({
   selector: "app-checkboxgroup",
@@ -33,7 +33,7 @@ export class CheckboxGroupComponent implements OnInit {
   selection = [];
 
 
-  constructor(private pubsubService: NgxPubSubService) { }
+  constructor(private pubSubService: PubSubService) { }
   ngOnInit() {
     const _this = this;
 
@@ -50,7 +50,7 @@ export class CheckboxGroupComponent implements OnInit {
     // });
 
     // trigger an event the first time
-    setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'checkboxgroup' }); }, 50);
+    setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'checkboxgroup' }); }, 50);
   }
 
   onCheck(id: number, checked: boolean): void {
@@ -68,7 +68,7 @@ export class CheckboxGroupComponent implements OnInit {
 
     if (_this.field.eventName !== null) {
       // wait a while before triggering the event
-      setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'checkboxgroup' }); }, 50);
+      setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'checkboxgroup' }); }, 50);
     }
   }
 }

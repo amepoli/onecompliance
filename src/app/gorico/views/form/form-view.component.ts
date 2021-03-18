@@ -10,7 +10,7 @@ import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { ReportService } from 'app/gorico/services/report.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService } from 'app/gorico/services/navigation.service';
@@ -97,14 +97,14 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
     refreshOnSave = false;
 
-    constructor(private pubsubService: NgxPubSubService,
+    constructor(private pubSubService: PubSubService,
         public attachDialog: MatDialog,
         private backendService: BackendService,
         private authService: AuthService,
         private _dialogService: DialogService,
         private _toastService: ToastService,
         private _fileService: FileManagerService,
-        private _pubSubService: NgxPubSubService,
+        private _pubSubService: PubSubService,
         private _reportService: ReportService,
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
@@ -275,7 +275,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
             })
         }
 
-        this.pubsubService.publishEvent(event.eventName, { origin: 'save_button', index: 0, valueSet: [], data: event, type: 'button_click' }); // provide index in case of multiple instances of the button
+        this.pubSubService.publishEvent(event.eventName, { origin: 'save_button', index: 0, valueSet: [], data: event, type: 'button_click' }); // provide index in case of multiple instances of the button
 
 
         this._console.log(event);

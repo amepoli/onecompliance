@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { FieldConfig } from "../../field.interface";
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { ConsoleLoggerService } from "app/gorico/services/console_logger.service";
 
 @Component({
@@ -28,14 +28,14 @@ export class RadiobuttonComponent implements OnInit {
 
   chosenItem: any;
 
-  constructor(private pubsubService: NgxPubSubService,
+  constructor(private pubSubService: PubSubService,
             private _console: ConsoleLoggerService) { }
   ngOnInit() {
     const _this = this;
     _this._console.log(_this.field);
     _this.chosenItem = _this.field.options.find(o => JSON.stringify(o.id) === JSON.stringify(_this.field.value));
     // trigger an event the first time 
-    setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'radiobutton' }); }, 50);
+    setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'radiobutton' }); }, 50);
   }
 
   onCheck(event: any): void {
@@ -46,7 +46,7 @@ export class RadiobuttonComponent implements OnInit {
 
     if (_this.field.eventName !== null) {
       // wait a while before triggering the event
-      setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: event.value.id, type: 'radiobutton' }); }, 50);
+      setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: event.value.id, type: 'radiobutton' }); }, 50);
     }
   }
 }

@@ -8,7 +8,7 @@ import { formViewParams } from '../form/form-view.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { ReportService } from 'app/gorico/services/report.service';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService } from 'app/gorico/services/navigation.service';
 import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
@@ -167,7 +167,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     constructor(
         private backendService: BackendService,
         private authService: AuthService,
-        private _pubSubService: NgxPubSubService,
+        private _pubSubService: PubSubService,
         private _toastService: ToastService,
         private _reportService: ReportService,
         private _importExportService: ImportExportService,
