@@ -27,7 +27,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('fileUploader', { static: true }) fileUploader: FileUploadComponent;
 
-    @ViewChild('formRef', { static: false }) formRef: FormGetterComponent;
+    @ViewChild('formRef') formRef: FormGetterComponent;
 
     // tslint:disable-next-line: max-line-length
     @ViewChildren('newTypeRef') newTypeRef: QueryList<FormGetterComponent>;  // see https://expertcodeblog.wordpress.com/2018/01/12/angular-resolve-error-viewchild-annotation-returns-undefined/

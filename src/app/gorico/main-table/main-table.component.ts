@@ -79,9 +79,9 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
     pubMsgCmdTopic = '/toolbar/in/cmd';
 
     @ViewChild('List', { static: true }) private List: ElementRef;
-    @ViewChild('Tabs', { static: false }) private Tabs: BottomTabsComponent;
-    @ViewChild('formView', { static: false }) private formView: FormViewComponent;
-    @ViewChild('tableView', { static: false }) private tableView: TableViewComponent;
+    @ViewChild('Tabs') private Tabs: BottomTabsComponent;
+    @ViewChild('formView') private formView: FormViewComponent;
+    @ViewChild('tableView') private tableView: TableViewComponent;
 
     @ViewChild('mainTable', { static: true }) mainTable: ElementRef;
 

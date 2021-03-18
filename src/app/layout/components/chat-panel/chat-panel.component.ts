@@ -23,13 +23,13 @@ export class ChatPanelComponent implements OnInit, AfterViewInit, OnDestroy
     sidebarFolded: boolean;
     user: any;
 
-    @ViewChild('replyForm', { static: false })
+    @ViewChild('replyForm')
     set replyForm(content: NgForm)
     {
         this._replyForm = content;
     }
 
-    @ViewChild('replyInput', { static: false })
+    @ViewChild('replyInput')
     set replyInput(content: ElementRef)
     {
         this._replyInput = content;

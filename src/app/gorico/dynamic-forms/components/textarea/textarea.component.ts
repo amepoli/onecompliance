@@ -38,7 +38,7 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   readOnlyPage: boolean; // field.readonly overridden by page
   maxHeight: number = 256; // Maximum height of textarea element
 
-  @ViewChild('textAreaEl', { static: false }) textAreaEl: ElementRef;
+  @ViewChild('textAreaEl') textAreaEl: ElementRef;
   @HostBinding('style.height.px') textAreaComponentHeight = '0';
   
   constructor(private _console: ConsoleLoggerService) { }
