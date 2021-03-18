@@ -22,7 +22,7 @@ export class TodoDetailsComponent implements OnInit, OnDestroy
     formType: string;
     todoForm: FormGroup;
 
-    @ViewChild('titleInput')
+    @ViewChild('titleInput', { static: false })
     titleInputField;
 
     // Private

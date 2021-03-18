@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';
@@ -25,9 +25,9 @@ import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service
 
 export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('fileUploader') fileUploader: FileUploadComponent;
+    @ViewChild('fileUploader', { static: true }) fileUploader: FileUploadComponent;
 
-    @ViewChild('formRef') formRef: FormGetterComponent;
+    @ViewChild('formRef', { static: false }) formRef: FormGetterComponent;
 
     // tslint:disable-next-line: max-line-length
     @ViewChildren('newTypeRef') newTypeRef: QueryList<FormGetterComponent>;  // see https://expertcodeblog.wordpress.com/2018/01/12/angular-resolve-error-viewchild-annotation-returns-undefined/

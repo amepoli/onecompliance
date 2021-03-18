@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, Store } from '@ngrx/store';
-import { Actions, Effect } from '@ngrx/effects';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 
 import { Observable, of, forkJoin } from 'rxjs';
 import { catchError, debounceTime, map, mergeMap, exhaustMap, withLatestFrom } from 'rxjs/operators';
@@ -39,8 +39,8 @@ export class MailsEffect
     @Effect()
     getMails: Observable<MailsActions.MailsActionsAll> =
         this.actions
-            .ofType<MailsActions.GetMails>(MailsActions.GET_MAILS)
             .pipe(
+                ofType<MailsActions.GetMails>(MailsActions.GET_MAILS),
                 exhaustMap((action) => {
 
                     let handle = {
@@ -78,10 +78,10 @@ export class MailsEffect
      * @type {Observable<any>}
      */
     @Effect()
-    updateMail: Observable<MailsActions.MailsActionsAll> =
+    updateMail =
         this.actions
-            .ofType<MailsActions.UpdateMail>(MailsActions.UPDATE_MAIL)
             .pipe(
+                ofType<MailsActions.UpdateMail>(MailsActions.UPDATE_MAIL),
                 exhaustMap((action) => {
                     return this.mailService.updateMail(action.payload).pipe(
                         map(() => {
@@ -98,8 +98,8 @@ export class MailsEffect
     @Effect()
     updateMails: Observable<MailsActions.MailsActionsAll> =
         this.actions
-            .ofType<MailsActions.UpdateMails>(MailsActions.UPDATE_MAILS)
             .pipe(
+                ofType<MailsActions.UpdateMails>(MailsActions.UPDATE_MAILS),
                 exhaustMap((action) => {
                     return forkJoin(
                         action.payload.map(mail => this.mailService.updateMail(mail)),
@@ -116,8 +116,8 @@ export class MailsEffect
     @Effect()
     setCurrentMail: Observable<Action> =
         this.actions
-            .ofType<MailsActions.SetCurrentMail>(MailsActions.SET_CURRENT_MAIL)
             .pipe(
+                ofType<MailsActions.SetCurrentMail>(MailsActions.SET_CURRENT_MAIL),
                 withLatestFrom(this.store.select(getMailsState)),
                 map(([action, state]) => {
                     return new MailsActions.SetCurrentMailSuccess(state.entities[action.payload]);
@@ -133,8 +133,8 @@ export class MailsEffect
     @Effect()
     checkCurrentMail: Observable<Action> =
         this.actions
-            .ofType<MailsActions.CheckCurrentMail>(MailsActions.CHECK_CURRENT_MAIL)
             .pipe(
+                ofType<MailsActions.CheckCurrentMail>(MailsActions.CHECK_CURRENT_MAIL),
                 withLatestFrom(this.store.select(getMailsState)),
                 map(([action, state]) => {
 
@@ -153,8 +153,8 @@ export class MailsEffect
     @Effect()
     getMailsSuccess: Observable<MailsActions.MailsActionsAll> =
         this.actions
-            .ofType<MailsActions.GetMailsSuccess>(MailsActions.GET_MAILS_SUCCESS)
             .pipe(
+                ofType<MailsActions.GetMailsSuccess>(MailsActions.GET_MAILS_SUCCESS),
                 mergeMap(() =>
                     [
                         new MailsActions.CheckCurrentMail()
@@ -167,8 +167,8 @@ export class MailsEffect
     @Effect()
     updateMailsSuccess: Observable<MailsActions.MailsActionsAll> =
         this.actions
-            .ofType<MailsActions.UpdateMailsSuccess>(MailsActions.UPDATE_MAILS_SUCCESS)
             .pipe(
+                ofType<MailsActions.UpdateMailsSuccess>(MailsActions.UPDATE_MAILS_SUCCESS),
                 mergeMap(() =>
                     [
                         new MailsActions.DeselectAllMails(),
@@ -182,8 +182,8 @@ export class MailsEffect
     @Effect()
     updateMailSuccess: Observable<MailsActions.MailsActionsAll> =
         this.actions
-            .ofType<MailsActions.UpdateMailSuccess>(MailsActions.UPDATE_MAIL_SUCCESS)
             .pipe(
+                ofType<MailsActions.UpdateMailSuccess>(MailsActions.UPDATE_MAIL_SUCCESS),
                 debounceTime(500),
                 map(() => {
                     return new MailsActions.GetMails();
@@ -197,8 +197,8 @@ export class MailsEffect
     @Effect()
     setFolderOnSelectedMails: Observable<MailsActions.MailsActionsAll> =
         this.actions
-            .ofType<MailsActions.SetFolderOnSelectedMails>(MailsActions.SET_FOLDER_ON_SELECTED_MAILS)
             .pipe(
+                ofType<MailsActions.SetFolderOnSelectedMails>(MailsActions.SET_FOLDER_ON_SELECTED_MAILS),
                 withLatestFrom(
                     this.store.select(getMailsState)),
                 map(([action, state]) => {
@@ -206,13 +206,10 @@ export class MailsEffect
                     let mailsToUpdate = [];
                     state.selectedMailIds
                          .map(id => {
-                             mailsToUpdate = [
-                                 ...mailsToUpdate,
-                                 entities[id] = {
+                             mailsToUpdate = mailsToUpdate.concat(entities[id] = {
                                      ...entities[id],
                                      folder: action.payload
-                                 }
-                             ];
+                                 });
                          });
                     return new MailsActions.UpdateMails(mailsToUpdate);
                 })
@@ -225,8 +222,8 @@ export class MailsEffect
     @Effect()
     addLabelOnSelectedMails: Observable<MailsActions.MailsActionsAll> =
         this.actions
-            .ofType<MailsActions.AddLabelOnSelectedMails>(MailsActions.ADD_LABEL_ON_SELECTED_MAILS)
             .pipe(
+                ofType<MailsActions.AddLabelOnSelectedMails>(MailsActions.ADD_LABEL_ON_SELECTED_MAILS),
                 withLatestFrom(this.store.select(getMailsState)),
                 map(([action, state]) => {
 
@@ -236,20 +233,19 @@ export class MailsEffect
                     state.selectedMailIds
                          .map(id => {
 
-                             let labels = [...entities[id].labels];
+                             let labels = [].concat(entities[id].labels);
 
                              if ( !entities[id].labels.includes(action.payload) )
                              {
-                                 labels = [...labels, action.payload];
+                                 labels = labels.concat(action.payload);
                              }
 
-                             mailsToUpdate = [
-                                 ...mailsToUpdate,
+                             mailsToUpdate = mailsToUpdate.concat(
                                  entities[id] = {
                                      ...entities[id],
                                      labels
                                  }
-                             ];
+                            );
                          });
 
                     return new MailsActions.UpdateMails(mailsToUpdate);

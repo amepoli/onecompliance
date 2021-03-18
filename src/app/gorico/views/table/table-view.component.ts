@@ -1,6 +1,8 @@
 import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener, ViewEncapsulation, OnDestroy, AfterViewInit } from '@angular/core';
 import { BackendService } from '../backend/backend.service';
-import { MatTableDataSource, MatPaginator, MatSort, MatRow } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource, MatRow } from '@angular/material/table';
 import { FieldConfig } from '../../dynamic-forms/field.interface';
 import { formViewParams } from '../form/form-view.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
@@ -102,8 +104,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
 
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     quickAddFormParams: formViewParams = {
         entryName: '',

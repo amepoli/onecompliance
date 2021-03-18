@@ -1,8 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MatButtonModule, MatDatepickerModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSlideToggleModule, MatToolbarModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { ColorPickerModule } from 'ngx-color-picker';
-import { CalendarModule as AngularCalendarModule } from 'angular-calendar';
+import { CalendarModule as AngularCalendarModule} from 'angular-calendar';
 
 import { FuseSharedModule } from '@fuse/shared.module';
 import { FuseConfirmDialogModule } from '@fuse/components';
@@ -39,7 +46,7 @@ const routes: Routes = [
         MatSlideToggleModule,
         MatToolbarModule,
 
-        AngularCalendarModule.forRoot(),
+        AngularCalendarModule.forRoot(null),
         ColorPickerModule,
 
         FuseSharedModule,

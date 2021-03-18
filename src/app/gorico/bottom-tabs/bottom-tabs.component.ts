@@ -1,5 +1,5 @@
 import { Component, Input, EventEmitter, Output, OnChanges, OnDestroy, OnInit, ViewChild, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
-import { MatTabChangeEvent, MatTabGroup } from '@angular/material';
+import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 import { tableViewParams } from 'app/gorico/views/table/table-view.component';
 import { formTableViewParams } from '../views/form-table/form-table-view.component';
 import { Subscription } from 'rxjs';
@@ -29,7 +29,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
 
-    @ViewChild("tabsGroup") tabsGroup: MatTabGroup;
+    @ViewChild("tabsGroup", { static: true }) tabsGroup: MatTabGroup;
 
     tableParams: tableViewParams;
 

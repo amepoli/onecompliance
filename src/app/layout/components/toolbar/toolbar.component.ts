@@ -10,7 +10,7 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { navigation } from 'app/navigation/navigation';
 
 import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 
 import { AuthService, UserInfo } from 'app/gorico/login-page/auth.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';

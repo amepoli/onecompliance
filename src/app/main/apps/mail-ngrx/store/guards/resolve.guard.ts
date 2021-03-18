@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate } from '@angular/router';
-import { RouterStateSnapshot } from '@angular/router/src/router_state';
+import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { Observable, forkJoin, of } from 'rxjs';

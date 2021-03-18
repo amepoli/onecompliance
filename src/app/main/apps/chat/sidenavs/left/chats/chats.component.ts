@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ObservableMedia } from '@angular/flex-layout';
+import { MediaObserver } from '@angular/flex-layout';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -30,12 +30,12 @@ export class ChatChatsSidenavComponent implements OnInit, OnDestroy
      *
      * @param {ChatService} _chatService
      * @param {FuseMatSidenavHelperService} _fuseMatSidenavHelperService
-     * @param {ObservableMedia} _observableMedia
+     * @param {MediaObserver} _MediaObserver
      */
     constructor(
         private _chatService: ChatService,
         private _fuseMatSidenavHelperService: FuseMatSidenavHelperService,
-        public _observableMedia: ObservableMedia
+        public _MediaObserver: MediaObserver
     )
     {
         // Set the defaults
@@ -97,7 +97,7 @@ export class ChatChatsSidenavComponent implements OnInit, OnDestroy
     {
         this._chatService.getChat(contact);
 
-        if ( !this._observableMedia.isActive('gt-md') )
+        if ( !this._MediaObserver.isActive('gt-md') )
         {
             this._fuseMatSidenavHelperService.getSidenav('chat-left-sidenav').toggle();
         }
