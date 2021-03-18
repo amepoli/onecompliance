@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ColorPickerModule } from 'ngx-color-picker';
-import { CalendarModule as AngularCalendarModule } from 'angular-calendar';
+import { CalendarModule as AngularCalendarModule} from 'angular-calendar';
 
 import { FuseSharedModule } from '@fuse/shared.module';
 import { FuseConfirmDialogModule } from '@fuse/components';
@@ -46,7 +46,7 @@ const routes: Routes = [
         MatSlideToggleModule,
         MatToolbarModule,
 
-        AngularCalendarModule.forRoot(),
+        AngularCalendarModule.forRoot(null),
         ColorPickerModule,
 
         FuseSharedModule,
