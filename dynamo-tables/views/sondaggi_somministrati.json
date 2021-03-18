@@ -25,12 +25,7 @@
     {
       "operation": "selectForm",
       "type": "preProcessing",
-      "queryString": "update entrasp.sondaggi_somministrati set somministrazione_completata=entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
-    },
-    {
-      "operation": "selectForm",
-      "type": "preProcessing",
-      "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+      "queryString": "update entrasp.sondaggi_somministrati set somministrazione_completata=entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$), pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
     },
     {
       "operation": "selectForm",
@@ -517,8 +512,7 @@
       "format": {
         "comboQuery": "select ss2.id_somministrazione as id, ss2.id_somministrazione||'-'||snd2.data_esecuzione as name from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join  entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join  entrasp.sondaggi snd2 on snd2.codice_azienda=mt.codice_azienda and snd2.id_modello_test=mt.id_modello_test inner join  entrasp.sondaggi_somministrati ss2 on  ss2.codice_azienda=snd2.codice_azienda and ss2.id_sondaggio=snd2.id_sondaggio where ss2.object_key=ss.object_key and ss.id_somministrazione=$id_somministrazione$ and ss.codice_azienda=$codice_azienda$ and ss2.id_somministrazione!=$id_somministrazione$;",
         "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
