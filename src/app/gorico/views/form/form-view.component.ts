@@ -2,7 +2,7 @@ import { Component, ViewChild, Input, Output, EventEmitter, OnChanges, OnInit, O
 
 import 'rxjs/add/operator/filter';
 import { BackendService } from '../backend/backend.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { TabType } from '../../bottom-tabs/bottom-tabs.component';
 import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
 import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';

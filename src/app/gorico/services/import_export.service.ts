@@ -8,7 +8,7 @@ import { BackendService } from '../views/backend/backend.service';
 import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
 import { AuthService } from '../login-page/auth.service';
 import { DialogService } from './dialog.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
 import { ConsoleLoggerService } from './console_logger.service';
 

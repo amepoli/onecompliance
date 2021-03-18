@@ -3,7 +3,6 @@ import { default as italiano } from './it.json';
 import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4.js';
 import { BackendService } from '../backend/backend.service';
 import { tableViewKey } from '../table/table-view.component';
-import { _MatChipListMixinBase } from '@angular/material';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';

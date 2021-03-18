@@ -1,5 +1,5 @@
 import { Component, Input, EventEmitter, Output, OnChanges, OnDestroy, OnInit, ViewChild, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
-import { MatTabChangeEvent, MatTabGroup } from '@angular/material';
+import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 import { tableViewParams } from 'app/gorico/views/table/table-view.component';
 import { formTableViewParams } from '../views/form-table/form-table-view.component';
 import { Subscription } from 'rxjs';
