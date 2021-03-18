@@ -24,18 +24,8 @@
     },
     {
       "operation": "selectForm",
-      "type": "preProcessing",
-      "queryString": "update entrasp.sondaggi_somministrati set somministrazione_completata=entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$), pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
-    },
-    {
-      "operation": "selectForm",
-      "type": "preProcessing",
-      "queryString": "update entrasp.sondaggi snd set codice_part='€global_codice_part€', sondaggio_completato=pfs.sondaggio_completato, pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE snd.codice_azienda=$codice_azienda$ AND snd.id_sondaggio=$id_sondaggio$;"
-    },
-    {
-      "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "select round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+      "queryString": "select entrasp.sondaggio_somministrato_preloading_update($codice_azienda$, $id_sondaggio$, $id_somministrazione$);"
     },
     {
       "operation": "selectForm",
@@ -681,7 +671,6 @@
       "isPrimary": false,
       "key": "punteggio_description",
       "label": "Punti ottenuti",
-      "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
       "inputEvents": [
@@ -712,7 +701,6 @@
       "isPrimary": false,
       "key": "ris_percentuale",
       "label": "% Singola Verif.",
-      "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
       "inputEvents": [
@@ -743,7 +731,6 @@
       "isPrimary": false,
       "key": "giudizio",
       "label": "Giudizio Singola Verifica",
-      "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
       "inputEvents": [
