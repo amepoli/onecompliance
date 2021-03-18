@@ -1,5 +1,5 @@
 import { Component, ViewChild, Input, Output, EventEmitter, AfterViewInit, OnDestroy } from '@angular/core';
-import { default as italiano } from './it.json';
+import * as italiano from './it.json';
 import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4.js';
 import { BackendService } from '../backend/backend.service';
 import { tableViewKey } from '../table/table-view.component';
