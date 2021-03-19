@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FieldConfig } from '../../field.interface';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';
 import { HttpClient } from '@angular/common/http';
@@ -43,7 +43,7 @@ export class ButtonComponent implements OnInit, OnDestroy {
     subscriptions: Subscription[] = [];
 
 
-    constructor(private pubsubService: NgxPubSubService,
+    constructor(private pubSubService: PubSubService,
         private _dialogService: DialogService,
         private backendService: BackendService,
         private authService: AuthService,
@@ -76,7 +76,7 @@ export class ButtonComponent implements OnInit, OnDestroy {
                 if (result.value === true) {
                     // User clicked yes
                     if (_this.field.eventName !== null) {
-                        _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: '', type: 'button_click' }); // provide index in case of multiple instances of the button
+                        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: '', type: 'button_click' }); // provide index in case of multiple instances of the button
                     }
                 }
             });
@@ -84,7 +84,7 @@ export class ButtonComponent implements OnInit, OnDestroy {
         else {
             // Perform action without confirmation
             if (_this.field.eventName !== null) {
-                _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: '', type: 'button_click' }); // provide index in case of multiple instances of the button
+                _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: '', type: 'button_click' }); // provide index in case of multiple instances of the button
             }
         }
 

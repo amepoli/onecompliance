@@ -3,7 +3,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { FieldConfig, Item } from '../../field.interface';
 import { ReplaySubject, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { ValidationsService } from 'app/gorico/services/validations.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 @Component({
@@ -56,7 +56,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   private _onDestroy = new Subject<void>();
 
 
-  constructor(private pubsubService: NgxPubSubService, 
+  constructor(private pubSubService: PubSubService, 
                 private cdr: ChangeDetectorRef,
                 private _console: ConsoleLoggerService) { }
 
@@ -76,7 +76,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     // if (_this.field.value != null) {
     //   // possibly compare object w/ subkeys value, let's stringify first
     //   _this.field.value = _this.field.options.find(x => JSON.stringify(x.id) === JSON.stringify(_this.field.value));
-    //   // setTimeout(() => {_this.pubsubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
+    //   // setTimeout(() => {_this.pubSubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
     // }
     // else {
     //   _this.field.value = '';
@@ -103,9 +103,9 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     const _this = this;
     if (this.field.eventName != null && this.field.eventTrigger === 'load') {
-      // this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
+      // this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
       setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
-        // _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.getFormattedId(_this.field.value.id), type: 'combobox' });
+        // _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.getFormattedId(_this.field.value.id), type: 'combobox' });
         _this.sendEvent();
       }, 500);
     }
@@ -167,14 +167,14 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (this.field.eventName != null && this.field.eventTrigger === 'select') {
-      // this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
+      // this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
       this.sendEvent();
     }
   }
 
   onOpen(): void {
     if (this.field.lazyLoading) {
-        this.pubsubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
+        this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
     }
 
   }
@@ -225,7 +225,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       value = this.field.value && this.field.value.id ? this.field.value.id : null;
     }
     this._console.log('value', value);
-    this.pubsubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: value, type: 'combobox' });
+    this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: value, type: 'combobox' });
 
   }
 }

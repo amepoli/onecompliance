@@ -7,7 +7,7 @@ import { BackendService } from 'app/gorico/views/backend/backend.service'
 import { tableViewParams, TableViewComponent } from 'app/gorico/views/table/table-view.component';
 import { formViewParams, FormViewComponent } from '../views/form/form-view.component';
 import { TabType, BottomTabsComponent } from '../bottom-tabs/bottom-tabs.component';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -78,12 +78,12 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
     subMsgCmdTopic = '/toolbar/out/cmd';
     pubMsgCmdTopic = '/toolbar/in/cmd';
 
-    @ViewChild('List') private List: ElementRef;
+    @ViewChild('List', { static: true }) private List: ElementRef;
     @ViewChild('Tabs') private Tabs: BottomTabsComponent;
     @ViewChild('formView') private formView: FormViewComponent;
     @ViewChild('tableView') private tableView: TableViewComponent;
 
-    @ViewChild('mainTable') mainTable: ElementRef;
+    @ViewChild('mainTable', { static: true }) mainTable: ElementRef;
 
 
 
@@ -94,7 +94,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         protected route: ActivatedRoute,
         protected router: Router,
         protected backendService: BackendService,
-        private pubSubService: NgxPubSubService,
+        private pubSubService: PubSubService,
         private authService: AuthService,
         protected location: Location,
         private httpClient: HttpClient,

@@ -13,8 +13,7 @@ import '@fuse/components/highlight/prism-languages';
 export class FuseHighlightComponent implements OnInit, OnDestroy
 {
     // Source
-    @ContentChild('source')
-    source: ElementRef;
+    @ContentChild('source') source: ElementRef;
 
     // Lang
     @Input('lang')
