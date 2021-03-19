@@ -116,88 +116,35 @@
 			"newLine": true
 		},
 		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_modello_test AS id, id_modello_test||'-'||titolo  AS name  FROM entrasp.modelli_test WHERE codice_azienda='€global_codice_azienda€' order by id_modello_test;",
-				"options": [],
-				"viewType": "combobox"
-			  },
-			"label": "Id Modello Verifica",
-			"key": "id_modello_test",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=574 order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_domanda",
+            "label": "ID Argomento domanda",
+            "readOnly": false,
+            "newLine": false
+        },
 		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Id Modello Verifica Vr",
-			"key": "id_modello_test_vr",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_domanda AS id, id_modello_test||'-'||id_domanda||'-'||descrizione  AS name  FROM entrasp.domande WHERE codice_azienda='€global_codice_azienda€' and id_modello_test=£id_modello_test£ order by descrizione;",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Id domanda",
-			"key": "id_domanda_temp",
-			"sameOrigin": false,
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_risposta_prev AS id, id_domanda||'-'||id_risposta_prev||'-'||risposta  AS name  FROM entrasp.risposte_previste WHERE codice_azienda='€global_codice_azienda€' and id_modello_test=£id_modello_test£ and id_domanda=£id_domanda_temp£ order by risposta;",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Id Risposta",
-			"key": "id_risposta_prev_temp",
-		    "sameOrigin": false,
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Id domanda",
-			"key": "id_domanda",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Id Risposta",
-			"key": "id_risposta_prev",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=725 order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_risposta_prev",
+            "label": "ID Argomento Risposta Prevista",
+            "readOnly": false,
+            "newLine": true
+        },
 		{
             "autoGenerate": false,
             "format": {
@@ -326,6 +273,7 @@
             "newLine": false,
             "queryCond": "id_indicatore_parent IS null"
 		},
+		
 		{
             "fieldName": "id_risposta_null",
             "format": {
@@ -355,7 +303,27 @@
             "label": "Nome/ Descrizione",
             "newLine": true,
             "queryCond": "(UPPER(titolo) like '%'||UPPER('€testo_ricerca€')||'%' or UPPER(descrizione) like '%'||UPPER('€testo_ricerca€')||'%')"
-        } 
+        },
+		{
+            "fieldName": "id_indicatore_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Indicatore",
+            "newLine": false,
+            "queryCond": "id_indicatore=$id_indicatore_s$"
+        },
+		{
+            "fieldName": "id_report_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Report",
+            "newLine": false,
+            "queryCond": "id_indicatore in(select id_indicatore from entrasp.indicatori_report where id_report=$id_report_s$)"
+        }
 	],
 	"subTables": [
 		{
