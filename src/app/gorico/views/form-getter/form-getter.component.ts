@@ -15,7 +15,6 @@ import { NavigationService } from 'app/gorico/services/navigation.service';
 import { MessageView } from 'app/gorico/services/messages.service';
 import { HelperService } from 'app/gorico/services/helper.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
-import { isArray } from 'lodash';
 
 export type formDataType = 'text' | 'date' | 'number' | 'boolean';
 
@@ -1240,7 +1239,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 if (result.result === 'OK') {
                                     _this._console.table(result);
                                     if (result.data ){
-                                        if (isArray(result.data)){
+                                        if (Array.isArray(result.data)){
                                             // I am hoping that the result contains keys for the next event
                                             value.data = {};
                                             value.data['keys'] = result.data[0];
