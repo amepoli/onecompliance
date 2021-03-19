@@ -1,6 +1,6 @@
 import { Component, ViewChild, Input, Output, EventEmitter, AfterViewInit, OnDestroy } from '@angular/core';
 import * as italiano from './it.json';
-import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4.js';
+import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4';
 import { BackendService } from '../backend/backend.service';
 import { tableViewKey } from '../table/table-view.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
