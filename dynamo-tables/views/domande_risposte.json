@@ -101,7 +101,7 @@
         },
         {
             "operation": "selectForm",
-            "queryString": "select id_risposta, id_sondaggio, id_somministrazione, risposta, id_risposta_prev as id_risposta_prev_radio, peso as peso_rb, peso as peso_oa, note as note_rb, note as note_mc  from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$ limit 1",
+            "queryString": "select mvr.id_risultato, rp.id_risposta, rp.id_sondaggio, rp.id_somministrazione, rp.risposta, rp.id_risposta_prev as id_risposta_prev_radio, rp.peso as peso_rb, rp.peso as peso_oa, rp.note as note_rb, rp.note as note_mc  from entrasp.risposte rp inner join entrasp.modelli_test_vr mvr on rp.codice_azienda=mvr.codice_azienda and rp.id_modello_test=mvr.id_modello_test and rp.id_modello_test_vr=mvr.rp.id_modello_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$ limit 1",
             "type": "postProcessing"
         },
         {
@@ -109,11 +109,6 @@
             "queryString": "select count(id_risorsa) as num_allegati from entrasp.cdms_risorse_oggetti where codice_azienda=$codice_azienda$ and nome_business_object='riepilogoRisposte' and entrasp.field_value_from_key(chiave::text, 'riepilogoRisposte', 'id_sondaggio'::character varying, '^'::character varying)::numeric=$id_sondaggio$ and entrasp.field_value_from_key(chiave::text, 'riepilogoRisposte', 'id_somministrazione'::character varying, '^'::character varying)::numeric=$id_somministrazione$ and entrasp.field_value_from_key(chiave::text, 'riepilogoRisposte', 'id_domanda'::character varying, '^'::character varying)::numeric= £id_domanda£",
             "type": "postProcessing"
         }, 
-        {
-            "operation": "selectForm",
-            "queryString": "select id_risultato from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$",
-            "type": "postProcessing"
-        },
         {
             "operation": "selectForm",
             "queryString": "select codice_colore as codice_colore_peso_rb_k, codice_colore as codice_colore_peso_oa_k from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto('€global_codice_azienda€'::varchar, £id_risultato£::numeric, coalesce(£peso_rb£, £peso_oa£)::numeric)",
