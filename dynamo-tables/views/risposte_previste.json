@@ -253,8 +253,7 @@
       "format": {
         "comboQuery": "SELECT id_argomento AS id, descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=574 order by descrizione",
         "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -262,6 +261,61 @@
       "label": "Argomento",
       "readOnly": false,
       "newLine": true
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "parola_s",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Parola chiave",
+      "newLine": false,
+      "queryCond": "(UPPER(risposta) like '%'||UPPER('€parola_s€')||'%')"
+    },
+    {
+      "fieldName": "no_argomento_associated",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Senza argomento",
+      "newLine": false,
+      "size": 1,
+      "queryCond": "id_argomento is null"
+    },
+    {
+      "fieldName": "id_modello_test_S",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Modello Verifica",
+      "newLine": false,
+      "queryCond": "id_modello_test=$id_modello_test_s$"
+    },
+    {
+      "fieldName": "no_sondaggi",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Senza Verifiche",
+      "newLine": true,
+      "queryCond": "id_modello_test not in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$)"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=574 order by descrizione",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "fieldName": "id_argomento_s",
+      "label": "Argomento",
+      "newLine": true,
+      "queryCond": "id_argomento=$id_argomento_s$"
+ 
     }
   ],
   "table_keys": [
@@ -294,7 +348,7 @@
     },
     {
       "format": {
-         "dataType": "number"
+        "dataType": "number"
       },
       "isHidden": true,
       "isPrimary": true,
@@ -321,7 +375,7 @@
       "width": "5%"
     },
     {
-       "format": {
+      "format": {
         "dataType": "text"
       },
       "isHidden": true,
@@ -338,7 +392,6 @@
       "key": "peso",
       "label": "Peso",
       "width": "5%"
- 
     },
     {
       "format": {
@@ -370,7 +423,7 @@
       "isPrimary": false,
       "key": "flag_non_applicabile",
       "label": "Non applicabile?",
-      "width": "5%"  
+      "width": "5%"
     },
     {
       "format": {
@@ -391,7 +444,7 @@
       "key": "argomento_descr",
       "label": "argomento_descr",
       "queryFunct": "entrasp.argomenti_descr_breve(id_argomento)",
-      "width": "5%"
+      "width": "20%"
     }
   ],
   "outputEvents": [
