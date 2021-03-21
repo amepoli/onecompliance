@@ -2,6 +2,9 @@
   "$schema": "../views.schema.json",
   "entryKey": "risposte_previste",
   "origin": "entrasp.risposte_previste",
+  "querySuffixes": {
+    "tableViewSuffix": "limit 2500"
+  },
   "predefinedQueries": [
     {
       "operation": "update",
@@ -246,15 +249,14 @@
       "label": "Non applicabile?",
       "size": 4,
       "readOnly": false,
-      "newLine": false
+      "newLine": true
     },
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_argomento AS id, descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=574 order by descrizione",
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=725 order by descrizione",
         "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -262,6 +264,189 @@
       "label": "Argomento",
       "readOnly": false,
       "newLine": true
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "parola_s",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Parola chiave",
+      "newLine": false,
+      "queryCond": "(UPPER(risposta) like '%'||UPPER('€parola_s€')||'%')"
+    },
+    {
+      "fieldName": "no_argomento_associated",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Senza argomento",
+      "newLine": false,
+      "size": 1,
+      "queryCond": "id_argomento is null"
+    },
+    {
+      "fieldName": "id_modello_test_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Modello Verifica",
+      "newLine": false,
+      "queryCond": "id_modello_test=$id_modello_test_s$"
+    },
+    {
+      "fieldName": "no_sondaggi",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Senza Verifiche",
+      "newLine": true,
+      "queryCond": "id_modello_test not in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$)"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=725 order by descrizione",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "fieldName": "id_argomento_s",
+      "label": "Argomento",
+      "newLine": true,
+      "queryCond": "id_argomento=$id_argomento_s$" 
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_modello_test",
+      "label": "id_modello_test"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_modello_test_vr",
+      "label": "id_modello_test_vr"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_domanda",
+      "label": "id_domanda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_risposta_prev",
+      "label": "id_risposta_prev"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "ordinamento",
+      "label": "Ordinamento",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_tipo_risposta",
+      "label": "codice_tipo_risposta"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "peso",
+      "label": "Peso",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "risposta",
+      "label": "Risposta",
+      "width": "25%"
+    },
+    {
+      "format": {
+        "dataType": "boolean",
+        "value": "0"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "flag_risposta_aperta",
+      "label": "Risposta aperta?",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "boolean",
+        "value": "0"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "flag_non_applicabile",
+      "label": "Non applicabile?",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "id_argomento",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "argomento_descr",
+      "label": "argomento_descr",
+      "queryFunct": "entrasp.argomenti_descr_breve(id_argomento)",
+      "width": "20%"
     }
   ],
   "outputEvents": [
