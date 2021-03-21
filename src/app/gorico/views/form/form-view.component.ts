@@ -341,15 +341,11 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         }, 1000);
                     }
                     else {
-                        // Check if error occured during preInserting check
-                        if(result.preInsertingErrors){
-                            _this._dialogService.showErrorDialog("Error", result.preInsertingErrors.join('\n'));
+                        // Check if error occured during pre check
+                        if(result.preErrors){
+                            _this._dialogService.showErrorDialog("Error", result.preErrors.join('\n'));
                         }
-                        // Check if error occured during preUpdatingErrors check
-                        else if(result.preUpdatingErrors){
-                            _this._dialogService.showErrorDialog("Error", result.preUpdatingErrors.join('\n'));
-                        }
-                        else{
+                        else {
                             // Show error snackbar
                             _this._toastService.showErrorToast(result.reason);
                         }
