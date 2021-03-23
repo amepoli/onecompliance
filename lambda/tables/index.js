@@ -1117,7 +1117,7 @@ async function processPreMainPost(queryString, client, notFullTable, isGet) {
     }
     
     if (queryString.postProcessQueriesAllRows != null && queryString.postProcessQueriesAllRows.length) {
-        queryData = await postProcess(queryString.postProcessQueriesAllRows, client, queryData, local_keys_pre, notFullTable, true);
+        queryData = await postProcess(queryString.postProcessQueriesAllRows, client, queryData, local_keys_pre, false, true);
     }
 
     return queryData;
@@ -1126,6 +1126,7 @@ async function processPreMainPost(queryString, client, notFullTable, isGet) {
 async function postProcess(queries, client, queryData, local_keys_pre, notFullTable, allRows)
 {
     let local_keys_post = {}; // additional keys generated with post-processing
+    let local_keys_post_allRows = [];
 
     // post-processing, exclude table view
     if (queries != null && queries.length) { // post-processing 
@@ -1140,18 +1141,33 @@ async function postProcess(queries, client, queryData, local_keys_pre, notFullTa
                 let result = await client.query(query);
                 let rawResult = result;
                 result = notFullTable ? result.rows[0] : result.rows;
-                if (result != null) { // add resulting keys to the list of local keys if any
-                    local_keys_post = Object.assign(local_keys_post, result);
-                    if (haveMainData) {
-                        queryData[row_index] = Object.assign(queryData[row_index], result);
-                    }
-                } else {
-                    rawResult.fields.forEach(field => {
-                        local_keys_post[field.name] = null;
+                // check if we are in a allRows scenario
+                let multipleRows = Array.isArray(result);
+                if (!multipleRows) {
+                    if (result != null) { // add resulting keys to the list of local keys if any
+                        local_keys_post = Object.assign(local_keys_post, result);
                         if (haveMainData) {
-                            queryData[row_index][field.name] = null;
+                            queryData[row_index] = Object.assign(queryData[row_index], result);
                         }
-                    });
+                    } else {
+                        rawResult.fields.forEach(field => {
+                            local_keys_post[field.name] = null;
+                            if (haveMainData) {
+                                queryData[row_index][field.name] = null;
+                            }
+                        });
+                    }
+                } else { // one shot, multiple rows
+                    for (let row_index2 = 0; row_index2 < result.length; row_index2++) {
+                        if (local_keys_post_allRows[row_index2] == null) {
+                            local_keys_post_allRows.push(result[row_index2]);
+                        } else {
+                            local_keys_post_allRows[row_index2] = Object.assign(local_keys_post_allRows[row_index2], result[row_index2]);
+                        }
+                        if (haveMainData) {
+                            queryData[row_index2] = Object.assign(queryData[row_index2], result[row_index2]);
+                        }
+                    }
                 }
                 console.log('Post query : ', query, ' result : ', result, ' raw result: ', rawResult);
             }
