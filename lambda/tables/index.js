@@ -223,6 +223,10 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     let postProcessQueries = [];
 
+    let postProcessQueriesAllRows = [];
+
+    let preCheckQueries = [];
+
     let orderBy;
 
     let querySuffixes;
@@ -273,6 +277,10 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
                     preProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
                 } else if (query.type === "postProcessing") {
                     postProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
+                }  else if (query.type === "postProcessingAllRows") {
+                    postProcessQueriesAllRows.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
+                } else if (query.type === "preCheck") {
+                    preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
                 }
             }
         });
@@ -298,10 +306,10 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
             return {
                 mainQuery: mainQuery,
                 comboQueries: comboQueries,
-                preInsertingCheckQueries: [],
-                preUpdatingCheckQueries: [],
+                preCheckQueries: preCheckQueries,
                 preProcessQueries: preProcessQueries,
-                postProcessQueries: postProcessQueries
+                postProcessQueries: postProcessQueries,
+                postProcessQueriesAllRows: postProcessQueriesAllRows
             };
         }
     }
@@ -316,7 +324,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
         // keep track of calculated where conditions, query becomes subqueries. 
         // See https://stackoverflow.com/questions/47455962/using-function-result-in-where-clause-in-postgresql
 
-        for (index = 0; index < entry_keys.length; index++) {
+        for (let index = 0; index < entry_keys.length; index++) {
             let element = entry_keys[index];
             if (isForm && element.format.viewType === 'subform') {
                 // append the keys at the end of the array (avoiding recursion, they will be processed later in the loop)
@@ -346,10 +354,10 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
             return {
                 mainQuery: null,
                 comboQueries: comboQueries,
-                preInsertingCheckQueries: [],
-                preUpdatingCheckQueries: [],
+                preCheckQueries: preCheckQueries,
                 preProcessQueries: preProcessQueries,
-                postProcessQueries: postProcessQueries
+                postProcessQueries: postProcessQueries,
+                postProcessQueriesAllRows: postProcessQueriesAllRows
             };
         }
 
@@ -408,7 +416,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     if (calculatedWhereCond.length) { // make query above
         queryString = 'SELECT * FROM (' + queryString + ') AS sub_query ';
-        let comma = ' WHERE ';
+        comma = ' WHERE ';
         calculatedWhereCond.forEach(
             element => {
                 queryString += comma + element.key + '=' + element.delimiter + element.value + element.delimiter;
@@ -439,10 +447,10 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
     return {
         mainQuery: queryString,
         comboQueries: comboQueries,
-        preInsertingCheckQueries: [],
-        preUpdatingCheckQueries: [],
+        preCheckQueries: preCheckQueries,
         preProcessQueries: preProcessQueries,
-        postProcessQueries: postProcessQueries
+        postProcessQueries: postProcessQueries,
+        postProcessQueriesAllRows: postProcessQueriesAllRows
     };
 
 }
@@ -594,10 +602,10 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
 
     return {
         mainQuery: '',
-        preInsertingCheckQueries: [],
-        preUpdatingCheckQueries: [],
+        preCheckQueries: [],
         preProcessQueries: [],
         postProcessQueries: [],
+        postProcessQueriesAllRows: [],
         comboQueries: comboQueries,
         eventQueries: eventQueries
     };
@@ -666,10 +674,10 @@ function getNewQuery(entry_params, table_keys) {
     return {
         mainQuery: null,
         comboQueries: comboQueries,
-        preInsertingCheckQueries: [],
-        preUpdatingCheckQueries: [],
+        preCheckQueries: [],
         preProcessQueries: [],
         postProcessQueries: [],
+        postProcessQueriesAllRows: [],
         defaultValues: defaultValues
     };
 }
@@ -681,13 +689,13 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
     if (entry_keys == null) return '';
 
-    let preInsertingCheckQueries = [];
-
-    let preUpdatingCheckQueries = [];
+    let preCheckQueries = [];
 
     let preProcessQueries = [];
 
     let postProcessQueries = [];
+
+    let postProcessQueriesAllRows = [];
 
     let keyTypes = getKeyTypes(entry_keys);
 
@@ -712,20 +720,10 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                     preProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
                 } else if (query.type === "postProcessing") {
                     postProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
-                }
-            }
-
-            // Preinserting check queries
-            if ((newRecord && query.operation === "insert")) {
-                if (query.type === "preInsertingCheck") {
-                    preInsertingCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
-                }
-            }
-
-            // Preupdating check queries
-            if ((query.operation === "update")) {
-                if (query.type === "preUpdatingCheck") {
-                    preUpdatingCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
+                } else if (query.type === "postProcessingAllRows") {
+                    postProcessQueriesAllRows.push(replaceKeys(query.queryString, keys, keyTypes));
+                } else if (query.type === "preCheck") {
+                    preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
                 }
             }
         });
@@ -733,10 +731,10 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             return {
                 mainQuery: mainQuery,
                 comboQueries: [],
-                preInsertingCheckQueries: preInsertingCheckQueries,
-                preUpdatingCheckQueries: preUpdatingCheckQueries,
+                preCheckQueries: preCheckQueries,
                 preProcessQueries: preProcessQueries,
-                postProcessQueries: postProcessQueries
+                postProcessQueries: postProcessQueries,
+                postProcessQueriesAllRows: postProcessQueriesAllRows
             };
         }
     }
@@ -869,10 +867,10 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
     return {
         mainQuery: queryString,
         comboQueries: [],
-        preInsertingCheckQueries: preInsertingCheckQueries,
-        preUpdatingCheckQueries: preUpdatingCheckQueries,
+        preCheckQueries: preCheckQueries,
         preProcessQueries: preProcessQueries,
-        postProcessQueries: postProcessQueries
+        postProcessQueries: postProcessQueries,
+        postProcessQueriesAllRows: postProcessQueriesAllRows
     };
 }
 
@@ -881,6 +879,10 @@ function getDeleteQuery(entry_params, table_keys) {
     let preProcessQueries = [];
 
     let postProcessQueries = [];
+
+    let postProcessQueriesAllRows = [];
+
+    let preCheckQueries = [];
 
     let entry_keys = entry_params.form_keys;
 
@@ -899,16 +901,20 @@ function getDeleteQuery(entry_params, table_keys) {
                     preProcessQueries.push(replaceKeys(query.queryString, table_keys, keyTypes));
                 } else if (query.type === "postProcessing") {
                     postProcessQueries.push(replaceKeys(query.queryString, table_keys, keyTypes));
+                } else if (query.type === "postProcessingAllRows") {
+                    postProcessQueriesAllRows.push(replaceKeys(query.queryString, table_keys, keyTypes));
+                } else if (query.type === "preCheck") {
+                    preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
                 }
             }
         });
         if (mainQuery) { // no need to further build main query, stop here
             return {
                 mainQuery: mainQuery,
-                preInsertingCheckQueries: [],
-                preUpdatingCheckQueries: [],
+                preCheckQueries: preCheckQueries,
                 preProcessQueries: preProcessQueries,
-                postProcessQueries: postProcessQueries
+                postProcessQueries: postProcessQueries,
+                postProcessQueriesAllRows: postProcessQueriesAllRows
             };
         }
     }
@@ -935,10 +941,10 @@ function getDeleteQuery(entry_params, table_keys) {
     return {
         mainQuery: queryString,
         comboQueries: [],
-        preInsertingCheckQueries: [],
-        preUpdatingCheckQueries: [],
+        preCheckQueries: preCheckQueries,
         preProcessQueries: preProcessQueries,
-        postProcessQueries: postProcessQueries
+        postProcessQueries: postProcessQueries,
+        postProcessQueriesAllRows: postProcessQueriesAllRows
     };
 
 }
@@ -1022,96 +1028,53 @@ async function processAttributeQueries(entry_params, keys, client) {
     return attributes;
 }
 
-async function processPreInsertingCheck(queryString, client) {
+async function processPreCheck(queryString, client) {
 
     let local_keys = {}; // additional keys generated with pre-processing  
     //console.log('queryString : ', queryString);
 
-    let preInsertingErrors = [];
+    let preErrors = [];
 
     if (queryString == null) {
-        return preInsertingErrors;
+        return preErrors;
     }
 
-    // pre-insertion check
-    if (queryString.preInsertingCheckQueries != null && queryString.preInsertingCheckQueries.length) {
-        for (let index = 0; index < queryString.preInsertingCheckQueries.length; index++) {
-            let query = queryString.preInsertingCheckQueries[index].query;
-            let message = queryString.preInsertingCheckQueries[index].message;
+    // pre check
+    if (queryString.preCheckQueries != null && queryString.preCheckQueries.length) {
+        for (let index = 0; index < queryString.preCheckQueries.length; index++) {
+            let query = queryString.preCheckQueries[index].query;
+            let message = queryString.preCheckQueries[index].message;
             query = replaceLocalKeys(query, local_keys);
             let result = await client.query(query);
             if (result) {
                 if (Array.isArray(result.rows)) {
                     if (result.rows.length > 0) {
-                        preInsertingErrors.push(message);
+                        preErrors.push(message);
                     }
                 }
                 else if (result.rows) {
-                    preInsertingErrors.push(message);
+                    preErrors.push(message);
                 }
             }
         }
     }
-    //console.log("PreInserting errors: ", preInsertingErrors);
-    return preInsertingErrors;
+    //console.log("Pre check errors: ", preErrors);
+    return preErrors;
 }
 
-function returnPreInsertingCheckResult(preInsertingErrors) {
+function returnPreCheckResult(preErrors) {
     return {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
-        "body": JSON.stringify({ result: 'KO', preInsertingErrors: preInsertingErrors })
+        "body": JSON.stringify({ result: 'KO', preErrors: preErrors })
     };
 }
 
-async function processPreUpdatingCheck(queryString, client) {
-
-    let local_keys = {}; // additional keys generated with pre-processing  
-    //console.log('queryString : ', queryString);
-
-    let preUpdatingErrors = [];
-
-    if (queryString == null) {
-        return preUpdatingErrors;
-    }
-
-    // pre-insertion check
-    if (queryString.preUpdatingCheckQueries != null && queryString.preUpdatingCheckQueries.length) {
-        for (let index = 0; index < queryString.preUpdatingCheckQueries.length; index++) {
-            let query = queryString.preUpdatingCheckQueries[index].query;
-            let message = queryString.preUpdatingCheckQueries[index].message;
-            query = replaceLocalKeys(query, local_keys);
-            let result = await client.query(query);
-            if (result) {
-                if (Array.isArray(result.rows)) {
-                    if (result.rows.length > 0) {
-                        preUpdatingErrors.push(message);
-                    }
-                }
-                else if (result.rows) {
-                    preUpdatingErrors.push(message);
-                }
-            }
-        }
-    }
-    //console.log("PreUpdating errors: ", preUpdatingErrors);
-    return preUpdatingErrors;
-}
-
-function returnPreUpdatingCheckResult(preUpdatingErrors) {
-    return {
-        "isBase64Encoded": false,
-        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-        "statusCode": 200,
-        "body": JSON.stringify({ result: 'KO', preUpdatingErrors: preUpdatingErrors })
-    };
-}
 
 async function processPreMainPost(queryString, client, notFullTable, isGet) {
 
     let local_keys_pre = {}; // additional keys generated with pre-processing  
-    let local_keys_post = {}; // additional keys generated with post-processing
 
     let queryData = [{}];
 
@@ -1149,38 +1112,67 @@ async function processPreMainPost(queryString, client, notFullTable, isGet) {
         console.log('Main query : ', query, ' result : ', queryData);
     }
 
+    if (queryString.postProcessQueries != null && queryString.postProcessQueries.length) {
+        queryData = await postProcess(queryString.postProcessQueries, client, queryData, local_keys_pre, notFullTable, !isGet);
+    }
+    
+    if (queryString.postProcessQueriesAllRows != null && queryString.postProcessQueriesAllRows.length) {
+        queryData = await postProcess(queryString.postProcessQueriesAllRows, client, queryData, local_keys_pre, false, true);
+    }
+
+    return queryData;
+}
+
+async function postProcess(queries, client, queryData, local_keys_pre, notFullTable, allRows)
+{
+    let local_keys_post = {}; // additional keys generated with post-processing
+    let local_keys_post_allRows = [];
 
     // post-processing, exclude table view
-    if (queryString.postProcessQueries != null && queryString.postProcessQueries.length) { // post-processing 
+    if (queries != null && queries.length) { // post-processing 
         let haveMainData = queryData.length > 0;
         // let maxindex = haveMainData ? queryData.length : 1; 
-        let maxindex = isGet ? queryData.length : 1; // run the queries once if is insert/update/delete, one per row if get
+        let maxindex = allRows ? 1 : queryData.length; // run the queries once if is insert/update/delete, one per row if get
         for (let row_index = 0; row_index < maxindex; row_index++) {
             local_keys_post = haveMainData ? Object.assign(local_keys_pre, queryData[row_index]) : local_keys_post;
-            for (let index = 0; index < queryString.postProcessQueries.length; index++) {
-                let query = queryString.postProcessQueries[index];
+            for (let index = 0; index < queries.length; index++) {
+                let query = queries[index];
                 query = replaceLocalKeys(query, local_keys_post);
                 let result = await client.query(query);
                 let rawResult = result;
                 result = notFullTable ? result.rows[0] : result.rows;
-                if (result != null) { // add resulting keys to the list of local keys if any
-                    local_keys_post = Object.assign(local_keys_post, result);
-                    if (haveMainData) {
-                        queryData[row_index] = Object.assign(queryData[row_index], result);
-                    }
-                } else {
-                    rawResult.fields.forEach(field => {
-                        local_keys_post[field.name] = null;
+                // check if we are in a allRows scenario
+                let multipleRows = Array.isArray(result);
+                if (!multipleRows) {
+                    if (result != null) { // add resulting keys to the list of local keys if any
+                        local_keys_post = Object.assign(local_keys_post, result);
                         if (haveMainData) {
-                            queryData[row_index][field.name] = null;
+                            queryData[row_index] = Object.assign(queryData[row_index], result);
                         }
-                    });
+                    } else {
+                        rawResult.fields.forEach(field => {
+                            local_keys_post[field.name] = null;
+                            if (haveMainData) {
+                                queryData[row_index][field.name] = null;
+                            }
+                        });
+                    }
+                } else { // one shot, multiple rows
+                    for (let row_index2 = 0; row_index2 < result.length; row_index2++) {
+                        if (local_keys_post_allRows[row_index2] == null) {
+                            local_keys_post_allRows.push(result[row_index2]);
+                        } else {
+                            local_keys_post_allRows[row_index2] = Object.assign(local_keys_post_allRows[row_index2], result[row_index2]);
+                        }
+                        if (haveMainData) {
+                            queryData[row_index2] = Object.assign(queryData[row_index2], result[row_index2]);
+                        }
+                    }
                 }
                 console.log('Post query : ', query, ' result : ', result, ' raw result: ', rawResult);
             }
         }
     }
-
 
     return queryData;
 }
@@ -1692,19 +1684,11 @@ exports.handler = async (event, context) => {
             return response;
         } else {
             // Check if there are errors in the insertion data
-            let preInsertingErrors = await processPreInsertingCheck(queryString, client);
+            let preErrors = await processPreCheck(queryString, client);
             // Return if there are errors in insertion
-            if (preInsertingErrors.length > 0) {
+            if (preErrors.length > 0) {
                 await client.release();
-                return returnPreInsertingCheckResult(preInsertingErrors);
-            }
-
-            // Check if there are errors in the update data
-            let preUpdatingErrors = await processPreUpdatingCheck(queryString, client);
-            // Return if there are errors in insertion
-            if (preUpdatingErrors.length > 0) {
-                await client.release();
-                return returnPreUpdatingCheckResult(preUpdatingErrors);
+                return returnPreCheckResult(preErrors);
             }
 
             // process query string(s) 
@@ -1788,20 +1772,12 @@ exports.handler = async (event, context) => {
                     // have to check if the record exists (update) or is new (insert), so try to recover it
                     queryString = getTableQuery(entry_params, primaryKeys, true, null, additionalQueryCond);
 
-                    // Check if there are errors in the insertion data
-                    let preInsertingErrors = await processPreInsertingCheck(queryString, client);
+                    // Check if there are errors in the insertion/update data
+                    let preErrors = await processPreCheck(queryString, client);
                     // Return if there are errors in insertion
-                    if (preInsertingErrors.length > 0) {
+                    if (preErrors.length > 0) {
                         await client.release();
-                        return returnPreInsertingCheckResult(preInsertingErrors);
-                    }
-
-                    // Check if there are errors in the update data
-                    let preUpdatingErrors = await processPreUpdatingCheck(queryString, client);
-                    // Return if there are errors in insertion
-                    if (preUpdatingErrors.length > 0) {
-                        await client.release();
-                        return returnPreUpdatingCheckResult(preUpdatingErrors);
+                        return returnPreCheckResult(preErrors);
                     }
 
                     queryData = await processPreMainPost(queryString, client, true, false);
@@ -1817,20 +1793,12 @@ exports.handler = async (event, context) => {
             queryData = [];
 
             for (let index = 0; index < queryStrings.length; index++) {
-                // Check if there are errors in the insertion data
-                let preInsertingErrors = await processPreInsertingCheck(queryString, client);
+                // Check if there are errors in the insertion/update data
+                let preErrors = await processPreCheck(queryString, client);
                 // Return if there are errors in insertion
-                if (preInsertingErrors.length > 0) {
+                if (preErrors.length > 0) {
                     await client.release();
-                    return returnPreInsertingCheckResult(preInsertingErrors);
-                }
-
-                // Check if there are errors in the update data
-                let preUpdatingErrors = await processPreUpdatingCheck(queryString, client);
-                // Return if there are errors in insertion
-                if (preUpdatingErrors.length > 0) {
-                    await client.release();
-                    return returnPreUpdatingCheckResult(preUpdatingErrors);
+                    return returnPreCheckResult(preErrors);
                 }
 
                 let data = await processPreMainPost(queryStrings[index], client, true, false);

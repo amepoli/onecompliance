@@ -25,17 +25,7 @@
     {
       "operation": "selectForm",
       "type": "preProcessing",
-      "queryString": "update entrasp.sondaggi_somministrati set somministrazione_completata=entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$), pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
-    },
-    {
-      "operation": "selectForm",
-      "type": "preProcessing",
-      "queryString": "update entrasp.sondaggi snd set codice_part='€global_codice_part€', sondaggio_completato=pfs.sondaggio_completato, pct_da=pfs.pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$) pfs WHERE snd.codice_azienda=$codice_azienda$ AND snd.id_sondaggio=$id_sondaggio$;"
-    },
-    {
-      "operation": "selectForm",
-      "type": "postProcessing",
-      "queryString": "select round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+      "queryString": "select entrasp.sondaggio_somministrato_preloading_update($codice_azienda$, $id_sondaggio$, $id_somministrazione$);"
     },
     {
       "operation": "selectForm",
@@ -681,7 +671,6 @@
       "isPrimary": false,
       "key": "punteggio_description",
       "label": "Punti ottenuti",
-      "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
       "inputEvents": [
@@ -712,7 +701,6 @@
       "isPrimary": false,
       "key": "ris_percentuale",
       "label": "% Singola Verif.",
-      "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
       "inputEvents": [
@@ -743,7 +731,6 @@
       "isPrimary": false,
       "key": "giudizio",
       "label": "Giudizio Singola Verifica",
-      "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
       "inputEvents": [
@@ -903,24 +890,24 @@
       "queryCond": "snd.id_modello_test=$id_modello_test$"
     },
     {
-      "fieldName": "id_sondaggio",
+      "fieldName": "id_sondaggio_s",
       "format": {
         "dataType": "number",
         "viewType": "input"
       },
       "label": "ID Sondaggio",
       "newLine": false,
-      "queryCond": "ss.id_sondaggio=$id_sondaggio$"
+      "queryCond": "ss.id_sondaggio=$id_sondaggio_s$"
     },
     {
-      "fieldName": "id_somministrazione",
+      "fieldName": "id_somministrazione_s",
       "format": {
         "dataType": "number",
         "viewType": "input"
       },
       "label": "Id Verifica",
       "newLine": true,
-      "queryCond": "ss.id_somministrazione=$id_somministrazione$"
+      "queryCond": "ss.id_somministrazione=$id_somministrazione_s$"
     },
     {
       "fieldName": "data_comp",
@@ -1512,7 +1499,7 @@
     "formQueries": [
       {
         "label": "Risposte punteggio diverso da 0",
-        "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.peso from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$  ri.peso!= 0"
+        "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.peso from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$ and ri.peso!= 0"
       }
     ]
   },

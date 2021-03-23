@@ -21,14 +21,15 @@ Services:
     First time the ftp docker container exited --> had to restart it (guess was due to missing 5222 port rule in security group)
     Istance tested as working as standalone, then terminated (i.e. all resources deleted by AWS) 
 
-4) RDS Aurora (TODO):
-    Here we have two options. Either we copy the DB backup on S3 to another region (see S3 point), or we use again AWS Backup 
+4) RDS Aurora (DONE):
+    Here we have two options. Either we copy the DB backup on S3 to another region (see S3 point), or we use again AWS Backup.
+    Chosen the first option, i.e. using S3 backup
 
 5) DynamoDB (To Test):
     Should be already done, as we are pushing table from the local environment. To be tested with another region
 
-6) Lambda (To Test):
-    Same as DynamoDB
+6) Lambda (TODO):
+    Lambda functions must be added and then pushed from local env
 
 7) Cloudfront (TODO):
     ???
@@ -36,8 +37,15 @@ Services:
 8) API GW and Amplify (Partially done):
     See Amplify notes, created the auth endpoint, still to add all APIs
 
-9) VPC (To Test):
-    Created a default VPC, no elastic IP yet
+9) VPC (DONE):
+    Created a default VPC, no elastic IP yet - likely not needed
+
+10) S3 (DONE):
+    Cloned and then enabled Cross-Region REplication for the following repos (N=2 for origin, N=3 for destination): goricoN-backups, goricoN.core, goricoN-migration,
+    goricoN.pictures, goricoN.cloud.
+    Had to enable the object versioning on both src and dst buckets
+
+11) SES (TODO)
 
 ...
 
