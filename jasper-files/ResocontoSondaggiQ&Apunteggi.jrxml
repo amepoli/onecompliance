@@ -29,7 +29,7 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up from entrasp.sondaggi snd left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(snd.codice_azienda, snd.id_sondaggio) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda where snd.codice_azienda='FININTSGR' and snd.id_sondaggio=800"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, funct.percentuale , replace(funct.codice_colore,'grey','#C0C0C0') as colore_giudizio_trans,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio),'grey','#C0C0C0') as colore_giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_1),'grey','#C0C0C0') as colore_giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_2),'grey','#C0C0C0') as colore_giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_follow_up),'grey','#C0C0C0') as colore_giudizio_follow_up from entrasp.sondaggi snd left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(snd.codice_azienda, snd.id_sondaggio) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda where snd.codice_azienda='IREN' and snd.id_sondaggio=35"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -178,6 +178,61 @@
 		<property name="com.jaspersoft.studio.field.label" value="flag_annullamento_manuale"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
 	</field>
+	<field name="pct_da" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pct_da"/>
+		<property name="com.jaspersoft.studio.field.label" value="pct_da"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="pct_da_manuale" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pct_da_manuale"/>
+		<property name="com.jaspersoft.studio.field.label" value="pct_da_manuale"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="id_sondaggio_succ" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio_succ"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio_succ"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="azione_richiesta" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="azione_richiesta"/>
+		<property name="com.jaspersoft.studio.field.label" value="azione_richiesta"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="link" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="link"/>
+		<property name="com.jaspersoft.studio.field.label" value="link"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="sondaggio_completato" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sondaggio_completato"/>
+		<property name="com.jaspersoft.studio.field.label" value="sondaggio_completato"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="budgeted_time" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="budgeted_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="budgeted_time"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="id_anagrafica_assegnataria" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_anagrafica_assegnataria"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_anagrafica_assegnataria"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="codice_compito" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_compito"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_compito"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="id_sondaggio_parent" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio_parent"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio_parent"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="COLUMN_39" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
+	</field>
 	<field name="id_risultato" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="id_risultato"/>
 		<property name="com.jaspersoft.studio.field.label" value="id_risultato"/>
@@ -201,6 +256,16 @@
 	<field name="decisioni_assunte" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="decisioni_assunte"/>
 		<property name="com.jaspersoft.studio.field.label" value="decisioni_assunte"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
+	</field>
+	<field name="COLUMN_45" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
+	</field>
+	<field name="COLUMN_46" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_somministrazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_somministrazione"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
 	</field>
 	<field name="follow_up" class="java.lang.String">
@@ -244,21 +309,41 @@
 		<property name="com.jaspersoft.studio.field.name" value="percentuale"/>
 		<property name="com.jaspersoft.studio.field.label" value="percentuale"/>
 	</field>
+	<field name="colore_giudizio_trans" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="colore_giudizio_trans"/>
+		<property name="com.jaspersoft.studio.field.label" value="colore_giudizio_trans"/>
+	</field>
 	<field name="giudizio_complessivo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="giudizio_complessivo"/>
 		<property name="com.jaspersoft.studio.field.label" value="giudizio_complessivo"/>
+	</field>
+	<field name="colore_giudizio_complessivo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="colore_giudizio_complessivo"/>
+		<property name="com.jaspersoft.studio.field.label" value="colore_giudizio_complessivo"/>
 	</field>
 	<field name="giudizio_1" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="giudizio_1"/>
 		<property name="com.jaspersoft.studio.field.label" value="giudizio_1"/>
 	</field>
+	<field name="colore_giudizio_1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="colore_giudizio_1"/>
+		<property name="com.jaspersoft.studio.field.label" value="colore_giudizio_1"/>
+	</field>
 	<field name="giudizio_2" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="giudizio_2"/>
 		<property name="com.jaspersoft.studio.field.label" value="giudizio_2"/>
 	</field>
+	<field name="colore_giudizio_2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="colore_giudizio_2"/>
+		<property name="com.jaspersoft.studio.field.label" value="colore_giudizio_2"/>
+	</field>
 	<field name="giudizio_follow_up" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="giudizio_follow_up"/>
 		<property name="com.jaspersoft.studio.field.label" value="giudizio_follow_up"/>
+	</field>
+	<field name="colore_giudizio_follow_up" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="colore_giudizio_follow_up"/>
+		<property name="com.jaspersoft.studio.field.label" value="colore_giudizio_follow_up"/>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
@@ -354,6 +439,7 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 					<printWhenExpression><![CDATA[$F{descrizione} != "null"]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -362,8 +448,8 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<paragraph leftIndent="5"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 			</textField>
@@ -373,6 +459,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -380,8 +467,8 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<paragraph leftIndent="5"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{risultati_emersi}]]></textFieldExpression>
 			</textField>
@@ -391,6 +478,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -398,8 +486,8 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<paragraph leftIndent="5"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{decisioni_assunte}]]></textFieldExpression>
 			</textField>
@@ -409,6 +497,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -416,8 +505,8 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<paragraph leftIndent="5"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{proposte_formulate}]]></textFieldExpression>
 			</textField>
@@ -609,9 +698,10 @@
 				<text><![CDATA[Risultato]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Opaque" x="427" y="169" width="110" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="ce5a455d-d364-428f-8f84-18fd2fdfeb4b">
+				<reportElement positionType="Float" mode="Opaque" x="427" y="169" width="110" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="ce5a455d-d364-428f-8f84-18fd2fdfeb4b">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{colore_giudizio_trans}]]></propertyExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -620,7 +710,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font isBold="false" isItalic="false"/>
+					<font fontName="Bold_arial" isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{giudizio_trans}]]></textFieldExpression>
 			</textField>
@@ -830,10 +920,11 @@
 				<text><![CDATA[Giudizio 2° Livello]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Opaque" x="110" y="381" width="427" height="20" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="c9732649-aa1b-4e29-b467-9f68f386183f">
+				<reportElement positionType="Float" mode="Opaque" x="110" y="381" width="427" height="20" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="c9732649-aa1b-4e29-b467-9f68f386183f">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{colore_giudizio_follow_up}]]></propertyExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -842,15 +933,17 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{giudizio_follow_up}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Opaque" x="111" y="545" width="426" height="20" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="36af716f-1499-4146-88ff-018e1e0b1a83">
+				<reportElement positionType="Float" mode="Opaque" x="111" y="545" width="426" height="20" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="36af716f-1499-4146-88ff-018e1e0b1a83">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{colore_giudizio_1}]]></propertyExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -859,15 +952,17 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{giudizio_1}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Opaque" x="111" y="571" width="426" height="20" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="6dee898e-6ea3-4dfe-87e0-d74292416397">
+				<reportElement positionType="Float" mode="Opaque" x="111" y="571" width="426" height="20" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="6dee898e-6ea3-4dfe-87e0-d74292416397">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{colore_giudizio_2}]]></propertyExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -876,16 +971,18 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{giudizio_2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Opaque" x="110" y="601" width="426" height="20" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="537700ef-7516-4565-ba48-e018776aff65">
+				<reportElement positionType="Float" mode="Opaque" x="110" y="601" width="426" height="20" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="537700ef-7516-4565-ba48-e018776aff65">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{colore_giudizio_complessivo}]]></propertyExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -894,6 +991,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{giudizio_complessivo}]]></textFieldExpression>
@@ -903,6 +1001,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -910,8 +1009,8 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<paragraph leftIndent="5"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{selezione_campione}]]></textFieldExpression>
 			</textField>
@@ -938,6 +1037,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -945,8 +1045,8 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<paragraph leftIndent="5"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{documentazione_analizzata}]]></textFieldExpression>
 			</textField>
@@ -973,6 +1073,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -980,8 +1081,8 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
-					<paragraph leftIndent="5"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<paragraph leftIndent="5" rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{metodologia_presentazione_risultati}]]></textFieldExpression>
 			</textField>
