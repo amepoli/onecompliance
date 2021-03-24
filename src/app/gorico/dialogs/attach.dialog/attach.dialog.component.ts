@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-upload.component';
 // import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
 // and https://stackoverflow.com/a/54645398 and then 'npm run build'
-// import * as CryptoJS from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 
 import { formGetterParams, FormGetterComponent } from 'app/gorico/views/form-getter/form-getter.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
@@ -266,8 +266,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     // var buffer = Buffer.from(<string>content);
                                     // const hash = createHash('sha1').update(buffer).digest("hex");
                                     // New methd by Zee
-                                    // const hash = CryptoJS.SHA1(<string>content).toString(CryptoJS.enc.Hex);
-                                    const hash = _this._encryptionService.SHA1(<string>content);
+                                    const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
                                     _this._console.log(hash);
                                     // check that the file has been correctly uploaded and pass file params to the backend
                                     var mime = require('mime-types');
