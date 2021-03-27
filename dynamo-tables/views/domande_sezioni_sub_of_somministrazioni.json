@@ -2,22 +2,17 @@
   "$schema": "../views.schema.json",
   "entryKey": "domande_sezioni_sub_of_somministrazioni",
   "businessObjectName": "domandeSezioni",
-  "origin": "entrasp.domande_sezioni",
+  "origin": "entrasp.sondaggi_somministrati_risultati_sezioni",
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select ss.codice_azienda, ss.id_somministrazione, snd.id_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione, round(prs.punteggio,2) as punteggio, prs.pesosezione, round(prs.risultatopercsezione,2)*100 as risultatopercsezione, prs.risultatopercsezionepesata from entrasp.sondaggi snd left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr join entrasp.domande_sezioni ds on mvr.codice_azienda=ds.codice_azienda and mvr.id_modello_test=ds.id_modello_test and mvr.id_modello_test_vr=ds.id_modello_test_vr left join entrasp.grc_punteggio_risposte_somministrazione_per_sezione(snd.codice_azienda,ss.id_somministrazione) prs on ds.id_sezione=prs.idsezione and ds.codice_azienda=prs.codiceazienda where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione=$id_somministrazione$;",
+      "queryString": "select ssrs.sezione_completata, ssrs.pct_risultato_ottenuto_calcolato_ponderato, round(ssrs.punteggio_ottenuto,2) as punteggio, pct_risultato_ottenuto_calcolato, ds.peso as pesosezione, round(ssrs.pct_risultato_ottenuto_calcolato*ds.peso, 2), ssrs.codice_azienda, ssrs.id_somministrazione, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi_somministrati_risultati_sezioni ssrs inner join  entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr where ssrs.codice_azienda=$codice_azienda$ and ssrs.id_sondaggio=$id_sondaggio$ and ssrs.id_somministrazione=$id_somministrazione$;",
       "type": "main"
     },
     {
       "operation": "selectForm",
-      "queryString": "select ss.codice_azienda, ss.id_somministrazione, snd.id_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi snd left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr join entrasp.domande_sezioni ds on mvr.codice_azienda=ds.codice_azienda and mvr.id_modello_test=ds.id_modello_test and mvr.id_modello_test_vr=ds.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and mvr.id_modello_test=$id_modello_test$ and mvr.id_modello_test_vr=$id_modello_test_vr$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione=$id_somministrazione$ and ds.id_sezione=$id_sezione$;",
+      "queryString": "select round(ssrs.punteggio_ottenuto,2) as punteggio, round(ssrs.pct_risultato_ottenuto_calcolato, 2) as risultatopercsezione, ds.peso as pesosezione, round(ssrs.pct_risultato_ottenuto_calcolato*ds.peso, 2), ssrs.codice_azienda, ssrs.id_somministrazione, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi_somministrati_risultati_sezioni ssrs inner join  entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr where ssrs.codice_azienda=$codice_azienda$ and ssrs.id_modello_test=$id_modello_test$ and ssrs.id_modello_test_vr=$id_modello_test_vr$ and ssrs.id_sondaggio=$id_sondaggio$ and ssrs.id_somministrazione=$id_somministrazione$ and ssrs.id_sezione=$id_sezione$;",
       "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "select round(punteggio,2) as punteggio, round(risultatopercsezione, 2) as risultatopercsezione, pesosezione, round(risultatopercsezionepesata, 2) as risultatopercsezionepesata from entrasp.grc_punteggio_risposte_somministrazione_per_sezione($codice_azienda$, $id_somministrazione$) where idsezione=$id_sezione$",
-      "type": "postProcessing"
     }
   ],
   "form_keys": [
@@ -97,6 +92,15 @@
       "isPrimary": true,
       "key": "id_sezione",
       "label": "id_sezione",
+      "inputEvents": [
+        {
+          "eventName": "onSave_domande_sezioni_sub",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": ""
+        }
+      ],
       "newLine": true,
       "readOnly": true
     },
@@ -168,13 +172,13 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "risultatopercsezionepesata",
+      "key": "pct_risultato_ottenuto_calcolato_ponderato",
       "label": "Punteggio % pesato sezione",
       "sameOrigin": false,
       "newLine": true,
       "readOnly": true,
       "size": 1.5
-    }   
+    }
   ],
   "querySuffixes": {
     "tableViewSuffix": "order by ds.ordinamento"
@@ -197,7 +201,7 @@
       "isPrimary": true,
       "key": "id_sezione",
       "label": "ID Sezione"
-       },
+    },
     {
       "format": {
         "dataType": "number"
@@ -243,16 +247,6 @@
       "key": "ordinamento",
       "label": "N.",
       "width": "5%"
-
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "punteggio_domande_default",
-      "label": "Punteggio predefinito delle domande"
     },
     {
       "format": {
@@ -270,7 +264,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "risultatopercsezione",
+      "key": "pct_risultato_ottenuto_calcolato",
       "label": "Risultato sez. %",
       "width": "10%"
     },
@@ -280,15 +274,15 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "completo_sezione",
+      "key": "sezione_completata",
       "label": "Sezione Completa",
       "style": [
-				{
-					"value": "Completo",
-					"font_color": "green",
-					"font_weight": "500"
-				}
-			],
+        {
+          "value": "Completo",
+          "font_color": "green",
+          "font_weight": "500"
+        }
+      ],
       "width": "10%"
     },
     {
@@ -307,18 +301,15 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "risultatopercsezionepesata",
+      "key": "pct_risultato_ottenuto_calcolato_ponderato",
       "label": "Risultato % ponderato",
       "width": "15%"
     }
-
-
-    
   ],
   "subTables": [
     {
       "entryKey": "domande_risposte_sezione",
-       "keys": [
+      "keys": [
         {
           "parent": "codice_azienda",
           "son": "codice_azienda"

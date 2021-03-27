@@ -95,23 +95,28 @@
     ],
     "predefinedQueries": [
         {
-         "operation": "selectForm",
-         "queryString": "select * from entrasp.select_domande_risposte($codice_azienda$, $id_sondaggio$, $id_somministrazione$) where id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$ and codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$;",
-         "type": "main"   
-        }, 
-        {
-            "operation": "insert",
-            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>note_=>coalesce($note_rb$,$note_mc$,''), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar)",
+            "operation": "selectForm",
+            "queryString": "select * from entrasp.select_domande_risposte($codice_azienda$, $id_sondaggio$, $id_somministrazione$) where id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$ and codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$;",
             "type": "main"
         },
         {
-            "operation": "update",
-            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>coalesce($note_rb$,$note_mc$,''), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar)",
+            "operation": "insert",
+            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>coalesce($note_rb$,$note_mc$,''), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
             "type": "main"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select true;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "select entrasp.aggiorna_punteggi_somministrazioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
+            "type": "postProcessing"
         },
         {
             "operation": "delete",
-            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>note_=>coalesce($note_rb$,$note_mc$,''), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar)",
+            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>note_=>coalesce($note_rb$,$note_mc$,''), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
             "type": "main"
         }
     ],
@@ -396,6 +401,13 @@
                     "queryFunct": "select case when count(id_risposta)=0 then true else false end as label from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=$id_domanda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
                 },
                 {
+                    "eventName": "onSave_D_R",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.aggiorna_punteggi_somministrazioni($codice_azienda$, $id_somministrazione$,$id_sondaggio$, $id_sezione$)"
+                },
+                {
                     "eventName": "onLoadD_R",
                     "condition": "none",
                     "values": [],
@@ -449,7 +461,7 @@
             "isHidden": false,
             "readOnly": true,
             "isPrimary": false,
-            "key": "note",
+            "key": "note_domanda",
             "label": "Note Esplicative Domanda",
             "size": 8,
             "format": {
@@ -561,7 +573,6 @@
                                 "values": [],
                                 "queryFunct": "select case when flag_risposta_aperta='1' then false else true end  from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_radio', '£id_risposta_prev_radio£') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
                             }
-                        
                         ],
                         "sameOrigin": false,
                         "label": "Risultato %",
@@ -621,7 +632,7 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "values": [
-                       3
+                        3
                     ]
                 }
             ],

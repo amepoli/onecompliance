@@ -1,7 +1,7 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "attachments",
-  "origin": "entrasp.views_attachments",
+  "origin": "entrasp.views_attachments_mv",
   "predefinedQueries": [],
   "businessObjectName": "cdms_risorse",
   "form_keys": [
@@ -37,11 +37,11 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
       "key": "id_risorsa",
-      "label": "id_risorsa",
-      "newLine": true,
+      "label": "ID Allegato",
+      "newLine": false,
       "readOnly": true
     },
     {
@@ -50,10 +50,23 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "key": "id_anagrafica",
-      "label": "id_anagrafica",
+      "label": "ID Anagrafica",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_progetto",
+      "label": "ID Progetto",
       "newLine": true,
       "readOnly": true
     },
@@ -98,6 +111,45 @@
       "newLine": true,
       "size": 4,
       "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "autore",
+      "label": "Utente",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_creazione",
+      "label": "Data Creazione",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_ultimo_accesso",
+      "label": "Data Ultimo Accesso",
+      "newLine": false,
+      "readOnly": true
     }
   ],
   "table_keys": [
@@ -123,10 +175,11 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
+      "width": "5%",
       "key": "id_risorsa",
-      "label": "id_risorsa"
+      "label": "ID Allegato"
     },
     {
       "format": {
@@ -135,6 +188,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "client_file_name",
+      "width": "28%",
       "label": "Nome file"
     },
     {
@@ -144,8 +198,29 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "denominazione",
+      "width": "30%",
       "label": "Nome/rag sociale",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_creazione",
+      "width": "8%",
+      "label": "Data Creazione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "8%",
+      "key": "autore",
+      "label": "Utente"
     },
     {
       "format": {
@@ -154,26 +229,49 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "tipo_allegato",
+      "width": "15%",
       "label": "Tipo Allegato"
     },
     {
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "id_sondaggio",
+      "width": "5%",
       "label": "Sondaggio"
     },
     {
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "id_somministrazione",
+      "width": "5%",
       "label": "Verifica"
-    } 
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_anagrafica",
+      "width": "5%",
+      "label": "Cliente"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_progetto",
+      "width": "5%",
+      "label": "Progetto"
+    }
   ],
   "search_keys": [
     {
@@ -207,7 +305,6 @@
       "newLine": true,
       "queryCond": "id_tipo_allegato=$id_tipo_allegato_s$"
     },
- 
     {
       "fieldName": "id_anagrafica_s",
       "format": {
@@ -228,6 +325,38 @@
       "label": "ID Anagrafica",
       "newLine": false,
       "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
+    },
+    {
+      "fieldName": "autore_s",
+      "format": {
+        "comboQuery": "select distinct autore as id, autore as name from entrasp.cdms_risorse where codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Utente",
+      "newLine": true,
+      "queryCond": "autore=$autore_s$"
+    },
+    {
+      "fieldName": "data_da_s",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data da",
+      "newLine": false,
+      "queryCond": "data_creazione>=$data_da_s$"
+    },
+    {
+      "fieldName": "data_a_s",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data da",
+      "newLine": false,
+      "queryCond": "data_creazione<=$data_a_s$"
     }
   ],
   "hideActions": [
