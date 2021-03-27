@@ -152,12 +152,7 @@
     {
       "operation": "selectForm",
       "type": "preProcessing",
-      "queryString": "update entrasp.sondaggi_somministrati set somministrazione_completata=entrasp.sondaggi_somministrati_complete($codice_azienda$, $id_somministrazione$) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$"
-    },
-    {
-      "operation": "selectForm",
-      "type": "preProcessing",
-      "queryString": "update entrasp.sondaggi_somministrati set pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$)) where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+      "queryString": "select entrasp.aggiorna_sondaggi_pre_loading($codice_azienda$, $id_sondaggio$);"
     },
     {
       "operation": "selectForm",
@@ -249,5 +244,7 @@
       "width": "10%"
     }
   ],
-  "querySuffixes": {"tableViewSuffix": "order by id_sondaggio"}
+  "querySuffixes": {
+    "tableViewSuffix": "order by id_sondaggio"
+  }
 }
