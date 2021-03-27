@@ -280,7 +280,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
                 }  else if (query.type === "postProcessingAllRows") {
                     postProcessQueriesAllRows.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
                 } else if (query.type === "preCheck") {
-                    preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
+                    preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes), operation: query.operation });
                 }
             }
         });
@@ -723,7 +723,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                 } else if (query.type === "postProcessingAllRows") {
                     postProcessQueriesAllRows.push(replaceKeys(query.queryString, keys, keyTypes));
                 } else if (query.type === "preCheck") {
-                    preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
+                    preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes), operation: query.operation });
                 }
             }
         });
@@ -904,7 +904,7 @@ function getDeleteQuery(entry_params, table_keys) {
                 } else if (query.type === "postProcessingAllRows") {
                     postProcessQueriesAllRows.push(replaceKeys(query.queryString, table_keys, keyTypes));
                 } else if (query.type === "preCheck") {
-                    preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes) });
+                    preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes), operation: query.operation });
                 }
             }
         });
@@ -1028,7 +1028,7 @@ async function processAttributeQueries(entry_params, keys, client) {
     return attributes;
 }
 
-async function processPreCheck(queryString, client) {
+async function processPreCheck(queryString, client, operationType) {
 
     let local_keys = {}; // additional keys generated with pre-processing  
     //console.log('queryString : ', queryString);
@@ -1042,6 +1042,10 @@ async function processPreCheck(queryString, client) {
     // pre check
     if (queryString.preCheckQueries != null && queryString.preCheckQueries.length) {
         for (let index = 0; index < queryString.preCheckQueries.length; index++) {
+            let operation = queryString.preCheckQueries[index].operation;
+            if (operation != operationType) {
+                continue;
+            }
             let query = queryString.preCheckQueries[index].query;
             let message = queryString.preCheckQueries[index].message;
             query = replaceLocalKeys(query, local_keys);
@@ -1528,6 +1532,51 @@ async function overrideTable(son) {
     return father;
 }
 
+
+function hasIsInsertQuery(entry_params, keys, queryString) {
+
+    let entry_keys = entry_params.form_keys;
+    let returnValue = {
+        query: null,
+        error: null
+    }
+
+    let predefinedInsertQuery = null;
+    let predefinedIsInsertQuery = null;
+    let preCheckQueries = [];
+    
+    if (entry_keys == null) {
+        returnValue.error = "Something wrong with provided data";
+        return returnValue;
+    }
+
+    let keyTypes = getKeyTypes(entry_keys);
+
+    if (entry_params.predefinedQueries) {
+        entry_params.predefinedQueries.forEach(query => {
+            if ((query.type === "main") && (query.operation === "insert")) {
+                predefinedInsertQuery = query;
+            } else if ((query.type === "main") && (query.operation === "isInsert")) {
+                predefinedIsInsertQuery = query;
+            } else if ((query.type === "preCheck") && ((query.operation === "insert") || (query.operation === "update"))) {
+                preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes), operation: query.operation });
+            }
+        });
+    }
+    
+    if (predefinedInsertQuery == null && predefinedIsInsertQuery == null) {
+        returnValue.query = null;
+    } else if (predefinedInsertQuery != null && predefinedIsInsertQuery != null) {
+        returnValue.query = predefinedIsInsertQuery;
+    } else { // something wrong with configuration
+        returnValue.error = "Something wrong with the configuration"
+        return returnValue
+    }
+
+    queryString.preCheckQueries = preCheckQueries;
+    return returnValue;
+}
+
 // main function starts here
 
 exports.handler = async (event, context) => {
@@ -1653,8 +1702,22 @@ exports.handler = async (event, context) => {
                 queryString = getNewQuery(entry_params, table_keys);
             } else if (isFormRecord) {
                 queryString = getTableQuery(entry_params, table_keys, true, null, additionalQueryCond);
+                // Check if there are errors in the preCheck
+                let preErrors = await processPreCheck(queryString, client, "selectForm");
+                // Return if there are errors 
+                if (preErrors.length > 0) {
+                    await client.release();
+                    return returnPreCheckResult(preErrors);
+                }
             } else { // table query
                 queryString = getTableQuery(entry_params, table_keys, false, null, additionalQueryCond);
+                // Check if there are errors in the preCheck
+                let preErrors = await processPreCheck(queryString, client, "selectTable");
+                // Return if there are errors 
+                if (preErrors.length > 0) {
+                    await client.release();
+                    return returnPreCheckResult(preErrors);
+                }
                 // add the search combos if any
                 getSearchCombos(entry_params, table_keys, false, queryString.comboQueries);
             }
@@ -1684,14 +1747,6 @@ exports.handler = async (event, context) => {
             await client.release();
             return response;
         } else {
-            // Check if there are errors in the insertion data
-            let preErrors = await processPreCheck(queryString, client);
-            // Return if there are errors in insertion
-            if (preErrors.length > 0) {
-                await client.release();
-                return returnPreCheckResult(preErrors);
-            }
-
             // process query string(s) 
             queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'), (method === 'GET'));
         }
@@ -1770,20 +1825,31 @@ exports.handler = async (event, context) => {
                     }
                 });
                 if (!newRecord) {
-                    // have to check if the record exists (update) or is new (insert), so try to recover it
-                    queryString = getTableQuery(entry_params, primaryKeys, true, null, additionalQueryCond);
+                    let insertCheck = hasIsInsertQuery(entry_params, primaryKeys, queryString);
 
+                    if (insertCheck.error != null) { // insert predefined query without isInsert query or viceversa
+                        return returnPreCheckResult(insertCheck.error);
+                    }
+                    
+                    if (insertCheck.query != null) {
+                        newRecord = await client.query(insertCheck.query);
+                    } else {
+                        // have to check if the record exists (update) or is new (insert), so try to recover it
+                        queryString = getTableQuery(entry_params, primaryKeys, true, null, additionalQueryCond);
+                        queryData = await processPreMainPost(queryString, client, true, false);
+                        // perform insert or update depending on previous query
+                        newRecord = queryData.length ? false : true;
+                    }  
+                    
                     // Check if there are errors in the insertion/update data
-                    let preErrors = await processPreCheck(queryString, client);
+                    let preErrors = await processPreCheck(queryString, client, newRecord ? "insert" : "update");
                     // Return if there are errors in insertion
                     if (preErrors.length > 0) {
                         await client.release();
                         return returnPreCheckResult(preErrors);
                     }
 
-                    queryData = await processPreMainPost(queryString, client, true, false);
-                    // perform insert or update depending on previous query
-                    newRecord = queryData.length ? false : true;
+                    
                 }
                 queryString = getInsertUpdateQuery(entry_params, keys, newRecord);
                 queryStrings.push(queryString);
@@ -1794,14 +1860,6 @@ exports.handler = async (event, context) => {
             queryData = [];
 
             for (let index = 0; index < queryStrings.length; index++) {
-                // Check if there are errors in the insertion/update data
-                let preErrors = await processPreCheck(queryString, client);
-                // Return if there are errors in insertion
-                if (preErrors.length > 0) {
-                    await client.release();
-                    return returnPreCheckResult(preErrors);
-                }
-
                 let data = await processPreMainPost(queryStrings[index], client, true, false);
                 queryData.push(data);
             }
