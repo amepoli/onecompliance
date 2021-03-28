@@ -12,7 +12,6 @@
             "eventTrigger": "onReload"
         }
     ],
-    
     "form_keys": [
         {
             "autoGenerate": false,
@@ -184,7 +183,8 @@
         }
     ],
     "predefinedQueries": [
-        {"operation": "selectTable",
+        {
+            "operation": "selectTable",
             "type": "preProcessing",
             "queryString": "update entrasp.anagrafiche_vr avr set liv_min_toll_rischio_per_sottoscrizione= entrasp.giudizio_mifid_strum_fin('€global_codice_azienda€', avr.id_anagrafica)from entrasp.ruoli_anagrafiche ra where avr.codice_part=ra.codice_part and avr.id_anagrafica=ra.id_anagrafica and avr.codice_part = '€global_codice_part€' and ra.codice_ruolo='FONDO'"
         },
@@ -196,6 +196,11 @@
         {
             "operation": "insert",
             "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceruolo=>'FONDO', codiceanagrafica=>$codice$, ragionesociale=>$ragione_sociale$::varchar, flagfondo=>'€flag_fondo€', annotazioniinterne=>$annotazioni_interne$);",
+            "type": "main"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_anagrafica$ is null as label;",
             "type": "main"
         },
         {
@@ -346,7 +351,6 @@
             "width": "10%",
             "label": "Ruolo"
         }
-        
     ],
     "search_keys": [
         {
@@ -399,6 +403,5 @@
             "newLine": false,
             "queryCond": "avr.liv_min_toll_rischio_per_sottoscrizione<=$liv_max$"
         }
-        
     ]
 }

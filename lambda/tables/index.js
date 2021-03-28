@@ -1541,7 +1541,7 @@ function hasIsInsertQuery(entry_params, keys, queryString) {
         error: null
     }
 
-    let predefinedInsertQuery = null;
+    let predefinedInsert = false;
     let predefinedIsInsertQuery = null;
     let preCheckQueries = [];
     
@@ -1555,18 +1555,18 @@ function hasIsInsertQuery(entry_params, keys, queryString) {
     if (entry_params.predefinedQueries) {
         entry_params.predefinedQueries.forEach(query => {
             if ((query.type === "main") && (query.operation === "insert")) {
-                predefinedInsertQuery = query;
+                predefinedInsert = true;
             } else if ((query.type === "main") && (query.operation === "isInsert")) {
-                predefinedIsInsertQuery = query;
+                predefinedIsInsertQuery = replaceKeys(query.queryString, keys, keyTypes);
             } else if ((query.type === "preCheck") && ((query.operation === "insert") || (query.operation === "update"))) {
                 preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes), operation: query.operation });
             }
         });
     }
     
-    if (predefinedInsertQuery == null && predefinedIsInsertQuery == null) {
+    if (!predefinedInsert && predefinedIsInsertQuery == null) {
         returnValue.query = null;
-    } else if (predefinedInsertQuery != null && predefinedIsInsertQuery != null) {
+    } else if (predefinedInsert && predefinedIsInsertQuery != null) {
         returnValue.query = predefinedIsInsertQuery;
     } else { // something wrong with configuration
         returnValue.error = "Something wrong with the configuration"
@@ -1814,43 +1814,45 @@ exports.handler = async (event, context) => {
             let queryStrings = [];
             for (let index = 0; index < body.length; index++) { // process all body rows
                 let keys = body[index];
-                // filter out the primary keys from the row
-                let primaryKeys = {};
                 let newRecord = false;
-                entry_params.form_keys.forEach(key => {
-                    if ((key.isPrimary && keys[key.key] != null && keys[key.key] !== '') || (table_keys[key.key] != null)) {
-                        primaryKeys[key.key] = keys[key.key];
-                    } else if (key.isPrimary && (keys[key.key] == null || keys[key.key] === '')) {
-                        newRecord = true;   // found a null/empty primary key, we are pushing a new record!
-                    }
-                });
-                if (!newRecord) {
-                    let insertCheck = hasIsInsertQuery(entry_params, primaryKeys, queryString);
 
-                    if (insertCheck.error != null) { // insert predefined query without isInsert query or viceversa
-                        return returnPreCheckResult(insertCheck.error);
-                    }
-                    
-                    if (insertCheck.query != null) {
-                        newRecord = await client.query(insertCheck.query);
-                    } else {
+                let insertCheck = hasIsInsertQuery(entry_params, keys, queryString);
+
+                if (insertCheck.error != null) { // insert predefined query without isInsert query or viceversa
+                    return returnPreCheckResult(insertCheck.error);
+                }
+
+                if (insertCheck.query != null) {
+                    let result = await client.query(insertCheck.query);
+                    newRecord = result.rows[0].label;
+                    //console.log("NEW RECORD: Query - ",insertCheck.query, " Result - ", newRecord, " Keys - ", keys);
+                } else {
+                    // filter out the primary keys from the row
+                    let primaryKeys = {};
+                    entry_params.form_keys.forEach(key => {
+                        if ((key.isPrimary && keys[key.key] != null && keys[key.key] !== '') || (table_keys[key.key] != null)) {
+                            primaryKeys[key.key] = keys[key.key];
+                        } else if (key.isPrimary && (keys[key.key] == null || keys[key.key] === '')) {
+                            newRecord = true;   // found a null/empty primary key, we are pushing a new record!
+                        }
+                    });
+                    if (!newRecord) {
                         // have to check if the record exists (update) or is new (insert), so try to recover it
                         queryString = getTableQuery(entry_params, primaryKeys, true, null, additionalQueryCond);
                         queryData = await processPreMainPost(queryString, client, true, false);
                         // perform insert or update depending on previous query
                         newRecord = queryData.length ? false : true;
-                    }  
-                    
-                    // Check if there are errors in the insertion/update data
-                    let preErrors = await processPreCheck(queryString, client, newRecord ? "insert" : "update");
-                    // Return if there are errors in insertion
-                    if (preErrors.length > 0) {
-                        await client.release();
-                        return returnPreCheckResult(preErrors);
                     }
-
-                    
                 }
+
+                // Check if there are errors in the insertion/update data
+                let preErrors = await processPreCheck(queryString, client, newRecord ? "insert" : "update");
+                // Return if there are errors in insertion
+                if (preErrors.length > 0) {
+                    await client.release();
+                    return returnPreCheckResult(preErrors);
+                }
+
                 queryString = getInsertUpdateQuery(entry_params, keys, newRecord);
                 queryStrings.push(queryString);
             }
