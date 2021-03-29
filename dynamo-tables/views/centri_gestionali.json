@@ -117,6 +117,19 @@
       "size": 5
     },
     {
+      "key": "id_responsabile",
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part=$codice_part$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Responsabile",
+      "newLine": false,
+      "readOnly": false,
+      "isPrimary": false,
+      "isHidden": false
+    },
+    {
       "autoGenerate": false,
       "format": {
         "value": "0",
@@ -173,11 +186,6 @@
       "type": "main"
     },
     {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "UPDATE entrasp.centri_gestionali cge set codice_part=az.codice_part from entrasp.aziende az where cge.codice_azienda=az.codice_azienda"
-    },
-    {
       "operation": "insert",
       "type": "postProcessing",
       "queryString": "UPDATE entrasp.centri_gestionali cge set codice_part=az.codice_part from entrasp.aziende az where cge.codice_azienda=az.codice_azienda"
@@ -186,13 +194,13 @@
 			"operation": "insert",
 			"type": "preCheck",
 			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£'",
-			"messageNotNull": "Il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+			"messageNotNull": "Inserimento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
 		},
 		{
 			"operation": "update",
 			"type": "preCheck",
-			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£'",
-			"messageNotNull": "Il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£' and id_centro_gest!=$id_centro_gest$",
+			"messageNotNull": "Aggiornamento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
 		}
   ],
   "search_keys": [
@@ -227,7 +235,7 @@
       "queryCond": "descrizione Like '%€descrizione€%'"
     },
     {
-      "fieldName": "id_responsabile",
+      "fieldName": "id_responsabile_s",
       "format": {
         "comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part=$codice_part$;",
         "options": [],
@@ -235,7 +243,7 @@
       },
       "label": "Responsabile",
       "newLine": false,
-      "queryCond": "id_responsabile=$id_responsabile$"
+      "queryCond": "id_responsabile=$id_responsabile_s$"
     },
     {
       "fieldName": "flag_principali",
