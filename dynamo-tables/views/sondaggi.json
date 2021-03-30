@@ -1016,6 +1016,17 @@
             "queryCond": "snd.id_centro_gest=$id_centro_gest$"
         },
         {
+            "fieldName": "id_progetto_s",
+            "format": {
+                "comboQuery": "SELECT id_progetto AS id, id_progetto||'-'||titolo AS name  FROM entrasp.progetti WHERE codice_azienda='€global_codice_azienda€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Id Progetto",
+            "newLine": false,
+            "queryCond": "snd.id_sondaggio in(select id_sondaggio from entrasp.progetti_fasi where id_progetto=$id_progetto_s$)"
+        },
+        {
             "fieldName": "stato",
             "format": {
                 "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",

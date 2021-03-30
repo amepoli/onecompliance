@@ -50,13 +50,13 @@
             "operation": "insert",
             "type": "preCheck",
             "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento=£id_argomento£",
-            "messageNotNull": "L'argomento è già stato utilizzato per un altro modello di test in questa azienda: prego utilizzare un argomento diverso"
+            "messageNotNull": "Inserimento: l'argomento è già stato utilizzato per un altro modello di test in questa azienda: prego utilizzare un argomento diverso"
         },
         {
             "operation": "update",
             "type": "preCheck",
-            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento!=£id_argomento£ and id_modello_test!=$id_modello_test$",
-            "messageNotNull": "L'argomento è già stato utilizzato per un altro modello di test in questa azienda: prego utilizzare un argomento diverso"
+            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento=£id_argomento£ and id_modello_test!=$id_modello_test$",
+            "messageNotNull": "Aggiornamento: l'argomento è già stato utilizzato per un altro modello di test in questa azienda: prego utilizzare un argomento diverso"
         }
     ],
     "messages": [
@@ -319,7 +319,7 @@
                     "condition": "none",
                     "values": [],
                     "successMessage": "Creata!",
-                    "queryFunct": "select id_modello_test_vr from entrasp.modello_test_new_version($codice_azienda$,$id_modello_test$, $id_modello_test_vr$)",
+                    "queryFunct": "select entrasp.modello_test_new_version($codice_azienda$,$id_modello_test$, $id_modello_test_vr$)as id_modello_test_vr",
                     "outputEventWhenComplete": "navigate_to_new_modello_test_vr"
                 }
             ]
