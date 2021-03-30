@@ -1062,7 +1062,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     combobox = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
                                     // Set options and make sure we don't cause the onchange selector while
                                     // changing options
-                                    combobox.setOptions(result.options, true);
+                                    if ((result.options != null && result.options[0] != null) || result.value == null) {
+                                        combobox.setOptions(result.options, true);
+                                    }
                                     result = result.value;
                                 }
                                 for (var k in result[0]) {
