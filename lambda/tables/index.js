@@ -24,7 +24,7 @@ const helperFuncts = require('./helperFuncts');
 var global_variables = {};
 
 function isDataTypeString(type) {
-    return (type.dataType === 'text' || type.dataType === 'date' || type.viewType === 'textarea')
+    return (type.dataType === 'text' || type.dataType === 'date' || type.dataType === 'datetime' || type.dataType === 'time' || type.viewType === 'textarea')
 }
 
 function replaceGlobalkeys(queryString) {
@@ -277,7 +277,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
                     preProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
                 } else if (query.type === "postProcessing") {
                     postProcessQueries.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
-                }  else if (query.type === "postProcessingAllRows") {
+                } else if (query.type === "postProcessingAllRows") {
                     postProcessQueriesAllRows.push(replaceKeys(addQueryCond(query.queryString, additionalQueryCond), table_keys, keyTypes));
                 } else if (query.type === "preCheck") {
                     preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes), operation: query.operation });
@@ -1120,7 +1120,7 @@ async function processPreMainPost(queryString, client, notFullTable, isGet) {
     if (queryString.postProcessQueries != null && queryString.postProcessQueries.length) {
         queryData = await postProcess(queryString.postProcessQueries, client, queryData, local_keys_pre, notFullTable, !isGet);
     }
-    
+
     if (queryString.postProcessQueriesAllRows != null && queryString.postProcessQueriesAllRows.length) {
         queryData = await postProcess(queryString.postProcessQueriesAllRows, client, queryData, local_keys_pre, false, true);
     }
@@ -1128,8 +1128,7 @@ async function processPreMainPost(queryString, client, notFullTable, isGet) {
     return queryData;
 }
 
-async function postProcess(queries, client, queryData, local_keys_pre, notFullTable, allRows)
-{
+async function postProcess(queries, client, queryData, local_keys_pre, notFullTable, allRows) {
     let local_keys_post = {}; // additional keys generated with post-processing
     let local_keys_post_allRows = [];
 
@@ -1544,7 +1543,7 @@ function hasIsInsertQuery(entry_params, keys, queryString) {
     let predefinedInsert = false;
     let predefinedIsInsertQuery = null;
     let preCheckQueries = [];
-    
+
     if (entry_keys == null) {
         returnValue.error = "Something wrong with provided data";
         return returnValue;
@@ -1563,7 +1562,7 @@ function hasIsInsertQuery(entry_params, keys, queryString) {
             }
         });
     }
-    
+
     if (!predefinedInsert && predefinedIsInsertQuery == null) {
         returnValue.query = null;
     } else if (predefinedInsert && predefinedIsInsertQuery != null) {

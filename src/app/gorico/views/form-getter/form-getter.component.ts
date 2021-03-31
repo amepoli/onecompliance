@@ -17,7 +17,7 @@ import { HelperService } from 'app/gorico/services/helper.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 import { isArray } from 'lodash';
 
-export type formDataType = 'text' | 'date' | 'number' | 'boolean';
+export type formDataType = 'text' | 'date' | 'datetime' | 'time' | 'number' | 'boolean';
 
 export type formViewType = 'input' | 'textarea' | 'combobox' | 'invisible' | 'checkbox' | 'radiobutton' | 'checkboxgroup' | 'button' | 'subform';
 
