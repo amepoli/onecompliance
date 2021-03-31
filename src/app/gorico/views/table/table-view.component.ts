@@ -26,7 +26,7 @@ export interface tableViewParams {
     outputEvent?: any;
 }
 
-export type tableDataType = 'text' | 'date' | 'number' | 'boolean';
+export type tableDataType = 'text' | 'date' | 'datetime' | 'time' | 'number' | 'boolean';
 
 export interface tableViewKey { // as per API specification
     isHidden: boolean;
