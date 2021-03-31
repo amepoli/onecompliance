@@ -226,6 +226,22 @@
                         "newLine": true,
                         "queryFunct": "SELECT cognome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "readOnly": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name FROM entrasp.centri_gestionali WHERE codice_part=$codice_part$;",
+                            "options": [],
+                            "viewType": "combobox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "id_centro_gest_default",
+                        "queryFunct": "select id_centro_gest_default from entrasp.anagrafiche_id where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$",
+                        "label": "Centro Gestionale Di Default",
+                        "newLine": true,
+                        "size": 3,
+                        "readOnly": false
                     }
                 ]
             },
@@ -534,7 +550,7 @@
         },
         {
             "operation": "insert",
-            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceruolo=>'CLI', codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>$ragione_sociale$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$);",
+            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', idcentrogestdefault=>$id_centro_gest_default$, tiposoggetto=>$tipo_soggetto$, codiceruolo=>'CLI', codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>$ragione_sociale$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$);",
             "type": "main"
         },
         {
