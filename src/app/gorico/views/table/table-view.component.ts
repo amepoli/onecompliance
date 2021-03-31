@@ -14,6 +14,7 @@ import { HelperService } from 'app/gorico/services/helper.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 import { Subscription } from 'rxjs';
 import { DialogService } from 'app/gorico/services/dialog.service';
+import { HttpClient } from '@angular/common/http';
 
 export interface tableViewParams {
     entryName: string;
@@ -35,7 +36,7 @@ export interface tableViewKey { // as per API specification
     queryFunct?: string;
     isButton?: boolean;
     buttonAction?: {
-        action: "navigate" | "delete" | "query",
+        action: "navigate" | "delete" | "query" | 'downloadAttachment',
         target: string,
         viewType: string,
         query?: string,
@@ -172,7 +173,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         private _navigationService: NavigationService,
         private _messagesService: MessagesService,
         private _dialogService: DialogService,
-        private _console: ConsoleLoggerService
+        private _console: ConsoleLoggerService,
+        private httpClient: HttpClient
     ) {
         this.calculateTableHeight();
     }
@@ -607,6 +609,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         else if(selectedViewKey.buttonAction.action == 'query'){
             this.runCustomQuery(selectedViewKey, keys);
         }
+        else if(selectedViewKey.buttonAction.action == 'downloadAttachment') {
+            this.downloadAttachment(selectedViewKey, keys);
+        }
     }
 
     performOnSuccessAction(selectedViewKey: tableViewKey, initialKeys: any, responseKeys: any) {
@@ -683,6 +688,25 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 console.error(error);
             }
         )
+    }
+
+    downloadAttachment(selectedViewKey: tableViewKey, keys: any) {
+        let _this = this;
+        // button value must be file_id^filename 
+        // const keys = _this.field.value.split('^');
+        selectedViewKey.key
+        const file_id = keys[0];
+        const filename = keys[1];
+        const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), {}, file_id).subscribe(
+            url => {
+                if (url != null) {
+                    _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
+                        fileData => {
+                            saveAs(fileData, filename);
+                        }));
+                }
+            });
+        _this.subscriptions.push(subscription);
     }
 
     getColumnLabels(viewKeys: tableViewKey[]) {
