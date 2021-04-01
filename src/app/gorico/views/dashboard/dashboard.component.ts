@@ -1,9 +1,8 @@
 import { Component, ViewChild, Input, Output, EventEmitter, AfterViewInit, OnDestroy } from '@angular/core';
-import { default as italiano } from './it.json';
-import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4.js';
+import * as italiano from './it.json';
+import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4';
 import { BackendService } from '../backend/backend.service';
 import { tableViewKey } from '../table/table-view.component';
-import { _MatChipListMixinBase } from '@angular/material';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
@@ -42,7 +41,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         private _console: ConsoleLoggerService,
         private _reportService: ReportService) { }
 
-    @ViewChild('pivot1') child: WebDataRocksPivot;
+    @ViewChild('pivot1', { static: true }) child: WebDataRocksPivot;
 
     @Input() height = 500;
     @Input() viewHeader = false;

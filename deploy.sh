@@ -30,7 +30,7 @@ cd ../dynamo-tables
 cd ..
 
 #compile application
-npm run build-prod
+ng build --prod
 #delete current distribution
 aws s3 rm s3://gorico2.cloud/$1 --recursive
 #upload files

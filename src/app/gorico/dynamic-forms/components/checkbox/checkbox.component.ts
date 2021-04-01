@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FieldConfig } from '../../field.interface';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 
 @Component({
   selector: 'app-checkbox',
@@ -23,7 +23,7 @@ export class CheckboxComponent implements OnInit {
   group: FormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
 
-  constructor(private pubsubService: NgxPubSubService) { }
+  constructor(private pubSubService: PubSubService) { }
   ngOnInit() {
 
     const _this = this;
@@ -34,7 +34,7 @@ export class CheckboxComponent implements OnInit {
     if (_this.field.eventName !== null && _this.field.eventTrigger === 'change') {
       if (!_this.field.conditionalQuery) {
         // No condition required, wait a while before triggering the event
-        setTimeout(() => { _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'change' }); }, 50);
+        setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'change' }); }, 50);
       }
     }
   }
@@ -44,13 +44,13 @@ export class CheckboxComponent implements OnInit {
     if (_this.field.eventName !== null) {
       if (!_this.field.conditionalQuery) {
         // No condition required, wait a while before triggering the event
-        _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: event.checked ? '1' : '0', type: _this.field.eventTrigger });
+        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: event.checked ? '1' : '0', type: _this.field.eventTrigger });
       }
       else {
         // First need to run a query
         // Query here
         // wait a while before triggering the event
-        _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: event.checked ? '1' : '0', type: _this.field.eventTrigger });
+        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: event.checked ? '1' : '0', type: _this.field.eventTrigger });
       }
 
     }

@@ -10,14 +10,14 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { navigation } from 'app/navigation/navigation';
 
 import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 
 import { AuthService, UserInfo } from 'app/gorico/login-page/auth.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';
 
 import { Router } from '@angular/router';
 
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { ReportService } from 'app/gorico/services/report.service';
 import { ImportItem, ExportItem, ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService } from 'app/gorico/services/navigation.service';
@@ -77,7 +77,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         private _sanitizer: DomSanitizer,
         private _authService: AuthService,
         private _backendService: BackendService,
-        private _pubSubService: NgxPubSubService,
+        private _pubSubService: PubSubService,
         private router: Router,
         private _reportService: ReportService,
         private _importExportService: ImportExportService,

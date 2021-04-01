@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryL
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { FieldConfig, FieldInputEvent } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { ComboboxComponent } from 'app/gorico/dynamic-forms/components/combobox/combobox.component';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'app/gorico/login-page/auth.service';
@@ -15,7 +15,6 @@ import { NavigationService } from 'app/gorico/services/navigation.service';
 import { MessageView } from 'app/gorico/services/messages.service';
 import { HelperService } from 'app/gorico/services/helper.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
-import { isArray } from 'lodash';
 
 export type formDataType = 'text' | 'date' | 'datetime' | 'time' | 'number' | 'boolean';
 
@@ -161,7 +160,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     constructor(
         private cdRef: ChangeDetectorRef,
         private backendService: BackendService,
-        private pubsubService: NgxPubSubService,
+        private pubSubService: PubSubService,
         private authService: AuthService,
         private _toastService: ToastService,
         private _dialogService: DialogService,
@@ -218,7 +217,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
 
         if (_this.isFormView && !_this.isTabMode) {
-            subscription = _this.pubsubService.subscribe('navigate_on_save_button',
+            subscription = _this.pubSubService.subscribe('navigate_on_save_button',
                 value => {
                     _this.eventCallback(value.data, value, null); // null as keyListener means that the full table is affected
                 });
@@ -277,7 +276,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             for (let i = 0; i < this.outputEvents.length; i++) {
                 const outputEvent = this.outputEvents[i];
                 if (!outputEvent.eventTrigger || outputEvent.eventTrigger === 'onReload') {
-                    this.pubsubService.publishEvent(outputEvent.eventName, { origin: 'table', index: 0, data: this.filteredFormData, type: 'page' });
+                    this.pubSubService.publishEvent(outputEvent.eventName, { origin: 'table', index: 0, data: this.filteredFormData, type: 'page' });
                 }
             }
         }
@@ -288,7 +287,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             for (let i = 0; i < this.outputEvents.length; i++) {
                 const outputEvent = this.outputEvents[i];
                 if (!outputEvent.eventTrigger || outputEvent.eventTrigger === 'onSave') {
-                    this.pubsubService.publishEvent(outputEvent.eventName, { origin: 'table', index: 0, data: this.filteredFormData, type: 'page' });
+                    this.pubSubService.publishEvent(outputEvent.eventName, { origin: 'table', index: 0, data: this.filteredFormData, type: 'page' });
                 }
             }
         }
@@ -363,7 +362,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             if (formRowProperty.inputEvents && formRowProperty.inputEvents.length) {
                                 for (let j = 0; j < formRowProperty.inputEvents.length; j++) {
                                     const event = formRowProperty.inputEvents[j];
-                                    const subcription = _this.pubsubService.subscribe(event.eventName,
+                                    const subcription = _this.pubSubService.subscribe(event.eventName,
                                         value => {
                                             _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
                                         });
@@ -380,7 +379,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         if (params.inputEvents != null) {  // subscribe to global table events
                             for (let i = 0; i < params.inputEvents.length; i++) {
                                 const event = params.inputEvents[i];
-                                const subcription = _this.pubsubService.subscribe(event.eventName,
+                                const subcription = _this.pubSubService.subscribe(event.eventName,
                                     value => {
                                         _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
                                     });
@@ -439,7 +438,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (key.inputEvents != null) {
                 for (let j = 0; j < key.inputEvents.length; j++) {
                     const event = key.inputEvents[j];
-                    const subscription = _this.pubsubService.subscribe(event.eventName, value => {
+                    const subscription = _this.pubSubService.subscribe(event.eventName, value => {
                         _this.eventCallback(event, value, key.key);
                     });
                     _this.formSubscriptions.push(subscription);
@@ -448,7 +447,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             // subscribe to combos
             if (key.format.viewType === 'combobox') {
                 // subscribe combobox lazy loading events
-                const lazy_subscription = _this.pubsubService.subscribe(_this.formParams.entryName + '_' + key.key + '_combo_lazy_loading',
+                const lazy_subscription = _this.pubSubService.subscribe(_this.formParams.entryName + '_' + key.key + '_combo_lazy_loading',
                     value => {
                         _this.eventCallback({actionType: 'combo_lazy_loading'}, value, value.data); 
                     });
@@ -932,7 +931,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             if (event.outputEventWhenComplete != null) {
-                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
             }
         } else if (event.actionType === 'readOnly') {
             // get the listener element if not full table
@@ -951,12 +950,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 listener.readonly = conditionMet;
             }
             if (event.outputEventWhenComplete != null) {
-                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
             }
         } else if (event.actionType === 'reload' && conditionMet) {
             _this.refreshView(false);
             if (event.outputEventWhenComplete != null) {
-                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
             }
         } else if (event.actionType === 'navigate' && conditionMet) {
             const formLine = _this.filteredFormData[value.index];
@@ -1002,7 +1001,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             });
             _this.sendEvent.emit({ eventType: 'navigate', queryParams: { entry: event.actionTarget, keys: [filteredKeys], index: 1, total: 1 } });
             if (event.outputEventWhenComplete != null) {
-                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
             }
         } else if ((event.actionType === 'query' || event.actionType === 'query_style' || event.actionType === 'combo_lazy_loading') && conditionMet) {
             let chiavi = {};
@@ -1130,7 +1129,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             }
                             if (event.outputEventWhenComplete != null) {
-                                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                                _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
                             }
                         }
                         else {
@@ -1167,7 +1166,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             if (event.outputEventWhenComplete != null) {
-                _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
             }
         }
         else if (event.actionType === 'show_message' && conditionMet && event.message) {
@@ -1190,7 +1189,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.reload();
                     // Reload screen
                     if (event.outputEventWhenComplete != null) {
-                        _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
                     }
                 }
                 else if (actionType === 'email') {
@@ -1242,7 +1241,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 if (result.result === 'OK') {
                                     _this._console.table(result);
                                     if (result.data ){
-                                        if (isArray(result.data)){
+                                        if (Array.isArray(result.data)){
                                             // I am hoping that the result contains keys for the next event
                                             value.data = {};
                                             value.data['keys'] = result.data[0];
@@ -1259,7 +1258,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                         _this._toastService.showSuccessToast('Success!');
                                     }
                                     if (event.outputEventWhenComplete != null) {
-                                        _this.pubsubService.publishEvent(event.outputEventWhenComplete, value);
+                                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
                                     }
                                 }
                                 else {

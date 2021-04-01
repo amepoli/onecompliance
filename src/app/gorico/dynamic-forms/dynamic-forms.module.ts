@@ -20,7 +20,7 @@ import { LabelComponent } from './components/label/label.component';
 import { SubformComponent } from './components/subform/subform.component';
 
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { MAT_DATE_LOCALE } from '@angular/material';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 @NgModule({
   declarations: [

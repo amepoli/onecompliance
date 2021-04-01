@@ -7,7 +7,9 @@ import { Observable, BehaviorSubject } from 'rxjs';
 export class FileManagerService // implements Resolve<any>
 {
 
-    files = [
+    files = [];
+    /*
+            [
         {
             'name': 'Work Documents',
             'type': 'folder',
@@ -149,7 +151,8 @@ export class FileManagerService // implements Resolve<any>
             'preview': 'assets/images/etc/sample-file-preview.jpg'
         }
     ];
-
+    */
+   
     onFilesChanged: BehaviorSubject<any>;
     onFileSelected: BehaviorSubject<any>;
     onFileAdd: BehaviorSubject<any>;
