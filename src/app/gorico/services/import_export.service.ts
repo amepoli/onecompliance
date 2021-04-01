@@ -5,10 +5,10 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { ToastService } from './toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from '../views/backend/backend.service';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { AuthService } from '../login-page/auth.service';
 import { DialogService } from './dialog.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
 import { ConsoleLoggerService } from './console_logger.service';
 

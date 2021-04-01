@@ -1,18 +1,22 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { BackendService } from 'app/gorico/views/backend/backend.service';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
 import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-upload.component';
-import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
+// import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
 // and https://stackoverflow.com/a/54645398 and then 'npm run build'
+import * as CryptoJS from 'crypto-js';
+
 import { formGetterParams, FormGetterComponent } from 'app/gorico/views/form-getter/form-getter.component';
 import { AuthService } from 'app/gorico/login-page/auth.service';
 import { Subscription } from 'rxjs';
 import { ToastService } from 'app/gorico/services/toast.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { EncryptionService } from 'app/gorico/services/encryption.service';
+
 
 
 @Component({
@@ -25,7 +29,7 @@ import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service
 
 export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('fileUploader') fileUploader: FileUploadComponent;
+    @ViewChild('fileUploader', { static: true }) fileUploader: FileUploadComponent;
 
     @ViewChild('formRef') formRef: FormGetterComponent;
 
@@ -70,7 +74,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         private httpClient: HttpClient,
         private authService: AuthService,
         private _toastService: ToastService,
-        private _console: ConsoleLoggerService) {
+        private _console: ConsoleLoggerService,
+        private _encryptionService: EncryptionService) {
 
         const _this = this;
 
@@ -208,8 +213,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                 'type': 'document',
                                 'owner': element.autore,
                                 'size': this.fileService.getFileSize(element.dimensione),
-                                'modified': new Date(element.data_upd).toString(),
-                                'opened': new Date(element.data_ins).toString(),
+                                'modified': new Date(element.data_upd || element.data_ultima_revisione).toString(),
+                                'opened': new Date(element.data_ins || element.data_ultima_accesso).toString(),
                                 'created': new Date(element.data_creazione).toString(),
                                 'extention': '',
                                 'location': '',
@@ -256,9 +261,12 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     for (var i = 0; i < content.byteLength; i++) {
                                          buffer[i] = content[i];
                                     };*/
-                                    var buffer = Buffer.from(<string>content);
                                     // create file content hash
-                                    const hash = createHash('sha1').update(buffer).digest("hex");
+                                    // Old method
+                                    // var buffer = Buffer.from(<string>content);
+                                    // const hash = createHash('sha1').update(buffer).digest("hex");
+                                    // New methd by Zee
+                                    const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
                                     _this._console.log(hash);
                                     // check that the file has been correctly uploaded and pass file params to the backend
                                     var mime = require('mime-types');

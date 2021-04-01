@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { DataSource } from '@angular/cdk/collections';
 import { merge, Observable, BehaviorSubject, fromEvent, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -21,13 +22,13 @@ export class EcommerceProductsComponent implements OnInit
     dataSource: FilesDataSource | null;
     displayedColumns = ['id', 'image', 'name', 'category', 'price', 'quantity', 'active'];
 
-    @ViewChild(MatPaginator)
+    @ViewChild(MatPaginator, { static: true })
     paginator: MatPaginator;
 
-    @ViewChild(MatSort)
+    @ViewChild(MatSort, { static: true })
     sort: MatSort;
 
-    @ViewChild('filter')
+    @ViewChild('filter', { static: true })
     filter: ElementRef;
 
     // Private

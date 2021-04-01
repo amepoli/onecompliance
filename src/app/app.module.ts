@@ -4,9 +4,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
-import { MatButtonModule, MatIconModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
-import 'hammerjs';
 
 import { FuseModule } from '@fuse/fuse.module';
 import { FuseSharedModule } from '@fuse/shared.module';
@@ -23,7 +23,6 @@ import { MainTableModule } from 'app/gorico/main-table/main-table.module';
 import { MailConfirmModule } from 'app/gorico/login-page/mail-confirm.module';
 import { ForgotPasswordModule } from 'app/gorico/login-page/forgot-password.module';
 import { AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
-import { NgxPubSubModule } from '@pscoped/ngx-pub-sub';
 import { MainDashboardsModule } from 'app/gorico/main-dashboards/main-dashboards.module';
 import { RedirectModule } from 'app/gorico/redirect/redirect.module';
 
@@ -45,7 +44,7 @@ const appRoutes: Routes = [];
         // RouterModule.forRoot(appRoutes),
 
         // With hash location strategy
-        RouterModule.forRoot(appRoutes, { onSameUrlNavigation: 'reload', useHash: true }),
+        RouterModule.forRoot(appRoutes, { onSameUrlNavigation: 'reload', useHash: true, relativeLinkResolution: 'legacy' }),
 
         TranslateModule.forRoot(),
 
@@ -78,7 +77,6 @@ const appRoutes: Routes = [];
         ForgotPasswordModule,
         MainTableModule,
         AmplifyAngularModule,
-        NgxPubSubModule,
         MainDashboardsModule,
 
         // Redirect

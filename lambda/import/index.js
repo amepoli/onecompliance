@@ -582,7 +582,7 @@ async function addCodiceAzienda(keys, company, view_keys, client, isForm) {
 }
 
 function isDataTypeString(type) {
-    return (type.dataType === 'text' || type.dataType === 'date' || type.viewType === 'textarea')
+    return (type.dataType === 'text' || type.dataType === 'date' || type.dataType === 'datetime' || type.dataType === 'time' || type.viewType === 'textarea')
 }
 
 function replaceLocalKeys(queryString, keys) {
@@ -1293,7 +1293,7 @@ exports.handler = async (event, context) => {
 
                 await addCodiceAzienda(table_keys, company, entry_params, client, isForm);
 
-                fullValueSet = Object.assign(fullValueSet,table_keys);
+                fullValueSet = Object.assign(fullValueSet, table_keys);
 
                 console.log('Full value set: ', fullValueSet);
 
@@ -1405,9 +1405,9 @@ exports.handler = async (event, context) => {
                         }
                     }
 
-//                    if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
-//                        queryData = { table_data: queryData, search_options: searchOptions };
-//                    }
+                    //                    if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
+                    //                        queryData = { table_data: queryData, search_options: searchOptions };
+                    //                    }
 
                     // process properties query
 
@@ -1419,9 +1419,9 @@ exports.handler = async (event, context) => {
                         attributes = await processAttributeQueries(entry_params, queryData, client);
                     }
 
- //                   if (!isForm) {
- //                       queryData = queryData["table_data"];
- //                   }
+                    //                   if (!isForm) {
+                    //                       queryData = queryData["table_data"];
+                    //                   }
 
                     //queryData["anonymous"]["calcolo_risultato_log"] = null;
                     console.log('queryData', queryData);

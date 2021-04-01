@@ -10,13 +10,14 @@
             "prefix": "app",
             "schematics": {
                 "@schematics/angular:component": {
-                    "styleext": "scss"
+                    "style": "scss"
                 }
             },
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
+                        "aot": true,
                         "outputPath": "dist",
                         "index": "src/index.html",
                         "main": "src/main.ts",
@@ -30,10 +31,16 @@
                         "styles": [
                             "src/styles.scss"
                         ],
-                        "scripts": []
+                        "scripts": ["../node_modules/crypto-js/crypto-js.js"]
                     },
                     "configurations": {
                         "production": {
+                            "budgets": [
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb"
+                                }
+                            ],
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
@@ -43,7 +50,6 @@
                             "optimization": true,
                             "outputHashing": "all",
                             "sourceMap": false,
-                            "extractCss": true,
                             "namedChunks": false,
                             "aot": true,
                             "extractLicenses": true,
@@ -51,10 +57,21 @@
                             "buildOptimizer": true
                         },
                         "ec": {
-                            "sourceMap": true,
-                            "extractCss": true
+                            "budgets": [
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb"
+                                }
+                            ],
+                            "sourceMap": true
                         },
                         "hmr": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
@@ -101,7 +118,7 @@
                         "styles": [
                             "styles.scss"
                         ],
-                        "scripts": [],
+                        "scripts": ["../node_modules/crypto-js/crypto-js.js"],
                         "assets": [
                             "src/favicon.ico",
                             "src/assets"

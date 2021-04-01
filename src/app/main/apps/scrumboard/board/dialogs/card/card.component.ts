@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgForm } from '@angular/forms/src/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatMenuTrigger } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { Subject } from 'rxjs';
 
 import { FuseConfirmDialogComponent } from '@fuse/components/confirm-dialog/confirm-dialog.component';
@@ -8,6 +8,7 @@ import { FuseUtils } from '@fuse/utils';
 
 import { ScrumboardService } from 'app/main/apps/scrumboard/scrumboard.service';
 import { takeUntil } from 'rxjs/operators';
+import { NgForm } from '@angular/forms';
 
 @Component({
     selector     : 'scrumboard-board-card-dialog',
@@ -24,10 +25,10 @@ export class ScrumboardCardDialogComponent implements OnInit, OnDestroy
     toggleInArray = FuseUtils.toggleInArray;
     confirmDialogRef: MatDialogRef<FuseConfirmDialogComponent>;
 
-    @ViewChild('checklistMenuTrigger')
+    @ViewChild('checklistMenuTrigger', { static: false })
     checklistMenu: MatMenuTrigger;
 
-    @ViewChild('newCheckListTitleField')
+    @ViewChild('newCheckListTitleField', { static: false })
     newCheckListTitleField;
 
     // Private

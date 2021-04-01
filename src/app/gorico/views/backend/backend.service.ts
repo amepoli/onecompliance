@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
-import { default as appData } from '../../../../../appdata.json';
-
-
+import * as appData from '../../../../../appdata.json';
 
 @Injectable({
   providedIn: 'root'

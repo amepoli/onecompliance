@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FieldConfig } from '../../field.interface';
-import { NgxPubSubService } from '@pscoped/ngx-pub-sub';
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { HelperService } from 'app/gorico/services/helper.service';
 import { Moment } from 'moment';
 import { ValidationsService } from 'app/gorico/services/validations.service';
@@ -12,15 +12,15 @@ import { Subscription } from 'rxjs';
   template: `
 <mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
-<input [required]="isRequired" *ngIf="field.inputType !== 'date'" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
+<input [required]="isRequired" *ngIf="field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
     (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()"
     [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
     
-<input [required]="isRequired" *ngIf="field.inputType === 'date'" matInput [matDatepicker]="picker" [value]="field.value" [placeholder]="field.label" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" 
+<input [required]="isRequired" *ngIf="field.inputType === 'date' || field.inputType === 'datetime' || field.inputType === 'time'" matInput [matDatepicker]="datepicker" [value]="field.value" [placeholder]="field.label" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" 
     (blur)="onBlur()" (focus)="onFocus()" (dateChange)="updateValue()"
     [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
-<mat-datepicker-toggle *ngIf="field.inputType === 'date'" matSuffix [for]="picker"></mat-datepicker-toggle>
-<mat-datepicker #picker></mat-datepicker>
+<mat-datepicker-toggle *ngIf="field.inputType === 'date' || field.inputType === 'datetime' || field.inputType === 'time'" matSuffix [for]="datepicker"></mat-datepicker-toggle>
+<mat-datepicker #datepicker></mat-datepicker>
 
 <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
 <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
@@ -52,7 +52,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   // For future use
   // @HostBinding('style.margin-right') marginRight = '1%';
 
-  constructor(private pubsubService: NgxPubSubService,
+  constructor(private pubSubService: PubSubService,
               private _console: ConsoleLoggerService) { }
   ngOnInit(): void {
     const _this = this;
@@ -61,11 +61,11 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
       _this.subscription = _this.group.get(_this.field.name).valueChanges.subscribe(value => {
-        _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: value, type: 'change' });
+        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: value, type: 'change' });
       });
     }
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
-      setTimeout(() => _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'blur' }), 50);
+      setTimeout(() => _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'blur' }), 50);
     }
 
     // Format the field value if needed
@@ -86,7 +86,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     // publish a change event to start if expected
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
       setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
-        _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
+        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
       }, 500);
     }
   }
@@ -100,14 +100,14 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   onBlur(): void {
     const _this = this;
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
-      _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur' });
+      _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur' });
     }
   }
 
   onFocus(): void {
     const _this = this;
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'focus') {
-      _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'focus' });
+      _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'focus' });
     }
   }
 
@@ -148,7 +148,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.group.get(_this.field.name).setValue(_this.field.value);
 
         // If Event publish is required on startup
-        // _this.pubsubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'change' });
+        // _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'change' });
       }
     }
   }

@@ -1,9 +1,9 @@
 import { Component, Input, EventEmitter, Output, OnChanges, OnDestroy, OnInit, ViewChild, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
-import { MatTabChangeEvent, MatTabGroup } from '@angular/material';
+import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 import { tableViewParams } from 'app/gorico/views/table/table-view.component';
 import { formTableViewParams } from '../views/form-table/form-table-view.component';
 import { Subscription } from 'rxjs';
-import { NgxPubSubService } from "@pscoped/ngx-pub-sub";
+import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { ConsoleLoggerService } from '../services/console_logger.service';
 
 
@@ -29,7 +29,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
 
-    @ViewChild("tabsGroup") tabsGroup: MatTabGroup;
+    @ViewChild("tabsGroup", { static: true }) tabsGroup: MatTabGroup;
 
     tableParams: tableViewParams;
 
@@ -46,7 +46,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
     firstLoad: boolean = true;
 
     constructor(private cdRef: ChangeDetectorRef, 
-                private pubsubService: NgxPubSubService,
+                private pubSubService: PubSubService,
                 private _console: ConsoleLoggerService) { }
 
     ngOnChanges(changes) {
@@ -61,7 +61,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
                 if (tab.inputEvents != null && tab.inputEvents.length) {
                     tab.inputEvents.forEach(event => {
                         if (event.actionType === 'show' || event.actionType === 'hide') {
-                            _this.subscriptions.push(_this.pubsubService.subscribe(event.eventName, msg => {
+                            _this.subscriptions.push(_this.pubSubService.subscribe(event.eventName, msg => {
                                 // TODO: handle the other conditions
                                 if (event.condition === 'equalTo') {
                                     // normalize if boolean conditions
