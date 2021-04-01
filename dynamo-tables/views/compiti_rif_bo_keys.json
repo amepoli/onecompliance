@@ -99,7 +99,9 @@
           "actionType": "update",
           "updateFunct": "'£codice_compito£'",
           "condition": "none",
-          "values": [""]
+          "values": [
+            ""
+          ]
         }
       ],
       "outputEvent": {
@@ -215,6 +217,114 @@
       "newLine": false,
       "readOnly": true
     }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "4%",
+      "queryFunct": "select true",
+      "key": "delete_compiti_verifiche",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "delete_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "compiti_rif_bo_keys",
+        "viewType": "form",
+        "query": "delete from entrasp.compiti_rif_bo_keys where codice_azienda='£codice_azienda£' AND codice_compito='£codice_compito£' AND id_somministrazione=£id_somministrazione£",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_somministrazione",
+            "destination": "id_somministrazione"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "width": "5%",
+      "key": "codice_compito",
+      "label": "Codice Compito"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "8%",
+      "key": "data_segnalazione",
+      "label": "Data"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_compito_titolo",
+      "width": "55%",
+      "queryFunct": "entrasp.compito_titolo($codice_azienda$, codice_compito)",
+      "label": "Titolo"
+    },
+    {
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "6%",
+			"key": "visible_button_compiti",
+      "label": "Compito",
+      "queryFunct": "select true",
+			"isButton": true,
+			"buttonAction": {
+				"target": "compiti",
+				"viewType": "form",
+				"action": "navigate",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "codice_compito",
+						"destination": "codice_compito"
+					}
+				]
+			}
+		}
   ],
   "hideActions": [
     {
