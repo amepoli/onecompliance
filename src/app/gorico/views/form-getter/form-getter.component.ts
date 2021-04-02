@@ -59,6 +59,9 @@ export interface formViewKey { // as per API specification
     format: {
         viewType: formViewType,
         dataType?: formDataType,
+        prefix?: string,
+        suffix?: string,
+        pipe?: "Date" | "DateTime" | "Time" | "UpperCase" | "LowerCase" | "Currency" | "Decimal" | "Percent",
         value?: any,
         options: [
             {
@@ -697,6 +700,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 fullValueSet: values[index],
                 value: (element != null) ? ((element.options != null) ? element.value : element) : null,
                 inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
+                prefix: field.format.prefix,
+                suffix: field.format.suffix,
+                pipe: field.format.pipe,
                 readonly: (attribute != null && attribute.readOnly != null && attribute.readOnly[index] != null) ? attribute.readOnly[index] : _this.isReadOnly ? true : (field.readOnly != null) ? field.readOnly : false,
                 isVisible: (attribute != null && attribute.isHidden != null && attribute.isHidden[index] != null) ? !attribute.isHidden[index] : field.isHidden != null ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,

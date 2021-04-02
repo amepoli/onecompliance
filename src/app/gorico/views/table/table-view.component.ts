@@ -59,7 +59,10 @@ export interface tableViewKey { // as per API specification
     },
     format: {
         dataType: tableDataType,
-        value?: any
+        value?: any,
+        prefix?: string,
+        suffix?: string,
+        pipe?: "Date" | "DateTime" | "Time" | "UpperCase" | "LowerCase" | "Currency" | "Decimal" | "Percent"
     };
     width?: string;
 }
@@ -108,6 +111,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
+    format = {};
+    
     quickAddFormParams: formViewParams = {
         entryName: '',
         keys: {},
@@ -275,7 +280,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
                     _this.loadStyle(params.table_keys);
                     _this.loadLevel(params.table_keys);
-
+                    _this.loadFormat(params.table_keys);
                     // signal toolbar about a dashboard 
                     _this._navigationService.onDashboardTableLoad.emit({origin: _this.tableData.entryName, dashboardTables: params.dashboardTables});
 
@@ -407,6 +412,18 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
         this._console.log('isLevel', this.isLevel);
         this._console.log('hasLevel', this.hasLevel);
+    }
+
+    loadFormat(table_keys: tableViewKey[]) {
+        if(table_keys && table_keys.length) {
+            this.format = {};
+            table_keys.forEach(viewKey => {
+                this.format[viewKey.key] = {
+                    dataType: viewKey.format.dataType,
+                    pipe: viewKey.format.pipe
+                }
+            })
+        }
     }
 
     getLevel(row, key) {

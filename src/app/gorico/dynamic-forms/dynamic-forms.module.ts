@@ -21,6 +21,7 @@ import { SubformComponent } from './components/subform/subform.component';
 
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { OneCompliancePipesModule } from '../pipes/pipes.module';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     MaterialModule,
     ReactiveFormsModule,
     FormsModule,
-    NgxMatSelectSearchModule
+    NgxMatSelectSearchModule,
+    OneCompliancePipesModule
   ],
   exports: [
     InputComponent,
