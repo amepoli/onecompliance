@@ -23,13 +23,13 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up ,ss.id_somministrazione as ss_id_somm from entrasp.sondaggi_somministrati ss join entrasp.sondaggi snd on ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=snd.codice_azienda left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on ss.codice_azienda = cr.codice_azienda  and ss.id_sondaggio =cr.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali(ss.codice_azienda, ss.id_sondaggio) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda where snd.codice_azienda = 'IREN' and snd.id_sondaggio = 31 and ss.id_somministrazione=31"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,snd.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, snd.ris_percentuale as percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up ,ss.id_somministrazione as ss_id_somm from entrasp.sondaggi_somministrati ss join entrasp.sondaggi snd on ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=snd.codice_azienda left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on ss.codice_azienda = cr.codice_azienda  and ss.id_sondaggio =cr.id_sondaggio where snd.codice_azienda = 'FINAFARM' and snd.id_sondaggio = 21856 and ss.id_somministrazione=21249"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -369,7 +369,7 @@
 				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement positionType="Float" x="0" y="305" width="537" height="20" uuid="77c957b7-3361-4435-ab25-dc7fb446067e">
+				<reportElement positionType="Float" x="0" y="305" width="537" height="20" isRemoveLineWhenBlank="true" uuid="77c957b7-3361-4435-ab25-dc7fb446067e">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -407,7 +407,7 @@
 				<textFieldExpression><![CDATA[$F{decisioni_assunte}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
-				<reportElement positionType="Float" x="0" y="351" width="537" height="20" uuid="183ab015-19e4-4017-bc4e-cff9c2342224">
+				<reportElement positionType="Float" x="0" y="351" width="537" height="20" isRemoveLineWhenBlank="true" uuid="183ab015-19e4-4017-bc4e-cff9c2342224">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -705,11 +705,12 @@
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="0" y="285" width="537" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="a17153c6-759b-452f-a81c-35ac9ead223b">
+				<reportElement positionType="Float" mode="Opaque" x="0" y="285" width="537" height="20" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="a17153c6-759b-452f-a81c-35ac9ead223b">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$F{risultati_emersi} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -728,6 +729,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$F{proposte_formulate} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -746,6 +748,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$F{decisioni_assunte} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -759,10 +762,11 @@
 				<text><![CDATA[Decisioni Assunte]]></text>
 			</staticText>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="0" y="443" width="537" height="20" uuid="e4a84cfe-8906-4ac2-a344-5d0256e00ad8">
+				<reportElement positionType="Float" x="0" y="443" width="537" height="20" isRemoveLineWhenBlank="true" uuid="e4a84cfe-8906-4ac2-a344-5d0256e00ad8">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<printWhenExpression><![CDATA[$F{follow_up}  != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -770,7 +774,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" markup="">
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{follow_up}]]></textFieldExpression>
@@ -779,6 +783,7 @@
 				<reportElement positionType="Float" mode="Opaque" x="0" y="423" width="537" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="37066412-2c24-4ae4-9d06-24d132aa70db">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{follow_up}  != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<pen lineColor="#000000"/>
@@ -793,9 +798,10 @@
 				<text><![CDATA[Follow up]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="0" y="475" width="110" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="c06a6cdb-d8b1-49fd-a9e6-9e99e2416b9b">
+				<reportElement positionType="Float" mode="Opaque" x="0" y="475" width="110" height="20" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="c06a6cdb-d8b1-49fd-a9e6-9e99e2416b9b">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{giudizio_follow_up} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<pen lineColor="#000000"/>
@@ -810,10 +816,11 @@
 				<text><![CDATA[Giudizio Follow up]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" mode="Opaque" x="0" y="505" width="110" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="1854121d-4d4c-49fe-b740-07829a455666">
+				<reportElement positionType="Float" mode="Opaque" x="0" y="505" width="110" height="20" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="1854121d-4d4c-49fe-b740-07829a455666">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$F{giudizio_1} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<pen lineColor="#000000"/>
@@ -831,6 +838,7 @@
 				<reportElement positionType="Float" mode="Opaque" x="1" y="565" width="110" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="b9eb7df3-c6c8-42a1-b819-bd19c945489d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{giudizio_complessivo} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<pen lineColor="#000000"/>
@@ -849,6 +857,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$F{giudizio_2} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<pen lineColor="#000000"/>
@@ -863,10 +872,11 @@
 				<text><![CDATA[Giudizio 2° Livello]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Opaque" x="110" y="475" width="427" height="20" backcolor="#FFFFFC" uuid="19433163-a1b1-4c6b-afd7-46f928c9a20a">
+				<reportElement positionType="Float" mode="Opaque" x="110" y="475" width="427" height="20" isRemoveLineWhenBlank="true" backcolor="#FFFFFC" uuid="19433163-a1b1-4c6b-afd7-46f928c9a20a">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<printWhenExpression><![CDATA[$F{giudizio_follow_up} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -880,11 +890,12 @@
 				<textFieldExpression><![CDATA[$F{giudizio_follow_up}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Opaque" x="110" y="505" width="427" height="20" backcolor="#FFFFFF" uuid="dc73fc08-52c7-4541-93c0-b9a6f0a2757b">
+				<reportElement positionType="Float" mode="Opaque" x="110" y="505" width="427" height="20" isRemoveLineWhenBlank="true" backcolor="#FFFFFF" uuid="dc73fc08-52c7-4541-93c0-b9a6f0a2757b">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$F{giudizio_1} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -902,6 +913,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<printWhenExpression><![CDATA[$F{giudizio_2} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -919,6 +931,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<printWhenExpression><![CDATA[$F{giudizio_complessivo} != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -975,6 +988,12 @@
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["Domande_risposte_per_somm_punt.jasper"]]></subreportExpression>
 			</subreport>
+			<break>
+				<reportElement x="0" y="585" width="240" height="1" uuid="632eeee7-bf04-4513-ac2e-56020d3da083"/>
+			</break>
+			<break>
+				<reportElement x="0" y="589" width="100" height="1" uuid="a5052504-58cc-4dd7-ad65-ae786e312ceb"/>
+			</break>
 		</band>
 	</detail>
 	<columnFooter>
