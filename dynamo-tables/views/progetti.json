@@ -16,7 +16,7 @@
 		},
 		{
 			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
-			"type": "postProcessing",
+			"type": "preProcessing",
 			"operation": "selectForm"
 		},
 		{
@@ -206,8 +206,7 @@
 						},
 						"actionOnYes": {
 							"actionType": "query",
-							"queryFunct": "update entrasp.sondaggi snd set stato='N' where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio in(select id_sondaggio from entrasp.progetti_fasi pf where pf.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$)"
-
+							"queryFunct": "select entrasp.annulla_progetto($id_progetto$, $codice_azienda$)"
 						}
 					}
 				}
