@@ -695,8 +695,6 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 
     let postProcessQueries = [];
 
-    let postProcessQueriesAllRows = [];
-
     let keyTypes = getKeyTypes(entry_keys);
 
     let primaryKeys = entry_keys.filter(key => key.isPrimary === true);
@@ -720,8 +718,6 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                     preProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
                 } else if (query.type === "postProcessing") {
                     postProcessQueries.push(replaceKeys(query.queryString, keys, keyTypes));
-                } else if (query.type === "postProcessingAllRows") {
-                    postProcessQueriesAllRows.push(replaceKeys(query.queryString, keys, keyTypes));
                 } else if (query.type === "preCheck") {
                     preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes), operation: query.operation });
                 }
@@ -734,7 +730,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
                 preCheckQueries: preCheckQueries,
                 preProcessQueries: preProcessQueries,
                 postProcessQueries: postProcessQueries,
-                postProcessQueriesAllRows: postProcessQueriesAllRows
+                postProcessQueriesAllRows: []
             };
         }
     }
@@ -870,8 +866,32 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         preCheckQueries: preCheckQueries,
         preProcessQueries: preProcessQueries,
         postProcessQueries: postProcessQueries,
-        postProcessQueriesAllRows: postProcessQueriesAllRows
+        postProcessQueriesAllRows: []
     };
+}
+
+async function runInsertUpdatePostProcessingRowQueries(entry_params, keys, client) {
+    
+    let postProcessQueriesAllRows = [];
+
+    let entry_keys = entry_params.form_keys;
+
+    let keyTypes = getKeyTypes(entry_keys);
+
+    if (entry_params.predefinedQueries) {
+        entry_params.predefinedQueries.forEach(query => {
+            if ((query.operation === "insert" || query.operation === "update") &&  query.type === "postProcessingAllRows") {
+                postProcessQueriesAllRows.push(replaceKeys(query.queryString, keys, keyTypes));
+            }
+        });
+    }
+
+    for (let i = 0; i < postProcessQueriesAllRows.length; i++) {
+        let query = postProcessQueriesAllRows[i];
+        console.log('Running post processing all rows query: ', query);
+        await client.query(query);
+    }
+
 }
 
 function getDeleteQuery(entry_params, table_keys) {
@@ -1811,9 +1831,10 @@ exports.handler = async (event, context) => {
             //console.log('BODY values: ', body);
             //let body = event.body; // test scenario
             let queryStrings = [];
+            let newRecord = false;
             for (let index = 0; index < body.length; index++) { // process all body rows
                 let keys = body[index];
-                let newRecord = false;
+                newRecord = false;
 
                 let insertCheck = hasIsInsertQuery(entry_params, keys, queryString);
 
@@ -1864,6 +1885,9 @@ exports.handler = async (event, context) => {
                 let data = await processPreMainPost(queryStrings[index], client, true, false);
                 queryData.push(data);
             }
+
+            let keys = body[0];
+            await runInsertUpdatePostProcessingRowQueries(entry_params, keys, client);
         }
 
         // last chance to calculate the keys with an evalFunct and to process attributes
