@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { TableViewComponent } from './table-view.component';
 import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
 import { FormViewModule } from '../form/form-view.module';
+import { OneCompliancePipesModule } from 'app/gorico/pipes/pipes.module';
 
 @NgModule({
   declarations: [TableViewComponent],
@@ -29,7 +30,8 @@ import { FormViewModule } from '../form/form-view.module';
     MatIconModule,
     MatButtonModule,
     DynamicFormsModule,
-    FormViewModule
+    FormViewModule,
+    OneCompliancePipesModule
   ],
   exports: [
     CommonModule,

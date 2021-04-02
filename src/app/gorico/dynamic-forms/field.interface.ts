@@ -59,6 +59,9 @@ export interface FieldConfig {
   newLine?: boolean;
   textareaHeight?: "S" | "M" | "L" | "XL";
   buttonIcon?: string;
+  prefix?: string;
+  suffix?: string;
+  pipe?: "Date" | "DateTime" | "Time" | "UpperCase" | "LowerCase" | "Currency" | "Decimal" | "Percent";
   confirmButtonAction?: boolean;
   isDownloadButton?: boolean;
   width?: number;

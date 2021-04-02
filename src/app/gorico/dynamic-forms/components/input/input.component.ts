@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
   template: `
 <mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
+<span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
 <input [required]="isRequired" *ngIf="field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
     (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()"
     [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
@@ -22,6 +23,7 @@ import { Subscription } from 'rxjs';
 <mat-datepicker-toggle *ngIf="field.inputType === 'date' || field.inputType === 'datetime' || field.inputType === 'time'" matSuffix [for]="datepicker"></mat-datepicker-toggle>
 <mat-datepicker #datepicker></mat-datepicker>
 
+<span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
 <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
 <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
 </ng-container>
