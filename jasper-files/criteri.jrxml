@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="criteri" pageWidth="507" pageHeight="800" columnWidth="507" leftMargin="0" rightMargin="0" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="sondaggi"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id_sondaggio" class="java.math.BigDecimal"/>
+	<queryString>
+		<![CDATA[select snd.id_sondaggio,  tmtrr.codice_azienda, tmtrr.prog_riga, tmtrr.descrizione, tmtrr.pct_da, 
+case when tmtrr.codice_colore='darkviolet' then '#800080' 
+     when tmtrr.codice_colore='yellow' then '#FFCC00' 
+     when tmtrr.codice_colore='orange' then '#FF6600'
+     else coalesce(codice_colore,'grey')
+end as codice_colore
+
+from entrasp.sondaggi snd
+left join entrasp.modelli_test_vr mtvr on snd.id_modello_test_vr=mtvr.id_modello_test_vr and snd.id_modello_test=mtvr.id_modello_test and snd.codice_azienda=mtvr.codice_azienda
+left join entrasp.modelli_test_risultati mtr on mtvr.codice_azienda=mtr.codice_azienda and mtvr.id_risultato=mtr.id_risultato
+left join entrasp.modelli_test_risultati_righe mtrr on mtr.codice_azienda=mtrr.codice_azienda and mtr.id_risultato=mtrr.id_risultato
+left join entrasp.tipi_modelli_test_risultati_righe tmtrr on mtrr.prog_riga=tmtrr.prog_riga and mtrr.codice_azienda=tmtrr.codice_azienda and mtrr.id_tipo_risultato=tmtrr.id_tipo_risultato
+where snd.codice_azienda=$P{codice_azienda} and snd.id_sondaggio=$P{id_sondaggio}]]>
+	</queryString>
+	<field name="id_sondaggio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tipi_modelli_test_risultati_righe"/>
+	</field>
+	<field name="prog_riga" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prog_riga"/>
+		<property name="com.jaspersoft.studio.field.label" value="prog_riga"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tipi_modelli_test_risultati_righe"/>
+	</field>
+	<field name="descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tipi_modelli_test_risultati_righe"/>
+	</field>
+	<field name="pct_da" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pct_da"/>
+		<property name="com.jaspersoft.studio.field.label" value="pct_da"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tipi_modelli_test_risultati_righe"/>
+	</field>
+	<field name="codice_colore" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_colore"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_colore"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tipi_modelli_test_risultati_righe"/>
+	</field>
+	<sortField name="prog_riga"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="31">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="-6" width="507" height="30" backcolor="#97EAF7" uuid="9be0d96c-6d5f-4554-b6ba-4ae0411b4a70"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Criteri di analisi]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="104" y="0" width="176" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="9bdf825a-49f7-4004-abb6-6747fa35302b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Giudizio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="14" y="0" width="86" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="70407000-30c5-42d3-aa9c-4f973578f333">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Punteggio]]></text>
+			</staticText>
+		</band>
+		<band height="19">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="14" y="0" width="86" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="11cfa718-6dd4-497f-bc10-b1d9777e2801">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pct_da}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="104" y="2" width="176" height="17" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="f961c1c3-516b-4d69-b250-eafb73f98467">
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{codice_colore}]]></propertyExpression>
+					<propertyExpression name="net.sf.jasperreports.style.box.bottom.pen.lineColor"><![CDATA[]]></propertyExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
