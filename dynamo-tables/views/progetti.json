@@ -133,7 +133,7 @@
 			},
 			"label": "Stato",
 			"key": "stato",
-			"readOnly": false,
+			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
@@ -180,6 +180,50 @@
 		{
 			"autoGenerate": false,
 			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "stato_progetto",
+			"label": "Annulla Progetto",
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "progetto_annulla",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"eventName": "progetto_annulla",
+					"actionType": "show_message",
+					"values": [],
+					"condition": "none",
+					"outputEventWhenComplete": "formReload",
+					"message": {
+						"messageText": "Vuoi annullare il progetto e tutti i sondaggi associati?",
+						"actionOnNo": {
+							"actionType": "query",
+							"queryFunct": "select 1"
+						},
+						"actionOnYes": {
+							"actionType": "query",
+							"queryFunct": "update entrasp.sondaggi snd set stato='N' where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio in(select id_sondaggio from entrasp.progetti_fasi pf where pf.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$)"
+
+						}
+					}
+				}
+				
+			],
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			  },
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 1.3
+		},
+		{
+			"autoGenerate": false,
+			"format": {
 				"viewType": "input",
 				"dataType": "text",
 				"validations": [
@@ -208,7 +252,7 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"size": 3,
+			"size": 2,
 			"newLine": false
 		},
 		{
