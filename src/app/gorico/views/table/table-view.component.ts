@@ -612,7 +612,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             this.runCustomQuery(selectedViewKey, keys);
         }
         else if(selectedViewKey.buttonAction.action == 'downloadAttachment') {
-            this.downloadAttachment(selectedViewKey, keys);
+            this.downloadAttachment(selectedViewKey, row);
         }
     }
 
@@ -692,23 +692,42 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         )
     }
 
-    downloadAttachment(selectedViewKey: tableViewKey, keys: any) {
+    downloadAttachment(selectedViewKey: tableViewKey, row: MatRow) {
         let _this = this;
-        // button value must be file_id^filename 
-        // const keys = _this.field.value.split('^');
-        selectedViewKey.key
-        const file_id = keys[0];
-        const filename = keys[1];
-        const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), {}, file_id).subscribe(
-            url => {
-                if (url != null) {
-                    _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
-                        fileData => {
-                            saveAs(fileData, filename);
-                        }));
-                }
-            });
-        _this.subscriptions.push(subscription);
+        // Value must be file_id^filename 
+        let data = row[selectedViewKey.key].split('^');
+
+
+        const file_id = data[0];
+        const filename = data[1];
+        if(file_id && filename)
+        {
+            _this._dialogService.showLoadingDialog("Downloading attachment", "Please wait...");            
+            const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), {}, file_id).subscribe(
+                url => {
+                    if (url != null) {
+                        _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
+                            fileData => {
+                                saveAs(fileData, filename);
+                                _this._dialogService.closeDialog();
+                                _this._toastService.showSuccessToast("Attachment downloaded successfully!");
+                            },
+                            error => {
+                                _this._dialogService.closeDialog();
+                                _this._toastService.showErrorToast("An error occured!");
+                            }));
+                    }
+                },
+                error => {
+                    _this._dialogService.closeDialog();
+                    _this._toastService.showErrorToast("An error occured!");
+                });
+            _this.subscriptions.push(subscription);
+
+        }
+        else {
+            _this._toastService.showErrorToast("File does not exist!");
+        }
     }
 
     getColumnLabels(viewKeys: tableViewKey[]) {
