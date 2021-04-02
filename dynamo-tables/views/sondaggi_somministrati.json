@@ -631,26 +631,27 @@
       "label": "Completamento singola verifica",
       "inputEvents": [
         {
+          "eventName": "onLoadSomministrazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "SELECT case when somministrazione_completata='Sondaggio completo' then '#FF6347'::varchar else '#ADFF2F'::varchar end as somministrazione_completata_background_color  FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;;"
+        },
+        {
           "eventName": "onSaveSomministrazione",
           "condition": "none",
           "values": [],
           "actionType": "query_style",
           "styleAttribute": "background_color",
-          "queryFunct": "SELECT colore_somministrazione_completa as somministrazione_completata_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+          "queryFunct": "SELECT case when somministrazione_completata='Sondaggio completo' then '#FF6347'::varchar else '#ADFF2F'::varchar end as somministrazione_completata_background_color  FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;;"
         },
         {
           "eventName": "onSaveSomministrazione",
           "condition": "none",
           "values": [],
           "actionType": "query",
-          "queryFunct": "SELECT sondaggio_completato as somministrazione_completata FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
-        },
-        {
-          "eventName": "onLoadSomministrazione",
-          "condition": "none",
-          "values": [],
-          "actionType": "query",
-          "queryFunct": "SELECT sondaggio_completato as somministrazione_completata FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+          "queryFunct": "SELECT somministrazione_completata FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
         }
       ],
       "newLine": false,
@@ -675,14 +676,14 @@
           "condition": "none",
           "values": [],
           "actionType": "query",
-          "queryFunct": "select punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+          "queryFunct": "select punteggio_description FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
         },
         {
           "eventName": "onLoadSomministrazione",
           "condition": "none",
           "values": [],
           "actionType": "query",
-          "queryFunct": "select punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+          "queryFunct": "select punteggio_description FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
         }
       ],
       "size": 1.25
@@ -705,14 +706,14 @@
           "condition": "none",
           "values": [],
           "actionType": "query",
-          "queryFunct": "select round(percentuale,2) as ris_percentuale from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+          "queryFunct": "select ris_percentuale FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
         },
         {
           "eventName": "onLoadSomministrazione",
           "condition": "none",
           "values": [],
           "actionType": "query",
-          "queryFunct": "select round(percentuale,2) as ris_percentuale from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+          "queryFunct": "select ris_percentuale FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
         }
       ],
       "size": 0.75
@@ -736,7 +737,7 @@
           "values": [],
           "actionType": "query_style",
           "styleAttribute": "background_color",
-          "queryFunct": "SELECT codice_colore as giudizio_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+          "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$)) as giudizio_background_color;"
         },
         {
           "eventName": "onSaveSomministrazione",
@@ -744,21 +745,14 @@
           "values": [],
           "actionType": "query_style",
           "styleAttribute": "background_color",
-          "queryFunct": "SELECT codice_colore as giudizio_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+          "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$)) as giudizio_background_color;"
         },
         {
           "eventName": "onSaveSomministrazione",
           "condition": "none",
           "values": [],
           "actionType": "query",
-          "queryFunct": "SELECT giudizio FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
-        },
-        {
-          "eventName": "onLoadSomministrazione",
-          "condition": "none",
-          "values": [],
-          "actionType": "query",
-          "queryFunct": "SELECT giudizio FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+          "queryFunct": "select giudizio from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
         }
       ],
       "size": 1.5
