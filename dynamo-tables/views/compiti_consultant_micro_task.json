@@ -344,32 +344,7 @@
       "readOnly": false,
       "sameOrigin": false
     },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": true,
-      "textareaHeight": "L",
-      "isPrimary": false,
-      "key": "note",
-      "insertUpdateFunct": "select coalesce('£note£', '£titolo£')",
-      "inputEvents": [
-        {
-          "eventName": "change_titolo",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select coalesce('£note£', '£titolo£')"
-        }
-      ],
-      "label": "Descrizione estesa",
-      "newLine": true,
-      "readOnly": false,
-      "size": 10
-    },
-    {
+     {
       "autoGenerate": false,
       "format": {
         "value": "0",
@@ -387,6 +362,60 @@
       "format": {
         "viewType": "subform",
         "subform_keys": [
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "textarea"
+            },
+            "isHidden": false,
+            "textareaHeight": "L",
+            "isPrimary": false,
+            "key": "note",
+            "insertUpdateFunct": "select coalesce('£note£', '£titolo£')",
+            "inputEvents": [
+              {
+                "eventName": "change_titolo",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select coalesce('£note£', '£titolo£')"
+              }
+            ],
+            "label": "Descrizione estesa",
+            "newLine": false,
+            "readOnly": false,
+            "size": 7
+          },      
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "budgeted_time",
+            "label": "Tempo preventivato (min.)",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "invested_time",
+            "label": "Tempo investito (min.)",
+            "queryFunct": "select sum(coalesce(durata,0)) from entrasp.consuntivazioni where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$",
+            "newLine": true,
+            "readOnly": false,
+            "size": 1.5
+          },
           {
             "autoGenerate": false,
             "format": {
@@ -1027,6 +1056,82 @@
         "confirmAction": false,
         "onSuccessAction": "reload"
       }
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "codice_azienda_s",
+      "format": {
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Azienda",
+      "newLine": false,
+      "queryCond": "codice_azienda='€codice_azienda_s€'"
+    },
+    {
+      "fieldName": "stato",
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "stato='€stato€'"
+    },
+    {
+      "fieldName": "note_search",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Note/Titolo",
+      "newLine": false,
+      "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
+    },
+    {
+      "fieldName": "codice_compito_s",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Codice Compito",
+      "newLine": false,
+      "queryCond": "codice_compito=$codice_compito_s$"
+    },
+    {
+      "fieldName": "titolo",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Titolo",
+      "newLine": true,
+      "queryCond": "titolo=$titolo$"
+    },
+    {
+      "fieldName": "id_tipo_segnalazione",
+      "format": {
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "ID Tipo Segnal.",
+      "newLine": false,
+      "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione$"
+    },
+    {
+      "fieldName": "id_centro_gest",
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id, codice_azienda||'-'||entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.compiti order by codice_azienda;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Centro Gestionale",
+      "newLine": false,
+      "queryCond": "id_centro_gest=$id_centro_gest$"
     }
   ],
   "querySuffixes": {
