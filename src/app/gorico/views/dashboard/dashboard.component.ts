@@ -8,6 +8,7 @@ import { ToastService } from 'app/gorico/services/toast.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 import { ReportService } from 'app/gorico/services/report.service';
 import { Subscription } from 'rxjs';
+import { Report } from 'webdatarocks';
 
 
 export interface DashboardParams {
@@ -43,7 +44,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
     @ViewChild('pivot1', { static: true }) child: WebDataRocksPivot;
 
-    @Input() height = 500;
+    @Input() height = '100%'; //500;
     @Input() viewHeader = false;
     @Input() tableParams: DashboardParams;
 
@@ -84,7 +85,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
             viewResults => {
                 if (viewResults.result === 'OK' && viewResults.data.table_keys != null) {
                     viewResults = viewResults.data;
-                    // keep only relevant global keys
+                // keep only relevant global keys
                     _this.tableParams.keys = _this.getCurrentKeys(viewResults.table_keys, _this.tableParams.keys);
                     // recover the dashboard labels
                     const inner_subscription = _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex, false).subscribe(
@@ -102,7 +103,16 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
                                             }
                                             results = _this.setOrder(results.data, labels);
                                             const report = _this.setReport(viewResults, _this.tableParams.entryIndex, results, lang, labels);
-                                            _this.child.webDataRocks.setReport(report);
+                                            const reportObject: Report = {
+                                                conditions: report.conditions,
+                                                dataSource: report.dataSource,
+                                                formats: report.formats,
+                                                // localization: report.localization,
+                                                // options: report.options,
+                                                slice: report.slice,
+                                                tableSizes: report.tableSizes
+                                            }
+                                            _this.child.webDataRocks.setReport(reportObject);
                                         }
                                         else {
                                             // Show error snackbar
@@ -297,14 +307,18 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
                     // get the right color, depending on type
                     let color = 'white';
                     if (colorsType === 'full') {
-                        color = colors[index] == null ? 'white' : colors[index].color;
+                        color = !colors[index] ? 'white' : colors[index].color;
                         index++;
                     } else if (colorsType === 'column') {
-                        color = colors[j - col_offset] == null ? 'white' : colors[j - col_offset].color;
+                        color = !colors[j - col_offset] ? 'white' : colors[j - col_offset].color;
                     } else if (colorsType === 'row') {
-                        color = colors[i - 2] == null ? 'white' : colors[i - 2].color;
+                        color = !colors[i - 2] ? 'white' : colors[i - 2].color;
                     }
                     const item = JSON.parse(JSON.stringify(model)); // copy the object
+                    if(!color) {
+                        color = 'white';
+                        //console.log(color);
+                    }
                     if (color.charAt(0) !== '#') {  // remove capital leading char if not already as hex
                         color = color.charAt(0).toLowerCase() + color.substring(1);
                     }
