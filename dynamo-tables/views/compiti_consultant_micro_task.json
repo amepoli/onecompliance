@@ -53,95 +53,7 @@
       "readOnly": false,
       "size": 2
     },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "select id_tipo_segnalazione as id, codice_azienda||'-'||descrizione as name from entrasp.tipi_segnalazioni where codice_azienda=$codice_azienda$ order by codice_azienda, id_tipo_segnalazione;",
-        "options": [],
-        "viewType": "combobox",
-        "value": 100,
-        "validations": [
-          {
-            "message": "Inserire almeno un tipo",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": true,
-      "insertUpdateFunct": "select coalesce(£id_tipo_segnalazione£, 100)",
-      "isPrimary": false,
-      "inputEvents": [
-        {
-          "eventName": "change_azienda",
-          "actionType": "query",
-          "queryFunct": "select coalesce(£id_tipo_segnalazione£, 100)",
-          "condition": "none",
-          "values": []
-        }
-      ],
-      "key": "id_tipo_segnalazione",
-      "label": "Tipo Segnalazione",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "label": "Azienda fatturante",
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_azienda_fatturante",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text",
-        "value": "A"
-      },
-      "outputEvent": {
-        "eventName": "codice_colore_change_compiti",
-        "eventTrigger": "select"
-      },
-      "inputEvents": [
-        {
-          "eventName": "codice_colore_change_compiti",
-          "condition": "none",
-          "values": [],
-          "actionType": "query_style",
-          "styleAttribute": "background_color",
-          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='€stato€'"
-        },
-        {
-          "eventName": "codice_colore_change_compiti2",
-          "condition": "none",
-          "values": [],
-          "actionType": "query_style",
-          "styleAttribute": "font_color",
-          "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='€stato€'"
-        }
-      ],
-      "label": "Stato",
-      "key": "stato",
-      "readOnly": false,
-      "isHidden": true,
-      "isPrimary": false,
-      "newLine": false,
-      "size": 1
-    },
-    {
+   {
       "autoGenerate": false,
       "format": {
         "dataType": "date",
@@ -158,44 +70,12 @@
       "size": 1
     },
     {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part=(select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$);",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_responsabile",
-      "insertUpdateFunct": "coalesce(£id_responsabile£, entrasp.user_current_azienda((€global_id_anagrafiche€)::text, $codice_azienda$))",
-      "inputEvents": [
-        {
-          "eventName": "change_azienda",
-          "actionType": "query",
-          "queryFunct": "select coalesce(£id_responsabile£, entrasp.user_current_azienda((€global_id_anagrafiche€)::text, $codice_azienda$));",
-          "condition": "none",
-          "values": []
-        },
-        {
-          "eventName": "compiti_consultant_load",
-          "actionType": "query",
-          "queryFunct": "select coalesce(£id_responsabile£, entrasp.user_current_azienda((€global_id_anagrafiche€)::text, $codice_azienda$));",
-          "condition": "none",
-          "values": []
-        }
-      ],
-      "label": "ID Responsabile",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2
-    },
-    {
       "autoGenerate": true,
       "format": {
         "dataType": "text",
         "viewType": "input"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
       "key": "codice_compito",
       "label": "Codice Segnalazione",
@@ -218,50 +98,6 @@
       "newLine": true,
       "readOnly": false,
       "size": 4
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_chiusura",
-      "label": "Data Chiusura",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_competenza",
-      "label": "Data Competenza",
-      "insertUpdateFunct": "select date_trunc('year', current_date::date) + interval '12 month' - interval '1 day'",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-      "label": "Centro Gestionale",
-      "newLine": true,
-      "readOnly": false,
-      "size": 3
     },
     {
       "autoGenerate": false,
@@ -337,6 +173,20 @@
         "eventName": "activate_maggiori_dettagli",
         "eventTrigger": "press"
       },
+      "inputEvents": [
+        {
+          "actionType": "hide",
+          "eventName": "activate_maggiori_dettagli",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "show",
+          "eventName": "hide_maggiori_dettagli",
+          "condition": "none",
+          "values": []
+        }
+      ],
       "style": {
         "background_color": "#25599C",
         "font_color": "white"
@@ -344,7 +194,43 @@
       "readOnly": false,
       "sameOrigin": false
     },
-     {
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "hide_maggiori_dettagli_k",
+      "label": "Nascondi dettagli",
+      "newLine": true,
+      "size": 1.5,
+      "outputEvent": {
+        "eventName": "hide_maggiori_dettagli",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "activate_maggiori_dettagli",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "eventName": "hide_maggiori_dettagli",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
       "autoGenerate": false,
       "format": {
         "value": "0",
@@ -372,21 +258,12 @@
             "textareaHeight": "L",
             "isPrimary": false,
             "key": "note",
-            "insertUpdateFunct": "select coalesce('£note£', '£titolo£')",
-            "inputEvents": [
-              {
-                "eventName": "change_titolo",
-                "actionType": "query",
-                "condition": "none",
-                "values": [],
-                "queryFunct": "select coalesce('£note£', '£titolo£')"
-              }
-            ],
+            "insertUpdateFunct": "coalesce('£note£', '£titolo£')",
             "label": "Descrizione estesa",
             "newLine": false,
             "readOnly": false,
             "size": 7
-          },      
+          },
           {
             "autoGenerate": false,
             "format": {
@@ -528,6 +405,62 @@
           {
             "autoGenerate": false,
             "format": {
+              "comboQuery": "select id_tipo_segnalazione as id, codice_azienda||'-'||descrizione as name from entrasp.tipi_segnalazioni where codice_azienda=$codice_azienda$ order by codice_azienda, id_tipo_segnalazione;",
+              "options": [],
+              "viewType": "combobox",
+              "value": 100
+            },
+            "isHidden": false,
+            "insertUpdateFunct": "select coalesce(£id_tipo_segnalazione£, 100)",
+            "isPrimary": false,
+            "key": "id_tipo_segnalazione",
+            "label": "Tipo Segnalazione",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text",
+              "value": "A"
+            },
+            "outputEvent": {
+              "eventName": "codice_colore_change_compiti",
+              "eventTrigger": "select"
+            },
+            "inputEvents": [
+              {
+                "eventName": "codice_colore_change_compiti",
+                "condition": "none",
+                "values": [],
+                "actionType": "query_style",
+                "styleAttribute": "background_color",
+                "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='€stato€'"
+              },
+              {
+                "eventName": "codice_colore_change_compiti2",
+                "condition": "none",
+                "values": [],
+                "actionType": "query_style",
+                "styleAttribute": "font_color",
+                "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='€stato€'"
+              }
+            ],
+            "label": "Stato",
+            "key": "stato",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2
+          },
+          {
+            "autoGenerate": false,
+            "format": {
               "viewType": "button"
             },
             "isHidden": false,
@@ -535,7 +468,7 @@
             "key": "chiudi_compito",
             "label": "Chiudi Segnalazione",
             "newLine": false,
-            "size": 5,
+            "size": 1.5,
             "outputEvent": {
               "eventName": "chiudi_segnalazione",
               "eventTrigger": "press"
@@ -613,8 +546,8 @@
             "isPrimary": false,
             "key": "riapri_compito",
             "label": "Riapri Segnalazione",
-            "newLine": true,
-            "size": 5,
+            "newLine": false,
+            "size": 1.5,
             "outputEvent": {
               "eventName": "riapri_segnalazione",
               "eventTrigger": "press"
@@ -686,6 +619,21 @@
           {
             "autoGenerate": false,
             "format": {
+              "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "newLine": true,
+            "readOnly": false,
+            "size": 3
+          },
+          {
+            "autoGenerate": false,
+            "format": {
               "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
               "options": [],
               "viewType": "combobox",
@@ -698,45 +646,6 @@
             "newLine": false,
             "readOnly": false,
             "size": 2
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
-              "options": [],
-              "viewType": "combobox",
-              "dataType": "text",
-              "value": "A"
-            },
-            "outputEvent": {
-              "eventName": "codice_colore_change_compiti",
-              "eventTrigger": "select"
-            },
-            "inputEvents": [
-              {
-                "eventName": "codice_colore_change_compiti",
-                "condition": "none",
-                "values": [],
-                "actionType": "query_style",
-                "styleAttribute": "background_color",
-                "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='€stato€'"
-              },
-              {
-                "eventName": "codice_colore_change_compiti2",
-                "condition": "none",
-                "values": [],
-                "actionType": "query_style",
-                "styleAttribute": "font_color",
-                "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='€stato€'"
-              }
-            ],
-            "label": "Stato",
-            "key": "stato",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "size": 1
           },
           {
             "autoGenerate": false,
@@ -771,20 +680,6 @@
             "size": 2
           },
           {
-            "autoGenerate": true,
-            "format": {
-              "dataType": "text",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "codice_compito",
-            "label": "Codice Segnalazione",
-            "newLine": false,
-            "readOnly": true,
-            "size": 1
-          },
-          {
             "autoGenerate": false,
             "format": {
               "dataType": "date",
@@ -812,21 +707,6 @@
             "newLine": false,
             "readOnly": false,
             "size": 1.5
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-              "options": [],
-              "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_centro_gest",
-            "label": "Centro Gestionale",
-            "newLine": true,
-            "readOnly": false,
-            "size": 3
           }
         ]
       },
@@ -835,17 +715,13 @@
           "actionType": "show",
           "condition": "none",
           "eventName": "activate_maggiori_dettagli",
-          "values": [
-            "P"
-          ]
+          "values": []
         },
         {
-          "actionType": "show",
-          "condition": "equalTo",
-          "eventName": "tipo_soggetto_load",
-          "values": [
-            "P"
-          ]
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "hide_maggiori_dettagli",
+          "values": []
         }
       ],
       "isHidden": true,
@@ -918,7 +794,7 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "key": "stato",
       "label": "Stato",
@@ -944,7 +820,7 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
       "key": "codice_compito",
       "label": "Codice Compito"
@@ -1123,7 +999,7 @@
       "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione$"
     },
     {
-      "fieldName": "id_centro_gest",
+      "fieldName": "id_centro_gest_s",
       "format": {
         "comboQuery": "SELECT id_centro_gest AS id, codice_azienda||'-'||entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.compiti order by codice_azienda;",
         "options": [],
@@ -1131,7 +1007,7 @@
       },
       "label": "Centro Gestionale",
       "newLine": false,
-      "queryCond": "id_centro_gest=$id_centro_gest$"
+      "queryCond": "id_centro_gest=$id_centro_gest_s$"
     }
   ],
   "querySuffixes": {
