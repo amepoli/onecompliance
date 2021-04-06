@@ -30,14 +30,29 @@
 			"type": "postProcessing"
 		},
 		{
+			"operation": "delete",
+			"type": "main",
+			"queryString": "select entrasp.progetto_fase_delete($codice_azienda$, $id_fase$);"
+		},
+		{
 			"operation": "update",
 			"queryString": "select entrasp.progetti_fasi_order($codice_azienda$, $id_progetto$, $id_fase$);",
 			"type": "postProcessing"
 		},
 		{
 			"operation": "selectTable",
-			"queryString": "select pf.*, (select case when id_somministrazione is null then false else true end as visible_button_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select case when id_somministrazione is null then false else true end as visible_button_modello_test from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio  from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$",
+			"queryString": "select pf.*, true as delete_fase, (select case when id_somministrazione is null then false else true end as visible_button_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select case when id_somministrazione is null then false else true end as visible_button_modello_test from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio  from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$",
 			"type": "main"
+		}
+	],
+	"messages": [
+		{
+			"viewType": "form",
+			"formMessageType": "delete",
+			"message": {
+				"title": "Cancellazione fase e sondaggio",
+				"text": "Sei sicuro di voler cancellare la fase, il sondaggio associato e tutte le risposte?"
+			}
 		}
 	],
 	"querySuffixes": {
@@ -100,7 +115,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT id_fase AS id, id_fase||'-'||codice||'-'||titolo AS name FROM entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$;",
+				"comboQuery": "SELECT id_fase AS id, id_fase||'-'||codice||'-'||titolo AS name FROM entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$ and id_progetto=£id_progetto£;",
 				"options": [],
 				"viewType": "combobox"
 			},
@@ -439,9 +454,9 @@
 				"viewType": "combobox",
 				"dataType": "text"
 			},
-			"fieldName": "id_fase_s",
+			"fieldName": "id_fase_sup_s",
 			"newLine": false,
-			"queryCond": "(pf.id_fase=$id_fase_s$ or pf.id_fase_sup=$id_fase_s$)"
+			"queryCond": "(pf.id_fase=$id_fase_sup_s$ or pf.id_fase_sup=$id_fase_sup_s$)"
 		},
 		{
 			"fieldName": "flag_principali",
@@ -502,6 +517,45 @@
 			"key": "id_fase",
 			"label": "id_fase"
 		},
+		{
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "key": "delete_fase",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "delete_icon"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "progetti_fasi",
+                "viewType": "form",
+				"confirmAction": true,
+				"confirmMessage": {
+					"text": "Sei sicuro di voler cancellare la fase, il sondaggio associato e tutte le risposte?",
+					"title": "Conferma cancellazione fase e sondaggio"
+				},
+                "query": "select entrasp.progetto_fase_delete('£codice_azienda£', £id_fase£)",
+                "action": "query",
+		        "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_fase",
+                        "destination": "id_fase"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
 		{
 			"format": {
 				"dataType": "number"
@@ -691,7 +745,7 @@
 				{
 					"value": "Parzialmente favorevole",
 					"font_color": "yellow",
-					"font_weight": "500"
+					"font_weight": "#fde910"
 				},
 				{
 					"value": "Parzialmente sfavorevole",
