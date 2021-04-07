@@ -9,6 +9,7 @@ import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service
 import { ReportService } from 'app/gorico/services/report.service';
 import { Subscription } from 'rxjs';
 import { Report } from 'webdatarocks';
+import { DialogService } from 'app/gorico/services/dialog.service';
 
 
 export interface DashboardParams {
@@ -40,7 +41,8 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         private authService: AuthService,
         private _toastService: ToastService,
         private _console: ConsoleLoggerService,
-        private _reportService: ReportService) { }
+        private _reportService: ReportService,
+        private _dialogService: DialogService) { }
 
     @ViewChild('pivot1', { static: true }) child: WebDataRocksPivot;
 
@@ -75,69 +77,85 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     }
 
     onReportComplete(): void {
-
         const _this = this;
+        
+        _this._dialogService.showLoadingDialog("Loading dashboard", "Please wait...");
         const lang = italiano;
         const company = _this.authService.getCurrentCompany();
         _this.child.webDataRocks.off('reportcomplete');
 
         const subscription = _this.backendService.getView(_this.tableParams.entryName, company, _this.tableParams.keys).subscribe(
             viewResults => {
-                if (viewResults.result === 'OK' && viewResults.data.table_keys != null) {
-                    viewResults = viewResults.data;
-                // keep only relevant global keys
-                    _this.tableParams.keys = _this.getCurrentKeys(viewResults.table_keys, _this.tableParams.keys);
-                    // recover the dashboard labels
-                    const inner_subscription = _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex, false).subscribe(
-                        response => {
-                            _this._console.log(response);
-                            if (response.result === 'OK') {
-                                const labels = response.data;
-                                // now recover the dashboard data
-                                const inner_subscription2 = _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, null, false).subscribe(
-                                    results => {
-                                        _this._console.log(results);
-                                        if (results.result === 'OK') {
-                                            if (results.data != null && results.data.table_data != null) {
-                                                results.data = results.data.table_data;
+                try{
+                    if (viewResults.result === 'OK' && viewResults.data.table_keys != null) {
+                        viewResults = viewResults.data;
+                        // keep only relevant global keys
+                        _this.tableParams.keys = _this.getCurrentKeys(viewResults.table_keys, _this.tableParams.keys);
+                        // recover the dashboard labels
+                        const inner_subscription = _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex, false).subscribe(
+                            response => {
+                                _this._console.log(response);
+                                if (response.result === 'OK') {
+                                    const labels = response.data;
+                                    // now recover the dashboard data
+                                    const inner_subscription2 = _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, null, false).subscribe(
+                                        results => {
+                                            _this._console.log(results);
+                                            if (results.result === 'OK') {
+                                                if (results.data != null && results.data.table_data != null) {
+                                                    results.data = results.data.table_data;
+                                                }
+                                                results = _this.setOrder(results.data, labels);
+                                                const report = _this.setReport(viewResults, _this.tableParams.entryIndex, results, lang, labels);
+                                                const reportObject: Report = {
+                                                    conditions: report.conditions,
+                                                    dataSource: report.dataSource,
+                                                    formats: report.formats,
+                                                    // localization: report.localization,
+                                                    options: report.options,
+                                                    slice: report.slice,
+                                                    // tableSizes: report.tableSizes
+                                                }
+                                                _this.child.webDataRocks.setReport(reportObject);
+                                                _this._dialogService.closeDialog();
                                             }
-                                            results = _this.setOrder(results.data, labels);
-                                            const report = _this.setReport(viewResults, _this.tableParams.entryIndex, results, lang, labels);
-                                            const reportObject: Report = {
-                                                conditions: report.conditions,
-                                                dataSource: report.dataSource,
-                                                formats: report.formats,
-                                                // localization: report.localization,
-                                                // options: report.options,
-                                                slice: report.slice,
-                                                tableSizes: report.tableSizes
+                                            else {
+                                                _this._dialogService.closeDialog();
+                                                // Show error snackbar
+                                                _this._toastService.showErrorToast(results.reason);
                                             }
-                                            _this.child.webDataRocks.setReport(reportObject);
-                                        }
-                                        else {
-                                            // Show error snackbar
-                                            _this._toastService.showErrorToast(results.reason);
-                                        }
-                                    });
-                                _this.subscriptions.push(inner_subscription2);
-                            }
-                            else {
-                                // Show error snackbar
-                                _this._toastService.showErrorToast(response.reason);
-                            }
-                        }, error => {
-                            // Error occured!
-                            _this._toastService.showErrorToast("An error occured!", error);
+                                        });
+                                    _this.subscriptions.push(inner_subscription2);
+                                }
+                                else {
+                                    _this._dialogService.closeDialog();
+                                    // Show error snackbar
+                                    _this._toastService.showErrorToast(response.reason);
+                                }
+                            }, error => {
+                                _this._dialogService.closeDialog();
+                                _this._toastService.showErrorToast("An error occured!", error);
 
-                        });
+                            });
 
-                    _this.subscriptions.push(inner_subscription);
+                        _this.subscriptions.push(inner_subscription);
+                    }
+                    else {
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showErrorToast("An error occured!", viewResults.reason);
+                    }
                 }
-                else {
-                    // Show error snackbar
-                    _this._toastService.showErrorToast(viewResults.reason);
+                catch(e) {
+                    _this._dialogService.closeDialog();
+                    _this._toastService.showErrorToast("An error occured!", e);
                 }
-            });
+
+            },
+            error => {
+                _this._dialogService.closeDialog();
+                _this._toastService.showErrorToast("An error occured!", error);
+            }
+        );
 
         _this.subscriptions.push(subscription);
     }

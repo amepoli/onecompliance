@@ -74,8 +74,16 @@ export class HelperService {
     public static getFormattedDate(dateTime) {
         // Example formatted date
         // "2017-09-25T00:00:00.000Z"
-        let formattedDate = `${dateTime.getFullYear()}-${this.getFormattedMonthDay(dateTime.getMonth() + 1)}-${this.getFormattedMonthDay(dateTime.getDate())}T00:00:00.000Z`;
-        return formattedDate;
+        let date = new Date(dateTime);
+        //We use dayCorrector to remove the timezone. We want brut date without any timezone
+        let dayCorrector = (date.getHours()>12) ? (1) : (0); //(date.getHours()<=12) ? (-1) : (0);
+        date.setDate(date.getDate()+dayCorrector);
+        let dateFinal = `${date.getFullYear()}-${this.getFormattedMonthDay(date.getMonth() + 1)}-${this.getFormattedMonthDay(date.getDate())}T00:00:00.000Z`;
+        return dateFinal;
+
+        // Old method
+        // let formattedDate = `${dateTime.getFullYear()}-${this.getFormattedMonthDay(dateTime.getMonth() + 1)}-${this.getFormattedMonthDay(dateTime.getDate())}T00:00:00.000Z`;
+        // return formattedDate;
     }
 
     /**
