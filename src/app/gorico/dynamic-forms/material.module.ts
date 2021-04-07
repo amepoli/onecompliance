@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -43,6 +43,10 @@ import { MatSelectModule } from '@angular/material/select';
     MatOptionModule,
     MatCheckboxModule,
     MatRadioModule
-  ]
+  ],
+  providers: [
+    { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
+  ],
+
 })
 export class MaterialModule {}

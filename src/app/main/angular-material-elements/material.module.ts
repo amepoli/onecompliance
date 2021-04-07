@@ -37,7 +37,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
-import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 
 @NgModule({
     imports: [
@@ -119,7 +119,11 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
         MatToolbarModule,
         MatTooltipModule,
         MatTreeModule
-    ]
+    ],
+    providers: [
+        { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
+    ],
+
 })
 export class MaterialModule
 {

@@ -117,13 +117,13 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     const _this = this;
 
     // Extra work needed to convert date type input
-    if (_this.field.inputType === 'date') {
+    if (_this.field.inputType === 'date' || _this.field.inputType === 'datetime' || _this.field.inputType === 'time') {
       let dateValue: any = _this.group.get(_this.field.name).value;
-
+      let dateType = typeof dateValue;
       // Check if date in Moment type
-      if (dateValue != null && typeof dateValue === 'object') {
+      if (dateValue != null && dateType === 'object') {
         // Convert Moment to string
-        _this.field.value = HelperService.getFormattedDate(dateValue.toDate());
+        _this.field.value = HelperService.getFormattedDate(dateValue);
         _this.group.get(_this.field.name).setValue(_this.field.value);
       }
       else {
