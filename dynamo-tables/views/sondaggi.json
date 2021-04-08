@@ -2,7 +2,9 @@
     "$schema": "../views.schema.json",
     "businessObjectName": "sondaggi",
     "origin": "entrasp.sondaggi",
-    "dashboardTables": ["dashboard_sondaggi"],
+    "dashboardTables": [
+        "dashboard_sondaggi"
+    ],
     "outputEvents": [
         {
             "eventName": "onSaveSondaggio",
@@ -519,21 +521,21 @@
             "label": "Data Esecuzione",
             "inputEvents": [
                 {
-                  "eventName": "onSaveSondaggio",
-                  "actionType": "query",
-                  "queryFunct": "select 1",
-                  "condition": "none",
-                  "values": [],
-                  "outputEventWhenComplete": "data_esecuzione_update"
+                    "eventName": "onSaveSondaggio",
+                    "actionType": "query",
+                    "queryFunct": "select 1",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "data_esecuzione_update"
                 },
                 {
-                  "eventName": "data_esecuzione_update",
-                  "actionType": "query",
-                  "condition": "none",
-                  "values": [],
-                  "queryFunct": "update entrasp.sondaggi_somministrati ss set data_esecuzione=snd.data_esecuzione from entrasp.sondaggi snd, entrasp.modelli_test mt where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
+                    "eventName": "data_esecuzione_update",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.sondaggi_somministrati ss set data_esecuzione=snd.data_esecuzione from entrasp.sondaggi snd, entrasp.modelli_test mt where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
                 }
-              ],
+            ],
             "newLine": false,
             "size": 1.5,
             "readOnly": false
@@ -822,29 +824,29 @@
             ],
             "inputEvents": [
                 {
-                  "eventName": "onLoadSondaggio",
-                  "condition": "none",
-                  "values": [],
-                  "actionType": "query_style",
-                  "styleAttribute": "background_color",
-                  "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
                 },
                 {
-                  "eventName": "onSaveSondaggio",
-                  "condition": "none",
-                  "values": [],
-                  "actionType": "query_style",
-                  "styleAttribute": "background_color",
-                  "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
+                    "eventName": "onSaveSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
                 },
                 {
-                  "eventName": "onSaveSondaggio",
-                  "condition": "none",
-                  "values": [],
-                  "actionType": "query",
-                  "queryFunct": "select giudizio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
+                    "eventName": "onSaveSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select giudizio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
                 }
-              ],
+            ],
             "size": 1.5
         },
         {
@@ -1189,32 +1191,13 @@
         },
         {
             "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_sondaggio_parent",
-            "label": "Id Sondaggio Parent",
-            "width": "5%"
-        },
-        {
-            "format": {
-                "dataType": "number"
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_sondaggio_succ",
-            "label": "ID succ.",
-            "width": "5%"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_sondaggio_rif",
-            "label": "id_sondaggio_rif"
+            "key": "centro_gest",
+            "label": "Centro Gestionale",
+            "width": "8%"
         },
         {
             "format": {
@@ -1238,21 +1221,12 @@
         },
         {
             "format": {
-                "dataType": "date"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_esecuzione",
-            "label": "Data Esecuzione",
-            "width": "6%"
-        },
-        {
-            "format": {
                 "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
+            "queryFunct": "substring(titolo, 1, 100)",
             "label": "Titolo",
             "width": "23%"
         },
@@ -1385,16 +1359,6 @@
             "isPrimary": false,
             "key": "id_modello_test_vr",
             "label": "Versione"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "centro_gest",
-            "label": "Centro Gestionale",
-            "width": "8%"
         },
         {
             "format": {
