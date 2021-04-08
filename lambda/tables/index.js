@@ -424,6 +424,12 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
             });
     }
 
+    queryString = addQueryCond(queryString, additionalQueryCond);
+
+    if (queryString.slice(-1) === ';') {
+        queryString = queryString.slice(0, -1);  // remove the final ';'
+    }
+
     // add order by if present (for table view only
     if (orderBy != null && orderBy.key != null) {
         let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
@@ -442,7 +448,7 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
 
     queryString = queryString + ';';
 
-    queryString = replaceKeys(addQueryCond(queryString, additionalQueryCond), table_keys, keyTypes);
+    queryString = replaceKeys(queryString, table_keys, keyTypes);
 
     return {
         mainQuery: queryString,
@@ -1329,6 +1335,8 @@ async function getProfileData(profile) {
 
 
 function isAuthorized(entry_name, profileData) {
+
+    let allowed;
 
     if (profileData != null && profileData.tables != null) {
         let permissions = profileData.tables;
