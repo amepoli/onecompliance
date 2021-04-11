@@ -1,0 +1,267 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "dashboard_consuntivazioni",
+  "inheritsFrom": "consuntivazioni_consultant_list",
+  "predefinedQueries": [
+       {
+      "operation": "selectForm",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "insert",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by date_time_end desc limit 100"
+  },
+  "dashboards": [
+    {
+      "width": "900px",
+      "height": "310px",
+      "dashboardHeight": "330",
+      "dashboardWidth": "400",
+      "title": "ORE PER AZIENDA E ESECUTORE",
+      "conditions": [
+        {
+          "format": {
+            "backgroundColor": "white",
+            "color": "blak",
+            "fontFamily": "Arial",
+            "fontSize": "11px"
+          },
+          "formula": "!isNaN(#value)"
+        }
+      ],
+      "dataSource": {
+        "data": []
+      },
+      "labels": {
+        "colorsQuery": {
+          "query": "select 'black' as color",
+          "type": "column"
+        },
+        "rowsQuery": {
+          "key": "esecutore",
+          "query": "select distinct entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa) as label from entrasp.consuntivazioni"
+        },
+        "columnsQuery": {
+          "key": "codice_azienda",
+          "query": "select codice_azienda as label from entrasp.aziende"
+        }
+      },
+      "localization": "it",
+      "options": {
+        "drillThrough": false,
+        "grid": {
+          "showGrandTotals": "rows",
+          "showHeaders": false
+        }
+      },
+      "slice": {
+        "reportFilters": [
+          {
+            "uniqueName": "anno_esecuzione"
+          },
+          {
+            "uniqueName": "mese_esecuzione"
+          }
+        ],
+        "columns": [
+          {
+            "uniqueName": "Measures"
+          },
+          {
+            "uniqueName": "codice_azienda"
+          }
+        ],
+        "measures": [
+          {
+            "aggregation": "sum",
+            "availableAggregations": [
+              "sum",
+              "count"
+            ],
+            "uniqueName": "durata"
+          }
+        ],
+        "rows": [
+          {
+            "filter": {
+              "members": [],
+              "negation": true
+            },
+            "uniqueName": "Esecutore"
+          }
+        ]
+      }
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "anno_esecuzione",
+      "queryFunct": "date_part('year', date_time_begin)",
+      "label": "Anno Esec."
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "mese_esecuzione",
+      "queryFunct": "date_part('month', date_time_begin)",
+      "label": "Mese Esec."
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_cons",
+      "width": "5%",
+      "label": "Codice"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo_compito",
+      "width": "40%",
+      "queryFunct": "substring(entrasp.descrizione_consuntivazione(codice_azienda, id_cons), 1, 200)",
+      "label": "Titolo attività"
+    },
+    {
+      "format": {
+        "dataType": "datetime"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "date_time_begin",
+      "label": "Inizio",
+      "width": "9%"
+    },
+    {
+      "format": {
+        "dataType": "datetime"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "date_time_end",
+      "label": "Fine",
+      "width": "9%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "durata",
+      "queryFunct": "round(coalesce(durata,0)/60,2)",
+      "label": "Durata Intervento (ore)",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "durata_ft",
+      "queryFunct": "round(coalesce(durata_ft,0)/60,2)",
+      "label": "Durata Fatturabile (ore)",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "esecutore",
+      "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa)",
+      "label": "Esecutore",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_attivita",
+      "label": "codice_attivita"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_progetto",
+      "label": "id_progetto"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test",
+      "label": "id_modello_test"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_fase",
+      "label": "id_fase"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_sondaggio",
+      "label": "id_sondaggio"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_compito",
+      "label": "codice_compito"
+    }
+  ]
+}
