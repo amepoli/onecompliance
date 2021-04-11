@@ -3,6 +3,12 @@
   "origin": "entrasp.sondaggi_somministrati",
   "businessObjectName": "sondaggiSomministrati",
   "entryKey": "sondaggi_somministrati",
+  "formRowProperties": [
+    {
+        "propertyType": "readOnly",
+        "queryString": "select case when (stato='C' or (entrasp.somministrazione_belongs_user((€global_id_anagrafiche€)::text, $id_sondaggio$, $id_somministrazione$, $codice_azienda$)=false and '€global_profile€'!='admin')) then 'true' else 'false' end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+    }
+],
   "dashboardTables": [
     "dashboard_sondaggi"
   ],
