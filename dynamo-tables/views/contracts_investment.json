@@ -3,6 +3,9 @@
 	"entryKey": "contracts_investment",
 	"businessObjectName": "contratti",
 	"origin": "entrasp.contratti",
+	"dashboardTables": [
+		"dashboard_contracts_investment"
+	  ],
 	"predefinedQueries": [
 		{
 			"operation": "update",
@@ -13,11 +16,6 @@
 			"operation": "insert",
 			"type": "postProcessing",
 			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
-		},
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select id_contratto, codice_azienda, numero_contratto, id_cliente, entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as tipo_contratto, data_stipulazione,id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)) as giudizio, entrasp.anagrafica_key(id_cliente, codice_azienda, '|') as anagrafica_key from entrasp.contratti where codice_azienda=$codice_azienda$ and entrasp.anagrafica_key(id_cliente, codice_azienda, '|')=$anagrafica_key$"
 		}
 	],
 	"outputEvents": [
@@ -367,5 +365,6 @@
 			"key": "anagrafica_key",
 			"label": "anagrafica_key"
 		}
-	]
+	],
+	"querySuffixes": {"tableViewSuffix": "limit 100"}
 }
