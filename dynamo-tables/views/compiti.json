@@ -3,6 +3,9 @@
   "businessObjectName": "compiti",
   "origin": "entrasp.compiti",
   "entryKey": "compiti",
+  "dashboardTables": [
+    "dashboard_compiti"
+  ],
   "predefinedQueries": [
     {
       "operation": "selectForm",
@@ -29,7 +32,6 @@
       "type": "postProcessing",
       "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda"
     }
-    
   ],
   "form_keys": [
     {
@@ -40,11 +42,11 @@
         "viewType": "combobox",
         "validations": [
           {
-              "message": "Inserire almeno un tipo",
-              "name": "required",
-              "validator": "Validators.required"
+            "message": "Inserire almeno un tipo",
+            "name": "required",
+            "validator": "Validators.required"
           }
-      ]
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -179,20 +181,20 @@
       "size": 2.5
     },
     {
-        "autoGenerate": false,
-        "format": {
+      "autoGenerate": false,
+      "format": {
         "comboQuery": "SELECT codice_compito AS id, codice_compito||' - '||titolo AS name FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$ and codice_compito!='£codice_compito£';",
         "options": [],
         "viewType": "combobox",
         "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "codice_compito_parent",
-        "label": "Codice Segnalazione Parent",
-        "newLine": false,
-        "readOnly": false,
-        "size": 2.5
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_compito_parent",
+      "label": "Codice Segnalazione Parent",
+      "newLine": false,
+      "readOnly": false,
+      "size": 2.5
     },
     {
       "autoGenerate": false,
@@ -373,12 +375,12 @@
     {
       "fieldName": "flag_compiti_aperti",
       "format": {
-          "viewType": "checkbox"
+        "viewType": "checkbox"
       },
       "label": "Solo Principali",
       "newLine": false,
       "queryCond": "codice_compito_parent IS null"
-  }
+    }
   ],
   "subTables": [
     {
@@ -406,7 +408,7 @@
         {
           "parent": "codice_compito",
           "son": "codice_compito"
-        }        
+        }
       ],
       "label": "Rischi Associati"
     },
@@ -428,49 +430,49 @@
       "entryKey": "sondaggi_sub_of_compiti",
       "isHidden": false,
       "keys": [
-          {
-              "parent": "codice_azienda",
-              "son": "codice_azienda"
-          },
-          {
-              "parent": "codice_compito",
-              "son": "codice_compito"
-          }
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "codice_compito",
+          "son": "codice_compito"
+        }
       ],
       "label": "Sondaggi Associati",
       "type": "tableForm"
-  },
-  {
-    "entryKey": "somministrazioni_sub_of_compiti",
-    "isHidden": false,
-    "keys": [
+    },
+    {
+      "entryKey": "somministrazioni_sub_of_compiti",
+      "isHidden": false,
+      "keys": [
         {
-            "parent": "codice_azienda",
-            "son": "codice_azienda"
-        },
-        {
-            "parent": "codice_compito",
-            "son": "codice_compito"
-        }
-    ],
-    "label": "Verifiche associate"
-},
-{
-  "entryKey": "progetti_sub_of_compiti",
-  "isHidden": false,
-  "keys": [
-      {
           "parent": "codice_azienda",
           "son": "codice_azienda"
-      },
-      {
+        },
+        {
           "parent": "codice_compito",
           "son": "codice_compito"
-      }
-  ],
-  "label": "Progetti associati",
-  "type": "tableForm"
-}
+        }
+      ],
+      "label": "Verifiche associate"
+    },
+    {
+      "entryKey": "progetti_sub_of_compiti",
+      "isHidden": false,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "codice_compito",
+          "son": "codice_compito"
+        }
+      ],
+      "label": "Progetti associati",
+      "type": "tableForm"
+    }
   ],
   "table_keys": [
     {
@@ -618,14 +620,14 @@
       "isPrimary": false,
       "key": "cliente_desc",
       "label": "Cliente"
-    }    
-   ],
-   "exportQueries": {
+    }
+  ],
+  "exportQueries": {
     "tableQueries": [
-        {
-            "label": "Segnalazioni",
-            "queryString": "select codice_compito, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, titolo, note, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest,entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr(id_tipo_segnalazione, codice_azienda) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione!=0"
-        }
+      {
+        "label": "Segnalazioni",
+        "queryString": "select codice_compito, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, titolo, note, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest,entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr(id_tipo_segnalazione, codice_azienda) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione!=0"
+      }
     ]
-}
+  }
 }
