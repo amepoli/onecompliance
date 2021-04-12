@@ -798,11 +798,17 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
             value = '(' + genString + ')'; // pass the generation query string as value 
             keyType.dataType = keyType.viewType = null; // avoid to get further quotes added 
         } else if (keys[element.key] == null) {  // no value passed for the key
-            if (element.format.value) {
-                value = element.format.value; // use default value 
-                //keyType.dataType = keyType.viewType = null; // avoid to get further quotes added 
-            } else {
-                return;   // no value passed and no default, skip the key
+            // Save the null value of combobox if we are updating 
+            if (element.format != null && element.format.viewType === 'combobox' && !newRecord) {
+                value = keys[element.key];
+            }
+            else {
+                if (element.format.value) {
+                    value = element.format.value; // use default value 
+                    //keyType.dataType = keyType.viewType = null; // avoid to get further quotes added 
+                } else {
+                    return;   // no value passed and no default, skip the key
+                }
             }
         } else {
             value = keys[element.key];
@@ -877,7 +883,7 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
 }
 
 async function runInsertUpdatePostProcessingRowQueries(entry_params, keys, client) {
-    
+
     let postProcessQueriesAllRows = [];
 
     let entry_keys = entry_params.form_keys;
@@ -886,7 +892,7 @@ async function runInsertUpdatePostProcessingRowQueries(entry_params, keys, clien
 
     if (entry_params.predefinedQueries) {
         entry_params.predefinedQueries.forEach(query => {
-            if ((query.operation === "insert" || query.operation === "update") &&  query.type === "postProcessingAllRows") {
+            if ((query.operation === "insert" || query.operation === "update") && query.type === "postProcessingAllRows") {
                 postProcessQueriesAllRows.push(replaceKeys(query.queryString, keys, keyTypes));
             }
         });
