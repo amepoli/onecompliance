@@ -258,11 +258,11 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "probabilita_pre",
-      "label": "Probabilità Ante Presidi",
+      "label": "Probabilità Ante Presidi (%)",
       "newLine": false,
       "outputEvent": {
         "eventName": "probabilita_pre_change",
-        "eventTrigger": "change"
+        "eventTrigger": "blur"
       },
       "readOnly": false
     },
@@ -276,7 +276,7 @@
           "actionType": "query",
           "eventName": "probabilita_pre_change",
           "condition": "none",
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda, 'P', coalesce(probabilita_pre,0)) as probabilita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$, 'P', coalesce(£probabilita_pre£,0)) as probabilita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
           "values": []
         },
         {
@@ -284,7 +284,7 @@
           "eventName": "probabilita_pre_change",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'P', coalesce(probabilita_pre,0)) as probabilita_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'P', coalesce(£probabilita_pre£,0)) as probabilita_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "background_color"
         }
       ],
@@ -305,11 +305,11 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "intensita_singola_pre",
-      "label": "Impatto Ante Presidi",
+      "label": "Impatto Ante Presidi (€)",
       "newLine": false,
       "outputEvent": {
         "eventName": "change_intensita_singola_pre",
-        "eventTrigger": "change"
+        "eventTrigger": "blur"
       },
       "readOnly": false
     },
@@ -323,7 +323,7 @@
           "actionType": "query",
           "eventName": "change_intensita_singola_pre",
           "condition": "none",
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda, 'I', coalesce(intensita_singola_pre,0)) as impatto_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$, 'I', coalesce(£intensita_singola_pre£,0)) as intensita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
           "values": []
         },
         {
@@ -331,7 +331,7 @@
           "eventName": "change_intensita_singola_pre",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'I', coalesce(intensita_singola_pre,0)) as intensita_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'I', coalesce(£intensita_singola_pre£,0)) as intensita_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "background_color"
         }
       ],
@@ -360,7 +360,7 @@
         },
         {
           "actionType": "update",
-          "eventName": "input_intensita_singola_pre",
+          "eventName": "change_intensita_singola_pre",
           "condition": "none",
           "values": [],
           "updateFunct": "(£probabilita_pre£/100*£intensita_singola_pre£).toFixed(2);"
@@ -369,7 +369,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "intensita_totale_pre",
-      "label": "Totale Ante Presidi",
+      "label": "Totale Ante Presidi (€)",
       "newLine": false,
       "outputEvent": {
         "eventName": "change_intensita_totale_pre",
@@ -385,7 +385,7 @@
       "inputEvents": [
         {
           "actionType": "query",
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'T', $intensita_totale_pre$) as intensita_totale_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$,'T', £intensita_totale_pre£) as intensita_totale_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "eventName": "change_intensita_totale_pre",
           "condition": "none",
           "values": []
@@ -395,7 +395,7 @@
           "eventName": "change_intensita_totale_pre",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', coalesce(intensita_totale_pre,0)) as intensita_totale_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'T', coalesce(£intensita_totale_pre£,0)) as intensita_totale_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "background_color"
         }
       ],
@@ -437,13 +437,13 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "probabilita_post",
-      "label": "Probabilità Post Presidi",
+      "label": "Probabilità Post Presidi (%)",
       "newLine": false,
       "outputEvent": {
         "eventName": "change_probabilita_post",
-        "eventTrigger": "change"
+        "eventTrigger": "blur"
       },
-      "readOnly": false
+      "readOnly": true
     },
     {
       "format": {
@@ -454,7 +454,7 @@
         {
           "actionType": "query",
           "eventName": "change_probabilita_post",
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda, 'P', coalesce(probabilita_post,0)) as probabilita_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda, 'P', coalesce(£probabilita_post£,0)) as probabilita_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
           "condition": "none",
           "values": []
         },
@@ -463,7 +463,7 @@
           "eventName": "change_probabilita_post",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'P', coalesce(probabilita_post,0)) as probabilita_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'P', coalesce(£probabilita_post£,0)) as probabilita_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "background_color"
         }
       ],
@@ -484,13 +484,13 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "intensita_singola_post",
-      "label": "Impatto Post Presidi",
+      "label": "Impatto Post Presidi (€)",
       "newLine": false,
       "outputEvent": {
         "eventName": "change_intensita_post",
-        "eventTrigger": "change"
+        "eventTrigger": "blur"
       },
-      "readOnly": false
+      "readOnly": true
     },
     {
       "format": {
@@ -502,7 +502,7 @@
           "actionType": "query",
           "eventName": "change_intensita_post",
           "condition": "none",
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda, 'I', coalesce(intensita_singola_post,0)) as impatto_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda, 'I', coalesce(£intensita_singola_post£,0)) as impatto_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
           "values": []
         },
         {
@@ -510,7 +510,7 @@
           "eventName": "change_intensita_post",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'I', coalesce(intensita_singola_post,0)) as impatto_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'I', coalesce(£intensita_singola_post£,0)) as impatto_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "background_color"
         }
       ],
@@ -552,9 +552,9 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "intensita_totale_post",
-      "label": "Totale Post Presidi",
+      "label": "Totale Post Presidi (€)",
       "newLine": false,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "format": {
@@ -567,14 +567,14 @@
           "eventName": "change_intensita_totale_post",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'T', $intensita_totale_post$) as intensita_totale_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
+          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'T', £intensita_totale_post£) as intensita_totale_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
         },
         {
           "actionType": "query_style",
           "eventName": "change_intensita_totale_post",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', $intensita_totale_post$) as intensita_totale_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', £intensita_totale_post£) as intensita_totale_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "background_color"
         }
       ],
@@ -614,7 +614,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "probabilita_post_rilevata",
-      "label": "Probabilità Rettificata",
+      "label": "Probabilità Rettificata (%)",
       "newLine": false,
       "outputEvent": {
         "eventName": "change_probabilita_rett",
@@ -633,14 +633,14 @@
           "eventName": "change_probabilita_rett",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce($probabilita_post_rilevata$,0)) as probabilita_rett_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
+          "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$,'P', coalesce(£probabilita_post_rilevata£,0)) as probabilita_rett_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
         },
         {
           "actionType": "query_style",
           "eventName": "change_probabilita_rett",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) as probabilita_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'P', coalesce(£probabilita_post_rilevata£,0)) as probabilita_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "background_color"
         },
         {
@@ -648,7 +648,7 @@
           "eventName": "change_probabilita_rett",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_flag_testo_chiaro(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) as probabilita_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_flag_testo_chiaro(codice_azienda,'P', coalesce(£probabilita_post_rilevata£,0)) as probabilita_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "font_color"
         }
       ],
@@ -669,7 +669,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "intensita_singola_post_rilevata",
-      "label": "Impatto rettificato",
+      "label": "Impatto rettificato (€)",
       "newLine": false,
       "outputEvent": {
         "eventName": "input_intensita_singola_post_rett",
@@ -695,7 +695,7 @@
           "eventName": "change_intensita_post",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'I', coalesce(intensita_singola_post_rilevata,0)) as intensita_singola_post_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'I', coalesce($intensita_singola_post_rilevata$,0)) as intensita_singola_post_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
           "styleAttribute": "background_color"
         }
       ],
@@ -716,7 +716,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "intensita_totale_post_rilevata",
-      "label": "Rischio Totale Rettificato",
+      "label": "Rischio Totale Rettificato (€)",
       "newLine": false,
       "outputEvent": {
         "eventName": "change_intensita_totale_post_rett",
