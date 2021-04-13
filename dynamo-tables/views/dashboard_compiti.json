@@ -14,6 +14,88 @@
       "queryString": "select codice_codifica_stato, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)as stato, codice_azienda, codice_compito, data_segnalazione, titolo, id_tipo_segnalazione, id_centro_gest from entrasp.compiti where codice_azienda='€global_codice_azienda€' and id_tipo_segnalazione!=0"
     }
   ],
+  "dashboards": [
+    {
+      "width": "900px",
+      "height": "310px",
+      "dashboardHeight": "330",
+      "dashboardWidth": "400",
+      "title": "DASH COMPITI",
+      "conditions": [
+        {
+          "format": {
+            "backgroundColor": "white",
+            "color": "blak",
+            "fontFamily": "Arial",
+            "fontSize": "11px"
+          },
+          "formula": "!isNaN(#value)"
+        }
+      ],
+      "dataSource": {
+        "data": []
+      },
+      "labels": {
+        "colorsQuery": {
+          "query": "select black as color",
+          "type": "column"
+        },
+        "columnsQuery": {
+          "key": "stato_rettificato",
+          "query": "select distinct entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO', codice) as label from entrasp.transcodifiche order by label"
+        },
+        "rowsQuery": {
+          "key": "centro_gest",
+          "query": "select distinct entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as label from entrasp.sondaggi"
+        }
+      },
+      "localization": "it",
+      "options": {
+        "drillThrough": false,
+        "grid": {
+          "showGrandTotals": "rows",
+          "showHeaders": false
+        }
+      },
+      "slice": {
+        "reportFilters": [
+          {
+            "uniqueName": "anno_esecuzione"
+          },
+          {
+            "uniqueName": "mese_esecuzione"
+          }
+        ],
+        "columns": [
+          {
+            "uniqueName": "Measures"
+          },
+          {
+            "uniqueName": "Stato_rettificato"
+          }
+        ],
+        "measures": [
+          {
+            "aggregation": "count",
+            "availableAggregations": [
+              "count",
+              "distinctcount"
+            ],
+            "uniqueName": "Stato_rettificato"
+          }
+        ],
+        "rows": [
+          {
+            "filter": {
+              "members": [],
+              "negation": true
+            },
+            "uniqueName": "Centro_gest"
+          }
+        ]
+      }
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,

@@ -286,8 +286,88 @@
 			"isHidden": false,
 			"isPrimary": true,
 			"newLine": false,
-			"size": 2
+			"size": 1.5
 		},
+		{
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "play_arrow",
+            "key": "play_time_report",
+            "label": "play_time_report",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "time_report_play",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "time_report_play",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, $codice_azienda$)",
+                    "outputEventWhenComplete": "after_time_report_play"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "stop",
+            "key": "stop_time_report",
+            "label": "stop_time_report",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "time_report_stop",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "time_report_stop",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
+                    "outputEventWhenComplete": "after_time_report_stop"
+                },
+                {
+                    "eventName": "after_time_report_play",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show",
+                    "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
+                },
+                {
+                    "eventName": "after_time_report_stop",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show",
+                    "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
+                },
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show",
+                    "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
+                }
+           
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
 		{
 			"autoGenerate": false,
 			"format": {
@@ -301,7 +381,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": true,
-			"size": 2
+			"size": 1.5
 		},
 		{
 			"autoGenerate": false,
@@ -462,23 +542,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "avvia_progetti",
-			"label": "Avvia Progetto",
-			"attributeFuncts": [
-				{
-					"attributeType": "style",
-					"styleAttribute": "background_color",
-					"queryString": "select case when count(id_progetto) = 0 then '#698EC2' else '#25599C' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-				},
-				{
-					"attributeType": "style",
-					"styleAttribute": "font_color",
-					"queryString": "select case when count(id_progetto) = 0 then '#5b635a' else 'white'  end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-				},
-				{
-					"attributeType": "readOnly",
-					"queryString": "select case when count(id_progetto) = 0  then false else true end as label from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$"
-				}
-			],
+			"label": "Avvia/aggiorna Progetto",
 			"newLine": false,
 			"outputEvent": {
 				"eventName": "progetti_avvia",
@@ -498,7 +562,7 @@
 					"outputEventWhenComplete": "formReload"
 				}
 			],
-			"readOnly": true,
+			"readOnly": false,
 			"sameOrigin": false,
 			"size": 1.3
 		},

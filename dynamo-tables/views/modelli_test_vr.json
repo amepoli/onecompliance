@@ -235,6 +235,86 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "buttonIcon": "play_arrow",
+            "key": "play_time_report",
+            "label": "play_time_report",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "time_report_play",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "time_report_play",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'modelli_test', $id_modello_test$, $codice_azienda$)",
+                    "outputEventWhenComplete": "after_time_report_play"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "stop",
+            "key": "stop_time_report",
+            "label": "stop_time_report",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "time_report_stop",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "time_report_stop",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
+                    "outputEventWhenComplete": "after_time_report_stop"
+                },
+                {
+                    "eventName": "after_time_report_play",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show",
+                    "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
+                },
+                {
+                    "eventName": "after_time_report_stop",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show",
+                    "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
+                },
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show",
+                    "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
+                }
+           
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "allinea_codici_esterni",
             "label": "Allin.Trasversale Mod.Verifica",
             "newLine": true,
