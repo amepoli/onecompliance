@@ -8,7 +8,18 @@
             "operation": "selectForm",
             "type": "preProcessing",
             "queryString": "update entrasp.presidi set codice_part='€global_codice_part€' WHERE codice_azienda=$codice_azienda$ AND id_presidio=$id_presidio$;"
-        }
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.rischi_presidi rp set pct_mitigazione_probabilita=pctmitigazioneprobabilita, pct_mitigazione_intensita_singola=pctmitigazioneintensitasingola, pct_mitigazione_probabilita_rettificata=pctmitigazioneprobabilita_rett, pct_mitigazione_intensita_singola_rettificata=pctmitigazioneintensitasingola_rett  from entrasp.rischio_presidi_value($codice_azienda$, $codice_rischio$) rpv where rp.codice_azienda=rpv.azienda and rp.id_presidio=rpv.idpresidio and rp.id_presidio=$id_presidio$ and rp.codice_azienda=$codice_azienda$;"
+          },
+          {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "update entrasp.rischi_presidi rp set pct_mitigazione_probabilita=pctmitigazioneprobabilita, pct_mitigazione_intensita_singola=pctmitigazioneintensitasingola, pct_mitigazione_probabilita_rettificata=pctmitigazioneprobabilita_rett, pct_mitigazione_intensita_singola_rettificata=pctmitigazioneintensitasingola_rett  from entrasp.rischio_presidi_value($codice_azienda$, $codice_rischio$) rpv where rp.codice_azienda=rpv.azienda and rp.id_presidio=rpv.idpresidio and rp.id_presidio=$id_presidio$ and rp.codice_azienda=$codice_azienda$;"
+          }
+      
     ],
     "form_keys": [
         {
@@ -231,7 +242,7 @@
     ],
     "subTables": [
         {
-            "entryKey": "rischi_associati_sub_of_presidi",
+            "entryKey": "rischi_sub_of_presidi",
             "keys": [
                 {
                     "parent": "id_presidio",

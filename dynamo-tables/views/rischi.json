@@ -19,13 +19,13 @@
     },
     {
       "operation": "update",
-      "type": "main",
-      "queryString": "select * from entrasp.rischi_net_value_update($codice_azienda$, $codice_rischio$);"
+      "type": "postProcessing",
+      "queryString": "select entrasp.rischi_net_value_update($codice_azienda$, $codice_rischio$);"
     },
     {
       "operation": "insert",
-      "type": "main",
-      "queryString": "select * from entrasp.rischi_net_value_update($codice_azienda$, $codice_rischio$);"
+      "type": "postProcessing",
+      "queryString": "select entrasp.rischi_net_value_update($codice_azienda$, $codice_rischio$);"
     }
   ],
   "messages": [
@@ -1208,6 +1208,12 @@
       "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I',intensita_singola_post)"
     }
   ],
+  "outputEvents": [
+    {
+      "eventTrigger": "onSave",
+      "eventName": "rischiReload"
+    }
+  ],
   "inputEvents": [
     {
       "actionTarget": {
@@ -1226,6 +1232,10 @@
       },
       "actionType": "navigate",
       "eventName": "navigate_to_rischio_new"
+    },
+    {
+      "actionType": "reload",
+      "eventName": "rischiReload"
     }
   ]
 }
