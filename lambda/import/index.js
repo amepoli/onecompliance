@@ -1365,6 +1365,30 @@ exports.handler = async (event, context) => {
 
                     console.log('queryString2', queryString);
 
+                    if (search_keys != null) {
+
+                        let search_params = entry_params.search_keys;
+                        let search_types = search_params.map(k => {
+                            let dataType = k.format.dataType ? k.format.dataType : '';
+                            return { key: k.fieldName, dataType: dataType };
+                        });
+
+                        console.log("Query so far: ", queryString);
+
+                        for (const key in search_keys) {
+                            if (search_keys.hasOwnProperty(key)) {
+                                let search_param = search_params.find(s => (s.fieldName === key));
+                                if (search_param != null && search_param.queryCond != null) {
+                                    let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
+                                    queryString = queryString + comma + fieldString;
+                                    comma = ' AND '; // needed only the first time if no table_
+                                }
+                            }
+                        }
+                    }
+
+                    console.log('queryString3', queryString);
+
                     queryData = await runQuery(queryString, client);
                     // console.log('queryData', queryData);
 
