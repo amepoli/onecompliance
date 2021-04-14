@@ -817,17 +817,22 @@ function getInsertUpdateQuery(entry_params, keys, newRecord) {
         queryString = queryString + comma + element.key;
         values[element.key] = value;
         if (!newRecord) { // values set immediately for UPDATE, later in the query for INSERT
+            if (value) {
+                let delimiter = isDataTypeString(keyType) ? '\'' : '';
+                if (value && value.id) { // combobox 
+                    value = value.id;
+                }
+                // if (keyType.viewType === 'combobox' && !value) {
+                //     value = 'null';
+                // }
+                // replace single quotes with double quotes in strings
+                value = ((keyType.dataType === 'text' && keyType.viewType === 'input') || keyType.viewType === 'textarea') ? value.replace(/'/g, "''") : value;
+                queryString = queryString + '=' + delimiter + value + delimiter;
+            }
+            else {
+                queryString = queryString + '=' + value;
 
-            let delimiter = isDataTypeString(keyType) ? '\'' : '';
-            if (value && value.id) { // combobox 
-                value = value.id;
             }
-            if (keyType.viewType === 'combobox' && !value) {
-                value = 'null';
-            }
-            // replace single quotes with double quotes in strings
-            value = (value == null) ? value : ((keyType.dataType === 'text' && keyType.viewType === 'input') || keyType.viewType === 'textarea') ? value.replace(/'/g, "''") : value;
-            queryString = queryString + '=' + delimiter + value + delimiter;
         }
         comma = ', ';
     });
