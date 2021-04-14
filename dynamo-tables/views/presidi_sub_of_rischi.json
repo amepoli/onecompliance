@@ -6,6 +6,21 @@
     "predefinedQueries": [
         {
             "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.rischi_presidi rp set pct_mitigazione_probabilita=pctmitigazioneprobabilita, pct_mitigazione_intensita_singola=pctmitigazioneintensitasingola, pct_mitigazione_probabilita_rettificata=pctmitigazioneprobabilita_rett, pct_mitigazione_intensita_singola_rettificata=pctmitigazioneintensitasingola_rett  from entrasp.rischio_presidi_value($codice_azienda$, $codice_rischio$) rpv where rp.codice_azienda=rpv.azienda and rp.id_presidio=rpv.idpresidio and rp.codice_rischio=$codice_rischio$ and rp.codice_azienda=$codice_azienda$;"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "update entrasp.rischi_presidi rp set pct_mitigazione_probabilita=pctmitigazioneprobabilita, pct_mitigazione_intensita_singola=pctmitigazioneintensitasingola, pct_mitigazione_probabilita_rettificata=pctmitigazioneprobabilita_rett, pct_mitigazione_intensita_singola_rettificata=pctmitigazioneintensitasingola_rett  from entrasp.rischio_presidi_value($codice_azienda$, $codice_rischio$) rpv where rp.codice_azienda=rpv.azienda and rp.id_presidio=rpv.idpresidio and rp.codice_rischio=$codice_rischio$ and rp.codice_azienda=$codice_azienda$;"
+        },
+        {
+            "operation": "update",
+            "queryString": "select entrasp.rischio_update_values($codice_azienda$, $codice_rischio$);",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "insert",
             "queryString": "select entrasp.rischio_update_values($codice_azienda$, $codice_rischio$);",
             "type": "postProcessing"
         }
@@ -234,7 +249,7 @@
         },
         {
             "format": {
-              "dataType": "number"
+                "dataType": "number"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -243,35 +258,35 @@
             "key": "delete_presidi_rischi",
             "label": "",
             "style": [
-              {
-                "button_icon": "delete",
-                "value": "delete_icon"
-              }
+                {
+                    "button_icon": "delete",
+                    "value": "delete_icon"
+                }
             ],
             "isButton": true,
             "buttonAction": {
-              "target": "presidi_sub_of_rischi",
-              "viewType": "form",
-              "query": "delete from entrasp.rischi_presidi where codice_azienda='£codice_azienda£' AND codice_rischio='£codice_rischio£' AND id_presidio=£id_presidio£",
-              "action": "query",
-              "keymap": [
-                {
-                  "source": "codice_azienda",
-                  "destination": "codice_azienda"
-                },
-                {
-                  "source": "id_presidio",
-                  "destination": "id_presidio"
-                },
-                {
-                  "source": "codice_rischio",
-                  "destination": "codice_rischio"
-                }
-              ],
-              "onSuccessAction": "reload"
+                "target": "presidi_sub_of_rischi",
+                "viewType": "form",
+                "query": "delete from entrasp.rischi_presidi where codice_azienda='£codice_azienda£' AND codice_rischio='£codice_rischio£' AND id_presidio=£id_presidio£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    },
+                    {
+                        "source": "codice_rischio",
+                        "destination": "codice_rischio"
+                    }
+                ],
+                "onSuccessAction": "reload"
             }
-          },
-          {
+        },
+        {
             "format": {
                 "dataType": "number"
             },
@@ -308,7 +323,7 @@
             "label": "% Prob. Mit.",
             "key": "pct_mitigazione_probabilita",
             "isHidden": false,
-            "width": "14%",
+            "width": "8%",
             "isPrimary": false
         },
         {
@@ -316,10 +331,10 @@
                 "dataType": "number",
                 "value": 0
             },
-            "label": "% Mit. Int. Sin.",
+            "label": "% Mit. Int.",
             "key": "pct_mitigazione_intensita_singola",
             "isHidden": false,
-            "width": "14%",
+            "width": "8%",
             "isPrimary": false
         },
         {
@@ -327,10 +342,32 @@
                 "dataType": "number",
                 "value": 0
             },
-            "label": "% Mit. Int. Tot.",
-            "key": "pct_mitigazione_intensita_totale",
+            "label": "%Mit.Prob.Rett.",
+            "key": "pct_mitigazione_probabilita_rettificata",
             "isHidden": false,
-            "width": "14%",
+            "width": "8%",
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "value": 0
+            },
+            "label": "% Mit.Int.Rett.",
+            "key": "pct_mitigazione_intensita_singola_rettificata",
+            "isHidden": false,
+            "width": "8%",
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "Note",
+            "key": "annotazioni",
+            "isHidden": false,
+            "queryFunct": "substring(annotazioni, 1, 100)",
+            "width": "8%",
             "isPrimary": false
         },
         {
