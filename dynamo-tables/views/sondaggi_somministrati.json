@@ -268,6 +268,93 @@
     {
       "autoGenerate": false,
       "format": {
+          "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "play_arrow",
+      "key": "play_time_report",
+      "label": "play_time_report",
+      "newLine": false,
+      "outputEvent": {
+          "eventName": "time_report_play",
+          "eventTrigger": "press"
+      },
+      "inputEvents": [
+          {
+              "eventName": "time_report_play",
+              "actionType": "query",
+              "condition": "none",
+              "values": [],
+              "queryFunct": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'sondaggi', $id_sondaggio$, $codice_azienda$) as play_time_report",
+              "outputEventWhenComplete": "after_time_report_play"
+          }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.5
+  },
+  {
+      "autoGenerate": false,
+      "format": {
+          "viewType": "checkbox",
+          "dataType": "boolean"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "time_report_stop_active",
+      "label": "time_report_stop_active",
+      "newLine": false,
+      "readOnly": false,
+      "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text)"
+  },
+  {
+      "autoGenerate": false,
+      "format": {
+          "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "stop",
+      "key": "stop_time_report",
+      "label": "stop_time_report",
+      "newLine": false,
+      "outputEvent": {
+          "eventName": "time_report_stop",
+          "eventTrigger": "press"
+      },
+      "inputEvents": [
+          {
+              "eventName": "time_report_stop",
+              "actionType": "query",
+              "condition": "none",
+              "values": [],
+              "queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
+              "outputEventWhenComplete": "after_time_report_stop"
+          },
+          {
+              "eventName": "after_time_report_stop",
+              "condition": "none",
+              "values": [true],
+              "actionType": "hide",
+              "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
+          },
+          {
+              "eventName": "onLoadSomministrazione",
+              "condition": "none",
+              "values": [true],
+              "actionType": "hide",
+              "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text)=true as label;"
+          }
+     
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.5
+  },
+    {
+      "autoGenerate": false,
+      "format": {
         "dataType": "date",
         "viewType": "input"
       },
@@ -1211,7 +1298,7 @@
           "text_align": "center"
         }
       ]
-    },
+    },   
     {
       "format": {
         "dataType": "date"
