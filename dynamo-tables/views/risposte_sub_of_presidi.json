@@ -1,0 +1,157 @@
+{
+  "$schema": "../views.schema.json",
+  "inheritsFrom": "risposte",
+  "entryKey": "risposte_sub_of_presidi",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select *, dpr.id_presidio, substring (rp.risposta,1,200) as risposta_sint, substring(rp.note,1,100) as note_sint, entrasp.risposte_previste_risposta(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda, rp.id_risposta_prev) as risposta_prev_descr, substring (entrasp.domande_descrizione(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda),1,200) as descr_domanda from entrasp.risposte rp inner join entrasp.domande_presidi dpr on rp.codice_azienda=dpr.codice_azienda and rp.id_modello_test=dpr.id_modello_test and rp.id_modello_test_vr=dpr.id_modello_test_vr and rp.id_domanda=dpr.id_domanda where rp.codice_azienda=$codice_azienda$ and dpr.id_presidio=$id_presidio$"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text",
+        "value": "DEMO"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_risposta",
+      "label": "id_risposta"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_sondaggio",
+      "label": "ID Sondaggio",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_somministrazione",
+      "label": "Verif.",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_modello_test",
+      "label": "Modello Verifica",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_modello_test_vr",
+      "label": "Vr",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_domanda",
+      "label": "ID Domanda",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descr_domanda",
+      "width": "30%",
+      "label": "Descrizione Domanda",
+      "queryFunct": "substring (entrasp.domande_descrizione(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda),1,200)"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_risposta_prev",
+      "label": "ID Risposta Prev",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "peso",
+      "label": "Peso",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "risposta_prev_descr",
+      "label": "Risposta Prevista",
+      "width": "15%",
+      "queryFunct": "entrasp.risposte_previste_risposta(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, id_risposta_prev)"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "risposta_sint",
+      "label": "Risposta Aperta",
+      "queryFunct": "substring (risposta,1,200)",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note_sint",
+      "width": "20%",
+      "queryFunct": "substring(note,1,100)",
+      "label": "Note"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_presidio",
+      "width": "20%",
+      "label": "id_presidio"
+    }
+  ]
+}
