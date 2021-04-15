@@ -5,6 +5,11 @@
     "businessObjectName": "rischi_presidi",
     "predefinedQueries": [
         {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select rp.*,true as delete_presidi_rischi, true as visible_button_presidio, entrasp.presidi_descr(pr.id_presidio, pr.codice_azienda)as descr_presidio, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio  from entrasp.rischi_presidi rp inner join entrasp.presidi pr on rp.codice_azienda=pr.codice_azienda and rp.id_presidio=pr.id_presidio where rp.codice_azienda=$codice_azienda$ and rp.codice_rischio=$codice_rischio$"
+        },
+        {
             "operation": "update",
             "type": "postProcessing",
             "queryString": "update entrasp.rischi_presidi rp set pct_mitigazione_probabilita=pctmitigazioneprobabilita, pct_mitigazione_intensita_singola=pctmitigazioneintensitasingola, pct_mitigazione_probabilita_rettificata=pctmitigazioneprobabilita_rett, pct_mitigazione_intensita_singola_rettificata=pctmitigazioneintensitasingola_rett  from entrasp.rischio_presidi_value($codice_azienda$, $codice_rischio$) rpv where rp.codice_azienda=rpv.azienda and rp.id_presidio=rpv.idpresidio and rp.codice_rischio=$codice_rischio$ and rp.codice_azienda=$codice_azienda$;"
@@ -297,11 +302,21 @@
         },
         {
             "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_presidio",
+            "width": "12%",
+            "label": "Tipo Presidio"
+        },
+        {
+            "format": {
                 "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "48.5%",
+            "width": "35%",
             "key": "descr_presidio",
             "queryFunct": "entrasp.presidi_descr(id_presidio, codice_azienda)",
             "label": "Presidio"
