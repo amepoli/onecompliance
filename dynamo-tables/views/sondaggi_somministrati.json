@@ -268,7 +268,7 @@
     {
       "autoGenerate": false,
       "format": {
-          "viewType": "button"
+        "viewType": "button"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -277,28 +277,28 @@
       "label": "play_time_report",
       "newLine": false,
       "outputEvent": {
-          "eventName": "time_report_play",
-          "eventTrigger": "press"
+        "eventName": "time_report_play",
+        "eventTrigger": "press"
       },
       "inputEvents": [
-          {
-              "eventName": "time_report_play",
-              "actionType": "query",
-              "condition": "none",
-              "values": [],
-              "queryFunct": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'sondaggi', $id_sondaggio$, $codice_azienda$) as play_time_report",
-              "outputEventWhenComplete": "after_time_report_play"
-          }
+        {
+          "eventName": "time_report_play",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'sondaggi', $id_sondaggio$, $codice_azienda$) as play_time_report",
+          "outputEventWhenComplete": "after_time_report_play"
+        }
       ],
       "readOnly": false,
       "sameOrigin": false,
       "size": 0.5
-  },
-  {
+    },
+    {
       "autoGenerate": false,
       "format": {
-          "viewType": "checkbox",
-          "dataType": "boolean"
+        "viewType": "checkbox",
+        "dataType": "boolean"
       },
       "isHidden": true,
       "isPrimary": false,
@@ -307,11 +307,11 @@
       "newLine": false,
       "readOnly": false,
       "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text)"
-  },
-  {
+    },
+    {
       "autoGenerate": false,
       "format": {
-          "viewType": "button"
+        "viewType": "button"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -320,38 +320,41 @@
       "label": "stop_time_report",
       "newLine": false,
       "outputEvent": {
-          "eventName": "time_report_stop",
-          "eventTrigger": "press"
+        "eventName": "time_report_stop",
+        "eventTrigger": "press"
       },
       "inputEvents": [
-          {
-              "eventName": "time_report_stop",
-              "actionType": "query",
-              "condition": "none",
-              "values": [],
-              "queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
-              "outputEventWhenComplete": "after_time_report_stop"
-          },
-          {
-              "eventName": "after_time_report_stop",
-              "condition": "none",
-              "values": [true],
-              "actionType": "hide",
-              "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
-          },
-          {
-              "eventName": "onLoadSomministrazione",
-              "condition": "none",
-              "values": [true],
-              "actionType": "hide",
-              "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text)=true as label;"
-          }
-     
+        {
+          "eventName": "time_report_stop",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
+          "outputEventWhenComplete": "after_time_report_stop"
+        },
+        {
+          "eventName": "after_time_report_stop",
+          "condition": "none",
+          "values": [
+            true
+          ],
+          "actionType": "hide",
+          "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
+        },
+        {
+          "eventName": "onLoadSomministrazione",
+          "condition": "none",
+          "values": [
+            true
+          ],
+          "actionType": "hide",
+          "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text)=true as label;"
+        }
       ],
       "readOnly": false,
       "sameOrigin": false,
       "size": 0.5
-  },
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -1099,6 +1102,26 @@
       "label": "Oggetto di verifica",
       "newLine": true,
       "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+    },
+    {
+      "fieldName": "flag_principali",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo Modello Verifica",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_modello_test(ss.codice_azienda, ss.id_sondaggio)"
+    },
+    {
+      "fieldName": "flag_principali",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo per Cliente/Sottostante",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_object_key(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)"
     }
   ],
   "subTables": [
@@ -1298,7 +1321,7 @@
           "text_align": "center"
         }
       ]
-    },   
+    },
     {
       "format": {
         "dataType": "date"
