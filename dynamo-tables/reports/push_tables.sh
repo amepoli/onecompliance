@@ -12,6 +12,24 @@ if [ ! -f ../../${1}.json ]; then
     exit 0
 fi
 
+if [ ! -d "dynamo-input" ]; then
+    mkdir dynamo-input
+fi
+
+rm -f dynamo-input/*
+
+if [ $# -eq 2 ]
+  then
+    FILES=${2}.json
+    if [ ! -f ${FILES} ]; then
+        echo "File not found!"
+        exit 0
+    fi
+    files=("${FILES}") # used later for pushing a specific file
+  else
+    files=(*.json)  # used later for pushing all files
+fi   
+
 TABLENAME=`cat ../../${1}.json | jq -r ".dynamoTables.reports.tableName"`
 
 if [ $? -ne 0 ]
@@ -40,7 +58,6 @@ fi
 
 echo "Pushing data ..."
 
-files=(*.json)
 n=25          	#only 25 files can be processed as batch
 for ((i=0; i < ${#files[@]}; i+=n)); do
 	(echo "["; for f in "${files[@]:i:n}"; do (cat "$f"; echo ","); done; echo "]") | json-dynamo-putrequest --beautify ${TABLENAME} > dynamo-input/dynamo_"$i".json
