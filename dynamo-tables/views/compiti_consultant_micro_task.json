@@ -7,7 +7,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, true as check, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito,entrasp.compito_titolo(cmp.codice_azienda, cmp.codice_compito_parent) as codice_compito_parent, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr(cmp.id_tipo_segnalazione, cmp.codice_azienda) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE id_tipo_segnalazione=100 and cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and (id_centro_gest is not null or id_responsabile is not null)"
+      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, foreseen_date, true as check, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito,entrasp.compito_titolo(cmp.codice_azienda, cmp.codice_compito_parent) as codice_compito_parent, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr(cmp.id_tipo_segnalazione, cmp.codice_azienda) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE id_tipo_segnalazione=100 and cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and (id_centro_gest is not null or id_responsabile is not null)"
     },
     {
       "operation": "selectForm",
@@ -65,9 +65,24 @@
       "key": "data_segnalazione",
       "label": "Data segnalazione",
       "insertUpdateFunct": "select coalesce('£data_segnalazione£', CURRENT_DATE)",
+      "newLine": false,
+      "readOnly": false,
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input",
+        "value": "CURRENT_DATE"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "foreseen_date",
+      "label": "Data Scadenza",
       "newLine": true,
       "readOnly": false,
-      "size": 1
+      "size": 2
     },
     {
       "autoGenerate": true,
@@ -785,19 +800,10 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "tipo_segnalazione",
-      "label": "Tipo",
-      "width": "12%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
       "isHidden": false,
       "isPrimary": false,
       "key": "stato",
+      "width": "7%",
       "label": "Stato",
       "style": [
         {
@@ -823,6 +829,7 @@
       },
       "isHidden": false,
       "isPrimary": true,
+      "width": "5%",
       "key": "codice_compito",
       "label": "Codice Compito"
     },
@@ -845,6 +852,16 @@
       "key": "data_segnalazione",
       "width": "8%",
       "label": "Data Segnalazione"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "foreseen_date",
+      "width": "8%",
+      "label": "Data Scadenza"
     },
     {
       "format": {
