@@ -10,23 +10,52 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-input',
   template: `
-<mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
-<mat-label>{{field.label}}</mat-label>
-<span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
-<input [required]="isRequired" *ngIf="field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
+<mat-form-field *ngIf="field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+  <mat-label>{{field.label}}</mat-label>
+  <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
+  <input [required]="isRequired" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
     (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()"
     [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
-    
-<input [required]="isRequired" *ngIf="field.inputType === 'date' || field.inputType === 'datetime' || field.inputType === 'time'" matInput [matDatepicker]="datepicker" [value]="field.value" [placeholder]="field.label" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" 
+  <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
+  <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+    <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
+  </ng-container>
+</mat-form-field>
+
+<mat-form-field *ngIf="field.isVisible != false && field.inputType === 'date'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+  <mat-label>{{field.label}}</mat-label>
+  <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
+
+  <input [required]="isRequired" matInput [matDatepicker]="datepicker" [value]="field.value" [placeholder]="field.label" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" 
     (blur)="onBlur()" (focus)="onFocus()" (dateChange)="updateValue()"
     [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
-<mat-datepicker-toggle *ngIf="field.inputType === 'date' || field.inputType === 'datetime' || field.inputType === 'time'" matSuffix [for]="datepicker"></mat-datepicker-toggle>
-<mat-datepicker #datepicker></mat-datepicker>
+  <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+  <mat-datepicker matInput [matDatepicker]="datepicker" #datepicker></mat-datepicker>
 
-<span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
-<ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
-<mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
-</ng-container>
+  <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
+  <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+    <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
+  </ng-container>
+</mat-form-field>
+
+<mat-form-field *ngIf="field.isVisible != false && (field.inputType === 'datetime' || field.inputType === 'time')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+  <mat-label>{{field.label}}</mat-label>
+  <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
+
+  <input [required]="isRequired" matInput [ngxMatDatetimePicker]="datetimepicker" [placeholder]="field.label" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" 
+    (blur)="onBlur()" (focus)="onFocus()" (dateChange)="updateValue()"
+    [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
+   <mat-datepicker-toggle matSuffix [for]="datetimepicker"></mat-datepicker-toggle>
+   <ngx-mat-datetime-picker #datetimepicker [showSpinners]="true" [showSeconds]="true"
+      [stepHour]="true" [stepMinute]="true" [stepSecond]="true"
+      [touchUi]="false" [enableMeridian]="true"
+      [disableMinute]="false" [hideTime]="false">
+   </ngx-mat-datetime-picker>
+
+  <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
+  <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+    <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
+  </ng-container>
 </mat-form-field>
 `,
   styles: [`
@@ -122,8 +151,15 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
       let dateType = typeof dateValue;
       // Check if date in Moment type
       if (dateValue != null && dateType === 'object') {
-        // Convert Moment to string
-        _this.field.value = HelperService.getFormattedDate(dateValue);
+        if (_this.field.inputType === 'date') {
+          _this.field.value = HelperService.getFormattedDate(dateValue);
+        }
+        if (_this.field.inputType === 'datetime') {
+          _this.field.value = HelperService.getFormattedDateTime(dateValue);
+        }
+        if (_this.field.inputType === 'time') {
+          _this.field.value = HelperService.getFormattedTime(dateValue);
+        }
         _this.group.get(_this.field.name).setValue(_this.field.value);
       }
       else {
