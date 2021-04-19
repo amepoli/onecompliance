@@ -62,7 +62,7 @@ export class HelperService {
      * @param value
      * @returns 2 digit formatted month or day
      */
-    public static getFormattedMonthDay(value: number) {
+    public static getTwoDigitText(value: number) {
         return (value > 9 ? `${value}` : `0${value}`);
     }
 
@@ -78,12 +78,41 @@ export class HelperService {
         //We use dayCorrector to remove the timezone. We want brut date without any timezone
         let dayCorrector = (date.getHours()>12) ? (1) : (0); //(date.getHours()<=12) ? (-1) : (0);
         date.setDate(date.getDate()+dayCorrector);
-        let dateFinal = `${date.getFullYear()}-${this.getFormattedMonthDay(date.getMonth() + 1)}-${this.getFormattedMonthDay(date.getDate())}T00:00:00.000Z`;
+        let dateFinal = `${date.getFullYear()}-${this.getTwoDigitText(date.getMonth() + 1)}-${this.getTwoDigitText(date.getDate())}T00:00:00.000Z`;
         return dateFinal;
 
         // Old method
-        // let formattedDate = `${dateTime.getFullYear()}-${this.getFormattedMonthDay(dateTime.getMonth() + 1)}-${this.getFormattedMonthDay(dateTime.getDate())}T00:00:00.000Z`;
+        // let formattedDate = `${dateTime.getFullYear()}-${this.getTwoDigitText(dateTime.getMonth() + 1)}-${this.getTwoDigitText(dateTime.getDate())}T00:00:00.000Z`;
         // return formattedDate;
+    }
+
+    /**
+     * Get formatted DateTime
+     * @param datetime
+     * @returns formatted date time
+     */
+    public static getFormattedDateTime(dateTime) {
+        // Example formatted date
+        // "2017-09-25T00:00:00.000Z"
+        let date = new Date(dateTime);
+        //We use dayCorrector to remove the timezone. We want brut date without any timezone
+        // let dayCorrector = (date.getHours()>12) ? (1) : (0); //(date.getHours()<=12) ? (-1) : (0);
+        // date.setDate(date.getDate()+dayCorrector);
+        let dateTimeFinal = `${date.getFullYear()}-${this.getTwoDigitText(date.getMonth() + 1)}-${this.getTwoDigitText(date.getDate())}T${this.getTwoDigitText(date.getHours())}:${this.getTwoDigitText(date.getMinutes())}:${this.getTwoDigitText(date.getSeconds())}.000Z`;
+        return dateTimeFinal;
+
+        // Old method
+        // let formattedDate = `${dateTime.getFullYear()}-${this.getTwoDigitText(dateTime.getMonth() + 1)}-${this.getTwoDigitText(dateTime.getDate())}T00:00:00.000Z`;
+        // return formattedDate;
+    }
+
+    /**
+     * Get formatted Time
+     * @param time 
+     * @returns formatted time
+     */
+    public static getFormattedTime(time) {
+        return time;
     }
 
     /**
