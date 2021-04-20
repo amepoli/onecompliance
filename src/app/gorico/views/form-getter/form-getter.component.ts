@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy, SimpleChanges, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { FieldConfig, FieldInputEvent } from 'app/gorico/dynamic-forms/field.interface';
 import { BackendService } from '../backend/backend.service';
@@ -15,6 +15,8 @@ import { NavigationService } from 'app/gorico/services/navigation.service';
 import { MessageView } from 'app/gorico/services/messages.service';
 import { HelperService } from 'app/gorico/services/helper.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { DynamicFieldDirective } from 'app/gorico/dynamic-forms/components/dynamic-field/dynamic-field.directive';
+import { SubformComponent } from 'app/gorico/dynamic-forms/components/subform/subform.component';
 
 export type formDataType = 'text' | 'date' | 'datetime' | 'time' | 'number' | 'boolean';
 
@@ -1093,12 +1095,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     }
                                 }
                             } else if (event.actionType === 'combo_lazy_loading') {
-                                let combobox: ComboboxComponent = null;
-                                combobox = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === keyListener).componentRef.instance;
-                                const comboValue = combobox.field.value != null ? combobox.field.value.id : null;
-                                combobox.setOptions(result, true);
-                                if (comboValue != null) {
-                                    combobox.setValue(comboValue);
+                                // Issue #178
+                                let comboboxEl = _this.findElementInDynamicFields(current_line.dynamicFields, keyListener);
+                                if(comboboxEl) {
+                                    let combobox: ComboboxComponent = null;
+                                    combobox = <ComboboxComponent>comboboxEl.componentRef.instance;
+                                    const comboValue = combobox.field.value != null ? combobox.field.value.id : null;
+                                    combobox.setOptions(result, true);
+                                    if (comboValue != null) {
+                                        combobox.setValue(comboValue);
+                                    }
                                 }
                             } else {  // query_style
                                 const filterFormData = (dataset, param) => {
@@ -1354,5 +1360,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
 
     }
+
+    findElementInDynamicFields(dynamicFields: QueryList<DynamicFieldDirective>, name: string) {
+        let element = null;
+        
+        dynamicFields.forEach(dynamicField => {
+            if (dynamicField.field.name === name) {
+                element = dynamicField;
+            }
+            if ( dynamicField.componentRef.instance instanceof SubformComponent && !element) {
+                
+                let findResult = this.findElementInDynamicFields((<SubformComponent>dynamicField.componentRef.instance).dynamicFields, name);
+                if (findResult) {
+                    element = findResult;
+                }
+            }
+        });
+        return element;
+    }
+
 }
 

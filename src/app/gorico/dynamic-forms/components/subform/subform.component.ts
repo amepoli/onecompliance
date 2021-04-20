@@ -1,7 +1,8 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, ViewChildren, QueryList } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ValidationsService } from 'app/gorico/services/validations.service';
 import { FieldConfig } from '../../field.interface';
+import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive';
 
 // [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}"
 @Component({
@@ -31,6 +32,8 @@ export class SubformComponent implements OnInit {
   field: FieldConfig;
   group: FormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
+  
+  @ViewChildren(DynamicFieldDirective) dynamicFields: QueryList<DynamicFieldDirective>;
 
   constructor() { }
   ngOnInit() {
