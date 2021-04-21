@@ -176,6 +176,15 @@
         "eventName": "change_durata",
         "eventTrigger": "change"
       },
+      "inputEvents": [
+        {
+          "eventName": "reload_durata",
+          "queryFunct": "select durata from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and id_cons=$id_cons$",
+          "actionType": "query",
+          "condition": "none",
+          "values": []
+        }
+      ],
       "newLine": false,
       "readOnly": false
     },
@@ -225,6 +234,28 @@
       "key": "date_time_begin",
       "label": "Inizio",
       "readOnly": false,
+      "outputEvent": {
+        "eventName": "date_time_begin_edit",
+        "eventTrigger": "change"
+      },
+      "inputEvents": [
+        {
+          "eventName": "date_time_begin_edit",
+          "actionType": "query",
+          "queryFunct": "update entrasp.consuntivazioni set durata_interval=(('2021-04-14T19:13:48.000Z')::timestamp - ('2021-04-14T18:53:13.381Z')::timestamp), durata_ft=0, durata=round((EXTRACT(EPOCH FROM (('2021-04-14T19:13:48.000Z')::timestamp - ('2021-04-14T18:53:13.381Z')::timestamp)::INTERVAL)/60)::numeric,0) where codice_azienda=$codice_azienda$ and id_cons=$id_cons$;",
+          "outputEventWhenComplete": "reload_durata",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "eventName": "date_time_end_edit",
+          "actionType": "query",
+          "queryFunct": "update entrasp.consuntivazioni set durata_interval=(('2021-04-14T19:13:48.000Z')::timestamp - ('2021-04-14T18:53:13.381Z')::timestamp), durata_ft=0, durata=round((EXTRACT(EPOCH FROM (('2021-04-14T19:13:48.000Z')::timestamp - ('2021-04-14T18:53:13.381Z')::timestamp)::INTERVAL)/60)::numeric,0) where codice_azienda=$codice_azienda$ and id_cons=$id_cons$;",
+          "outputEventWhenComplete": "reload_durata",
+          "condition": "none",
+          "values": []
+        }
+      ],
       "newLine": false
     },
     {
@@ -238,7 +269,11 @@
       "key": "date_time_end",
       "label": "Fine",
       "readOnly": false,
-      "newLine": true
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "date_time_end_edit",
+        "eventTrigger": "change"
+      }
     },
     {
       "autoGenerate": false,
