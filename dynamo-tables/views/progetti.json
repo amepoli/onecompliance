@@ -76,7 +76,7 @@
 		{
 			"eventName": "progetti_reload",
 			"actionType": "reload"
-		  },
+		},
 		{
 			"eventName": "formReload",
 			"actionType": "reload"
@@ -141,7 +141,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 3,
+			"size": 2,
 			"outputEvent": {
 				"eventName": "codice_colore_change_stato",
 				"eventTrigger": "select"
@@ -188,7 +188,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "stato_progetto",
+			"key": "annulla_progetto",
 			"label": "Annulla Progetto",
 			"newLine": false,
 			"outputEvent": {
@@ -214,12 +214,11 @@
 						}
 					}
 				}
-				
 			],
 			"style": {
 				"background_color": "#25599C",
 				"font_color": "white"
-			  },
+			},
 			"readOnly": false,
 			"sameOrigin": false,
 			"size": 1.3
@@ -227,51 +226,51 @@
 		{
 			"autoGenerate": false,
 			"format": {
-			  "viewType": "button"
+				"viewType": "button"
 			},
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": false,
 			"key": "reopen_progetto_k",
 			"label": "Riapri Progetto",
 			"newLine": false,
 			"outputEvent": {
-			  "eventName": "progetto_reopen",
-			  "eventTrigger": "press"
+				"eventName": "progetto_reopen",
+				"eventTrigger": "press"
 			},
 			"inputEvents": [
-			  {
-				"eventName": "progetto_reopen",
-				"actionType": "query",
-				"queryFunct": "update entrasp.progetti set stato='A' where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
-				"condition": "none",
-				"values": [],
-				"outputEventWhenComplete": "progetti_reload"
-			  }
+				{
+					"eventName": "progetto_reopen",
+					"actionType": "query",
+					"queryFunct": "update entrasp.progetti set stato='A' where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+					"condition": "none",
+					"values": [],
+					"outputEventWhenComplete": "progetti_reload"
+				}
 			],
 			"style": {
-			  "background_color": "#fada5e",
-			  "font_color": "white"
+				"background_color": "#fada5e",
+				"font_color": "white"
 			},
 			"readOnly": false,
 			"sameOrigin": false,
-			"size": 1,
+			"size": 1.5,
 			"attributeFuncts": [
-			  {
-				"attributeType": "style",
-				"styleAttribute": "background_color",
-				"queryString": "select case when stato='C' then '#fada5e' else '#698EC2' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-			  },
-			  {
-				"attributeType": "style",
-				"styleAttribute": "font_color",
-				"queryString": "select case when stato='C' then 'black' else '#5b635a' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-			  },
-			  {
-				"attributeType": "readOnly",
-				"queryString": "select case when stato='C' then false else true end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$;"
-			  }
+				{
+					"attributeType": "style",
+					"styleAttribute": "background_color",
+					"queryString": "select case when stato='C' then '#fada5e' else '#698EC2' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+				},
+				{
+					"attributeType": "style",
+					"styleAttribute": "font_color",
+					"queryString": "select case when stato='C' then 'black' else '#5b635a' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+				},
+				{
+					"attributeType": "readOnly",
+					"queryString": "select case when stato='C' then false else true end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$;"
+				}
 			]
-		  },
+		},
 		{
 			"autoGenerate": false,
 			"format": {
@@ -303,7 +302,7 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"size": 2,
+			"size": 1.5,
 			"newLine": false
 		},
 		{
@@ -332,7 +331,7 @@
 						}
 					},
 					"outputEventWhenComplete": "navigate_to_new_progetto"
-				}	
+				}
 			],
 			"readOnly": true,
 			"isHidden": false,
@@ -341,85 +340,84 @@
 			"size": 1.5
 		},
 		{
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "buttonIcon": "play_arrow",
-            "key": "play_time_report",
-            "label": "play_time_report",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "time_report_play",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "time_report_play",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, $codice_azienda$)",
-                    "outputEventWhenComplete": "after_time_report_play"
-                }
-            ],
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 0.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "buttonIcon": "stop",
-            "key": "stop_time_report",
-            "label": "stop_time_report",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "time_report_stop",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "time_report_stop",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
-                    "outputEventWhenComplete": "after_time_report_stop"
-                },
-                {
-                    "eventName": "after_time_report_play",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "show",
-                    "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
-                },
-                {
-                    "eventName": "after_time_report_stop",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "show",
-                    "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
-                },
-                {
-                    "eventName": "onLoadSondaggio",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "show",
-                    "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
-                }
-           
-            ],
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 0.5
-        },
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"buttonIcon": "play_arrow",
+			"key": "play_time_report",
+			"label": "play_time_report",
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "time_report_play",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"eventName": "time_report_play",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, $codice_azienda$)",
+					"outputEventWhenComplete": "after_time_report_play"
+				}
+			],
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 0.5
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"buttonIcon": "stop",
+			"key": "stop_time_report",
+			"label": "stop_time_report",
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "time_report_stop",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"eventName": "time_report_stop",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
+					"outputEventWhenComplete": "after_time_report_stop"
+				},
+				{
+					"eventName": "after_time_report_play",
+					"condition": "none",
+					"values": [],
+					"actionType": "show",
+					"queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
+				},
+				{
+					"eventName": "after_time_report_stop",
+					"condition": "none",
+					"values": [],
+					"actionType": "show",
+					"queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
+				},
+				{
+					"eventName": "onLoadSondaggio",
+					"condition": "none",
+					"values": [],
+					"actionType": "show",
+					"queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
+				}
+			],
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 0.5
+		},
 		{
 			"autoGenerate": false,
 			"format": {
@@ -782,15 +780,15 @@
 			"queryCond": "data_inserimento<='€data_ins_max€'"
 		},
 		{
-            "fieldName": "parola_s",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "Parola chiave",
-            "newLine": false,
-            "queryCond": "(UPPER(titolo) like '%'||UPPER('€parola_s€')||'%')"
-        }
+			"fieldName": "parola_s",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Parola chiave",
+			"newLine": false,
+			"queryCond": "(UPPER(titolo) like '%'||UPPER('€parola_s€')||'%')"
+		}
 	],
 	"subTables": [
 		{
