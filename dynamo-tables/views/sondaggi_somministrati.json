@@ -46,7 +46,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.id_centro_gest, snd.codice_part, snd.data_comp, snd.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
+      "queryString": "select ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.id_centro_gest, snd.codice_part, snd.data_comp, snd.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, substring(entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio),1,120) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
     }
   ],
   "messages": [
@@ -1040,7 +1040,7 @@
         "viewType": "input"
       },
       "label": "Id Verifica",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "ss.id_somministrazione=$id_somministrazione_s$"
     },
     {
@@ -1050,8 +1050,21 @@
         "viewType": "input"
       },
       "label": "Data Competenza",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "snd.data_comp='€data_comp€'"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "fieldName": "stato_s",
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "ss.stato='€stato_s€'"
+
     },
     {
       "fieldName": "data_esec_prevista_min",
@@ -1090,8 +1103,8 @@
         "viewType": "input"
       },
       "label": "Data Esecuzione entro il",
-      "newLine": true,
-      "queryCond": "snd.data_esecuzione<='€data_esec_max€'"
+      "newLine": false,
+      "queryCond": "(snd.data_esecuzione<='€data_esec_max€' and snd.data_esecuzione is not null) or (ss.data_esecuzione<='€data_esec_max€' and ss.data_esecuzione is not null)"
     },
     {
       "fieldName": "object_description",
@@ -1102,6 +1115,26 @@
       "label": "Oggetto di verifica",
       "newLine": true,
       "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+    },
+    {
+      "fieldName": "incompleto_s",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Incompleto",
+      "newLine": false,
+      "queryCond": "ss.somministrazione_completata!='Completo'"
+    },
+    {
+      "fieldName": "no_giudizio",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Senza giudizio",
+      "newLine": false,
+      "queryCond": "ss.giudizio is null"
     },
     {
       "fieldName": "flag_ultimo_modello_test",
