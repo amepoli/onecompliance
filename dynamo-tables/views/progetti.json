@@ -74,6 +74,10 @@
 	],
 	"inputEvents": [
 		{
+			"eventName": "progetti_reload",
+			"actionType": "reload"
+		  },
+		{
 			"eventName": "formReload",
 			"actionType": "reload"
 		},
@@ -220,6 +224,54 @@
 			"sameOrigin": false,
 			"size": 1.3
 		},
+		{
+			"autoGenerate": false,
+			"format": {
+			  "viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "reopen_progetto_k",
+			"label": "Riapri Progetto",
+			"newLine": false,
+			"outputEvent": {
+			  "eventName": "progetto_reopen",
+			  "eventTrigger": "press"
+			},
+			"inputEvents": [
+			  {
+				"eventName": "progetto_reopen",
+				"actionType": "query",
+				"queryFunct": "update entrasp.progetti set stato='A' where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+				"condition": "none",
+				"values": [],
+				"outputEventWhenComplete": "progetti_reload"
+			  }
+			],
+			"style": {
+			  "background_color": "#fada5e",
+			  "font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 1,
+			"attributeFuncts": [
+			  {
+				"attributeType": "style",
+				"styleAttribute": "background_color",
+				"queryString": "select case when stato='C' then '#fada5e' else '#698EC2' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+			  },
+			  {
+				"attributeType": "style",
+				"styleAttribute": "font_color",
+				"queryString": "select case when stato='C' then 'black' else '#5b635a' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+			  },
+			  {
+				"attributeType": "readOnly",
+				"queryString": "select case when stato='C' then false else true end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$;"
+			  }
+			]
+		  },
 		{
 			"autoGenerate": false,
 			"format": {
