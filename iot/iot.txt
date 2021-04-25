@@ -1,3 +1,10 @@
 Followed the guide @ https://wiki.seeedstudio.com/Arduino-AWS-IOT-Bridge/ 
 
 Bridging the IoT data, at the moment using the '#' jolly key, next step is to filter them out
+
+Once a week the Dynamo table is purged by means of 
+
+aws dynamodb describe-table --table-name IoT_data | jq '.Table | del(.TableId, .TableArn, .ItemCount, .TableSizeBytes, .CreationDateTime, .TableStatus, .LatestStreamArn, .LatestStreamLabel, .ProvisionedThroughput.NumberOfDecreasesToday, .ProvisionedThroughput.LastIncreaseDateTime)' > schema.json
+aws dynamodb delete-table --table-name IoT_data
+aws dynamodb create-table --cli-input-json file://schema.json
+
