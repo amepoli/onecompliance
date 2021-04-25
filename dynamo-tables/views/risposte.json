@@ -6,7 +6,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select rp.*, substring (entrasp.domande_descrizione(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda),1,200) as descr_domanda, entrasp.risposte_previste_risposta(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda, rp.id_risposta_prev) as risposta_prev_descr, substring (rp.risposta,1,150) as risposta_sint, substring(rp.note,1,100) as note_sint from entrasp.risposte rp inner join entrasp.sondaggi snd on rp.codice_azienda=snd.codice_azienda and rp.id_sondaggio=snd.id_sondaggio inner join entrasp.sondaggi_somministrati ss on ss.codice_azienda=snd.codice_azienda and snd.id_sondaggio=ss.id_sondaggio",
+      "queryString": "select rp.*, substring (entrasp.domande_descrizione(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda),1,200) as descr_domanda, entrasp.risposte_previste_risposta(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda, rp.id_risposta_prev) as risposta_prev_descr, substring (rp.risposta,1,150) as risposta_sint, substring(rp.note,1,100) as note_sint from entrasp.risposte rp inner join entrasp.sondaggi snd on rp.codice_azienda=snd.codice_azienda and rp.id_sondaggio=snd.id_sondaggio inner join entrasp.sondaggi_somministrati ss on ss.codice_azienda=snd.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where rp.codice_azienda=$codice_azienda$",
       "type": "main"
     }
   ],
@@ -372,7 +372,7 @@
     "tableQueries": [
       {
         "label": "riepilogo_risposte",
-        "queryString": "SELECT * FROM entrasp.grc_riepilogo_risposte rp inner join entrasp.sondaggi snd on rp.id_sondaggio=snd.id_sondaggio and rp.codice_azienda=snd.codice_azienda inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where rp.codice_azienda=$codice_azienda$"
+        "queryString": "SELECT rp.* FROM entrasp.grc_riepilogo_risposte rp inner join entrasp.sondaggi snd on rp.id_sondaggio=snd.id_sondaggio and rp.codice_azienda=snd.codice_azienda inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where rp.codice_azienda=$codice_azienda$"
       }
     ]
   },
