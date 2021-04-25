@@ -3,6 +3,13 @@
   "origin": "entrasp.risposte",
   "businessObjectName": "riepilogoRisposte",
   "entryKey": "risposte",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select rp.*, substring (entrasp.domande_descrizione(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda),1,200) as descr_domanda, entrasp.risposte_previste_risposta(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda, rp.id_risposta_prev) as risposta_prev_descr, substring (rp.risposta,1,150) as risposta_sint, substring(rp.note,1,100) as note_sint from entrasp.risposte rp inner join entrasp.sondaggi snd on rp.codice_azienda=snd.codice_azienda and rp.id_sondaggio=snd.id_sondaggio inner join entrasp.sondaggi_somministrati ss on ss.codice_azienda=snd.codice_azienda and snd.id_sondaggio=ss.id_sondaggio",
+      "type": "main"
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -365,7 +372,7 @@
     "tableQueries": [
       {
         "label": "riepilogo_risposte",
-        "queryString": "SELECT * FROM entrasp.grc_riepilogo_risposte where codice_azienda=$codice_azienda$"
+        "queryString": "SELECT * FROM entrasp.grc_riepilogo_risposte rp inner join entrasp.sondaggi snd on rp.id_sondaggio=snd.id_sondaggio and rp.codice_azienda=snd.codice_azienda inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where rp.codice_azienda=$codice_azienda$"
       }
     ]
   },
@@ -379,7 +386,7 @@
       },
       "label": "Id Modello di Verifica",
       "newLine": false,
-      "queryCond": "id_modello_test=$id_modello_test_s$"
+      "queryCond": "rp.id_modello_test=$id_modello_test_s$"
     },
     {
       "fieldName": "id_sondaggio",
@@ -389,7 +396,7 @@
       },
       "label": "ID Sondaggio",
       "newLine": false,
-      "queryCond": "id_sondaggio=$id_sondaggio$"
+      "queryCond": "rp.id_sondaggio=$id_sondaggio$"
     },
     {
       "fieldName": "id_risposta_s",
@@ -399,7 +406,7 @@
       },
       "label": "Id Risposta",
       "newLine": false,
-      "queryCond": "id_risposta=$id_risposta_s$"
+      "queryCond": "rp.id_risposta=$id_risposta_s$"
     },
     {
       "fieldName": "id_somministrazione",
@@ -409,7 +416,7 @@
       },
       "label": "Id Verifica",
       "newLine": true,
-      "queryCond": "id_somministrazione=$id_somministrazione$"
+      "queryCond": "ss.id_somministrazione=$id_somministrazione$"
     },
     {
       "fieldName": "id_domanda_s",
@@ -419,7 +426,7 @@
       },
       "label": "Id Domanda",
       "newLine": false,
-      "queryCond": "id_domanda=$id_domanda_s$"
+      "queryCond": "rp.id_domanda=$id_domanda_s$"
     },
     {
       "fieldName": "id_risposta_prev",
@@ -428,8 +435,139 @@
         "viewType": "input"
       },
       "label": "ID Risposta Prev",
+      "newLine": false,
+      "queryCond": "rp.id_risposta_prev =$id_risposta_prev$"
+    },
+    {
+      "fieldName": "data_comp",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Competenza",
+      "newLine": false,
+      "queryCond": "snd.data_comp='€data_comp€'"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "fieldName": "stato_s",
+      "label": "Stato",
       "newLine": true,
-      "queryCond": "id_risposta_prev =$id_risposta_prev$"
+      "queryCond": "ss.stato='€stato_s€'"
+
+    },
+    {
+      "fieldName": "data_esec_prevista_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista>='€data_esec_prevista_min€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista entro il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista<='€data_esec_prevista_max€'"
+    },
+    {
+      "fieldName": "data_esec_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_esecuzione>='€data_esec_min€'"
+    },
+    {
+      "fieldName": "data_esec_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione entro il",
+      "newLine": false,
+      "queryCond": "(snd.data_esecuzione<='€data_esec_max€' and snd.data_esecuzione is not null) or (ss.data_esecuzione<='€data_esec_max€' and ss.data_esecuzione is not null)"
+    },
+    {
+      "fieldName": "object_description",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Oggetto di verifica",
+      "newLine": true,
+      "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+    },
+    {
+      "fieldName": "incompleto_s",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Incompleto",
+      "newLine": false,
+      "queryCond": "ss.somministrazione_completata!='Completo'"
+    },
+    {
+      "fieldName": "no_giudizio",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Senza giudizio",
+      "newLine": false,
+      "queryCond": "ss.giudizio is null"
+    },
+    {
+      "fieldName": "flag_ultimo_modello_test",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo Modello Verifica",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_modello_test(ss.codice_azienda, ss.id_sondaggio)"
+    },
+    {
+      "fieldName": "flag_ultimo_modello_test_rett",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo Modello Verifica Rett.",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_modello_test_rett(ss.codice_azienda, ss.id_sondaggio)"
+    },
+    {
+      "fieldName": "flag_ultimo_per_cliente",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo per Cliente/Sottostante",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_object_key(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)"
+    },
+    {
+      "fieldName": "flag_ultimo_per_cliente_rett",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo per Cliente/Sottostante Rett.",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_object_key_rett(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)"
     }
   ],
   "subTables": [
