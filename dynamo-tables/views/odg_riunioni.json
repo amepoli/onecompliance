@@ -8,16 +8,6 @@
       "operation": "selectForm",
       "type": "preProcessing",
       "queryString": "update entrasp.riunioni rnn set codice_part=az.codice_part from entrasp.aziende az WHERE rnn.codice_azienda=az.codice_azienda and id_riunione=$id_riunione$;"
-    },
-    {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "UPDATE entrasp.odg_riunioni rnn set codice_part=az.codice_part from entrasp.aziende az where rnn.codice_azienda=az.codice_azienda"
-    },
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "update entrasp.odg_riunioni rnn set codice_part=az.codice_part from entrasp.aziende az where rnn.codice_azienda=az.codice_azienda"
     }
   ],
   "form_keys": [
@@ -74,21 +64,29 @@
       "isPrimary": false,
       "key": "id_odg_parent",
       "label": "ID OdG Parent",
-      "newLine": false,
+      "newLine": true,
       "readOnly": false
     },
     {
       "autoGenerate": false,
       "format": {
         "dataType": "number",
-        "viewType": "input"
+        "viewType": "input",
+        "validations": [
+          {
+              "message": "Inserire una numerazione!",
+              "name": "required",
+              "validator": "Validators.required"
+          }
+      ]
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "ordinamento_odg",
       "label": "Ordinamento",
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+      "size": 1.5
     },
     {
       "autoGenerate": false,
@@ -109,7 +107,7 @@
       "label": "Punto",
       "newLine": true,
       "readOnly": false,
-      "size": 10
+      "size": 8.5
     },
     {
       "autoGenerate": false,
@@ -119,7 +117,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "note",
+      "key": "annotazioni",
       "label": "Note",
       "newLine": true,
       "readOnly": false,
@@ -146,17 +144,7 @@
       },
       "label": "Note",
       "newLine": false,
-      "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
-    },
-    {
-      "fieldName": "codice_compito",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Codice Compito",
-      "newLine": false,
-      "queryCond": "codice_compito=$codice_compito$"
+      "queryCond": "UPPER (annotazioni) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
     },
     {
       "fieldName": "titolo",
@@ -178,26 +166,6 @@
       "label": "ID Tipo Segnal.",
       "newLine": false,
       "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$"
-    },
-    {
-      "fieldName": "id_centro_gest",
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Centro Gestionale",
-      "newLine": false,
-      "queryCond": "id_centro_gest=$id_centro_gest$"
-    },
-    {
-      "fieldName": "flag_compiti_aperti",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Solo Principali",
-      "newLine": false,
-      "queryCond": "codice_compito_parent IS null"
     }
   ],
   "subTables": [
@@ -207,6 +175,10 @@
         {
           "parent": "codice_azienda",
           "son": "codice_azienda"
+        },
+        {
+          "parent": "id_riunione",
+          "son": "id_riunione"
         },
         {
           "parent": "id_odg",
@@ -239,11 +211,65 @@
   "table_keys": [
     {
       "format": {
-        "dataType": "number"
+          "dataType": "number"
       },
       "isHidden": false,
+      "isPrimary": false,
+      "width": "4%",
+      "queryFunct": "select true",
+      "key": "delete_procedure_aziendali",
+      "label": "",
+      "style": [
+          {
+              "button_icon": "delete",
+              "value": "delete_icon"
+          }
+      ],
+      "isButton": true,
+      "buttonAction": {
+          "target": "odg_riunioni",
+          "viewType": "form",
+          "query": "delete from entrasp.odg_riunioni where codice_azienda='£codice_azienda£' and id_riunione=£id_riunione£ and id_odg=£id_odg£",
+          "action": "query",
+          "keymap": [
+              {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+              },
+              {
+                  "source": "id_riunione",
+                  "destination": "id_riunione"
+              },
+              {
+                  "source": "id_odg",
+                  "destination": "id_odg"
+              }
+          ],
+          "confirmAction": true,
+          "confirmMessage": {
+              "text": "Sei sicuro di voler cancellare il punto all'ordine del giorno?",
+              "title": "Cancellazione ordine del giorno"
+          },
+          "onSuccessAction": "reload"
+      }
+  },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
       "isPrimary": true,
       "key": "id_odg",
+      "width": "5%",
+      "label": "ID OdG"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_odg_parent",
       "width": "5%",
       "label": "ID OdG"
     },
@@ -260,11 +286,10 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "riunione_descr",
-      "queryFunct": "entrasp.riunioni_descr(id_riunione, codice_azienda)",
-      "label": "Riunione"
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda"
     },
     {
       "format": {
@@ -280,10 +305,11 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda"
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "width": "30%",
+      "label": "Titolo"
     },
     {
       "format": {
@@ -291,9 +317,9 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "titolo",
-      "width": "30%",
-      "label": "Titolo"
-    }
+      "key": "riunione_descr",
+      "queryFunct": "entrasp.riunioni_descr(id_riunione, codice_azienda)",
+      "label": "Riunione"
+    }  
   ]
 }

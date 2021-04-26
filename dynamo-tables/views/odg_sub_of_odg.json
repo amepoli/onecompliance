@@ -1,0 +1,17 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "odg_sub_of_odg",
+  "inheritsFrom": "odg_riunioni",
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.riunioni rnn set codice_part=az.codice_part from entrasp.aziende az WHERE rnn.codice_azienda=az.codice_azienda and id_riunione=$id_riunione$;"
+    },
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select * from entrasp.odg_riunioni od WHERE codice_azienda=$codice_azienda$ and id_riunione=$id_riunione$ and id_odg=$id_odg_parent$;"
+    }
+  ]
+}
