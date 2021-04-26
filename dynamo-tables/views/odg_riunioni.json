@@ -433,47 +433,18 @@
   ],
   "subTables": [
     {
-      "entryKey": "consuntivazioni_sub",
+      "entryKey": "odg_sub_of_odg",
       "keys": [
         {
           "parent": "codice_azienda",
           "son": "codice_azienda"
         },
         {
-          "parent": "codice_compito",
-          "son": "codice_compito"
+          "parent": "id_odg",
+          "son": "id_odg_parent"
         }
       ],
-      "label": "Aggiornamenti"
-    },
-    {
-      "entryKey": "rischi_sub_of_compiti",
-      "type": "tableForm",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "codice_compito",
-          "son": "codice_compito"
-        }
-      ],
-      "label": "Rischi Associati"
-    },
-    {
-      "entryKey": "compiti_sub_of_compiti",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "codice_compito",
-          "son": "codice_compito_parent"
-        }
-      ],
-      "label": "Sotto Compiti"
+      "label": "Sotto Ordini"
     },
     {
       "entryKey": "sondaggi_sub_of_compiti",
@@ -678,49 +649,10 @@
       ],
       "isButton": true,
       "buttonAction": {
-        "target": "compiti_consultant_to_do_open",
+        "target": "odg_riunioni",
         "viewType": "form",
         "action": "query",
         "query": "select entrasp.time_report_play(('£user_companies£')::text, '£codice_compito£', '£codice_azienda£')",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "codice_compito",
-            "destination": "codice_compito"
-          },
-          {
-            "source": "user_companies",
-            "destination": "user_companies"
-          }
-        ],
-        "confirmAction": false,
-        "onSuccessAction": "reload"
-      }
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "time_report_stop_active",
-      "label": "",
-      "style": [
-        {
-          "button_icon": "stop",
-          "value": "stop"
-        }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "compiti_consultant_to_do_open",
-        "viewType": "form",
-        "action": "query",
-        "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
         "keymap": [
           {
             "source": "codice_azienda",
