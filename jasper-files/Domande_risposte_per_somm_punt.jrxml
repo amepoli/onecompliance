@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports5.2.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Domande_risposte" pageWidth="507" pageHeight="800" columnWidth="507" leftMargin="0" rightMargin="0" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
@@ -13,7 +13,6 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -26,6 +25,7 @@
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -35,7 +35,7 @@
 	</parameter>
 	<parameter name="id_sondaggio" class="java.math.BigDecimal"/>
 	<queryString>
-		<![CDATA[SELECT ds.id_sezione,ds.ordinamento,d.note as note_domanda,s.codice_azienda,s.id_modello_test, s.id_modello_test_vr, mtst.codice AS codice_modello_test, (select case when r.punteggio=0 then '#C0C0C0' else coalesce(codice_colore,'grey') end as codice_colore from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto(r.codice_azienda, mt.id_risultato, r.peso)),mtst.descrizione AS modello_test, s.id_sondaggio, s.data_esecuzione, ss.id_somministrazione, ss.object_name, ss.object_key, ss.object_description AS oggetto, ss.note, ds.descrizione AS descrizione_sezione, d.id_domanda, d.descrizione AS domanda, COALESCE(r.id_risposta, 0::numeric) AS idrisposta, COALESCE(r.id_risposta_prev, 0::numeric) AS idrispostaprev, COALESCE(rp.id_risposta_prev, 0::numeric) AS rp_idrispostaprev, CASE WHEN r.id_risposta_prev=rp.id_risposta_prev THEN true else false END as checked,rp.risposta as rp_risposta, r.risposta as r_risposta, replace(COALESCE(rp.risposta, r.risposta), ' '::text, ' '::text) AS descrizione_risposta,replace(COALESCE(r.note, 'Nessuna'::text), ' '::text, ' '::text) AS note_risposta,length(replace(COALESCE(r.note, 'Nessuna'::text), ' '::text, ' '::text)) as len, COALESCE(d.punteggio, ds.punteggio_domande_default, mt.punteggio_domande_default) AS punteggio, COALESCE(r.peso, ds.peso_risposte_default, mt.peso_risposte_default) AS peso, COALESCE(r.punteggio_risposta, 0::numeric) AS punt_risposta,  COALESCE(prg.codice_progetto, '000'::character varying) AS cod_progetto, replace(prg.titolo::text, ' '::text, ' '::text) AS titolo_prog,  round(r.peso*r.punteggio/100, 2)::varchar||' su '||r.punteggio::varchar as giudizio_domanda  FROM entrasp.sondaggi s  JOIN entrasp.sondaggi_somministrati ss ON ss.codice_azienda::text = s.codice_azienda::text AND ss.id_sondaggio = s.id_sondaggio  JOIN entrasp.modelli_test_vr mt ON mt.codice_azienda::text = s.codice_azienda::text AND mt.id_modello_test = s.id_modello_test AND mt.id_modello_test_vr = s.id_modello_test_vr  JOIN entrasp.modelli_test mtst ON mt.codice_azienda::text = mtst.codice_azienda::text AND mt.id_modello_test = mtst.id_modello_test  LEFT JOIN entrasp.domande d ON mt.codice_azienda::text = d.codice_azienda::text AND mt.id_modello_test = d.id_modello_test AND mt.id_modello_test_vr = d.id_modello_test_vr  LEFT JOIN entrasp.domande_sezioni ds ON d.codice_azienda::text = ds.codice_azienda::text AND d.id_modello_test = ds.id_modello_test AND d.id_modello_test_vr = ds.id_modello_test_vr AND d.id_sezione = ds.id_sezione  LEFT JOIN entrasp.risposte r ON d.codice_azienda::text = r.codice_azienda::text AND d.id_modello_test = r.id_modello_test AND d.id_modello_test_vr = r.id_modello_test_vr AND d.id_domanda = r.id_domanda AND ss.id_sondaggio = r.id_sondaggio AND ss.id_somministrazione = r.id_somministrazione LEFT JOIN entrasp.risposte_previste rp ON d.codice_azienda::text = rp.codice_azienda::text AND d.id_modello_test = rp.id_modello_test AND d.id_modello_test_vr = rp.id_modello_test_vr AND d.id_domanda = rp.id_domanda  LEFT JOIN entrasp.progetti_fasi pf ON s.id_sondaggio = pf.id_sondaggio AND s.codice_azienda::text = pf.codice_azienda::text LEFT JOIN entrasp.progetti prg ON pf.id_progetto = prg.id_progetto AND pf.codice_azienda::text = prg.codice_azienda::text where d.codice_azienda=$P{codice_azienda} and ss.id_sondaggio=$P{id_sondaggio} and entrasp.domanda_active($P{codice_azienda}, d.id_modello_test,d.id_modello_test_vr,d.id_domanda,ss.id_somministrazione)=1 ORDER BY s.codice_azienda, s.id_sondaggio, ds.ordinamento, d.ordinamento,ss.object_key]]>
+		<![CDATA[SELECT ds.id_sezione,ds.ordinamento,d.note as note_domanda,d.ordinamento as domanda_ord, s.codice_azienda,s.id_modello_test, s.id_modello_test_vr, mtst.codice AS codice_modello_test, (select case when r.punteggio=0 then '#C0C0C0' else coalesce(codice_colore,'grey') end as codice_colore from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto(r.codice_azienda, mt.id_risultato, r.peso)),mtst.descrizione AS modello_test, s.id_sondaggio, s.data_esecuzione, ss.id_somministrazione, ss.object_name, ss.object_key, ss.object_description AS oggetto, ss.note, ds.descrizione AS descrizione_sezione, d.id_domanda, d.descrizione AS domanda, COALESCE(r.id_risposta, 0::numeric) AS idrisposta, COALESCE(r.id_risposta_prev, 0::numeric) AS idrispostaprev, COALESCE(rp.id_risposta_prev, 0::numeric) AS rp_idrispostaprev, CASE WHEN r.id_risposta_prev=rp.id_risposta_prev THEN true else false END as checked,rp.risposta as rp_risposta, r.risposta as r_risposta, replace(COALESCE(rp.risposta, r.risposta), ' '::text, ' '::text) AS descrizione_risposta,replace(COALESCE(r.note, 'Nessuna'::text), ' '::text, ' '::text) AS note_risposta,length(replace(COALESCE(r.note, 'Nessuna'::text), ' '::text, ' '::text)) as len, COALESCE(d.punteggio, ds.punteggio_domande_default, mt.punteggio_domande_default) AS punteggio, COALESCE(r.peso, ds.peso_risposte_default, mt.peso_risposte_default) AS peso, COALESCE(r.punteggio_risposta, 0::numeric) AS punt_risposta,  COALESCE(prg.codice_progetto, '000'::character varying) AS cod_progetto, replace(prg.titolo::text, ' '::text, ' '::text) AS titolo_prog,  round(r.peso*r.punteggio/100, 2)::varchar||' su '||r.punteggio::varchar as giudizio_domanda  FROM entrasp.sondaggi s  JOIN entrasp.sondaggi_somministrati ss ON ss.codice_azienda::text = s.codice_azienda::text AND ss.id_sondaggio = s.id_sondaggio  JOIN entrasp.modelli_test_vr mt ON mt.codice_azienda::text = s.codice_azienda::text AND mt.id_modello_test = s.id_modello_test AND mt.id_modello_test_vr = s.id_modello_test_vr  JOIN entrasp.modelli_test mtst ON mt.codice_azienda::text = mtst.codice_azienda::text AND mt.id_modello_test = mtst.id_modello_test  LEFT JOIN entrasp.domande d ON mt.codice_azienda::text = d.codice_azienda::text AND mt.id_modello_test = d.id_modello_test AND mt.id_modello_test_vr = d.id_modello_test_vr  LEFT JOIN entrasp.domande_sezioni ds ON d.codice_azienda::text = ds.codice_azienda::text AND d.id_modello_test = ds.id_modello_test AND d.id_modello_test_vr = ds.id_modello_test_vr AND d.id_sezione = ds.id_sezione  LEFT JOIN entrasp.risposte r ON d.codice_azienda::text = r.codice_azienda::text AND d.id_modello_test = r.id_modello_test AND d.id_modello_test_vr = r.id_modello_test_vr AND d.id_domanda = r.id_domanda AND ss.id_sondaggio = r.id_sondaggio AND ss.id_somministrazione = r.id_somministrazione LEFT JOIN entrasp.risposte_previste rp ON d.codice_azienda::text = rp.codice_azienda::text AND d.id_modello_test = rp.id_modello_test AND d.id_modello_test_vr = rp.id_modello_test_vr AND d.id_domanda = rp.id_domanda  LEFT JOIN entrasp.progetti_fasi pf ON s.id_sondaggio = pf.id_sondaggio AND s.codice_azienda::text = pf.codice_azienda::text LEFT JOIN entrasp.progetti prg ON pf.id_progetto = prg.id_progetto AND pf.codice_azienda::text = prg.codice_azienda::text where d.codice_azienda=$P{codice_azienda} and ss.id_sondaggio=$P{id_sondaggio} and entrasp.domanda_active($P{codice_azienda}, d.id_modello_test,d.id_modello_test_vr,d.id_domanda,ss.id_somministrazione)=1 ORDER BY s.codice_azienda, s.id_sondaggio, ds.ordinamento, d.ordinamento,ss.object_key]]>
 	</queryString>
 	<field name="id_sezione" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="id_sezione"/>
@@ -50,6 +50,11 @@
 	<field name="note_domanda" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="note_domanda"/>
 		<property name="com.jaspersoft.studio.field.label" value="note_domanda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="domande"/>
+	</field>
+	<field name="domanda_ord" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="domanda_ord"/>
+		<property name="com.jaspersoft.studio.field.label" value="domanda_ord"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="domande"/>
 	</field>
 	<field name="codice_azienda" class="java.lang.String">
@@ -194,13 +199,14 @@
 		<property name="com.jaspersoft.studio.field.label" value="giudizio_domanda"/>
 	</field>
 	<sortField name="id_somministrazione"/>
-	<group name="Gruppo1">
-		<groupExpression><![CDATA[$F{descrizione_sezione}]]></groupExpression>
+	<sortField name="ordinamento"/>
+	<sortField name="domanda_ord"/>
+	<group name="id_somministrazione">
+		<groupExpression><![CDATA[$F{id_somministrazione}]]></groupExpression>
 		<groupHeader>
-			<band height="5">
-				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<textField textAdjust="StretchHeight">
-					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="0" y="1" width="507" height="3" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#0AADFF" uuid="bf1976d2-9060-4a8f-9af7-dba00075a72a">
+			<band height="12">
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="0" y="5" width="507" height="3" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="id_somministrazione" forecolor="#FFFFFF" backcolor="#0AADFF" uuid="bf1976d2-9060-4a8f-9af7-dba00075a72a">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -214,12 +220,15 @@
 				</textField>
 			</band>
 		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
 	</group>
-	<group name="Gruppo3">
+	<group name="id_sezione">
 		<groupExpression><![CDATA[$F{id_sezione} != null]]></groupExpression>
 		<groupHeader>
 			<band height="21">
-				<textField textAdjust="StretchHeight">
+				<textField isStretchWithOverflow="true">
 					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="61" y="4" width="29" height="16" isRemoveLineWhenBlank="true" printWhenGroupChanges="Gruppo2" forecolor="#FFFFFF" backcolor="#1587A1" uuid="da82805e-b7b7-44fb-8590-30d1cb703689">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -255,7 +264,7 @@
 					</textElement>
 					<text><![CDATA[Sezione:]]></text>
 				</staticText>
-				<textField textAdjust="StretchHeight">
+				<textField isStretchWithOverflow="true">
 					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="100" y="4" width="406" height="16" isRemoveLineWhenBlank="true" printWhenGroupChanges="Gruppo2" forecolor="#FFFCFC" backcolor="#1587A1" uuid="6d8aaad9-d361-4097-bc4c-9f230c5e0c7c">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -282,8 +291,8 @@
 		<groupHeader>
 			<band height="42">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<textField textAdjust="StretchHeight">
-					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="0" y="2" width="409" height="17" isRemoveLineWhenBlank="true" printWhenGroupChanges="Gruppo2" backcolor="#C0F0FC" uuid="938fd0cf-77df-4a53-955e-81938c30b373">
+				<textField isStretchWithOverflow="true">
+					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="32" y="2" width="381" height="17" isRemoveLineWhenBlank="true" printWhenGroupChanges="Gruppo2" backcolor="#C0F0FC" uuid="938fd0cf-77df-4a53-955e-81938c30b373">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -308,7 +317,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{giudizio_domanda}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement positionType="Float" x="10" y="19" width="399" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="003a6b13-cac9-41c6-8d46-35c0c80b2450">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -324,6 +333,23 @@
 						<paragraph leftIndent="5"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{note_domanda}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="1" y="2" width="28" height="17" backcolor="#C0F0FC" uuid="c0405a31-5b7f-4737-80ee-ded93012ed38">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{domanda_ord}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -344,7 +370,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<text><![CDATA[Note risposta:]]></text>
 				</staticText>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement positionType="Float" x="24" y="16" width="482" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="e3b2293a-869f-4fe5-a191-e0008328104f">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -369,7 +395,7 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="53" y="2" width="416" height="8" uuid="d9aadd20-6068-42d7-988f-7b2f13cd737c"/>
 				<textElement textAlignment="Justified"/>
 				<textFieldExpression><![CDATA[$F{rp_risposta}]]></textFieldExpression>
@@ -400,7 +426,7 @@
 				</reportElement>
 				<text><![CDATA[Risposta aperta:]]></text>
 			</staticText>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Transparent" x="118" y="0" width="389" height="4" isRemoveLineWhenBlank="true" backcolor="#DE1E1B" uuid="d663dfa4-3064-4963-a943-d71ec6502b7a"/>
 				<textFieldExpression><![CDATA[$F{r_risposta}]]></textFieldExpression>
 			</textField>
