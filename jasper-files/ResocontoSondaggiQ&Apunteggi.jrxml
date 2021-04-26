@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports5.2.0  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ResocontoSondaggiQ&amp;Amultipli" language="groovy" pageWidth="565" pageHeight="800" columnWidth="537" columnSpacing="27" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
@@ -29,7 +29,7 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, funct.percentuale , replace(funct.codice_colore,'grey','#C0C0C0') as colore_giudizio_trans,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio),'grey','#C0C0C0') as colore_giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_1),'grey','#C0C0C0') as colore_giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_2),'grey','#C0C0C0') as colore_giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_follow_up),'grey','#C0C0C0') as colore_giudizio_follow_up from entrasp.sondaggi snd left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(snd.codice_azienda, snd.id_sondaggio) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda where snd.codice_azienda='SARDAFACTORING' and snd.id_sondaggio=41"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,snd.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, snd.ris_percentuale as percentuale, replace(entrasp.modelli_test_risultati_righe_codice_colore(snd.codice_azienda, mtv.id_risultato, snd.ris_percentuale),'grey','#C0C0C0') as colore_giudizio_trans,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio),'grey','#C0C0C0') as colore_giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_1),'grey','#C0C0C0') as colore_giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_2),'grey','#C0C0C0') as colore_giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_follow_up),'grey','#C0C0C0') as colore_giudizio_follow_up from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mtv on snd.codice_azienda=mtv.codice_azienda and snd.id_modello_test=mtv.id_modello_test and snd.id_modello_test_vr=mtv.id_modello_test_vr inner join entrasp.modelli_test mt on mtv.codice_azienda = mt.codice_azienda  and mtv.id_modello_test =mt.id_modello_test inner join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio where snd.codice_azienda='SARDAFACTORING' and snd.id_sondaggio=41 and cr.id_somministrazione is null"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["SARDAFACTORING"]]></defaultValueExpression>
@@ -373,9 +373,9 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="20">
+		<band height="24">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="489" y="6" width="48" height="10" isRemoveLineWhenBlank="true" uuid="12bf5114-5ce0-4683-9f89-3179a5f3bd1d">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -398,6 +398,21 @@
 				</textElement>
 				<text><![CDATA[Sondaggio:]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="10" y="6" width="65" height="14" uuid="9906275d-9a22-4b00-86ad-cef84ee589b7"/>
+				<textElement textAlignment="Right">
+					<font fontName="Bold_arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pagina n.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="81" y="6" width="65" height="14" uuid="69550f15-325b-4dfb-823d-641fca652571">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<detail>
@@ -419,7 +434,7 @@
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["Domande_risposte_per_somm_punt.jasper"]]></subreportExpression>
 			</subreport>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="124" width="537" height="20" isRemoveLineWhenBlank="true" uuid="4d16ce68-5b69-44d9-8f44-382a35669e83">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -438,7 +453,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="434" width="537" height="20" isRemoveLineWhenBlank="true" uuid="9b97a71f-919f-4dca-ae7e-f3644bf8d07c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -457,7 +472,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{risultati_emersi}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="526" width="537" height="20" isRemoveLineWhenBlank="true" uuid="e6df9f9f-ead9-4f16-bfa1-95d66d01b57d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -476,7 +491,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{decisioni_assunte}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="480" width="537" height="20" isRemoveLineWhenBlank="true" uuid="11531a1e-ec30-4992-b1e2-7cbf17c3f9fb">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -526,7 +541,7 @@
 				</textElement>
 				<text><![CDATA[Data Esecuzione]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="77" width="537" height="20" uuid="865eca5f-3104-474b-a3e5-76fe58b24a3d">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -589,7 +604,7 @@
 				</textElement>
 				<text><![CDATA[ID Sondaggio]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="427" y="32" width="110" height="20" backcolor="#FFFFFF" uuid="516544c2-241e-46f7-828d-b3706a749d59">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -620,7 +635,7 @@
 				</textElement>
 				<text><![CDATA[Centro Gestionale]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="169" width="110" height="20" uuid="037de9af-9db6-4f5f-bbdd-6ea68b8d40e9">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -651,7 +666,7 @@
 				</textElement>
 				<text><![CDATA[Stato]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="213" y="169" width="110" height="20" uuid="b7217bb7-7ac5-4353-9d33-67f5a4534515">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -682,7 +697,7 @@
 				</textElement>
 				<text><![CDATA[Risultato]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="415" y="169" width="120" height="20" forecolor="#000000" backcolor="#FFFFFF" uuid="ce5a455d-d364-428f-8f84-18fd2fdfeb4b">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -790,7 +805,7 @@
 				</textElement>
 				<text><![CDATA[Decisioni Assunte]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="362" width="537" height="20" isRemoveLineWhenBlank="true" uuid="bfd4f8d5-e18a-49a3-a51c-61f3ead63fdc">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -974,7 +989,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{giudizio_complessivo}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="-1" y="214" width="537" height="20" isRemoveLineWhenBlank="true" uuid="857338b6-5b53-4d9b-a9ae-5df17525dedf">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1010,7 +1025,7 @@
 				</textElement>
 				<text><![CDATA[Selezione campione]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="260" width="537" height="20" isRemoveLineWhenBlank="true" uuid="be0b01d9-3dac-4461-a129-a6c3c64b2585">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1046,7 +1061,7 @@
 				</textElement>
 				<text><![CDATA[Documentazione analizzata]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="-1" y="305" width="537" height="20" isRemoveLineWhenBlank="true" uuid="452722d3-4813-42a7-8786-f6f6d9909f07">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1083,7 +1098,7 @@
 				<text><![CDATA[Metodologia di presentazione dei risultati]]></text>
 			</staticText>
 			<break>
-				<reportElement x="0" y="632" width="100" height="1" uuid="b3bc325b-fd1a-4470-94f3-a5173b79cd71"/>
+				<reportElement positionType="Float" x="0" y="633" width="100" height="1" uuid="42ed0484-9e59-486e-945f-3d552fe4a897"/>
 			</break>
 			<subreport>
 				<reportElement positionType="Float" x="1" y="329" width="535" height="9" uuid="b38a06b7-6e1f-4d8c-a077-13bda52b8959">
@@ -1099,25 +1114,11 @@
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["criteri.jasper"]]></subreportExpression>
 			</subreport>
-			<break>
-				<reportElement x="0" y="339" width="100" height="1" uuid="cb9e91ea-e2b0-47c3-bd51-95ec0af434ed"/>
-			</break>
 		</band>
 	</detail>
 	<columnFooter>
 		<band splitType="Stretch"/>
 	</columnFooter>
-	<pageFooter>
-		<band height="29">
-			<line>
-				<reportElement x="-1" y="5" width="537" height="1" uuid="630c7832-cfb9-4e1f-b2c0-0af506d77c88"/>
-			</line>
-			<textField>
-				<reportElement x="436" y="10" width="100" height="17" uuid="1823e245-9b66-4f60-a20a-8c5442411575"/>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-		</band>
-	</pageFooter>
 	<summary>
 		<band splitType="Stretch"/>
 	</summary>
