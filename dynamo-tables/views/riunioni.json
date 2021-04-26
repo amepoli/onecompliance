@@ -34,35 +34,147 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni where codice_azienda = $codice_azienda$ and id_tipo_segnalazione!=0;",
-        "options": [],
-        "viewType": "combobox",
-        "validations": [
-          {
-            "message": "Inserire almeno un tipo",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
       },
       "isHidden": false,
-      "isPrimary": false,
-      "key": "id_tipo_segnalazione",
-      "label": "Tipo Segnalazione",
+      "isPrimary": true,
+      "key": "id_riunione",
+      "label": "ID Riunione",
       "newLine": false,
       "readOnly": false
     },
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "date",
-        "value": "£CURRENT_DATE£",
+        "dataType": "number",
         "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "data_segnalazione",
-      "label": "Data segnalazione",
+      "key": "id_agenda",
+      "label": "ID Agenda",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_part",
+      "label": "codice_part",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_presidente) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_presidente",
+      "label": "Presidente",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_segretario) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_segretario",
+      "label": "Segretario",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_centro_gest",
+      "label": "Centro Gestionale",
+      "newLine": false,
+      "readOnly": false,
+      "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_riunione",
+      "label": "Data Riunione",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "time",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "ora_riunione",
+      "label": "Ora Riunione",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "time",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "ora_inizio",
+      "label": "Ora di Inizio",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "time",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "ora_fine",
+      "label": "Ora di Fine",
       "newLine": false,
       "readOnly": false
     },
@@ -107,216 +219,27 @@
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "play_arrow",
-      "key": "play_time_report",
-      "label": "play_time_report",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "time_report_play",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "time_report_play",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$) as play_time_report"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "stop",
-      "key": "stop_time_report",
-      "label": "stop_time_report",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "time_report_stop",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "time_report_stop",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
-          "outputEventWhenComplete": "after_time_report_stop"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_responsabile",
-      "label": "ID Responsabile",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_cliente",
-      "label": "Cliente",
-      "newLine": false,
-      "readOnly": false,
-      "size": 5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-      "label": "Centro Gestionale",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest_monitor",
-      "label": "Centro Gestionale Monitoraggio",
-      "newLine": true,
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_compito",
-      "label": "Codice Segnalazione",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT codice_compito AS id, codice_compito||' - '||titolo AS name FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$ and codice_compito!='£codice_compito£';",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice_compito_parent",
-      "label": "Codice Segnalazione Parent",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
+        "dataType": "number",
         "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "data_chiusura",
-      "label": "Data Chiusura",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_competenza",
-      "label": "Data Competenza",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
+      "key": "id_argomento",
+      "label": "ID Argomento",
       "newLine": false,
       "readOnly": false
     },
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_ins",
-      "label": "Data Inserimento",
-      "insertUpdateFunct": "select CURRENT_DATE",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
         "dataType": "text",
-        "value": "£global_userid£",
         "viewType": "input"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
-      "key": "ute_ins",
-      "label": "Utente_ins",
-      "newLine": true,
+      "key": "codice_protocollo",
+      "label": "Protocollo",
+      "newLine": false,
       "readOnly": false
     },
     {
@@ -334,8 +257,8 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "titolo",
-      "label": "Titolo",
+      "key": "oggetto",
+      "label": "Oggetto",
       "newLine": true,
       "readOnly": false,
       "size": 10
@@ -344,14 +267,7 @@
       "autoGenerate": false,
       "format": {
         "dataType": "text",
-        "viewType": "textarea",
-        "validations": [
-          {
-            "message": "Breve descrizione necessaria",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "viewType": "textarea"        
       },
       "isHidden": false,
       "isPrimary": false,
@@ -361,6 +277,7 @@
       "readOnly": false,
       "size": 10
     }
+    
   ],
   "search_keys": [
     {
@@ -529,15 +446,6 @@
     }
   ],
   "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_codifica_stato",
-      "label": "codice_codifica_stato"
-    },
     {
       "format": {
         "dataType": "text"
