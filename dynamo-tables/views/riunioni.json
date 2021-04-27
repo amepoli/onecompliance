@@ -11,7 +11,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select id_riunione, codice_protocollo, oggetto, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.riunioni where codice_azienda=$codice_azienda$"
+      "queryString": "select id_riunione, codice_protocollo, oggetto, entrasp.argomenti_descr(id_argomento) as descr_riunione, data_riunione, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.riunioni where codice_azienda=$codice_azienda$"
     },
     {
       "operation": "update",
@@ -387,9 +387,20 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "key": "descr_riunione",
+      "queryFunct": "entrasp.argomenti_descr(id_argomento)",
+      "label": "Tipo riunione",
+      "width": "15%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
       "key": "descr_centro_gest",
       "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
-      "label": "Centro Gest",
+      "label": "Organo/ Centro Gest",
       "width": "10%"
     },
     {
