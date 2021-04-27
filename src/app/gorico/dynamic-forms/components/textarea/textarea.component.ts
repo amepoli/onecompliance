@@ -8,7 +8,11 @@ import { FieldConfig } from "../../field.interface";
 <mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
 <textarea class="text-area" (input)="setHeights()" #textAreaEl
- matInput [formControlName]="field.name" [readonly]="field.readonly || readOnlyPage" matTextareaAutosize matAutosizeMinRows="1" matAutosizeMaxRows="5"></textarea>
+ matInput [formControlName]="field.name" [readonly]="field.readonly || readOnlyPage" matTextareaAutosize
+ matAutosizeMinRows="1" matAutosizeMaxRows="5" [style.padding]="'4px'" [style.border-radius]="'4px'"
+ [style.background-color]="style.background_color" [style.color]="style.font_color"
+ [style.font-size]="style.font_size" [style.font-style]="style.font_style"
+ [style.font-weight]="style.font_weight"></textarea>
 <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
 <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
 </ng-container>
@@ -38,6 +42,14 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   readOnlyPage: boolean; // field.readonly overridden by page
   maxHeight: number = 256; // Maximum height of textarea element
 
+  style = {
+    background_color: 'transparent',
+    font_color: 'black',
+    font_size: 'unset',
+    font_style: 'unset',
+    font_weight: 'unset'
+  };
+
   @ViewChild('textAreaEl') textAreaEl: ElementRef;
   @HostBinding('style.height.px') textAreaComponentHeight = '0';
   
@@ -49,6 +61,7 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(){
     this.setHeights();
+    this.loadStyles();
   }
 
   setHeights() {
@@ -68,5 +81,24 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
     // Apply heights
     this.textAreaEl.nativeElement.style.height = height + 'px';
     this.textAreaComponentHeight = (height + 78) + "";
+  }
+  loadStyles() {
+    if(this.field.style) {
+      if(this.field.style.background_color) {
+        this.style.background_color = this.field.style.background_color;
+      }
+      if(this.field.style.font_color) {
+        this.style.font_color = this.field.style.font_color;
+      }
+      if(this.field.style.font_size) {
+        this.style.font_size = this.field.style.font_size;
+      }
+      if(this.field.style.font_style) {
+        this.style.font_style = this.field.style.font_style;
+      }
+      if(this.field.style.font_weight) {
+        this.style.font_weight = this.field.style.font_weight;
+      }
+    }
   }
 }
