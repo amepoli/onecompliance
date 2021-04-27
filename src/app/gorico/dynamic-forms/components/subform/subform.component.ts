@@ -8,7 +8,8 @@ import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive'
 @Component({
   selector: 'app-subform',
   template: `
-    <div class="subform-style" *ngIf="field.isVisible != false">
+    <div class="subform-style" [style.border-radius]="'4px'" [style.background-color]="style.background_color" 
+    [style.padding]="style.padding" *ngIf="field.isVisible != false">
         <ng-container *ngFor='let subfield of field.subform;' dynamicField [field]="subfield" [group]="group" [readOnlyPage]="readOnlyPage">
         </ng-container>
 </div>
@@ -35,6 +36,11 @@ export class SubformComponent implements OnInit {
   
   @ViewChildren(DynamicFieldDirective) dynamicFields: QueryList<DynamicFieldDirective>;
 
+  style = {
+    background_color: 'transparent',
+    padding: '0px'
+  };
+
   constructor() { }
   ngOnInit() {
     const _this = this;
@@ -44,7 +50,17 @@ export class SubformComponent implements OnInit {
       }
       _this.group.addControl(field.name, new FormControl(field.value, ValidationsService.bindValidations(field.validations || [])));
     });
+
+    _this.loadStyles();
   }
 
+  loadStyles() {
+    if(this.field.style) {
+      if(this.field.style.background_color) {
+        this.style.background_color = this.field.style.background_color;
+        this.style.padding = '4px';
+      }
+    }
+  }
 
 }
