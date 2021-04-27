@@ -1,0 +1,507 @@
+{"$schema": "../views.schema.json",
+  "entryKey": "riunioni_sub_of_argomenti",
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.riunioni rnn set codice_part=az.codice_part from entrasp.aziende az WHERE rnn.codice_azienda=az.codice_azienda and id_riunione=$id_riunione$;"
+    },
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select id_riunione, codice_protocollo, oggetto, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.riunioni where id_aromento=$id_argomento$"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "UPDATE entrasp.riunioni cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "update entrasp.riunioni cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_riunione",
+      "label": "Id Riunione",
+      "newLine": false,
+      "readOnly": true,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "Argomento",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "datetime",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_riunione",
+      "label": "Data e ora riunione",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text",
+        "value": "A"
+      },
+      "outputEvent": {
+        "eventName": "codice_colore_change_riunione",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "eventName": "codice_colore_change_riunione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='€stato€'"
+        },
+        {
+          "eventName": "codice_colore_change_riunione2",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "font_color",
+          "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice='€stato€'"
+        }
+      ],
+      "label": "Stato",
+      "key": "stato",
+      "readOnly": false,
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "play_arrow",
+      "key": "play_time_report",
+      "label": "play_time_report",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "time_report_play",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "time_report_play",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'riunioni', $id_riunione$, $codice_azienda$) as play_time_report"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "stop",
+      "key": "stop_time_report",
+      "label": "stop_time_report",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "time_report_stop",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "time_report_stop",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_presidente",
+      "label": "Presidente",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_segretario",
+      "label": "Segretario",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_centro_gest",
+      "label": "Organo/Comitato/Centro Gestionale",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+       },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_protocollo",
+      "label": "Protocollo",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+       },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "oggetto",
+      "label": "Oggetto",
+      "newLine": true,
+      "readOnly": false,
+      "size": 10
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "textarea"
+       },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "label": "Note",
+      "newLine": true,
+      "readOnly": false,
+      "size": 10
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "stato",
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "stato='€stato€'"
+    },
+    {
+      "fieldName": "id_riunione",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Codice Compito",
+      "newLine": false,
+      "queryCond": "id_riunion=$id_riunione$"
+    },
+    {
+      "fieldName": "id_centro_gest",
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.riunioni WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Centro Gestionale",
+      "newLine": false,
+      "queryCond": "id_centro_gest=$id_centro_gest$"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "odg_riunioni",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_riunione",
+          "son": "id_riunione"
+        }
+      ],
+      "label": "Punti all'ordine del giorno"
+    },
+    {
+      "entryKey": "consuntivazioni_sub",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_riunione",
+          "son": "id_riunione"
+        }
+      ],
+      "label": "Aggiornamenti"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "width": "5%",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento",
+      "width": "5%",
+      "label": "Tipo riunione"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_riunione",
+      "width": "5%",
+      "label": "Id Riunione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_protocollo",
+      "width": "7%",
+      "label": "Protocollo"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descr_centro_gest",
+      "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
+      "label": "Centro Gest",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "oggetto",
+      "width": "35%",
+      "label": "Oggetto"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "stato",
+      "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
+      "label": "Stato",
+      "width": "6%",
+      "style": [
+        {
+          "value": "Chiuso",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Provvisorio",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Aperto",
+          "font_color": "red",
+          "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda"
+    },
+    {
+      "format": {
+        "dataType": "datetime"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_riunione",
+      "width": "6%",
+      "label": "Data"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_cliente",
+      "label": "cliente"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "3%",
+      "key": "time_report_play",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "play_arrow",
+          "value": "play_arrow"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "riunioni",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.business_object_play(('£user_companies£')::text, 'riunioni', '£id_riunione£', '£codice_azienda£')",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_riunione",
+            "destination": "id_riunione"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "time_report_stop_active",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "stop",
+          "value": "stop"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "riunioni",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+        "keymap": [
+          {
+            "source": "user_companies",
+            "destination": "user_companies"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "reload"
+      }
+    }
+  ]
+}
