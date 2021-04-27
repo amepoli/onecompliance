@@ -1,0 +1,145 @@
+{
+  "$schema": "../profiles.schema.json",
+  "menu": {
+    "allow": [
+      "gorico",
+      "me",
+      "documents",
+      "organization",
+      "employees",
+      "meetings",
+      "meetings_agenda",
+      "meetings_management",
+      "workflow_aml",
+      "projects_aml",
+      "testforms",
+      "surveys_model",
+      "surveys_elements",
+      "surveys_elements",
+      "question_answers"
+    ],
+    "deny": [
+    ]
+  },
+  "name": "aml_profiling_and_meetings",
+  "tables": {
+    "allow": [
+      "me",
+      "anagrafiche_vr",
+      "anagrafiche_vr_attachments",
+      "anagrafiche_vr_sub_anagrafiche_vr",
+      "attachments",
+      "attivita_aml",
+      "centri_gestionali_sub_of_anagrafiche_vr",
+      "centri_gestionali_sub_of_me",
+      "compiti_rif_bo_keys",
+      "consuntivazioni_sub_of_modelli_test",
+      "domande",
+      "domande_risposte",
+      "domande_risposte_sezione",
+      "domande_dettaglio",
+      "domande_sezioni_detail",
+      "domande_sezioni_sub_of_somministrazioni",
+      "fe_attachment_form",
+      "modelli_test_vr",
+      "modelli_test_vr_attachments",
+      "modelli_test_vr_sub_version",
+      "odg_rinioni",
+      "odg_sub_odg",
+      "presidi_sub_of_modelli_test",
+      "progetti_attachments",
+      "progetti_fasi",
+      "progetti_mine", 
+      "progetti_sub_of_anagrafiche_vr",
+      "projects_aml",
+      "risposte",
+      "riunioni",
+      "risposte_attachments",
+      "risposte_previste",
+      "ruoli_sub_of_anagrafiche",
+      "seleziona_campione",
+      "sondaggi_somministrati",     
+      "sondaggi_somministrati_open_mine",
+      "sondaggi_somministrati_sub_of_anagrafiche",
+      "sondaggi_open_mine",
+      "sondaggi_sub_of_modelli_test",
+      "sondaggi_somministrati_attachments",
+      "sondaggi_somministrati_sub_of_sondaggi_somministrati",
+      "tipi_allegati"
+    ],
+    "deny": [      
+    ],
+    "form_keys": [
+      {
+        "entry": "modelli_test_vr",
+        "hide": [
+          "allinea_codici_esterni",
+          "codice_esterno"
+        ]
+      },
+      {
+        "entry": "progetti",
+        "hide": [
+          "aggiorna_codici"
+        ]
+      },
+      {
+        "entry": "projects_aml",
+        "hide": [
+          "aggiorna_codici",
+          "modello_progetto"
+        ]
+      },
+      {
+        "entry": "sondaggi_somministrati",
+        "hide": [
+          "id_sondaggio",
+          "sondaggi_from_sondaggi_somministrati",
+          "close_associated_sondaggio_button_key",
+          "data_comp",
+          "id_modello_test",
+          "id_modello_test_vr",
+          "modello_test_from_sondaggi_somministrati",
+          "criterio_analisi",
+          "riepilogo_risultati"
+          
+        ]
+      },
+      {
+        "entry": "centri_gestionali",
+        "hide": [
+          "id_argomento"
+        ]
+      }
+    ],
+    "readOnly": [],
+    "table_keys": [
+      {
+        "entry": "progetti_fasi",
+        "hide": [
+          "visible_button_modello_test"
+        ]
+      }
+       
+    ],
+    
+    "queryCond": [
+      {
+        "entry": "modelli_test_vr",
+        "viewType": "table",
+        "queryString": "id_centro_gest in(select id_centro_gest from entrasp.centri_gestionali where id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri where id_anagrafica=€global_userid€ and codice_part='€global_codice_part€') and codice_part='€global_codice_part€')"
+      },
+      {
+        "entry": "sondaggi",
+        "viewType": "table",
+        "queryString": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€')"
+      },
+      {
+        "entry": "sondaggi_somministrati",
+        "viewType": "table",
+        "queryString": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€')"
+      }
+   
+    ]
+  }
+}
