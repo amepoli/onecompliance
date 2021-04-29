@@ -780,6 +780,16 @@
 			"queryCond": "data_inserimento<='€data_ins_max€'"
 		},
 		{
+			"fieldName": "progetti_con_fasi_incomplete",
+			"format": {
+			  "viewType": "checkbox",
+			  "value": "0"
+			},
+			"label": "Progetti con verifiche incomplete",
+			"newLine": false,
+			"queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi_somministrati ss on pf.id_sondaggio=ss.id_sondaggio and pf.codice_azienda=ss.codice_azienda where pf.codice_azienda=$codice_azienda$ and ss.somministrazione_completata!='Completo' and pf.id_sondaggio is not null)"
+		  },
+		{
 			"fieldName": "parola_s",
 			"format": {
 				"dataType": "text",
@@ -975,6 +985,6 @@
 		}
 	],
 	"querySuffixes": {
-		"tableViewSuffix": "order by data_inserimento desc limit 50"
+		"tableViewSuffix": "order by data_inserimento desc limit 150"
 	}
 }
