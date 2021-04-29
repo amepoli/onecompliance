@@ -114,8 +114,12 @@
 	"exportQueries": {
 		"formQueries": [
 			{
-				"label": "Valore indicatori",
-				"queryString": "select ind.id_indicatore, ind.descrizione as Descrizione_Indicatore, entrasp.calcola_indicatore(ind.id_indicatore, '€data_esec_da€', '€data_esec_a€') as Valore_Indicatore from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore and ir.id_report=$id_report$"
+				"label": "Valore indicatori con azienda",
+				"queryString": "select ind.id_indicatore, ind.descrizione as Descrizione_Indicatore, entrasp.calcola_indicatore_arg(ind.id_argomento::integer, '€data_esec_da€', '€data_esec_a€',$codice_azienda$::varchar,ir.codice_tipo_indicatore::varchar) as Valore_Indicatore from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore and ir.id_report=$id_report$"
+			},
+			{
+				"label": "Valore indicatori senza azienda",
+				"queryString": "select ind.id_indicatore, ind.descrizione as Descrizione_Indicatore, entrasp.calcola_indicatore_arg(ind.id_argomento::integer, '€data_esec_da€', '€data_esec_a€,null,ir.codice_tipo_indicatore::varchar) as Valore_Indicatore from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore and ir.id_report=$id_report$"
 			}
 		]
 	},
