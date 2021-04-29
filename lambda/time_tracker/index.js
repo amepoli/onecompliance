@@ -77,7 +77,6 @@ async function getProfileData(profile) {
 function isAuthorized(entry_name, profileData) {
 
     let allowed;
-
     if (profileData != null && profileData.tables != null) {
         let permissions = profileData.tables;
         if (permissions.allow.indexOf(entry_name) !== -1) { // allowed 

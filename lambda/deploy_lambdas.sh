@@ -43,3 +43,4 @@ cd ../email_result_handler
 echo "Deploying email result handler"
 ./deploy_lambda.sh $1
 cd ..
+#TODO: ADD THE TIME TRACKER LAMBDA !!!!!!!
