@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
-import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
+import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 
 @NgModule({
@@ -32,7 +32,8 @@ import { NgxMatMomentModule } from '@angular-material-components/moment-adapter'
     MatRadioModule,
     NgxMatTimepickerModule,
     NgxMatDatetimePickerModule,
-    NgxMatMomentModule, 
+    NgxMatMomentModule,
+    NgxMatNativeDateModule
   ],
   exports: [
     MatButtonModule,
@@ -50,7 +51,8 @@ import { NgxMatMomentModule } from '@angular-material-components/moment-adapter'
     MatRadioModule,
     NgxMatTimepickerModule,
     NgxMatDatetimePickerModule,
-    NgxMatMomentModule, 
+    NgxMatMomentModule,
+    NgxMatNativeDateModule
   ],
   providers: [
     { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
