@@ -20,7 +20,7 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select pr.codice_azienda, pr.id_progetto,pr.codice_progetto, pr.titolo , pr.id_tipo_progetto, pr.id_cliente, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pr.stato) as stato,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_cliente),prf.titolo as prf_titolo, prf.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prd_idfase,prf.id_sondaggio as prf_idsond,prf2.titolo as prf_titolo2, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf2.stato) as prf2_stato,prf2.id_fase as prf2_idfase,prf2.id_sondaggio as prf2_idson,s1.titolo as s1_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s1.stato) as stato_sondaggio1,s2.titolo as s2_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s2.stato) as stato_sondaggio2, s1.descrizione, s1.data_prevista from entrasp.progetti pr left join entrasp.progetti_fasi prf on pr.codice_azienda=prf.codice_azienda and pr.id_progetto=prf.id_progetto left join entrasp.sondaggi s1 on prf.codice_azienda=s1.codice_azienda and prf.id_sondaggio=s1.id_sondaggio left join entrasp.progetti_fasi prf2 on prf.codice_azienda=prf2.codice_azienda and prf.id_fase=prf2.id_fase_sup left join entrasp.sondaggi s2 on prf2.codice_azienda=s2.codice_azienda and prf2.id_sondaggio=s2.id_sondaggio WHERE pr.codice_azienda='UNIFACTOR' and prf.id_fase_sup is null"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select pr.codice_azienda, pr.id_progetto,pr.codice_progetto, pr.titolo , pr.id_tipo_progetto, pr.id_cliente, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pr.stato) as stato,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_cliente),prf.titolo as prf_titolo, prf.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prd_idfase,prf.id_sondaggio as prf_idsond,prf2.titolo as prf_titolo2, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf2.stato) as prf2_stato,prf2.id_fase as prf2_idfase,prf2.id_sondaggio as prf2_idson,s1.titolo as s1_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s1.stato) as stato_sondaggio1,s2.titolo as s2_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s2.stato) as stato_sondaggio2, s1.descrizione, s1.data_prevista from entrasp.progetti pr left join entrasp.progetti_fasi prf on pr.codice_azienda=prf.codice_azienda and pr.id_progetto=prf.id_progetto left join entrasp.sondaggi s1 on prf.codice_azienda=s1.codice_azienda and prf.id_sondaggio=s1.id_sondaggio left join entrasp.progetti_fasi prf2 on prf.codice_azienda=prf2.codice_azienda and prf.id_fase=prf2.id_fase_sup left join entrasp.sondaggi s2 on prf2.codice_azienda=s2.codice_azienda and prf2.id_sondaggio=s2.id_sondaggio WHERE pr.codice_azienda='IREN' and prf.id_fase_sup is null"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -394,8 +394,8 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{prf_titolo}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight">
-					<reportElement positionType="Float" x="125" y="23" width="412" height="20" uuid="1384ae52-80b6-4eb4-8fd6-7b9e30414855">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="125" y="23" width="412" height="20" isRemoveLineWhenBlank="true" uuid="1384ae52-80b6-4eb4-8fd6-7b9e30414855">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -408,8 +408,8 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 				</textField>
-				<textField>
-					<reportElement positionType="Float" x="15" y="23" width="100" height="20" uuid="d332846f-3ad2-4642-bb1d-2bdb24d1d9e0">
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="15" y="23" width="100" height="20" isRemoveLineWhenBlank="true" uuid="d332846f-3ad2-4642-bb1d-2bdb24d1d9e0">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box>
@@ -512,8 +512,8 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{prf_titolo2}]]></textFieldExpression>
 				</textField>
-				<textField>
-					<reportElement positionType="Float" x="30" y="24" width="100" height="20" uuid="00bca6c2-cb0f-450c-9f25-ea98493ce489">
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="30" y="24" width="100" height="20" isRemoveLineWhenBlank="true" uuid="00bca6c2-cb0f-450c-9f25-ea98493ce489">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box>
@@ -525,8 +525,8 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{data_prevista}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight">
-					<reportElement positionType="Float" x="140" y="24" width="397" height="20" uuid="4cbbf5d3-7715-43aa-aee4-3cf58aa3acc1">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="140" y="24" width="397" height="20" isRemoveLineWhenBlank="true" uuid="4cbbf5d3-7715-43aa-aee4-3cf58aa3acc1">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
