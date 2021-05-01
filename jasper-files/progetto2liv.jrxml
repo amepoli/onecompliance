@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="progetto2liv" pageWidth="565" pageHeight="842" columnWidth="537" columnSpacing="27" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="376ede0d-23cd-4d7b-a1bf-664463cad42c">
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports5.2.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="progetto2liv" pageWidth="507" pageHeight="842" columnWidth="507" columnSpacing="27" leftMargin="0" rightMargin="0" topMargin="1" bottomMargin="1" whenResourceMissingType="Empty" uuid="376ede0d-23cd-4d7b-a1bf-664463cad42c">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
 	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
@@ -24,25 +24,10 @@
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="id_fase_sup" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="id_fase_sup" class="java.math.BigDecimal" isForPrompting="false"/>
 	<queryString>
-		<![CDATA[select pr.codice_azienda, pr.id_progetto, pr.id_tipo_progetto,prf.titolo as prf_titolo, prf.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prd_idfase,prf.id_sondaggio as prf_idsond,s1.titolo as s1_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s1.stato) as stato_sondaggio1, s1.data_prevista, s1.descrizione from entrasp.progetti pr inner join entrasp.progetti_fasi prf on pr.codice_azienda=prf.codice_azienda and pr.id_progetto=prf.id_progetto left join entrasp.sondaggi s1 on prf.codice_azienda=s1.codice_azienda and prf.id_sondaggio=s1.id_sondaggio  WHERE pr.codice_azienda=  $P{codice_azienda} and prf.id_fase_sup =  $P{id_fase_sup} ]]>
+		<![CDATA[select prf.titolo as prf_titolo, prf.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prd_idfase,prf.id_sondaggio as prf_idsond,snd.titolo as s1_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato_sondaggio1, snd.data_prevista, snd.descrizione from entrasp.progetti_fasi prf left join entrasp.sondaggi snd on prf.codice_azienda=snd.codice_azienda and prf.id_sondaggio=snd.id_sondaggio  WHERE prf.codice_azienda=$P{codice_azienda} and prf.id_fase_sup= $P{id_fase_sup}]]>
 	</queryString>
-	<field name="codice_azienda" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
-		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
-	<field name="id_progetto" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_progetto"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_progetto"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
-	<field name="id_tipo_progetto" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_tipo_progetto"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_tipo_progetto"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
-	</field>
 	<field name="prf_titolo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="prf_titolo"/>
 		<property name="com.jaspersoft.studio.field.label" value="prf_titolo"/>
@@ -97,12 +82,13 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="96">
+		<band height="91">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="10" y="0" width="522" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="Gruppo1" forecolor="#FFFFFF" backcolor="#040538" uuid="41124474-f15f-4507-a8bc-5e0e7a740abe">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="0" y="0" width="506" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="Gruppo1" forecolor="#FFFFFF" backcolor="#040538" uuid="41124474-f15f-4507-a8bc-5e0e7a740abe">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineWidth="1.25" lineStyle="Solid" lineColor="#000000"/>
@@ -113,9 +99,8 @@
 				<text><![CDATA[Sotto-fasi di secondo livello:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="10" y="20" width="100" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="Gruppo2" forecolor="#030202" backcolor="#9ADAFC" uuid="1a6b8233-51b8-4203-8a60-337312fc4913">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="0" y="20" width="100" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="Gruppo2" forecolor="#030202" backcolor="#9ADAFC" uuid="1a6b8233-51b8-4203-8a60-337312fc4913">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineColor="#000000"/>
@@ -130,9 +115,10 @@
 				<text><![CDATA[Codice]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="120" y="20" width="412" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="Gruppo2" forecolor="#030202" backcolor="#9ADAFC" uuid="b8fe3dbd-462e-40bf-b676-bdf6926e4156">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="106" y="20" width="398" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="Gruppo2" forecolor="#030202" backcolor="#9ADAFC" uuid="b8fe3dbd-462e-40bf-b676-bdf6926e4156">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineColor="#000000"/>
@@ -146,10 +132,9 @@
 				</textElement>
 				<text><![CDATA[Titolo]]></text>
 			</staticText>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Opaque" x="10" y="40" width="100" height="20" backcolor="#FFFFFF" uuid="c9605ce3-743c-4371-b833-6849e8bc129a">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Opaque" x="0" y="40" width="100" height="20" backcolor="#FFFFFF" uuid="c9605ce3-743c-4371-b833-6849e8bc129a">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -162,10 +147,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codice}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="120" y="40" width="412" height="20" backcolor="#FFFFFF" uuid="faf73bb6-639e-41b4-ad67-309bedbd58e9">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="106" y="40" width="398" height="20" backcolor="#FFFFFF" uuid="faf73bb6-639e-41b4-ad67-309bedbd58e9">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -178,10 +163,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{prf_titolo}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="120" y="70" width="412" height="20" isRemoveLineWhenBlank="true" uuid="1384ae52-80b6-4eb4-8fd6-7b9e30414855">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="106" y="63" width="398" height="20" isRemoveLineWhenBlank="true" uuid="1384ae52-80b6-4eb4-8fd6-7b9e30414855">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -193,8 +178,9 @@
 				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="10" y="70" width="100" height="20" isRemoveLineWhenBlank="true" uuid="d332846f-3ad2-4642-bb1d-2bdb24d1d9e0">
+				<reportElement positionType="Float" x="0" y="63" width="100" height="20" isRemoveLineWhenBlank="true" uuid="d332846f-3ad2-4642-bb1d-2bdb24d1d9e0">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
