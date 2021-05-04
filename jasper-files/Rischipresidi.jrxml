@@ -32,8 +32,12 @@
 		<defaultValueExpression><![CDATA[new String ("http://localhost/core/images/SICC/")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LOGO" class="java.lang.String"/>
-	<parameter name="codice_azienda" class="java.lang.String"/>
-	<parameter name="codice_rischio" class="java.lang.String"/>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["ASCOHOLDING"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codice_rischio" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0001"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[select rp.codice_azienda, pr.codice, rp.codice_rischio,rp.id_presidio,pr.descrizione_breve, pr.descrizione, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione  from entrasp.rischi_presidi rp, entrasp.presidi pr where rp.codice_azienda=$P{codice_azienda} and rp.codice_rischio=$P{codice_rischio} and rp.codice_azienda=pr.codice_azienda and rp.id_presidio=pr.id_presidio]]>
 	</queryString>
