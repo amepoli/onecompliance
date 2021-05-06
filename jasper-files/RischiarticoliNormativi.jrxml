@@ -23,8 +23,12 @@
 		<defaultValueExpression><![CDATA[new String ("http://localhost/core/images/SICC/")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LOGO" class="java.lang.String"/>
-	<parameter name="codice_azienda" class="java.lang.String"/>
-	<parameter name="codice_rischio" class="java.lang.String"/>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<parameterDescription><![CDATA["ASCOHOLDING"]]></parameterDescription>
+	</parameter>
+	<parameter name="codice_rischio" class="java.lang.String">
+		<parameterDescription><![CDATA["0001"]]></parameterDescription>
+	</parameter>
 	<queryString>
 		<![CDATA[select entrasp.articoli_normativi_descrizione(ran.codice_articolo_normativo, ran.id_testo_normativo),an.rubrica,ran.codice_articolo_normativo,ran.id_testo_normativo,ran.codice_rischio,ran.codice_azienda ,entrasp.testi_normativi_rif_descr2(ran.id_testo_normativo) from entrasp.rischi_articoli_normativi ran, entrasp.articoli_normativi an where codice_azienda=$P{codice_azienda} and codice_rischio=$P{codice_rischio} and ran.codice_articolo_normativo = an.codice_articolo_normativo and ran.id_testo_normativo=an.id_testo_normativo]]>
 	</queryString>
@@ -61,18 +65,41 @@
 		<property name="com.jaspersoft.studio.field.name" value="testi_normativi_rif_descr2"/>
 		<property name="com.jaspersoft.studio.field.label" value="testi_normativi_rif_descr2"/>
 	</field>
+	<group name="Gruppo1">
+		<groupExpression><![CDATA[$F{id_testo_normativo}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField textAdjust="StretchHeight">
+					<reportElement mode="Opaque" x="0" y="0" width="507" height="17" forecolor="#030303" backcolor="#B3E2F5" uuid="eaad073a-5bfa-4869-9604-4112811a844e">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{testi_normativi_rif_descr2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
 	<title>
 		<band height="25">
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="2" width="507" height="20" forecolor="#FFFFFF" backcolor="#4CB6D9" uuid="9aa06b90-d7e8-4cc9-a5eb-28197ec94f2e">
+				<reportElement mode="Opaque" x="0" y="2" width="507" height="20" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#4CB6D9" uuid="9aa06b90-d7e8-4cc9-a5eb-28197ec94f2e">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineColor="#000000"/>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bold_arial" size="14" isBold="true"/>
@@ -83,49 +110,24 @@
 	</title>
 	<detail>
 		<band height="43" splitType="Stretch">
-			<line>
-				<reportElement positionType="Float" x="0" y="42" width="507" height="1" uuid="72c5bfff-58fa-48e4-9c9f-257f58075b7b">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-				</reportElement>
-			</line>
 			<textField>
-				<reportElement x="0" y="21" width="88" height="17" uuid="8df32f6e-5639-4069-b187-5f683b860b70">
+				<reportElement x="0" y="3" width="88" height="17" uuid="8df32f6e-5639-4069-b187-5f683b860b70">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codice_articolo_normativo}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement mode="Opaque" x="0" y="3" width="67" height="17" forecolor="#FFFFFF" backcolor="#25599C" uuid="41c3e554-c9a6-4cac-b6e1-dd8ca11fff76"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Bold_arial" isBold="true"/>
-				</textElement>
-				<text><![CDATA[ARTICOLO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="112" y="3" width="78" height="17" forecolor="#FFFFFF" backcolor="#25599C" uuid="2742e29d-cd16-4c69-ad84-05d395d18f49"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Bold_arial" isBold="true"/>
-				</textElement>
-				<text><![CDATA[RUBRICA]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="369" y="2" width="78" height="17" forecolor="#FFFFFF" backcolor="#25599C" uuid="23e84e24-2579-46c0-865a-de499f24d9e8"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Bold_arial" isBold="true"/>
-				</textElement>
-				<text><![CDATA[TESTO NORMATIVO]]></text>
-			</staticText>
 			<textField textAdjust="StretchHeight">
-				<reportElement x="111" y="21" width="220" height="17" uuid="1fb583a2-e36a-4e91-939a-b9fd1ed7a34b">
+				<reportElement x="111" y="3" width="386" height="17" uuid="1fb583a2-e36a-4e91-939a-b9fd1ed7a34b">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 				</reportElement>
 				<box>
@@ -138,21 +140,6 @@
 					<paragraph leftIndent="3"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rubrica}]]></textFieldExpression>
-			</textField>
-			<textField textAdjust="StretchHeight">
-				<reportElement x="369" y="20" width="138" height="17" uuid="eaad073a-5bfa-4869-9604-4112811a844e">
-					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<paragraph leftIndent="3"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{testi_normativi_rif_descr2}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
