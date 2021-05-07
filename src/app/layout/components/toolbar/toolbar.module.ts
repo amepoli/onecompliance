@@ -9,6 +9,7 @@ import { FuseSearchBarModule, FuseShortcutsModule } from '@fuse/components';
 import { FuseSharedModule } from '@fuse/shared.module';
 
 import { ToolbarComponent } from 'app/layout/components/toolbar/toolbar.component';
+import { TimeTrackerModule } from 'app/gorico/views/time_tracker/time-tracker.module';
 
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import { ToolbarComponent } from 'app/layout/components/toolbar/toolbar.componen
 
         FuseSharedModule,
         FuseSearchBarModule,
-        FuseShortcutsModule
+        FuseShortcutsModule,
+        TimeTrackerModule
     ],
     exports     : [
         ToolbarComponent

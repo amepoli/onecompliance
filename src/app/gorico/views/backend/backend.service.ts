@@ -18,6 +18,7 @@ export class BackendService {
   private menuApiName = appData.lambdas.menu.apiName;
   private langApiName = appData.lambdas.translation.apiName;
   private emailApiName = appData.lambdas.email_trigger.apiName;
+  private timeTrackerApiName = appData.lambdas.time_tracker.apiName;
 
   private myGetInit = { // OPTIONAL
     headers: {
@@ -260,6 +261,24 @@ export class BackendService {
       cc: cc
     };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.emailApiName, this.myPutPostInit));
+  }
+
+  checkTimerStatus(company: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = {request_type: 'checkStatus', company: company };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.timeTrackerApiName, this.myGetInit));
+  }
+
+  startTimer(company: string, codice_compito: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { request_type: 'startTime', company: company, codice_compito: codice_compito };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.timeTrackerApiName, this.myGetInit));
+  }
+
+  stopTimer(company: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { request_type: 'stopTime', company: company };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.timeTrackerApiName, this.myGetInit));
   }
 
 }
