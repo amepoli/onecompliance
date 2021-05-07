@@ -38,7 +38,7 @@ import { Subscription } from 'rxjs';
   </ng-container>
 </mat-form-field>
 
-<mat-form-field *ngIf="field.isVisible != false && (field.inputType === 'datetime' || field.inputType === 'time')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field *ngIf="field.isVisible != false && (field.inputType === 'datetime')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
 
@@ -57,6 +57,27 @@ import { Subscription } from 'rxjs';
     <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
   </ng-container>
 </mat-form-field>
+
+<mat-form-field *ngIf="field.isVisible != false && (field.inputType === 'time')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+  <mat-label>{{field.label}}</mat-label>
+  <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
+
+  <input [required]="isRequired" matInput [ngxMatTimePicker]="timepicker" [placeholder]="field.label" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" 
+    (blur)="onBlur()" (focus)="onFocus()" (dateChange)="updateValue()"
+    [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
+  <mat-datepicker-toggle matSuffix [for]="timepicker"></mat-datepicker-toggle>
+  <ngx-mat-timepicker [required]="isRequired" [placeholder]="field.label" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" 
+    (blur)="onBlur()" (focus)="onFocus()" (timeChange)="updateValue()"
+    [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
+  </ngx-mat-timepicker>
+
+  <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
+  <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+    <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
+  </ng-container>
+</mat-form-field>
+
+
 `,
   styles: [`
     :host ::ng-deep .mat-form-field-flex {
