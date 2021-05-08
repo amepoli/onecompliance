@@ -647,6 +647,16 @@
     },
     {
       "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "foreseen_date",
+      "width": "8%",
+      "label": "Data Scadenza"
+    },
+    {
+      "format": {
         "dataType": "text"
       },
       "isHidden": false,
@@ -725,6 +735,45 @@
     },
     {
       "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "time_report_stop_active",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "stop",
+          "value": "stop"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "compiti_consultant_to_do_open",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          },
+          {
+            "source": "user_companies",
+            "destination": "user_companies"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
         "dataType": "text"
       },
       "isHidden": true,
@@ -768,6 +817,6 @@
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "order by time_report_stop_active desc"
+    "tableViewSuffix": "order by time_report_stop_active desc, foreseen_date asc"
   }
 }
