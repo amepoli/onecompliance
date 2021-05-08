@@ -24,6 +24,7 @@ async function _setGlobalVariables (company, client, userid, dynamo) {
     data = data.Item;
 
     if (data != null) {
+        global_variables.global_username = data.username;
         let companies = data.companies;
         if (company != null) {
             var global_user_companies = '';
@@ -41,7 +42,7 @@ async function _setGlobalVariables (company, client, userid, dynamo) {
                     global_variables.global_userid = c.id_anagrafica;
                     global_variables.global_profile = c.profile;
                 }
-            };
+            }
             global_variables.global_user_companies = global_user_companies;
             global_variables.global_id_anagrafiche = global_id_anagrafiche;
         }
