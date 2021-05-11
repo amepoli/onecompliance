@@ -13,6 +13,11 @@
 			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
 		},
 		{
+			"operation": "update",
+			"type": "postProcessing",
+			"queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+		},
+		{
 			"operation": "insert",
 			"type": "postProcessing",
 			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
@@ -28,7 +33,7 @@
 			"eventTrigger": "onReload"
 		}
 	],
-	"form_keys": [
+		"form_keys": [
 		{
 			"autoGenerate": false,
 			"format": {
@@ -222,18 +227,7 @@
 			"label": "Data Contratto a",
 			"newLine": false,
 			"size": 2,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "change_data_contratto_a",
-				"eventTrigger": "blur"
-			},
-			"inputEvents": [
-				{
-					"eventName": "change_data_contratto_a",
-					"actionType": "query",
-					"queryFunct": "select entrasp.sondaggi_delete_after_end_contract($codice_azienda$, $id_cliente$, coalesce('£data_contratto_a£'::date,'2200-01-01'::date))"
-				}
-			]
+			"readOnly": false
 		},
 		{
 			"autoGenerate": false,
