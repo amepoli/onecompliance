@@ -20,6 +20,7 @@ import { NavigationService } from '../services/navigation.service';
 import { MessageView } from '../services/messages.service';
 import { ScrollService } from '../services/scroll.service';
 import { ConsoleLoggerService } from '../services/console_logger.service';
+import { TimeTrackerService } from '../services/time_tracker.service';
 
 @Component({
     selector: 'main-table',
@@ -104,6 +105,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         private _reportService: ReportService,
         private _navigationService: NavigationService,
         private _cdr: ChangeDetectorRef,
+        private _timeTrackerService: TimeTrackerService,
         private _console: ConsoleLoggerService) {
     }
 
@@ -126,6 +128,11 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
             }));
 
+        // Receive Navigation Event from Time Tracker Service
+        _this.subscriptions.push(_this._timeTrackerService.navigateRequested.subscribe((data) => {
+            _this.onEvent(data);
+        }));
+        
         // Report related subscriptions
         _this.subscriptions.push(_this._reportService.reloadRequested.subscribe((entryName) => {
             if (entryName === _this.tableName) {
