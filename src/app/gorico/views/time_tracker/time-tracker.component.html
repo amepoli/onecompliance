@@ -1,8 +1,9 @@
 <div class="time-tracker-container" *ngIf="data">
     <div class="div1">
-        <p style="margin-left: 16px; font-weight: bold;">Azienda: "{{data.codice_azienda}}"</p>
+        <p style="margin-left: 16px; font-weight: bold;" (click)="gotoAziendeTasks()">Azienda: "{{data.codice_azienda}}"
+        </p>
         <p style="margin-left: 16px;">Task: "{{data.description}}"</p>
-        <button mat-button (click)="navigate()">
+        <button mat-button (click)="gotoTaskDetails()">
             <mat-icon>arrow_forward</mat-icon>
         </button>
         <button mat-button *ngIf="data.status === 'paused'" (click)="startTimer()">
@@ -14,5 +15,8 @@
         <p style="margin-right: 16px;" [style.color]="data.status === 'paused' ? 'orange': 'green'">
             {{elapsedTime}}
         </p>
+        <button mat-button (click)="gotoTasksList()">
+            <mat-icon>list</mat-icon>
+        </button>
     </div>
 </div>
