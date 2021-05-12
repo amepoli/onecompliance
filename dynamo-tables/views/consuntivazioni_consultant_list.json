@@ -1,11 +1,11 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "consuntivazioni_consultant_list",
+  "origin": "entrasp.consuntivazioni",
   "businessObjectName": "consuntivazioni",
   "dashboardTables": [
     "dashboard_consuntivazioni"
 ],
-  "origin": "entrasp.consuntivazioni",
   "predefinedQueries": [
     {
       "operation": "selectTable",
@@ -28,7 +28,7 @@
       "type": "postProcessing"
     }
   ],
-  "form_keys": [
+    "form_keys": [
     {
       "autoGenerate": false,
       "format": {
@@ -120,7 +120,15 @@
             "0"
           ],
           "outputEventWhenComplete": "consuntivazioni_reload"
-        }
+        },
+        {
+            "eventName": "change_codice_azienda",
+            "actionType": "query",
+            "queryFunct": "select entrasp.aggiorna_azienda_consuntivazione($codice_azienda$::varchar, '£codice_azienda_nuova£'::varchar, $id_cons$::numeric) as id_cons",
+            "outputEventWhenComplete": "consuntivazioni_consultant_list_navigate",
+            "condition": "none",
+            "values": []
+          }
       ]
     },
     {
@@ -269,7 +277,7 @@
       "key": "date_time_end",
       "label": "Fine",
       "readOnly": false,
-      "newLine": false,
+      "newLine": true,
       "outputEvent": {
         "eventName": "date_time_end_edit",
         "eventTrigger": "change"
@@ -295,7 +303,21 @@
       "textareaHeight": "M",
       "newLine": false,
       "readOnly": false,
-      "size": 8
+      "size": 6
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+            "dataType": "text",
+            "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": false,
+      "readOnly": true,
+      "size": 2
     },
     {
       "autoGenerate": false,
@@ -306,11 +328,16 @@
         "dataType": "text"
       },
       "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
+      "isPrimary": false,
+      "sameOrigin": false,
+      "key": "codice_azienda_nuova",
+      "label": "Nuova Azienda",
       "newLine": true,
       "readOnly": false,
+      "outputEvent": {
+        "eventTrigger": "select",
+        "eventName": "change_codice_azienda"
+      },
       "size": 2
     },
     {
@@ -400,7 +427,7 @@
       "autoGenerate": false,
       "format": {
         "viewType": "combobox",
-        "comboQuery": "select codice_compito as id, codice_compito||'-'||titolo as name from entrasp.compiti where codice_azienda=$codice_azienda$",
+        "comboQuery": "select codice_compito as id, codice_compito||'-'||titolo as name from entrasp.compiti where codice_azienda=$codice_azienda$ and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, codice_compito, codice_azienda)",
         "options": [],
         "dataType": "text"
       },
@@ -832,6 +859,24 @@
       },
       "actionType": "navigate",
       "eventName": "navigate_to_compito"
+    },
+    {
+      "actionTarget": {
+        "name": "consuntivazioni_consultant_list",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda_new",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_cons",
+            "destination": "id_cons"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "consuntivazioni_consultant_list_navigate"
     }
   ],
   "hideActions": [
@@ -860,4 +905,5 @@
       }
     ]
   }
+  
 }
