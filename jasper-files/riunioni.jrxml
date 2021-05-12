@@ -29,13 +29,13 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select codice_azienda, id_riunione, codice_part, entrasp.anagrafiche_id_codcognnome(codice_part,id_presidente)as id_presidente, entrasp.anagrafiche_id_codcognnome(codice_part,id_segretario)as id_segretario, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) as id_centro_gest, data_riunione, codice_protocollo, oggetto, note  from entrasp.riunioni where codice_azienda= 'DEMO'and id_riunione= 1"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select codice_azienda, id_riunione, convocazione, codice_part, entrasp.anagrafiche_id_codcognnome(codice_part,id_presidente)as id_presidente, entrasp.anagrafiche_id_codcognnome(codice_part,id_segretario)as id_segretario, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) as id_centro_gest, data_riunione, codice_protocollo, oggetto, note  from entrasp.riunioni where codice_azienda= 'DEMO' and id_riunione= 1"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[$P!{mainQuery}]]>
+		<![CDATA[select codice_azienda, id_riunione, convocazione, codice_part, entrasp.anagrafiche_id_codcognnome(codice_part,id_presidente)as id_presidente, entrasp.anagrafiche_id_codcognnome(codice_part,id_segretario)as id_segretario, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) as id_centro_gest, data_riunione, codice_protocollo, oggetto, note  from entrasp.riunioni where codice_azienda= 'DEMO' and id_riunione= 1]]>
 	</queryString>
 	<field name="codice_azienda" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
@@ -45,6 +45,11 @@
 	<field name="id_riunione" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="id_riunione"/>
 		<property name="com.jaspersoft.studio.field.label" value="id_riunione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="riunioni"/>
+	</field>
+	<field name="convocazione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="convocazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="convocazione"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="riunioni"/>
 	</field>
 	<field name="codice_part" class="java.lang.String">
@@ -131,7 +136,7 @@
 				<reportElement positionType="Float" x="1" y="115" width="65" height="16" uuid="d97d15ed-72cf-4944-9420-acfbeb2a9b16">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[codice_protocollo != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{codice_protocollo}!= null]]></printWhenExpression>
 				</reportElement>
 				<text><![CDATA[Protocollo n.:]]></text>
 			</staticText>
@@ -171,7 +176,7 @@
 				<reportElement positionType="Float" x="1" y="175" width="534" height="16" uuid="13e4ffb6-cacb-49e9-9293-577e6c04415e">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{convocazione}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
 				<reportElement positionType="Float" x="210" y="200" width="140" height="54" uuid="613cd8ec-788c-431b-b49d-330a901db2d8"/>
@@ -205,6 +210,10 @@
 				<textElement textAlignment="Center"/>
 				<text><![CDATA[Il Presidente]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="0" y="440" width="536" height="30" uuid="296dccdc-feec-478a-b2de-d8f183c12281"/>
+				<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>
