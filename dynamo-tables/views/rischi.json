@@ -38,7 +38,9 @@
       }
     }
   ],
-  "dashboardTables": ["rischi_rettificati"],
+  "dashboardTables": [
+    "rischi_rettificati"
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -224,7 +226,8 @@
       "key": "id_centro_gest",
       "label": "Centro Gestionale Responsabile (liv 1)",
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+      "size": 4
     },
     {
       "format": {
@@ -236,533 +239,637 @@
       "isPrimary": false,
       "key": "id_centro_gest_liv2",
       "label": "Centro Gestionale Monitoraggio (liv 2)",
-      "newLine": true,
-      "readOnly": false
+      "newLine": false,
+      "readOnly": false,
+      "size": 4
     },
     {
+      "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "label"
+        "viewType": "button"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "situazione_ante_presidi",
-      "label": "Situazione Ante Presidi",
+      "key": "activate_valutazione_rischi_k",
+      "label": "Valutazione Rischi",
+      "buttonIcon": "add",
+      "newLine": false,
+      "size": 1,
+      "outputEvent": {
+        "eventName": "activate_valutazione_rischi",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "hide",
+          "eventName": "activate_valutazione_rischi",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "show",
+          "eventName": "hide_valutazione_rischi",
+          "condition": "none",
+          "values": []
+        }
+      ],
       "style": {
-        "background_color": "#03a9f4",
-        "font_color": "white",
-        "font_size": "1.3em",
-        "font_style": "italic",
-        "font_weight": "400"
+        "background_color": "#25599C",
+        "font_color": "white"
       },
-      "newLine": true,
-      "readOnly": true,
+      "readOnly": false,
       "sameOrigin": false
     },
     {
+      "autoGenerate": false,
       "format": {
-        "dataType": "number",
-        "value": 0,
-        "viewType": "input"
+        "viewType": "button"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
-      "key": "probabilita_pre",
-      "label": "Probabilità Ante Presidi (%)",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "probabilita_pre_change",
-        "eventTrigger": "blur"
-      },
-      "readOnly": false
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "inputEvents": [
-        {
-          "actionType": "query",
-          "eventName": "probabilita_pre_change",
-          "condition": "none",
-          "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$, 'P', coalesce(£probabilita_pre£,0)) as probabilita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
-          "values": []
-        },
-        {
-          "actionType": "query_style",
-          "eventName": "probabilita_pre_change",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'P', coalesce(£probabilita_pre£,0)) as probabilita_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
-          "styleAttribute": "background_color"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "sameOrigin": false,
-      "key": "probabilita_pre_descrizione",
-      "label": "Probabilità Ante - Descrizione",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "format": {
-        "dataType": "number",
-        "value": 0,
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "intensita_singola_pre",
-      "label": "Impatto Ante Presidi (€)",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "change_intensita_singola_pre",
-        "eventTrigger": "blur"
-      },
-      "readOnly": false
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "inputEvents": [
-        {
-          "actionType": "query",
-          "eventName": "change_intensita_singola_pre",
-          "condition": "none",
-          "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$, 'I', coalesce(£intensita_singola_pre£,0)) as intensita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
-          "values": []
-        },
-        {
-          "actionType": "query_style",
-          "eventName": "change_intensita_singola_pre",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'I', coalesce(£intensita_singola_pre£,0)) as intensita_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
-          "styleAttribute": "background_color"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "sameOrigin": false,
-      "key": "intensita_pre_descrizione",
-      "label": "Impatto Ante - Descrizione",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "evalFunct": "(Number(£probabilita_pre£)/100*Number(£intensita_singola_pre£)).toFixed(2)",
-      "format": {
-        "dataType": "number",
-        "viewType": "input",
-        "value": 0
-      },
-      "inputEvents": [
-        {
-          "actionType": "update",
-          "eventName": "probabilita_pre_change",
-          "condition": "none",
-          "values": [],
-          "updateFunct": "(Number(£probabilita_pre£)/100*Number(£intensita_singola_pre£)).toFixed(2);"
-        },
-        {
-          "actionType": "update",
-          "eventName": "change_intensita_singola_pre",
-          "condition": "none",
-          "values": [],
-          "updateFunct": "(£probabilita_pre£/100*£intensita_singola_pre£).toFixed(2);"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "intensita_totale_pre",
-      "label": "Totale Ante Presidi (€)",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "change_intensita_totale_pre",
-        "eventTrigger": "change"
-      },
-      "readOnly": true
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "inputEvents": [
-        {
-          "actionType": "query",
-          "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$,'T', £intensita_totale_pre£) as intensita_totale_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
-          "eventName": "change_intensita_totale_pre",
-          "condition": "none",
-          "values": []
-        },
-        {
-          "actionType": "query_style",
-          "eventName": "change_intensita_totale_pre",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'T', coalesce(£intensita_totale_pre£,0)) as intensita_totale_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
-          "styleAttribute": "background_color"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "intensita_totale_pre_descrizione",
-      "label": "Totale Ante - Descrizione",
+      "key": "hide_valutazione_rischi_k",
+      "label": "Nascondi dettagli",
+      "buttonIcon": "minimize",
       "newLine": true,
-      "readOnly": true,
-      "sameOrigin": false
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "value": "0",
-        "viewType": "label"
+      "size": 1.5,
+      "outputEvent": {
+        "eventName": "hide_valutazione_rischi",
+        "eventTrigger": "press"
       },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "situazione_post_presidi",
-      "label": "Situazione Post Presidi",
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "activate_valutazione_rischi",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "eventName": "hide_valutazione_rischi",
+          "condition": "none",
+          "values": []
+        }
+      ],
       "style": {
-        "background_color": "#03a9f4",
-        "font_color": "white",
-        "font_size": "1.3em",
-        "font_style": "italic",
-        "font_weight": "400"
+        "background_color": "#25599C",
+        "font_color": "white"
       },
-      "newLine": true,
-      "readOnly": true,
+      "readOnly": false,
       "sameOrigin": false
     },
     {
       "format": {
-        "dataType": "number",
-        "value": 0,
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "probabilita_post",
-      "label": "Probabilità Post Presidi (%)",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "change_probabilita_post",
-        "eventTrigger": "blur"
-      },
-      "readOnly": true
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
+        "viewType": "subform",
+        "subform_keys": [
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "situazione_ante_presidi",
+            "label": "Situazione Ante Presidi",
+            "style": {
+              "background_color": "#03a9f4",
+              "font_color": "white",
+              "font_size": "1.3em",
+              "font_style": "italic",
+              "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+          },
+          {
+            "format": {
+              "dataType": "number",
+              "value": 0,
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "probabilita_pre",
+            "label": "Probabilità Ante Presidi (%)",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "probabilita_pre_change",
+              "eventTrigger": "blur"
+            },
+            "readOnly": false
+          },
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "inputEvents": [
+              {
+                "actionType": "query",
+                "eventName": "probabilita_pre_change",
+                "condition": "none",
+                "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$, 'P', coalesce(£probabilita_pre£,0)) as probabilita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
+                "values": []
+              },
+              {
+                "actionType": "query_style",
+                "eventName": "probabilita_pre_change",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'P', coalesce(£probabilita_pre£,0)) as probabilita_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+                "styleAttribute": "background_color"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "probabilita_pre_descrizione",
+            "label": "Probabilità Ante - Descrizione",
+            "newLine": false,
+            "readOnly": true
+          },
+          {
+            "format": {
+              "dataType": "number",
+              "value": 0,
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "intensita_singola_pre",
+            "label": "Impatto Ante Presidi (€)",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "change_intensita_singola_pre",
+              "eventTrigger": "blur"
+            },
+            "readOnly": false
+          },
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "inputEvents": [
+              {
+                "actionType": "query",
+                "eventName": "change_intensita_singola_pre",
+                "condition": "none",
+                "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$, 'I', coalesce(£intensita_singola_pre£,0)) as intensita_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
+                "values": []
+              },
+              {
+                "actionType": "query_style",
+                "eventName": "change_intensita_singola_pre",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'I', coalesce(£intensita_singola_pre£,0)) as intensita_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+                "styleAttribute": "background_color"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "intensita_pre_descrizione",
+            "label": "Impatto Ante - Descrizione",
+            "newLine": false,
+            "readOnly": true
+          },
+          {
+            "evalFunct": "(Number(£probabilita_pre£)/100*Number(£intensita_singola_pre£)).toFixed(2)",
+            "format": {
+              "dataType": "number",
+              "viewType": "input",
+              "value": 0
+            },
+            "inputEvents": [
+              {
+                "actionType": "update",
+                "eventName": "probabilita_pre_change",
+                "condition": "none",
+                "values": [],
+                "updateFunct": "(Number(£probabilita_pre£)/100*Number(£intensita_singola_pre£)).toFixed(2);"
+              },
+              {
+                "actionType": "update",
+                "eventName": "change_intensita_singola_pre",
+                "condition": "none",
+                "values": [],
+                "updateFunct": "(£probabilita_pre£/100*£intensita_singola_pre£).toFixed(2);"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "intensita_totale_pre",
+            "label": "Totale Ante Presidi (€)",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "change_intensita_totale_pre",
+              "eventTrigger": "change"
+            },
+            "readOnly": true
+          },
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "inputEvents": [
+              {
+                "actionType": "query",
+                "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$,'T', £intensita_totale_pre£) as intensita_totale_pre_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+                "eventName": "change_intensita_totale_pre",
+                "condition": "none",
+                "values": []
+              },
+              {
+                "actionType": "query_style",
+                "eventName": "change_intensita_totale_pre",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'T', coalesce(£intensita_totale_pre£,0)) as intensita_totale_pre_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+                "styleAttribute": "background_color"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "intensita_totale_pre_descrizione",
+            "label": "Totale Ante - Descrizione",
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+          },
+          {
+            "format": {
+              "dataType": "text",
+              "value": "0",
+              "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "situazione_post_presidi",
+            "label": "Situazione Post Presidi",
+            "style": {
+              "background_color": "#03a9f4",
+              "font_color": "white",
+              "font_size": "1.3em",
+              "font_style": "italic",
+              "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+          },
+          {
+            "format": {
+              "dataType": "number",
+              "value": 0,
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "probabilita_post",
+            "label": "Probabilità Post Presidi (%)",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "change_probabilita_post",
+              "eventTrigger": "blur"
+            },
+            "readOnly": true
+          },
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "inputEvents": [
+              {
+                "actionType": "query",
+                "eventName": "change_probabilita_post",
+                "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda, 'P', coalesce(£probabilita_post£,0)) as probabilita_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
+                "condition": "none",
+                "values": []
+              },
+              {
+                "actionType": "query_style",
+                "eventName": "change_probabilita_post",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'P', coalesce(£probabilita_post£,0)) as probabilita_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+                "styleAttribute": "background_color"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "probabilita_post_descrizione",
+            "label": "Probabilità Post - Descrizione",
+            "newLine": false,
+            "sameOrigin": false,
+            "readOnly": true
+          },
+          {
+            "format": {
+              "dataType": "number",
+              "value": 0,
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "intensita_singola_post",
+            "label": "Impatto Post Presidi (€)",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "change_intensita_post",
+              "eventTrigger": "blur"
+            },
+            "readOnly": true
+          },
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "inputEvents": [
+              {
+                "actionType": "query",
+                "eventName": "change_intensita_post",
+                "condition": "none",
+                "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda, 'I', coalesce(£intensita_singola_post£,0)) as impatto_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
+                "values": []
+              },
+              {
+                "actionType": "query_style",
+                "eventName": "change_intensita_post",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'I', coalesce(£intensita_singola_post£,0)) as impatto_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+                "styleAttribute": "background_color"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "impatto_post_descrizione",
+            "label": "Impatto Post - Descrizione",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true
+          },
+          {
+            "evalFunct": "(Number(£probabilita_post£)/100*Number(£intensita_singola_post£)).toFixed(2)",
+            "format": {
+              "dataType": "number",
+              "viewType": "input",
+              "value": 0
+            },
+            "inputEvents": [
+              {
+                "actionType": "update",
+                "eventName": "change_probabilita_post",
+                "condition": "none",
+                "values": [],
+                "updateFunct": "(Number(£probabilita_post£)/100*Number(£intensita_singola_post£)).toFixed(2);"
+              },
+              {
+                "actionType": "update",
+                "eventName": "change_intensita_post",
+                "condition": "none",
+                "values": [],
+                "updateFunct": "(£probabilita_post£/100*£intensita_singola_post£).toFixed(2);"
+              }
+            ],
+            "outputEvent": {
+              "eventName": "change_intensita_totale_post",
+              "eventTrigger": "change"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "intensita_totale_post",
+            "label": "Totale Post Presidi (€)",
+            "newLine": false,
+            "readOnly": true
+          },
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "inputEvents": [
+              {
+                "actionType": "query",
+                "eventName": "change_intensita_totale_post",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'T', £intensita_totale_post£) as intensita_totale_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
+              },
+              {
+                "actionType": "query_style",
+                "eventName": "change_intensita_totale_post",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', £intensita_totale_post£) as intensita_totale_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+                "styleAttribute": "background_color"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "intensita_totale_post_descrizione",
+            "label": "Totale Post - Descrizione",
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+          },
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "situazione_rettificata",
+            "label": "Situazione Rettificata",
+            "style": {
+              "background_color": "#03a9f4",
+              "font_color": "white",
+              "font_size": "1.3em",
+              "font_style": "italic",
+              "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+          },
+          {
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "probabilita_post_rilevata",
+            "label": "Probabilità Rettificata (%)",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "change_probabilita_rett",
+              "eventTrigger": "change"
+            },
+            "readOnly": true
+          },
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "inputEvents": [
+              {
+                "actionType": "query",
+                "eventName": "change_probabilita_rett",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$,'P', coalesce(£probabilita_post_rilevata£,0)) as probabilita_rett_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
+              },
+              {
+                "actionType": "query_style",
+                "eventName": "change_probabilita_rett",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'P', coalesce(£probabilita_post_rilevata£,0)) as probabilita_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+                "styleAttribute": "background_color"
+              },
+              {
+                "actionType": "query_style",
+                "eventName": "change_probabilita_rett",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_flag_testo_chiaro(codice_azienda,'P', coalesce(£probabilita_post_rilevata£,0)) as probabilita_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+                "styleAttribute": "font_color"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "probabilita_rett_descrizione",
+            "label": "Probabilità rett.- Descrizione",
+            "newLine": false,
+            "readOnly": true
+          },
+          {
+            "format": {
+              "dataType": "number",
+              "viewType": "input",
+              "value": "0"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "intensita_singola_post_rilevata",
+            "label": "Impatto rettificato (€)",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "input_intensita_singola_post_rett",
+              "eventTrigger": "blur"
+            },
+            "readOnly": true
+          },
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "inputEvents": [
+              {
+                "actionType": "query",
+                "eventName": "input_intensita_singola_post_rett",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce($intensita_singola_post_rilevata$,0)) as intensita_singola_post_rett_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
+              },
+              {
+                "actionType": "query_style",
+                "eventName": "change_intensita_post",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'I', coalesce($intensita_singola_post_rilevata$,0)) as intensita_singola_post_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+                "styleAttribute": "background_color"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "intensita_singola_post_rett_descrizione",
+            "label": "Impatto Rettificato - Descrizione",
+            "newLine": false,
+            "sameOrigin": false,
+            "readOnly": true
+          },
+          {
+            "evalFunct": "(Number(£probabilita_post_rilevata£)/100*Number(£intensita_singola_post_rilevata£)).toFixed(2)",
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "intensita_totale_post_rilevata",
+            "label": "Rischio Totale Rettificato (€)",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "change_intensita_totale_post_rett",
+              "eventTrigger": "change"
+            },
+            "readOnly": true
+          },
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "inputEvents": [
+              {
+                "actionType": "query",
+                "eventName": "change_intensita_totale_post_rett",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'T', coalesce($intensita_totale_post_rilevata$,0)) as intensita_totale_post_rett_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
+              },
+              {
+                "actionType": "query_style",
+                "eventName": "change_intensita_totale_post_rett",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', coalesce(intensita_totale_post_rilevata,0)) as intensita_totale_post_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
+                "styleAttribute": "background_color"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "intensita_totale_post_rett_descrizione",
+            "label": "Rischio Totale Rettificato - Descrizione",
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+          }
+        ]
       },
       "inputEvents": [
         {
-          "actionType": "query",
-          "eventName": "change_probabilita_post",
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda, 'P', coalesce(£probabilita_post£,0)) as probabilita_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
+          "actionType": "show",
           "condition": "none",
+          "eventName": "activate_valutazione_rischi",
           "values": []
         },
         {
-          "actionType": "query_style",
-          "eventName": "change_probabilita_post",
+          "actionType": "hide",
           "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'P', coalesce(£probabilita_post£,0)) as probabilita_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
-          "styleAttribute": "background_color"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "probabilita_post_descrizione",
-      "label": "Probabilità Post - Descrizione",
-      "newLine": false,
-      "sameOrigin": false,
-      "readOnly": true
-    },
-    {
-      "format": {
-        "dataType": "number",
-        "value": 0,
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "intensita_singola_post",
-      "label": "Impatto Post Presidi (€)",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "change_intensita_post",
-        "eventTrigger": "blur"
-      },
-      "readOnly": true
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "inputEvents": [
-        {
-          "actionType": "query",
-          "eventName": "change_intensita_post",
-          "condition": "none",
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda, 'I', coalesce(£intensita_singola_post£,0)) as impatto_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio= $codice_rischio$;",
+          "eventName": "hide_valutazione_rischi",
           "values": []
-        },
-        {
-          "actionType": "query_style",
-          "eventName": "change_intensita_post",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'I', coalesce(£intensita_singola_post£,0)) as impatto_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
-          "styleAttribute": "background_color"
         }
       ],
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
-      "key": "impatto_post_descrizione",
-      "label": "Impatto Post - Descrizione",
-      "sameOrigin": false,
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "evalFunct": "(Number(£probabilita_post£)/100*Number(£intensita_singola_post£)).toFixed(2)",
-      "format": {
-        "dataType": "number",
-        "viewType": "input",
-        "value": 0
-      },
-      "inputEvents": [
-        {
-          "actionType": "update",
-          "eventName": "change_probabilita_post",
-          "condition": "none",
-          "values": [],
-          "updateFunct": "(Number(£probabilita_post£)/100*Number(£intensita_singola_post£)).toFixed(2);"
-        },
-        {
-          "actionType": "update",
-          "eventName": "change_intensita_post",
-          "condition": "none",
-          "values": [],
-          "updateFunct": "(£probabilita_post£/100*£intensita_singola_post£).toFixed(2);"
-        }
-      ],
-      "outputEvent": {
-        "eventName": "change_intensita_totale_post",
-        "eventTrigger": "change"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "intensita_totale_post",
-      "label": "Totale Post Presidi (€)",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "inputEvents": [
-        {
-          "actionType": "query",
-          "eventName": "change_intensita_totale_post",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'T', £intensita_totale_post£) as intensita_totale_post_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
-        },
-        {
-          "actionType": "query_style",
-          "eventName": "change_intensita_totale_post",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', £intensita_totale_post£) as intensita_totale_post_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
-          "styleAttribute": "background_color"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "intensita_totale_post_descrizione",
-      "label": "Totale Post - Descrizione",
+      "key": "valutazione_rischi",
+      "label": "Valutazione Rischi",
       "newLine": true,
-      "readOnly": true,
-      "sameOrigin": false
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "label"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "situazione_rettificata",
-      "label": "Situazione Rettificata",
-      "style": {
-        "background_color": "#03a9f4",
-        "font_color": "white",
-        "font_size": "1.3em",
-        "font_style": "italic",
-        "font_weight": "400"
-      },
-      "newLine": true,
-      "readOnly": true,
-      "sameOrigin": false
-    },
-    {
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "probabilita_post_rilevata",
-      "label": "Probabilità Rettificata (%)",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "change_probabilita_rett",
-        "eventTrigger": "change"
-      },
-      "readOnly": true
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "inputEvents": [
-        {
-          "actionType": "query",
-          "eventName": "change_probabilita_rett",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_descrizione($codice_azienda$,'P', coalesce(£probabilita_post_rilevata£,0)) as probabilita_rett_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
-        },
-        {
-          "actionType": "query_style",
-          "eventName": "change_probabilita_rett",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore($codice_azienda$,'P', coalesce(£probabilita_post_rilevata£,0)) as probabilita_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
-          "styleAttribute": "background_color"
-        },
-        {
-          "actionType": "query_style",
-          "eventName": "change_probabilita_rett",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_flag_testo_chiaro(codice_azienda,'P', coalesce(£probabilita_post_rilevata£,0)) as probabilita_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
-          "styleAttribute": "font_color"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
+      "readOnly": false,
       "sameOrigin": false,
-      "key": "probabilita_rett_descrizione",
-      "label": "Probabilità rett.- Descrizione",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "format": {
-        "dataType": "number",
-        "viewType": "input",
-        "value": "0"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "intensita_singola_post_rilevata",
-      "label": "Impatto rettificato (€)",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "input_intensita_singola_post_rett",
-        "eventTrigger": "blur"
-      },
-      "readOnly": true
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "inputEvents": [
-        {
-          "actionType": "query",
-          "eventName": "input_intensita_singola_post_rett",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce($intensita_singola_post_rilevata$,0)) as intensita_singola_post_rett_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
-        },
-        {
-          "actionType": "query_style",
-          "eventName": "change_intensita_post",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'I', coalesce($intensita_singola_post_rilevata$,0)) as intensita_singola_post_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
-          "styleAttribute": "background_color"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "intensita_singola_post_rett_descrizione",
-      "label": "Impatto Rettificato - Descrizione",
-      "newLine": false,
-      "sameOrigin": false,
-      "readOnly": true
-    },
-    {
-      "evalFunct": "(Number(£probabilita_post_rilevata£)/100*Number(£intensita_singola_post_rilevata£)).toFixed(2)",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "intensita_totale_post_rilevata",
-      "label": "Rischio Totale Rettificato (€)",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "change_intensita_totale_post_rett",
-        "eventTrigger": "change"
-      },
-      "readOnly": true
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "inputEvents": [
-        {
-          "actionType": "query",
-          "eventName": "change_intensita_totale_post_rett",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_descrizione(codice_azienda,'T', coalesce($intensita_totale_post_rilevata$,0)) as intensita_totale_post_rett_descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;"
-        },
-        {
-          "actionType": "query_style",
-          "eventName": "change_intensita_totale_post_rett",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.cpl_soglie_colore(codice_azienda,'T', coalesce(intensita_totale_post_rilevata,0)) as intensita_totale_post_rett_descrizione_background_color from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$;",
-          "styleAttribute": "background_color"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "intensita_totale_post_rett_descrizione",
-      "label": "Rischio Totale Rettificato - Descrizione",
-      "newLine": true,
-      "readOnly": true,
-      "sameOrigin": false
+      "saveWhenHidden": true
     }
   ],
   "origin": "entrasp.rischi",
@@ -839,25 +946,25 @@
     {
       "fieldName": "data_comp_prevista_min",
       "format": {
-          "dataType": "date",
-          "viewType": "input"
+        "dataType": "date",
+        "viewType": "input"
       },
       "label": "Sondaggi con data competenza dal",
       "newLine": false,
       "size": 2,
       "queryCond": "codice_rischio in (select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp>='€data_comp_prevista_min€')"
-  },
-  {
+    },
+    {
       "fieldName": "data_comp_prevista_max",
       "format": {
-          "dataType": "date",
-          "viewType": "input"
+        "dataType": "date",
+        "viewType": "input"
       },
       "label": "Sondaggi con data competenza fino al",
       "newLine": true,
       "size": 2,
-      "queryCond":"codice_rischio in (select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp>='€data_comp_prevista_max€')"
-  },
+      "queryCond": "codice_rischio in (select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp>='€data_comp_prevista_max€')"
+    },
     {
       "fieldName": "rischi_without_procedure",
       "format": {
@@ -1265,7 +1372,6 @@
       "actionType": "reload",
       "eventName": "rischiReload"
     }
-    
   ],
   "exportQueries": {
     "tableQueries": [
