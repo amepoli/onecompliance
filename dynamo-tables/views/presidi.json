@@ -86,7 +86,7 @@
             "key": "id_presidio_parent",
             "label": "Presidio Superiore",
             "newLine": false,
-            "size": 4,
+            "size": 6,
             "readOnly": true
         },
         {
@@ -115,7 +115,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 2
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -136,7 +136,7 @@
             "label": "Codice",
             "newLine": false,
             "readOnly": false,
-            "size": 2
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -149,9 +149,40 @@
             "isPrimary": false,
             "key": "id_tipo_presidio",
             "label": "Tipo Presidio",
-            "newLine": true,
-            "size": 8,
+            "newLine": false,
+            "size": 6,
             "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice::character AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text",
+                "value": "A"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato_attuazione",
+            "label": "Stato Attuazione",
+            "size": 2.5,
+            "newLine": true,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "procedura_change_stato",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "procedura_change_stato",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_attuazione_background_color from entrasp.transcodifiche where tipo_dato='STATO_ATTUAZIONE' and codice=$stato_attuazione$"
+                }
+            ]
         },
         {
             "autoGenerate": false,
@@ -176,7 +207,23 @@
             "isPrimary": false,
             "key": "descrizione_breve",
             "label": "Titolo",
+            "size": 7,
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
             "newLine": true,
+            "size": 3,
             "readOnly": false
         },
         {
@@ -192,50 +239,6 @@
             "textareaHeight": "L",
             "newLine": true,
             "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_centro_gest",
-            "label": "Centro Gestionale",
-            "newLine": false,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT codice::character AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE';",
-                "options": [],
-                "viewType": "combobox",
-                "dataType": "text",
-                "value": "A"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "stato_attuazione",
-            "label": "Stato Attuazione",
-            "newLine": true,
-            "readOnly": false,
-            "outputEvent": {
-                "eventName": "procedura_change_stato",
-                "eventTrigger": "select"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "procedura_change_stato",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "queryFunct": "select background_color as stato_attuazione_background_color from entrasp.transcodifiche where tipo_dato='STATO_ATTUAZIONE' and codice=$stato_attuazione$"
-                }
-            ]
         },
         {
             "autoGenerate": false,
