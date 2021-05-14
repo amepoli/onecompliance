@@ -18,8 +18,20 @@
             "operation": "insert",
             "type": "postProcessing",
             "queryString": "update entrasp.rischi_presidi rp set pct_mitigazione_probabilita=pctmitigazioneprobabilita, pct_mitigazione_intensita_singola=pctmitigazioneintensitasingola, pct_mitigazione_probabilita_rettificata=pctmitigazioneprobabilita_rett, pct_mitigazione_intensita_singola_rettificata=pctmitigazioneintensitasingola_rett  from entrasp.rischio_presidi_value_input_id_presidio($codice_azienda$, $id_presidio$) rpv where rp.codice_azienda=rpv.azienda and rp.id_presidio=rpv.id_presidio and rp.id_presidio=$id_presidio$ and rp.codice_azienda=$codice_azienda$;"
-          }
-      
+          },
+          {
+			"operation": "insert",
+			"type": "preCheck",
+			"queryString": "select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and codice='£codice£'",
+			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+		},
+		{
+			"operation": "update",
+			"type": "preCheck",
+			"queryString": "select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and codice='£codice£' and id_presidio!=$id_presidio$",
+			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+		}
+     
     ],
     "form_keys": [
         {
