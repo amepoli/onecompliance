@@ -3,7 +3,9 @@
     "entryKey": "modelli_test_vr_consultant",
     "origin": "entrasp.modelli_test_vr",
     "businessObjectName": "modelliTest",
-    "querySuffixes": {"tableViewSuffix": "order by mt.id_modello_test desc limit 100"},
+    "querySuffixes": {
+        "tableViewSuffix": "order by mt.id_modello_test desc limit 100"
+    },
     "predefinedQueries": [
         {
             "type": "main",
@@ -19,7 +21,7 @@
             "operation": "isInsert",
             "queryString": "select $id_modello_test$ is null as label;",
             "type": "main"
-          },
+        },
         {
             "type": "main",
             "operation": "update",
@@ -108,8 +110,31 @@
             "key": "data_ins",
             "label": "Data Inserimento",
             "newLine": false,
-            "size": 2,
+            "size": 1.5,
             "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "duplica_mdt",
+            "buttonIcon": "content_copy",
+            "label": "Duplica Modello Verifica",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "modelli_test_button_duplica",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "size": 0.5,
+            "sameOrigin": false
         },
         {
             "autoGenerate": true,
@@ -205,11 +230,12 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "duplica_mdt",
-            "label": "Duplica Modello Verifica",
+            "key": "nuova_versione_mdt",
+            "label": "Nuova Versione",
+            "size": 1.5,
             "newLine": false,
             "outputEvent": {
-                "eventName": "modelli_test_button_duplica",
+                "eventName": "modelli_test_button_nuova_versione",
                 "eventTrigger": "press"
             },
             "style": {
@@ -217,7 +243,6 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "size": 2,
             "sameOrigin": false
         },
         {
@@ -232,7 +257,7 @@
             "key": "id_modello_test_vr",
             "label": "Versione",
             "newLine": false,
-            "size": 1,
+            "size": 1.5,
             "readOnly": true,
             "inputEvents": [
                 {
@@ -243,28 +268,6 @@
                     "queryFunct": "select id_modello_test_vr from entrasp._modello_test_new_version($codice_azienda$,$id_modello_test$, $id_modello_test_vr$)"
                 }
             ]
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "nuova_versione_mdt",
-            "label": "Nuova Versione",
-            "size": 2,
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "modelli_test_button_nuova_versione",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -559,7 +562,7 @@
             },
             "label": "Centro Gestionale",
             "newLine": false,
-            "size": 2,
+            "size": 4,
             "queryCond": "mt.id_centro_gest= $id_centro_gest$"
         },
         {
@@ -770,7 +773,6 @@
             },
             "isHidden": false,
             "isPrimary": false,
-
             "key": "codice_arg",
             "label": "Codice Argomento",
             "queryFunct": "select codice_arg from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
