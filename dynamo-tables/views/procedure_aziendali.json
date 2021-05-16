@@ -109,22 +109,9 @@
             "isPrimary": false,
             "key": "descrizione_breve",
             "label": "Descrizione Breve",
-            "newLine": true,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "textarea"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descrizione",
-            "label": "Descrizione Estesa",
-            "newLine": true,
-            "textareaHeight": "L",
-            "readOnly": false
+            "newLine": false,
+            "readOnly": false,
+            "size": 6
         },
         {
             "autoGenerate": false,
@@ -144,8 +131,38 @@
             "isPrimary": false,
             "key": "id_centro_gest",
             "label": "Centro Gestionale",
-            "newLine": false,
+            "newLine": true,
+            "readOnly": false,
+            "size": 4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione Estesa",
+            "newLine": true,
+            "textareaHeight": "L",
             "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_procedura AS id, id_procedura||' - '||codice||' - '||descrizione_breve AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$ and id_procedura!=£id_procedura£;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_procedura_parent",
+            "label": "Procedura parent",
+            "newLine": false,
+            "readOnly": false,
+            "size": 6
         },
         {
             "autoGenerate": false,
@@ -160,6 +177,7 @@
             "isPrimary": false,
             "key": "stato_attuazione",
             "label": "Stato Attuazione",
+            "size": 4,
             "newLine": true,
             "readOnly": false,
             "outputEvent": {
@@ -176,20 +194,6 @@
                     "queryFunct": "select background_color as stato_attuazione_background_color from entrasp.transcodifiche where tipo_dato='STATO_ATTUAZIONE' and codice=$stato_attuazione$"
                 }
             ]
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_procedura AS id, id_procedura||' - '||codice||' - '||descrizione_breve AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$ and id_procedura!=£id_procedura£;",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_procedura_parent",
-            "label": "Procedura parent",
-            "newLine": false,
-            "readOnly": false
         },
         {
             "autoGenerate": false,

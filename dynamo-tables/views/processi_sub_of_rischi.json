@@ -4,11 +4,12 @@
   "predefinedQueries": [
     {
       "operation": "selectForm",
-      "queryString": "SELECT fr.*, pr.codice from entrasp.fonti_rischio fr inner join entrasp.procedure_aziendali pr on fr.codice_azienda=pr.codice_azienda and fr.id_procedura=pr.id_procedura where fr.codice_azienda=$codice_azienda$ and fr.codice_rischio=$codice_rischio$ and codice_tipo_fonte_rischio='PROC';",
+      "queryString": "SELECT fr.* from entrasp.fonti_rischio fr where fr.codice_azienda=$codice_azienda$ and fr.codice_rischio=$codice_rischio$ and codice_tipo_fonte_rischio='PROC' and fr.id_fonte_rischio=$id_fonte_rischio$;",
       "type": "main"
     }
   ],
   "origin": "entrasp.fonti_rischio",
+  "businessObjectName": "fonti_rischio",
   "form_keys": [
     {
             "autoGenerate": false,
@@ -208,7 +209,7 @@
       "dataType": "number"
   },
   "isHidden": true,
-  "isPrimary": true,
+  "isPrimary": false,
   "key": "id_procedura",
   "label": "ID Processo"
 },
@@ -219,6 +220,7 @@
   "isHidden": false,
   "isPrimary": false,
   "key": "codice",
+  "queryFunct": "entrasp.procedure_aziendali_codice(id_procedura, codice_azienda)",
   "label": "codice",
   "width": "10%"
 },
