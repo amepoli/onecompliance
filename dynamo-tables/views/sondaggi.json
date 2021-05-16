@@ -943,6 +943,25 @@
         {
             "autoGenerate": false,
             "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "report_problem",
+            "key": "create_segnalazione",
+            "label": "Crea Segnalazione",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "compito_create",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5          
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "dataType": "number",
                 "viewType": "input"
             },
@@ -952,7 +971,8 @@
             "label": "Id Sondaggio Succ",
             "newLine": true,
             "readOnly": false,
-            "sameOrigin": true
+            "sameOrigin": true,
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -1001,6 +1021,30 @@
             "isPrimary": false,
             "key": "pct_da",
             "label": "pct_da",
+            "sameOrigin": false,
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "inputEvents": [
+                {
+                    "eventName": "compito_create",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.compiti_rif_bo_insert('sondaggi', $titolo$, $codice_azienda$, $id_sondaggio$) as codice_compito_created",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "to_compito_created"
+                }
+            ],
+            "key": "codice_compito_created",
+            "label": "codice_compito_created",
             "sameOrigin": false,
             "newLine": true,
             "readOnly": true
@@ -1268,6 +1312,21 @@
                 }
             ],
             "label": "Sondaggi Connessi"
+        },
+        {
+            "entryKey": "compiti_sub_of_sondaggi",
+            "type": "table",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
+            ],
+            "label": "Segnalazioni associate"
         }
     ],
     "table_keys": [
@@ -1585,6 +1644,60 @@
             "actionType": "navigate",
             "eventName": "to_riepilogo_risultati"
         },
+        {
+            "actionTarget": {
+                "name": "cpl_risultati_sondaggi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_riepilogo_risultati"
+        },
+        {
+            "actionTarget": {
+                "name": "cpl_risultati_sondaggi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_riepilogo_risultati"
+        },
+        {
+            "actionTarget": {
+                "name": "compiti",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_compito_created",
+                        "destination": "codice_compito"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_compito_created"
+        }, 
         {
             "actionTarget": {
                 "name": "sondaggi",
