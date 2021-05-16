@@ -856,6 +856,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "ulteriori_elementi",
+      "buttonIcon": "add",
       "label": "Dati Accessori",
       "newLine": false,
       "outputEvent": {
@@ -868,7 +869,26 @@
       },
       "readOnly": false,
       "sameOrigin": false,
-      "size": 1.5
+      "size": 0.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "report_problem",
+      "key": "create_segnalazione",
+      "label": "Crea Segnalazione",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "compito_create",
+        "eventTrigger": "press"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.5
     },
     {
       "autoGenerate": false,
@@ -1010,6 +1030,30 @@
       "sameOrigin": false,
       "newLine": false,
       "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "inputEvents": [
+        {
+          "eventName": "compito_create",
+          "actionType": "query",
+          "queryFunct": "select entrasp.compiti_rif_bo_insert('sondaggiSomministrati', $titolo$, $codice_azienda$, $id_sondaggio$, $id_somministrazione$) as codice_compito_created",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "to_compito_created"
+        }
+      ],
+      "key": "codice_compito_created",
+      "label": "codice_compito_created",
+      "sameOrigin": false,
+      "newLine": true,
+      "readOnly": true
     }
   ],
   "search_keys": [
@@ -1064,7 +1108,6 @@
       "label": "Stato",
       "newLine": true,
       "queryCond": "ss.stato='€stato_s€'"
-
     },
     {
       "fieldName": "data_esec_prevista_min",
@@ -1195,7 +1238,6 @@
       "label": "Giudizio",
       "newLine": false,
       "queryCond": "ss.giudizio='€giudizio_s€'"
-
     },
     {
       "format": {
@@ -1364,7 +1406,26 @@
         }
       ],
       "label": "Seleziona Campione"
-    }
+    },
+    {
+      "entryKey": "compiti_sub_of_somministrazioni",
+      "type": "table",
+      "keys": [
+          {
+              "parent": "codice_azienda",
+              "son": "codice_azienda"
+          },
+          {
+              "parent": "id_sondaggio",
+              "son": "id_sondaggio"
+          },
+          {
+            "parent": "id_somministrazione",
+            "son": "id_somministrazione"
+        }
+      ],
+      "label": "Segnalazioni associate"
+  }
   ],
   "table_keys": [
     {
@@ -1684,6 +1745,24 @@
     {
       "eventName": "sondaggi_somministrati_reload",
       "actionType": "reload"
+    },
+    {
+      "actionTarget": {
+        "name": "compiti",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito_created",
+            "destination": "codice_compito"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_compito_created"
     },
     {
       "actionTarget": {
