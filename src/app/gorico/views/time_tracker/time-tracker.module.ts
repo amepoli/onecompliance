@@ -17,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DynamicFormsModule } from '../../dynamic-forms/dynamic-forms.module';
 import { FileManagerModule } from 'app/main/apps/file-manager/file-manager.module';
@@ -40,6 +41,7 @@ import { FormGetterModule } from '../form-getter/form-getter.module';
     MatCardModule,
     MatProgressSpinnerModule,
     MatBadgeModule,
+    MatTooltipModule,
     FileManagerModule,
     MatDialogModule,
     FormGetterModule
@@ -60,6 +62,7 @@ import { FormGetterModule } from '../form-getter/form-getter.module';
     MatInputModule,
     MatCardModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
     TimeTrackerComponent,
   ],
   declarations: [TimeTrackerComponent],
