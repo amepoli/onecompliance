@@ -1,9 +1,8 @@
 {
   "$schema": "../views.schema.json",
   "businessObjectName": "compiti_rif_bo",
-  "origin": "entrasp.compiti",
+  "origin": "entrasp.compiti_rif_bo",
   "entryKey": "compiti_sub_of_somministrazioni",
-  "inheritsFrom": "compiti",
   "predefinedQueries": [
     {
       "operation": "selectForm",
@@ -29,6 +28,71 @@
       "operation": "insert",
       "type": "postProcessing",
       "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": true,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "dataType": "text",
+        "comboQuery": "select codice_compito as id, codice_compito||'-'||titolo as name from entrasp.compiti where codice_azienda =$codice_azienda$"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "label": "Codice Compito",
+      "newLine": false,
+      "size": 2,
+      "readOnly": false
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "readOnly": true,
+      "key": "id_sondaggio",
+      "label": "id_sondaggio"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "value": "sondaggioSomministrati"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "key": "object_name",
+      "label": "object_name"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "value": "sondaggio"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "insertUpdateFunct": "select $codice_azienda$||'#'||$id_sondaggio$||'#'||$id_somministrazione$",
+      "readOnly": true,
+      "key": "object_key",
+      "label": "object_key"
     }
   ],
   "table_keys": [
