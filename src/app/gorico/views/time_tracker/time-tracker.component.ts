@@ -4,6 +4,7 @@ import 'rxjs/add/operator/filter';
 import { TimeTrackerService } from 'app/gorico/services/time_tracker.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { HelperService } from 'app/gorico/services/helper.service';
 
 @Component({
     selector: 'time-tracker',
@@ -65,10 +66,14 @@ export class TimeTrackerComponent implements DoCheck, AfterViewInit, OnDestroy {
     }
 
     gotoAziendeTasks() {
-        this._router.navigate([`/gorico/main-table/aziende_tasks`]);
+        HelperService.redirectTo(this._router, `/gorico/main-table/aziende_tasks`);
+    }
+
+    gotoConsultantList() {
+        HelperService.redirectTo(this._router, `/gorico/main-table/consuntivazioni_consultant_list`);
     }
 
     gotoTasksList() {
-        this._router.navigate([`/gorico/main-table/compiti_consultant_micro_task`]);
+        HelperService.redirectTo(this._router, `/gorico/main-table/compiti_consultant_micro_task`);
     }
 }
