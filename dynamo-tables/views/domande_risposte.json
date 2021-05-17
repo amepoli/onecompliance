@@ -91,6 +91,24 @@
             },
             "actionType": "navigate",
             "eventName": "domande_button_dettaglio"
+        },
+        {
+            "actionTarget": {
+                "name": "compiti",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_compito_created",
+                        "destination": "codice_compito"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_compito_created"
         }
     ],
     "predefinedQueries": [
@@ -114,7 +132,7 @@
             "queryString": "select entrasp.aggiorna_punteggi_somministrazioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
             "type": "postProcessingAllRows"
         },
-       {
+        {
             "operation": "delete",
             "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>coalesce($note_rb$,$note_mc$,''), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
             "type": "main"
@@ -329,7 +347,6 @@
                 "dataType": "number"
             },
             "style": {
-
                 "font_color": "black",
                 "font_weight": "600"
             },
@@ -347,7 +364,6 @@
                 "dataType": "text"
             },
             "style": {
-
                 "font_color": "black",
                 "font_weight": "600"
             },
@@ -468,18 +484,18 @@
             "sameOrigin": false
         },
         {
-			"format": {
-				"viewType": "invisible"
-			},
-			"size": 0.75,
-			"isHidden": false,
-			"isPrimary": false,
-			"label": "invisible_1",
-			"key": "invisible_1",
-			"sameOrigin": false,
-			"readOnly": true,
-			"newLine": false
-		},
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 0.75,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_1",
+            "key": "invisible_1",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": false
+        },
         {
             "isHidden": false,
             "readOnly": true,
@@ -493,7 +509,6 @@
                 "dataType": "text"
             },
             "style": {
-
                 "font_color": "black",
                 "font_weight": "500",
                 "font_style": "italic"
@@ -536,6 +551,30 @@
             "newLine": true
         },
         {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "inputEvents": [
+                {
+                    "eventName": "compito_create",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.compiti_rif_bo_insert('riepilogoRisposte', $descrizione$, $codice_azienda$, $id_sondaggio$, $id_somministrazione$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as codice_compito_created",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "to_compito_created"
+                }
+            ],
+            "key": "codice_compito_created",
+            "label": "codice_compito_created",
+            "sameOrigin": false,
+            "newLine": true,
+            "readOnly": true
+        },
+        {
             "isHidden": true,
             "readOnly": false,
             "isPrimary": false,
@@ -562,7 +601,7 @@
                         "readOnly": false,
                         "key": "id_risposta_prev_radio",
                         "label": "Risposta",
-                        "size": 9,
+                        "size": 8.5,
                         "newLine": false,
                         "format": {
                             "viewType": "radiobutton",
@@ -578,7 +617,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "readOnly": true,
-                        "newLine": true,
+                        "newLine": false,
                         "key": "peso_rb",
                         "inputEvents": [
                             {
@@ -611,6 +650,25 @@
                             "viewType": "input",
                             "dataType": "number"
                         }
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "buttonIcon": "report_problem",
+                        "key": "create_segnalazione",
+                        "label": "Crea Segnalazione",
+                        "newLine": true,
+                        "outputEvent": {
+                            "eventName": "compito_create",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 0.5
                     },
                     {
                         "autoGenerate": false,
@@ -676,7 +734,7 @@
                         "newLine": false,
                         "key": "risposta",
                         "label": "Risposta",
-                        "size": 9,
+                        "size": 8.5,
                         "format": {
                             "viewType": "textarea",
                             "dataType": "text",
@@ -694,7 +752,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "readOnly": false,
-                        "newLine": true,
+                        "newLine": false,
                         "key": "peso_oa",
                         "sameOrigin": false,
                         "label": "Risultato %",
@@ -720,6 +778,25 @@
                                 }
                             ]
                         }
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "buttonIcon": "report_problem",
+                        "key": "create_segnalazione",
+                        "label": "Crea Segnalazione",
+                        "newLine": true,
+                        "outputEvent": {
+                            "eventName": "compito_create",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 0.5
                     },
                     {
                         "autoGenerate": false,
@@ -770,7 +847,7 @@
                         "key": "risposta_multipla",
                         "label": "Risposta",
                         "newLine": false,
-                        "size": 9,
+                        "size": 8.5,
                         "format": {
                             "viewType": "checkboxgroup",
                             "options": [],
@@ -785,7 +862,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "readOnly": true,
-                        "newLine": true,
+                        "newLine": false,
                         "key": "peso_mc",
                         "sameOrigin": false,
                         "label": "Risultato %",
@@ -811,6 +888,25 @@
                                 "queryFunct": "select codice_colore as peso_mc_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select sum(peso) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=any(entrasp.evaluate_given_field_multiple('risposta_multipla', '$risposta_multipla$')) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
                             }
                         ]
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "buttonIcon": "report_problem",
+                        "key": "create_segnalazione",
+                        "label": "Crea Segnalazione",
+                        "newLine": true,
+                        "outputEvent": {
+                            "eventName": "compito_create",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 0.5
                     },
                     {
                         "isHidden": false,
