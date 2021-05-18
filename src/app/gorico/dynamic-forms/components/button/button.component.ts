@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
     template: `
 <div align="center" [ngStyle]="{'display': 'inline-block', 'width': '100%'}" *ngIf="field.isVisible != false" [formGroup]="group">
 <button *ngIf="field.buttonIcon && !field.isDownloadButton" mat-icon-button [disabled]="field.readonly" (click)="onClickButton()">
-        <mat-icon>{{field.buttonIcon}}</mat-icon>
+        <mat-icon>{{field.buttonIcon}}</mat-icon>{{field.label}}
 </button>
 <button *ngIf="field.isDownloadButton" mat-icon-button [disabled]="field.readonly" (click)="onClickButton()">
         <mat-icon>cloud_download</mat-icon>
