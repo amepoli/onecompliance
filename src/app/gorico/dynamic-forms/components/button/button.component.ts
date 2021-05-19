@@ -11,7 +11,11 @@ import { Subscription } from 'rxjs';
     selector: 'app-button',
     template: `
 <div align="center" [ngStyle]="{'display': 'inline-block', 'width': '100%'}" *ngIf="field.isVisible != false" [formGroup]="group">
-<button *ngIf="field.buttonIcon && !field.isDownloadButton" mat-icon-button [disabled]="field.readonly" (click)="onClickButton()">
+<button *ngIf="field.buttonIcon && !field.label && !field.isDownloadButton" mat-icon-button [disabled]="field.readonly" (click)="onClickButton()">
+        <mat-icon>{{field.buttonIcon}}</mat-icon>
+</button>
+<button *ngIf="field.buttonIcon && field.label && !field.isDownloadButton" mat-icon-button color="primary" [disabled]="field.readonly" (click)="onClickButton()"
+[style.width]="'100%'"  >
         <mat-icon>{{field.buttonIcon}}</mat-icon>{{field.label}}
 </button>
 <button *ngIf="field.isDownloadButton" mat-icon-button [disabled]="field.readonly" (click)="onClickButton()">
@@ -28,7 +32,7 @@ import { Subscription } from 'rxjs';
         '[style.padding-top.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "24": "14": "0"',
         '[style.margin-right]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "8px": "1%": "0"',
         '[style.margin-left]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "8px": "1%": "0"',
-        '[style.width]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "32px": field.width + "%": "0"',
+        '[style.width]': 'field.isVisible? (field.buttonIcon && !field.label) || field.isDownloadButton? "32px": field.width + "%": "0"',
         '[style.height.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "32": "96": "0"',
         // I want to use this in the future :p
         // '[style.display]': 'field.isVisible? "unset": "none"'
