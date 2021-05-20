@@ -1,0 +1,169 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "anagrafiche_sub_of_asset",
+  "inheritsFrom": "asset_sub_of_anagrafiche",
+  "form_keys": [
+ 
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_part",
+      "label": "codice_part",
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT an.id_anagrafica AS id, concat(codice, ' - ', ragione_sociale) as name from entrasp.anagrafiche_vr an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and codice_ruolo= 'DIP';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_anagrafica",
+      "label": "Utente Abilitato",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_asset",
+      "label": "id_asset",
+      "readOnly": true,
+      "newLine": false
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "4%",
+      "queryFunct": "select true",
+      "key": "delete_anagrafiche_asset",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "delete_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "anagrafiche_sub_of_asset",
+        "viewType": "form",
+        "query": "delete from entrasp.asset_anagrafiche_id where codice_azienda='£codice_azienda£' AND codice_part='£codice_part£' id_asset=£id_asset£ AND id_anagrafica=£id_anagrafica£",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_part",
+            "destination": "codice_part"
+          },
+          {
+            "source": "id_asset",
+            "destination": "id_asset"
+          },
+          {
+            "source": "id_anagrafica",
+            "destination": "id_anagrafica"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_asset",
+      "label": "Asset"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica)",
+      "key": "anagrafiche_descr",
+      "sameOrigin": false,
+      "label": "Utenti Abilitati"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_anagrafica",
+      "label": "ID"
+    },
+    {
+      "format": {
+          "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "7.5%",
+      "key": "visible_button_presidio",
+      "label": "Utente",
+      "queryFunct": "select true",
+      "isButton": true,
+      "buttonAction": {
+          "target": "anagrafiche_vr",
+          "viewType": "form",
+          "action": "navigate",
+          "keymap": [
+              {
+                  "source": "codice_part",
+                  "destination": "codice_part"
+              },
+              {
+                  "source": "id_anagrafica",
+                  "destination": "id_anagrafica"
+              }
+          ]
+      }
+  }
+  ] 
+}

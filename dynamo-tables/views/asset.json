@@ -236,7 +236,22 @@
       "key": "id_responsabile_interno",
       "size": 5,
       "label": "Responsabile Interno",
-      "newLine": false,
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CREDENZIALI'"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_tipo_credenziali",
+      "label": "Credenziali di accesso",
+      "size": 3,
       "readOnly": false
     }
 
@@ -259,6 +274,15 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_asset",
+      "label": "ID"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_asset_parent",
       "label": "ID"
     },
     {
@@ -327,7 +351,35 @@
             }
         ],
         "label": "Trattamento Dati"
-    }
+    },
+    {
+      "entryKey": "anagrafiche_sub_of_asset",
+      "keys": [
+          {
+              "parent": "codice_azienda",
+              "son": "codice_azienda"
+          },
+          {
+              "parent": "id_asset",
+              "son": "id_asset"
+          }
+      ],
+      "label": "Utenti Abilitati"
+  },
+  {
+    "entryKey": "asset_sub_asset",
+    "keys": [
+        {
+            "parent": "codice_azienda",
+            "son": "codice_azienda"
+        },
+        {
+            "parent": "id_asset",
+            "son": "id_asset_parent"
+        }
+    ],
+    "label": "Sotto Asset"
+}
    
 ]
  
