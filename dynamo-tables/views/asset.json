@@ -61,7 +61,7 @@
         "dataType": "text",
         "viewType": "combobox",
         "options": [],
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_ASSET'"
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father in (3391,3392,3393,3394,3395,3396,3397) order by descrizione"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -143,7 +143,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
         "options": [],
         "viewType": "combobox"
       },
@@ -158,7 +158,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
         "options": [],
         "viewType": "combobox"
       },
@@ -212,7 +212,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
         "options": [],
         "viewType": "combobox"
       },
@@ -227,7 +227,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
         "options": [],
         "viewType": "combobox"
       },
@@ -381,6 +381,48 @@
     "label": "Sotto Asset"
 }
    
+],
+"search_keys": [
+  {
+    "fieldName": "id_asset",
+    "format": {
+        "dataType": "number",
+        "viewType": "input"
+    },
+    "label": "ID Asset",
+    "newLine": false,
+    "queryCond": "id_asset=$id_asset$"
+},
+{
+  "fieldName": "id_tipo_asset",
+  "format": {
+      "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_ASSET';",
+      "options": [],
+      "viewType": "combobox"
+  },
+  "label": "Tipo Asset",
+  "newLine": false,
+  "queryCond": "mt.id_tipo_asset=$id_id_tipo_asset$"
+},
+{
+  "fieldName": "parola_search",
+  "format": {
+      "dataType": "text",
+      "viewType": "input"
+  },
+  "label": "Parola chiave",
+  "newLine": true,
+  "queryCond": "upper(descrizione) like '%'||upper('€parola_search€')||'%'"
+},
+{
+  "fieldName": "flag_principali",
+  "format": {
+      "value": "0",
+      "viewType": "checkbox"
+  },
+  "label": "Solo Principali",
+  "newLine": false,
+  "queryCond": "id_asset_parent IS null"
+}
 ]
- 
 }
