@@ -17,6 +17,7 @@ import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service
 import { Subscription } from 'rxjs';
 import { DialogService } from 'app/gorico/services/dialog.service';
 import { HttpClient } from '@angular/common/http';
+import { SelectionModel } from '@angular/cdk/collections';
 
 export interface tableViewParams {
     entryName: string;
@@ -168,6 +169,25 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     subMsgCmdTopic = '/toolbar/out/cmd';
     pubMsgCmdTopic = '/toolbar/in/cmd';
 
+    // Selection
+    initialSelection: any = [];
+    allowMultiSelect = true;
+    selection = null;
+
+    /** Whether the number of selected elements matches the total number of rows. */
+    isAllSelected() {
+        const numSelected = this.selection.selected.length;
+        const numRows = this.dataSource.data.length;
+        return numSelected == numRows;
+    }
+
+    /** Selects all rows if they are not all selected; otherwise clear selection. */
+    masterToggle() {
+        this.isAllSelected() ?
+            this.selection.clear() :
+            this.dataSource.data.forEach(row => this.selection.select(row));
+    }
+
     subscriptions: Subscription[] = [];
 
     constructor(
@@ -183,6 +203,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         private _console: ConsoleLoggerService,
         private httpClient: HttpClient
     ) {
+        // Set selection model
+        this.selection = new SelectionModel<any>(this.allowMultiSelect, this.initialSelection);
+        
+        
         this.calculateTableHeight();
     }
 
@@ -749,6 +773,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     getColumnLabels(viewKeys: tableViewKey[]) {
         let colLabels = viewKeys.map(c => c.key);
+        // return ['select', ...colLabels];
         return colLabels;
 
     }
