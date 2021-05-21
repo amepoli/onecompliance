@@ -839,6 +839,18 @@
       "label": "Durata maggiore di",
       "newLine": false,
       "queryCond": "csn.durata>=$durata_min$"
+    },
+    {
+      "fieldName": "dynamo_user_s",
+      "format": {
+        "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.anagrafiche_id order by dynamo_user;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "User",
+      "newLine": false,
+      "queryCond": "csn.codice_part||'-'||csn.id_risorsa in(select codice_part||'-'||id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€dynamo_user_s€')"
     }
   ],
   "inputEvents": [

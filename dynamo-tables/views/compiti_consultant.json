@@ -13,12 +13,22 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select cmp.codice_azienda, cmp.foreseen_date, cmp.codice_compito, cmp.titolo, sustring(cmp.note from 1 to 239) as note, cmp.data_segnalazione, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, entrasp.tipo_segnalazione_descr(cmp.id_tipo_segnalazione, cmp.codice_azienda) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as compiti_aperti, codice_compito_parent from entrasp.compiti cmp WHERE cmp.codice_compito_parent is null and cmp.codice_azienda in(€global_user_companies€)"
+      "queryString": "select cmp.codice_azienda, cmp.foreseen_date, cmp.codice_compito, cmp.titolo, sustring(cmp.note from 1 to 239) as note, cmp.data_segnalazione, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as compiti_aperti, codice_compito_parent from entrasp.compiti cmp WHERE cmp.codice_compito_parent is null and cmp.codice_azienda in(€global_user_companies€)"
     },
     {
       "operation": "selectForm",
       "type": "preProcessing",
       "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda=az.codice_azienda and codice_compito=$codice_compito$;"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "select entrasp.assegna_compito_user_centro_gest_default_insert((€global_id_anagrafiche€)::text, $titolo$, $codice_azienda$);"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "select entrasp.assegna_compito_user_centro_gest_default((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$);"
     }
   ],
   "form_keys": [
@@ -52,7 +62,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_tipo_segnalazione as id, codice_azienda||'-'||descrizione as name from entrasp.tipi_segnalazioni where codice_azienda=$codice_azienda$ order by codice_azienda, id_tipo_segnalazione;",
+        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni order by descrizione;",
         "options": [],
         "viewType": "combobox",
         "value": 0,
@@ -88,14 +98,7 @@
         "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
         "options": [],
         "viewType": "combobox",
-        "dataType": "text",
-        "validations": [
-          {
-            "message": "Codice azienda fatturante necessario",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "dataType": "text"
       },
       "label": "Azienda fatturante",
       "isHidden": false,
@@ -297,14 +300,7 @@
       "format": {
         "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
         "options": [],
-        "viewType": "combobox",
-        "validations": [
-          {
-            "message": "Centro gestionale necessario",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -545,6 +541,18 @@
       "label": "Centro Gestionale",
       "newLine": false,
       "queryCond": "id_centro_gest=$id_centro_gest$"
+    },
+    {
+      "fieldName": "dynamo_user_s",
+      "format": {
+        "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.anagrafiche_id order by dynamo_user;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "User",
+      "newLine": false,
+      "queryCond": "codice_part||'-'||id_anagrafica in(select codice_part||'-'||id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€dynamo_user_s€')"
     }
   ],
   "subTables": [

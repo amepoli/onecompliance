@@ -166,6 +166,11 @@
   "entryKey": "dashboard_sondaggi",
   "predefinedQueries": [
     {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select codice_azienda, id_modello_test, giudizio, id_sondaggio, titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest, entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO',entrasp.stato_rettificato(data_prevista,stato)) as stato_rettificato from entrasp.sondaggi where codice_azienda=$codice_azienda$"
+    },
+    {
       "operation": "selectForm",
       "type": "preProcessing",
       "queryString": "select entrasp.aggiorna_sondaggi_pre_loading($codice_azienda$, $id_sondaggio$);"
