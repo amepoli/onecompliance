@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSortModule } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TableViewComponent } from './table-view.component';
 import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
 import { FormViewModule } from '../form/form-view.module';
@@ -29,6 +30,7 @@ import { OneCompliancePipesModule } from 'app/gorico/pipes/pipes.module';
     MatSortModule,
     MatIconModule,
     MatButtonModule,
+    MatCheckboxModule,
     DynamicFormsModule,
     FormViewModule,
     OneCompliancePipesModule
@@ -45,6 +47,7 @@ import { OneCompliancePipesModule } from 'app/gorico/pipes/pipes.module';
     MatSortModule,
     MatIconModule,
     MatButtonModule,
+    MatCheckboxModule,
     DynamicFormsModule,
     TableViewComponent
   ],
