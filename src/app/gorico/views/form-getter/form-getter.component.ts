@@ -1101,7 +1101,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     let combobox: ComboboxComponent = null;
                                     combobox = <ComboboxComponent>comboboxEl.componentRef.instance;
                                     const comboValue = combobox.field.value != null ? combobox.field.value.id : null;
-                                    combobox.setOptions(result, true);
+                                    combobox.setOptions(result, true, true);
                                     if (comboValue != null) {
                                         combobox.setValue(comboValue);
                                     }
