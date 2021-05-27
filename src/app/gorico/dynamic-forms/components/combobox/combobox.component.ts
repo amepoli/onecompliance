@@ -43,7 +43,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   group: FormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
   isRequired = false; // field is required or not
-
+  optionsSetManually = false; // Options set by calling setOptions() function
   subscription: Subscription;
 
   /** control for the MatSelect filter keyword */
@@ -120,13 +120,16 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     this._onDestroy.complete();
   }
 
-  setOptions(options: any[], skipNextEvent: boolean) {
+  setOptions(options: any[], skipNextEvent: boolean, optionsSetManually: boolean = false) {
     this.field.options = options.filter(x =>  x && x.name !== null);
     // this.field.options = options;
     
     // load the initial bank list
     this.filteredItems.next(this.field.options.slice());
     this.skipNextEvent = skipNextEvent;
+
+    // Set the boolen true so we don't call 
+    this.optionsSetManually = optionsSetManually;
   }
 
   setValue(id){
@@ -173,16 +176,16 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onOpen(): void {
-    if (this.field.lazyLoading) {
+    if (this.field.lazyLoading && !this.optionsSetManually) {
         this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
     }
   }
 
   onClose(): void {
     // purge all 
-    if (this.field.lazyLoading && this.field.value != null) {
-        this.setOptions([this.field.value], false);
-    }
+    // if (this.field.lazyLoading && this.field.value != null) {
+    //     this.setOptions([this.field.value], false);
+    // }
   }
 
   resetSelection() {
