@@ -11,10 +11,11 @@ import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service
   template: `
 <mat-form-field [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" appearance="outline">
 <mat-label>{{field.label}}</mat-label>
-<mat-select [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)" (click)="onOpen()" (closed)="onClose()"
+<mat-select [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)" (openedChange)="openedChange($event)"
 [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
-<mat-option value="" [style.color]="'grey'">Seleziona</mat-option>
+<mat-option *ngIf="isLazyLoading" value="" [style.color]="'grey'"><span ><mat-icon>cached</mat-icon></span>Loading...</mat-option>
+<mat-option *ngIf="!isLazyLoading" value="" [style.color]="'grey'">Seleziona</mat-option>
 <mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly || readOnlyPage">{{item.name}}</mat-option>
 </mat-select>
 
@@ -43,8 +44,10 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   group: FormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
   isRequired = false; // field is required or not
-  optionsSetManually = false; // Options set by calling setOptions() function
   subscription: Subscription;
+
+  isLazyLoading = false; // lazy loading in progress
+  isLazyLoaded = false; // Options set by calling setOptions() function
 
   /** control for the MatSelect filter keyword */
   public itemFilterCtrl: FormControl = new FormControl();
@@ -120,16 +123,17 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     this._onDestroy.complete();
   }
 
-  setOptions(options: any[], skipNextEvent: boolean, optionsSetManually: boolean = false) {
-    this.field.options = options.filter(x =>  x && x.name !== null);
+  setOptions(options: any[], skipNextEvent: boolean, isLazyLoaded: boolean = false) {
+    this.field.options = options.slice(0, Math.min(20, options.length)).filter(x =>  x && x.name !== null);
     // this.field.options = options;
     
     // load the initial bank list
     this.filteredItems.next(this.field.options.slice());
     this.skipNextEvent = skipNextEvent;
 
-    // Set the boolen true so we don't call 
-    this.optionsSetManually = optionsSetManually;
+    // if lazy loading called this function, we stop the loading indicator
+    this.isLazyLoading = false;
+    this.isLazyLoaded = isLazyLoaded;
   }
 
   setValue(id){
@@ -175,13 +179,27 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  openedChange(opened): void {
+    if (opened) {
+      this.onOpen();
+    }
+    else {
+      this.onClose();
+    }
+  }
+
   onOpen(): void {
-    if (this.field.lazyLoading && !this.optionsSetManually) {
-        this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
+    if (this.field.lazyLoading && !this.isLazyLoaded) {
+      this.isLazyLoading = true;
+      this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
     }
   }
 
   onClose(): void {
+    // Zee update
+    // Now that we are limiting the list to only 20, 
+    // it is probably safe to keep list in memory
+
     // purge all 
     // if (this.field.lazyLoading && this.field.value != null) {
     //     this.setOptions([this.field.value], false);
