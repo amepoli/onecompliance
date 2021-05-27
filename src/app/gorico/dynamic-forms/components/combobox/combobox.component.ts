@@ -129,17 +129,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   setOptions(options: any[], skipNextEvent: boolean, isLazyLoaded: boolean = false) {
     this.completeOptions = options.filter(x =>  x && x.name !== null);
     
-    let filteredOptions: Item[] = this.completeOptions.slice(0, Math.min(20, this.completeOptions.length));
-    
-    // Check if the selected item is inside the 20 items selected,
-    // add if doesn't exist
-    if (this.field.value != null && this.field.value != '') {
-      if(filteredOptions.indexOf(this.field.value) < 0) {
-        filteredOptions = [this.field.value, ...filteredOptions.slice(0, Math.min(19, filteredOptions.length))]        
-      }  
-    }
-
-    this.field.options = filteredOptions;
+    this.field.options = this.getOptionsWithCurrentSelection(this.completeOptions);
     
     // load the initial bank list
     this.filteredItems.next(this.field.options.slice());
@@ -149,6 +139,20 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLazyLoading = false;
     this.isLazyLoaded = isLazyLoaded;
   }
+
+  getOptionsWithCurrentSelection(options: Item[]) {
+    let filteredOptions: Item[] = options.slice(0, Math.min(20, options.length));
+    
+    // Check if the selected item is inside the 20 items selected,
+    // add if doesn't exist
+    if (this.field.value != null && this.field.value != '') {
+      if(filteredOptions.indexOf(this.field.value) < 0) {
+        filteredOptions = [this.field.value, ...filteredOptions.slice(0, Math.min(19, filteredOptions.length))]        
+      }  
+    }
+    return filteredOptions;
+  }
+
 
   setValue(id){
     const _this = this;
@@ -231,15 +235,16 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     // get the search keyword
     let search = this.itemFilterCtrl.value;
     if (!search) {
-      this.filteredItems.next(this.field.options.slice());
-      return;
-    } else {
-      search = search.toLowerCase();
+      this.field.options = this.getOptionsWithCurrentSelection(this.completeOptions);      
     }
-    // filter the banks
-    this.filteredItems.next(
-      this.completeOptions.filter(item => item.name.toLowerCase().indexOf(search) > -1).slice(0, Math.min(20, this.completeOptions.length))
-    );
+    else {
+      search = search.toLowerCase();
+      this.field.options = this.getOptionsWithCurrentSelection(this.completeOptions.filter(item => item.name.toLowerCase().indexOf(search) > -1));
+    }
+    
+    this.filteredItems.next(this.field.options.slice());
+    return;
+
   }
 
   private getFormattedId(id: any): any {
