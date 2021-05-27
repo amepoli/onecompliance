@@ -13,7 +13,9 @@ import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service
 <mat-label>{{field.label}}</mat-label>
 <mat-select [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)" (openedChange)="openedChange($event)"
 [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
-<ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'"></ngx-mat-select-search>
+<ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'">
+<mat-icon ngxMatSelectSearchClear>clear</mat-icon>
+</ngx-mat-select-search>
 <mat-option *ngIf="isLazyLoading" value="" [style.color]="'grey'"><span ><mat-icon>cached</mat-icon></span>Loading...</mat-option>
 <mat-option *ngIf="!isLazyLoading" value="" [style.color]="'grey'">Seleziona</mat-option>
 <mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly || readOnlyPage">{{item.name}}</mat-option>
@@ -46,6 +48,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   isRequired = false; // field is required or not
   subscription: Subscription;
 
+  completeOptions: Item[]; // complete options list
   isLazyLoading = false; // lazy loading in progress
   isLazyLoaded = false; // Options set by calling setOptions() function
 
@@ -124,8 +127,19 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setOptions(options: any[], skipNextEvent: boolean, isLazyLoaded: boolean = false) {
-    this.field.options = options.slice(0, Math.min(20, options.length)).filter(x =>  x && x.name !== null);
-    // this.field.options = options;
+    this.completeOptions = options.filter(x =>  x && x.name !== null);
+    
+    let filteredOptions: Item[] = this.completeOptions.slice(0, Math.min(20, this.completeOptions.length));
+    
+    // Check if the selected item is inside the 20 items selected,
+    // add if doesn't exist
+    if (this.field.value != null && this.field.value != '') {
+      if(filteredOptions.indexOf(this.field.value) < 0) {
+        filteredOptions = [this.field.value, ...filteredOptions.slice(0, Math.min(19, filteredOptions.length))]        
+      }  
+    }
+
+    this.field.options = filteredOptions;
     
     // load the initial bank list
     this.filteredItems.next(this.field.options.slice());
@@ -141,10 +155,10 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     if(id != null && id !== ''){
       // id = JSON.stringify(id);
       if(typeof id === 'object'){
-        _this.field.value = _this.field.options.find(x => JSON.stringify(x.id) == JSON.stringify(id));
+        _this.field.value = _this.completeOptions.find(x => JSON.stringify(x.id) == JSON.stringify(id));
       }
       else{
-        _this.field.value = _this.field.options.find(x => '' + x.id == '' + id);
+        _this.field.value = _this.completeOptions.find(x => '' + x.id == '' + id);
       }
     }
     else{
@@ -224,7 +238,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     // filter the banks
     this.filteredItems.next(
-      this.field.options.filter(item => item.name.toLowerCase().indexOf(search) > -1)
+      this.completeOptions.filter(item => item.name.toLowerCase().indexOf(search) > -1).slice(0, Math.min(20, this.completeOptions.length))
     );
   }
 
