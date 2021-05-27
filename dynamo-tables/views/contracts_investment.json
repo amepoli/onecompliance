@@ -79,7 +79,14 @@
 			"format": {
 				"comboQuery": "select id_tipo_contratto as id, descrizione as name from entrasp.tipi_contratto where codice_azienda = $codice_azienda$;",
 				"options": [],
-				"viewType": "combobox"
+				"viewType": "combobox",
+				"validations": [
+					{
+						"message": "Inserire uno stato!",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
 			},
 			"isHidden": false,
 			"isPrimary": false,
@@ -107,9 +114,16 @@
 				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
 				"options": [],
 				"viewType": "combobox",
-				"dataType": "text"
+				"dataType": "text",
+				"validations": [
+					{
+						"message": "Inserire uno stato!",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]			
 			},
-			"outputEvent": {
+				"outputEvent": {
 				"eventName": "contratto_change_stato",
 				"eventTrigger": "select"
 			},
@@ -403,5 +417,9 @@
             "queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
         }
     ],
+	"hideActions": [{
+		"tableActionType": "add",
+		"viewType": "table"
+	}],
 	"querySuffixes": {"tableViewSuffix": "limit 100"}
 }
