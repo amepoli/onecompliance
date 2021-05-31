@@ -162,6 +162,12 @@
           "condition": "none",
           "eventName": "associa_sondaggio_show",
           "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "associa_progetto_show",
+          "values": []
         }
       ],
       "isHidden": true,
@@ -224,7 +230,7 @@
             "readOnly": false,
             "sameOrigin": false,
             "size": 1
-          }               
+          }                              
         ]
       },
       "inputEvents": [
@@ -245,6 +251,12 @@
           "condition": "none",
           "eventName": "copia_da_somministrazione_show",
           "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "associa_progetto_show",
+          "values": []
         }
       ],
       "isHidden": true,
@@ -256,7 +268,156 @@
       "sameOrigin": false,
       "saveWhenHidden": true
     },
-    
+    {
+      "format": {
+        "viewType": "subform",
+        "subform_keys": [
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "combobox",
+              "options": [],
+              "comboQuery": "select prg.id_progetto as id, concat (prg.id_progetto, ' - ', prg.titolo) as name from entrasp.progetti prg where prg.codice_azienda=$codice_azienda$ and prg.id_centro_gest = (select id_centro_gest from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1)"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "queryFunct": "select id_progetto from entrasp.progetti_fasi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1",
+            "label": "Progetto associato",
+            "outputEvent": {
+              "eventName": "id_progetto_update",
+              "eventTrigger": "select"
+            },
+            "inputEvents": [
+              {
+                "eventName": "id_progetto_update",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.progetti_fasi_insert_from_sondaggio($codice_azienda$,  $id_progetto$, $id_sondaggio$,  entrasp.evaluate_given_field_null('id_fase_parent', '$id_fase_parent$'))",
+                "successMessage": "Done!"
+              }             
+            ],
+            "newLine": false,
+            "readOnly": false,
+            "size": 3
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "combobox",
+              "options": [],
+              "comboQuery": "select id_fase as id, titolo as name from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=£id_progetto£"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_fase_parent",
+            "queryFunct": "select id_fase_sup from entrasp.progetti_fasi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1",
+            "sameOrigin": false,
+            "label": "Fase livello superiore",
+            "outputEvent": {
+              "eventName": "id_fase_parent_update",
+              "eventTrigger": "select"
+            },
+            "inputEvents": [
+              {
+                "eventName": "id_fase_parent_update",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.progetti_fasi_insert_from_sondaggio($codice_azienda$,  $id_progetto$, $id_sondaggio$,  entrasp.evaluate_given_field_null('id_fase_parent', '$id_fase_parent$'))",
+                "successMessage": "Done!"
+              },
+              {
+                "eventName": "id_progetto_update",
+                "actionType": "show",
+                "condition": "none",
+                "values": []
+              }
+            ],
+            "newLine": false,
+            "readOnly": false,
+            "size": 3
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "progetto_from_sondaggi_somministrati",
+            "buttonIcon": "stacked_line_chart",
+            "label": "Progetto associato",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "to_progetto_from_sondaggi_somministrati",
+              "eventTrigger": "press"
+            },
+            "style": {
+              "background_color": "#25599C",
+              "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+          },       
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "associa_progetto_hide_k",
+            "buttonIcon": "close",
+            "label": "Maschera principale",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "associa_progetto_hide",
+              "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+          }                              
+        ]
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "condition": "none",
+          "eventName": "associa_progetto_show",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "associa_progetto_hide",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "associa_sondaggio_show",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "copia_da_somministrazione_show",
+          "values": []
+        }
+      ],
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "associa_progetto_sub_form",
+      "label": "associa_progetto_sub_form",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": false,
+      "saveWhenHidden": true
+    }, 
     {
       "autoGenerate": false,
       "format": {
@@ -395,53 +556,28 @@
       "size": 0.8
     },
     {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_somministrazione",
-      "label": "ID Verifica",
-      "newLine": false,
-      "readOnly": true,
-      "size": 0.65
-    },
-    {
       "autoGenerate": false,
       "format": {
-        "dataType": "number",
-        "viewType": "input"
+        "viewType": "button"
       },
       "isHidden": false,
-      "isPrimary": true,
-      "key": "id_sondaggio",
-      "inputEvents": [
-        {
-          "eventName": "close_associated_sondaggio_button",
-          "condition": "none",
-          "values": [],
-          "actionType": "query",
-          "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
-          "outputEventWhenComplete": "sondaggi_somministrati_reload"
-        },
-        {
-          "eventName": "close_associated_sondaggio_combo",
-          "condition": "equalTo",
-          "values": [
-            "C"
-          ],
-          "actionType": "query",
-          "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
-          "outputEventWhenComplete": "sondaggi_somministrati_reload"
-        }
-      ],
-      "label": "ID Sondaggio",
+      "isPrimary": false,
+      "key": "modello_test_from_sondaggi_somministrati",
+      "buttonIcon": "grading",
+      "label": "Modello Verifica",
       "newLine": false,
-      "readOnly": true,
-      "size": 0.65
-    },
+      "outputEvent": {
+        "eventName": "to_modello_test_from_sondaggi_somministrati",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.8
+    }, 
     {
       "autoGenerate": false,
       "format": {
@@ -463,7 +599,7 @@
       },
       "readOnly": false,
       "sameOrigin": false,
-      "size": 1
+      "size": 0.8
     },
     {
       "autoGenerate": false,
@@ -474,7 +610,7 @@
       "isPrimary": false,
       "key": "copia_da_somministrazione_show_k",
       "buttonIcon": "content_copy",
-      "label": "Copia da somministrazione",
+      "label": "Copia verifica",
       "newLine": false,
       "outputEvent": {
         "eventName": "copia_da_somministrazione_show",
@@ -482,7 +618,7 @@
       },
       "readOnly": false,
       "sameOrigin": false,
-      "size": 1
+      "size": 0.8
     },
     {
       "autoGenerate": false,
@@ -501,7 +637,26 @@
       },
       "readOnly": false,
       "sameOrigin": false,
-      "size": 1
+      "size": 0.8
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "associa_progetto_show_k",
+      "buttonIcon": "content_copy",
+      "label": "Associa progetto",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "associa_progetto_show",
+        "eventTrigger": "press"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.8
     },
     {
       "autoGenerate": false,
@@ -659,27 +814,52 @@
       "size": 0.6
     },
     {
-      "autoGenerate": false,
+      "autoGenerate": true,
       "format": {
-        "viewType": "button"
+        "dataType": "number",
+        "viewType": "input"
       },
       "isHidden": false,
-      "isPrimary": false,
-      "key": "modello_test_from_sondaggi_somministrati",
-      "buttonIcon": "grading",
-      "label": "Modello Verifica",
+      "isPrimary": true,
+      "key": "id_somministrazione",
+      "label": "ID Verifica",
       "newLine": false,
-      "outputEvent": {
-        "eventName": "to_modello_test_from_sondaggi_somministrati",
-        "eventTrigger": "press"
+      "readOnly": true,
+      "size": 0.65
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
       },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_sondaggio",
+      "inputEvents": [
+        {
+          "eventName": "close_associated_sondaggio_button",
+          "condition": "none",
+          "values": [],
+          "actionType": "query",
+          "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
+          "outputEventWhenComplete": "sondaggi_somministrati_reload"
+        },
+        {
+          "eventName": "close_associated_sondaggio_combo",
+          "condition": "equalTo",
+          "values": [
+            "C"
+          ],
+          "actionType": "query",
+          "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
+          "outputEventWhenComplete": "sondaggi_somministrati_reload"
+        }
+      ],
+      "label": "ID Sondaggio",
+      "newLine": false,
+      "readOnly": true,
+      "size": 0.65
     },
     {
       "autoGenerate": false,
@@ -1990,6 +2170,24 @@
       },
       "actionType": "navigate",
       "eventName": "to_modello_test_from_sondaggi_somministrati"
+    },
+    {
+      "actionTarget": {
+        "name": "progetti",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_progetto",
+            "destination": "id_progetto"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_progetto_from_sondaggi_somministrati"
     }
   ],
   "hideActions": [
