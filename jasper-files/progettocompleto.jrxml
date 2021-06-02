@@ -26,8 +26,7 @@
 		<defaultValueExpression><![CDATA["IREN"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select prf.codice, entrasp.codice_progetti_fase_se_livello(prf.codice_azienda, prf.id_fase, 0) as codice_liv0, entrasp.codice_progetti_fase_se_livello(prf.codice_azienda, prf.id_fase, 1) as codice_liv2,  entrasp.codice_progetti_fase_se_livello(prf.codice_azienda, prf.id_fase, 2) as codice_liv3, pr.codice_azienda, pr.id_progetto,pr.codice_progetto, pr.titolo , pr.id_tipo_progetto, pr.id_cliente, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pr.stato) as stato,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_cliente), prf.titolo as prf_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prf_idfase, s1.titolo as s1_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s1.stato) as stato_sondaggio1, prf.ordinamento as prf_ordinamento, funct1.giudizio as giudizio_trans1 from entrasp.progetti_fasi prf left join entrasp.progetti pr on prf.codice_azienda=pr.codice_azienda and prf.id_progetto=pr.id_progetto left join entrasp.sondaggi s1 on prf.codice_azienda=s1.codice_azienda and prf.id_sondaggio=s1.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(s1.codice_azienda, s1.id_sondaggio) funct1 on s1.id_sondaggio=funct1.idsondaggio and s1.codice_azienda=funct1.codiceazienda WHERE prf.codice_azienda='IREN' and prf.id_progetto=1
-]]>
+		<![CDATA[$P!{mainQuery}]]>
 	</queryString>
 	<field name="codice" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice"/>
