@@ -1,9 +1,8 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges } from '@angular/core';
+import { AuthService } from 'app/gorico/services';
 
 import 'rxjs/add/operator/filter';
 import { FormViewComponent } from '../form/form-view.component';
-import { NavigationService } from 'app/gorico/services/navigation.service';
-import { AuthService } from 'app/gorico/login-page/auth.service';
 
 @Component({
     selector: 'form-view-toolbar',

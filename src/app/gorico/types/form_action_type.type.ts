@@ -1,0 +1,1 @@
+export type FormActionType = "add" | "delete" | "save" | "share" | "attachments" | "navigate" | "import_export";

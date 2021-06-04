@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BackendService } from '../views/backend/backend.service';
-import { DashboardCellEvent } from '../views/dashboard/dashboard.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../login-page/auth.service';
+import { DashboardCellEvent } from '../interfaces';
+import { AuthService, BackendService } from '../services';
 
 @Component({
   selector: 'app-main-dashboards',

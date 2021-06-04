@@ -1,15 +1,10 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { FieldConfig } from '../dynamic-forms/field.interface';
-import { AuthService } from '../login-page/auth.service';
-import { BackendService } from '../views/backend/backend.service';
+import { TimeTrackerStatus } from '../interfaces';
+import { AuthService } from './auth.service';
+import { BackendService } from './backend.service';
 import { HelperService } from './helper.service';
 import { ToastService } from './toast.service';
-
-interface TimeTrackerStatus {
-    data: any;
-    elapsedTime: string;
-}
 
 @Injectable({
     providedIn: 'root'

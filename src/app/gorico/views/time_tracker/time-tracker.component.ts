@@ -1,10 +1,9 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, OnDestroy } from '@angular/core';
 
 import 'rxjs/add/operator/filter';
-import { TimeTrackerService } from 'app/gorico/services/time_tracker.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { HelperService } from 'app/gorico/services/helper.service';
+import { HelperService, TimeTrackerService } from 'app/gorico/services';
 
 @Component({
     selector: 'time-tracker',

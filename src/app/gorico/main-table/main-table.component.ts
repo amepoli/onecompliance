@@ -2,25 +2,15 @@ import { Component, OnInit, ViewChild, ElementRef, AfterContentInit, OnDestroy, 
 
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { BackendService } from 'app/gorico/views/backend/backend.service'
 
-import { tableViewParams, TableViewComponent } from 'app/gorico/views/table/table-view.component';
-import { formViewParams, FormViewComponent } from '../views/form/form-view.component';
-import { TabType, BottomTabsComponent } from '../bottom-tabs/bottom-tabs.component';
-import { PubSubService } from 'app/gorico/services/pubsub.service';
+import { TableViewComponent } from 'app/gorico/views/table/table-view.component';
+import { FormViewComponent } from '../views/form/form-view.component';
+import { BottomTabsComponent } from '../bottom-tabs/bottom-tabs.component';
 import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../login-page/auth.service';
-import { ToastService } from 'app/gorico/services/toast.service';
-import { DialogService } from '../services/dialog.service';
-import { ImportExportService } from '../services/import_export.service';
-import { ReportService } from '../services/report.service';
-import { NavigationService } from '../services/navigation.service';
-import { MessageView } from '../services/messages.service';
-import { ScrollService } from '../services/scroll.service';
-import { ConsoleLoggerService } from '../services/console_logger.service';
-import { TimeTrackerService } from '../services/time_tracker.service';
+import { FormViewParams, MessageView, TableViewParams, TabType } from '../interfaces';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, ImportExportService, NavigationService, PubSubService, ReportService, ScrollService, TimeTrackerService, ToastService } from '../services';
 
 @Component({
     selector: 'main-table',
@@ -40,14 +30,14 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public navigationHistory: { level: number, tableName: string, type: string, tableKeys: any, primaryKeys: any, params: any, description: string }[] = [];
 
-    private tableParams: tableViewParams = {
+    private tableParams: TableViewParams = {
         entryName: '',
         keys: {},
         showHeader: true,
         showFullScreenButton: false
     };
 
-    private formParams: formViewParams = {
+    private formParams: FormViewParams= {
         entryName: '',
         keys: {},
         index: 0,

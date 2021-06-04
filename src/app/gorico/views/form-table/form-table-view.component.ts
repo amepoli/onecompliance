@@ -1,22 +1,9 @@
 import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit, HostListener, ChangeDetectorRef, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
-import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
-import { BackendService } from '../backend/backend.service';
-import { AuthService } from 'app/gorico/login-page/auth.service';
-import { ToastService } from 'app/gorico/services/toast.service';
-import { formViewParams } from '../form/form-view.component';
-import { NavigationService } from 'app/gorico/services/navigation.service';
-import { DialogService } from 'app/gorico/services/dialog.service';
-import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
-import { ScrollService } from 'app/gorico/services/scroll.service';
-import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { FormGetterComponent } from '../form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
+import { FormGetterParams, FormTableViewParams, MessageElement, MessageView } from 'app/gorico/interfaces';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, MessagesService, NavigationService, ScrollService, ToastService } from 'app/gorico/services';
 
-
-export interface formTableViewParams {
-  entryName: string;
-  keys: any;
-  showHeader: boolean;
-}
 
 @Component({
   selector: 'form-table-view',
@@ -32,12 +19,12 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
 
   @ViewChild(FormGetterComponent, { static: true }) formGetter: FormGetterComponent;
 
-  @Input() tableData: formTableViewParams;
+  @Input() tableData: FormTableViewParams;
   @Input() SaveData: boolean;
   @Output() sendEvent = new EventEmitter<any>();
   @Output() onReload = new EventEmitter<any>();
 
-  getterParams: formGetterParams; // params for the child formGetter form view
+  getterParams: FormGetterParams; // params for the child formGetter form view
 
   processView = false;   // handle the form-getter child view
 

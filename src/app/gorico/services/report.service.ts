@@ -4,21 +4,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { ToastService } from './toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendService } from '../views/backend/backend.service';
+import { BackendService } from './backend.service';
 import { PubSubService } from 'app/gorico/services/pubsub.service';
-import { AuthService } from '../login-page/auth.service';
+import { AuthService } from './auth.service';
 import { DialogService } from './dialog.service';
 import { ConsoleLoggerService } from './console_logger.service';
-
-export interface ReportItem {
-    alias: string;
-    descrizione: string;
-}
-
-export interface ReportList {
-    entryName: string;
-    reports: ReportItem[]
-};
+import { ReportList } from '../interfaces';
 
 @Injectable({
     providedIn: 'root'

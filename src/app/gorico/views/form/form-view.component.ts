@@ -1,59 +1,13 @@
 import { Component, ViewChild, Input, Output, EventEmitter, OnChanges, OnInit, OnDestroy } from '@angular/core';
 
 import 'rxjs/add/operator/filter';
-import { BackendService } from '../backend/backend.service';
 import { MatDialog } from '@angular/material/dialog';
-import { TabType } from '../../bottom-tabs/bottom-tabs.component';
 import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.dialog.component';
-import { FormGetterComponent, formGetterParams } from '../form-getter/form-getter.component';
-import { AuthService } from 'app/gorico/login-page/auth.service';
-import { ToastService } from 'app/gorico/services/toast.service';
-import { DialogService } from 'app/gorico/services/dialog.service';
-import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
-import { PubSubService } from 'app/gorico/services/pubsub.service';
-import { ReportService } from 'app/gorico/services/report.service';
-import { ImportExportService } from 'app/gorico/services/import_export.service';
-import { NavigationService } from 'app/gorico/services/navigation.service';
-import { MessageView, MessagesService, MessageElement, MessageItem } from 'app/gorico/services/messages.service';
-import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { FormGetterComponent } from '../form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
-
-type tabViewType = 'table' | 'tableForm';
-
-type tabEventActionType = 'show' | 'hide';
-
-type tabConditionType = 'equalTo' | 'greaterThan' | 'lessThan';
-
-export interface tabViewKey { // as per API specification
-    label: string;
-    entryKey: string;
-    type: tabViewType;
-    keys: [
-        {
-            parent: string,
-            son: string
-        }
-    ];
-    inputEvents?: [
-        {
-            eventName: string,
-            actionType: tabEventActionType,
-            condition: tabConditionType,
-            values: string[]
-        }
-    ];
-    isHidden?: boolean;
-}
-
-export interface formViewParams {
-    entryName: string;
-    keys: any;
-    index: number;
-    total: number;
-    isNew: boolean;
-    showNavBar: boolean;
-    navBarMode: string;
-}
+import { FormGetterParams, FormViewParams, MessageElement, MessageItem, MessageView, TabType, TabViewKey } from 'app/gorico/interfaces';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, ToastService } from 'app/gorico/services';
+import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 
 type savingStateType = 'save' | 'saving' | 'done';
 
@@ -65,7 +19,7 @@ type savingStateType = 'save' | 'saving' | 'done';
 export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
     @Input() isQuickAdd: boolean = false;
-    @Input() tableData: formViewParams;
+    @Input() tableData: FormViewParams;
     @Output() sendEvent = new EventEmitter<any>();
 
     @ViewChild(FormGetterComponent, { static: true }) formGetter: FormGetterComponent;
@@ -80,11 +34,11 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
     readOnly = false;
 
-    tabKeys: tabViewKey[]; // view tab fields as specified by the backend
+    tabKeys: TabViewKey[]; // view tab fields as specified by the backend
 
     currentKeys: any; // relevant keys passed by the child component 
 
-    getterParams: formGetterParams; // params for the child formGetter form view
+    getterParams: FormGetterParams; // params for the child formGetter form view
 
     savingState: savingStateType = 'save';
 
@@ -203,7 +157,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         this.formGetter.refreshView();
     }
 
-    getTabs(tabKeys: tabViewKey[], keys: any): TabType[] {
+    getTabs(tabKeys: TabViewKey[], keys: any): TabType[] {
         const tabs: TabType[] = [];
         tabKeys.forEach(tabKey => {
             const tab: TabType = {

@@ -1,9 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-
-export interface ScrollInfo {
-    x: number;
-    y: number;
-};
+import { ScrollInfo } from '../interfaces';
 
 @Injectable({
     providedIn: 'root'

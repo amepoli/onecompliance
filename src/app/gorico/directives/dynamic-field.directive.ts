@@ -7,19 +7,19 @@ import {
   ViewContainerRef
 } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { FieldConfig } from "../../field.interface";
-import { InputComponent } from "../input/input.component";
-import { ButtonComponent } from "../button/button.component";
-import { SelectComponent } from "../select/select.component";
-import { DateComponent } from "../date/date.component";
-import { RadiobuttonComponent } from "../radiobutton/radiobutton.component";
-import { CheckboxGroupComponent } from "../checkboxgroup/checkboxgroup.component";
-import { CheckboxComponent } from "../checkbox/checkbox.component";
-import { ComboboxComponent } from "../combobox/combobox.component";
-import { TextAreaComponent } from '../textarea/textarea.component';
-import { SubformComponent } from '../subform/subform.component';
-import { LabelComponent } from "../label/label.component";
-import { InvisibleComponent } from "../invisible/invisible.component";
+import { FieldConfig } from 'app/gorico/interfaces';
+import { InputComponent } from "../dynamic-forms/components/input/input.component";
+import { ButtonComponent } from "../dynamic-forms/components/button/button.component";
+import { SelectComponent } from "../dynamic-forms/components/select/select.component";
+import { DateComponent } from "../dynamic-forms/components/date/date.component";
+import { RadiobuttonComponent } from "../dynamic-forms/components/radiobutton/radiobutton.component";
+import { CheckboxGroupComponent } from "../dynamic-forms/components/checkboxgroup/checkboxgroup.component";
+import { CheckboxComponent } from "../dynamic-forms/components/checkbox/checkbox.component";
+import { ComboboxComponent } from "../dynamic-forms/components/combobox/combobox.component";
+import { TextAreaComponent } from '../dynamic-forms/components/textarea/textarea.component';
+import { SubformComponent } from '../dynamic-forms/components/subform/subform.component';
+import { LabelComponent } from "../dynamic-forms/components/label/label.component";
+import { InvisibleComponent } from "../dynamic-forms/components/invisible/invisible.component";
 
 const componentMapper = {
   input: InputComponent,

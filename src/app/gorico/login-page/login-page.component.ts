@@ -3,10 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
-import { AuthService } from './auth.service';
 
 import { Router, ActivatedRoute } from '@angular/router';
-import { DialogService } from '../services/dialog.service';
+import { AuthService, DialogService } from '../services';
 
 
 @Component({

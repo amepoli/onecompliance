@@ -1,8 +1,6 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
-import { BackendService } from 'app/gorico/views/backend/backend.service';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
 import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-upload.component';
@@ -10,12 +8,11 @@ import { FileUploadComponent } from 'app/gorico/file-uploader/file-upload/file-u
 // and https://stackoverflow.com/a/54645398 and then 'npm run build'
 import * as CryptoJS from 'crypto-js';
 
-import { formGetterParams, FormGetterComponent } from 'app/gorico/views/form-getter/form-getter.component';
-import { AuthService } from 'app/gorico/login-page/auth.service';
+import { FormGetterComponent } from 'app/gorico/views/form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
-import { ToastService } from 'app/gorico/services/toast.service';
-import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
-import { EncryptionService } from 'app/gorico/services/encryption.service';
+import { FormGetterParams } from 'app/gorico/interfaces';
+import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
+import { AuthService, BackendService, ConsoleLoggerService, EncryptionService, ToastService } from 'app/gorico/services';
 
 
 
@@ -52,14 +49,14 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
     currentKeys: any;
 
-    formParams: formGetterParams = {
+    formParams: FormGetterParams = {
         entryName: 'fe_attachment_form',
         keys: {},
         isNew: true,
         isVisible: true
     };
 
-    newTypeParams: formGetterParams = {
+    newTypeParams: FormGetterParams = {
         entryName: 'tipi_allegati',
         keys: {},
         isNew: true,

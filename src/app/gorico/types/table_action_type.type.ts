@@ -1,0 +1,1 @@
+export type TableActionType = "add" | "import_export";

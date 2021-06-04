@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FieldConfig } from '../../field.interface';
-import { PubSubService } from 'app/gorico/services/pubsub.service';
+import { FieldConfig } from 'app/gorico/interfaces';
+import { PubSubService } from 'app/gorico/services';
 
 @Component({
   selector: 'app-checkbox',

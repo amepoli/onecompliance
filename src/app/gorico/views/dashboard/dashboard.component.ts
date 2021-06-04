@@ -1,33 +1,12 @@
 import { Component, ViewChild, Input, Output, EventEmitter, AfterViewInit, OnDestroy } from '@angular/core';
 import * as italiano from './it.json';
 import { WebDataRocksPivot } from 'app/webdatarocks/webdatarocks.angular4';
-import { BackendService } from '../backend/backend.service';
-import { tableViewKey } from '../table/table-view.component';
-import { AuthService } from 'app/gorico/login-page/auth.service';
-import { ToastService } from 'app/gorico/services/toast.service';
-import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
-import { ReportService } from 'app/gorico/services/report.service';
 import { Subscription } from 'rxjs';
 import { Report } from 'webdatarocks';
-import { DialogService } from 'app/gorico/services/dialog.service';
+import { DashboardCellEvent, DashboardParams, TableViewKey } from 'app/gorico/interfaces';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, ReportService, ToastService } from 'app/gorico/services';
 
 
-export interface DashboardParams {
-    entryName: string;
-    entryIndex: number; // in case of multiple dashboards for the same entry
-    keys: any;
-}
-
-export interface DashboardCellEvent {
-    entryName: string;
-    row: number;
-    column: number;
-    rowLabel: string;
-    rowValue: any;
-    columnLabel: string;
-    columnValue: any;
-    cellValue: any;
-}
 @Component({
     selector: 'dashboard',
     templateUrl: './dashboard.component.html',
@@ -160,7 +139,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         _this.subscriptions.push(subscription);
     }
 
-    getCurrentKeys(validKeysArray: tableViewKey[], inputKeys: any): any {
+    getCurrentKeys(validKeysArray: TableViewKey[], inputKeys: any): any {
 
         const outputKeys = {};
         for (const key in inputKeys) {
