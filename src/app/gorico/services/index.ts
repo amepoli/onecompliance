@@ -1,4 +1,5 @@
 export * from './auth.service';
+export * from './actions.service';
 export * from './backend.service';
 export * from './console_logger.service';
 export * from './dialog.service';

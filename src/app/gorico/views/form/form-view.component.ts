@@ -6,7 +6,7 @@ import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.d
 import { FormGetterComponent } from '../form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
 import { FormGetterParams, FormViewParams, MessageElement, MessageItem, MessageView, TabType, TabViewKey } from 'app/gorico/interfaces';
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, ToastService } from 'app/gorico/services';
+import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, ToastService } from 'app/gorico/services';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 
 type savingStateType = 'save' | 'saving' | 'done';
@@ -63,7 +63,8 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
         private _messagesService: MessagesService,
-        private _console: ConsoleLoggerService
+        private _console: ConsoleLoggerService,
+        private _actionsService: ActionsService
     ) {
 
     }
@@ -367,50 +368,37 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         });
     }
 
-    getShareMessage() {
-        let result: MessageItem = {
-            title: "Delete form",
-            text: "Are you sure you wanna delete form?"
-        };
-        if (this.messages != null && this.messages.length) {
-            let deleteMessageElements = this.messages.filter(m => m.messageType === "share");
-            if (deleteMessageElements && deleteMessageElements.length) {
-                result.title = deleteMessageElements[0].message.title;
-                result.text = deleteMessageElements[0].message.text;
-            }
-        }
-        return result;
-    }
-
     shareElement(azienda){
         var _this = this;
-        let shareMessage: MessageItem = _this.getShareMessage();
+        let keys = JSON.parse(JSON.stringify(_this.currentKeys));
+        keys['chosen_azienda'] = azienda;
+        let entryName: string = _this.tableData.entryName;
+        let company: string = _this.authService.getCurrentCompany(keys);
 
-        // Show confirmation dialog to make sure user wants to delete
-        _this._dialogService.showConfimationDialog(shareMessage.title, shareMessage.text, "Yes", "No", "warning").then((result) => {
-            if (result.value === true) {
-                // User said yes so let's share
-                let keys = JSON.parse(JSON.stringify(_this.currentKeys));
-                keys['chosen_azienda'] = azienda;
-                const subscription = _this.backendService.shareData(_this.tableData.entryName, _this.authService.getCurrentCompany(keys), keys ).subscribe(
-                    result => {
-                        _this._console.log(result);
-                        if (result.result === 'OK') {
-                            // Show success toast
-                            _this._toastService.showSuccessToast("Shared successfully");
-                        }
-                        else {
-                            // Show error snackbar
-                            _this._toastService.showErrorToast(result.reason);
-                        }
-                    }
-                );
-
-                _this.subscriptions.push(subscription);
-            }
-        });
+        _this._actionsService.performFormAction("share", this.messages, entryName, company, keys);
+        
     }
 
+    startEvent(){
+        var _this = this;
+        let keys = JSON.parse(JSON.stringify(_this.currentKeys));
+        let entryName: string = _this.tableData.entryName;
+        let company: string = _this.authService.getCurrentCompany(keys);
+
+        _this._actionsService.performFormAction("startEvent", this.messages, entryName, company, keys);
+        
+    }
+
+    stopEvent(){
+        var _this = this;
+        let keys = JSON.parse(JSON.stringify(_this.currentKeys));
+        let entryName: string = _this.tableData.entryName;
+        let company: string = _this.authService.getCurrentCompany(keys);
+
+        _this._actionsService.performFormAction("stopEvent", this.messages, entryName, company, keys);
+        
+    }
+    
     toElement(target: string) {
         this.sendEvent.emit({ eventType: target });
     }
