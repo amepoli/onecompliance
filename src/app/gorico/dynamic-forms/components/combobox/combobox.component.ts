@@ -1,11 +1,9 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { FieldConfig, Item } from '../../field.interface';
+import { FieldConfig, Item } from 'app/gorico/interfaces';
+import { ConsoleLoggerService, PubSubService, ValidationsService } from 'app/gorico/services';
 import { ReplaySubject, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { PubSubService } from 'app/gorico/services/pubsub.service';
-import { ValidationsService } from 'app/gorico/services/validations.service';
-import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 @Component({
   selector: 'combobox',
   template: `

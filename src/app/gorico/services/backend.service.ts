@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
-import * as appData from '../../../../../appdata.json';
+import * as appData from '../../../../appdata.json';
+import { FormActionType } from '../types';
 
 @Injectable({
   providedIn: 'root'
@@ -83,9 +84,9 @@ export class BackendService {
     return from(this.amplifyService.api().del(this.apiName, '/' + this.tablesApiName, this.myGetInit));
   }
 
-  shareData(entryName: string, company: string, keys: any): Observable<any> {
+  performFormAction(formActionType: FormActionType,  entryName: string, company: string, keys: any): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { entry_name: entryName, 'share': 1, company: company, keys: JSON.stringify(keys) };
+    this.myGetInit.queryStringParameters = { entry_name: entryName, isFormAction: 1, formActionType: formActionType, company: company, keys: JSON.stringify(keys) };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
   }
 

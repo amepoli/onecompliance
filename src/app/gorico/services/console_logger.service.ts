@@ -1,13 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as appData from '../../../../appdata.json';
-
-export interface ILoggerService {
-    info(value: any, ...rest: any[]): void;
-    log(value: any, ...rest: any[]): void;
-    warn(value: any, ...rest: any[]): void;
-    error(value: any, ...rest: any[]): void;
-    table(value: any, ...rest: any[]): void;
-}
+import { ILoggerService } from '../interfaces';
 
 @Injectable({
     providedIn: 'root'

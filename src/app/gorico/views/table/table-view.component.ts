@@ -1,92 +1,12 @@
 import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener, ViewEncapsulation, OnDestroy, AfterViewInit } from '@angular/core';
-import { BackendService } from '../backend/backend.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatRow } from '@angular/material/table';
-import { FieldConfig } from '../../dynamic-forms/field.interface';
-import { formViewParams } from '../form/form-view.component';
-import { AuthService } from 'app/gorico/login-page/auth.service';
-import { ToastService } from 'app/gorico/services/toast.service';
-import { ReportService } from 'app/gorico/services/report.service';
-import { PubSubService } from 'app/gorico/services/pubsub.service';
-import { ImportExportService } from 'app/gorico/services/import_export.service';
-import { NavigationService } from 'app/gorico/services/navigation.service';
-import { MessageView, MessageElement, MessagesService } from 'app/gorico/services/messages.service';
-import { HelperService } from 'app/gorico/services/helper.service';
-import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
+import { FieldConfig, FormViewParams, MessageElement, MessageView, SearchViewKey, TableViewKey, TableViewParams } from 'app/gorico/interfaces';
 import { Subscription } from 'rxjs';
-import { DialogService } from 'app/gorico/services/dialog.service';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
-
-export interface tableViewParams {
-    entryName: string;
-    keys: any;
-    showHeader: boolean;
-    showFullScreenButton: boolean;
-    outputEvent?: any;
-}
-
-export type tableDataType = 'text' | 'date' | 'datetime' | 'time' | 'number' | 'boolean';
-
-export interface tableViewKey { // as per API specification
-    isHidden: boolean;
-    isPrimary: boolean;
-    isLevel?: boolean;
-    hasLevel?: boolean;
-    key: string;
-    label: string;
-    queryFunct?: string;
-    isButton?: boolean;
-    buttonAction?: {
-        action: "navigate" | "delete" | "query" | 'downloadAttachment',
-        target: string,
-        viewType: string,
-        query?: string,
-        onSuccessAction?: "reload" | "navigate",
-        confirmAction?: boolean,
-        confirmMessage?: {
-            title: string,
-            text: string
-        },
-        keymap?:{
-            source: string,
-            destination: string
-        }[],
-        onSuccessActionKeymap?:{
-            source: string,
-            destination: string
-        }[]
-    },
-    format: {
-        dataType: tableDataType,
-        value?: any,
-        prefix?: string,
-        suffix?: string,
-        pipe?: "Date" | "DateTime" | "Time" | "UpperCase" | "LowerCase" | "Currency" | "Decimal" | "Percent"
-    };
-    width?: string;
-}
-
-export interface searchViewKey { // as per API specification
-    fieldName: string;	// form field name, might or not correspond to a postgres column
-    newLine: boolean; 	// new line with the next field
-    label: string;		// displayed key name
-    queryCond: string; 	// postgres query condition (after WHERE clause), mandatory to link w/ a Postgres column
-    format: {		//  DataFormat type
-        viewType: string; 		// form view type, one among “input” | “combobox” | “checkbox” | “radiobutton” 
-        dataType?: string; 				//  only if viewtype=”input”
-        value?: any;  		// default value
-        options?: [					// in caseof combobox | radiobutton
-            {
-                id: number,			// combobox entry ID
-                name: string			// displayed entry value
-            }];
-        comboQuery?: string,		// combobox query, returns an array of [{“id”: Number, “name”: String}]
-    };
-    isVisible: boolean;
-    width: string;
-}
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, ToastService } from 'app/gorico/services';
 
 @Component({
     selector: 'table-view',
@@ -105,7 +25,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     @Input() isTabMode: boolean = false;
     @Input() isCurTab: boolean = false;
 
-    @Input() tableData: tableViewParams;
+    @Input() tableData: TableViewParams;
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
 
@@ -114,7 +34,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     format = {};
     
-    quickAddFormParams: formViewParams = {
+    quickAddFormParams: FormViewParams = {
         entryName: '',
         keys: {},
         index: 1,
@@ -146,9 +66,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     messages: MessageElement[] = []; // Messages
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
-    viewKeys: tableViewKey[];  // view fields as specified by the backend
+    viewKeys: TableViewKey[];  // view fields as specified by the backend
 
-    searchKeys: searchViewKey[];
+    searchKeys: SearchViewKey[];
 
     currentKeys: any; // relevant keys passed by the parent component 
 
@@ -438,7 +358,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this._console.log('hasLevel', this.hasLevel);
     }
 
-    loadFormat(table_keys: tableViewKey[]) {
+    loadFormat(table_keys: TableViewKey[]) {
         if(table_keys && table_keys.length) {
             this.format = {};
             table_keys.forEach(viewKey => {
@@ -512,7 +432,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         return styles;
     }
 
-    private getSearchData(searchKeys: searchViewKey[]): FieldConfig[] {
+    private getSearchData(searchKeys: SearchViewKey[]): FieldConfig[] {
         let _this = this;
         let fieldValues: FieldConfig[] = [];
 
@@ -607,7 +527,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     onButtonClick(key: string, index: number, row: MatRow) {
         let _this = this;
         _this.skipGetRecord = true;
-        let selectedViewKey: tableViewKey = _this.viewKeys.filter(x => x.key == key)[0];
+        let selectedViewKey: TableViewKey = _this.viewKeys.filter(x => x.key == key)[0];
 
         if(selectedViewKey && selectedViewKey.buttonAction) {
             if(selectedViewKey.buttonAction.confirmAction) {
@@ -634,7 +554,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         
     }
 
-    performButtonAction(selectedViewKey: tableViewKey, row: MatRow) {
+    performButtonAction(selectedViewKey: TableViewKey, row: MatRow) {
         let keys = {};
         if(selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0){
             selectedViewKey.buttonAction.keymap.forEach( map => {
@@ -657,7 +577,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         }
     }
 
-    performOnSuccessAction(selectedViewKey: tableViewKey, initialKeys: any, responseKeys: any) {
+    performOnSuccessAction(selectedViewKey: TableViewKey, initialKeys: any, responseKeys: any) {
         let _this = this;
         let action = selectedViewKey.buttonAction.onSuccessAction;
         if(action == 'reload') {
@@ -694,7 +614,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         setTimeout(() => { this.sendEvent.emit({ eventType: "navigate", queryParams: params }); }, 50);
     }
 
-    deleteRow(selectedViewKey: tableViewKey, keys: any) {
+    deleteRow(selectedViewKey: TableViewKey, keys: any) {
         var _this = this;
         const subscription = _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), [keys]).subscribe(
             result => {
@@ -716,7 +636,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         );
     }
 
-    runCustomQuery(selectedViewKey: tableViewKey, keys: any) {
+    runCustomQuery(selectedViewKey: TableViewKey, keys: any) {
         let _this = this;
         _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
             response => {
@@ -733,7 +653,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         )
     }
 
-    downloadAttachment(selectedViewKey: tableViewKey, row: MatRow) {
+    downloadAttachment(selectedViewKey: TableViewKey, row: MatRow) {
         let _this = this;
         // Value must be file_id^filename 
         let data = row[selectedViewKey.key].split('^');
@@ -771,14 +691,14 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         }
     }
 
-    getColumnLabels(viewKeys: tableViewKey[]) {
+    getColumnLabels(viewKeys: TableViewKey[]) {
         let colLabels = viewKeys.map(c => c.key);
         // return ['select', ...colLabels];
         return colLabels;
 
     }
 
-    getCurrentKeys(validKeysArray: tableViewKey[], inputKeys: any) {
+    getCurrentKeys(validKeysArray: TableViewKey[], inputKeys: any) {
 
         let outputKeys = {};
         for (const key in inputKeys) {

@@ -1,35 +1,5 @@
 import { Injectable } from '@angular/core';
-
-export interface MessageView {
-    viewType: "table" | "form";
-    tableMessageType: "add" | "import_export";
-    formMessageType: "add" | "delete" | "save" | "share" | "attachments" | "navigate" | "import_export";
-    message: MessageItem;
-}
-
-export interface MessageItem {
-    /**
-     * Message Title
-     */
-    title: string;
-
-    /**
-     * Message Text
-     */
-    text: string;
-}
-
-export interface MessageElement {
-    /**
-     * Message Type
-     */
-    messageType: "add" | "delete" | "save" | "share" | "attachments" | "navigate" | "import_export";
-
-    /**
-     * Message Item
-     */
-    message: MessageItem;
-}
+import { MessageView } from '../interfaces';
 
 
 @Injectable({

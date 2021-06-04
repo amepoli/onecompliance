@@ -4,34 +4,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { ToastService } from './toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendService } from '../views/backend/backend.service';
+import { BackendService } from './backend.service';
 import { PubSubService } from 'app/gorico/services/pubsub.service';
-import { AuthService } from '../login-page/auth.service';
+import { AuthService } from './auth.service';
 import { DialogService } from './dialog.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
 import { ConsoleLoggerService } from './console_logger.service';
-
-
-export interface ImportItem {
-    label: string;
-    queryString: string;
-}
-
-export interface ImportList {
-    entryName: string;
-    items: ImportItem[]
-};
-
-export interface ExportItem {
-    label: string;
-    queryString: string;
-}
-
-export interface ExportList {
-    entryName: string;
-    items: ExportItem[]
-};
+import { ExportItem, ExportList, ImportItem, ImportList } from '../interfaces';
 
 @Injectable({
     providedIn: 'root'

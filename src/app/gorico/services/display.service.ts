@@ -1,16 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-
-export interface DisplayServiceConstants {
-    navbarHeight: number,
-    mainTableHeaderHeight: number,
-    formViewMiniHeight: number,
-    bottomTabsHeaderHeight: number,
-};
-
-export interface DisplayServiceSettings {
-    mainTableViewContentHeight: number,
-    bottomViewHeight: number,
-};
+import { DisplayServiceConstants, DisplayServiceSettings } from '../interfaces';
 
 @Injectable({
     providedIn: 'root'

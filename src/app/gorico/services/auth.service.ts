@@ -2,23 +2,16 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { AmplifyService } from 'aws-amplify-angular';
 import { Observable } from 'rxjs/Observable';
 import { AuthState } from 'aws-amplify-angular/dist/src/providers/auth.state';
-import { BackendService } from '../views/backend/backend.service';
+import { BackendService } from './backend.service';
 import { BehaviorSubject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { ToastService } from 'app/gorico/services/toast.service';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { ConsoleLoggerService } from '../services/console_logger.service';
+import { ConsoleLoggerService } from './console_logger.service';
+import { UserInfo } from '../interfaces';
 
-export interface UserInfo {
-  name: string;
-  lastname: string;
-  username: string;
-  picture: string;
-  language: string;
-  companies: string[];
-}
 @Injectable({
   providedIn: 'root'
 })

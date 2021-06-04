@@ -13,9 +13,9 @@ import {
   FormGroup,
   FormBuilder
 } from '@angular/forms';
-import { ValidationsService } from 'app/gorico/services/validations.service';
-import { FieldConfig } from '../../field.interface';
-import { DynamicFieldDirective } from '../dynamic-field/dynamic-field.directive';
+import { ValidationsService } from 'app/gorico/services';
+import { FieldConfig } from 'app/gorico/interfaces';
+import { DynamicFieldDirective } from 'app/gorico/directives';
 
 @Component({
   exportAs: 'dynamicForm',

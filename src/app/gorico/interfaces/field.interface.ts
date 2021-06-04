@@ -1,5 +1,3 @@
-import { Observable } from 'rxjs';
-
 export interface Validator {
   message: string;
   name: string;

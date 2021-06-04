@@ -12,18 +12,17 @@ import { navigation } from 'app/navigation/navigation';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import { AuthService, UserInfo } from 'app/gorico/login-page/auth.service';
-import { BackendService } from 'app/gorico/views/backend/backend.service';
+import { AuthService } from 'app/gorico/services/auth.service';
+import { BackendService } from 'app/gorico/services/backend.service';
 
 import { Router } from '@angular/router';
 
 import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { ReportService } from 'app/gorico/services/report.service';
-import { ImportItem, ExportItem, ImportExportService } from 'app/gorico/services/import_export.service';
+import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService } from 'app/gorico/services/navigation.service';
-import { MessageView, MessageElement } from 'app/gorico/services/messages.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
-
+import { ExportItem, ImportItem, MessageElement, UserInfo } from 'app/gorico/interfaces';
 
 @Component({
     selector: 'toolbar',

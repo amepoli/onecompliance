@@ -1,10 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-
-export interface HideAction {
-    viewType: "table" | "form";
-    tableActionType: "add" | "import_export";
-    formActionType: "add" | "delete" | "save" | "share" | "attachments" | "navigate" | "import_export";
-}
+import { HideAction } from '../interfaces';
 
 @Injectable({
     providedIn: 'root'

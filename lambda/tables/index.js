@@ -986,13 +986,13 @@ function getDeleteQuery(entry_params, table_keys) {
 
 }
 
-function getShareQuery(entry_params) {
+function getFormActionQuery(formActionType, entry_params) {
     if (entry_params.predefinedQueries != null && entry_params.predefinedQueries.length > 0) {
-        let shareElement = entry_params.predefinedQueries.filter(el => el.operation == 'share');
-        if (shareElement != null && shareElement.length > 0) {
-            shareElement = shareElement[0];
-            if (shareElement.queryString) {
-                return shareElement.queryString;
+        let element = entry_params.predefinedQueries.filter(el => el.operation == formActionType);
+        if (element != null && element.length > 0) {
+            element = element[0];
+            if (element.queryString) {
+                return element.queryString;
             }
         }
     }
@@ -1271,9 +1271,9 @@ async function processCustomQuery(queryString, keys, client) {
     }
 }
 
-async function processShareQuery(queryString, keys, client) {
+async function processFormActionQuery(formActionType, queryString, keys, client) {
     if (queryString != null) {
-        console.log('Running shared query');
+        console.log(`Running ${formActionType} query`);
         console.log('keys: ', keys);
 
         console.log('queryString: ', queryString);
@@ -1295,7 +1295,7 @@ async function processShareQuery(queryString, keys, client) {
             };
         }
         catch (e) {
-            console.log('Share Query Error: ', e);
+            console.log(`${formActionType} Query Error: `, e);
             return {
                 "isBase64Encoded": false,
                 "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -1658,7 +1658,9 @@ exports.handler = async (event, context) => {
     var isCustomQuery = (queryParams['custom_query'] === '1');;
     var customQueryButtonKey = queryParams['custom_query_key'];
 
-    var isShareEvent = (queryParams['share'] === '1');;
+
+    var isFormAction = queryParams['isFormAction'] === '1';
+    var formActionType = queryParams['formActionType'];
 
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
@@ -1732,8 +1734,8 @@ exports.handler = async (event, context) => {
         if (method === 'GET') {
             if (dashboardIndex != null) {
                 queryString = getDashboardQuery(entry_params, table_keys, dashboardIndex);
-            } else if (isShareEvent) {
-                queryString = getShareQuery(entry_params);
+            } else if (isFormAction) {
+                queryString = getFormActionQuery(formActionType, entry_params);
             } else if (isSearchRequest) {
                 queryString = getTableQuery(entry_params, table_keys, false, search_keys, additionalQueryCond);
             } else if (isNewRecord) {
@@ -1779,9 +1781,9 @@ exports.handler = async (event, context) => {
             console.log(response);
             await client.release();
             return response;
-        } else if (isShareEvent) {
-            let response = await processShareQuery(queryString, table_keys, client);
-            console.log(response);
+        } else if (isFormAction) {
+            let response = await processFormActionQuery(formActionType, queryString, table_keys, client);
+            console.log(`${formActionType} Response`, response);
             await client.release();
             return response;
         } else {
@@ -1790,7 +1792,7 @@ exports.handler = async (event, context) => {
         }
 
         // process comboboxes 
-        if (method === 'GET' && dashboardIndex == null && !isEventUpdate && !isCustomQuery && !isShareEvent) {
+        if (method === 'GET' && dashboardIndex == null && !isEventUpdate && !isCustomQuery && !isFormAction) {
 
             if (queryData != null && isNewRecord && queryString.defaultValues != null) { // only for new records, merge default values
                 queryData.forEach(item => {
@@ -1911,7 +1913,7 @@ exports.handler = async (event, context) => {
 
         // last chance to calculate the keys with an evalFunct and to process attributes
 
-        if (method === 'GET' && dashboardIndex == null && !isCustomQuery && !isShareEvent) {
+        if (method === 'GET' && dashboardIndex == null && !isCustomQuery && !isFormAction) {
             queryData = getCalculatedParams(entry_params, queryData, isFormRecord);
             // process attributeFuncts
             if (isFormRecord) {

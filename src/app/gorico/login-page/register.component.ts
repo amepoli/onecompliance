@@ -6,11 +6,9 @@ import { takeUntil } from 'rxjs/operators';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
 
-import { AuthService } from './auth.service';
+import { AuthService, ConsoleLoggerService, DialogService } from '../services';
 
 import { Router } from '@angular/router';
-import { DialogService } from '../services/dialog.service';
-import { ConsoleLoggerService } from '../services/console_logger.service';
 
 
 @Component({

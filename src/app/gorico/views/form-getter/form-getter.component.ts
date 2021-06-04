@@ -1,100 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy, SimpleChanges, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynamic-form/dynamic-form.component';
-import { FieldConfig, FieldInputEvent } from 'app/gorico/dynamic-forms/field.interface';
-import { BackendService } from '../backend/backend.service';
-import { PubSubService } from 'app/gorico/services/pubsub.service';
 import { ComboboxComponent } from 'app/gorico/dynamic-forms/components/combobox/combobox.component';
 import { Subscription } from 'rxjs';
-import { AuthService } from 'app/gorico/login-page/auth.service';
-import { ToastService } from 'app/gorico/services/toast.service';
-import { DialogService } from 'app/gorico/services/dialog.service';
-import { ValidationsService } from 'app/gorico/services/validations.service';
-import { ImportExportService } from 'app/gorico/services/import_export.service';
-import { NavigationService } from 'app/gorico/services/navigation.service';
-
-import { MessageView } from 'app/gorico/services/messages.service';
-import { HelperService } from 'app/gorico/services/helper.service';
-import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
-import { DynamicFieldDirective } from 'app/gorico/dynamic-forms/components/dynamic-field/dynamic-field.directive';
 import { SubformComponent } from 'app/gorico/dynamic-forms/components/subform/subform.component';
-
-export type formDataType = 'text' | 'date' | 'datetime' | 'time' | 'number' | 'boolean';
-
-export type formViewType = 'input' | 'textarea' | 'combobox' | 'invisible' | 'checkbox' | 'radiobutton' | 'checkboxgroup' | 'button' | 'subform';
-
-export type eventActionType = 'show' | 'update' | 'query' | 'update_style' | 'query_style';
-
-export type eventTriggerType = 'change' | 'focus' | 'blur';
-
-export interface formViewKey { // as per API specification
-    isHidden: boolean;
-    autoGenerate?: boolean;
-    readOnly: boolean;
-    isPrimary: boolean;
-    isVisible: boolean;
-    isLevel?: boolean;
-    hasLevel?: boolean;
-    newLine: boolean;
-    textareaHeight?: 'S' | 'M' | 'L' | 'XL';
-    buttonIcon?: string;
-    confirmButtonAction?: boolean;
-    isDownloadButton?: boolean;
-    size?: number;
-    style?: {
-        background_color?: string,
-        font_color?: string
-    };
-    key: string;
-    label: string;
-    subKeys?: [
-        {
-            key: string,
-            dataType: formDataType
-        }
-    ];
-    outputEvent?: {
-        eventName: string,
-        eventTrigger?: eventTriggerType,
-        conditionalQuery?: string
-    };
-    inputEvents?: FieldInputEvent[];
-    format: {
-        viewType: formViewType,
-        dataType?: formDataType,
-        prefix?: string,
-        suffix?: string,
-        pipe?: "Date" | "DateTime" | "Time" | "UpperCase" | "LowerCase" | "Currency" | "Decimal" | "Percent",
-        value?: any,
-        options: [
-            {
-                id: number,
-                name: string
-            }
-        ],
-        comboQuery?: string,
-        validations?: [
-            {
-                message: string,
-                name: string,
-                validator: string,
-                value?: string
-            }
-        ],
-        subform_keys?: formViewKey[];
-    };
-}
-
-export interface OutputEvent {
-    'eventName': string,
-    'eventTrigger': 'onSave' | 'onReload'
-}
-
-export interface formGetterParams {
-    entryName: string;
-    keys: any;
-    isNew: boolean;
-    isVisible: boolean;
-}
+import { FieldConfig, FormGetterParams, FormViewKey, MessageView, OutputEvent } from 'app/gorico/interfaces';
+import { FormDataType } from 'app/gorico/types';
+import { DynamicFieldDirective } from 'app/gorico/directives';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, ToastService, ValidationsService } from 'app/gorico/services';
 
 @Component({
     selector: 'form-getter',
@@ -110,7 +22,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     @Input() isFormView: boolean = false;
 
     @Input() filter: string;
-    @Input() formParams: formGetterParams = null;
+    @Input() formParams: FormGetterParams = null;
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
 
@@ -135,7 +47,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
-    viewKeys: formViewKey[]; // view form fields as specified by the backend
+    viewKeys: FormViewKey[]; // view form fields as specified by the backend
     formRowProperties: any[];
 
     currentKeys: any; // relevant keys passed by the parent component 
@@ -435,7 +347,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
     }
 
-    subscribeFieldInputEvents(viewKeys: formViewKey[]): void {
+    subscribeFieldInputEvents(viewKeys: FormViewKey[]): void {
         const _this = this;
         for (let i = 0; i < viewKeys.length; i++) { // subscribe to single field events
             const key = viewKeys[i];
@@ -464,7 +376,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
     }
 
-    getCurrentKeys(validKeysArray: formViewKey[], inputKeys: any) {
+    getCurrentKeys(validKeysArray: FormViewKey[], inputKeys: any) {
 
         const outputKeys = {};
         for (const key in inputKeys) {
@@ -612,7 +524,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         _this.generalSubscriptions.push(subscription);
     }
 
-    private getFormData(formKeys: formViewKey[], values: any, startingIndex = 0): FieldConfig[][] {
+    private getFormData(formKeys: FormViewKey[], values: any, startingIndex = 0): FieldConfig[][] {
 
         const fieldValuesArray: FieldConfig[][] = [[]];
 
@@ -623,7 +535,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     }
 
-    private getSubKeysObject(subKeys: [{ key: string, dataType: formDataType }], commaSeparatedValues: string): any {
+    private getSubKeysObject(subKeys: [{ key: string, dataType: FormDataType }], commaSeparatedValues: string): any {
         const outputObject = {};
         if (commaSeparatedValues == null) {
             return null;
@@ -641,7 +553,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         return outputObject;
     }
 
-    private getFieldValues(formKeys: formViewKey[], values: any, index: number): FieldConfig[] {
+    private getFieldValues(formKeys: FormViewKey[], values: any, index: number): FieldConfig[] {
         const _this = this;
         const fieldValues = new Array();
         for (let i = 0; i < formKeys.length; i++) {
@@ -672,7 +584,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         return fieldValues;
     }
 
-    private getFieldValue(field: formViewKey, element: any, values: any, index: number): FieldConfig {
+    private getFieldValue(field: FormViewKey, element: any, values: any, index: number): FieldConfig {
         const _this = this;
         let fieldValue: FieldConfig;
 

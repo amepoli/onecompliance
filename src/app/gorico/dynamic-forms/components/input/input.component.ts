@@ -1,11 +1,8 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FieldConfig } from '../../field.interface';
-import { PubSubService } from 'app/gorico/services/pubsub.service';
-import { HelperService } from 'app/gorico/services/helper.service';
+import { FieldConfig } from 'app/gorico/interfaces';
+import { ConsoleLoggerService, HelperService, PubSubService, ValidationsService } from 'app/gorico/services';
 import { Moment } from 'moment';
-import { ValidationsService } from 'app/gorico/services/validations.service';
-import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-input',

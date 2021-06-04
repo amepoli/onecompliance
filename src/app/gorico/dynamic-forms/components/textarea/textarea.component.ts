@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostBinding, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { ConsoleLoggerService } from "app/gorico/services/console_logger.service";
-import { FieldConfig } from "../../field.interface";
+import { ConsoleLoggerService } from "app/gorico/services";
+import { FieldConfig } from 'app/gorico/interfaces';
 @Component({
   selector: "app-textarea",
   template: `

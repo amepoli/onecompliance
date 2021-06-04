@@ -1,21 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { FieldConfig } from '../dynamic-forms/field.interface';
-
-export interface MarkerReplacer {
-    /**
-     * Marker
-     */
-    marker: string;
-    replace:
-    /**
-     * Replace marker with value
-     * @param context you should pass 'this' as context
-     * @param value value to replace with marker
-     * @returns replaced string 
-     */
-    (context: any, value: string) => string;
-};
+import { FieldConfig, MarkerReplacer } from 'app/gorico/interfaces';
 
 @Injectable({
     providedIn: 'root'

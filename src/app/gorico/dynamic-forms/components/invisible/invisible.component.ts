@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnInit, ViewEncapsulation } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { FieldConfig } from "../../field.interface";
+import { FieldConfig } from 'app/gorico/interfaces';
 @Component({
   selector: "app-invisible",
   template: `

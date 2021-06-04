@@ -1,8 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { FieldConfig } from "../../field.interface";
-import { PubSubService } from 'app/gorico/services/pubsub.service';
-import { ConsoleLoggerService } from "app/gorico/services/console_logger.service";
+import { FieldConfig } from 'app/gorico/interfaces';
+import { ConsoleLoggerService, PubSubService } from "app/gorico/services";
 
 @Component({
   selector: "app-radiobutton",

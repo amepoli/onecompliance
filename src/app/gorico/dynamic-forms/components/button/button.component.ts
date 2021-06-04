@@ -1,12 +1,9 @@
 import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FieldConfig } from '../../field.interface';
-import { PubSubService } from 'app/gorico/services/pubsub.service';
-import { DialogService } from 'app/gorico/services/dialog.service';
-import { BackendService } from 'app/gorico/views/backend/backend.service';
+import { FieldConfig } from 'app/gorico/interfaces';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from 'app/gorico/login-page/auth.service';
 import { Subscription } from 'rxjs';
+import { AuthService, BackendService, DialogService, PubSubService } from 'app/gorico/services';
 @Component({
     selector: 'app-button',
     template: `
