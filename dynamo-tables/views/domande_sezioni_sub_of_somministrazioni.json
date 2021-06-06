@@ -13,7 +13,12 @@
       "operation": "selectForm",
       "queryString": "select round(ssrs.punteggio_ottenuto,2) as punteggio, round(ssrs.pct_risultato_ottenuto_calcolato, 2) as risultatopercsezione, ds.peso as pesosezione, round(ssrs.pct_risultato_ottenuto_calcolato*ds.peso, 2), ssrs.codice_azienda, ssrs.id_somministrazione, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi_somministrati_risultati_sezioni ssrs inner join  entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr where ssrs.codice_azienda=$codice_azienda$ and ssrs.id_modello_test=$id_modello_test$ and ssrs.id_modello_test_vr=$id_modello_test_vr$ and ssrs.id_sondaggio=$id_sondaggio$ and ssrs.id_somministrazione=$id_somministrazione$ and ssrs.id_sezione=$id_sezione$;",
       "type": "main"
-    }
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "select entrasp.risposte_aggiorna_numero_allegati_somministrazione($codice_azienda$, £id_sondaggio£, £id_somministrazione£)",
+      "type": "postProcessing"
+    } 
   ],
   "form_keys": [
     {
