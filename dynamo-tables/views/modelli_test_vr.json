@@ -55,7 +55,7 @@
         {
             "operation": "update",
             "type": "preCheck",
-            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento=£id_argomento£ and id_modello_test!=$id_modello_test$",
+            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento=£id_argomento£ and id_centro_gest=£id_centro_gest£ and id_modello_test!=$id_modello_test$",
             "messageNotNull": "Aggiornamento: l'argomento è già stato utilizzato per un altro modello di test in questa azienda: prego utilizzare un argomento diverso"
         },
         {
@@ -771,6 +771,18 @@
             "queryCond": "(upper(mt.titolo) like '%'||upper('€titolo_search€')||'%' or upper(mt.descrizione) like '%'||upper('€titolo_search€')||'%')"
         },
         {
+            "fieldName": "cod_att_princ_s",
+            "format": {
+                "comboQuery": "SELECT codice_attivita AS id, codice_attivita||'-'||descrizione AS name  FROM entrasp.attivita WHERE codice_azienda=$codice_azienda$ and codice_attivita_parent is null;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Associati al modello progetto",
+            "newLine": true,
+            "queryCond": "mt.id_modello_test in (select id_modello_test from entrasp.attivita where entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)= $cod_att_princ_s$ and id_modello_test is not null and codice_azienda='€global_codice_azienda€')"
+        },
+        {
             "fieldName": "no_questions",
             "format": {
                 "value": "0",
@@ -789,6 +801,16 @@
             "label": "Senza Verifiche",
             "newLine": false,
             "queryCond": "mt.id_modello_test not in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$)"
+        },
+        {
+            "fieldName": "no_argomento",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza Argomento",
+            "newLine": false,
+            "queryCond": "mt.id_argomento is null"
         },
         {
             "fieldName": "no_procedure",
@@ -998,6 +1020,21 @@
                 }
             ],
             "label": "Processi Associati"
+        },
+        {
+            "entryKey": "attivita_sub_of_modelli_test",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                }
+            ],
+            "label": "Fasi mod.prog.associate"
         }
     ],
     "table_keys": [
