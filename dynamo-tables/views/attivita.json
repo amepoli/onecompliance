@@ -63,7 +63,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select *,true as create_progetto, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest  from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent is null and data_fine_validita is null;"
+            "queryString": "select *, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest  from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent is null and data_fine_validita is null;"
         },
         {
             "operation": "insert",
@@ -453,7 +453,29 @@
             },
             "label": "Mostra inattivi",
             "newLine": false,
-            "queryCond": "(1=1 or data_fine_validita is not null)"
+            "queryCond": "1=1 or data_fine_validita is not null"
+        },
+        {
+            "fieldName": "flag_modelli_test_senza_argomento",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Fasi con modelli test senza argomento",
+            "newLine": false,
+            "queryCond": "1=1 or id_modello_test in (select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento is null)"
+        },
+        {
+            "fieldName": "cod_att_princ_s",
+            "format": {
+                "comboQuery": "SELECT codice_attivita AS id, codice_attivita||'-'||descrizione AS name  FROM entrasp.attivita WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Codice attivita principale",
+            "newLine": false,
+            "queryCond": "entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)= $cod_att_princ_s$"
         }
     ],
     "subTables": [
@@ -551,6 +573,16 @@
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest)",
             "label": "Centro Gestionale",
             "width": "15%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_attivita_principale",
+            "label": "Cod att. principale",
+            "width": "10%"
         },
         {
             "format": {
