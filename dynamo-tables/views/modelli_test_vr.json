@@ -84,7 +84,7 @@
             "message": {
                 "title": "Condivisione modello di test",
                 "text": "Condividere il modello di test nell'azienda selezionata?"
-            }       
+            }
         }
     ],
     "form_keys": [
@@ -252,17 +252,67 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=45 order by descrizione",
-                "options": [],
-                "viewType": "combobox"
+                "viewType": "button"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_argomento",
-            "queryFunct": "SELECT id_argomento from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "label": "Argomento",
+            "key": "id_somministrazione_new_button",
+            "buttonIcon": "question_answer",
+            "label": "Crea Verifica",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "somministrazione_new",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "flag_applicazione_singola",
+                    "condition": "equalTo",
+                    "values": [
+                        "0"
+                    ]
+                }
+            ],
             "readOnly": false,
-            "newLine": false
+            "size": 1,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_sondaggio_new_button",
+            "label": "Crea Sondaggio",
+            "newLine": false,
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "flag_applicazione_singola",
+                    "condition": "equalTo",
+                    "values": [
+                        "0"
+                    ]
+                }
+            ],
+            "outputEvent": {
+                "eventName": "sondaggio_new",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "size": 0.9,
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -414,10 +464,25 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "size": 10,
+            "size": 6,
             "textareaHeight": "L",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=45 order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "queryFunct": "SELECT id_argomento from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "label": "Argomento",
+            "readOnly": false,
+            "newLine": true
         },
         {
             "autoGenerate": false,
@@ -431,7 +496,7 @@
             "key": "documentazione_necessaria",
             "label": "Documentazione Necessaria",
             "newLine": false,
-            "size": 4.5,
+            "size": 6,
             "textareaHeight": "L",
             "readOnly": false
         },
@@ -473,7 +538,7 @@
             "size": 2,
             "readOnly": false
         },
-         {
+        {
             "autoGenerate": false,
             "format": {
                 "viewType": "button"
@@ -513,71 +578,6 @@
             "sameOrigin": false
         },
         {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_sondaggio_new_button",
-            "label": "Crea Sondaggio",
-            "newLine": false,
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "eventName": "flag_applicazione_singola",
-                    "condition": "equalTo",
-                    "values": [
-                        "0"
-                    ]
-                }
-            ],
-            "outputEvent": {
-                "eventName": "sondaggio_new",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "size": 1,
-            "sameOrigin": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_somministrazione_new_button",
-            "buttonIcon": "question_answer",
-            "label": "Crea Verifica",
-            "newLine": true,
-            "outputEvent": {
-                "eventName": "somministrazione_new",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "inputEvents": [
-                {
-                    "actionType": "hide",
-                    "eventName": "flag_applicazione_singola",
-                    "condition": "equalTo",
-                    "values": [
-                        "0"
-                    ]
-                }
-            ],
-            "readOnly": false,
-            "size": 1,
-            "sameOrigin": false
-        },
-        {
             "format": {
                 "viewType": "invisible"
             },
@@ -589,6 +589,23 @@
             "label": "new_line",
             "newLine": true,
             "size": 0.1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_filtro_selezione AS id, descrizione AS name  FROM entrasp.filtri_selezione_oggetti order by descrizione;",
+                "options": [],
+                "viewType": "combobox",
+                "value": 0
+            },
+            "queryFunct": "SELECT id_filtro_selezione from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_filtro_selezione",
+            "label": "Seleziona Popolazione",
+            "newLine": false,
+            "size": 3.5,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -608,7 +625,7 @@
             "readOnly": false,
             "sameOrigin": false,
             "newLine": false,
-            "size": 1.32
+            "size": 1
         },
         {
             "autoGenerate": false,
@@ -620,7 +637,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "flag_sezioni",
-            "size": 1.32,
+            "size": 1,
             "label": "Domande a sezioni",
             "outputEvent": {
                 "eventName": "flag_sezioni",
@@ -658,7 +675,7 @@
             "queryFunct": "SELECT flag_applicazione_singola from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
             "isHidden": false,
             "isPrimary": false,
-            "size": 1.33,
+            "size": 1,
             "key": "flag_applicazione_singola",
             "label": "Mono-somministrazione",
             "outputEvent": {
@@ -676,7 +693,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "size": 1.33,
+            "size": 1,
             "key": "flag_no_domande",
             "label": "No domande",
             "outputEvent": {
@@ -703,29 +720,26 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "size": 1.33,
+            "size": 1.8,
             "key": "stop_replanning_when_contracts_closed",
             "label": "Blocca ripetizione se contratto chiuso",
             "newLine": false,
             "readOnly": false
         },
-        {
-            "autoGenerate": false,
+         {
             "format": {
-                "comboQuery": "SELECT id_filtro_selezione AS id, descrizione AS name  FROM entrasp.filtri_selezione_oggetti order by descrizione;",
-                "options": [],
-                "viewType": "combobox",
-                "value": 0
+                "viewType": "invisible"
             },
-            "queryFunct": "SELECT id_filtro_selezione from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_filtro_selezione",
-            "label": "Selezioni Popolazione",
+            "readOnly": true,
+            "sameOrigin": false,
+            "key": "new_line",
+            "label": "new_line",
             "newLine": true,
-            "size": 3.42,
-            "readOnly": false
+            "size": 0.1
         }
+     
     ],
     "search_keys": [
         {
@@ -1128,53 +1142,54 @@
             "label": "id_somministrazione"
         },
         {
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"width": "6%",
-			"queryFunct": "select true",
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "queryFunct": "select true",
             "key": "create_somministrazione",
-		    "label": "Crea Verifica",
-			"isButton": true,
+            "label": "Crea Verifica",
+            "isButton": true,
             "buttonAction": {
-				"target": "sondaggi_somministrati",
-				"viewType": "form",
-				"action": "query",
-				"query": "select codice_azienda, id_sondaggio, id_somministrazione from entrasp.sondaggio_insert_from_list('£codice_azienda£', £id_modello_test£)",
-				"keymap": [
-					{
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
+                "target": "sondaggi_somministrati",
+                "viewType": "form",
+                "action": "query",
+                "query": "select codice_azienda, id_sondaggio, id_somministrazione from entrasp.sondaggio_insert_from_list('£codice_azienda£', £id_modello_test£)",
+                "keymap": [
                     {
-						"source": "id_modello_test",
-						"destination": "id_modello_test"
-					}
-				],
-				"confirmAction": true,
-				"confirmMessage": {
-					"title": "Nuova verifica",
-					"text": "Si vuole creare una nuova verifica/ profilazione?"
-				},
-				"onSuccessAction": "navigate",
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Nuova verifica",
+                    "text": "Si vuole creare una nuova verifica/ profilazione?"
+                },
+                "onSuccessAction": "navigate",
                 "onSuccessActionKeymap": [
                     {
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
-					{
-						"source": "id_sondaggio",
-						"destination": "id_sondaggio"
-					},
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
                     {
-						"source": "id_somministrazione",
-						"destination": "id_somministrazione"
-					}
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "id_somministrazione",
+                        "destination": "id_somministrazione"
+                    }
                 ]
-			}
-		},
+            }
+        },
+        
         {
             "format": {
                 "dataType": "number"
