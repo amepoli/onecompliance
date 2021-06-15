@@ -2,15 +2,14 @@ import { Component, OnInit, OnChanges, ViewChildren, QueryList } from '@angular/
 import { FormGroup, FormControl } from '@angular/forms';
 import { ValidationsService } from 'app/gorico/services';
 import { FieldConfig } from 'app/gorico/interfaces';
-import { DynamicFieldDirective } from 'app/gorico/directives';
+import { SubFormDynamicFieldDirective } from 'app/gorico/directives/subform-dynamic-field.directive';
 
-// [ngStyle]="{'margin-right': '1%', 'margin-left': '1%', 'width': field.width+'%'}"
 @Component({
   selector: 'app-subform',
   template: `
     <div class="subform-style" [style.border-radius]="'4px'" [style.background-color]="style.background_color" 
     [style.padding]="style.padding" *ngIf="field.isVisible != false">
-        <ng-container *ngFor='let subfield of field.subform;' dynamicField [field]="subfield" [group]="group" [readOnlyPage]="readOnlyPage">
+        <ng-container *ngFor='let subfield of field.subform;' subformDynamicField [field]="subfield" [group]="group" [readOnlyPage]="readOnlyPage">
         </ng-container>
 </div>
 `,
@@ -34,7 +33,7 @@ export class SubformComponent implements OnInit {
   group: FormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
   
-  @ViewChildren(DynamicFieldDirective) dynamicFields: QueryList<DynamicFieldDirective>;
+  @ViewChildren(SubFormDynamicFieldDirective) dynamicFields: QueryList<SubFormDynamicFieldDirective>;
 
   style = {
     background_color: 'transparent',

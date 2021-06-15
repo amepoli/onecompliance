@@ -5,8 +5,9 @@ import { Subscription } from 'rxjs';
 import { SubformComponent } from 'app/gorico/dynamic-forms/components/subform/subform.component';
 import { FieldConfig, FormGetterParams, FormViewKey, MessageView, OutputEvent } from 'app/gorico/interfaces';
 import { FormDataType } from 'app/gorico/types';
-import { DynamicFieldDirective } from 'app/gorico/directives';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, ToastService, ValidationsService } from 'app/gorico/services';
+import { DynamicFieldDirective } from 'app/gorico/directives';
+import { SubFormDynamicFieldDirective } from 'app/gorico/directives/subform-dynamic-field.directive';
 
 @Component({
     selector: 'form-getter',
@@ -1273,7 +1274,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     }
 
-    findElementInDynamicFields(dynamicFields: QueryList<DynamicFieldDirective>, name: string) {
+    findElementInDynamicFields(dynamicFields: QueryList<DynamicFieldDirective> | QueryList<SubFormDynamicFieldDirective> , name: string) {
         let element = null;
         
         dynamicFields.forEach(dynamicField => {
