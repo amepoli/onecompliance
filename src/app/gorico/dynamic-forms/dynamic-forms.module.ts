@@ -22,6 +22,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { OneCompliancePipesModule } from '../pipes/pipes.module';
 import { DynamicFieldDirective } from '../directives';
+import { SubFormDynamicFieldDirective } from '../directives/subform-dynamic-field.directive';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { DynamicFieldDirective } from '../directives';
     CheckboxGroupComponent,
     CheckboxComponent,
     DynamicFieldDirective,
+    SubFormDynamicFieldDirective,
     DynamicFormComponent,
     ComboboxComponent,
     TextAreaComponent,
