@@ -182,5 +182,12 @@ export class HelperService {
         //     router.navigate([uri]));
     }
 
+    /**
+     * Refresh application
+     */
+    public static refreshApp() {
+        return window.location.reload();
+    }
+    
 }
 
