@@ -23,6 +23,7 @@ import { ImportExportService } from 'app/gorico/services/import_export.service';
 import { NavigationService } from 'app/gorico/services/navigation.service';
 import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
 import { ExportItem, ImportItem, MessageElement, UserInfo } from 'app/gorico/interfaces';
+import { HelperService } from 'app/gorico/services';
 
 @Component({
     selector: 'toolbar',
@@ -347,5 +348,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'print_item', value: item.alias });
     }
 
+    refreshApp() {
+        HelperService.refreshApp();
+    }
 
 }
