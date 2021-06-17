@@ -51,7 +51,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.id_centro_gest, snd.codice_part, snd.data_comp, snd.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, substring(entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio),1,120) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test, case when snd.data_prevista<now() and ss.stato!='C' then 'Scaduto' else 'Non scaduto' end as scaduto from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
+      "queryString": "select ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.id_centro_gest, snd.codice_part, snd.data_comp, snd.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.sondaggio_riprogrammato(ss.codice_azienda, ss.id_sondaggio), entrasp.id_somministrazione_precedente(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, substring(entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio),1,120) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test, case when snd.data_prevista<now() and ss.stato!='C' then 'Scaduto' else 'Non scaduto' end as scaduto from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
     }
   ],
   "messages": [
@@ -905,7 +905,7 @@
         }
       ],
       "newLine": false,
-      "size": 2.5,
+      "size": 2,
       "readOnly": false
     },
     {
@@ -926,7 +926,7 @@
       "label": "Verifica su/di",
       "newLine": true,
       "readOnly": false,
-      "size": 2.5
+      "size": 2
     },
     {
       "autoGenerate": false,
@@ -1507,6 +1507,16 @@
       "queryCond": "snd.data_prevista<=now() and ss.stato!='C'"
     },
     {
+      "fieldName": "flag_sondaggio_riprogrammato",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Verifica riprogrammata",
+      "newLine": false,
+      "queryCond": "entrasp.sondaggio_riprogrammato(snd.codice_azienda, snd.id_sondaggio)"
+    },
+    {
       "fieldName": "incompleto_s",
       "format": {
         "viewType": "checkbox",
@@ -2064,7 +2074,7 @@
       "isPrimary": false,
       "key": "scaduto",
       "label": "Scaduto Sì/No",
-      "width": "6%"
+      "width": "5%"
     },
     {
       "format": {
@@ -2074,6 +2084,29 @@
       "isPrimary": false,
       "key": "id_sondaggio_parent",
       "label": "id_sondaggio_parent",
+      "width": "5%"
+    },
+    {
+      "format": {
+          "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "isCheckbox": true,
+      "key": "sondaggio_riprogrammato",
+      "queryFunct": "entrasp.sondaggio_riprogrammato(ss.codice_azienda, ss.id_sondaggio)",
+      "label": "Sondaggio Riprogrammato",
+      "width": "5%"
+    },
+    {
+      "format": {
+          "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_somministrazione_precedente",
+      "queryFunct": "entrasp.id_somministrazione_precedente(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)",
+      "label": "Somm. precedente",
       "width": "5%"
     }
   ],
