@@ -6,6 +6,7 @@ import { FormActionType } from '../types';
 import { BackendService } from './backend.service';
 import { ConsoleLoggerService } from './console_logger.service';
 import { DialogService } from './dialog.service';
+import { TimeTrackerService } from './time_tracker.service';
 import { ToastService } from './toast.service';
 
 @Injectable({
@@ -18,8 +19,8 @@ export class ActionsService {
         private _dialogService: DialogService, 
         private backendService: BackendService, 
         private _toastService: ToastService,
-        private _console: ConsoleLoggerService) {
-
+        private _console: ConsoleLoggerService,
+        private _timeTrackerService: TimeTrackerService) {
     }
     public getFormActionMessage(actionType: FormActionType, messages: MessageElement[]) {
         let result: MessageItem = null;
@@ -52,6 +53,10 @@ export class ActionsService {
                 if (result.result === 'OK') {
                     // Show success toast
                     _this._toastService.showSuccessToast(actionType + " successful!");
+
+                    if(actionType === 'startEvent' || actionType === 'stopEvent') {
+                        _this._timeTrackerService.checkTimerStatus();
+                    }
                 }
                 else {
                     // Show error snackbar

@@ -49,7 +49,7 @@ export class TimeTrackerComponent implements DoCheck, AfterViewInit, OnDestroy {
     }
 
     checkTimerStatus() {
-        this._timeTrackerService.checkTimerStatus();
+        this._timeTrackerService.updateStatusLocally();
     }
 
     startTimer() {

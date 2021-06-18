@@ -6,7 +6,7 @@ import { FieldConfig, FormViewParams, MessageElement, MessageView, SearchViewKey
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, ToastService } from 'app/gorico/services';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimeTrackerService, ToastService } from 'app/gorico/services';
 
 @Component({
     selector: 'table-view',
@@ -121,7 +121,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         private _messagesService: MessagesService,
         private _dialogService: DialogService,
         private _console: ConsoleLoggerService,
-        private httpClient: HttpClient
+        private httpClient: HttpClient,
+        private _timeTrackerService: TimeTrackerService
     ) {
         // Set selection model
         this.selection = new SelectionModel<any>(this.allowMultiSelect, this.initialSelection);
@@ -607,6 +608,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             let mergedParams = { entry: { name: selectedViewKey.buttonAction.target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };            
             _this.navigate(mergedParams);    
 
+        }
+        else if(action == 'update_time_tracker') {
+            _this._timeTrackerService.checkTimerStatus();
         }
     }
 
