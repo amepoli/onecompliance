@@ -14,7 +14,7 @@ export interface TableViewKey { // as per API specification
         target: string,
         viewType: string,
         query?: string,
-        onSuccessAction?: "reload" | "navigate",
+        onSuccessAction?: "reload" | "navigate" | "update_time_tracker",
         confirmAction?: boolean,
         confirmMessage?: {
             title: string,

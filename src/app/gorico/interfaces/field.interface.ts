@@ -16,7 +16,7 @@ export interface Key {
 }
 
 export interface FieldInputEvent {
-  actionType: 'hide' | 'show' | 'readOnly' | 'query' | 'query_style' | 'show_message' | 'toggle' | 'update' | 'update_style';
+  actionType: 'hide' | 'show' | 'readOnly' | 'query' | 'query_style' | 'show_message' | 'toggle' | 'update' | 'update_style' | 'update_time_tracker';
   eventName: string;
   values: any[];
   condition: 'equalTo' | 'greatorThan' | 'lessThan' | 'none';
@@ -36,11 +36,11 @@ export interface FieldInputEvent {
   message?: {
     messageText: string,
     actionOnYes: {
-      actionType: 'reload' | 'query',
+      actionType: 'reload' | 'query' | 'update_time_tracker',
       queryFunct?: string
     },
     actionOnNo: {
-      actionType: 'reload' | 'query',
+      actionType: 'reload' | 'query' | 'update_time_tracker',
       queryFunct?: string
     }
   };

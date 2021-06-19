@@ -18,17 +18,9 @@ export class TimeTrackerService {
     // Event Emitter for naviate requests
     public statusUpdated: EventEmitter<TimeTrackerStatus> = new EventEmitter();
 
-    public currentElapsedTime: {
-        hours: number,
-        minutes: number,
-        seconds: number,
-        milliseconds: number
-    };
-
     public lastStatus: TimeTrackerStatus;
-    public lastStatusUpdate: Date;
-    public nextTry: number = 0;
-
+    public lastStatusUpdate: number;
+    
     /**
      * Constructor
      * @param AuthService
@@ -46,65 +38,56 @@ export class TimeTrackerService {
     /**
      * Check Timer Status
      */
-    checkTimerStatus(forced = false) {
+    checkTimerStatus() {
         let _this = this;
         const company = _this._authService.getCurrentCompany();
         
-        if(forced || !_this.lastStatus || !_this.lastStatusUpdate || (Date.now() - _this.nextTry) > 10000) {
-            if(company) {
-                if(_this.lastStatus) {
-                    _this.updateStatusLocally();
-                }
-                let subscription = _this._backendService.checkTimerStatus(company).subscribe(
-                    result => {
-                        _this.nextTry = Date.now() + 10000;
-                        if (result.result === 'OK' && result.data) {
-                            let status: TimeTrackerStatus = {data: null, elapsedTime: null};
-                            if (Array.isArray(result.data)) {
-                                status.data = result.data[0];
-                            }
-                            else {
-                                status.data = result.data;
-                            }
-                            
-                            if(!_this.lastStatus || _this.isStatusDifferent(_this.lastStatus, status)) {
-                                status.elapsedTime = HelperService.getTwoDigitText(status.data.elapsed_time.hours? status.data.elapsed_time.hours: 0) + ':' +
-                                HelperService.getTwoDigitText(status.data.elapsed_time.minutes? status.data.elapsed_time.minutes: 0) + ':' +
-                                HelperService.getTwoDigitText(status.data.elapsed_time.seconds? status.data.elapsed_time.seconds: 0)
-                                
-                                _this.lastStatusUpdate = new Date();
-                                _this.lastStatus = status;
-                                _this.lastStatus.data.elapsed_time.hours = _this.lastStatus.data.elapsed_time.hours || 0;
-                                _this.lastStatus.data.elapsed_time.minutes = _this.lastStatus.data.elapsed_time.minutes || 0;
-                                _this.lastStatus.data.elapsed_time.seconds = _this.lastStatus.data.elapsed_time.seconds || 0;
-                                _this.lastStatus.data.elapsed_time.milliseconds = _this.lastStatus.data.elapsed_time.milliseconds || 0;
-                                
-                                _this.statusUpdated.emit(status);
-
-                            }
-                            else {
-                                _this.updateStatusLocally();
-                            }
-                        }
-                        else{
-                            _this.statusUpdated.emit(null);
-                        }
-                        subscription.unsubscribe();
-                    },
-                    error => {
-                        _this._toastService.showErrorToast(error);
-                        _this.statusUpdated.emit(null);
-                        _this.nextTry = Date.now() + 10000;
-                        subscription.unsubscribe();
-                    }
-                );
+        if(company) {
+            if(_this.lastStatus) {
+                _this.updateStatusLocally();
             }
-        }
-        else {
-            _this.updateStatusLocally();
-        }
+            let subscription = _this._backendService.checkTimerStatus(company).subscribe(
+                result => {
+                    if (result.result === 'OK' && result.data) {
+                        let status: TimeTrackerStatus = {data: null, elapsedTime: null};
+                        if (Array.isArray(result.data)) {
+                            status.data = result.data[0];
+                        }
+                        else {
+                            status.data = result.data;
+                        }
+                        
+                        if(!_this.lastStatus || _this.isStatusDifferent(_this.lastStatus, status)) {
+                            status.elapsedTime = HelperService.getTwoDigitText(status.data.elapsed_time.hours? status.data.elapsed_time.hours: 0) + ':' +
+                            HelperService.getTwoDigitText(status.data.elapsed_time.minutes? status.data.elapsed_time.minutes: 0) + ':' +
+                            HelperService.getTwoDigitText(status.data.elapsed_time.seconds? status.data.elapsed_time.seconds: 0)
+                            
+                            _this.lastStatusUpdate = Date.now();
+                            _this.lastStatus = status;
+                            _this.lastStatus.data.elapsed_time.hours = _this.lastStatus.data.elapsed_time.hours || 0;
+                            _this.lastStatus.data.elapsed_time.minutes = _this.lastStatus.data.elapsed_time.minutes || 0;
+                            _this.lastStatus.data.elapsed_time.seconds = _this.lastStatus.data.elapsed_time.seconds || 0;
+                            _this.lastStatus.data.elapsed_time.milliseconds = _this.lastStatus.data.elapsed_time.milliseconds || 0;
+                            
+                            _this.statusUpdated.emit(status);
 
-        
+                        }
+                        else {
+                            _this.updateStatusLocally();
+                        }
+                    }
+                    else{
+                        _this.statusUpdated.emit(null);
+                    }
+                    subscription.unsubscribe();
+                },
+                error => {
+                    _this._toastService.showErrorToast(error);
+                    _this.statusUpdated.emit(null);
+                    subscription.unsubscribe();
+                }
+            );
+        }
     }
 
     /**
@@ -130,7 +113,7 @@ export class TimeTrackerService {
                     }
                     if (status) {
                         _this._toastService.showSuccessToast('Task started!');
-                        _this.checkTimerStatus(true);
+                        _this.checkTimerStatus();
                     }
                     else {
                         _this._toastService.showErrorToast('Task startng failed!');
@@ -168,7 +151,7 @@ export class TimeTrackerService {
                     }
                     if (status) {
                         _this._toastService.showSuccessToast('Task stopped!');
-                        _this.checkTimerStatus(true);
+                        _this.checkTimerStatus();
                     }
                     else {
                         _this._toastService.showErrorToast('Task stopping failed!');
@@ -202,31 +185,37 @@ export class TimeTrackerService {
 
     updateStatusLocally() {
         let _this = this;
-        if(_this.lastStatus.data.status === 'running') {
-            const elapsedMilliseconds: number = Date.now() - _this.lastStatusUpdate.getTime();
-            let seconds = 0;
-            
-            if(elapsedMilliseconds > 999) {
-                seconds = parseInt("" + elapsedMilliseconds / 1000);
-            }
+        if(_this.lastStatus) {
+            if(_this.lastStatus.data.status === 'running') {
+                const elapsedMilliseconds: number = Date.now() - _this.lastStatusUpdate;
+                let seconds = 0;
+                
+                if(elapsedMilliseconds > 999) {
+                    seconds = parseInt("" + elapsedMilliseconds / 1000);
+                }
 
-            let currentStatus = JSON.parse(JSON.stringify(_this.lastStatus));
-            currentStatus.data.elapsed_time.seconds += seconds;
-            
-            if(currentStatus.data.elapsed_time.seconds > 59) {
-                currentStatus.data.elapsed_time.minutes = currentStatus.data.elapsed_time.minutes + parseInt("" + (currentStatus.data.elapsed_time.seconds / 60));
-                currentStatus.data.elapsed_time.seconds = currentStatus.data.elapsed_time.seconds % 60;
+                let currentStatus = JSON.parse(JSON.stringify(_this.lastStatus));
+                currentStatus.data.elapsed_time.seconds += seconds;
+                
+                if(currentStatus.data.elapsed_time.seconds > 59) {
+                    currentStatus.data.elapsed_time.minutes = currentStatus.data.elapsed_time.minutes + parseInt("" + (currentStatus.data.elapsed_time.seconds / 60));
+                    currentStatus.data.elapsed_time.seconds = currentStatus.data.elapsed_time.seconds % 60;
+                }
+                
+                if(currentStatus.data.elapsed_time.minutes > 59) {
+                    currentStatus.data.elapsed_time.hours = currentStatus.data.elapsed_time.hours + parseInt("" + (currentStatus.data.elapsed_time.minutes / 60));
+                    currentStatus.data.elapsed_time.minutes = currentStatus.data.elapsed_time.minutes % 60;
+                }
+                
+                currentStatus.elapsedTime = HelperService.getTwoDigitText(currentStatus.data.elapsed_time.hours? currentStatus.data.elapsed_time.hours: 0) + ':' +
+                                HelperService.getTwoDigitText(currentStatus.data.elapsed_time.minutes? currentStatus.data.elapsed_time.minutes: 0) + ':' +
+                                HelperService.getTwoDigitText(currentStatus.data.elapsed_time.seconds? currentStatus.data.elapsed_time.seconds: 0)
+                _this.statusUpdated.emit(currentStatus);
+
             }
-            
-            if(currentStatus.data.elapsed_time.minutes > 59) {
-                currentStatus.data.elapsed_time.hours = currentStatus.data.elapsed_time.hours + parseInt("" + (currentStatus.data.elapsed_time.minutes / 60));
-                currentStatus.data.elapsed_time.minutes = currentStatus.data.elapsed_time.minutes % 60;
-            }
-            
-            currentStatus.elapsedTime = HelperService.getTwoDigitText(currentStatus.data.elapsed_time.hours? currentStatus.data.elapsed_time.hours: 0) + ':' +
-                            HelperService.getTwoDigitText(currentStatus.data.elapsed_time.minutes? currentStatus.data.elapsed_time.minutes: 0) + ':' +
-                            HelperService.getTwoDigitText(currentStatus.data.elapsed_time.seconds? currentStatus.data.elapsed_time.seconds: 0)
-            _this.statusUpdated.emit(currentStatus);
+        }
+        else {
+            _this.checkTimerStatus();
         }
 
     }

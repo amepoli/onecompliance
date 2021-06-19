@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { SubformComponent } from 'app/gorico/dynamic-forms/components/subform/subform.component';
 import { FieldConfig, FormGetterParams, FormViewKey, MessageView, OutputEvent } from 'app/gorico/interfaces';
 import { FormDataType } from 'app/gorico/types';
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, ToastService, ValidationsService } from 'app/gorico/services';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/gorico/services';
 import { DynamicFieldDirective } from 'app/gorico/directives';
 import { SubFormDynamicFieldDirective } from 'app/gorico/directives/subform-dynamic-field.directive';
 
@@ -84,7 +84,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private _dialogService: DialogService,
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
-        private _console: ConsoleLoggerService
+        private _console: ConsoleLoggerService,
+        private _timeTrackerService: TimeTrackerService
     ) {
         const _this = this;
 
@@ -878,6 +879,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (event.outputEventWhenComplete != null) {
                 _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
             }
+        } else if(event.actionType === 'update_time_tracker') {
+            _this._timeTrackerService.checkTimerStatus();
         } else if (event.actionType === 'navigate' && conditionMet) {
             const formLine = _this.filteredFormData[value.index];
             const navigationKeys = {};
@@ -1116,6 +1119,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if (event.outputEventWhenComplete != null) {
                         _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
                     }
+                }
+                else if(action === 'update_time_tracker') {
+                    _this._timeTrackerService.checkTimerStatus();
                 }
                 else if (actionType === 'email') {
                     _this.sendEmail({ templateKey: 'test' });
