@@ -52,6 +52,16 @@
       "operation": "selectTable",
       "type": "main",
       "queryString": "select ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.id_centro_gest, snd.codice_part, snd.data_comp, snd.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.sondaggio_riprogrammato(ss.codice_azienda, ss.id_sondaggio), entrasp.id_somministrazione_precedente(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, substring(entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio),1,120) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test, case when snd.data_prevista<now() and ss.stato!='C' then 'Scaduto' else 'Non scaduto' end as scaduto from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ((ss.codice_azienda=$codice_azienda$ and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and snd.data_prevista is null and ss.data_esecuzione is null))"
+    },
+    {
+      "operation": "startEvent",
+      "type": "main",
+      "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'sondaggi', $id_sondaggio$, '$codice_azienda$'::varchar) as play_time_report"
+    },
+    {
+      "operation": "stopEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
     }
   ],
   "messages": [
@@ -1251,97 +1261,7 @@
       "readOnly": false,
       "sameOrigin": false
     },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "play_arrow",
-      "key": "play_time_report",
-      "label": "",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "time_report_play",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "time_report_play",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'sondaggi', $id_sondaggio$, $codice_azienda$) as play_time_report",
-          "outputEventWhenComplete": "after_time_report_play"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "checkbox",
-        "dataType": "boolean"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "time_report_stop_active",
-      "label": "time_report_stop_active",
-      "newLine": false,
-      "readOnly": false,
-      "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text)"
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "stop",
-      "key": "stop_time_report",
-      "label": "",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "time_report_stop",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "time_report_stop",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
-          "outputEventWhenComplete": "after_time_report_stop"
-        },
-        {
-          "eventName": "after_time_report_stop",
-          "condition": "none",
-          "values": [
-            true
-          ],
-          "actionType": "hide",
-          "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) as label;"
-        },
-        {
-          "eventName": "onLoadSomministrazione",
-          "condition": "none",
-          "values": [
-            true
-          ],
-          "actionType": "hide",
-          "queryFunct": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text)=true as label;"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
-    },
-    {
+   {
       "autoGenerate": false,
       "format": {
         "dataType": "number",
