@@ -15,3 +15,4 @@ export * from './scroll.service';
 export * from './time_tracker.service';
 export * from './toast.service';
 export * from './validations.service';
+export * from './documentation.service';

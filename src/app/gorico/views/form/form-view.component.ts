@@ -6,7 +6,7 @@ import { AttachDialogComponent } from 'app/gorico/dialogs/attach.dialog/attach.d
 import { FormGetterComponent } from '../form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
 import { FormGetterParams, FormViewParams, MessageElement, MessageItem, MessageView, TabType, TabViewKey } from 'app/gorico/interfaces';
-import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, ToastService } from 'app/gorico/services';
+import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, DocumentationService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, ToastService } from 'app/gorico/services';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 
 type savingStateType = 'save' | 'saving' | 'done';
@@ -399,6 +399,10 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         
     }
     
+    openDocumentation() {
+        DocumentationService.openFormViewDocumentationLink(this.tableData.entryName);
+    }
+
     toElement(target: string) {
         this.sendEvent.emit({ eventType: target });
     }
