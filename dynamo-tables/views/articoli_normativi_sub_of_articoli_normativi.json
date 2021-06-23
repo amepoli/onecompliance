@@ -1,11 +1,12 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "articoli_normativi_sub_of_articoli_normativi",
+  "businessObjectName": "articoli_normativi_rif",
   "origin": "entrasp.articoli_normativi_rif",
   "predefinedQueries": [
     {
       "operation": "selectForm",
-      "queryString": "select (id_testo_normativo_rif, codice_articolo_normativo_rif) as articolo_testo_normativo_rif from entrasp.articoli_normativi_rif where codice_azienda=$codice_azienda$ AND id_testo_normativo=$id_testo_normativo$ and codice_articolo_normativo=$codice_articolo_normativo$",
+      "queryString": "select (id_testo_normativo_rif, codice_articolo_normativo_rif) as articolo_testo_normativo_rif from entrasp.articoli_normativi_rif where id_testo_normativo=$id_testo_normativo$ and codice_articolo_normativo=$codice_articolo_normativo$",
       "type": "postProcessing"
     },
     {
@@ -141,19 +142,6 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
-      "readOnly": true,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
         "dataType": "number",
         "viewType": "input"
       },
@@ -178,10 +166,113 @@
       "newLine": false
     }
   ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "testo_normativo",
+      "label": "Testo normativo",
+      "width": "20%",
+      "queryFunct": "entrasp.testi_normativi_rif_descr(id_testo_normativo_rif)"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "articolo_testo_normativo_rif",
+      "label": "Articolo normativo (foglia)",
+      "width": "35%",
+      "queryFunct": "entrasp.articoli_normativi_cod_rub(codice_articolo_normativo_rif, id_testo_normativo_rif)"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "sanz_amm_min_quota",
+      "label": "Sanz.Amm.Min.Quote",
+      "width": "7%",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(codice_articolo_normativo_rif, id_testo_normativo_rif)",
+      "sameOrigin": false
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "sanz_amm_max_quota",
+      "width": "7%",
+      "sameOrigin": false,
+      "label": "Sanz.Amm.Max.Quote",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(codice_articolo_normativo_rif, id_testo_normativo_rif)"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "sanz_int_min",
+      "label": "Sanz.Int.Min.gg.",
+      "width": "7%",
+      "sameOrigin": false,
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(codice_articolo_normativo_rif, id_testo_normativo_rif)"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "sanz_int_max",
+      "label": "Sanz.Int.Max.gg.",
+      "width": "7%",
+      "sameOrigin": false,
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(codice_articolo_normativo_rif, id_testo_normativo_rif)"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_testo_normativo",
+      "label": "id_testo_normativo"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_articolo_normativo",
+      "label": "codice_articolo_normativo"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "ordinamento",
+      "label": "ordinamento",
+      "queryFunct": "entrasp.ordinamento_art_normativo(id_testo_normativo_rif, codice_articolo_normativo_rif)"
+    }
+  ],
   "inputEvents": [
     {
       "eventName": "update_articoli_normativi_rif",
       "actionType": "reload"
     }
-  ]
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by testo_normativo, ordinamento, codice_articolo_normativo"
+  }
 }
