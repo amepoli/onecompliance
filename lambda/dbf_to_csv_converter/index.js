@@ -4,11 +4,25 @@ AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
 const separator = '~';
+const folders = ['batch/finafarm'];
 
-async function readDBFFile(company, file) {
+async function getFilesList(folder) {
+    const s3ParamsGetFilesList = {
+        Bucket: 'BUCKET_NAME',
+        Prefix: folder
+    };
+
+    let files = await s3.listObjects(s3ParamsGetFilesList).promise();
+    if (files && files.Contents && files.Contents.length) {
+        return files.Contents.filter(x => x.Size > 0).map(x => x.Key);
+    }
+    return null;
+}
+
+async function readDBFFile(file) {
     const s3ParamsGetList = {
         Bucket: 'BUCKET_NAME',
-        Key: `batch/${company}/${file}`
+        Key: file
     };
 
     const dbfFile = await s3.getObject(s3ParamsGetList).promise();
@@ -36,12 +50,48 @@ function createCSV(dbfData) {
     }
 }
 
+
+async function processFiles(files) {
+    await files.reduce(async (promise, srcFile) => {
+        // This line will wait for the last async function to finish.
+        // The first iteration uses an already resolved Promise
+        // so, it will immediately continue.
+        await promise;
+
+        console.log(srcFile);
+        let dbfData = await readDBFFile(srcFile);
+        if (dbfData) {
+            let csvData = createCSV(dbfData);
+            // console.log(csvData);
+        }
+
+    }, Promise.resolve());
+}
+
+
+async function process() {
+    await folders.reduce(async (promise, folder) => {
+        // This line will wait for the last async function to finish.
+        // The first iteration uses an already resolved Promise
+        // so, it will immediately continue.
+        await promise;
+
+        let files = await getFilesList(folder);
+        if (files && files.length) {
+            await processFiles(files);
+        }
+        console.log(files);
+    }, Promise.resolve());
+}
+
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters ? event.queryStringParameters : event;
     console.log(queryParams);
 
     let body = { result: 'KO', data: null };
+
+    await process();
 
     let dbfData = await readDBFFile(queryParams['company'], queryParams['file']);
     if (dbfData) {
