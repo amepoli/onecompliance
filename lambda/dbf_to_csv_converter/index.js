@@ -20,6 +20,7 @@ async function getFilesList(folder) {
 }
 
 async function readDBFFile(file) {
+    console.log('Reading DBF...');
     const s3ParamsGetList = {
         Bucket: 'BUCKET_NAME',
         Key: file
@@ -27,15 +28,19 @@ async function readDBFFile(file) {
 
     const dbfFile = await s3.getObject(s3ParamsGetList).promise();
     if (dbfFile && dbfFile.Body) {
+        console.log('Parsing DBF...');
         var dbfData = parseDBF(dbfFile.Body);
         if (dbfData && dbfData.length) {
             return dbfData;
         }
     }
+
+    console.log('DBF invalid!');
     return null;
 }
 
 function createCSV(dbfData) {
+    console.log('Creating CSV...');
     const rows = dbfData != null ? dbfData.length : 0;
     if (rows > 0) {
         const keys = Object.keys(dbfData[0]);
@@ -58,12 +63,13 @@ async function processFiles(files) {
         // so, it will immediately continue.
         await promise;
 
-        console.log(srcFile);
+        console.log(`Processing file: ${srcFile}`);
         let dbfData = await readDBFFile(srcFile);
         if (dbfData) {
             let csvData = createCSV(dbfData);
             // console.log(csvData);
         }
+        console.log(`Processing complete!`);
 
     }, Promise.resolve());
 }
@@ -80,7 +86,6 @@ async function process() {
         if (files && files.length) {
             await processFiles(files);
         }
-        console.log(files);
     }, Promise.resolve());
 }
 
@@ -93,19 +98,19 @@ exports.handler = async (event, context) => {
 
     await process();
 
-    let dbfData = await readDBFFile(queryParams['company'], queryParams['file']);
-    if (dbfData) {
-        let csvData = createCSV(dbfData);
-        if (csvData) {
-            body = { result: 'OK', data: csvData }
-        }
-        else {
-            body = { result: 'KO', reason: 'DBF File not found or invalid!', data: null }
-        }
-    }
-    else {
-        body = { result: 'KO', reason: 'DBF File not found or invalid!', data: null }
-    }
+    // let dbfData = await readDBFFile(queryParams['company'], queryParams['file']);
+    // if (dbfData) {
+    //     let csvData = createCSV(dbfData);
+    //     if (csvData) {
+    //         body = { result: 'OK', data: csvData }
+    //     }
+    //     else {
+    //         body = { result: 'KO', reason: 'DBF File not found or invalid!', data: null }
+    //     }
+    // }
+    // else {
+    //     body = { result: 'KO', reason: 'DBF File not found or invalid!', data: null }
+    // }
 
     return {
         "isBase64Encoded": false,
