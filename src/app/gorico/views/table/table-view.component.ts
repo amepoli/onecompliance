@@ -612,6 +612,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         else if(action == 'update_time_tracker') {
             _this._timeTrackerService.checkTimerStatus();
         }
+        else if(action == 'update_time_tracker_and_reload') {
+            // check Timer Status first
+            _this._timeTrackerService.checkTimerStatus();
+            
+            // reload
+            _this.loadData();
+        }
     }
 
     navigate(params){
