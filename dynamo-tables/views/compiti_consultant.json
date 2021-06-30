@@ -29,8 +29,18 @@
       "operation": "update",
       "type": "postProcessing",
       "queryString": "select entrasp.assegna_compito_user_centro_gest_default((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$);"
+    },
+    {
+      "operation": "startEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$')"     
+    },
+    {
+      "operation": "stopEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
     }
-  ],
+   ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -146,63 +156,6 @@
       "isPrimary": false,
       "newLine": false,
       "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "play_arrow",
-      "key": "play_time_report",
-      "label": "",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "time_report_play",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "time_report_play",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$) as play_time_report"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "stop",
-      "key": "stop_time_report",
-      "label": "",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "time_report_stop",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "time_report_stop",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
-          "outputEventWhenComplete": "after_time_report_stop"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
     },
     {
       "autoGenerate": false,
@@ -739,7 +692,7 @@
           }
         ],
         "confirmAction": false,
-        "onSuccessAction": "reload"
+        "onSuccessAction": "update_time_tracker_and_reload"
       }
     },
     {
@@ -778,7 +731,7 @@
           }
         ],
         "confirmAction": false,
-        "onSuccessAction": "reload"
+        "onSuccessAction": "update_time_tracker_and_reload"
       }
     },
     {
