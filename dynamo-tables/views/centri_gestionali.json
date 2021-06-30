@@ -208,7 +208,12 @@
 			"type": "preCheck",
 			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£' and id_centro_gest!=$id_centro_gest$",
 			"messageNotNull": "Aggiornamento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
-		}
+		},
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "select entrasp.update_dynamo_user((€global_id_anagrafiche€)::text, (€global_user_companies€)::text, '€global_username€')"			
+    }
   ],
   "search_keys": [
     {
