@@ -26,6 +26,18 @@
       "operation": "update",
       "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
       "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "type": "preCheck",
+      "queryString": "select £date_time_begin£>now()",
+      "messageNotNull": "La data inizio non può essere nel futuro. Correggere e poi salvare."
+    },
+    {
+      "operation": "update",
+      "type": "preCheck",
+      "queryString": "select £date_time_begin£>£date_time_end£",
+      "messageNotNull": "La data fine non può essere precedente alla data inizio. Correggere e poi salvare."
     }
   ],
     "form_keys": [
