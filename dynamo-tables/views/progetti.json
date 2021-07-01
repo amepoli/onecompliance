@@ -52,10 +52,10 @@
 			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
 		},
 		{
-            "type": "main",
-            "operation": "share",
-            "queryString": "select null;"
-        },
+			"type": "main",
+			"operation": "share",
+			"queryString": "select null;"
+		},
 		{
 			"type": "main",
 			"operation": "stopEvent",
@@ -64,7 +64,7 @@
 		{
 			"type": "main",
 			"operation": "startEvent",
-			"queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, '$codice_azienda$'::varchar)"		
+			"queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, '$codice_azienda$'::varchar)"
 		}
 	],
 	"messages": [
@@ -367,8 +367,23 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true,
+			"newLine": false,
 			"size": 1.5
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"label": "Azienda Erogante",
+			"key": "codice_azienda_erogante",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true
 		},
 		{
 			"autoGenerate": false,
@@ -719,13 +734,13 @@
 		{
 			"fieldName": "progetti_con_fasi_incomplete",
 			"format": {
-			  "viewType": "checkbox",
-			  "value": "0"
+				"viewType": "checkbox",
+				"value": "0"
 			},
 			"label": "Progetti con verifiche incomplete",
 			"newLine": false,
 			"queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi_somministrati ss on pf.id_sondaggio=ss.id_sondaggio and pf.codice_azienda=ss.codice_azienda where pf.codice_azienda=$codice_azienda$ and ss.somministrazione_completata!='Completo' and pf.id_sondaggio is not null)"
-		  },
+		},
 		{
 			"fieldName": "parola_s",
 			"format": {

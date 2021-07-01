@@ -2,7 +2,7 @@
     "$schema": "../views.schema.json",
     "entryKey": "cpl_trattamenti_dati_titolari_sub_of_fornitori",
     "origin": "entrasp.cpl_trattamenti_dati_titolari_esterni",
-    "businessObjectName": "cpl_trattamenti_dati_titolari_sub_of_fornitori",
+    "businessObjectName": "cpl_trattamenti_dati_titolari_esterni",
     "form_keys": [
       {
         "autoGenerate": false,
@@ -34,15 +34,24 @@
       {
         "autoGenerate": false,
         "format": {
-          "viewType": "input",
-          "dataType": "number"
+          "viewType": "combobox",
+          "comboQuery": "select  id_trattamento_dati as id, titolo as name from entrasp.cpl_trattamenti_dati where codice_azienda=$codice_azienda$",
+          "options": [],
+          "validations": [
+            {
+              "message": "Breve descrizione necessaria",
+              "name": "required",
+              "validator": "Validators.required"
+            }
+          ]
         },
-        "isHidden": true,
+        "isHidden": false,
         "isPrimary": true,
         "key": "id_trattamento_dati",
-        "label": "ID",
+        "label": "Trattamento Dati",
+        "newLine": false,
         "readOnly": false,
-        "newLine": false
+        "size": 7
       }, 
       {
         "autoGenerate": false,
@@ -51,12 +60,40 @@
           "options": [],
           "viewType": "combobox"
         },
-        "isHidden": false,
+        "isHidden": true,
         "isPrimary": true,
         "key": "id_titolare_esterno",
         "label": "Titolare esterno",
         "readOnly": false,
         "newLine": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input",
+          "dataType": "date"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "data_firma_contratto",
+        "label": "Data Firma Contratto",
+        "readOnly": false,
+        "newLine": false,
+        "size": 1.5
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "input",
+          "dataType": "date"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "data_chiusura_contratto",
+        "label": "Data Chiusura Contratto",
+        "readOnly": false,
+        "newLine": false,
+        "size": 1.5
       }
     ],
     "table_keys": [
@@ -145,6 +182,26 @@
         "key": "trattamento_desc",
         "sameOrigin": false,
         "label": "Trattamento Dati"
+      },
+      {
+        "format": {
+          "dataType": "date"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "data_firma_contratto",
+        "width": "10%",
+        "label": "Data firma contratto"
+      },
+      {
+        "format": {
+          "dataType": "date"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "data_chiusura_contratto",
+        "width": "10%",
+        "label": "Data chiusura contratto"
       }
     ]
   }
