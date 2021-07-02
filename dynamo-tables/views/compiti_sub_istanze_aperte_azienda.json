@@ -1,0 +1,164 @@
+{
+  "$schema": "../views.schema.json",
+  "inheritsFrom": "compiti_consultant",
+  "entryKey": "compiti_sub_istanze_aperte_azienda",
+  "predefinedQueries": [
+    {
+      "type": "main",
+      "operation": "selectTable",
+      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, true as check, entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, $codice_azienda$, '2021-01-01'::date, '2021-12-31'::date, codice_compito) as time_consumed, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito,cmp.stato, cmp.codice_azienda, cmp.codice_azienda, foreseen_date, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and cmp.codice_azienda=$codice_azienda$;"
+    },
+    {
+      "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda='€global_codice_azienda€' and cmp.codice_azienda=az.codice_azienda and cmp.codice_part is null;"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "select entrasp.assegna_compito_user_centro_gest_default_insert((€global_id_anagrafiche€)::text, $titolo$, $codice_azienda$);"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "select entrasp.assegna_compito_user_centro_gest_default((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$);"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "check",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "check",
+          "value": "check"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "compiti_consultant_to_do_open",
+        "viewType": "form",
+        "action": "query",
+        "query": "update entrasp.compiti set stato='C' where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£'",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda",
+      "width": "7%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_segnalazione",
+      "label": "Tipo",
+      "width": "12%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "stato",
+      "label": "Stato",
+      "width": "5%",
+      "style": [
+        {
+          "value": "Chiuso",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Provvisorio",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Aperto",
+          "font_color": "red",
+          "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "width": "5%",
+      "label": "Codice Compito"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_segnalazione",
+      "width": "8%",
+      "label": "Data Segnalazione"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "foreseen_date",
+      "width": "8%",
+      "label": "Data Scadenza"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "width": "30%",
+      "label": "Titolo"
+    },
+    {
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "time_consumed",
+			"width": "15%",
+			"label": "Tempo impiegato"
+		}
+    
+  ],
+  "querySuffixes": {"tableViewSuffix": "order by cmp.stato"}
+
+}
