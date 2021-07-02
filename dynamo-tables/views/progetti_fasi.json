@@ -16,7 +16,7 @@
 	"predefinedQueries": [
 		{
 			"operation": "selectForm",
-			"queryString": "update entrasp.progetti_fasi pf set stato=snd.stato from entrasp.sondaggi snd where pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio and id_fase=$id_fase$",
+			"queryString": "select entrasp.progetti_fasi_stato_update($codice_azienda$, (select id_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase=$id_fase$ limit 1));",
 			"type": "preProcessing"
 		},
 		{
@@ -115,7 +115,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT id_fase AS id, id_fase||'-'||codice||'-'||titolo AS name FROM entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$ and id_progetto=£id_progetto£;",
+				"comboQuery": "SELECT id_fase AS id, id_fase||'-'||codice||'-'||titolo AS name FROM entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$ and id_progetto=(select id_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase=$id_fase$ limit 1);",
 				"options": [],
 				"viewType": "combobox"
 			},
@@ -849,10 +849,6 @@
 				{
 					"parent": "id_fase",
 					"son": "id_fase_sup"
-				},
-				{
-					"parent": "id_progetto",
-					"son": "id_progetto"
 				}
 			],
 			"label": "Sotto fasi"
