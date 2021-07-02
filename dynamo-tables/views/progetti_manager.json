@@ -34,6 +34,11 @@
 			"queryString": "select entrasp.progetti_fasi_stato_update($codice_azienda$, $id_progetto$);"
 		},
 		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select prg.*,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)as stato, entrasp.centri_gestionali_descr(prg.codice_part, prg.id_centro_gest) as centro_gest from entrasp.progetti prg inner join entrasp.centri_gestionali cg on prg.codice_part=cg.codice_part and prg.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where dynamo_user='€global_username€'"
+		},
+		{
 			"operation": "delete",
 			"type": "main",
 			"queryString": "select entrasp.progetto_delete($codice_azienda$, $id_progetto$);"
@@ -64,6 +69,134 @@
 			"type": "main",
 			"operation": "startEvent",
 			"queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, '$codice_azienda$'::varchar)"
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_inserimento",
+			"label": "Data Progetto",
+			"width": "9%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "Azienda Cliente"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "stato",
+			"queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
+			"label": "Stato",
+			"width": "6%",
+			"style": [
+				{
+					"value": "Chiuso",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Provvisorio",
+					"font_color": "#D97F02",
+					"font_weight": "500"
+				},
+				{
+					"value": "Confermato",
+					"font_color": "red",
+					"font_weight": "500"
+				}
+			]
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_tipo_progetto",
+			"label": "id_tipo_progetto",
+			"width": "6%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_attivita",
+			"label": "Codice Attività",
+			"width": "7%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_progetto",
+			"label": "Codice Progetto",
+			"width": "7%"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"key": "id_progetto",
+			"label": "Id Progetto",
+			"width": "6%"
+		},
+	
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "codice_part",
+			"label": "codice_part"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "titolo",
+			"label": "Titolo",
+			"width": "31%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "centro_gest",
+			"label": "Centro gestionale",
+			"width": "13%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_azienda_erogante",
+			"label": "Azienda Erogante"
 		}
 	]
 	
