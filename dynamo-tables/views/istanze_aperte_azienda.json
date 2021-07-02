@@ -6,7 +6,7 @@
 	"predefinedQueries": [
 		{
 			"operation": "selectTable",
-			"queryString": "select codice_azienda, codice_part, entrasp.count_sondaggi_open_azienda(codice_azienda, $codice_azienda$, '2021-01-01'::date, '2021-12-31'::date) as sondaggi_aperti, entrasp.count_progetti_open_azienda(codice_azienda, $codice_azienda$, '2021-01-01'::date, '2021-12-31'::date) as progetti_aperti, entrasp.compiti_count_open_azienda(codice_azienda, $codice_azienda$, '2021-01-01'::date, '2021-12-31'::date) as compiti_aperti from entrasp.aziende where codice_azienda in(€global_user_companies€)",
+			"queryString": "select codice_azienda, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, $codice_azienda$, '2021-01-01'::date, '2021-12-31'::date) as time_consumed, entrasp.count_sondaggi_open_azienda(codice_azienda, $codice_azienda$, '2021-01-01'::date, '2021-12-31'::date) as sondaggi_aperti, entrasp.count_progetti_open_azienda(codice_azienda, $codice_azienda$, '2021-01-01'::date, '2021-12-31'::date) as progetti_aperti, entrasp.compiti_count_open_azienda(codice_azienda, $codice_azienda$, '2021-01-01'::date, '2021-12-31'::date) as compiti_aperti from entrasp.aziende where codice_azienda in(€global_user_companies€)",
 			"type": "main"
 		}
 	],
@@ -74,6 +74,19 @@
 			"label": "Numero Compiti Aperti",
 			"key": "compiti_aperti",
 			"queryFunct": "entrasp.compiti_count_open_azienda(codice_azienda)",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "Tempo Impiegato",
+			"key": "time_consumed",
 			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": false,
@@ -206,7 +219,20 @@
 			"key": "progetti_aperti",
 			"width": "15%",
 			"label": "N.progetti aperti"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "time_consumed",
+			"width": "15%",
+			"label": "Tempo impiegato"
 		}
 	
-	]
+	],
+	"querySuffixes": {
+		"tableViewSuffix": "order by codice_azienda"
+	}
 }
