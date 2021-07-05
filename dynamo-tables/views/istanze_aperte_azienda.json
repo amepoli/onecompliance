@@ -125,7 +125,7 @@
 					"son": "codice_azienda_erogante"
 				}
 			],
-			"label": "Compiti"
+			"label": "Attività/compiti"
 		},
 		
 		{
@@ -184,6 +184,30 @@
 	],
 	"search_keys": [
 		{
+			"fieldName": "cliente_s",
+			"format": {
+			  "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+			  "options": [],
+			  "viewType": "combobox",
+			  "dataType": "text"
+			},
+			"label": "Cliente",
+			"newLine": false,
+			"queryCond": "(codice_azienda='€cliente_s€' and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2021-12-31'::date) is not null)"
+		  },
+		  {
+			"fieldName": "fornitore_s",
+			"format": {
+			  "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.employers where dynamo_user='€global_username€' order by codice_azienda;",
+			  "options": [],
+			  "viewType": "combobox",
+			  "dataType": "text"
+			},
+			"label": "Fornitore",
+			"newLine": false,
+			"queryCond": "(codice_azienda_erogante='€fornitore_s€' and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2021-12-31'::date) is not null)"
+		  },
+		  {
             "fieldName": "data_esec_min",
             "format": {
                 "dataType": "date",
