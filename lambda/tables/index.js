@@ -573,7 +573,7 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
                 // Let's see if there's any show_message action
                 field_key.inputEvents.forEach(
                     event => {
-                        if (event.actionType === 'show_message') {
+                        if (event.actionType === 'show_message' && event.eventName === eventInfo.name) {
                             // This is the action we were looking for.
                             if (eventInfo.type === 'actionYes') {
                                 // It's a Yes Action
