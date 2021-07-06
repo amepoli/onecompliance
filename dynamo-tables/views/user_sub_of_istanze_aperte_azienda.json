@@ -1,0 +1,66 @@
+{
+  "$schema": "../views.schema.json",
+  "inheritsFrom": "compiti_consultant",
+  "entryKey": "user_sub_of_istanze_aperte_azienda",
+  "predefinedQueries": [
+    {
+      "type": "main",
+      "operation": "selectTable",
+      "queryString": "select distinct $codice_azienda$ as codice_azienda, coalesce(an.nome||' '||an.cognome, avr.ragione_sociale) as nmrs, an.dynamo_user, $codice_azienda_erogante$ as codice_azienda_erogante, entrasp.consuntivazioni_time_consumed_azienda($codice_azienda$, $codice_azienda_erogante$, '2021-01-01'::date, '2021-12-31'::date, dynamouser=>an.dynamo_user) as time_consumed, $codice_azienda$ as codice_azienda FROM entrasp.anagrafiche_id an inner join entrasp.consuntivazioni csn on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica where csn.codice_azienda='€global_codice_azienda€' and csn.id_risorsa is not null and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica) and an.dynamo_user in(select dynamo_user from entrasp.employers where codice_azienda=$codice_azienda_erogante$);"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "dynamo_user",
+      "label": "Collaboratore",
+      "width": "20%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "nmrs",
+      "width": "30%",
+      "label": "Denominazione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_azienda_erogante",
+      "label": "Fornitore",
+      "width": "7%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "time_consumed",
+      "width": "15%",
+      "label": "Tempo impiegato"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by dynamo_user"
+  }
+}
