@@ -1,21 +1,21 @@
 {
   "$schema": "../views.schema.json",
-  "entryKey": "classification_mdt",
+  "entryKey": "classification_categories_mdt",
   "inheritsFrom": "argomenti",
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento =aa.id_argomento_son  where id_argomento_father=45",
+      "queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento =aa.id_argomento_son  where id_argomento_father=3425",
       "type": "main"
     },
     {
       "operation": "insert",
-      "queryString": "select entrasp.argomenti_classification_insert($descrizione_breve$, $descrizione$, $codice$, 45) as id_argomento;",
+      "queryString": "select entrasp.argomenti_classification_insert($descrizione_breve$, $descrizione$, $codice$, 3425) as id_argomento;",
       "type": "main"
     },
     {
       "operation": "delete",
-      "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=45 and id_argomento_son=$id_argomento$;",
+      "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=3425 and id_argomento_son=$id_argomento$;",
       "type": "preProcessing"
     },
     {
@@ -92,7 +92,7 @@
     {
       "fieldName": "categorie_modello_test",
       "format": {
-          "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3425 order by descrizione",
+          "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=697 order by descrizione",
           "options": [],
           "viewType": "combobox",
           "dataType": "text"
@@ -100,6 +100,7 @@
       "label": "Argomento",
       "newLine": false,
       "queryCond": "arg.id_argomento in(select mt.id_argomento from entrasp.modelli_test mt)"
+  
   }
   ],
   "subTables": [
