@@ -45,7 +45,6 @@
             "operation": "stopEvent",
             "type": "main",
             "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
-      
         },
         {
             "operation": "startEvent",
@@ -413,7 +412,7 @@
             "sameOrigin": false,
             "size": 1
         },
-         {
+        {
             "autoGenerate": false,
             "format": {
                 "viewType": "button"
@@ -533,6 +532,7 @@
                     "eventName": "sondaggi_button_duplica",
                     "actionType": "show_message",
                     "condition": "none",
+                    "outputEventWhenComplete": "aggiorna_id_sondaggio",
                     "values": [],
                     "message": {
                         "messageText": "Sei sicuro di voler duplicare questo sondaggio? (si verrà automaticamente trasferiti nel nuovo sondaggio)",
@@ -542,9 +542,10 @@
                         },
                         "actionOnYes": {
                             "actionType": "query",
-                            "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"
+                            "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"                           
                         }
-                    }                },
+                    }
+                },
                 {
                     "eventName": "aggiorna_id_sondaggio",
                     "actionType": "query",

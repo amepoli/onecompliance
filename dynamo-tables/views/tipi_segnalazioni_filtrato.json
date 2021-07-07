@@ -1,0 +1,12 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "tipi_segnalazioni_filtrato",
+    "inheritsFrom": "tipi_segnalazioni",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select distinct ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice from entrasp.tipi_segnalazioni ts inner join entrasp.compiti cmp on ts.id_tipo_segnalazione=cmp.id_tipo_segnalazione where cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)"
+        }
+    ]
+}
