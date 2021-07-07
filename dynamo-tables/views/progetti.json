@@ -14,6 +14,7 @@
 			"type": "postProcessing",
 			"operation": "selectForm"
 		},
+	
 		{
 			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
 			"type": "preProcessing",
@@ -371,20 +372,19 @@
 			"size": 1.5
 		},
 		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"label": "Azienda Erogante",
-			"key": "codice_azienda_erogante",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
+            "autoGenerate": false,
+            "format": {
+              "viewType": "input",
+              "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+			"queryFunct": "select arg.descrizione from entrasp.attivita att inner join entrasp.argomenti arg on att.id_argomento = arg.id_argomento where codice_azienda=$codice_azienda$  and codice_attivita='$codice_attivita$'",
+            "label": "Argomento",
+            "readOnly": true,
+            "newLine": true
+          },
 		{
 			"autoGenerate": false,
 			"format": {
