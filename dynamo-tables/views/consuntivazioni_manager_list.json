@@ -29,6 +29,10 @@
       {
         "label": "Time report utente",
         "queryString": "select csn.codice_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.anagrafiche_id_codcognnome(csn.codice_part, csn.id_risorsa) as esecutore, substring(csn.note from 1 for 100) as note_restricted from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€)"
+      },
+      {
+        "queryString": "select csn.codice_compito, csn.codice_azienda, codice_azienda_erogante, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest), csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto,an.dynamo_user, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.anagrafiche_id_codcognnome(csn.codice_part, csn.id_risorsa) as esecutore, substring(csn.note from 1 for 100) as note_restricted from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica inner join entrasp.compiti cmp on csn.codice_azienda=cmp.codice_azienda and csn.codice_compito=cmp.codice_compito inner join entrasp.centri_gestionali cg on cmp.id_centro_gest=cg.id_centro_gest and cmp.codice_part=cg.codice_part inner join entrasp.employers em on an.dynamo_user=em.dynamo_user WHERE em.codice_azienda in(select codice_azienda from entrasp.employers where dynamo_user = '€global_user€') and csn.data_intervento between '2021-01-01' and '2021-12-31' order by csn.data_intervento",
+        "label": "Time report global "
       }
     ]
   }

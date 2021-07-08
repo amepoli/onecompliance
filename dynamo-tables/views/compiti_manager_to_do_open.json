@@ -5,8 +5,8 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select codice_azienda, data_segnalazione, foreseen_date, titolo, codice_compito, substring(note from 1 for 100) as note, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, codice_compito, codice_azienda), entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, codice_compito, codice_azienda) as time_report_play from entrasp.compiti WHERE (stato!='C' and codice_azienda in(€global_user_companies€))"
+      "queryString": "select codice_azienda, (€global_id_anagrafiche€)::text as user_companies, true as check, data_segnalazione, foreseen_date, titolo, codice_compito, substring(note from 1 for 100) as note, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, codice_compito, codice_azienda), entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, codice_compito, codice_azienda) as time_report_play from entrasp.compiti WHERE (stato!='C' and codice_azienda in(€global_user_companies€))"
     }
   ],
-  "inheritsFrom": "compiti_consultant"
+  "inheritsFrom": "compiti_consultant_micro_task"
 }
