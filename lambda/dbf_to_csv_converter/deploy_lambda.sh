@@ -38,13 +38,15 @@ sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js
 
 rm index.js-e
 
+# sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" dbf-reader.js
+
 #push zip to AWS
 
 rm ./nodejs.zip
 
 npm install
 
-zip -r nodejs.zip node_modules index.js package.json
+zip -r nodejs.zip node_modules index.js package.json dbf-reader.js
 
 aws lambda update-function-code --function-name $LAMBDANAME --zip-file fileb://./nodejs.zip
 
