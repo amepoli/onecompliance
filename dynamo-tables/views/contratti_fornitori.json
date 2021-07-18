@@ -1,8 +1,8 @@
 {
 	"$schema": "../views.schema.json",
-	"entryKey": "contractti_fronitori",
-	"businessObjectName": "contratti_passivi",
-	"origin": "entrasp.contratti_passivi",
+	"entryKey": "contratti_fornitori",
+	"businessObjectName": "contratti",
+	"origin": "entrasp.contratti",
 	"predefinedQueries": [
 		{
 			"operation": "update",
@@ -22,7 +22,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select *, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) from entrasp.contratti where array[id_argomento_contratto] <@ any(select entrasp.sotto_argomenti(3428))"
+			"queryString": "select *, entrasp.argomenti_descr(id_argomento_contratto) as tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as id_cliente, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore) as id_fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_strumento_finanziario) as id_strumento_finanziario from entrasp.contratti where array[id_argomento_contratto] <@ any(select entrasp.sotto_argomenti(3428)) and id_argomento_contratto is not null and codice_azienda=$codice_azienda$"
 		}
 	],
 	"outputEvents": [
@@ -35,7 +35,7 @@
 			"eventTrigger": "onReload"
 		}
 	],
-		"form_keys": [
+	"form_keys": [
 		{
 			"autoGenerate": false,
 			"format": {
@@ -56,7 +56,7 @@
 				"dataType": "number"
 			},
 			"label": "ID Contratto",
-			"key": "id_contratto_p",
+			"key": "id_contratto",
 			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": true,
@@ -70,13 +70,13 @@
 				"viewType": "combobox"
 			},
 			"label": "Fornitore",
-			"key": "id_fonitore",
+			"key": "id_fornitore",
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false
 		},
-	{
+		{
 			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
@@ -155,7 +155,8 @@
 			"key": "data_contratto_da",
 			"label": "Data Contratto Da",
 			"newLine": false,
-			"size": 2,			"readOnly": false
+			"size": 2,
+			"readOnly": false
 		},
 		{
 			"autoGenerate": false,
@@ -170,22 +171,6 @@
 			"newLine": false,
 			"size": 2,
 			"readOnly": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "combobox",
-				"options": [],
-				"dataType": "text",
-				"comboQuery": "select codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZIO_MIFID'"
-			},
-			"label": "Giudizio Appropriatezza",
-			"key": "giudizio",
-			"readOnly": true,
-			"queryFunct": "entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)",
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
 		}
 	],
 	"table_keys": [
@@ -224,9 +209,19 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "id_cliente",
-			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
-			"label": "Cliente"
+			"key": "id_strumento_finanziario",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_strumento_finanziario)",
+			"label": "Fondo"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "id_fornitore",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore)",
+			"label": "Fornitore"
 		},
 		{
 			"format": {
@@ -236,7 +231,7 @@
 			"isPrimary": false,
 			"width": "10%",
 			"key": "tipo_contratto",
-			"queryFunct": "entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto)",
+			"queryFunct": "entrasp.argomenti_descr(id_argomento_contratto)",
 			"label": "Tipo Contratto"
 		},
 		{
@@ -248,106 +243,47 @@
 			"key": "data_stipulazione",
 			"width": "10%",
 			"label": "Data Stipulazione"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "id_strumento_finanziario",
-			"label": "id_strumento_finanziario"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "fondo_gestito",
-			"width": "35%",
-			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario)",
-			"label": "Strum.fin.sottoscritto/acquistato"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"label": "Giudizio Appropriatezza",
-			"width": "10%",
-			"key": "giudizio",
-			"queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto))",
-			"isHidden": false,
-			"style": [
-				{
-				  "value": "Appropriato",
-				  "font_color": "green",
-				  "font_weight": "500"
-				},
-				{
-				  "value": "Adeguato",
-				  "font_color": "green",
-				  "font_weight": "500"
-				},
-				{
-				  "value": "Non Appropriato",
-				  "font_color": "red",
-				  "font_weight": "500"
-				},
-				{
-				  "value": "Non Adeguato",
-				  "font_color": "red",
-				  "font_weight": "500"
-				}
-			],
-			"isPrimary": false
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"queryFunct": "entrasp.anagrafica_key(id_cliente, codice_azienda, '|')",
-			"key": "anagrafica_key",
-			"label": "anagrafica_key"
 		}
 	],
 	"search_keys": [
-        {
-            "fieldName": "id_anagrafica_s",
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "label": "ID Cliente",
-            "newLine": false,
-            "queryCond": "avr.id_cliente=$id_anagrafica_s$"
-        },
-        {
-            "fieldName": "nome_rs",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "Nome/Cognome/Ragione Sociale",
-            "newLine": true,
-            "queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')"
-        },
-        {
-            "fieldName": "numero_contratto_s",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "Numero Contratto",
-            "newLine": false,
-            "queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
-        }
-    ],
-	"hideActions": [{
-		"tableActionType": "add",
-		"viewType": "table"
-	}],
-	"querySuffixes": {"tableViewSuffix": "limit 100"}
+		{
+			"fieldName": "id_anagrafica_s",
+			"format": {
+				"dataType": "number",
+				"viewType": "input"
+			},
+			"label": "ID Cliente",
+			"newLine": false,
+			"queryCond": "avr.id_cliente=$id_anagrafica_s$"
+		},
+		{
+			"fieldName": "nome_rs",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Nome/Cognome/Ragione Sociale",
+			"newLine": true,
+			"queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')"
+		},
+		{
+			"fieldName": "numero_contratto_s",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Numero Contratto",
+			"newLine": false,
+			"queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
+		}
+	],
+	"hideActions": [
+		{
+			"tableActionType": "add",
+			"viewType": "table"
+		}
+	],
+	"querySuffixes": {
+		"tableViewSuffix": "limit 100"
+	}
 }

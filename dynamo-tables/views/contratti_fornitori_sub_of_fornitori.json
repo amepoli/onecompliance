@@ -1,0 +1,29 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "contratti_fornitori_sub_of_fornitori",
+	"businessObjectName": "contratti",
+	"inheritsFrom": "contratti_fornitori",
+	"origin": "entrasp.contratti",
+	"predefinedQueries": [
+		{
+			"operation": "update",
+			"type": "postProcessing",
+			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+		},
+		{
+			"operation": "update",
+			"type": "postProcessing",
+			"queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+		},
+		{
+			"operation": "insert",
+			"type": "postProcessing",
+			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+		},
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select *, entrasp.argomenti_descr(id_argomento_contratto) as tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as id_cliente, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore) as id_fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_strumento_finanziario) as id_strumento_finanziario from entrasp.contratti where array[id_argomento_contratto] <@ any(select entrasp.sotto_argomenti(3428)) and id_argomento_contratto is not null and codice_part=$codice_part$ and id_fornitore=$id_fornitore$"
+		}
+	]
+}
