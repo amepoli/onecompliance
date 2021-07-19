@@ -48,6 +48,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     showAdvSearch = false;
 
+    showImportDataButton = false;
+
+    importDataSource: string;
+
     searchData: FieldConfig[];
 
     searchOptions = []; // search options for comboboxes
@@ -211,6 +215,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         _this.subscriptions.push(_this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.tableData.keys).subscribe(
             result => {
                 if (result.result === 'OK' && result.data != null && result.data.table_keys != null) {
+                    _this.showImportDataButton = result.externalUpdate != null;
+                    _this.importDataSource = result.externalUpdate;
                     const params = result.data;
                     _this._console.table(params);
                     _this.viewKeys = params.table_keys;
@@ -743,6 +749,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         else { // forward to parent
             this.sendEvent.emit(event);
         }
+    }
+
+    importData() {
+        // at the moment we only handle Archiflow import 
     }
 
 

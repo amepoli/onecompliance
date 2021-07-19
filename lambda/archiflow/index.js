@@ -5,7 +5,7 @@ var lambda = new AWS.Lambda({
     region: 'eu-central-1' //change to your region
 });
 
-var postData_login = JSON.stringify({
+var postData_login = JSON.stringify({ 
     "strUser":"ALACRITAS",
     "strPassword":"ALACRITAS",
     "oConnectionInfo": {
@@ -124,12 +124,15 @@ exports.handler = async (event, context) => {
     cards.forEach(card => {
       let cardId = card.CardId;
       let indexes = card.Indexes;
+      let progressivo = card.CardProg;
       if (indexes != null) {
         let dataFirma = '';
         let societaFondo = '';
         let controparte = '';
         let piva = '';
         let tipoFornitore = '';
+        let numSistema = '';
+        
         indexes.forEach(index => {
           if (index.FieldDescription === 'Data firma' ) {
             dataFirma = index.FieldValue;
@@ -141,10 +144,12 @@ exports.handler = async (event, context) => {
             piva = index.FieldValue;
           } else if (index.FieldDescription === 'Tipologia fornitore' ) {
             tipoFornitore = index.FieldValue;
-          } 
+          } else if (index.FieldDescription === 'N° di sistema' ) {
+            numSistema = index.FieldValue;
+          }
         });
         if (tipoFornitoreFilter.indexOf(tipoFornitore) > -1) {
-          processedCards.push({"cardId": cardId, "dataFirma": dataFirma, "societaFondo": societaFondo, "controparte": controparte, "piva": piva, "tipoFornitore": tipoFornitore});
+          processedCards.push({"cardId": cardId, "progressivo": progressivo, "dataFirma": dataFirma, "societaFondo": societaFondo, "controparte": controparte, "piva": piva, "tipoFornitore": tipoFornitore, "numSistema": numSistema});
         }
       }
     });
@@ -156,9 +161,6 @@ exports.handler = async (event, context) => {
             Payload: JSON.stringify({processedCards})
         }).promise();
     
-    /*response = {
-        statusCode: 200,
-        body: JSON.stringify('Hello from Lambda!'),
-    };*/
+
     return response;
 };

@@ -91,6 +91,18 @@ function getProfileHideActions(entry_name, profileData) {
     return profileHideActions;
 }
 
+function getExternalSource(entry_name, profileData) {
+    let externalSource;
+    if (profileData != null && profileData.tables.externalSources != null) {
+        let externalSources = profileData.tables.externalSources;
+        externalSource = externalSources.find(x => x.entry == entry_name);
+        if (externalSource != null) {
+            externalSource = externalSource.source;
+        }
+    }
+    return externalSource;
+}
+
 async function overrideTable(son) {
 
     if (son.inheritsFrom == null) {
@@ -142,6 +154,8 @@ exports.handler = async (event, context) => {
 
     var data;
 
+    var externalUpdate;
+
     try {
 
         const profile = await getProfile(userid, company);
@@ -155,12 +169,15 @@ exports.handler = async (event, context) => {
             };
         }
 
+        
+
         data = await dynamo.get(DynamoParams).promise();
 
         data = await overrideTable(data.Item);
 
         data = processPermissions(data, profile, entry_name);
         data['profileHideActions'] = getProfileHideActions(entry_name, profile);
+        externalUpdate = getExternalSource(entry_name, profile);
 
     } catch (e) {
         console.log(e);
@@ -177,6 +194,6 @@ exports.handler = async (event, context) => {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
-        "body": JSON.stringify({ result: 'OK', data: data })
+        "body": JSON.stringify({ result: 'OK', data: data, externalUpdate: externalUpdate })
     };
 };
