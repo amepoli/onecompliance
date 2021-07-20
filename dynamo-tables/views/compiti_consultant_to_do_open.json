@@ -12,6 +12,16 @@
       "operation": "selectForm",
       "type": "preProcessing",
       "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda=az.codice_azienda and codice_compito=$codice_compito$;"
+    },
+    {
+      "operation": "startEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"     
+    },
+    {
+      "operation": "stopEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
     }
   ],
   "table_keys": [
