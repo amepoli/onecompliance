@@ -3,10 +3,13 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
+const separator_in = ';';
+const separator_out = '~';
+
 const stuff_to_replace = [
     {
-        in: ';',
-        out: ','
+        in: separator_in,
+        out: separator_out
     },
     {
         in: '"',
@@ -14,9 +17,9 @@ const stuff_to_replace = [
     },
 ];
 
-const default_file_in = 'Rapporti.csv';
-const default_file_out = 'Rapporti_out.csv';
-const default_folders = ['batch/finint/upload'];
+const default_file_in = 'Rapporti_zee.CSV';
+const default_file_out = 'Rapporti_zee_out.CSV';
+const default_folders = ['batch/finint/zee/upload'];
 const default_bucket = 'BUCKET_NAME';
 
 async function getFilesList(folder = default_folders[0], bucket = default_bucket) {
@@ -58,12 +61,87 @@ function processCSV(csvData) {
     // Another technique
     let stringData = unescape(encodeURIComponent(csvData.toString()));
 
-    // remove unwanted stuff
-    stuff_to_replace.forEach(item => {
-        var find = item.in;
-        var re = new RegExp(find, 'g');
-        stringData = stringData.replace(re, item.out);
+    console.log('CSV contains \n: ', stringData.includes('\n'));
+    // Remove the header
+    console.log((stringData.match(/\r/) ? 'CR' : '')
+        + ' ' + (stringData.match(/\n/) ? 'LF' : ''));
+
+    stringData = stringData.split(' ').filter(x => x != null && x.length).join(' ');
+    stringData = stringData.split('\n');
+    stringData.splice(0, 1);
+    stringData = stringData.map(line => {
+        let columns = [];
+        let columnStarted = false;
+        let columnContainsQuote = false;
+        let curColumn = "";
+        for (let i = 0; i < line.length; i++) {
+            // let's go through each character one by one.
+            let curChar = line[i];
+            if (!columnStarted) {
+                if (curChar === '"') {
+                    curColumn = "";
+                    columnStarted = true;
+                    columnContainsQuote = true;
+                }
+                else if (curChar === ';') {
+                    // curColumn = "";
+                    // columnStarted = true;
+                    // columnContainsQuote = false;
+                }
+                else {
+                    curColumn = curChar !== ' ' ? curChar : '';
+                    columnStarted = true;
+                    columnContainsQuote = false;
+                }
+            }
+            else {
+                if (columnContainsQuote) {
+                    if (curChar === '"') {
+                        columns.push(curColumn);
+                        curColumn = "";
+                        columnStarted = false;
+                        columnContainsQuote = false;
+                    }
+                    else {
+                        curColumn += '' + (curColumn || curChar !== ' ' ? curChar : '');
+                    }
+                }
+                else {
+                    if (curChar === ';' || i == line.length - 1) {
+                        columns.push(curColumn);
+                        curColumn = "";
+                        columnStarted = false;
+                        columnContainsQuote = false;
+                    }
+                    else {
+                        curColumn += '' + (curColumn || curChar !== ' ' ? curChar : '');
+                    }
+                }
+            }
+        }
+        return columns.join(separator_out);
+        // return line.split('"').filter(x => x != null && x.length && x != ';').join(separator_out)
     });
+    stringData = stringData.join('\n');
+
+    // To add header
+    // let header = stringData.splice(0, 1);
+    // header.replace(/ /g, '');
+    // stringData = header + '\n' + stringData.join(';\n') + ';';
+
+
+    // remove unwanted stuff
+    // stuff_to_replace.forEach(item => {
+    //     var find = item.in;
+    //     var re = new RegExp(find, 'g');
+    //     stringData = stringData.replace(re, item.out);
+    // });
+
+    // Replace any space with the separator
+    var find = ' ' + stuff_to_replace[0].out;
+    var re = new RegExp(find, 'g');
+    stringData = stringData.replace(re, stuff_to_replace[0].out);
+    return stringData;
 }
 
 function createCSV(dbfData) {
@@ -90,6 +168,7 @@ async function writeCSVToS3(key, data, bucket = default_bucket) {
         Key: key,
         Body: data
     }
+    console.log(params.Key);
     await s3.putObject(params).promise();
     // , function (err, data) {
     //     if (err) console.log(err, err.stack); // an error occurred
@@ -132,7 +211,7 @@ async function processFiles(files, bucket = default_bucket) {
         if (csvBuffer) {
             let processedCSV = processCSV(csvBuffer);
             if (processedCSV) {
-                await writeCSVToS3(srcFile.replace('.csv', '_out.csv'), csvData, bucket);
+                await writeCSVToS3(srcFile.replace('.CSV', '_out.CSV').replace('.csv', '_out.csv'), processedCSV, bucket);
                 // console.log(csvData);
             }
         }
@@ -150,8 +229,8 @@ async function start(folders = default_folders, inFileName = default_file_in, ou
 
         let files = await getFilesList(folder);
         if (files && files.length) {
-            // await deleteFiles(files.filter(x => x == inFileName), bucket);
-            await processFiles(files.filter(x => x == outFileName), bucket);
+            await deleteFiles(files.filter(x => x.toLowerCase().includes(outFileName.toLowerCase())), bucket);
+            await processFiles(files.filter(x => x.toLowerCase().includes(inFileName.toLowerCase())), bucket);
         }
     }, Promise.resolve());
 }
