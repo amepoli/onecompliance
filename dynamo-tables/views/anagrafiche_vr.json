@@ -296,14 +296,14 @@
                     {
                         "autoGenerate": true,
                         "format": {
-                            "dataType": "number",
+                            "dataType": "text",
                             "viewType": "combobox",
                             "options": [],
                             "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_DOCUMENTO_IDENT';"
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "id_tipo_documento",
+                        "key": "codice_tipo_documento",
                         "label": "Tipo Documento",
                         "newLine": false,
                         "readOnly": false,
@@ -330,13 +330,22 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "nuova_versione",
-                        "label": "Nuova Scadenza",
+                        "key": "nuovo_doc",
+                        "label": "Nuovo documento",
                         "newLine": true,
                         "outputEvent": {
-                            "eventName": "clienti_button_nuova_versione",
+                            "eventName": "nuova_scadenza_documento",
                             "eventTrigger": "press"
                         },
+                        "inputEvents": [
+                            {
+                                "eventName": "nuova_scadenza_documento",
+                                "actionType": "query",
+                                "queryFunct": "select entrasp.anagrafica_id_new_version($codice_azienda$, $id_anagrafica$, $prog_vr$, £codice_tipo_documento£, £data_scadenza_documento£) as nuovo_doc",
+                                "condition": "none",
+                                "values": []        
+                            }
+                        ],       
                         "style": {
                             "background_color": "#25599C",
                             "font_color": "white"
