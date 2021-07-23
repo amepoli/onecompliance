@@ -294,7 +294,7 @@
                         "readOnly": false
                     },
                     {
-                        "autoGenerate": true,
+                        "autoGenerate": false,
                         "format": {
                             "dataType": "text",
                             "viewType": "combobox",
@@ -337,15 +337,6 @@
                             "eventName": "nuova_scadenza_documento",
                             "eventTrigger": "press"
                         },
-                        "inputEvents": [
-                            {
-                                "eventName": "nuova_scadenza_documento",
-                                "actionType": "query",
-                                "queryFunct": "select entrasp.anagrafica_id_new_version($codice_azienda$, $id_anagrafica$, $prog_vr$, £codice_tipo_documento£, £data_scadenza_documento£) as nuovo_doc",
-                                "condition": "none",
-                                "values": []        
-                            }
-                        ],       
                         "style": {
                             "background_color": "#25599C",
                             "font_color": "white"
@@ -353,7 +344,6 @@
                         "readOnly": false,
                         "sameOrigin": false
                     }
-            
                 ]
             },
             "inputEvents": [
@@ -531,8 +521,17 @@
                     "actionType": "query",
                     "condition": "none",
                     "eventName": "clienti_button_nuova_versione",
-                    "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version('€global_codice_azienda€',$id_anagrafica$, $prog_vr$)",
-                    "values": []
+                    "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version('€global_codice_azienda€',$id_anagrafica$, $prog_vr$) as prog_vr",
+                    "values": [],
+                    "successMessage": "Done!"
+                },
+                {
+                    "eventName": "nuova_scadenza_documento",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.anagrafica_id_new_version('€global_codice_azienda€', $id_anagrafica$, $prog_vr$, $codice_tipo_documento$, ($data_scadenza_documento$)::date) as prog_vr",
+                    "condition": "none",
+                    "values": [],
+                    "successMessage": "Done!"
                 }
             ],
             "isHidden": false,
@@ -678,7 +677,7 @@
         },
         {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idcentrogestdefault=>$id_centro_gest_default$);",
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, codicetipodoc=>$codice_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date);",
             "type": "main"
         },
         {
