@@ -21,6 +21,7 @@ DBNAME=`cat ../../${1}.json | jq -r ".postgres.dbName"`
 HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
 USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
 PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
+VPCFUNCTION=`cat ../../${1}.json | jq -r ".lambdas.archiflow.vpcFunction"`
 
 #replace Variables
 cp index.js index.js.ori
@@ -32,6 +33,7 @@ sed -i -e "s/PASSWORD/${PASSWORD}/g" index.js
 sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
 sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
 sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
+sed -i -e "s/FUNCTION_NAME/${VPCFUNCTION}/g" index.js
 
 rm index.js-e
 

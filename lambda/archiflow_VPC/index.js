@@ -18,7 +18,12 @@ exports.handler = async (event) => {
     let cards = event.processedCards;
     
     if (cards == null) {
-        return { statusCode:200, body: JSON.stringify({"response" : "KO", "reason": "Something wrong with provided data"})};
+        return { 
+            "statusCode":200, 
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "body": JSON.stringify({"response" : "KO", "reason": "Something wrong with provided data"})
+        }; 
     }
     
     
@@ -27,6 +32,7 @@ exports.handler = async (event) => {
         const client = await pool.connect();
         
         let query = "";
+        let response;
         
 
         for (let i= 0; i < cards.length; i++) {
@@ -34,24 +40,39 @@ exports.handler = async (event) => {
             
             if (card.cardId != null) {
                 query = "SELECT * from imports.archiflow_contratti_temporary where card_id='" + card.cardId + "';";
-                let response = await client.query(query);
-                console.log(response);
+                response = await client.query(query);
                 if (response.rows[0] == null) {
                     query = "INSERT INTO imports.archiflow_contratti_temporary (card_id, progressivo, data_firma, societa_fondo, controparte, partita_iva, tipo_fornitore, n_sistema) VALUES ('" 
                         + card.cardId + "', '" + card.progressivo + "', '" + card.dataFirma + "', '" + card.societaFondo.replace(/'/g, "''") + "', '" + card.controparte.replace(/'/g, "''") + "', '" + card.piva + "', '" + card.tipoFornitore.replace(/'/g, "''") + "', '" + card.numSistema  + "');" ;
-                    response = await client.query(query);
-                    console.log(response);
+                } else {
+                    query = "UPDATE imports.archiflow_contratti_temporary SET card_id='" + card.cardId + "', progressivo='" + card.progressivo + "', data_firma='" + 
+                        card.dataFirma + "', societa_fondo='" + card.societaFondo.replace(/'/g, "''") + "', controparte='" + card.controparte.replace(/'/g, "''") + 
+                        "', partita_iva='" + card.piva + "', tipo_fornitore='" + card.tipoFornitore.replace(/'/g, "''") + "', n_sistema='" + card.numSistema  + "';";
                 }
+                response = await client.query(query);
             }
         }
+
+        // run post-process query
+        query = "select entrasp.contratti_insert_from_contratti_fornitori_temporary('FININTSGR');";
+        response = await client.query(query);
+
+        //release the client
         await client.release();
     } catch(e){
-        return { statusCode:200, body: JSON.stringify({"response" : "KO", "reason": "Something wrong with accessing the DB"})}; 
+        return { 
+            "statusCode":200, 
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "body": JSON.stringify({"response" : "KO", "reason": "Something wrong with accessing the DB"})
+        }; 
     }
     
 
     return {
-        statusCode: 200,
-        body: JSON.stringify({"response" : "OK"}),
+        "statusCode": 200,
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "body": JSON.stringify({"response" : "OK"}),
     };
 };

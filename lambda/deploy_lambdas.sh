@@ -45,4 +45,10 @@ echo "Deploying email result handler"
 cd ../time_tracker
 echo "Deploying time-tracker handler"
 ./deploy_lambda.sh $1
+cd ../archiflow
+echo "Deploying archiflow trampoline"
+./deploy_lambda.sh $1
+cd ../archiflow_VPC
+echo "Deploying archiflow lambda"
+./deploy_lambda.sh $1
 cd ..

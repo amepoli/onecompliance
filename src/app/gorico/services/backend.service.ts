@@ -3,6 +3,7 @@ import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
 import * as appData from '../../../../appdata.json';
 import { FormActionType } from '../types';
+import axios from 'axios';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class BackendService {
   private langApiName = appData.lambdas.translation.apiName;
   private emailApiName = appData.lambdas.email_trigger.apiName;
   private timeTrackerApiName = appData.lambdas.time_tracker.apiName;
+  private archiflowApiName = appData.lambdas.archiflow.apiName;
 
   private myGetInit = { // OPTIONAL
     headers: {
@@ -40,6 +42,12 @@ export class BackendService {
   dashboardKeys = null; // bridge keys between dashboard view and main table view
 
   constructor(private amplifyService: AmplifyService) {
+    axios.interceptors.request.use((config) => {
+        config.timeout = 120000;
+        return config;
+      }, (error) => {
+        return Promise.reject(error);
+      });
   }
 
   private replacer(key, value) {
@@ -280,6 +288,12 @@ export class BackendService {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { request_type: 'stopTime', company: company };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.timeTrackerApiName, this.myGetInit));
+  }
+
+  updateArchiflow(numRecords: number): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = {numRecords: numRecords};
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.archiflowApiName, this.myGetInit));
   }
 
 }

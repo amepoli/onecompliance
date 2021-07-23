@@ -161,7 +161,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             }
         }
         else if (changes.isCurTab) {
-            _this._console.log("inside table-view isCurTab changes!");
+            _this._console.log('inside table-view isCurTab changes!');
 
             _this._console.table({ change: 'isCurTab', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
 
@@ -209,7 +209,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     public loadData() {
-        let _this = this;
+        const _this = this;
         _this.resetView();
         _this.isLoading = true;
         _this.subscriptions.push(_this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.tableData.keys).subscribe(
@@ -350,7 +350,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     this.isLevel = key.key;
                 }
                 else {
-                    this._console.error("More than one isLevel key defined!");
+                    this._console.error('More than one isLevel key defined!');
                 }
             }
             else if (key.hasLevel) {
@@ -427,10 +427,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     }
                 });
             }
-            else if (values.includes("*")) {
-                Object.keys(this.styles[column]["*"]).forEach(key => {
+            else if (values.includes('*')) {
+                Object.keys(this.styles[column]['*']).forEach(key => {
                     if (key != 'value') {
-                        styles[HelperService.getStyleName(key)] = this.styles[column]["*"][key];
+                        styles[HelperService.getStyleName(key)] = this.styles[column]['*'][key];
                     }
                 });
             }
@@ -540,7 +540,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             if(selectedViewKey.buttonAction.confirmAction) {
                 let confirmMessage: {title: string, text: string} = {
                     title: selectedViewKey.buttonAction.action,
-                    text: "Are you sure?"
+                    text: 'Are you sure?'
                 };
 
                 if(selectedViewKey.buttonAction.confirmMessage ){
@@ -548,7 +548,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 }
                 
                 // Show confirmation dialog to make sure user wants to perform action
-                _this._dialogService.showConfimationDialog(confirmMessage.title, confirmMessage.text, "Yes", "No", "warning").then((result) => {
+                _this._dialogService.showConfimationDialog(confirmMessage.title, confirmMessage.text, 'Yes', 'No', 'warning').then((result) => {
                     if (result.value === true) {
                         _this.performButtonAction(selectedViewKey, row);
                     }
@@ -628,7 +628,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     navigate(params){
-        setTimeout(() => { this.sendEvent.emit({ eventType: "navigate", queryParams: params }); }, 50);
+        setTimeout(() => { this.sendEvent.emit({ eventType: 'navigate', queryParams: params }); }, 50);
     }
 
     deleteRow(selectedViewKey: TableViewKey, keys: any) {
@@ -638,7 +638,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 _this._console.log(result);
                 if (result.result === 'OK') {
                     // Show success toast
-                    _this._toastService.showSuccessToast("Table row Deleted");
+                    _this._toastService.showSuccessToast('Table row Deleted');
 
                 }
                 else {
@@ -648,7 +648,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             },
             error => {
                 console.log(error);
-                _this._toastService.showErrorToast("An error occured!", error);
+                _this._toastService.showErrorToast('An error occured!', error);
             }
         );
     }
@@ -680,7 +680,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         const filename = data[1];
         if(file_id && filename)
         {
-            _this._dialogService.showLoadingDialog("Downloading attachment", "Please wait...");            
+            _this._dialogService.showLoadingDialog('Downloading attachment', 'Please wait...');            
             const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), {}, file_id).subscribe(
                 url => {
                     if (url != null) {
@@ -688,23 +688,23 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                             fileData => {
                                 saveAs(fileData, filename);
                                 _this._dialogService.closeDialog();
-                                _this._toastService.showSuccessToast("Attachment downloaded successfully!");
+                                _this._toastService.showSuccessToast('Attachment downloaded successfully!');
                             },
                             error => {
                                 _this._dialogService.closeDialog();
-                                _this._toastService.showErrorToast("An error occured!");
+                                _this._toastService.showErrorToast('An error occured!');
                             }));
                     }
                 },
                 error => {
                     _this._dialogService.closeDialog();
-                    _this._toastService.showErrorToast("An error occured!");
+                    _this._toastService.showErrorToast('An error occured!');
                 });
             _this.subscriptions.push(subscription);
 
         }
         else {
-            _this._toastService.showErrorToast("File does not exist!");
+            _this._toastService.showErrorToast('File does not exist!');
         }
     }
 
@@ -743,7 +743,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     onEvent(event: any) {
         if (event.eventType === 'savedForm') { // quick add form view submitted the new record
             this.showQuickAdd = false; // hide quick add
-            this._toastService.showSuccessToast("Saved successfully!"); // show success toast
+            this._toastService.showSuccessToast('Saved successfully!'); // show success toast
             this.loadTable(null); // reload the table to visualize the record
         }
         else { // forward to parent
@@ -752,7 +752,44 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     importData() {
+        const _this = this;
         // at the moment we only handle Archiflow import 
+        if (_this.importDataSource === 'archiflow') {
+            _this._dialogService.showLoadingDialog('Connecting to Archiflow', 'Please wait...');
+            _this.subscriptions.push(_this.backendService.updateArchiflow(0).subscribe( // get the number of records
+                result => {
+                    _this._console.log(result);
+                    _this._dialogService.closeDialog();
+                    _this._dialogService.showLoadingDialog('Retrieving records from Archiflow', 'Please wait...');
+                    if (result.result === 'OK') {
+                        _this.subscriptions.push(_this.backendService.updateArchiflow(result.numRecords).subscribe(
+                            innerResult => {
+                                _this._console.log(innerResult);
+                                if (innerResult.result === 'OK') {
+                                    _this.loadData();
+                                    _this._dialogService.closeDialog();
+                                    _this._toastService.showSuccessToast('Successfully updated!'); // show success toast
+                                } else {
+                                    _this._dialogService.closeDialog();
+                                    _this._toastService.showErrorToast('An error occured!');
+                                }
+                            },
+                            innerError => {
+                                _this._dialogService.closeDialog();
+                                _this._toastService.showErrorToast('An error occured!');
+                            }
+                        ));
+                    } else {
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showErrorToast('An error occured!');
+                    }
+                },
+                error => {
+                    _this._dialogService.closeDialog();
+                    _this._toastService.showErrorToast('An error occured!');
+                }
+            ));
+        }
     }
 
 

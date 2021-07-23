@@ -1,66 +1,10 @@
 const https = require('https');
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
-var lambda = new AWS.Lambda({
+const lambda = new AWS.Lambda({
     region: 'eu-central-1' //change to your region
 });
 
-var postData_login = JSON.stringify({ 
-    "strUser":"ALACRITAS",
-    "strPassword":"ALACRITAS",
-    "oConnectionInfo": {
-        "Language": "0",
-        "DateFormat": "dd/mm/yyyy",
-        "WorkflowDomain": "SIAV"
-    }
-  });
-
-var options_login = {
-  "method": "POST",
-  "hostname": "afmobile.finint.com",
-  "path": "/ArchiflowService/Login.svc/json/Login",
-  "headers": {
-    "Content-Type": "application/json",
-  }
-};
-
-var postData_getCards = {
-    "paramIn": {
-        "SessionInfo": {
-            "CharacterSet": 1,
-            "ClientType": 0,
-            "DateFormat": "dd/MM/yyyy",
-            "ExecutiveOfficeCode": 0,
-            "ExecutiveOffices": [],
-            "Language": 0,
-            "LoginTicketUserId": null,
-            "LoginType": 1,
-            "SessionId": "",
-            "TokenSess": "192.168.200.84",
-            "VelocisDatabase": "arcsql50",
-            "VelocisServer": "RDS",
-            "WorkflowId": ""
-        },
-        "SearchCriteria": {
-        },
-        "PageNumber": 1,
-        "PageSize": 282,
-        "GetIndexes": true,
-        "GetInvoice": false
-    }
-};
-
-
-var options_getCards = {
-  "method": "POST",
-  "hostname": "afmobile.finint.com",
-  "path": "/archiflowservice/Card.svc/json/RetrieveCardsByParam",
-  "headers": {
-    "Content-Type": "application/json",
-  }
-};
-
-var tipoFornitoreFilter = ["CONSULENTE TECNICO", "CONSULENTE FISCALE", "LEGALE /AMMINISTRATIVO"];
 
 function post(options, postData) {
   return new Promise(((resolve, reject) => {
@@ -92,13 +36,84 @@ function post(options, postData) {
 
 
 exports.handler = async (event, context) => {
-    // TODO implement
+    
+    var postData_login = JSON.stringify({ 
+        "strUser":"ALACRITAS",
+        "strPassword":"ALACRITAS",
+        "oConnectionInfo": {
+            "Language": "0",
+            "DateFormat": "dd/mm/yyyy",
+            "WorkflowDomain": "SIAV"
+        }
+      });
+    
+    var options_login = {
+      "method": "POST",
+      "hostname": "afmobile.finint.com",
+      "path": "/ArchiflowService/Login.svc/json/Login",
+      "headers": {
+        "Content-Type": "application/json",
+      }
+    };
+    
+    var postData_getCards = {
+        "paramIn": {
+            "SessionInfo": {
+                "CharacterSet": 1,
+                "ClientType": 0,
+                "DateFormat": "dd/MM/yyyy",
+                "ExecutiveOfficeCode": 0,
+                "ExecutiveOffices": [],
+                "Language": 0,
+                "LoginTicketUserId": null,
+                "LoginType": 1,
+                "SessionId": "",
+                "TokenSess": "192.168.200.84",
+                "VelocisDatabase": "arcsql50",
+                "VelocisServer": "RDS",
+                "WorkflowId": ""
+            },
+            "SearchCriteria": {
+            },
+            "PageNumber": 1,
+            "PageSize": 1,
+            "GetIndexes": true,
+            "GetInvoice": false
+        }
+    };
+    
+    
+    var options_getCards = {
+      "method": "POST",
+      "hostname": "afmobile.finint.com",
+      "path": "/archiflowservice/Card.svc/json/RetrieveCardsByParam",
+      "headers": {
+        "Content-Type": "application/json",
+      }
+    };
+    
+    var tipoFornitoreFilter = ["CONSULENTE TECNICO", "CONSULENTE FISCALE", "LEGALE /AMMINISTRATIVO"];
+
+    let numRecords = event.queryStringParameters.numRecords;
+
+    if (numRecords > 0) {
+        // recover a set of records
+        postData_getCards.paramIn.PageSize = numRecords;
+    } else {
+        // get the number of records
+        postData_getCards.GetIndexes = false;
+    }
     
     let response = await post(options_login, postData_login);
     //let response = await post(options_test, postData_test);
     
     if (response == null || response.oSessionInfo == null ||  response.oSessionInfo.SessionId == null || response.oSessionInfo.WorkflowId == null) {
-      return({statusCode: 200, body: JSON.stringify({result: 'KO', reason: 'Something wrong with login'})});
+        return({
+            "statusCode": 200, 
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "body": JSON.stringify({result: 'KO', reason: 'Something wrong with getting doc list'})
+          });
     }
     
     let token = response.oSessionInfo.SessionId;
@@ -114,9 +129,25 @@ exports.handler = async (event, context) => {
     response = await post(options_getCards, postData_getCards);
     
     if (response == null || response.RetrieveCardsByParamResult == null ||  response.RetrieveCardsByParamResult.Cards == null) {
-      return({statusCode: 200, body: JSON.stringify({result: 'KO', reason: 'Something wrong with getting doc list'})});
+      return({
+          "statusCode": 200, 
+          "isBase64Encoded": false,
+          "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+          "body": JSON.stringify({result: 'KO', reason: 'Something wrong with getting doc list'})
+        });
     }
-    
+
+    if (numRecords === 0) {
+        // return the number of records and stop here
+        numRecords = response.RetrieveCardsByParamResult.HitCount;
+        return({
+            "statusCode": 200, 
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "body": JSON.stringify({result: 'OK', numRecords: numRecords})
+          });
+    }   
+
     let cards = response.RetrieveCardsByParamResult.Cards;
     
     let processedCards = [];
@@ -157,10 +188,16 @@ exports.handler = async (event, context) => {
     console.log(processedCards);
     
     response = await lambda.invoke({
-            FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:archiflow_VPC',
-            Payload: JSON.stringify({processedCards})
-        }).promise();
-    
+        FunctionName: 'FUNCTION_NAME',
+        Payload: JSON.stringify({ processedCards })
+    }).promise();
 
-    return response;
+    console.log(response);
+
+    return({
+        "statusCode": 200, 
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "body": JSON.stringify({result: 'OK'})
+      });
 };
