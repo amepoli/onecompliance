@@ -17,10 +17,24 @@ const stuff_to_replace = [
     },
 ];
 
-const default_file_in = 'Rapporti_zee.CSV';
-const default_file_out = 'Rapporti_zee_out.CSV';
+const output_file = '_out';
+
+const default_files_in = ['Rapporti_zee.CSV'];
+const default_files_out = default_files_in.map(file => file.replace('.CSV', output_file + '.CSV').replace('.csv', output_file + '.csv'));
 const default_folders = ['batch/finint/zee/upload'];
 const default_bucket = 'BUCKET_NAME';
+
+function filterFiles(files, fileNames) {
+    return files.filter(file => {
+        let keep = false;
+        fileNames.forEach(fileName => {
+            if (file.toLowerCase().includes(fileName.toLowerCase())) {
+                keep = true;
+            }
+        });
+        return keep;
+    });
+}
 
 async function getFilesList(folder = default_folders[0], bucket = default_bucket) {
     const s3ParamsGetFilesList = {
@@ -61,11 +75,7 @@ function processCSV(csvData) {
     // Another technique
     let stringData = unescape(encodeURIComponent(csvData.toString()));
 
-    console.log('CSV contains \n: ', stringData.includes('\n'));
     // Remove the header
-    console.log((stringData.match(/\r/) ? 'CR' : '')
-        + ' ' + (stringData.match(/\n/) ? 'LF' : ''));
-
     stringData = stringData.split(' ').filter(x => x != null && x.length).join(' ');
     stringData = stringData.split('\n');
     stringData.splice(0, 1);
@@ -186,7 +196,6 @@ async function deleteFiles(files, bucket = default_bucket) {
                 })
             }
         };
-        console.log('deleteFiles: ', JSON.stringify(params));
         await s3.deleteObjects(params, function (err, data) {
             if (err) console.log(err, err.stack); // an error occurred
             // else console.log(data);           // successful response
@@ -198,20 +207,21 @@ async function deleteFiles(files, bucket = default_bucket) {
 }
 
 
-async function processFiles(files, bucket = default_bucket) {
-    await files.reduce(async (promise, srcFile) => {
+async function processFiles(filesIn, filesOut, bucket = default_bucket) {
+    await filesIn.reduce(async (promise, srcFile, i) => {
         // This line will wait for the last async function to finish.
         // The first iteration uses an already resolved Promise
         // so, it will immediately continue.
         await promise;
 
+        let outFile = filesOut[i];
         console.log(`Processing file: ${srcFile}`);
         let csvBuffer = await readCSVFile(srcFile, bucket);
 
         if (csvBuffer) {
             let processedCSV = processCSV(csvBuffer);
             if (processedCSV) {
-                await writeCSVToS3(srcFile.replace('.CSV', '_out.CSV').replace('.csv', '_out.csv'), processedCSV, bucket);
+                await writeCSVToS3(outFile, processedCSV, bucket);
                 // console.log(csvData);
             }
         }
@@ -220,7 +230,7 @@ async function processFiles(files, bucket = default_bucket) {
     }, Promise.resolve());
 }
 
-async function start(folders = default_folders, inFileName = default_file_in, outFileName = default_file_out, bucket = default_bucket) {
+async function start(folders = default_folders, inFileNames = default_files_in, outFileNames = default_files_out, bucket = default_bucket) {
     await folders.reduce(async (promise, folder) => {
         // This line will wait for the last async function to finish.
         // The first iteration uses an already resolved Promise
@@ -229,19 +239,22 @@ async function start(folders = default_folders, inFileName = default_file_in, ou
 
         let files = await getFilesList(folder);
         if (files && files.length) {
-            await deleteFiles(files.filter(x => x.toLowerCase().includes(outFileName.toLowerCase())), bucket);
-            await processFiles(files.filter(x => x.toLowerCase().includes(inFileName.toLowerCase())), bucket);
+            let inFiles = filterFiles(files, inFileNames);
+            let outFiles = outFileNames.map(file => (folder + '/' + file).replace('//', '/'));
+            console.log("Input files: ", inFiles);
+            console.log("Output files: ", outFiles);
+            await deleteFiles(outFiles, bucket);
+            await processFiles(inFiles, outFiles, bucket);
         }
     }, Promise.resolve());
 }
 
 async function processQueryParams(queryParams) {
-    console.log('Running custom event.');
-    let bucket = queryParams.bucket;
-    let file_in = [queryParams.file_in];
-    let file_out = [queryParams.file_out];
-    let folders = [queryParams.folder];
-    await start(folders, file_in, file_out);
+    let bucket = queryParams.bucket ? queryParams.bucket : default_bucket;
+    let files_in = queryParams.file_in ? [queryParams.file_in] : default_files_in;
+    let files_out = queryParams.file_out ? [queryParams.file_out] : default_files_out;
+    let folders = queryParams.folder ? [queryParams.folder] : default_folders;
+    await start(folders, files_in, files_out, bucket);
 
 }
 
