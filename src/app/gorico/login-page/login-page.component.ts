@@ -153,7 +153,7 @@ export class LoginPageComponent implements OnInit {
 
     }
 
-    onSubmit(): void {
+    onSubmit(e): void {
         this.authService.setUsername(this.loginForm.value.username);
         this.authService.setPassword(this.loginForm.value.password);
 
@@ -162,6 +162,9 @@ export class LoginPageComponent implements OnInit {
         // Show loading Alert
         this._dialogService.showLoadingDialog("Signing in", "Please wait...");
 
+        // Cognito fix
+        e.preventDefault();
+        
         // Sign in
         this.signingIn = true;
         this.authService.signIn();
