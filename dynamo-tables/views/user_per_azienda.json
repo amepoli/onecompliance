@@ -1,0 +1,66 @@
+{
+  "$schema": "../views.schema.json",
+  "inheritsFrom": "compiti_consultant",
+  "entryKey": "user_per_azienda",
+  "predefinedQueries": [
+    {
+      "type": "main",
+      "operation": "selectTable",
+      "queryString": "select distinct ar.codice_azienda, coalesce(an.nome||' '||an.cognome, avr.ragione_sociale) as nmrs, an.dynamo_user, ae.codice_azienda as codice_azienda_erogante, entrasp.consuntivazioni_time_consumed_azienda(ar.codice_azienda,ae.codice_azienda, '2021-01-01'::date, '2021-12-31'::date, dynamouser=>an.dynamo_user) as time_consumed FROM (select codice_azienda from entrasp.aziende) ar,(select distinct codice_azienda from entrasp.employers) as ae, entrasp.anagrafiche_id an inner join entrasp.consuntivazioni csn on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica where csn.codice_azienda=ar.codice_azienda and csn.id_risorsa is not null and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica) and dynamo_user is not null and entrasp.consuntivazioni_time_consumed_azienda(ar.codice_azienda,ae.codice_azienda, '2021-01-01'::date, '2021-12-31'::date, dynamouser=>an.dynamo_user) is not null;"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "dynamo_user",
+      "label": "Collaboratore",
+      "width": "20%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "nmrs",
+      "width": "30%",
+      "label": "Denominazione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_azienda_erogante",
+      "label": "Fornitore",
+      "width": "7%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "time_consumed",
+      "width": "15%",
+      "label": "Tempo impiegato"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by dynamo_user"
+  }
+}
