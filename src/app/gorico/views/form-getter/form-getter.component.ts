@@ -3,7 +3,7 @@ import { DynamicFormComponent } from 'app/gorico/dynamic-forms/components/dynami
 import { ComboboxComponent } from 'app/gorico/dynamic-forms/components/combobox/combobox.component';
 import { Subscription } from 'rxjs';
 import { SubformComponent } from 'app/gorico/dynamic-forms/components/subform/subform.component';
-import { FieldConfig, FormGetterParams, FormViewKey, MessageView, OutputEvent } from 'app/gorico/interfaces';
+import { ExportItem, FieldConfig, FormGetterParams, FormViewKey, ImportItem, MessageView, OutputEvent } from 'app/gorico/interfaces';
 import { FormDataType } from 'app/gorico/types';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/gorico/services';
 import { DynamicFieldDirective } from 'app/gorico/directives';
@@ -44,6 +44,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     hideActions: string[] = [];
 
+    importList: ImportItem[] = [];
+    exportList: ExportItem[] = [];
+
+    
     numRows = 1;
 
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
@@ -233,6 +237,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     // Profile hide actions
                     if(params.profileHideActions) {
                         _this.hideActions = _this.hideActions.concat(params.profileHideActions);
+                    }
+
+                    // Load Import Queries list if available
+                    if (params.importQueries && params.importQueries.formQueries) {
+                        _this.importList = params.importQueries.formQueries;
+                    }
+                    else {
+                        _this.importList = [];
+                    }
+
+                    // Load Export Queries list if available
+                    if (params.exportQueries && params.exportQueries.formQueries) {
+                        _this.exportList = params.exportQueries.formQueries;
+                    }
+                    else {
+                        _this.exportList = [];
                     }
 
                     if (_this.isFormView && !_this.isTabMode) {
@@ -1296,6 +1316,47 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
         });
         return element;
+    }
+
+    getFormValues(): any {
+        const _this = this;
+        if (this.formArray != null) {
+            return HelperService.getFormValues(this.formArray.first.form.value)
+        }
+        return {};
+    }
+
+    // Import export stuff
+    uploadCSV(): void {
+        this._importExportService.importCSV(this.formParams.entryName);
+    }
+
+    importAdvanced(item: ImportItem) {
+        this._importExportService.importAdvancedCSV(this.formParams.entryName, this.formParams.keys, item.label, true);    
+    }
+
+    downloadTemplateFile(): void {
+        this._importExportService.getTemplateFile(this.formParams.entryName);
+    }
+
+    downloadCSV() {
+        const formValues = this.getFormValues();
+        this._importExportService.downloadCSV(this.formParams.entryName, this.authService.getCurrentCompany(this.currentKeys), this.formParams.keys, null, true, formValues, null);
+    }
+
+    downloadAdvancedCSV(item: ExportItem): void {
+        const formValues = this.getFormValues();
+        this._importExportService.downloadCSV(this.formParams.entryName, this.authService.getCurrentCompany(this.currentKeys), this.formParams.keys, null, true, formValues, item.label);
+    }
+
+    downloadExcel() {
+        const formValues = this.getFormValues();
+        this._importExportService.downloadExcel(this.formParams.entryName, this.authService.getCurrentCompany(this.currentKeys), this.formParams.keys, null, true, formValues, null);
+    }
+
+    downloadAdvancedExcel(item: ExportItem): void {
+        const formValues = this.getFormValues();
+        this._importExportService.downloadExcel(this.formParams.entryName, this.authService.getCurrentCompany(this.currentKeys), this.formParams.keys, null, true, formValues, item.label);
     }
 
 }

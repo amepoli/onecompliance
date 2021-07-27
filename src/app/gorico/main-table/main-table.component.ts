@@ -10,7 +10,7 @@ import { Location } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FormViewParams, MessageView, TableViewParams, TabType } from '../interfaces';
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, ImportExportService, NavigationService, PubSubService, ReportService, ScrollService, TimeTrackerService, ToastService } from '../services';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, ReportService, ScrollService, TimeTrackerService, ToastService } from '../services';
 
 @Component({
     selector: 'main-table',
@@ -476,32 +476,10 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     getFormValues(): any {
         const _this = this;
-        let formValues = {};
         if (_this.tableType === 'form' && _this.formView != null) {
-            formValues = _this.formView.formGetter.formArray.first.form.value;
-            // process the booleans (1/0 instead of true/false)
-            for (const value in formValues) {
-                if (formValues.hasOwnProperty(value)) {
-                    const element = formValues[value];
-                    _this._console.log(element);
-                    if (element == null) {
-                        continue; // skip null entries
-                    }
-                    // decode combos
-                    if (element['id'] != null) {
-                        formValues[value] = element['id'];
-                    }
-                    // encode boolean
-                    else if (element === true) {
-                        formValues[value] = '1';
-                    }
-                    else if (element === false) {
-                        formValues[value] = '0';
-                    }
-                }
-            }
+            return HelperService.getFormValues(_this.formView.formGetter.formArray.first.form.value)
         }
-        return formValues;
+        return {};
     }
 
 }

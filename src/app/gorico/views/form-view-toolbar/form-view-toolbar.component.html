@@ -56,6 +56,116 @@
                 </ng-container>
             </mat-menu>
 
+            <div *ngIf="!formView.formGetter.hideActions.includes('import_export')">
+
+                <button mat-button [matMenuTriggerFor]="downloadUploadMenu">
+                    <mat-icon>import_export</mat-icon>
+                </button>
+
+                <mat-menu #downloadUploadMenu="matMenu" [overlapTrigger]="false">
+
+                    <button mat-menu-item [matMenuTriggerFor]="uploadMenu">
+                        <mat-icon>cloud_upload</mat-icon>
+                        <span>Upload</span>
+                    </button>
+
+                    <button mat-menu-item [matMenuTriggerFor]="downloadMenu">
+                        <mat-icon>cloud_download</mat-icon>
+                        <span>Download</span>
+                    </button>
+                </mat-menu>
+
+                <mat-menu #uploadMenu="matMenu" [overlapTrigger]="false">
+
+                    <button mat-menu-item (click)="formView.formGetter.uploadCSV()">
+                        <mat-icon>note_add</mat-icon>
+                        <span>Upload CSV</span>
+                    </button>
+
+                    <button *ngIf="formView.formGetter.importList && formView.formGetter.importList.length"
+                        mat-menu-item [matMenuTriggerFor]="advancedImportMenu">
+                        <mat-icon>miscellaneous_services</mat-icon>
+                        <span>Advanced</span>
+                    </button>
+                </mat-menu>
+
+                <mat-menu #advancedImportMenu="matMenu" [overlapTrigger]="false">
+
+                    <button *ngFor="let item of formView.formGetter.importList" mat-menu-item
+                        (click)="formView.formGetter.importAdvanced(item)">
+                        <mat-icon>format_align_justify</mat-icon>
+                        <span>{{item.label}}</span>
+                    </button>
+
+                </mat-menu>
+
+                <mat-menu #downloadMenu="matMenu" [overlapTrigger]="false">
+
+                    <button mat-menu-item [matMenuTriggerFor]="downloadCSVMenu">
+                        <mat-icon>reorder</mat-icon>
+                        <span>CSV</span>
+                    </button>
+
+                    <button mat-menu-item [matMenuTriggerFor]="downloadExcelMenu">
+                        <mat-icon svgIcon="excel"></mat-icon>
+                        <span>Excel</span>
+                    </button>
+
+                </mat-menu>
+
+                <mat-menu #downloadCSVMenu="matMenu" [overlapTrigger]="false">
+
+                    <button mat-menu-item (click)="formView.formGetter.downloadTemplateFile()">
+                        <mat-icon>assignment</mat-icon>
+                        <span>Download Template</span>
+                    </button>
+
+                    <button mat-menu-item (click)="formView.formGetter.downloadCSV()">
+                        <mat-icon>format_align_justify</mat-icon>
+                        <span>Download</span>
+                    </button>
+
+                    <button *ngIf="formView.formGetter.exportList && formView.formGetter.exportList.length"
+                        mat-menu-item [matMenuTriggerFor]="advancedCsvMenu">
+                        <mat-icon>miscellaneous_services</mat-icon>
+                        <span>Advanced</span>
+                    </button>
+                </mat-menu>
+
+                <mat-menu #downloadExcelMenu="matMenu" [overlapTrigger]="false">
+
+                    <button mat-menu-item (click)="formView.formGetter.downloadExcel()">
+                        <mat-icon>format_align_justify</mat-icon>
+                        <span>Download</span>
+                    </button>
+
+                    <button *ngIf="formView.formGetter.exportList && formView.formGetter.exportList.length"
+                        mat-menu-item [matMenuTriggerFor]="advancedExcelMenu">
+                        <mat-icon>miscellaneous_services</mat-icon>
+                        <span>Advanced</span>
+                    </button>
+                </mat-menu>
+
+                <mat-menu #advancedCsvMenu="matMenu" [overlapTrigger]="false">
+
+                    <button *ngFor="let item of formView.formGetter.exportList" mat-menu-item
+                        (click)="formView.formGetter.downloadAdvancedCSV(item)">
+                        <mat-icon>format_align_justify</mat-icon>
+                        <span>{{item.label}}</span>
+                    </button>
+
+                </mat-menu>
+                <mat-menu #advancedExcelMenu="matMenu" [overlapTrigger]="false">
+
+                    <button *ngFor="let item of formView.formGetter.exportList" mat-menu-item
+                        (click)="formView.formGetter.downloadAdvancedExcel(item)">
+                        <mat-icon>format_align_justify</mat-icon>
+                        <span>{{item.label}}</span>
+                    </button>
+
+                </mat-menu>
+            </div>
+
             <button mat-button *ngIf="!formView.formGetter.hideActions.includes('startEvent')"
                 (click)="formView.startEvent()">
                 <mat-icon>play_arrow</mat-icon>
