@@ -120,6 +120,17 @@
             "newLine": false,
             "size": 1,
             "queryCond": "avr.codice_fiscale in(select codice_fiscale from entrasp.conta_anagrafiche_per_codice_fiscale where conta>1 and codice_fiscale is not null and codice_fiscale!='' and codice_part='€global_codice_part€')"
+        },
+        {
+            "fieldName": "documenti_scaduti",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Documenti scaduti",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "(data_scadenza_documento<CURRENT_DATE and data_scadenza_documento is not null)"
         }
     ],
     "form_keys": [
@@ -294,7 +305,7 @@
                         "readOnly": false
                     },
                     {
-                        "autoGenerate": true,
+                        "autoGenerate": false,
                         "format": {
                             "dataType": "text",
                             "viewType": "combobox",
@@ -305,6 +316,7 @@
                         "isPrimary": false,
                         "key": "codice_tipo_documento",
                         "label": "Tipo Documento",
+                        "queryFunct": "SELECT codice_tipo_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
                         "newLine": false,
                         "readOnly": false,
                         "size": 2
@@ -319,6 +331,7 @@
                         "isPrimary": false,
                         "key": "data_scadenza_documento",
                         "label": "Data Scadenza Documento",
+                        "queryFunct": "SELECT data_scadenza_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
                         "newLine": false,
                         "readOnly": false,
                         "size": 2
@@ -337,15 +350,6 @@
                             "eventName": "nuova_scadenza_documento",
                             "eventTrigger": "press"
                         },
-                        "inputEvents": [
-                            {
-                                "eventName": "nuova_scadenza_documento",
-                                "actionType": "query",
-                                "queryFunct": "select entrasp.anagrafica_id_new_version($codice_azienda$, $id_anagrafica$, $prog_vr$, £codice_tipo_documento£, £data_scadenza_documento£) as nuovo_doc",
-                                "condition": "none",
-                                "values": []        
-                            }
-                        ],       
                         "style": {
                             "background_color": "#25599C",
                             "font_color": "white"
@@ -353,7 +357,6 @@
                         "readOnly": false,
                         "sameOrigin": false
                     }
-            
                 ]
             },
             "inputEvents": [
@@ -531,8 +534,17 @@
                     "actionType": "query",
                     "condition": "none",
                     "eventName": "clienti_button_nuova_versione",
-                    "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version('€global_codice_azienda€',$id_anagrafica$, $prog_vr$)",
-                    "values": []
+                    "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version('€global_codice_azienda€',$id_anagrafica$, $prog_vr$) as prog_vr",
+                    "values": [],
+                    "successMessage": "Done!"
+                },
+                {
+                    "eventName": "nuova_scadenza_documento",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.anagrafica_id_new_version('€global_codice_azienda€', $id_anagrafica$, $prog_vr$, $codice_tipo_documento$, ($data_scadenza_documento$)::date) as prog_vr",
+                    "condition": "none",
+                    "values": [],
+                    "successMessage": "Done!"
                 }
             ],
             "isHidden": false,
@@ -678,7 +690,7 @@
         },
         {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idcentrogestdefault=>$id_centro_gest_default$);",
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, codicetipodoc=>$codice_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date);",
             "type": "main"
         },
         {
@@ -871,5 +883,11 @@
     ],
     "querySuffixes": {
         "tableViewSuffix": "limit 500"
-    }
+    },
+    "inputEvents": [
+        {
+            "actionType": "reload",
+            "eventName": "formReload"
+        }
+    ]
 }
