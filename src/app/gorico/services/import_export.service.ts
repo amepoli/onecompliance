@@ -580,7 +580,7 @@ export class ImportExportService {
         }
     }
 
-    requestGetCSV(label: string) {
+    requestGetCSV(label: string = null) {
         // if label is null, this must be normal CSV
         if (label === null) {
             this.onGetCSVRequested.emit(null);
@@ -593,7 +593,7 @@ export class ImportExportService {
         }
     }
 
-    requestGetExcel(label) {
+    requestGetExcel(label: string = null) {
         // if label is null, this must be normal Excel
         if (label === null) {
             this.onGetExcelRequested.emit(null);

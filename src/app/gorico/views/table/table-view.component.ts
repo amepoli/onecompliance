@@ -2,7 +2,7 @@ import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleCha
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatRow } from '@angular/material/table';
-import { FieldConfig, FormViewParams, MessageElement, MessageView, SearchViewKey, TableViewKey, TableViewParams } from 'app/gorico/interfaces';
+import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, SearchViewKey, TableViewKey, TableViewParams } from 'app/gorico/interfaces';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -66,7 +66,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     isFullScreen = false;
 
     hideActions: string[] = []; // Hide actions
-    
+    importList: ImportItem[] = [];
+    exportList: ExportItem[] = [];
+
     messages: MessageElement[] = []; // Messages
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
@@ -250,8 +252,24 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     }
 
                     
+                    // Load Import Queries list if available
+                    if (params.importQueries && params.importQueries.tableQueries) {
+                        _this.importList = params.importQueries.tableQueries;
+                    }
+                    else {
+                        _this.importList = [];
+                    }
+
+                    // Load Export Queries list if available
+                    if (params.exportQueries && params.exportQueries.tableQueries) {
+                        _this.exportList = params.exportQueries.tableQueries;
+                    }
+                    else {
+                        _this.exportList = [];
+                    }
+
                     if (!_this.isTabMode){
-                        // Load Import Queries list if available
+                        // Propogate Import Queries list if available
                         if (params.importQueries && params.importQueries.tableQueries) {
                             _this._console.log('importQueries', params.importQueries);
                             _this._importExportService.updateImportList(_this.tableData.entryName, params.importQueries.tableQueries);
@@ -260,7 +278,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                             _this._importExportService.updateImportList(_this.tableData.entryName, []);
                         }
 
-                        // Load Export Queries list if available
+                        // Propogate Export Queries list if available
                         if (params.exportQueries && params.exportQueries.tableQueries) {
                             _this._console.log('exportQueries', params.exportQueries);
                             _this._importExportService.updateExportList(_this.tableData.entryName, params.exportQueries.tableQueries);
@@ -880,5 +898,35 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             }
         }
         return (100 - margins - sumWidths); // considering 4% margins
+    }
+
+
+    // Import export stuff
+    uploadCSV(): void {
+        this._importExportService.importCSV(this.tableData.entryName);
+    }
+
+    importAdvanced(item: ImportItem) {
+        this._importExportService.importAdvancedCSV(this.tableData.entryName, this.tableData.keys, item.label, false);    
+    }
+
+    downloadTemplateFile(): void {
+        this._importExportService.getTemplateFile(this.tableData.entryName);
+    }
+
+    downloadCSV() {
+        this._importExportService.downloadCSV(this.tableData.entryName, this.authService.getCurrentCompany(this.currentKeys), this.tableData.keys, null, false, {}, null);
+    }
+
+    downloadAdvancedCSV(item: ExportItem): void {
+        this._importExportService.downloadCSV(this.tableData.entryName, this.authService.getCurrentCompany(this.currentKeys), this.tableData.keys, null, false, {}, item.label);
+    }
+
+    downloadExcel() {
+        this._importExportService.downloadExcel(this.tableData.entryName, this.authService.getCurrentCompany(this.currentKeys), this.tableData.keys, null, false, {}, null);
+    }
+
+    downloadAdvancedExcel(item: ExportItem): void {
+        this._importExportService.downloadExcel(this.tableData.entryName, this.authService.getCurrentCompany(this.currentKeys), this.tableData.keys, null, false, {}, item.label);
     }
 }

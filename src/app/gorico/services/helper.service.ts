@@ -183,6 +183,33 @@ export class HelperService {
     }
 
     /**
+     * Get form values
+     */
+    public static getFormValues(formValues: any): any {
+        // process the booleans (1/0 instead of true/false)
+        for (const value in formValues) {
+            if (formValues.hasOwnProperty(value)) {
+                const element = formValues[value];
+                if (element == null) {
+                    continue; // skip null entries
+                }
+                // decode combos
+                if (element['id'] != null) {
+                    formValues[value] = element['id'];
+                }
+                // encode boolean
+                else if (element === true) {
+                    formValues[value] = '1';
+                }
+                else if (element === false) {
+                    formValues[value] = '0';
+                }
+            }
+        }
+        return formValues;
+    }
+
+    /**
      * Refresh application
      */
     public static refreshApp() {

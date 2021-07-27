@@ -4,6 +4,110 @@
         <mat-form-field class="filter">
             <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
         </mat-form-field>
+
+        <div *ngIf="!hideActions.includes('import_export')">
+
+            <button mat-button [matMenuTriggerFor]="downloadUploadMenu">
+                <mat-icon>import_export</mat-icon>
+            </button>
+
+            <mat-menu #downloadUploadMenu="matMenu" [overlapTrigger]="false">
+
+                <button mat-menu-item [matMenuTriggerFor]="uploadMenu">
+                    <mat-icon>cloud_upload</mat-icon>
+                    <span>Upload</span>
+                </button>
+
+                <button mat-menu-item [matMenuTriggerFor]="downloadMenu">
+                    <mat-icon>cloud_download</mat-icon>
+                    <span>Download</span>
+                </button>
+            </mat-menu>
+
+            <mat-menu #uploadMenu="matMenu" [overlapTrigger]="false">
+
+                <button mat-menu-item (click)="uploadCSV()">
+                    <mat-icon>note_add</mat-icon>
+                    <span>Upload CSV</span>
+                </button>
+
+                <button *ngIf="importList && importList.length" mat-menu-item [matMenuTriggerFor]="advancedImportMenu">
+                    <mat-icon>miscellaneous_services</mat-icon>
+                    <span>Advanced</span>
+                </button>
+            </mat-menu>
+
+            <mat-menu #advancedImportMenu="matMenu" [overlapTrigger]="false">
+
+                <button *ngFor="let item of importList" mat-menu-item (click)="importAdvanced(item)">
+                    <mat-icon>format_align_justify</mat-icon>
+                    <span>{{item.label}}</span>
+                </button>
+
+            </mat-menu>
+
+            <mat-menu #downloadMenu="matMenu" [overlapTrigger]="false">
+
+                <button mat-menu-item [matMenuTriggerFor]="downloadCSVMenu">
+                    <mat-icon>reorder</mat-icon>
+                    <span>CSV</span>
+                </button>
+
+                <button mat-menu-item [matMenuTriggerFor]="downloadExcelMenu">
+                    <mat-icon svgIcon="excel"></mat-icon>
+                    <span>Excel</span>
+                </button>
+
+            </mat-menu>
+
+            <mat-menu #downloadCSVMenu="matMenu" [overlapTrigger]="false">
+
+                <button mat-menu-item (click)="downloadTemplateFile()">
+                    <mat-icon>assignment</mat-icon>
+                    <span>Download Template</span>
+                </button>
+
+                <button mat-menu-item (click)="downloadCSV()">
+                    <mat-icon>format_align_justify</mat-icon>
+                    <span>Download</span>
+                </button>
+
+                <button *ngIf="exportList && exportList.length" mat-menu-item [matMenuTriggerFor]="advancedCsvMenu">
+                    <mat-icon>miscellaneous_services</mat-icon>
+                    <span>Advanced</span>
+                </button>
+            </mat-menu>
+
+            <mat-menu #downloadExcelMenu="matMenu" [overlapTrigger]="false">
+
+                <button mat-menu-item (click)="downloadExcel()">
+                    <mat-icon>format_align_justify</mat-icon>
+                    <span>Download</span>
+                </button>
+
+                <button *ngIf="exportList && exportList.length" mat-menu-item [matMenuTriggerFor]="advancedExcelMenu">
+                    <mat-icon>miscellaneous_services</mat-icon>
+                    <span>Advanced</span>
+                </button>
+            </mat-menu>
+
+            <mat-menu #advancedCsvMenu="matMenu" [overlapTrigger]="false">
+
+                <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedCSV(item)">
+                    <mat-icon>format_align_justify</mat-icon>
+                    <span>{{item.label}}</span>
+                </button>
+
+            </mat-menu>
+            <mat-menu #advancedExcelMenu="matMenu" [overlapTrigger]="false">
+
+                <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedExcel(item)">
+                    <mat-icon>format_align_justify</mat-icon>
+                    <span>{{item.label}}</span>
+                </button>
+
+            </mat-menu>
+        </div>
         <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="50"></mat-paginator>
 
     </div>
