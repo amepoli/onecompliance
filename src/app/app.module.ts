@@ -17,14 +17,14 @@ import { fuseConfig } from 'app/fuse-config';
 import { AppComponent } from 'app/app.component';
 import { AppStoreModule } from 'app/store/store.module';
 import { LayoutModule } from 'app/layout/layout.module';
-import { LoginPageModule } from 'app/gorico/login-page/login-page.module';
-import { RegisterModule } from 'app/gorico/login-page/register.module';
-import { MainTableModule } from 'app/gorico/main-table/main-table.module';
-import { MailConfirmModule } from 'app/gorico/login-page/mail-confirm.module';
-import { ForgotPasswordModule } from 'app/gorico/login-page/forgot-password.module';
+import { LoginPageModule } from 'app/oc/login-page/login-page.module';
+import { RegisterModule } from 'app/oc/login-page/register.module';
+import { MainTableModule } from 'app/oc/main-table/main-table.module';
+import { MailConfirmModule } from 'app/oc/login-page/mail-confirm.module';
+import { ForgotPasswordModule } from 'app/oc/login-page/forgot-password.module';
 import { AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
-import { MainDashboardsModule } from 'app/gorico/main-dashboards/main-dashboards.module';
-import { RedirectModule } from 'app/gorico/redirect/redirect.module';
+import { MainDashboardsModule } from 'app/oc/main-dashboards/main-dashboards.module';
+import { RedirectModule } from 'app/oc/redirect/redirect.module';
 
 import { ToastrModule } from 'ngx-toastr';
 

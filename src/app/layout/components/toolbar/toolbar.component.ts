@@ -12,18 +12,18 @@ import { navigation } from 'app/navigation/navigation';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
 
-import { AuthService } from 'app/gorico/services/auth.service';
-import { BackendService } from 'app/gorico/services/backend.service';
+import { AuthService } from 'app/oc/services/auth.service';
+import { BackendService } from 'app/oc/services/backend.service';
 
 import { Router } from '@angular/router';
 
-import { PubSubService } from 'app/gorico/services/pubsub.service';
-import { ReportService } from 'app/gorico/services/report.service';
-import { ImportExportService } from 'app/gorico/services/import_export.service';
-import { NavigationService } from 'app/gorico/services/navigation.service';
-import { ConsoleLoggerService } from 'app/gorico/services/console_logger.service';
-import { ExportItem, ImportItem, MessageElement, UserInfo } from 'app/gorico/interfaces';
-import { HelperService } from 'app/gorico/services';
+import { PubSubService } from 'app/oc/services/pubsub.service';
+import { ReportService } from 'app/oc/services/report.service';
+import { ImportExportService } from 'app/oc/services/import_export.service';
+import { NavigationService } from 'app/oc/services/navigation.service';
+import { ConsoleLoggerService } from 'app/oc/services/console_logger.service';
+import { ExportItem, ImportItem, MessageElement, UserInfo } from 'app/oc/interfaces';
+import { HelperService } from 'app/oc/services';
 
 @Component({
     selector: 'toolbar',
@@ -294,7 +294,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     }
 
     gotoDashboard(): void {
-        this.router.navigate(['/gorico/dashboard', {table: this.dashboardTables}]);
+        this.router.navigate(['/oc/dashboard', {table: this.dashboardTables}]);
     }
 
     getReportList(): void {

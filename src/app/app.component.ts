@@ -10,13 +10,13 @@ import { FuseNavigationService } from '@fuse/components/navigation/navigation.se
 import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 import { FuseSplashScreenService } from '@fuse/services/splash-screen.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { AuthService } from 'app/gorico/services/auth.service';
+import { AuthService } from 'app/oc/services/auth.service';
 
 import { navigation } from 'app/navigation/navigation';
 
 import { Router, NavigationEnd } from '@angular/router';
-import { BackendService } from './gorico/services/backend.service';
-import { ConsoleLoggerService } from './gorico/services/console_logger.service';
+import { BackendService } from './oc/services/backend.service';
+import { ConsoleLoggerService } from './oc/services/console_logger.service';
 
 @Component({
     selector: 'app',
