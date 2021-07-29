@@ -2,7 +2,7 @@ import { FuseNavigation } from '@fuse/types';
 
 export const navigation: FuseNavigation[] = [
     {
-        id       : 'gorico',
+        id       : 'oc',
         title    : 'Menu',
         type     : 'group',
         children : [
@@ -12,7 +12,7 @@ export const navigation: FuseNavigation[] = [
                 translate: 'NAV.ME',
                 type     : 'item',
                 icon     : 'account_circle',
-                url      : '/gorico/main-table/me'
+                url      : '/oc/main-table/me'
             }
         ]
     }

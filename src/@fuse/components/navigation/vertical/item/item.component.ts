@@ -2,7 +2,7 @@ import { AfterViewInit, Component, HostBinding, Input } from '@angular/core';
 import { Event, NavigationEnd, Router } from '@angular/router';
 
 import { FuseNavigationItem } from '@fuse/types';
-import { HelperService } from 'app/gorico/services/helper.service';
+import { HelperService } from 'app/oc/services/helper.service';
 
 @Component({
     selector: 'fuse-nav-vertical-item',
