@@ -191,13 +191,13 @@ exports.handler = async (event, context) => {
             // Let's run query to get keys arrangement
             query = `select * from entrasp.grc_listacampiditabella_pk('${bus_object}')`;
             response = await client.query(query);
-            console.log ('Query keys: ', query, ' response ', response, ' keys ', keys);
+            console.log('Query keys: ', query, ' response ', response, ' keys ', keys);
             if (response.rows && response.rows.length && response.rows[0].grc_listacampiditabella_pk) {
                 // Create query keys 
                 let queryKeys = response.rows[0].grc_listacampiditabella_pk.split(' ').join('').split(',');
                 if (queryKeys != null) {
                     chiave = keys[queryKeys[0]];
-                    for (let i= 1; i < queryKeys.length; i++) {
+                    for (let i = 1; i < queryKeys.length; i++) {
                         chiave = chiave + '^' + keys[queryKeys[i]];
                     }
                 }
@@ -239,21 +239,26 @@ exports.handler = async (event, context) => {
                 const requestBody = JSON.parse(event.body);
                 console.log(checksum, actualChecksum);
                 if (checksum === actualChecksum) { // file correctly uploaded
-                    query = `SELECT (MAX(id_risorsa)+1) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
+                    query = `SELECT coalesce(max(id_risorsa),0) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
+                    // query = `SELECT (MAX(id_risorsa)+1) as         id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
                     response = await client.query(query);
                     const nextId = response['rows'][0]['id_risorsa'];
 
-                    query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, content_type, flag_indexed, id_tipo_allegato)
+                    query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, 
+                        descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, 
+                        content_type, flag_indexed, id_tipo_allegato)
                     values ('${company}', ${nextId}, '${requestBody.nickname}',1, '${requestBody.descrizione}', '${requestBody.autore}', 
                     '${date}', '${date}', '${requestBody.url}','${requestBody.descrizione_breve}', '${date}', '${requestBody.content_type}', 1, ${requestBody.id_tipo_allegato}) returning id_risorsa;`;
                     response = await client.query(query);
                     console.log(query);
 
-                    query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) values ('${company}', ${nextId}, '${bus_object}','${chiave}');`;
+                    query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
+                    values ('${company}', ${nextId}, '${bus_object}','${chiave}');`;
                     response = await client.query(query);
                     console.log(query);
 
-                    query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1) 
+                    query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, 
+                        file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1) 
                   values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
                           '${requestBody.autore}', '${requestBody.nickname}', '${requestBody.content_type}', ${requestBody.dimensione}, '${checksum}');`;
                     response = await client.query(query);
@@ -281,7 +286,7 @@ exports.handler = async (event, context) => {
                 body = { result: 'OK', url: signedUrl };
             }
         }
-        
+
     } catch (e) {
         console.log(e);
         body = { result: 'KO', reason: 'Server error' };
