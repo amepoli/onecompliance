@@ -19,7 +19,7 @@ export interface FieldInputEvent {
   actionType: 'hide' | 'show' | 'readOnly' | 'query' | 'query_style' | 'show_message' | 'toggle' | 'update' | 'update_style' | 'update_time_tracker';
   eventName: string;
   values: any[];
-  condition: 'equalTo' | 'greatorThan' | 'lessThan' | 'none';
+  condition: 'equalTo' | 'notEqualTo' | 'greatorThan' | 'lessThan' | 'none';
   queryFunct?: string;
   styleAttribute?: 'background_color' | 'font_color';
   updateFunct?: string;
