@@ -1,4 +1,4 @@
 export interface OutputEvent {
     'eventName': string,
-    'eventTrigger': 'onSave' | 'onReload'
+    'eventTrigger': 'onAddNew' | 'onSave' | 'onReload'
 }

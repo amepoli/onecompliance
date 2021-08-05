@@ -131,6 +131,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // check and in case publish a table event on PubSub
         let subscription = _this.formArray.changes.subscribe(
             c => { // publish when last element has been shown
+                if (_this.formParams && _this.formParams.isNew && _this.formArray.length) {
+                    _this.runOnAddNewEvents();
+                }
                 if (_this.formParams && !_this.formParams.isNew && _this.formArray.length) {
                     _this.runOnReloadEvents();
                 }
@@ -192,6 +195,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         this.pagination.curPage = curPage;
         this.pagination.curRecords = curRecords;
     
+    }
+
+    public runOnAddNewEvents() {
+        if (this.outputEvents != null && this.outputEvents.length) {
+            for (let i = 0; i < this.outputEvents.length; i++) {
+                const outputEvent = this.outputEvents[i];
+                if (!outputEvent.eventTrigger || outputEvent.eventTrigger === 'onAddNew') {
+                    this.pubSubService.publishEvent(outputEvent.eventName, { origin: 'table', index: 0, data: this.filteredFormData, type: 'page' });
+                }
+            }
+        }
     }
 
     public runOnReloadEvents() {
