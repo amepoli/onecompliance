@@ -852,28 +852,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // not a ViewProperties event, check the condition if any -- TODO: support other conditions beyond equalTo 
         let conditionMet = true;
 
-        if (event.condition === 'equalTo') {
+        if (event.condition != null) {
             // normalize if boolean conditions
             let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v);
             let msgData = Array.isArray(value.data) ? value.data : [value.data];
             msgData = msgData.map(m => m === true || m === 'true' || m === 't' ? '1' : m === false || m === 'false' || m === 'f' ? '0' : m);
             // handle jolly chars 
             eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
-            // tricky way to compare two arrays
-            conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
+        
+            if (event.condition === 'equalTo') {
+                // tricky way to compare two arrays
+                conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
+            }
+            else if (event.condition === 'notEqualTo' ) {
+                // tricky way to compare two arrays
+                conditionMet = JSON.stringify(eventValues) !== JSON.stringify(msgData);
+            }
         }
-
-        if (event.condition === 'notEqualTo' ) {
-            // normalize if boolean conditions
-            let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v);
-            let msgData = Array.isArray(value.data) ? value.data : [value.data];
-            msgData = msgData.map(m => m === true || m === 'true' || m === 't' ? '1' : m === false || m === 'false' || m === 'f' ? '0' : m);
-            // handle jolly chars 
-            eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
-            // tricky way to compare two arrays
-            conditionMet = JSON.stringify(eventValues) !== JSON.stringify(msgData);
-        }
-
+        
         if (event.actionType === 'show' || event.actionType === 'hide' || event.actionType === 'toggle') {
             // get the listener element if not full table
             let listener: FieldConfig = null;
