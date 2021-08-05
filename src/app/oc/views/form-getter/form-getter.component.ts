@@ -130,13 +130,18 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this;
         // check and in case publish a table event on PubSub
         let subscription = _this.formArray.changes.subscribe(
-            c => { // publish when last element has been shown
-                if (_this.formParams && _this.formParams.isNew && _this.formArray.length) {
-                    _this.runOnAddNewEvents();
-                }
-                if (_this.formParams && !_this.formParams.isNew && _this.formArray.length) {
-                    _this.runOnReloadEvents();
-                }
+            c => {
+                // run events based on form state
+                if (_this.formParams && _this.formArray.length) {
+                    // If adding new, run on Add New Events
+                    if (_this.formParams.isNew) {
+                        _this.runOnAddNewEvents();
+                    }
+                    // otherwise, run on Reload Events
+                    else {
+                        _this.runOnReloadEvents();
+                    }
+                }                
             }
         );
         _this.generalSubscriptions.push(subscription);
