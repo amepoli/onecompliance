@@ -130,10 +130,18 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this;
         // check and in case publish a table event on PubSub
         let subscription = _this.formArray.changes.subscribe(
-            c => { // publish when last element has been shown
-                if (_this.formParams && !_this.formParams.isNew && _this.formArray.length) {
-                    _this.runOnReloadEvents();
-                }
+            c => {
+                // run events based on form state
+                if (_this.formParams && _this.formArray.length) {
+                    // If adding new, run on Add New Events
+                    if (_this.formParams.isNew) {
+                        _this.runOnAddNewEvents();
+                    }
+                    // otherwise, run on Reload Events
+                    else {
+                        _this.runOnReloadEvents();
+                    }
+                }                
             }
         );
         _this.generalSubscriptions.push(subscription);
@@ -192,6 +200,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         this.pagination.curPage = curPage;
         this.pagination.curRecords = curRecords;
     
+    }
+
+    public runOnAddNewEvents() {
+        if (this.outputEvents != null && this.outputEvents.length) {
+            for (let i = 0; i < this.outputEvents.length; i++) {
+                const outputEvent = this.outputEvents[i];
+                if (!outputEvent.eventTrigger || outputEvent.eventTrigger === 'onAddNew') {
+                    this.pubSubService.publishEvent(outputEvent.eventName, { origin: 'table', index: 0, data: this.filteredFormData, type: 'page' });
+                }
+            }
+        }
     }
 
     public runOnReloadEvents() {
@@ -838,28 +857,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // not a ViewProperties event, check the condition if any -- TODO: support other conditions beyond equalTo 
         let conditionMet = true;
 
-        if (event.condition === 'equalTo') {
+        if (event.condition != null) {
             // normalize if boolean conditions
             let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v);
             let msgData = Array.isArray(value.data) ? value.data : [value.data];
             msgData = msgData.map(m => m === true || m === 'true' || m === 't' ? '1' : m === false || m === 'false' || m === 'f' ? '0' : m);
             // handle jolly chars 
             eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
-            // tricky way to compare two arrays
-            conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
+        
+            if (event.condition === 'equalTo') {
+                // tricky way to compare two arrays
+                conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
+            }
+            else if (event.condition === 'notEqualTo' ) {
+                // tricky way to compare two arrays
+                conditionMet = JSON.stringify(eventValues) !== JSON.stringify(msgData);
+            }
         }
-
-        if (event.condition === 'notEqualTo' ) {
-            // normalize if boolean conditions
-            let eventValues = event.values.map(v => v === 'true' ? '1' : v === 'false' ? '0' : v);
-            let msgData = Array.isArray(value.data) ? value.data : [value.data];
-            msgData = msgData.map(m => m === true || m === 'true' || m === 't' ? '1' : m === false || m === 'false' || m === 'f' ? '0' : m);
-            // handle jolly chars 
-            eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
-            // tricky way to compare two arrays
-            conditionMet = JSON.stringify(eventValues) !== JSON.stringify(msgData);
-        }
-
+        
         if (event.actionType === 'show' || event.actionType === 'hide' || event.actionType === 'toggle') {
             // get the listener element if not full table
             let listener: FieldConfig = null;
