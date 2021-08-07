@@ -84,16 +84,18 @@
     {
       "autoGenerate": false,
       "format": {
-          "value": "0",
-          "viewType": "checkbox"
+        "value": "0",
+        "viewType": "checkbox",
+        "dataType": "boolean"
       },
       "key": "flag_classificazione",
       "label": "Argomento padre (di classificazione)",
+      "insertUpdateFunct": "£flag_classificazione£::boolean",
       "newLine": false,
       "readOnly": false,
       "isPrimary": false,
       "isHidden": false
-  }
+    }
   ],
   "search_keys": [
     {
@@ -119,13 +121,25 @@
     {
       "fieldName": "flag_classificazione",
       "format": {
-          "value": "0",
-          "viewType": "checkbox"
+        "value": "0",
+        "viewType": "checkbox"
       },
       "label": "Macro categorie",
       "newLine": false,
       "queryCond": "flag_classificazione=true"
-  }
+    },
+    {
+      "fieldName": "categorie_modello_test_s",
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3425 order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Categorie modelli test",
+      "newLine": false,
+      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))"
+    }
   ],
   "subTables": [
     {

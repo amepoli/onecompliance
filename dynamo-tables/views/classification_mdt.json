@@ -38,14 +38,14 @@
   ],
   "search_keys": [
     {
-      "fieldName": "id_argomento",
+      "fieldName": "id_argomento_s",
       "format": {
         "dataType": "number",
         "viewType": "input"
       },
       "label": "ID",
       "newLine": false,
-      "queryCond": "arg.id_argomento=$id_argomento$"
+      "queryCond": "arg.id_argomento=$id_argomento_s$"
     },
     {
       "fieldName": "codice",
@@ -90,16 +90,16 @@
       "queryCond": "arg.id_argomento in(select mt.id_argomento from entrasp.modelli_test mt)"
     },
     {
-      "fieldName": "categorie_modello_test",
+      "fieldName": "categorie_modello_test_s",
       "format": {
           "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3425 order by descrizione",
           "options": [],
           "viewType": "combobox",
           "dataType": "text"
       },
-      "label": "Argomento",
+      "label": "Categorie modelli test",
       "newLine": false,
-      "queryCond": "arg.id_argomento in(select mt.id_argomento from entrasp.modelli_test mt)"
+      "queryCond": "array[arg.id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))"
   }
   ],
   "subTables": [
