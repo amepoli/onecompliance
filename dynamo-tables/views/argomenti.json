@@ -79,7 +79,7 @@
       "label": "Descrizione",
       "newLine": false,
       "readOnly": false,
-      "size": 1.5
+      "size": 8
     },
     {
       "autoGenerate": false,
@@ -94,7 +94,8 @@
       "newLine": false,
       "readOnly": false,
       "isPrimary": false,
-      "isHidden": false
+      "isHidden": false,
+      "size": 2
     }
   ],
   "search_keys": [
@@ -119,6 +120,66 @@
       "queryCond": "(UPPER(descrizione) like '%'||UPPER('€descr_rs')||'%' or UPPER(descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')"
     },
     {
+      "fieldName": "categorie_modello_test_s",
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=45 order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Categorie modelli test",
+      "newLine": false,
+      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))"
+    },
+    {
+      "fieldName": "attivita_s",
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3417 order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Tipo modello di progetto",
+      "newLine": true,
+      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($attivita_s$))"
+    },
+    {
+      "fieldName": "centro_gestionale_s",
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=349 order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Centro gestionale",
+      "newLine": false,
+      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($centro_gestionale_s$))"
+    },
+    {
+      "fieldName": "tipo_intermediario_s",
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=133 order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Tipo intermediario",
+      "newLine": true,
+      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($tipo_intermediario_s$))"
+    },
+    {
+      "fieldName": "livello_controllo_s",
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3368 order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Livello controllo",
+      "newLine": true,
+      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($livello_controllo_s$))"
+    },
+    {
       "fieldName": "flag_classificazione",
       "format": {
         "value": "0",
@@ -127,19 +188,8 @@
       "label": "Macro categorie",
       "newLine": false,
       "queryCond": "flag_classificazione=true"
-    },
-    {
-      "fieldName": "categorie_modello_test_s",
-      "format": {
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3425 order by descrizione",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "label": "Categorie modelli test",
-      "newLine": false,
-      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))"
     }
+    
   ],
   "subTables": [
     {
@@ -181,16 +231,6 @@
         }
       ],
       "label": "Modelli Verifica"
-    },
-    {
-      "entryKey": "modelli_test_extended_sub_of_argomenti",
-      "keys": [
-        {
-          "parent": "id_argomento",
-          "son": "id_argomento"
-        }
-      ],
-      "label": "Modelli Verifica Estesi"
     },
     {
       "entryKey": "rischi_argomenti_sub",

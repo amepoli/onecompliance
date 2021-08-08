@@ -3,6 +3,13 @@
   "entryKey": "argomenti_sub_of_argomenti_father",
   "origin": "entrasp.argomenti_argomenti",
   "businessObjectName": "argomenti_argomenti",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select *, entrasp.argomenti_codice(id_argomento_father) as codice, entrasp.argomenti_descr(id_argomento_father) as argomento,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento_son$"
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -124,8 +131,31 @@
       "isPrimary": false,
       "queryFunct": "entrasp.argomenti_descr(id_argomento_father)",
       "key": "argomento",
-      "label": "Argomento Padre"
-    }
+      "label": "Argomento Padre",
+      "width": "40%"
+    },
+    {
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "6%",
+			"key": "button_argomento",
+  		"label": "Argomento",
+			"isButton": true,
+			"buttonAction": {
+				"target": "argomenti",
+				"viewType": "form",
+				"action": "navigate",
+				"keymap": [
+					{
+						"source": "id_argomento_father",
+						"destination": "id_argomento"
+					}
+				]
+			}
+		}
   ],
   "inputEvents": [
     {

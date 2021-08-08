@@ -4,7 +4,7 @@
     "origin": "entrasp.modelli_test_vr",
     "businessObjectName": "modelliTest",
     "querySuffixes": {
-        "tableViewSuffix": "order by mt.id_modello_test desc limit 100"
+        "tableViewSuffix": "order by mt.id_argomento desc limit 100"
     },
     "predefinedQueries": [
         {
@@ -554,18 +554,6 @@
             "queryCond": "mt.id_modello_test=$id_modello_test$"
         },
         {
-            "fieldName": "id_centro_gest",
-            "format": {
-                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Centro Gestionale",
-            "newLine": false,
-            "size": 4,
-            "queryCond": "mt.id_centro_gest= $id_centro_gest$"
-        },
-        {
             "fieldName": "no_external_code",
             "format": {
                 "value": "0",
@@ -596,7 +584,138 @@
             "label": "Titolo/Descrizione",
             "newLine": true,
             "queryCond": "(upper(mt.titolo) like '%'||upper('€titolo_search€')||'%' or upper(mt.descrizione) like '%'||upper('€titolo_search€')||'%')"
+        },
+        {
+            "fieldName": "categorie_modello_test_s",
+            "format": {
+              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=45 order by descrizione",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "label": "Categorie modelli test",
+            "newLine": false,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))"
+          },
+          {
+            "fieldName": "attivita_s",
+            "format": {
+              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3417 order by descrizione",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "label": "Tipo modello di progetto",
+            "newLine": true,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($attivita_s$))"
+          },
+          {
+            "fieldName": "centro_gestionale_s",
+            "format": {
+              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=349 order by descrizione",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "label": "Centro gestionale",
+            "newLine": false,
+            "queryCond": "array[id_argomento]<@any(select entrasp.argomenti_centro_gest($centro_gestionale_s$, 1))"
+          },
+          {
+            "fieldName": "tipo_intermediario_s",
+            "format": {
+              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=133 order by descrizione",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "label": "Tipo intermediario",
+            "newLine": true,
+            "queryCond": "array[id_argomento]<@any(select entrasp.argomenti_tipo_intermed($tipo_intermediario_s$, 1))"
+          },
+          {
+            "fieldName": "livello_controllo_s",
+            "format": {
+              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3368 order by descrizione",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "label": "Livello controllo",
+            "newLine": true,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($livello_controllo_s$))"
+          },
+          {
+            "fieldName": "no_questions",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza Domande",
+            "newLine": false,
+            "queryCond": "mt.id_modello_test not in(select distinct dm.id_modello_test from entrasp.domande dm where codice_azienda=$codice_azienda$)"
+        },
+        {
+            "fieldName": "no_sondaggi",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza Verifiche",
+            "newLine": false,
+            "queryCond": "mt.id_modello_test not in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$)"
+        },
+        {
+            "fieldName": "no_argomento",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza Argomento",
+            "newLine": false,
+            "queryCond": "mt.id_argomento is null"
+        },
+        {
+            "fieldName": "no_procedure",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza Processi",
+            "newLine": false,
+            "queryCond": "mt.id_modello_test not in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=mt.codice_azienda)"
+        },
+        {
+            "fieldName": "no_procedure",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con Processi",
+            "newLine": false,
+            "queryCond": "mt.id_modello_test in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=mt.codice_azienda)"
+        },
+        {
+            "fieldName": "with_presidi",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con Presidi",
+            "newLine": false,
+            "queryCond": "mt.id_modello_test in(select distinct pmt.id_modello_test from entrasp.domande_presidi pmt where codice_azienda=mt.codice_azienda)"
+        },
+        {
+            "fieldName": "no_presidi",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza Presidi",
+            "newLine": false,
+            "queryCond": "mt.id_modello_test not in(select distinct pmt.id_modello_test from entrasp.domande_presidi pmt where codice_azienda=mt.codice_azienda)"
         }
+       
     ],
     "subTables": [
         {
@@ -871,5 +990,12 @@
                 "queryString": "select * from entrasp.domande dm left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where dm.codice_azienda=$codice_azienda$ and dm.id_modello_test=$id_modello_test$ and dm.id_modello_test_vr=$id_modello_test_vr$"
             }
         ]
-    }
+    },
+    "hideActions": [
+        {
+            "viewType": "table",
+            "tableActionType": "quick-add"
+        }
+    ]
+
 }
