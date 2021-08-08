@@ -480,19 +480,7 @@
             "newLine": false,
             "queryCond": "1=1 or id_modello_test in (select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento is null)"
         },
-        {
-            "fieldName": "cod_att_princ_s",
-            "format": {
-                "comboQuery": "SELECT codice_attivita AS id, codice_attivita||'-'||descrizione AS name  FROM entrasp.attivita WHERE codice_azienda=$codice_azienda$ and codice_attivita_parent is null;",
-                "options": [],
-                "viewType": "combobox",
-                "dataType": "text"
-            },
-            "label": "Codice attivita principale",
-            "newLine": false,
-            "queryCond": "entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)= $cod_att_princ_s$"
-        },
-        {
+       {
             "fieldName": "titolo_search",
             "format": {
                 "dataType": "text",
@@ -559,9 +547,21 @@
                 "dataType": "text"
             },
             "label": "Livello controllo",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($livello_controllo_s$))"
-        }
+        },
+        {
+            "fieldName": "cod_att_princ_s",
+            "format": {
+                "comboQuery": "SELECT codice_attivita AS id, codice_attivita||'-'||descrizione AS name  FROM entrasp.attivita WHERE codice_azienda=$codice_azienda$ and codice_attivita_parent is null;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Codice attivita principale",
+            "newLine": false,
+            "queryCond": "entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)= $cod_att_princ_s$"
+        }    
     ],
     "subTables": [
         {
