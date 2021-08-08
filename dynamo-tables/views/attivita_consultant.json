@@ -41,29 +41,29 @@
             "eventName": "to_modello_test_from_attivita"
         },
         {
-			"actionTarget": {
-				"name": "attivita",
-				"type": "form",
-				"keymap": [
-					{
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
-					{
-						"source": "codice_attivita",
-						"destination": "codice_attivita"
-					}
-				]
-			},
-			"actionType": "navigate",
-			"eventName": "navigate_to_new_attivita"
-		}
+            "actionTarget": {
+                "name": "attivita",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_attivita",
+                        "destination": "codice_attivita"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "navigate_to_new_attivita"
+        }
     ],
     "predefinedQueries": [
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select *, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest  from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent is null and data_fine_validita is null;"
+            "queryString": "select *, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest  from entrasp.attivita where codice_attivita_parent is null and data_fine_validita is null;"
         },
         {
             "operation": "insert",
@@ -120,26 +120,25 @@
             "newLine": false,
             "readOnly": true,
             "inputEvents": [
-				{
-					"eventName": "attivita_duplica",
-					"actionType": "show_message",
-					"condition": "none",
-					"values": [],
-					"message": {
-						"messageText": "Sei sicuro di voler duplicare questa attivita? (si verrà automaticamente trasferiti nella nuova)",
-						"actionOnNo": {
-							"actionType": "query",
-							"queryFunct": "select 1;"
-						},
-						"actionOnYes": {
-							"actionType": "query",
-							"queryFunct": "select entrasp.attivita_duplica($codice_azienda$, $codice_attivita$) as codice_attivita;"
-						}
-					},
-					"outputEventWhenComplete": "navigate_to_new_attivita"
-				}
-			]
-
+                {
+                    "eventName": "attivita_duplica",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler duplicare questa attivita? (si verrà automaticamente trasferiti nella nuova)",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1;"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.attivita_duplica($codice_azienda$, $codice_attivita$) as codice_attivita;"
+                        }
+                    },
+                    "outputEventWhenComplete": "navigate_to_new_attivita"
+                }
+            ]
         },
         {
             "autoGenerate": false,
@@ -163,24 +162,24 @@
             "size": 2
         },
         {
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "duplica_attivita",
-			"buttonIcon": "content_copy",
-			"label": "Duplica attivita",
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "attivita_duplica",
-				"eventTrigger": "press"
-			},
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1
-		},
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "duplica_attivita",
+            "buttonIcon": "content_copy",
+            "label": "Duplica attivita",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "attivita_duplica",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+        },
         {
             "autoGenerate": false,
             "format": {
@@ -217,10 +216,10 @@
         {
             "autoGenerate": false,
             "format": {
-              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3417 order by descrizione",
-              "options": [],
-              "viewType": "combobox",
-              "dataType": "text"
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3417 order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -228,7 +227,7 @@
             "label": "Argomento",
             "readOnly": false,
             "newLine": true
-          },
+        },
         {
             "autoGenerate": false,
             "format": {
@@ -492,6 +491,76 @@
             "label": "Codice attivita principale",
             "newLine": false,
             "queryCond": "entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)= $cod_att_princ_s$"
+        },
+        {
+            "fieldName": "titolo_search",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Titolo/Descrizione",
+            "newLine": true,
+            "queryCond": "(upper(mt.titolo) like '%'||upper('€titolo_search€')||'%' or upper(mt.descrizione) like '%'||upper('€titolo_search€')||'%')"
+        },
+        {
+            "fieldName": "categorie_attivita_s",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3417 order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Categorie modelli di progetto",
+            "newLine": false,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_attivita_s$))"
+        },
+        {
+            "fieldName": "attivita_s",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3417 order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Tipo modello di progetto",
+            "newLine": true,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($attivita_s$))"
+        },
+        {
+            "fieldName": "centro_gestionale_s",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=349 order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Centro gestionale",
+            "newLine": false,
+            "queryCond": "array[id_argomento]<@any(select entrasp.argomenti_centro_gest($centro_gestionale_s$, 2))"
+        },
+        {
+            "fieldName": "tipo_intermediario_s",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=133 order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Tipo intermediario",
+            "newLine": true,
+            "queryCond": "array[id_argomento]<@any(select entrasp.argomenti_tipo_intermed($tipo_intermediario_s$, 2))"
+        },
+        {
+            "fieldName": "livello_controllo_s",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3368 order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Livello controllo",
+            "newLine": true,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($livello_controllo_s$))"
         }
     ],
     "subTables": [
@@ -538,7 +607,9 @@
             "label": "Progetti Associati"
         }
     ],
-    "querySuffixes": {"tableViewSuffix": "order by codice"},
+    "querySuffixes": {
+        "tableViewSuffix": "order by codice"
+    },
     "table_keys": [
         {
             "format": {
@@ -553,10 +624,11 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": true,
             "key": "codice_azienda",
-            "label": "codice_azienda"
+            "label": "codice_azienda",
+            "width": "10%"
         },
         {
             "format": {
@@ -603,11 +675,10 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "codice_attivita_principale",
-            "label": "Cod att. principale",
-            "width": "10%"
+            "label": "Cod att. principale"
         },
         {
             "format": {
