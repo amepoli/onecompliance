@@ -239,7 +239,7 @@ exports.handler = async (event, context) => {
                 const requestBody = JSON.parse(event.body);
                 console.log(checksum, actualChecksum);
                 if (checksum === actualChecksum) { // file correctly uploaded
-                    query = `SELECT coalesce(max(id_risorsa),0) as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
+                    query = `SELECT coalesce(max(id_risorsa),0) + 1 as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
                     // query = `SELECT (MAX(id_risorsa)+1) as         id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
                     response = await client.query(query);
                     const nextId = response['rows'][0]['id_risorsa'];
@@ -248,7 +248,8 @@ exports.handler = async (event, context) => {
                         descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, 
                         content_type, flag_indexed, id_tipo_allegato)
                     values ('${company}', ${nextId}, '${requestBody.nickname}',1, '${requestBody.descrizione}', '${requestBody.autore}', 
-                    '${date}', '${date}', '${requestBody.url}','${requestBody.descrizione_breve}', '${date}', '${requestBody.content_type}', 1, ${requestBody.id_tipo_allegato}) returning id_risorsa;`;
+                    '${date}', '${date}', '${requestBody.url}','${requestBody.descrizione_breve}', '${date}', '${requestBody.content_type}', 1, 
+                    ${requestBody.id_tipo_allegato}) returning id_risorsa;`;
                     response = await client.query(query);
                     console.log(query);
 
@@ -260,7 +261,8 @@ exports.handler = async (event, context) => {
                     query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, 
                         file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1) 
                   values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
-                          '${requestBody.autore}', '${requestBody.nickname}', '${requestBody.content_type}', ${requestBody.dimensione}, '${checksum}');`;
+                          '${requestBody.autore}', '${requestBody.nickname}', '${requestBody.content_type}', ${requestBody.dimensione}, 
+                          '${checksum}');`;
                     response = await client.query(query);
                     console.log(query);
                     body = { result: 'OK' };

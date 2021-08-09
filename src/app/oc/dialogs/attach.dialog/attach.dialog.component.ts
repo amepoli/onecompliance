@@ -279,8 +279,22 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
                                         responseCheck => {
-                                            _this.fileService.requestReload(_this.data.entryName);
-                                            _this._console.log(responseCheck);
+                                            if(responseCheck.result === 'OK')
+                                            {
+                                                _this.fileService.requestReload(_this.data.entryName);
+                                                _this._console.log(responseCheck);
+                                                // Show success snackbar
+                                                _this._toastService.showSuccessToast("File uploaded successfully!");
+                                            }
+                                            else {
+                                                // Show error snackbar
+                                                _this._toastService.showErrorToast(responseCheck.reason);
+                                            }
+                                            
+                                        },
+                                        error => {
+                                            // Show error snackbar
+                                            _this._toastService.showErrorToast(error);
                                         }
                                     );
 
