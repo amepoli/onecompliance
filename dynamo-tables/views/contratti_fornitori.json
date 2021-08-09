@@ -22,7 +22,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select *, entrasp.argomenti_descr(id_argomento_contratto) as tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as id_cliente, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore) as id_fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_strumento_finanziario) as id_strumento_finanziario from entrasp.contratti where array[id_argomento_contratto] <@ any(select entrasp.sotto_argomenti(3428)) and id_argomento_contratto is not null and codice_azienda=$codice_azienda$"
+			"queryString": "select *, true as create_somministrazione, entrasp.argomenti_descr(id_argomento_contratto) as tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as id_cliente, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore) as id_fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_strumento_finanziario) as id_strumento_finanziario from entrasp.contratti where array[id_argomento_contratto] <@ any(select entrasp.sotto_argomenti(3428)) and id_argomento_contratto is not null and codice_azienda=$codice_azienda$"
 		}
 	],
 	"outputEvents": [
@@ -244,7 +244,55 @@
 			"key": "data_stipulazione",
 			"width": "10%",
 			"label": "Data Stipula"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "8%",
+	        "key": "create_somministrazione",
+		    "label": "Valuta fornitura",
+			"isButton": true,
+            "buttonAction": {
+				"target": "sondaggi_somministrati",
+				"viewType": "form",
+				"action": "query",
+				"query": "select codice_azienda, id_sondaggio, id_somministrazione from entrasp.sondaggio_insert_from_list('£codice_azienda£', £id_modello_test£)",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+                    {
+						"source": "id_modello_test",
+						"destination": "id_modello_test"
+					}
+				],
+				"confirmAction": true,
+				"confirmMessage": {
+					"title": "Valutazione contratto di fornitura",
+					"text": "Si vuole inserire una valutazione della fornitura?"
+				},
+				"onSuccessAction": "navigate",
+                "onSuccessActionKeymap": [
+                    {
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_sondaggio",
+						"destination": "id_sondaggio"
+					},
+                    {
+						"source": "id_somministrazione",
+						"destination": "id_somministrazione"
+					}
+                ]
+			}
 		}
+   
 	],
 	"search_keys": [
 		{
