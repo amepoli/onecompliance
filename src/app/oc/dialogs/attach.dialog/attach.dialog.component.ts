@@ -118,17 +118,22 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
                     _this.backendService.deleteFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.currentKeys), selected.id_risorsa, selected.file_id, _this.data.keys).subscribe(
-                        url => {
-                            if (url != null) {
-                                _this._console.table(url);
-                                _this.httpClient.delete(url.url).subscribe(
+                        urlResponse => {
+                            if (urlResponse.result == 'OK') {
+                                _this._console.table(urlResponse);
+                                _this.httpClient.delete(urlResponse.url).subscribe(
                                     fileData => {
-                                        _this.fileService.requestReload(_this.data.entryName);
+                                            _this._toastService.showSuccessToast("File deleted successfully!");
+                                            _this.fileService.requestReload(_this.data.entryName);
                                     });
+                            }
+                            else {
+                                _this._toastService.showErrorToast(urlResponse.reason);
                             }
                         },
                         err => {
                             _this._console.error(err);
+                            _this._toastService.showErrorToast(err);
                         });
                 }
             }
