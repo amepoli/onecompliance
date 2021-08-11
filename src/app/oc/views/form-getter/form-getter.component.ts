@@ -878,7 +878,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         if (event.actionType === 'show' || event.actionType === 'hide' || event.actionType === 'toggle') {
             // get the listener element if not full table
             let listener: FieldConfig = null;
-            if (keyListener != null && value.type !== 'page') {
+            // if (keyListener != null && value.type !== 'page') {
+            if (keyListener != null) {
                 const targetLine = _this.filteredFormData[value.index];  // recover the form "line"
                 if (targetLine != null) {
                     listener = HelperService.findElement(targetLine, keyListener);
