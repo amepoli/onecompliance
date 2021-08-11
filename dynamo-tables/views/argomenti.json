@@ -176,8 +176,20 @@
         "dataType": "text"
       },
       "label": "Livello controllo",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($livello_controllo_s$))"
+    },
+    {
+      "fieldName": "categoria_calcolata_s",
+      "format": {
+        "comboQuery": "SELECT codice AS id, nome_tabella AS name  FROM entrasp.tabelle where codice is not null order by codice",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Categoria calcolata",
+      "newLine": true,
+      "queryCond": "id_argomento in(select entrasp.argomenti_category_of($categoria_calcolata_s$))"
     },
     {
       "fieldName": "flag_classificazione",
