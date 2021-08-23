@@ -961,9 +961,21 @@
                 "dataType": "text"
             },
             "label": "Associati al modello progetto",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "mt.id_modello_test in (select id_modello_test from entrasp.attivita where entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)= $cod_att_princ_s$ and id_modello_test is not null and codice_azienda='€global_codice_azienda€')"
         },
+        {
+            "fieldName": "argomento_s",
+            "format": {
+              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg order by descrizione",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "label": "Argomento",
+            "newLine": true,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
+          },
         {
             "fieldName": "no_questions",
             "format": {

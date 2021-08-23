@@ -91,10 +91,55 @@
       "key": "flag_classificazione",
       "label": "Argomento padre (di classificazione)",
       "insertUpdateFunct": "£flag_classificazione£::boolean",
-      "newLine": false,
+      "newLine": true,
       "readOnly": false,
       "isPrimary": false,
       "isHidden": false,
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento_nuovo",
+      "label": "Argomento con cui unire il presente",
+      "sameOrigin": false,
+      "newLine": false,
+      "readOnly": false,
+      "size": 8
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "argomento_unifica_k",
+      "buttonIcon": "merge_type",
+      "label": "Unifica argomento",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "argomento_unifica",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "argomento_unifica",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.unifica_argomento($id_argomento$, $id_argomento_nuovo$)",
+          "successMessage": "Done!"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
       "size": 2
     }
   ],
@@ -201,7 +246,6 @@
       "newLine": false,
       "queryCond": "flag_classificazione=true"
     }
-    
   ],
   "subTables": [
     {
