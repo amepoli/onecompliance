@@ -15,6 +15,12 @@
             "queryString": "select entrasp.modello_test_delete($codice_azienda$, $id_modello_test$);"
         },
         {
+            "type": "preCheck",
+            "operation": "share",
+            "queryString": "select id_argomento from entrasp.modelli_test where codice_azienda='$codice_azienda$' and id_modello_test=$id_modello_test$;",
+            "messageNotNull": "Necessario attribuire un argomento al modello di test prima di condividerlo!"
+        },
+        {
             "type": "main",
             "operation": "share",
             "queryString": "select entrasp.grc_accoda_singolo_modello_test('$codice_azienda$', '$chosen_azienda$', $id_modello_test$, $id_modello_test_vr$);"
