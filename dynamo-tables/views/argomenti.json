@@ -167,7 +167,7 @@
     {
       "fieldName": "categorie_modello_test_s",
       "format": {
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=45 order by descrizione",
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3425 order by descrizione",
         "options": [],
         "viewType": "combobox",
         "dataType": "text"
@@ -177,16 +177,16 @@
       "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))"
     },
     {
-      "fieldName": "attivita_s",
+      "fieldName": "categorie_modello_test_s2",
       "format": {
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3417 order by descrizione",
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3425 order by descrizione",
         "options": [],
         "viewType": "combobox",
         "dataType": "text"
       },
-      "label": "Tipo modello di progetto",
+      "label": "Categorie modelli test 2",
       "newLine": true,
-      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($attivita_s$))"
+      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s2$))"
     },
     {
       "fieldName": "centro_gestionale_s",
@@ -225,6 +225,18 @@
       "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($livello_controllo_s$))"
     },
     {
+      "fieldName": "attivita_s",
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3417 order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Tipo modello di progetto (attivita)",
+      "newLine": true,
+      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($attivita_s$))"
+    },
+    {
       "fieldName": "categoria_calcolata_s",
       "format": {
         "comboQuery": "SELECT codice AS id, nome_tabella AS name  FROM entrasp.tabelle where codice is not null order by codice",
@@ -233,8 +245,20 @@
         "dataType": "text"
       },
       "label": "Categoria calcolata",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "id_argomento in(select entrasp.argomenti_category_of($categoria_calcolata_s$))"
+    },
+    {
+      "fieldName": "associati_to",
+      "format": {
+        "comboQuery": "SELECT codice AS id, nome_tabella AS name  FROM entrasp.tabelle where codice is not null order by codice",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Associato a (modelli di verifica, attività, centri_gestionali, etc)",
+      "newLine": true,
+      "queryCond": "id_argomento in(select entrasp.argomenti_associated_to($associati_to$))"
     },
     {
       "fieldName": "flag_classificazione",
