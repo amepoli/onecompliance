@@ -161,7 +161,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 2,
+			"size": 1.5,
 			"outputEvent": {
 				"eventName": "codice_colore_change_stato",
 				"eventTrigger": "select"
@@ -323,7 +323,7 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"size": 1.5,
+			"size": 1.3,
 			"newLine": false
 		},
 		{
@@ -358,7 +358,7 @@
 			"isHidden": false,
 			"isPrimary": true,
 			"newLine": false,
-			"size": 1.5
+			"size": 1.3
 		},
 		{
 			"autoGenerate": false,
@@ -373,7 +373,21 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 1.5
+			"size": 1.3
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"label": "Data Competenza",
+			"key": "data_competenza",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 1.3
 		},
 		{
             "autoGenerate": false,
@@ -384,7 +398,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_argomento",
-			"queryFunct": "select arg.descrizione from entrasp.attivita att inner join entrasp.argomenti arg on att.id_argomento = arg.id_argomento where codice_azienda=$codice_azienda$  and codice_attivita='$codice_attivita$'",
+			"queryFunct": "select entrasp.argomenti_descr_breve(att.id_argomento) from entrasp.progetti pr inner join entrasp.attivita att on att.codice_azienda=pr.codice_azienda and att.codice_attivita=pr.codice_attivita where id_progetto=$id_progetto$ and pr.codice_azienda=$codice_azienda$",
             "label": "Argomento",
             "readOnly": true,
             "newLine": true
@@ -652,8 +666,10 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true
+			"newLine": false,
+			"size": 8.5
 		}
+		
 	],
 	"search_keys": [
 		{
@@ -750,6 +766,15 @@
 			"label": "Progetti con verifiche incomplete",
 			"newLine": false,
 			"queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi_somministrati ss on pf.id_sondaggio=ss.id_sondaggio and pf.codice_azienda=ss.codice_azienda where pf.codice_azienda=$codice_azienda$ and ss.somministrazione_completata!='Completo' and pf.id_sondaggio is not null)"
+		},{
+			"fieldName": "data_comp",
+			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"label": "Data Competenza",
+			"newLine": false,
+			"queryCond": "data_competenza>='€data_comp€'"
 		},
 		{
 			"fieldName": "parola_s",
@@ -816,7 +841,7 @@
 			"isPrimary": false,
 			"key": "data_inserimento",
 			"label": "Data Progetto",
-			"width": "9%"
+			"width": "8%"
 		},
 		{
 			"format": {
