@@ -1,3 +1,5 @@
+import { EmailActionParameters } from "./email_action_parameters";
+
 export interface Validator {
   message: string;
   name: string;
@@ -36,11 +38,12 @@ export interface FieldInputEvent {
   message?: {
     messageText: string,
     actionOnYes: {
-      actionType: 'reload' | 'query' | 'update_time_tracker',
-      queryFunct?: string
+      actionType: 'reload' | 'query' | 'email',
+      queryFunct?: string,
+      emailActionParameters?: EmailActionParameters
     },
     actionOnNo: {
-      actionType: 'reload' | 'query' | 'update_time_tracker',
+      actionType: 'reload' | 'query',
       queryFunct?: string
     }
   };
