@@ -186,6 +186,51 @@
       "label": "Testo Email",
       "newLine": true,
       "readOnly": false
-    }
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+          "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "invia_mail",
+      "buttonIcon": "email",
+      "label": "Invia_mail",
+      "newLine": false,
+      "outputEvent": {
+          "eventName": "send_email",
+          "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "send_email",
+          "condition": "none",
+          "values": [],
+          "actionType": "show_message",
+          "message": {
+            "messageText": "",
+            "actionOnYes": {
+              "actionType": "email",
+              "emailActionParameters": {
+                "recipientKey": "email_to",
+                "bodyKeys": ["data_riferimento_da", "data_riferimento_a", "documentazione_analizzata"]
+              }
+            },
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select 1"
+            }
+          }
+        }
+      ],
+      "style": {
+          "background_color": "#25599C",
+          "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+  }
   ]
 }
