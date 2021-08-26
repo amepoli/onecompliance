@@ -80,59 +80,65 @@ function processCSV(csvData) {
     stringData = stringData.split('\n');
     stringData.splice(0, 1);
     stringData = stringData.map(line => {
-        let columns = [];
-        let columnStarted = false;
-        let columnContainsQuote = false;
-        let curColumn = "";
-        for (let i = 0; i < line.length; i++) {
-            // let's go through each character one by one.
-            let curChar = line[i];
-            if (!columnStarted) {
-                if (curChar === '"') {
-                    curColumn = "";
-                    columnStarted = true;
-                    columnContainsQuote = true;
-                }
-                else if (curChar === ';') {
-                    // curColumn = "";
-                    // columnStarted = true;
-                    // columnContainsQuote = false;
-                }
-                else {
-                    curColumn = curChar !== ' ' ? curChar : '';
-                    columnStarted = true;
-                    columnContainsQuote = false;
-                }
-            }
-            else {
-                if (columnContainsQuote) {
+        if (line && line.length > 2) {
+            let columns = [];
+            let columnStarted = false;
+            let columnContainsQuote = false;
+            let curColumn = "";
+            for (let i = 0; i < line.length; i++) {
+                // let's go through each character one by one.
+                let curChar = line[i];
+                if (!columnStarted) {
                     if (curChar === '"') {
-                        columns.push(curColumn);
                         curColumn = "";
-                        columnStarted = false;
-                        columnContainsQuote = false;
+                        columnStarted = true;
+                        columnContainsQuote = true;
+                    }
+                    else if (curChar === ';') {
+                        // curColumn = "";
+                        // columnStarted = true;
+                        // columnContainsQuote = false;
                     }
                     else {
-                        curColumn += '' + (curColumn || curChar !== ' ' ? curChar : '');
+                        curColumn = curChar !== ' ' ? curChar : '';
+                        columnStarted = true;
+                        columnContainsQuote = false;
                     }
                 }
                 else {
-                    if (curChar === ';' || i == line.length - 1) {
-                        columns.push(curColumn);
-                        curColumn = "";
-                        columnStarted = false;
-                        columnContainsQuote = false;
+                    if (columnContainsQuote) {
+                        if (curChar === '"') {
+                            columns.push(curColumn);
+                            curColumn = "";
+                            columnStarted = false;
+                            columnContainsQuote = false;
+                        }
+                        else {
+                            curColumn += '' + (curColumn || curChar !== ' ' ? curChar : '');
+                        }
                     }
                     else {
-                        curColumn += '' + (curColumn || curChar !== ' ' ? curChar : '');
+                        if (curChar === ';' || i == line.length - 1) {
+                            columns.push(curColumn);
+                            curColumn = "";
+                            columnStarted = false;
+                            columnContainsQuote = false;
+                        }
+                        else {
+                            curColumn += '' + (curColumn || curChar !== ' ' ? curChar : '');
+                        }
                     }
                 }
             }
+            return columns.join(separator_out);
+
         }
-        return columns.join(separator_out);
+        else {
+            return null;
+        }
         // return line.split('"').filter(x => x != null && x.length && x != ';').join(separator_out)
     });
-    stringData = stringData.join('\n');
+    stringData = stringData.filter(x => x != null).join('\n');
 
     // To add header
     // let header = stringData.splice(0, 1);
