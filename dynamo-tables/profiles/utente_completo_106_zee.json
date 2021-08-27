@@ -1,0 +1,168 @@
+{
+  "$schema": "../profiles.schema.json",
+  "name": "utente_completo_106_zee",
+  "menu": {
+    "allow": [
+      "gorico",
+      "me",
+      "clients",
+      "documents",
+      "employees",
+      "organization",
+      "persons_register",
+      "projecttypes_aml",
+      "workflow_aml",
+      "projects_aml",
+      "testforms",
+      "tasks",
+      "surveys_model",
+      "surveys_elements",
+      "surveys_generic",
+      "surveys_elements",
+      "question_answers"
+    ],
+    "deny": []
+  },
+  "tables": {
+    "allow": [
+      "anagrafiche_vr",
+      "anagrafiche_vr_attachments",
+      "me",
+      "anagrafiche_vr_sub_anagrafiche_vr",
+      "argomenti_sub_modelli_test",
+      "attachments",
+      "attivita",
+      "attivita_aml",
+      "attivita_sub_of_attivita",
+      "centri_gestionali_sub_of_anagrafiche_vr",
+      "centri_gestionali_sub_of_me",
+      "clientela",
+      "compiti",
+      "compiti_rif_bo_keys",
+      "compiti_sub_of_compiti",
+      "consuntivazioni_sub",
+      "consuntivazioni_sub_of_attivita",
+      "consuntivazioni_sub_of_modelli_test",
+      "consuntivazioni_sub_of_sondaggi",
+      "contracts_investment",
+      "dashboard_centri_gestionali",
+      "dashboard_compiti",
+      "dashboard_sondaggi",
+      "dashboard_sondaggi_somministrati",
+      "domande",
+      "domande_dettaglio",
+      "domande_risposte",
+      "domande_risposte_sezione",
+      "domande_sezioni_detail",
+      "domande_sezioni_sub_of_somministrazioni",
+      "fe_attachment_form",
+      "fondi_gestiti",
+      "mifid",
+      "modelli_test_vr",
+      "modelli_test_vr_attachments",
+      "modelli_test_vr_sub_version",
+      "presidi_sub_of_modelli_test",
+      "procedure_sub_modelli_test",
+      "profilazione_aml",
+      "profiling_models",
+      "progetti",
+      "progetti_attachments",
+      "progetti_fasi",
+      "progetti_fasi_sub_of_progetti_fasi",
+      "progetti_mine",
+      "progetti_sub_of_anagrafiche_vr",
+      "progetti_sub_of_compiti",
+      "projects_aml",
+      "rischi_sub_of_compiti",
+      "risposte",
+      "risposte_attachments",
+      "risposte_previste",
+      "ruoli_sub_of_anagrafiche",
+      "seleziona_campione",
+      "somministrazioni_sub_of_compiti",
+      "sondaggi",
+      "sondaggi_attachments",
+      "sondaggi_open_mine",
+      "sondaggi_somministrati",
+      "sondaggi_somministrati_attachments",
+      "sondaggi_somministrati_open_mine",
+      "sondaggi_somministrati_sub_of_anagrafiche",
+      "sondaggi_somministrati_sub_of_sondaggi_somministrati",
+      "sondaggi_sub_of_compiti",
+      "sondaggi_sub_of_modelli_test",
+      "sondaggi_sub_of_sondaggi",
+      "tipi_allegati",
+      "valutazioni_strum_fin"
+    ],
+    "deny": [],
+    "form_keys": [
+      {
+        "entry": "modelli_test_vr",
+        "hide": [
+          "allinea_codici_esterni",
+          "codice_esterno"
+        ]
+      },
+      {
+        "entry": "progetti",
+        "hide": [
+          "aggiorna_codici"
+        ]
+      },
+      {
+        "entry": "projects_aml",
+        "hide": [
+          "aggiorna_codici",
+          "modello_progetto"
+        ]
+      },
+      {
+        "entry": "sondaggi_somministrati",
+        "hide": [
+          "sondaggi_from_sondaggi_somministrati",
+          "close_associated_sondaggio_button_key",
+          "data_comp",
+          "id_modello_test",
+          "id_modello_test_vr",
+          "modello_test_from_sondaggi_somministrati",
+          "id_somm_to_copy_from",
+          "copy_from_somministrazione",
+          "criterio_analisi",
+          "riepilogo_risultati"
+        ]
+      },
+      {
+        "entry": "centri_gestionali",
+        "hide": [
+          "id_argomento"
+        ]
+      }
+    ],
+    "readOnly": [],
+    "table_keys": [
+      {
+        "entry": "progetti_fasi",
+        "hide": [
+          "visible_button_modello_test"
+        ]
+      }
+    ],
+    "queryCond": [
+      {
+        "entry": "modelli_test_vr",
+        "viewType": "table",
+        "queryString": "id_centro_gest in(select id_centro_gest from entrasp.centri_gestionali where id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri where id_anagrafica=€global_userid€ and codice_part='€global_codice_part€') and codice_part='€global_codice_part€')"
+      },
+      {
+        "entry": "sondaggi",
+        "viewType": "table",
+        "queryString": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€')"
+      },
+      {
+        "entry": "sondaggi_somministrati",
+        "viewType": "table",
+        "queryString": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€')"
+      }
+    ]
+  }
+}
