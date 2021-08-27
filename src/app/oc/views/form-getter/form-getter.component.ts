@@ -52,6 +52,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
+    isAuthorized: boolean = true;
     viewKeys: FormViewKey[]; // view form fields as specified by the backend
     formRowProperties: any[];
 
@@ -355,8 +356,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.loadTableData();
                 }
                 else {
-                    // Show error snackbar
-                    _this._toastService.showErrorToast(results.reason);
+                    if(results.reason === 'Not Authorized') {
+                        console.log('Not Authorized');
+                        _this.isAuthorized = false;
+                    }
+                    else {
+                        // Show error snackbar
+                        _this._toastService.showErrorToast(results.reason);
+                    }
+                    // // Show error snackbar
+                    // _this._toastService.showErrorToast(results.reason);
                 }
             });
         _this.generalSubscriptions.push(subscription);
@@ -1171,7 +1180,26 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._timeTrackerService.checkTimerStatus();
                 }
                 else if (actionType === 'email') {
-                    _this.sendEmail({ templateKey: 'test' });
+                    
+
+                    let recipient = value.valueSet[event.message.actionOnYes.emailActionParameters.recipientKey];
+                    let body = event.message.actionOnYes.emailActionParameters.bodyKeys.map(key => 
+                        `${key}: ${value.valueSet[key]}`
+                    ).join('\n');
+
+                    _this.sendEmail({
+                        subject: 'OneCompliance',
+                        header: body,
+                        query: null,
+                        footer: null,
+                        company:_this.authService.getCurrentCompany(_this.currentKeys),
+                        conditionQuery: null,
+                        onSuccessQuery: null,
+                        to: recipient,
+                        cc: null
+                    });
+                    console.log(JSON.stringify(event));
+                    // _this.sendEmail({ templateKey: 'test' });
                 }
                 else {
                     // Run query
