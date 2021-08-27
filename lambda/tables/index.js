@@ -1678,8 +1678,10 @@ exports.handler = async (event, context) => {
         return {
             "isBase64Encoded": false,
             "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            "statusCode": 403,
-            "error": "Not Authorized"
+            // "statusCode": 403,
+            // "error": "Not Authorized"
+            "statusCode": 200,
+            "body": JSON.stringify({ result: 'KO', reason: "Not Authorized" })
         };
     } else {
         console.log(method, ' request for ', queryParams.entry_name, ' authorized!');
@@ -1693,8 +1695,10 @@ exports.handler = async (event, context) => {
         return {
             "isBase64Encoded": false,
             "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            "statusCode": 403,
-            "error": "Not Authorized"
+            // "statusCode": 403,
+            // "error": "Not Authorized"
+            "statusCode": 200,
+            "body": JSON.stringify({ result: 'KO', reason: "Not Authorized" })
         };
     }
 
