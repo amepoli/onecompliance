@@ -72,6 +72,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     messages: MessageElement[] = []; // Messages
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
+    isAuthorized: boolean = true;
     viewKeys: TableViewKey[];  // view fields as specified by the backend
 
     searchKeys: SearchViewKey[];
@@ -343,8 +344,14 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.isLoading = false;
                 }
                 else {
-                    // Show error snackbar
-                    _this._toastService.showErrorToast(results.reason);
+                    if(results.reason === 'Not Authorized') {
+                        console.log('Not Authorized');
+                        _this.isAuthorized = false;
+                    }
+                    else {
+                        // Show error snackbar
+                        _this._toastService.showErrorToast(results.reason);
+                    }
                 }
 
                 _this.isLoading = false;
