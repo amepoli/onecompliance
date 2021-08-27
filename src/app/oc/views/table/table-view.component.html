@@ -1,231 +1,237 @@
 <div class="table-view-component" style="height: 100%;">
+    <div *ngIf="isAuthorized">
+        <div *ngIf="tableData.showHeader" class="table_header">
+            <mat-form-field class="filter">
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+            </mat-form-field>
 
-    <div *ngIf="tableData.showHeader" class="table_header">
-        <mat-form-field class="filter">
-            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-        </mat-form-field>
+            <div *ngIf="!hideActions.includes('import_export')">
 
-        <div *ngIf="!hideActions.includes('import_export')">
-
-            <button mat-button [matMenuTriggerFor]="downloadUploadMenu">
-                <mat-icon>import_export</mat-icon>
-            </button>
-
-            <mat-menu #downloadUploadMenu="matMenu" [overlapTrigger]="false">
-
-                <button mat-menu-item [matMenuTriggerFor]="uploadMenu">
-                    <mat-icon>cloud_upload</mat-icon>
-                    <span>Upload</span>
+                <button mat-button [matMenuTriggerFor]="downloadUploadMenu">
+                    <mat-icon>import_export</mat-icon>
                 </button>
 
-                <button mat-menu-item [matMenuTriggerFor]="downloadMenu">
-                    <mat-icon>cloud_download</mat-icon>
-                    <span>Download</span>
-                </button>
-            </mat-menu>
+                <mat-menu #downloadUploadMenu="matMenu" [overlapTrigger]="false">
 
-            <mat-menu #uploadMenu="matMenu" [overlapTrigger]="false">
-
-                <button mat-menu-item (click)="uploadCSV()">
-                    <mat-icon>note_add</mat-icon>
-                    <span>Upload CSV</span>
-                </button>
-
-                <button *ngIf="importList && importList.length" mat-menu-item [matMenuTriggerFor]="advancedImportMenu">
-                    <mat-icon>miscellaneous_services</mat-icon>
-                    <span>Advanced</span>
-                </button>
-            </mat-menu>
-
-            <mat-menu #advancedImportMenu="matMenu" [overlapTrigger]="false">
-
-                <button *ngFor="let item of importList" mat-menu-item (click)="importAdvanced(item)">
-                    <mat-icon>format_align_justify</mat-icon>
-                    <span>{{item.label}}</span>
-                </button>
-
-            </mat-menu>
-
-            <mat-menu #downloadMenu="matMenu" [overlapTrigger]="false">
-
-                <button mat-menu-item [matMenuTriggerFor]="downloadCSVMenu">
-                    <mat-icon>reorder</mat-icon>
-                    <span>CSV</span>
-                </button>
-
-                <button mat-menu-item [matMenuTriggerFor]="downloadExcelMenu">
-                    <mat-icon svgIcon="excel"></mat-icon>
-                    <span>Excel</span>
-                </button>
-
-            </mat-menu>
-
-            <mat-menu #downloadCSVMenu="matMenu" [overlapTrigger]="false">
-
-                <button mat-menu-item (click)="downloadTemplateFile()">
-                    <mat-icon>assignment</mat-icon>
-                    <span>Download Template</span>
-                </button>
-
-                <button mat-menu-item (click)="downloadCSV()">
-                    <mat-icon>format_align_justify</mat-icon>
-                    <span>Download</span>
-                </button>
-
-                <button *ngIf="exportList && exportList.length" mat-menu-item [matMenuTriggerFor]="advancedCsvMenu">
-                    <mat-icon>miscellaneous_services</mat-icon>
-                    <span>Advanced</span>
-                </button>
-            </mat-menu>
-
-            <mat-menu #downloadExcelMenu="matMenu" [overlapTrigger]="false">
-
-                <button mat-menu-item (click)="downloadExcel()">
-                    <mat-icon>format_align_justify</mat-icon>
-                    <span>Download</span>
-                </button>
-
-                <button *ngIf="exportList && exportList.length" mat-menu-item [matMenuTriggerFor]="advancedExcelMenu">
-                    <mat-icon>miscellaneous_services</mat-icon>
-                    <span>Advanced</span>
-                </button>
-            </mat-menu>
-
-            <mat-menu #advancedCsvMenu="matMenu" [overlapTrigger]="false">
-
-                <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedCSV(item)">
-                    <mat-icon>format_align_justify</mat-icon>
-                    <span>{{item.label}}</span>
-                </button>
-
-            </mat-menu>
-            <mat-menu #advancedExcelMenu="matMenu" [overlapTrigger]="false">
-
-                <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedExcel(item)">
-                    <mat-icon>format_align_justify</mat-icon>
-                    <span>{{item.label}}</span>
-                </button>
-
-            </mat-menu>
-        </div>
-        <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="50"></mat-paginator>
-
-    </div>
-
-
-    <div class="table-view-buttons">
-        <button *ngIf="tableData.showHeader" mat-button (click)="advSearch()">
-            <mat-icon>search</mat-icon>
-            Advanced Search
-        </button>
-
-        <div class="table-view-buttons-separator"></div>
-        <button
-            *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && !hideActions.includes('quick-add')"
-            mat-button (click)="quickAdd()">
-            <mat-icon>add</mat-icon>
-            Quick Add
-        </button>
-
-        <button *ngIf="tableData.showFullScreenButton" mat-button (click)="fullScreen()">
-            <mat-icon *ngIf="!isFullScreen">fullscreen</mat-icon>
-            <mat-icon *ngIf="isFullScreen">fullscreen_exit</mat-icon>
-            FullScreen
-        </button>
-
-        <button *ngIf="showImportDataButton" mat-button (click)="importData()">
-            <mat-icon>update</mat-icon>
-            Update from External Source
-        </button>
-    </div>
-
-    <div *ngIf="showAdvSearch" class="adv-search">
-        <dynamic-form class="form-container" [fields]='searchData' (submit)='search_submit($event)'
-            formName='search_form'>
-        </dynamic-form>
-        <div class="buts-search">
-            <button class="but-search" mat-button (click)="cancel_search()">
-                <mat-icon>cancel</mat-icon>
-                Cancel
-            </button>
-            <button class="but-search" mat-button type="submit" form="search_form">
-                <mat-icon>keyboard_return</mat-icon>
-                Search
-            </button>
-        </div>
-        <br>
-    </div>
-
-    <form-view [isQuickAdd]="true" *ngIf="showQuickAdd" class="quick-add" [tableData]="quickAddFormParams"
-        (sendEvent)='onEvent($event)'>
-    </form-view>
-
-    <div class="mat-elevation-z2" class="data-table">
-
-        <table class="table-view-content" mat-table [hidden]="isLoading" [dataSource]="dataSource" matSort>
-            <!-- <ng-container matColumnDef="select">
-                <mat-header-cell class="table-column-select" [style.width]="'5% !important'" [style.flex]="'0 0 5%'"
-                    *matHeaderCellDef>
-                    <mat-checkbox (change)="$event ? masterToggle() : null"
-                        [checked]="selection.hasValue() && isAllSelected()"
-                        [indeterminate]="selection.hasValue() && !isAllSelected()">
-                    </mat-checkbox>
-                </mat-header-cell>
-                <mat-cell class="table-column-select" [style.justify-content]="'left'" [style.width]="'5% !important'"
-                    [style.flex]="'0 0 5%'" *matCellDef="let row">
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
-                        [checked]="selection.isSelected(row)">
-                    </mat-checkbox>
-                </mat-cell>
-            </ng-container> -->
-
-            <ng-container [matColumnDef]="entry.key" *ngFor="let entry of viewKeys">
-
-                <mat-header-cell class="table-column"
-                    [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
-                    [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matHeaderCellDef mat-sort-header
-                    [hidden]="entry.isHidden">
-                    {{entry.label}}
-                </mat-header-cell>
-                <mat-cell class="table-column" [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
-                    [style.flex]="entry.width? '0 0 ' + entry.width: '1'" [style.white-space]="'nowrap'"
-                    [style.text-overflow]="'ellipsis'" *matCellDef="let row; let i = index;"
-                    [style.border-radius.px]="entry.isButton ? '4': '24'" [hidden]="entry.isHidden">
-
-                    <mat-checkbox *ngIf="entry.isCheckbox" (click)="$event.stopPropagation()" disabled
-                        aria-disabled="true" [checked]="row[entry.key] == '1'? true: false">
-                    </mat-checkbox>
-
-                    <button *ngIf="entry.isButton && doesButtonIconExist(entry.key) && !entry.label && row[entry.key]"
-                        style="color: #25599c;" mat-icon-button (click)="onButtonClick(entry.key, i, row)">
-                        <mat-icon>{{getButtonIcon(entry.key)}}</mat-icon>
+                    <button mat-menu-item [matMenuTriggerFor]="uploadMenu">
+                        <mat-icon>cloud_upload</mat-icon>
+                        <span>Upload</span>
                     </button>
-                    <button *ngIf="entry.isButton && entry.label && row[entry.key]"
-                        style="background-color: #25599c; color: white;" mat-raised-button
-                        (click)="onButtonClick(entry.key, i, row)">
-                        <mat-icon *ngIf="doesButtonIconExist(entry.key)">{{getButtonIcon(entry.key)}}</mat-icon>
+
+                    <button mat-menu-item [matMenuTriggerFor]="downloadMenu">
+                        <mat-icon>cloud_download</mat-icon>
+                        <span>Download</span>
+                    </button>
+                </mat-menu>
+
+                <mat-menu #uploadMenu="matMenu" [overlapTrigger]="false">
+
+                    <button mat-menu-item (click)="uploadCSV()">
+                        <mat-icon>note_add</mat-icon>
+                        <span>Upload CSV</span>
+                    </button>
+
+                    <button *ngIf="importList && importList.length" mat-menu-item
+                        [matMenuTriggerFor]="advancedImportMenu">
+                        <mat-icon>miscellaneous_services</mat-icon>
+                        <span>Advanced</span>
+                    </button>
+                </mat-menu>
+
+                <mat-menu #advancedImportMenu="matMenu" [overlapTrigger]="false">
+
+                    <button *ngFor="let item of importList" mat-menu-item (click)="importAdvanced(item)">
+                        <mat-icon>format_align_justify</mat-icon>
+                        <span>{{item.label}}</span>
+                    </button>
+
+                </mat-menu>
+
+                <mat-menu #downloadMenu="matMenu" [overlapTrigger]="false">
+
+                    <button mat-menu-item [matMenuTriggerFor]="downloadCSVMenu">
+                        <mat-icon>reorder</mat-icon>
+                        <span>CSV</span>
+                    </button>
+
+                    <button mat-menu-item [matMenuTriggerFor]="downloadExcelMenu">
+                        <mat-icon svgIcon="excel"></mat-icon>
+                        <span>Excel</span>
+                    </button>
+
+                </mat-menu>
+
+                <mat-menu #downloadCSVMenu="matMenu" [overlapTrigger]="false">
+
+                    <button mat-menu-item (click)="downloadTemplateFile()">
+                        <mat-icon>assignment</mat-icon>
+                        <span>Download Template</span>
+                    </button>
+
+                    <button mat-menu-item (click)="downloadCSV()">
+                        <mat-icon>format_align_justify</mat-icon>
+                        <span>Download</span>
+                    </button>
+
+                    <button *ngIf="exportList && exportList.length" mat-menu-item [matMenuTriggerFor]="advancedCsvMenu">
+                        <mat-icon>miscellaneous_services</mat-icon>
+                        <span>Advanced</span>
+                    </button>
+                </mat-menu>
+
+                <mat-menu #downloadExcelMenu="matMenu" [overlapTrigger]="false">
+
+                    <button mat-menu-item (click)="downloadExcel()">
+                        <mat-icon>format_align_justify</mat-icon>
+                        <span>Download</span>
+                    </button>
+
+                    <button *ngIf="exportList && exportList.length" mat-menu-item
+                        [matMenuTriggerFor]="advancedExcelMenu">
+                        <mat-icon>miscellaneous_services</mat-icon>
+                        <span>Advanced</span>
+                    </button>
+                </mat-menu>
+
+                <mat-menu #advancedCsvMenu="matMenu" [overlapTrigger]="false">
+
+                    <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedCSV(item)">
+                        <mat-icon>format_align_justify</mat-icon>
+                        <span>{{item.label}}</span>
+                    </button>
+
+                </mat-menu>
+                <mat-menu #advancedExcelMenu="matMenu" [overlapTrigger]="false">
+
+                    <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedExcel(item)">
+                        <mat-icon>format_align_justify</mat-icon>
+                        <span>{{item.label}}</span>
+                    </button>
+
+                </mat-menu>
+            </div>
+            <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="50"></mat-paginator>
+
+        </div>
+
+
+        <div class="table-view-buttons">
+            <button *ngIf="tableData.showHeader" mat-button (click)="advSearch()">
+                <mat-icon>search</mat-icon>
+                Advanced Search
+            </button>
+
+            <div class="table-view-buttons-separator"></div>
+            <button
+                *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && !hideActions.includes('quick-add')"
+                mat-button (click)="quickAdd()">
+                <mat-icon>add</mat-icon>
+                Quick Add
+            </button>
+
+            <button *ngIf="tableData.showFullScreenButton" mat-button (click)="fullScreen()">
+                <mat-icon *ngIf="!isFullScreen">fullscreen</mat-icon>
+                <mat-icon *ngIf="isFullScreen">fullscreen_exit</mat-icon>
+                FullScreen
+            </button>
+
+            <button *ngIf="showImportDataButton" mat-button (click)="importData()">
+                <mat-icon>update</mat-icon>
+                Update from External Source
+            </button>
+        </div>
+
+        <div *ngIf="showAdvSearch" class="adv-search">
+            <dynamic-form class="form-container" [fields]='searchData' (submit)='search_submit($event)'
+                formName='search_form'>
+            </dynamic-form>
+            <div class="buts-search">
+                <button class="but-search" mat-button (click)="cancel_search()">
+                    <mat-icon>cancel</mat-icon>
+                    Cancel
+                </button>
+                <button class="but-search" mat-button type="submit" form="search_form">
+                    <mat-icon>keyboard_return</mat-icon>
+                    Search
+                </button>
+            </div>
+            <br>
+        </div>
+
+        <form-view [isQuickAdd]="true" *ngIf="showQuickAdd" class="quick-add" [tableData]="quickAddFormParams"
+            (sendEvent)='onEvent($event)'>
+        </form-view>
+
+        <div class="mat-elevation-z2" class="data-table">
+
+            <table class="table-view-content" mat-table [hidden]="isLoading" [dataSource]="dataSource" matSort>
+                <!-- <ng-container matColumnDef="select">
+                        <mat-header-cell class="table-column-select" [style.width]="'5% !important'" [style.flex]="'0 0 5%'"
+                            *matHeaderCellDef>
+                            <mat-checkbox (change)="$event ? masterToggle() : null"
+                                [checked]="selection.hasValue() && isAllSelected()"
+                                [indeterminate]="selection.hasValue() && !isAllSelected()">
+                            </mat-checkbox>
+                        </mat-header-cell>
+                        <mat-cell class="table-column-select" [style.justify-content]="'left'" [style.width]="'5% !important'"
+                            [style.flex]="'0 0 5%'" *matCellDef="let row">
+                            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+                                [checked]="selection.isSelected(row)">
+                            </mat-checkbox>
+                        </mat-cell>
+                    </ng-container> -->
+
+                <ng-container [matColumnDef]="entry.key" *ngFor="let entry of viewKeys">
+
+                    <mat-header-cell class="table-column"
+                        [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
+                        [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matHeaderCellDef mat-sort-header
+                        [hidden]="entry.isHidden">
                         {{entry.label}}
-                    </button>
-                    <p *ngIf="!entry.isButton && !entry.isCheckbox" style="width: 100%; text-align: left;"
-                        [style.padding-left.px]="getLevel(row, entry.key)"
-                        [ngStyle]="getElementStyle(entry.key, row[entry.key])">
-                        {{row[entry.key] | onecompliance: format[entry.key]}}
-                    </p>
-                </mat-cell>
-            </ng-container>
+                    </mat-header-cell>
+                    <mat-cell class="table-column" [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
+                        [style.flex]="entry.width? '0 0 ' + entry.width: '1'" [style.white-space]="'nowrap'"
+                        [style.text-overflow]="'ellipsis'" *matCellDef="let row; let i = index;"
+                        [style.border-radius.px]="entry.isButton ? '4': '24'" [hidden]="entry.isHidden">
 
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-checkbox *ngIf="entry.isCheckbox" (click)="$event.stopPropagation()" disabled
+                            aria-disabled="true" [checked]="row[entry.key] == '1'? true: false">
+                        </mat-checkbox>
 
-            <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;" (click)="getRecord(i, row)"
-                [style.background]="(selectedRow == row) ? 'lightblue' : ''">
-            </mat-row>
-        </table>
+                        <button
+                            *ngIf="entry.isButton && doesButtonIconExist(entry.key) && !entry.label && row[entry.key]"
+                            style="color: #25599c;" mat-icon-button (click)="onButtonClick(entry.key, i, row)">
+                            <mat-icon>{{getButtonIcon(entry.key)}}</mat-icon>
+                        </button>
+                        <button *ngIf="entry.isButton && entry.label && row[entry.key]"
+                            style="background-color: #25599c; color: white;" mat-raised-button
+                            (click)="onButtonClick(entry.key, i, row)">
+                            <mat-icon *ngIf="doesButtonIconExist(entry.key)">{{getButtonIcon(entry.key)}}</mat-icon>
+                            {{entry.label}}
+                        </button>
+                        <p *ngIf="!entry.isButton && !entry.isCheckbox" style="width: 100%; text-align: left;"
+                            [style.padding-left.px]="getLevel(row, entry.key)"
+                            [ngStyle]="getElementStyle(entry.key, row[entry.key])">
+                            {{row[entry.key] | onecompliance: format[entry.key]}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
 
-        <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
-            <mat-progress-spinner color="primary" mode="indeterminate">
-            </mat-progress-spinner>
-        </mat-card>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 
+                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;" (click)="getRecord(i, row)"
+                    [style.background]="(selectedRow == row) ? 'lightblue' : ''">
+                </mat-row>
+            </table>
+
+            <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
+                <mat-progress-spinner color="primary" mode="indeterminate">
+                </mat-progress-spinner>
+            </mat-card>
+
+        </div>
     </div>
-
+    <div *ngIf="!isAuthorized" class="not-authorized">
+        <mat-icon>lock</mat-icon>
+    </div>
 </div>

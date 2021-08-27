@@ -1,26 +1,32 @@
 <div class='form-getter-component' *ngIf="formParams">
-    <mat-progress-bar mode="indeterminate" *ngIf="isAddingNew"></mat-progress-bar>
-    <div *ngFor="let idx of pagination.curRecords">
-        <div *ngIf="formParams.isVisible && !isLoading && (hiddenRows[idx] == null || hiddenRows[idx] === false)">
-            <hr><br>
-            <dynamic-form class="form-container" [isQuickAdd]="quickAddData[idx]" [fields]='filteredFormData[idx]'
-                [readOnlyPage]='readonlyRows[idx]'>
-            </dynamic-form>
+    <div *ngIf="isAuthorized">
+        <mat-progress-bar mode="indeterminate" *ngIf="isAddingNew"></mat-progress-bar>
+        <div *ngFor="let idx of pagination.curRecords">
+            <div *ngIf="formParams.isVisible && !isLoading && (hiddenRows[idx] == null || hiddenRows[idx] === false)">
+                <hr><br>
+                <dynamic-form class="form-container" [isQuickAdd]="quickAddData[idx]" [fields]='filteredFormData[idx]'
+                    [readOnlyPage]='readonlyRows[idx]'>
+                </dynamic-form>
+            </div>
+        </div>
+        <mat-card *ngIf="formParams.isVisible && isLoading"
+            style="display: flex; justify-content: center; align-items: center">
+            <mat-progress-spinner color="primary" mode="indeterminate">
+            </mat-progress-spinner>
+        </mat-card>
+
+        <div align=center style="display: flex;" *ngIf="pagination.totalPages > 1">
+            <button [disabled]="pagination.curPage == 1" mat-button (click)="updatePagination(-1)">
+                <mat-icon>keyboard_arrow_left</mat-icon>Previous
+            </button>
+            <p>Page {{this.pagination.curPage}} of {{this.pagination.totalPages}}</p>
+            <button [disabled]="pagination.curPage == this.pagination.totalPages" mat-button
+                (click)="updatePagination(1)">
+                <mat-icon>keyboard_arrow_right</mat-icon>Next
+            </button>
         </div>
     </div>
-    <mat-card *ngIf="formParams.isVisible && isLoading"
-        style="display: flex; justify-content: center; align-items: center">
-        <mat-progress-spinner color="primary" mode="indeterminate">
-        </mat-progress-spinner>
-    </mat-card>
-
-    <div align=center style="display: flex;" *ngIf="pagination.totalPages > 1">
-        <button [disabled]="pagination.curPage == 1" mat-button (click)="updatePagination(-1)">
-            <mat-icon>keyboard_arrow_left</mat-icon>Previous
-        </button>
-        <p>Page {{this.pagination.curPage}} of {{this.pagination.totalPages}}</p>
-        <button [disabled]="pagination.curPage == this.pagination.totalPages" mat-button (click)="updatePagination(1)">
-            <mat-icon>keyboard_arrow_right</mat-icon>Next
-        </button>
+    <div *ngIf="!isAuthorized" class="not-authorized">
+        <mat-icon>lock</mat-icon>
     </div>
 </div>
