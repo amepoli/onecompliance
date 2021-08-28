@@ -3,7 +3,7 @@ aws.config.update({region: 'eu-central-1'});
 var ddb = new aws.DynamoDB({apiVersion: '2012-10-08'});
 var ses = new aws.SES({apiVersion: '2010-12-01'});
 
-var sender_address = 'nicola.capovilla@alacritas.eu';
+var sender_address = 'info@alacritas.eu';
 var admin_address = 'amedeo.poli@alacritas.eu';
 
 async function sendEmail(to, body, subject) {
