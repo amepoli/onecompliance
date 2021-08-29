@@ -459,8 +459,19 @@
                 "viewType": "combobox"
             },
             "label": "Presidio Superiore",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "id_presidio_parent=$id_presidio_parent$"
+        },
+        {
+            "fieldName": "codice_rischio_s",
+            "format": {
+                "comboQuery": "SELECT codice_rischio AS id, titolo AS name  FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Associati al rischio",
+            "newLine": true,
+            "queryCond": "id_presidio in(select id_presidio from entrasp.rischi_presidi where codice_rischio='$codice_rischio_s$')"
         },
         {
             "fieldName": "id_presidio",
