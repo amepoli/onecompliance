@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FieldConfig, MarkerReplacer } from 'app/oc/interfaces';
 
@@ -7,7 +7,9 @@ import { FieldConfig, MarkerReplacer } from 'app/oc/interfaces';
 })
 export class HelperService {
 
-
+    // Event Emitter for naviate requests
+    public static navigateRequested: EventEmitter<any> = new EventEmitter();
+    
     /**
      * Markers
      */
@@ -169,6 +171,23 @@ export class HelperService {
         return element;
     }
 
+
+    /**
+     * Request Navigate
+     * @param entry
+     * @param keys
+     */
+    public static navigateTo(entry: string, type: string, keys: object) {
+        let params = {
+            entry:{name: entry, type: type},
+            index: 1,
+            keys: [
+                keys
+            ]
+        };
+        
+        this.navigateRequested.emit({ eventType: "navigate", queryParams: params });
+    }
 
     /**
      * Redirect to Uri

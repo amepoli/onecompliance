@@ -119,7 +119,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }));
 
         // Receive Navigation Event from Time Tracker Service
-        _this.subscriptions.push(_this._timeTrackerService.navigateRequested.subscribe((data) => {
+        _this.subscriptions.push(HelperService.navigateRequested.subscribe((data) => {
             _this.onEvent(data);
         }));
         

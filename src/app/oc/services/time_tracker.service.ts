@@ -11,9 +11,6 @@ import { ToastService } from './toast.service';
 })
 export class TimeTrackerService {
 
-    // Event Emitter for naviate requests
-    public navigateRequested: EventEmitter<any> = new EventEmitter();
-
     
     // Event Emitter for naviate requests
     public statusUpdated: EventEmitter<TimeTrackerStatus> = new EventEmitter();
@@ -167,22 +164,6 @@ export class TimeTrackerService {
         }
     }
 
-    /**
-     * Request Navigate
-     * @param data
-     */
-    requestNavigate(data: any) {
-        let params = {
-            entry:{name: 'compiti_consultant_micro_task', type: 'form'},
-            index: 1,
-            keys: [
-                {codice_azienda: data.codice_azienda, codice_compito: data.codice_compito}
-            ]
-        };
-        
-        this.navigateRequested.emit({ eventType: "navigate", queryParams: params });
-    }
-
     updateStatusLocally() {
         let _this = this;
         if(_this.lastStatus) {
@@ -224,6 +205,7 @@ export class TimeTrackerService {
         if(
             oldStatus.data.codice_azienda !== newStatus.data.codice_azienda ||
             oldStatus.data.codice_compito !== newStatus.data.codice_compito ||
+            oldStatus.data.id_cons !== newStatus.data.id_cons ||
             oldStatus.data.date_time_begin !== newStatus.data.date_time_begin ||
             oldStatus.data.description !== newStatus.data.description ||
             oldStatus.data.status !== newStatus.data.status            
