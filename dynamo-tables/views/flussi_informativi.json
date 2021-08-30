@@ -1,6 +1,6 @@
 {
   "$schema": "../views.schema.json",
-  "entryKey": "reclami",
+  "entryKey": "flussi_informativi",
   "inheritsFrom": "data_breach",
   "dashboardTables": [
     "dashboard_compiti"
@@ -19,7 +19,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select codice_compito,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=200"
+      "queryString": "select codice_compito,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=7"
     },
     {
       "operation": "update",
@@ -30,16 +30,6 @@
       "operation": "insert",
       "type": "postProcessing",
       "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda"
-    },
-    {
-      "operation": "startEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$')"
-    },
-    {
-      "operation": "stopEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
     }
   ],
   "form_keys": [
@@ -48,7 +38,7 @@
       "format": {
         "viewType": "input",
         "dataType": "number",
-        "value": 200
+        "value": 7
       },
       "isHidden": true,
       "isPrimary": false,
@@ -67,7 +57,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "data_segnalazione",
-      "label": "Data Reclamo",
+      "label": "Data Richiesta",
       "newLine": false,
       "readOnly": false
     },
@@ -119,7 +109,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "id_responsabile",
-      "label": "Responsabile",
+      "label": "ID Responsabile",
       "newLine": true,
       "readOnly": false
     },
@@ -148,7 +138,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "id_centro_gest",
-      "label": "Centro Gestionale",
+      "label": "Centro Gestionale Emittente",
       "newLine": false,
       "readOnly": false,
       "size": 2.5
@@ -163,7 +153,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "id_centro_gest_monitor",
-      "label": "Centro Gestionale Monitoraggio",
+      "label": "Centro Gestionale Richiedente",
       "newLine": true,
       "readOnly": false,
       "size": 2.5
@@ -177,7 +167,7 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "codice_compito",
-      "label": "Codice Reclamo",
+      "label": "Codice Richiesta",
       "newLine": false,
       "readOnly": false,
       "size": 2.5
@@ -193,7 +183,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "codice_compito_parent",
-      "label": "Reclamo Parent",
+      "label": "Richiesta Parent",
       "newLine": false,
       "readOnly": false,
       "size": 2.5
