@@ -377,20 +377,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         if (data.templateKey) {
             _this.backendService.sendEmailUsingTemplate(data);
         } else {
+            _this._dialogService.showLoadingDialog('Email', 'Sending email. Please wait...');
             const subscription = _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.to, data.cc)
             .subscribe(
                 result => {
-                    _this._console.log(result);
+                    _this._dialogService.closeDialog();
                     if (result.Success) {
-                        _this._toastService.showSuccessToast(result.Message);
+                        _this._toastService.showSuccessToast('Email sent successfully!');
                     }
                     else {
                         _this._toastService.showErrorToast(result.Error);
                     }
 
                 }, error => {
+                    _this._dialogService.closeDialog();
                     _this._toastService.showErrorToast(error);
-
                 }
             );
             _this.generalSubscriptions.push(subscription);

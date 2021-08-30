@@ -197,21 +197,29 @@ exports.handler = async (event, context, callback) => {
         // Let's get entry from DynammoDB using templateKey from event
         entry = await getEntry(event.templateKey);
     }
+    else if (event.body && typeof event.body === 'string') {
+        // Let's get entry from JSON body if exists
+        let jsonObject = JSON.parse(event.body);
+        if (jsonObject.body) {
+            // Let's get entry from DynammoDB using templateKey from event
+            entry = jsonObject;
+        }
+    }
     else {
         // If no templateKey, then the event must be the data
         entry = event;
     }
 
     if (entry) {
-        console.log(entry);
+        console.log('entry: ', entry);
 
         let result = true;
         if (entry.conditionalQuery && entry.conditionalQuery.length > 0) {
             // Run query
             result = await runQuery(entry.conditionalQuery);
+            console.log(result[0]);
         }
         if (result) {
-            console.log(result[0]);
 
             // Get recipients
             let to = await getListOrQuery(entry.to);

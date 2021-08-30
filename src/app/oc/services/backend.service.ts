@@ -256,7 +256,8 @@ export class BackendService {
 
   sendEmail(subject: string, header: string, query: string, footer: string, company: string, conditionQuery: string, onSuccessQuery: string, to: string, cc: string): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = {
+    this.myPutPostInit.queryStringParameters = {company: company};
+    this.myPutPostInit.body = JSON.parse(JSON.stringify({
       subject: subject,
       body: {
         header: header,
@@ -266,10 +267,10 @@ export class BackendService {
       company: company,
       conditionQuery: conditionQuery,
       onSuccessQuery: onSuccessQuery,
-      to: to,
-      cc: cc
-    };
-    return from(this.amplifyService.api().get(this.apiName, '/' + this.emailApiName, this.myPutPostInit));
+      to: {list:to},
+      cc: {list:cc}
+    }));
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.emailApiName, this.myPutPostInit));
   }
 
   checkTimerStatus(company: string): Observable<any> {
