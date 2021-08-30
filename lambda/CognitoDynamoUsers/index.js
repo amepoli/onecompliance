@@ -84,7 +84,7 @@ exports.handler = async (event, context, callback) => {
             await ddb.putItem(ddbParams).promise();
             console.log("User added to DB");
             subject = "Il tuo utente è stato confermato / Your account has been confirmed";
-            content = "Congratulazioni,\nIl Suo account è stato confermato.\nPotrebbe servire qualche minuto ancora perché venga configurato correttament.\n\nCongratulations,\your account has been confirmed.\nIt might take few minutes to fully configure it\n\nThe Gorico Team.";
+            content = "Congratulazioni,\nIl Suo account è stato confermato.\nPotrebbe servire qualche minuto ancora perché venga configurato correttamente.\n\nCongratulations,\your account has been confirmed.\nIt might take few minutes to fully configure it\n\nThe OneCompliance Team.";
             await sendEmail(event.request.userAttributes.email, content, subject);
             console.log("Confirmation: Sent an email to the user");
             // Return to Amazon Cognito
