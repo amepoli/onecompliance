@@ -61,7 +61,13 @@ export class TimeTrackerComponent implements DoCheck, AfterViewInit, OnDestroy {
     }
 
     gotoTaskDetails() {
-        this._timeTrackerService.requestNavigate(this.data);
+        let keys = {codice_azienda: this.data.codice_azienda, codice_compito: this.data.codice_compito}
+        HelperService.navigateTo('compiti_consultant_micro_task', 'form', keys);
+    }
+
+    gotoConsultantDetails() {
+        let keys = {codice_azienda: this.data.codice_azienda, id_cons: this.data.id_cons}
+        HelperService.navigateTo('consuntivazioni_consultant_list', 'form', keys);    
     }
 
     gotoAziendeTasks() {
