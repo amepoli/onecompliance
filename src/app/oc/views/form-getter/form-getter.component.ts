@@ -377,7 +377,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         if (data.templateKey) {
             _this.backendService.sendEmailUsingTemplate(data);
         } else {
-            _this._dialogService.showLoadingDialog('Email', 'Sending email. Please wait...');
+            _this._dialogService.showLoadingDialog('Sending Email', 'Sending email. Please wait...');
             const subscription = _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.to, data.cc)
             .subscribe(
                 result => {
@@ -1182,10 +1182,32 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else if (actionType === 'email') {
                     
+                    let formValues = _this.formArray.first.form.value;
 
-                    let recipient = value.valueSet[event.message.actionOnYes.emailActionParameters.recipientKey];
+                    // process the booleans (1/0 instead of true/false)
+                    for (const value in formValues) {
+                        if (formValues.hasOwnProperty(value)) {
+                            const element = formValues[value];
+                            if (element == null) {
+                                continue; // skip null entries
+                            }
+                            // decode combos
+                            if (element['id'] != null) {
+                                formValues[value] = element['id'];
+                            }
+                            // encode boolean
+                            else if (element === true) {
+                                formValues[value] = '1';
+                            }
+                            else if (element === false) {
+                                formValues[value] = '0';
+                            }
+                        }
+                    }
+
+                    let recipient = formValues[event.message.actionOnYes.emailActionParameters.recipientKey];
                     let body = event.message.actionOnYes.emailActionParameters.bodyKeys.map(key => 
-                        `${key}: ${value.valueSet[key]}`
+                        `${key}: ${formValues[key]}`
                     ).join('\n');
 
                     _this.sendEmail({
