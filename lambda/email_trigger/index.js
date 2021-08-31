@@ -54,13 +54,32 @@ exports.handler = async (event, context, callback) => {
     if (composeEmailResponse.Success && composeEmailResponse.Data) {
         let sendEmailResponse = await send_email(composeEmailResponse.Data);
         if (sendEmailResponse.Success && sendEmailResponse.Message) {
-            callback(null, JSON.parse(sendEmailResponse.Message));
+
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 200,
+                "body": JSON.stringify(sendEmailResponse.Message)
+            };
+            // callback(null, JSON.parse(sendEmailResponse.Message));
         }
         else {
-            callback(null, JSON.parse(sendEmailResponse.Error));
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 200,
+                "body": JSON.stringify(sendEmailResponse.Error)
+            };
+            // callback(null, JSON.parse(sendEmailResponse.Error));
         }
     }
     else {
-        callback(null, JSON.parse(composeEmailResponse.Error));
+        return {
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "statusCode": 200,
+            "body": JSON.stringify(composeEmailResponse.Error)
+        };
+        // callback(null, JSON.parse(composeEmailResponse.Error));
     }
 };
