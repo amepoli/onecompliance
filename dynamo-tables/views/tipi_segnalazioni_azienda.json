@@ -1,0 +1,54 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "tipi_segnalazioni_azienda",
+    "inheritsFrom": "tipi_segnalazioni",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, count(cmp.codice_compito) as num_compiti from entrasp.tipi_segnalazioni ts inner join entrasp.compiti cmp on ts.id_tipo_segnalazione=cmp.id_tipo_segnalazione WHERE cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and cmp.codice_azienda='€global_codice_azienda€' group by ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_tipo_segnalazione",
+            "label": "id_tipo_segnalazione",
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "width": "30%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "num_compiti",
+            "label": "N.segnalazioni",
+            "width": "12%"
+        }
+    ]
+}
