@@ -4,6 +4,11 @@
   "inheritsFrom": "rischi",
   "predefinedQueries": [
     {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "SELECT codice_part,codice_azienda,codice,codice_rischio,titolo,id_centro_gest, id_centro_gest_liv2, coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,flag_modalita_valutazione_rischi_avanzata,vulnerabilita,descrizione,id_centro_gest,probabilita_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_pre,0)) AS probabilita_pre_descrizione,intensita_singola_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_pre,0)) AS intensita_pre_descrizione,intensita_totale_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'T',coalesce(intensita_totale_pre,0)) AS intensita_totale_pre_descrizione,coalesce(probabilita_post,0) as probabilita_post,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post,0)) AS probabilita_post_descrizione, coalesce(intensita_singola_post,0) as intensita_singola_post,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post,0)) AS impatto_post_descrizione,coalesce(intensita_totale_post,0) as intensita_totale_post,coalesce(probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) AS probabilita_rett_descrizione,coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata)) AS intensita_singola_post_rett_descrizione,coalesce(intensita_totale_pre,0) as intensita_totale_pre FROM entrasp.rischi WHERE id_argomento=$id_argomento$;"
+    },
+    {
       "operation": "selectForm",
       "type": "main",
       "queryString": "SELECT codice_part,codice_azienda,codice,codice_rischio,titolo,id_centro_gest, id_centro_gest_liv2, coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,flag_modalita_valutazione_rischi_avanzata,vulnerabilita,descrizione,id_centro_gest,probabilita_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_pre,0)) AS probabilita_pre_descrizione,intensita_singola_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_pre,0)) AS intensita_pre_descrizione,intensita_totale_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'T',coalesce(intensita_totale_pre,0)) AS intensita_totale_pre_descrizione,coalesce(probabilita_post,0) as probabilita_post,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post,0)) AS probabilita_post_descrizione, coalesce(intensita_singola_post,0) as intensita_singola_post,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post,0)) AS impatto_post_descrizione,coalesce(intensita_totale_post,0) as intensita_totale_post,coalesce(probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) AS probabilita_rett_descrizione,coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata)) AS intensita_singola_post_rett_descrizione,coalesce(intensita_totale_pre,0) as intensita_totale_pre FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$;"
@@ -107,6 +112,16 @@
       "width": "10%",
       "label": "Centro Gestionale Monitoraggio (liv.2)",
       "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest_liv2)"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "width": "10%",
+      "label": "id_argomento"
     },
     {
       "format": {
