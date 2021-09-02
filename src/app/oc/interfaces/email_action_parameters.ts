@@ -1,4 +1,6 @@
 export interface EmailActionParameters {
-    recipientKey: string,
+    subjectKeys: string[]
+    recipientKeys: string[]
+    ccKeys: string[]
     bodyKeys: string[]
 }

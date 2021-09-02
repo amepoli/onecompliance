@@ -1205,21 +1205,33 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
 
-                    let recipient = formValues[event.message.actionOnYes.emailActionParameters.recipientKey];
-                    let body = event.message.actionOnYes.emailActionParameters.bodyKeys.map(key => 
-                        `${key}: ${formValues[key]}`
-                    ).join('\n');
-
+                    let subject = 'OneCompliance';
+                    if(event.message.actionOnYes.emailActionParameters.subjectKeys && event.message.actionOnYes.emailActionParameters.subjectKeys.length) {
+                        subject = event.message.actionOnYes.emailActionParameters.subjectKeys.map(key => formValues[key]).join(' ');
+                    }
+                    let recipients = null;
+                    if(event.message.actionOnYes.emailActionParameters.recipientKeys && event.message.actionOnYes.emailActionParameters.recipientKeys.length) {
+                        recipients = event.message.actionOnYes.emailActionParameters.recipientKeys.map(key => formValues[key]).join(',');
+                    }
+                    let cc = null;
+                    if(event.message.actionOnYes.emailActionParameters.ccKeys && event.message.actionOnYes.emailActionParameters.ccKeys.length) {
+                        cc = event.message.actionOnYes.emailActionParameters.ccKeys.map(key => formValues[key]).join(',');
+                    }
+                    let body = null;
+                    if(event.message.actionOnYes.emailActionParameters.bodyKeys && event.message.actionOnYes.emailActionParameters.bodyKeys.length) {
+                        body = event.message.actionOnYes.emailActionParameters.bodyKeys.map(key => `${key}: ${formValues[key]}`).join('\n');
+                    }
+                    
                     _this.sendEmail({
-                        subject: 'OneCompliance',
+                        subject: subject,
                         header: body,
                         query: null,
                         footer: null,
                         company:_this.authService.getCurrentCompany(_this.currentKeys),
                         conditionQuery: null,
                         onSuccessQuery: null,
-                        to: recipient,
-                        cc: null
+                        to: recipients,
+                        cc: cc
                     });
                     console.log(JSON.stringify(event));
                     // _this.sendEmail({ templateKey: 'test' });
