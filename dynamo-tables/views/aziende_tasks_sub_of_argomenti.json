@@ -1,0 +1,96 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "aziende_tasks_sub_of_argomenti",
+	"inheritsFrom": "aziende_tasks",
+	"predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"queryString": "select codice_azienda, codice_part, entrasp.count_sondaggi_open_azienda(codice_azienda) as sondaggi_aperti, entrasp.count_my_sondaggi_open_azienda(codice_azienda, €global_userid€) as my_sondaggi_aperti, entrasp.compiti_count_open_azienda_to_do(codice_azienda) as compiti_aperti_to_do, entrasp.compiti_count_open_azienda(codice_azienda) as compiti_aperti from entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda",
+			"type": "main"
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "15%",
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "Azienda"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "15%",
+			"key": "codice_part",
+			"label": "Partizione"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "compiti_aperti_to_do",
+			"width": "15%",
+			"label": "N.to do aperti"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "compiti_aperti",
+			"width": "15%",
+			"label": "N.compiti aperti"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "my_sondaggi_aperti",
+			"width": "15%",
+			"label": "N. mie verifiche aperte",
+			"style": [
+				{
+					"value": "0",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": ">0",
+					"font_color": "red",
+					"font_weight": "500"
+				}
+			]
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "sondaggi_aperti",
+			"width": "15%",
+			"label": "N. verifiche aperte"
+		}
+	],
+	"hideActions": [
+		{
+			"tableActionType": "add",
+			"viewType": "table"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "add"
+		}
+	]
+}

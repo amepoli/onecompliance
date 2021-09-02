@@ -1,0 +1,143 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "centri_gestionali_sub_of_argomenti",
+  "inheritsFrom": "centri_gestionali",
+  "dashboardTables": [
+    "dashboard_centri_gestionali"
+  ],
+  "origin": "entrasp.centri_gestionali",
+  "predefinedQueries": [
+    {
+			"type": "main",
+			"operation": "selectTable",
+			"queryString": "SELECT codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, tree_path_referente, id_gruppo_lavoro, tree_path, ute_ref, flag_grc_controller, flag_grc_gestore, descrizione_estesa, id_argomento, codice_azienda_erogante, entrasp.anagrafiche_id_codcognnome(codice_part,id_responsabile) as responsabile, entrasp.centri_gestionali_descr(codice_part,id_centro_gest_parent) as parente FROM entrasp.centri_gestionali;"
+		},
+    {
+      "operation": "isInsert",
+      "queryString": "select $id_centro_gest$ is null as label;",
+      "type": "main"
+    },
+    {
+      "operation": "insert",
+      "queryString": "select entrasp.centro_gest_insert($codice_part$, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, $codice_azienda_erogante$)as id_centro_gest",
+      "type": "main"
+    },
+    {
+      "operation": "delete",
+      "queryString": "select entrasp.centro_gestionale_delete('€global_codice_part€', $id_centro_gest$);",
+      "type": "main"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "UPDATE entrasp.centri_gestionali cge set codice_part=az.codice_part from entrasp.aziende az where cge.codice_part=az.codice_part"
+    },
+    {
+			"operation": "insert",
+			"type": "preCheck",
+			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£'",
+			"messageNotNull": "Inserimento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+		},
+		{
+			"operation": "update",
+			"type": "preCheck",
+			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£' and id_centro_gest!=$id_centro_gest$",
+			"messageNotNull": "Aggiornamento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+		},
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "select entrasp.update_dynamo_user((€global_id_anagrafiche€)::text, (€global_user_companies€)::text, '€global_username€')"			
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_part",
+      "label": "codice_part"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_centro_gest",
+      "label": "ID",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_anagrafica",
+      "label": "ID Anagrafica",
+      "sameOrigin": false,
+      "width": "0%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
+      "label": "Codice",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_azienda_erogante",
+      "label": "Azienda erogante",
+      "width": "12%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Descrizione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "responsabile",
+      "label": "Responsabile",
+      "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_responsabile)"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "parente",
+      "label": "Centro Superiore",
+      "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest_parent)"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "id_argomento"
+    }
+  ]
+}

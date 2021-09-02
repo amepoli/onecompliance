@@ -1,0 +1,38 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "attivita_sub_of_argomenti",
+    "origin": "entrasp.attivita",
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select *, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest  from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent is null and data_fine_validita is null;"
+        },
+        {
+            "operation": "insert",
+            "queryString": "update entrasp.attivita att set codice_part='€global_codice_part€' where att.codice_azienda=$codice_azienda$ and att.codice_part is null",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "update",
+            "queryString": "update entrasp.attivita att set codice_part='€global_codice_part€' where att.codice_azienda=$codice_azienda$ and att.codice_part is null",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "delete",
+            "queryString": "delete from entrasp.attivita att where entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita)=$codice_attivita$ and att.codice_azienda=$codice_azienda$",
+            "type": "main"
+        },
+        {
+            "type": "main",
+            "operation": "share",
+            "queryString": "select entrasp.grc_accoda_attivita_e_relativi_modelli('$codice_azienda$', '$chosen_azienda$', '$codice_attivita$');"
+        },
+        {
+            "operation": "delete",
+            "type": "preCheck",
+            "queryString": "select codice_attivita from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_attivita=$codice_attivita$",
+            "messageNotNull": "Aggiornamento: il modello è referenziato da un progetto. Cancellare i progetti associati prima di cancellare il presente modello!"
+        }
+    ]
+}
