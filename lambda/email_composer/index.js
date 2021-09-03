@@ -229,6 +229,10 @@ exports.handler = async (event, context, callback) => {
             let cc = await getListOrQuery(entry.cc);
             console.log('cc', cc);
 
+            // Get CCN
+            let ccn = await getListOrQuery(entry.ccn);
+            console.log('ccn', ccn);
+
             // Get body
             let body = await getBody(entry.body);
 
@@ -238,6 +242,7 @@ exports.handler = async (event, context, callback) => {
                 "data": {
                     "to": to,
                     "cc": cc,
+                    "ccn": ccn,
                     "body": body,
                     "subject": entry.subject,
                     "sender": sender_address

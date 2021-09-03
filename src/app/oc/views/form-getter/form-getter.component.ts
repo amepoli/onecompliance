@@ -378,7 +378,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             _this.backendService.sendEmailUsingTemplate(data);
         } else {
             _this._dialogService.showLoadingDialog('Sending Email', 'Sending email. Please wait...');
-            const subscription = _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.to, data.cc)
+            const subscription = _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.to, data.cc, data.ccn)
             .subscribe(
                 result => {
                     _this._dialogService.closeDialog();
@@ -1209,17 +1209,36 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if(event.message.actionOnYes.emailActionParameters.subjectKeys && event.message.actionOnYes.emailActionParameters.subjectKeys.length) {
                         subject = event.message.actionOnYes.emailActionParameters.subjectKeys.map(key => formValues[key]).join(' ');
                     }
+                    if(event.message.actionOnYes.emailActionParameters.subject && event.message.actionOnYes.emailActionParameters.subject.length) {
+                        subject = event.message.actionOnYes.emailActionParameters.subject;
+                    }
                     let recipients = null;
                     if(event.message.actionOnYes.emailActionParameters.recipientKeys && event.message.actionOnYes.emailActionParameters.recipientKeys.length) {
                         recipients = event.message.actionOnYes.emailActionParameters.recipientKeys.map(key => formValues[key]).join(',');
+                    }
+                    if(event.message.actionOnYes.emailActionParameters.recipientList && event.message.actionOnYes.emailActionParameters.recipientList.length) {
+                        recipients = event.message.actionOnYes.emailActionParameters.recipientList.join(',');
                     }
                     let cc = null;
                     if(event.message.actionOnYes.emailActionParameters.ccKeys && event.message.actionOnYes.emailActionParameters.ccKeys.length) {
                         cc = event.message.actionOnYes.emailActionParameters.ccKeys.map(key => formValues[key]).join(',');
                     }
+                    if(event.message.actionOnYes.emailActionParameters.ccList && event.message.actionOnYes.emailActionParameters.ccList.length) {
+                        cc = event.message.actionOnYes.emailActionParameters.ccList.join(',');
+                    }
+                    let ccn = null;
+                    if(event.message.actionOnYes.emailActionParameters.ccnKeys && event.message.actionOnYes.emailActionParameters.ccnKeys.length) {
+                        ccn = event.message.actionOnYes.emailActionParameters.ccnKeys.map(key => formValues[key]).join(',');
+                    }
+                    if(event.message.actionOnYes.emailActionParameters.ccnList && event.message.actionOnYes.emailActionParameters.ccnList.length) {
+                        ccn = event.message.actionOnYes.emailActionParameters.ccnList.join(',');
+                    }
                     let body = null;
                     if(event.message.actionOnYes.emailActionParameters.bodyKeys && event.message.actionOnYes.emailActionParameters.bodyKeys.length) {
                         body = event.message.actionOnYes.emailActionParameters.bodyKeys.map(key => `${key}: ${formValues[key]}`).join('\n');
+                    }
+                    if(event.message.actionOnYes.emailActionParameters.body && event.message.actionOnYes.emailActionParameters.body.length) {
+                        body = event.message.actionOnYes.emailActionParameters.body;
                     }
                     
                     _this.sendEmail({
@@ -1231,7 +1250,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         conditionQuery: null,
                         onSuccessQuery: null,
                         to: recipients,
-                        cc: cc
+                        cc: cc,
+                        ccn: ccn
                     });
                     console.log(JSON.stringify(event));
                     // _this.sendEmail({ templateKey: 'test' });
