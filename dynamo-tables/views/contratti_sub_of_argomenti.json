@@ -6,7 +6,7 @@
 		{
 			"type": "main",
 			"operation": "selectTable",
-			"queryString": "SELECT codice_azienda, id_contratto, numero_contratto, data_stipulazione, data_contratto_da, data_contratto_a, id_cliente, id_destinazione, giorni_disdetta, data_cessazione, id_cond_fatt, id_cond_pag, durata, stato, descrizione, data_disdetta, id_tipo_contratto, tariffa_mensile, tariffa_a_corpo, tariffa_startup, id_fatturazione, id_destinazione_fatturazione, id_valuta, id_conto_corrente_terzi, id_conto_corrente_az, id_agente_primario, id_agente_secondario, pct_provvigione_pri, pct_provvigione_sec, id_tipo_garanzia, id_articolo, codice_variante, id_centro_costo, flag_contratto_quadro, id_contratto_rinnovo, codice_part, codice_sede, id_centro_gest, id_evento, codice_class, sconto, flag_dettagli_riservati, codice_listino, descrizione_alt, desc_canone_mensile, desc_canone_mensile_alt, flag_ricalcolo, id_rinnovo, id_rinnovo_da, stato_prec, codice_azienda_ft, note, id_strumento_finanziario, codice_esterno_numeric, codice_esterno_varchar, id_argomento_contratto, id_fornitore, entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as id_tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as descr_cliente FROM entrasp.contratti;"
+			"queryString": "SELECT id_argomento_contratto, codice_azienda, id_contratto, numero_contratto, id_tipo_contratto, codice_part, id_strumento_finanziario, entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as id_tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as descr_cliente FROM entrasp.contratti WHERE id_argomento_contratto=$id_argomento_contratto$;"
 		},
 		{
 			"operation": "update",
@@ -84,6 +84,15 @@
 			"isPrimary": false,
 			"key": "id_strumento_finanziario",
 			"label": "Tipo Contratto"
+		  } ,
+		  {
+			"format": {
+			  "dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_argomento_contratto",
+			"label": "id_argomento_contratto"
 		  } 
-	  ]
+		]
 }
