@@ -13,6 +13,13 @@
       "viewType": "form"
     }
   ],
+  "predefinedQueries": [
+    {
+      "type": "preProcessing",
+      "operation": "selectForm",
+      "queryString": "select entrasp.calcola_email_subject_sondaggio($codice_azienda$, $id_sondaggio$)"
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -190,6 +197,33 @@
     {
       "autoGenerate": false,
       "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "email_subject",
+      "label": "Oggetto email",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "email_cc",
+      "label": "email_cc",
+      "emailLabel": "Documentazione richiesta",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "viewType": "button"
       },
       "isHidden": false,
@@ -213,10 +247,10 @@
             "actionOnYes": {
               "actionType": "email",
               "emailActionParameters": {
-                "subjectKeys": ["selezione_campione"],
+                "subjectKeys": ["email_subject"],
                 "recipientKeys": ["email_to"],
-                "ccKeys": ["link"],
-                "bodyKeys": ["data_riferimento_da", "data_riferimento_a", "documentazione_analizzata"]
+                "ccKeys": ["email_cc"],
+                "bodyKeys": ["email_text","data_riferimento_da", "data_riferimento_a", "documentazione_analizzata"]
               }
             },
             "actionOnNo": {
