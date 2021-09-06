@@ -78,7 +78,7 @@
                         "format": {
                             "viewType": "combobox",
                             "options": [],
-                            "comboQuery": "select prg.id_progetto as id, concat (prg.id_progetto, ' - ', prg.titolo) as name from entrasp.progetti prg where prg.codice_azienda=$codice_azienda$ and prg.id_centro_gest = (select id_centro_gest from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1)"
+                            "comboQuery": "select prg.id_progetto as id, concat (prg.id_progetto, ' - ', prg.titolo) as name from entrasp.progetti prg where prg.id_progetto in (select pf.id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi s on pf.codice_azienda=s.codice_azienda and pf.id_sondaggio=s.id_sondaggio where s.id_centro_gest=£id_centro_gest£ and pf.codice_azienda=$codice_azienda$)"
                         },
                         "isHidden": false,
                         "isPrimary": false,
