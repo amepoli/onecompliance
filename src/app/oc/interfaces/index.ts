@@ -30,3 +30,4 @@ export * from './scroll_info.interface';
 export * from './time_tracker_status.interface';
 export * from './field.interface';
 export * from './email_action_parameters';
+export * from './email_body_key_parameters';

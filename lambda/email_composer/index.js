@@ -20,7 +20,7 @@ const pool = new Pool({
     connectionTimeoutMillis: 1000
 });
 
-var sender_address = 'amedeo.poli@alacritas.eu';
+var default_sender = 'amedeo.poli@alacritas.eu';
 
 // Some test addresses
 //var admin_addresses = ['akhtar.syedzeeshan@alacritas.eu', 'amedeo.poli@alacritas.eu', 'nicola.capovilla@alacritas.eu'];
@@ -142,7 +142,7 @@ async function sendEmail(to, cc, body, subject) {
             },
 
             // Replace source_email with your SES validated email address
-            Source: sender_address
+            Source: default_sender
         };
         */
 
@@ -153,7 +153,7 @@ async function sendEmail(to, cc, body, subject) {
                 "cc": cc,
                 "body": body,
                 "subject": subject,
-                "sender": sender_address
+                "sender": default_sender
             }
         }
 
@@ -221,6 +221,9 @@ exports.handler = async (event, context, callback) => {
         }
         if (result) {
 
+            // Get subject
+            let subject = entry.subject;
+
             // Get recipients
             let to = await getListOrQuery(entry.to);
             console.log('to', to);
@@ -236,6 +239,8 @@ exports.handler = async (event, context, callback) => {
             // Get body
             let body = await getBody(entry.body);
 
+            // Get sender
+            let sender = entry.sender ? entry.sender : default_sender;
             console.log("Calling back...");
 
             let eParams = {
@@ -244,8 +249,8 @@ exports.handler = async (event, context, callback) => {
                     "cc": cc,
                     "ccn": ccn,
                     "body": body,
-                    "subject": entry.subject,
-                    "sender": sender_address
+                    "subject": subject,
+                    "sender": sender
                 }
             }
             event = eParams;
