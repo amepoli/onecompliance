@@ -3,7 +3,7 @@
   "origin": "entrasp.sondaggi",
   "entryKey": "sondaggi_ulteriori_elementi",
   "businessObjectName": "sondaggi",
-  "hideActions": [
+   "hideActions": [
     {
       "formActionType": "add",
       "viewType": "form"
@@ -164,58 +164,6 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "email_to",
-      "label": "Destinatari",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "email_text",
-      "label": "Testo Email",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "email_subject",
-      "label": "Oggetto email",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "email_cc",
-      "label": "email_cc",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
         "viewType": "button"
       },
       "isHidden": false,
@@ -228,57 +176,7 @@
         "eventName": "send_email",
         "eventTrigger": "press"
       },
-      "inputEvents": [
-        {
-          "eventName": "send_email",
-          "condition": "none",
-          "values": [],
-          "actionType": "show_message",
-          "message": {
-            "messageText": "Si intende procedere all'invio dell'email?",
-            "actionOnYes": {
-              "actionType": "email",
-              "emailActionParameters": {
-                "subjectKeys": ["email_subject"],
-                "senderKey": "link",
-                "recipientKeys": ["email_to"],
-                "ccKeys": ["link"],
-                "bodyKeys": [
-                  {
-                    "key": "email_text",
-                    "label": ""
-                  },
-                  {
-                    "key": "data_riferimento_da",
-                    "label": "Data riferimento da: "
-                  },
-                  {
-                    "key": "data_riferimento_a",
-                    "label": "Data riferimento a: "
-                  },
-                  {
-                    "key": "documentazione_analizzata",
-                    "label": "Documentazione analizzata: "
-                  }
-                ],
-                "outputEventWhenComplete": "trackEmailSond"
-              }
-            },
-            "actionOnNo": {
-              "actionType": "query",
-              "queryFunct": "select 1"
-            }
-          }
-        },
-        {
-          "eventName": "trackEmailSond",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.track_email_send_sond_ult_elem($codice_azienda$, $id_sondaggio$)"
-        }
-      ],
-      "style": {
+     "style": {
         "background_color": "#25599C",
         "font_color": "white"
       },
@@ -302,6 +200,27 @@
           }
       ],
       "label": "Richieste documentazione"
+  }
+],
+"inputEvents": [
+  {
+    "actionType": "navigate",
+    "eventName": "send_email",
+    "actionTarget": {
+      "name": "sondaggi_send_email",
+      "type": "form",
+      "keymap": [
+        {
+          "source": "codice_azienda",
+          "destination": "codice_azienda"
+        },
+        {
+          "source": "id_sondaggio",
+          "destination": "id_sondaggio"
+        }
+
+      ]
+    }
   }
 ]
 }
