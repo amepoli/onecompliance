@@ -217,7 +217,6 @@
       "isPrimary": false,
       "key": "email_cc",
       "label": "email_cc",
-      "emailLabel": "Documentazione richiesta",
       "newLine": false,
       "readOnly": true
     },
@@ -248,9 +247,28 @@
               "actionType": "email",
               "emailActionParameters": {
                 "subjectKeys": ["email_subject"],
+                "senderKey": "link",
                 "recipientKeys": ["email_to"],
-                "ccKeys": ["email_cc"],
-                "bodyKeys": ["email_text","data_riferimento_da", "data_riferimento_a", "documentazione_analizzata"]
+                "ccKeys": ["link"],
+                "bodyKeys": [
+                  {
+                    "key": "email_text",
+                    "label": ""
+                  },
+                  {
+                    "key": "data_riferimento_da",
+                    "label": "Data riferimento da: "
+                  },
+                  {
+                    "key": "data_riferimento_a",
+                    "label": "Data riferimento a: "
+                  },
+                  {
+                    "key": "documentazione_analizzata",
+                    "label": "Documentazione analizzata: "
+                  }
+                ],
+                "outputEventWhenComplete": "trackEmailSond"
               }
             },
             "actionOnNo": {
@@ -258,6 +276,13 @@
               "queryFunct": "select 1"
             }
           }
+        },
+        {
+          "eventName": "trackEmailSond",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.track_email_send_sond_ult_elem($codice_azienda$, $id_sondaggio$)"
         }
       ],
       "style": {

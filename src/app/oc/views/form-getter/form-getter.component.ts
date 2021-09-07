@@ -3,7 +3,7 @@ import { DynamicFormComponent } from 'app/oc/dynamic-forms/components/dynamic-fo
 import { ComboboxComponent } from 'app/oc/dynamic-forms/components/combobox/combobox.component';
 import { Subscription } from 'rxjs';
 import { SubformComponent } from 'app/oc/dynamic-forms/components/subform/subform.component';
-import { ExportItem, FieldConfig, FormGetterParams, FormViewKey, ImportItem, MessageView, OutputEvent } from 'app/oc/interfaces';
+import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, ImportItem, MessageView, OutputEvent } from 'app/oc/interfaces';
 import { FormDataType } from 'app/oc/types';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/oc/services';
 import { DynamicFieldDirective } from 'app/oc/directives';
@@ -371,19 +371,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         _this.generalSubscriptions.push(subscription);
     }
 
-    sendEmail(data: any) {
+    sendEmail(data: any, outputEventWhenComplete: string, value: any) {
         const _this = this;
 
         if (data.templateKey) {
             _this.backendService.sendEmailUsingTemplate(data);
         } else {
             _this._dialogService.showLoadingDialog('Sending Email', 'Sending email. Please wait...');
-            const subscription = _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.to, data.cc, data.ccn)
+            const subscription = _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.sender, data.to, data.cc, data.ccn)
             .subscribe(
                 result => {
                     _this._dialogService.closeDialog();
                     if (result.Success) {
                         _this._toastService.showSuccessToast('Email sent successfully!');
+                        if (outputEventWhenComplete) {
+                            _this.pubSubService.publishEvent(outputEventWhenComplete, value);
+                        }
                     }
                     else {
                         _this._toastService.showErrorToast(result.Error);
@@ -1183,6 +1186,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 else if (actionType === 'email') {
                     
                     let formValues = _this.formArray.first.form.value;
+                    let emailActionParameters: EmailActionParameters = event.message.actionOnYes.emailActionParameters;
 
                     // process the booleans (1/0 instead of true/false)
                     for (const value in formValues) {
@@ -1206,54 +1210,68 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
 
                     let subject = 'OneCompliance';
-                    if(event.message.actionOnYes.emailActionParameters.subjectKeys && event.message.actionOnYes.emailActionParameters.subjectKeys.length) {
-                        subject = event.message.actionOnYes.emailActionParameters.subjectKeys.map(key => formValues[key]).join(' ');
+                    if(emailActionParameters.subjectKeys && emailActionParameters.subjectKeys.length) {
+                        subject = emailActionParameters.subjectKeys.map(key => formValues[key]).join(' ');
                     }
-                    if(event.message.actionOnYes.emailActionParameters.subject && event.message.actionOnYes.emailActionParameters.subject.length) {
-                        subject = event.message.actionOnYes.emailActionParameters.subject;
+                    if(emailActionParameters.subject && emailActionParameters.subject.length) {
+                        subject = emailActionParameters.subject;
                     }
-                    let recipients = null;
-                    if(event.message.actionOnYes.emailActionParameters.recipientKeys && event.message.actionOnYes.emailActionParameters.recipientKeys.length) {
-                        recipients = event.message.actionOnYes.emailActionParameters.recipientKeys.map(key => formValues[key]).join(',');
+
+                    let sender = null;
+                    if(emailActionParameters.senderKey && emailActionParameters.senderKey.length) {
+                        sender = formValues[emailActionParameters.senderKey];
                     }
-                    if(event.message.actionOnYes.emailActionParameters.recipientList && event.message.actionOnYes.emailActionParameters.recipientList.length) {
-                        recipients = event.message.actionOnYes.emailActionParameters.recipientList.join(',');
-                    }
-                    let cc = null;
-                    if(event.message.actionOnYes.emailActionParameters.ccKeys && event.message.actionOnYes.emailActionParameters.ccKeys.length) {
-                        cc = event.message.actionOnYes.emailActionParameters.ccKeys.map(key => formValues[key]).join(',');
-                    }
-                    if(event.message.actionOnYes.emailActionParameters.ccList && event.message.actionOnYes.emailActionParameters.ccList.length) {
-                        cc = event.message.actionOnYes.emailActionParameters.ccList.join(',');
-                    }
-                    let ccn = null;
-                    if(event.message.actionOnYes.emailActionParameters.ccnKeys && event.message.actionOnYes.emailActionParameters.ccnKeys.length) {
-                        ccn = event.message.actionOnYes.emailActionParameters.ccnKeys.map(key => formValues[key]).join(',');
-                    }
-                    if(event.message.actionOnYes.emailActionParameters.ccnList && event.message.actionOnYes.emailActionParameters.ccnList.length) {
-                        ccn = event.message.actionOnYes.emailActionParameters.ccnList.join(',');
-                    }
-                    let body = null;
-                    if(event.message.actionOnYes.emailActionParameters.bodyKeys && event.message.actionOnYes.emailActionParameters.bodyKeys.length) {
-                        body = event.message.actionOnYes.emailActionParameters.bodyKeys.map(key => `${key}: ${formValues[key]}`).join('\n');
-                    }
-                    if(event.message.actionOnYes.emailActionParameters.body && event.message.actionOnYes.emailActionParameters.body.length) {
-                        body = event.message.actionOnYes.emailActionParameters.body;
+                    if(emailActionParameters.sender && emailActionParameters.sender.length) {
+                        sender = emailActionParameters.sender;
                     }
                     
-                    _this.sendEmail({
-                        subject: subject,
-                        header: body,
-                        query: null,
-                        footer: null,
-                        company:_this.authService.getCurrentCompany(_this.currentKeys),
-                        conditionQuery: null,
-                        onSuccessQuery: null,
-                        to: recipients,
-                        cc: cc,
-                        ccn: ccn
-                    });
-                    console.log(JSON.stringify(event));
+                    let recipients = null;
+                    if(emailActionParameters.recipientKeys && emailActionParameters.recipientKeys.length) {
+                        recipients = emailActionParameters.recipientKeys.map(key => formValues[key]).join(',');
+                    }
+                    if(emailActionParameters.recipientList && emailActionParameters.recipientList.length) {
+                        recipients = emailActionParameters.recipientList.join(',');
+                    }
+                    let cc = null;
+                    if(emailActionParameters.ccKeys && emailActionParameters.ccKeys.length) {
+                        cc = emailActionParameters.ccKeys.map(key => formValues[key]).join(',');
+                    }
+                    if(emailActionParameters.ccList && emailActionParameters.ccList.length) {
+                        cc = emailActionParameters.ccList.join(',');
+                    }
+                    let ccn = null;
+                    if(emailActionParameters.ccnKeys && emailActionParameters.ccnKeys.length) {
+                        ccn = emailActionParameters.ccnKeys.map(key => formValues[key]).join(',');
+                    }
+                    if(emailActionParameters.ccnList && emailActionParameters.ccnList.length) {
+                        ccn = emailActionParameters.ccnList.join(',');
+                    }
+                    let body = null;
+                    if(emailActionParameters.bodyKeys && emailActionParameters.bodyKeys.length) {
+                        body = emailActionParameters.bodyKeys.map(key => `${key.label}${formValues[key.key]}`).join('\n');
+                    }
+                    if(emailActionParameters.body && emailActionParameters.body.length) {
+                        body = emailActionParameters.body;
+                    }
+                    
+                    _this.sendEmail(
+                        {
+                            subject: subject,
+                            header: body,
+                            query: null,
+                            footer: null,
+                            company:_this.authService.getCurrentCompany(_this.currentKeys),
+                            conditionQuery: null,
+                            onSuccessQuery: null,
+                            sender: sender,
+                            to: recipients,
+                            cc: cc,
+                            ccn: ccn
+                        },
+                        emailActionParameters.outputEventWhenComplete,
+                        value
+                    );
+                    // console.log(JSON.stringify(event));
                     // _this.sendEmail({ templateKey: 'test' });
                 }
                 else {
