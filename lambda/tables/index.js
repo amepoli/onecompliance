@@ -1296,18 +1296,19 @@ async function processCustomQuery(queryString, keys, client) {
 async function processFormActionQuery(formActionType, queryString, keys, client) {
     if (queryString != null) {
         console.log('queryString: ', queryString);
-        let preCheckFine = true;
         if (queryString.preCheckQueries && queryString.preCheckQueries.length) {
-            let preCheckResult = await processPreCheck(queryString, client, formActionType);
-            if (preCheckResult && preCheckResult.length === queryString.preCheckQueries.length) {
-                preCheckFine = true;
-            }
-            else {
-                preCheckFine = false;
+            let preCheckErrors = await processPreCheck(queryString, client, formActionType);
+            if (preCheckErrors && preCheckErrors.length) {
+                return {
+                    "isBase64Encoded": false,
+                    "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                    "statusCode": 200,
+                    "body": JSON.stringify({ result: 'KO', reason: preCheckErrors })
+                };
             }
         }
 
-        if (preCheckFine && queryString.mainQuery) {
+        if (queryString.mainQuery) {
             console.log(`Running ${formActionType} query`);
 
             // queryString = replaceGlobalkeys(queryString);
@@ -1333,6 +1334,14 @@ async function processFormActionQuery(formActionType, queryString, keys, client)
                     "body": JSON.stringify({ result: 'KO', error: e, queryString: queryString })
                 };
             }
+        }
+        else {
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 200,
+                "body": JSON.stringify({ result: 'KO', error: ['No main query provided'] })
+            };
         }
     }
 }
