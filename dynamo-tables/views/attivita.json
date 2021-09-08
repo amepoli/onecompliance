@@ -41,23 +41,23 @@
             "eventName": "to_modello_test_from_attivita"
         },
         {
-			"actionTarget": {
-				"name": "attivita",
-				"type": "form",
-				"keymap": [
-					{
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
-					{
-						"source": "codice_attivita",
-						"destination": "codice_attivita"
-					}
-				]
-			},
-			"actionType": "navigate",
-			"eventName": "navigate_to_new_attivita"
-		}
+            "actionTarget": {
+                "name": "attivita",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_attivita",
+                        "destination": "codice_attivita"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "navigate_to_new_attivita"
+        }
     ],
     "predefinedQueries": [
         {
@@ -120,26 +120,25 @@
             "newLine": false,
             "readOnly": true,
             "inputEvents": [
-				{
-					"eventName": "attivita_duplica",
-					"actionType": "show_message",
-					"condition": "none",
-					"values": [],
-					"message": {
-						"messageText": "Sei sicuro di voler duplicare questa attivita? (si verrà automaticamente trasferiti nella nuova)",
-						"actionOnNo": {
-							"actionType": "query",
-							"queryFunct": "select 1;"
-						},
-						"actionOnYes": {
-							"actionType": "query",
-							"queryFunct": "select entrasp.attivita_duplica($codice_azienda$, $codice_attivita$) as codice_attivita;"
-						}
-					},
-					"outputEventWhenComplete": "navigate_to_new_attivita"
-				}
-			]
-
+                {
+                    "eventName": "attivita_duplica",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler duplicare questa attivita? (si verrà automaticamente trasferiti nella nuova)",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1;"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.attivita_duplica($codice_azienda$, $codice_attivita$) as codice_attivita;"
+                        }
+                    },
+                    "outputEventWhenComplete": "navigate_to_new_attivita"
+                }
+            ]
         },
         {
             "autoGenerate": false,
@@ -163,24 +162,24 @@
             "size": 2
         },
         {
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "duplica_attivita",
-			"buttonIcon": "content_copy",
-			"label": "Duplica attivita",
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "attivita_duplica",
-				"eventTrigger": "press"
-			},
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1
-		},
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "duplica_attivita",
+            "buttonIcon": "content_copy",
+            "label": "Duplica attivita",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "attivita_duplica",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+        },
         {
             "autoGenerate": false,
             "format": {
@@ -191,7 +190,7 @@
             "key": "aggiorna_codici",
             "buttonIcon": "sync_alt",
             "label": "Aggiorna Codici",
-            "newLine": false,
+            "newLine": true,
             "outputEvent": {
                 "eventName": "codici_aggiorna",
                 "eventTrigger": "press"
@@ -214,21 +213,6 @@
             "size": 1.5,
             "sameOrigin": false
         },
-        {
-            "autoGenerate": false,
-            "format": {
-              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3417 order by descrizione",
-              "options": [],
-              "viewType": "combobox",
-              "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_argomento",
-            "label": "Argomento",
-            "readOnly": false,
-            "newLine": true
-          },
         {
             "autoGenerate": false,
             "format": {
@@ -271,7 +255,7 @@
             "label": "Attività Livello Superiore",
             "newLine": false,
             "readOnly": false,
-            "size": 5
+            "size": 3
         },
         {
             "autoGenerate": false,
@@ -284,9 +268,58 @@
             "isPrimary": false,
             "key": "id_centro_gest",
             "label": "Centro Gestionale",
-            "newLine": true,
-            "size": 5,
+            "newLine": false,
+            "size": 3.5,
             "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "queryFunct": "SELECT id_argomento from entrasp.attivita WHERE codice_azienda=$codice_azienda$ AND codice_attivita=$codice_attivita$",
+            "label": "Argomento",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "create_associate_argomento_k",
+            "buttonIcon": "class",
+            "label": "Crea e associa argomento",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "create_associate_argomento",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "create_associate_argomento",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "formReload",
+                    "queryFunct": "select entrasp.argomenti_attivita_create_and_update($codice_azienda$, $codice_attivita$, $descrizione$, $descrizione$ , $codice$, 3417)"
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "size": 1.5,
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -538,7 +571,9 @@
             "label": "Progetti Associati"
         }
     ],
-    "querySuffixes": {"tableViewSuffix": "order by codice"},
+    "querySuffixes": {
+        "tableViewSuffix": "order by codice"
+    },
     "table_keys": [
         {
             "format": {
