@@ -986,17 +986,39 @@ function getDeleteQuery(entry_params, table_keys) {
 
 }
 
-function getFormActionQuery(formActionType, entry_params) {
+function getFormActionQuery(formActionType, keys, entry_params) {
+
+    let entry_keys = entry_params.form_keys;
+    // if (entry_keys == null) {
+    //     returnValue.error = "Something wrong with provided data";
+    //     return returnValue;
+    // }
+
+    let keyTypes = getKeyTypes(entry_keys);
+
+    let mainQuery = null;
+    let preCheckQueries = [];
+
     if (entry_params.predefinedQueries != null && entry_params.predefinedQueries.length > 0) {
-        let element = entry_params.predefinedQueries.filter(el => el.operation == formActionType);
-        if (element != null && element.length > 0) {
-            element = element[0];
-            if (element.queryString) {
-                return element.queryString;
+        entry_params.predefinedQueries
+            .filter(el => el.operation == formActionType)
+            .forEach(element => {
+                if (element.type === 'main') {
+                    if (element.queryString) {
+                        mainQuery = replaceKeys(element.queryString, keys, []);
+                    }
+                }
+                else if (element.type === 'preCheck') {
+                    preCheckQueries.push({ message: element.messageNotNull, query: replaceKeys(element.queryString, keys, []), operation: element.operation });
+                }
             }
-        }
+            );
     }
-    return null;
+
+    return {
+        mainQuery: mainQuery,
+        preCheckQueries: preCheckQueries
+    };
 }
 
 function getAttributeFuncts(keys) {
@@ -1273,34 +1295,52 @@ async function processCustomQuery(queryString, keys, client) {
 
 async function processFormActionQuery(formActionType, queryString, keys, client) {
     if (queryString != null) {
-        console.log(`Running ${formActionType} query`);
-        console.log('keys: ', keys);
-
         console.log('queryString: ', queryString);
-        queryString = replaceKeys(queryString, keys, []);
-        console.log('queryString: ', queryString);
-
-        // queryString = replaceGlobalkeys(queryString);
-        // queryString = replaceLocalKeys(queryString, keys);
-        try {
-            let result = await client.query(queryString);
-            if (result.rows != null && result.rows.length > 0) {
-                result = result.rows[0];
+        if (queryString.preCheckQueries && queryString.preCheckQueries.length) {
+            let preCheckErrors = await processPreCheck(queryString, client, formActionType);
+            if (preCheckErrors && preCheckErrors.length) {
+                return {
+                    "isBase64Encoded": false,
+                    "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                    "statusCode": 200,
+                    "body": JSON.stringify({ result: 'KO', reason: preCheckErrors })
+                };
             }
-            return {
-                "isBase64Encoded": false,
-                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-                "statusCode": 200,
-                "body": JSON.stringify({ result: 'OK', response: result, queryString: queryString })
-            };
         }
-        catch (e) {
-            console.log(`${formActionType} Query Error: `, e);
+
+        if (queryString.mainQuery) {
+            console.log(`Running ${formActionType} query`);
+
+            // queryString = replaceGlobalkeys(queryString);
+            // queryString = replaceLocalKeys(queryString, keys);
+            try {
+                let result = await client.query(queryString.mainQuery);
+                if (result.rows != null && result.rows.length > 0) {
+                    result = result.rows[0];
+                }
+                return {
+                    "isBase64Encoded": false,
+                    "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                    "statusCode": 200,
+                    "body": JSON.stringify({ result: 'OK', response: result, queryString: queryString })
+                };
+            }
+            catch (e) {
+                console.log(`${formActionType} Query Error: `, e);
+                return {
+                    "isBase64Encoded": false,
+                    "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                    "statusCode": 200,
+                    "body": JSON.stringify({ result: 'KO', error: e, queryString: queryString })
+                };
+            }
+        }
+        else {
             return {
                 "isBase64Encoded": false,
                 "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
                 "statusCode": 200,
-                "body": JSON.stringify({ result: 'KO', error: e, queryString: queryString })
+                "body": JSON.stringify({ result: 'KO', error: ['No main query provided'] })
             };
         }
     }
@@ -1743,7 +1783,7 @@ exports.handler = async (event, context) => {
             if (dashboardIndex != null) {
                 queryString = getDashboardQuery(entry_params, table_keys, dashboardIndex);
             } else if (isFormAction) {
-                queryString = getFormActionQuery(formActionType, entry_params);
+                queryString = getFormActionQuery(formActionType, table_keys, entry_params);
             } else if (isSearchRequest) {
                 queryString = getTableQuery(entry_params, table_keys, false, search_keys, additionalQueryCond);
             } else if (isNewRecord) {
@@ -1794,6 +1834,7 @@ exports.handler = async (event, context) => {
             console.log(`${formActionType} Response`, response);
             await client.release();
             return response;
+            // queryData = await processPreMainPost(queryString, client, true, true);
         } else {
             // process query string(s) 
             queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'), (method === 'GET'));
