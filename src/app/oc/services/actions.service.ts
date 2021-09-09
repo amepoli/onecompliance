@@ -59,8 +59,13 @@ export class ActionsService {
                     }
                 }
                 else {
-                    // Show error snackbar
-                    _this._toastService.showErrorToast(result.reason);
+                    let errors = result.reason;
+                    if(Array.isArray(result.reason)) {
+                        errors = result.reason.join('\n');
+                    }
+                    _this._dialogService.showErrorDialog("Error", errors);
+                    // // Show error snackbar
+                    // _this._toastService.showErrorToast(result.reason);
                 }
                 subscription.unsubscribe();
             },
