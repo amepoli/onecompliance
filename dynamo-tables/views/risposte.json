@@ -462,6 +462,28 @@
 
     },
     {
+      "fieldName": "object_description",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Oggetto di verifica",
+      "newLine": false,
+      "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+    },
+    {
+      "format": {
+        "comboQuery": "select prg.id_progetto as id, concat (prg.id_progetto, ' - ', prg.titolo) as name from entrasp.progetti prg where prg.codice_azienda=$codice_azienda$",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "fieldName": "progetto_s",
+      "label": "Progetto",
+      "newLine": true,
+      "queryCond": "ss.id_sondaggio in(select id_sondaggio from entrasp.progetti_fasi pf where id_progetto=$progetto_s$ and codice_azienda=$codice_azienda$)"
+    },
+    {
       "fieldName": "data_esec_prevista_min",
       "format": {
         "dataType": "date",
@@ -500,16 +522,6 @@
       "label": "Data Esecuzione entro il",
       "newLine": false,
       "queryCond": "(snd.data_esecuzione<='€data_esec_max€' and snd.data_esecuzione is not null) or (ss.data_esecuzione<='€data_esec_max€' and ss.data_esecuzione is not null)"
-    },
-    {
-      "fieldName": "object_description",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Oggetto di verifica",
-      "newLine": true,
-      "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
     },
     {
       "fieldName": "incompleto_s",
@@ -657,6 +669,6 @@
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "limit 100"
+    "tableViewSuffix": "order by ss.id_sondaggio, ss.id_somministrazione limit 100"
 }
 }
