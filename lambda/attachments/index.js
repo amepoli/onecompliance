@@ -4,10 +4,10 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
-    host: '',
-    database: '',
-    user: '',
-    password: '',
+    host: 'HOST_NAME',
+    database: 'DB_NAME',
+    user: 'USER_NAME',
+    password: 'PASSWORD',
     port: 5432,
     max: 1,
     min: 0,
@@ -31,7 +31,7 @@ async function overrideTable(son) {
     }
 
     const DynamoParams = {
-        TableName: '',
+        TableName: 'VIEWS_NAME',
         Key: {
             entryKey: son.inheritsFrom
         }
@@ -43,7 +43,7 @@ async function overrideTable(son) {
     if (father == null) {
         return son;
     }
-    
+
     if (father.inheritsFrom != null) {
         father = await overrideTable(father);
     }
@@ -63,7 +63,7 @@ async function tableName2BusinessObject(table_name) {
     }
 
     const DynamoParams = {
-        TableName: '',
+        TableName: 'VIEWS_NAME',
         Key: {
             entryKey: table_name
         }
@@ -74,6 +74,7 @@ async function tableName2BusinessObject(table_name) {
     // complete table if inherited
     entry_params = await overrideTable(entry_params.Item);
 
+    console.log('entry_params: ', entry_params);
     let business_object = entry_params.businessObjectName;
 
     if (business_object != null) {
@@ -158,12 +159,12 @@ exports.handler = async (event, context) => {
     }
 
     const s3ParamsInsert = {
-        Bucket: '',
+        Bucket: 'BUCKET_NAME',
         Key: company + '/' + filename
     };
 
     const s3ParamsGetList = {
-        Bucket: '',
+        Bucket: 'BUCKET_NAME',
         Key: company + '/' + filename
     };
 
