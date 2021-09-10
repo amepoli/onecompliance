@@ -1,0 +1,146 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "sondaggi_for_state",
+	"origin": "entrasp.transcodifiche",
+	"businessObjectName": "transcodifiche",
+	"predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select ts.codice,ts.transcodifica,count(snd.id_sondaggio) as num_sondaggi from entrasp.transcodifiche ts inner join entrasp.sondaggi snd on ts.codice=snd.stato where ts.tipo_dato='STATO_SONDAGGI' group by ts.codice, ts.transcodifica, ts.ordinamento order by ts.ordinamento"
+        }
+	],
+	"form_keys": [
+		  {
+			"autoGenerate": false,
+			"format": {
+			  "viewType": "input",
+			  "dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"key": "codice",
+			"label": "Codice",
+			"readOnly": false,
+			"newLine": true
+		  }, 
+		  {
+			"autoGenerate": false,
+			"format": {
+			  "viewType": "input",
+			  "dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": true,
+			"key": "tipo_dato",
+			"label": "Tipo Dato",
+			"readOnly": false,
+			"newLine": false
+		  },
+		  {
+			"autoGenerate": false,
+			"format": {
+			  "viewType": "input",
+			  "dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "transcodifica",
+			"label": "Transcodifica",
+			"readOnly": false,
+			"newLine": true
+		  }
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": true,
+			"key": "codice",
+			"label": "Codice"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"key": "tipo_dato",
+			"label": "Tipo Dato"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "transcodifica",
+			"label": "Stato"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "num_sondaggi",
+			"label": "Numero sondaggi"
+		}
+	],
+	"search_keys": [
+		{
+            "fieldName": "tipo_dato_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Parola Chiave",
+            "newLine": false,
+            "queryCond": "(UPPER(tipo_dato) like '%'||UPPER('€tipo_dato_s€')||'%' or UPPER(transcodifica) like '%'||UPPER('€tipo_dato_s€')||'%') "
+		},
+		{
+            "fieldName": "tipo_dato_s2",
+            "format": {
+                "dataType": "text",
+				"comboQuery": "select distinct tipo_dato as id from entrasp.transcodifiche order by tipo_dato",
+				"options": [],
+				"viewType": "combobox"
+            },
+            "label": "Tipo Dato",
+            "newLine": false,
+            "queryCond": "tipo_dato ='€tipo_dato_s2€'"
+        }
+	],
+	"subTables": [
+		{
+			"entryKey": "sondaggi_consultant_sub_of_sondaggi_consultant",
+			"keys": [
+			  {
+				"parent": "codice",
+				"son": "stato"
+			  }
+			],
+			"label": "Sondaggi"
+		  }
+	],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "quick-add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        }
+    ]
+}
