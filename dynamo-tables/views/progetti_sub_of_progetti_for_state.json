@@ -1,12 +1,12 @@
 {
 	"$schema": "../views.schema.json",
-	"entryKey": "progetti_open",
 	"inheritsFrom": "progetti",
+	"entryKey": "progetti_sub_of_progetti_for_state",
 	"predefinedQueries": [
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select *, entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as descr_stato, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) as descr_cliente, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest from entrasp.progetti pr where pr.codice_azienda=$codice_azienda$ AND (pr.stato!='C' OR id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi_somministrati ss on pf.id_sondaggio=ss.id_sondaggio and pf.codice_azienda=ss.codice_azienda where pf.codice_azienda=$codice_azienda$ and ss.somministrazione_completata!='Completo' and pf.id_sondaggio is not null));"
+			"queryString": "select *, entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as descr_stato, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) as descr_cliente, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest from entrasp.progetti pr where pr.stato=$stato$ and pr.codice_azienda='€global_codice_azienda€';"
 		},
 		{
 			"operation": "selectForm",
@@ -71,4 +71,5 @@
 			"queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, '$codice_azienda$'::varchar)"
 		}
 	]
+
 }
