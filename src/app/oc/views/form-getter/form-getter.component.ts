@@ -470,7 +470,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if (results.properties.readOnly != null && results.properties.readOnly.length) {
                         _this.readonlyRows = results.properties.readOnly.map(p => p.label);
                     }
-
+                    else {
+                        _this.readonlyRows = [];                    
+                    }
                     // signal parent to show/hide "save" icon
                     _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly });
                     if (_this.formParams.isNew) {  // handle newly set primary keys
