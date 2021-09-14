@@ -10,7 +10,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT mt.codice_azienda, entrasp.argomenti_descr_breve(mt.id_argomento) as argomento, mt.id_modello_test, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test);"
+            "queryString": "SELECT mt.codice_azienda, entrasp.argomenti_descr_breve(mt.id_argomento) as argomento, mt.id_modello_test, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test inner join entrasp.aziende az on mt.codice_azienda=az.codice_azienda WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test);"
         },
         {
             "type": "main",
@@ -618,8 +618,8 @@
               "dataType": "text"
             },
             "label": "Centro gestionale",
-            "newLine": false,
-            "queryCond": "array[id_argomento]<@any(select entrasp.argomenti_centro_gest($centro_gestionale_s$, 1))"
+            "newLine": true,
+            "queryCond": "array[mt.id_argomento]<@any(select entrasp.argomenti_centro_gest($centro_gestionale_s$, 1))"
           },
           {
             "fieldName": "tipo_intermediario_s",
@@ -629,9 +629,21 @@
               "viewType": "combobox",
               "dataType": "text"
             },
-            "label": "Tipo intermediario",
+            "label": "Presenti (anche) nel seguente tipo di intermediario",
+            "newLine": false,
+            "queryCond": "array[mt.id_argomento]<@any(select entrasp.argomenti_tipo_intermed($tipo_intermediario_s$, 1))"
+          },
+          {
+            "fieldName": "tipo_intermediario_spec_s",
+            "format": {
+              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=133 order by descrizione",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "label": "Specifici (solo) per il seguente tipo di intermediario",
             "newLine": true,
-            "queryCond": "array[id_argomento]<@any(select entrasp.argomenti_tipo_intermed($tipo_intermediario_s$, 1))"
+            "queryCond": "az.id_argomento=$tipo_intermediario_spec_s$"
           },
           {
             "fieldName": "livello_controllo_s",
