@@ -329,7 +329,9 @@ function getTableQuery(entry_params, table_keys, isForm, search_keys, additional
             if (isForm && element.format.viewType === 'subform') {
                 // append the keys at the end of the array (avoiding recursion, they will be processed later in the loop)
                 element.format.subform_keys.forEach(subkey => {
-                    if (element.sameOrigin != null) {
+                    // #278
+                    // Put sameOrigin if subkey does not have it
+                    if (subkey['sameOrigin'] == null && element.sameOrigin != null) {
                         subkey['sameOrigin'] = element.sameOrigin;
                     }
                     entry_keys.push(subkey);
