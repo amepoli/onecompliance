@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="procedureAziendali" pageWidth="565" pageHeight="842" columnWidth="535" leftMargin="15" rightMargin="15" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="376ede0d-23cd-4d7b-a1bf-664463cad42c">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="procedureAziendali"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="mainQuery" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select att.codice_azienda,att.codice_attivita,att.descrizione,arg.descrizione as argomento,cg.descrizione as centro_gestionale,att.data_inizio_validita,att.data_fine_validita from entrasp.attivita att left join entrasp.argomenti arg on att.id_argomento = arg.id_argomento left join entrasp.centri_gestionali cg on att.codice_part=cg.codice_part and att.id_centro_gest=cg.id_centro_gest where att.codice_attivita_parent is null"
+]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{mainQuery}]]>
+	</queryString>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
+	</field>
+	<field name="codice_attivita" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_attivita"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_attivita"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
+	</field>
+	<field name="descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
+	</field>
+	<field name="argomento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="argomento"/>
+		<property name="com.jaspersoft.studio.field.label" value="argomento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="argomenti"/>
+	</field>
+	<field name="centro_gestionale" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="centro_gestionale"/>
+		<property name="com.jaspersoft.studio.field.label" value="centro_gestionale"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
+	</field>
+	<field name="data_inizio_validita" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="data_inizio_validita"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_inizio_validita"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
+	</field>
+	<field name="data_fine_validita" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="data_fine_validita"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_fine_validita"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
+	</field>
+	<group name="Gruppo1">
+		<groupExpression><![CDATA[$F{uno_id_proc}]]></groupExpression>
+		<groupHeader>
+			<band height="200">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$F{uno_id_pp} == null]]></printWhenExpression>
+				<textField textAdjust="StretchHeight">
+					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="110" y="34" width="425" height="20" backcolor="#FFFFFF" uuid="877b4a22-b792-4943-b0bc-6ceb48c0e425">
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+						<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+						<paragraph leftIndent="5" rightIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{argomento}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="0" y="34" width="100" height="20" backcolor="#FFFFFF" uuid="2464d46d-beee-4e63-bbeb-fa6d202e3902">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{codice_attivita}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="0" y="84" width="535" height="20" isRemoveLineWhenBlank="true" uuid="6ad74109-1734-4f82-a1c8-ceeb6252ef0c">
+						<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+						<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+						<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+						<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+						<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+						<property name="com.jasperassistant.designer.Grid" value="false"/>
+						<property name="ireport.scriptlethandling" value="0"/>
+						<property name="ireport.encoding" value="UTF-8"/>
+						<property name="businessObjectName" value="procedureAziendali"/>
+						<property name="ireport.zoom" value="1.0"/>
+						<property name="ireport.x" value="0"/>
+						<property name="ireport.y" value="0"/>
+						<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+						<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+						<property name="com.jaspersoft.studio.unit." value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+						<property name="com.jaspersoft.studio.unit.spacingAfter" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<paragraph leftIndent="5" rightIndent="5" spacingBefore="0" spacingAfter="0"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="10" width="535" height="1" uuid="d8502813-b711-4106-98ab-738e8f1b7e8b">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<graphicElement>
+						<pen lineWidth="2.0"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="14" width="100" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="43130e1f-ca36-49fb-9856-3b21ee59ae75">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[  Codice]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="110" y="14" width="425" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="86a25b84-5de4-4d1f-b1ba-1f2c6f58db54">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Argomento]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" mode="Opaque" x="0" y="64" width="535" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="29e43962-a1c6-4a9f-b2cd-9c4f9e9aa1fe">
+						<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+						<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+						<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+						<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+						<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+						<property name="com.jasperassistant.designer.Grid" value="false"/>
+						<property name="ireport.scriptlethandling" value="0"/>
+						<property name="ireport.encoding" value="UTF-8"/>
+						<property name="businessObjectName" value="procedureAziendali"/>
+						<property name="ireport.zoom" value="1.0"/>
+						<property name="ireport.x" value="0"/>
+						<property name="ireport.y" value="0"/>
+						<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+						<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+						<property name="com.jaspersoft.studio.unit." value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Descrizione]]></text>
+				</staticText>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="125" y="113" width="410" height="20" uuid="81ca7bfd-0c08-4964-9f67-e7691c5823c3">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{centro_gestionale}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" mode="Opaque" x="0" y="113" width="115" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="bc5f2e63-49de-4577-bd77-887e7ac66d63">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Centro Gestionale]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" mode="Opaque" x="0" y="142" width="115" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="0d9212f9-9a48-4989-a2ad-2c31671a983b">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Data Inizio Validità]]></text>
+				</staticText>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="125" y="142" width="114" height="20" uuid="5d9aaf66-f30e-460e-9e54-a2c83c48f06b">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{data_inizio_validita}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" mode="Opaque" x="255" y="142" width="115" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="18586279-1cd9-4489-889e-568abf1bebe4">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Data Fine Validità]]></text>
+				</staticText>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="380" y="142" width="114" height="20" uuid="945b04f2-bdb2-4b4d-be22-320a8e6ce489">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{data_fine_validita}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Gruppo2">
+		<groupExpression><![CDATA[$F{due_id_proc}]]></groupExpression>
+	</group>
+	<group name="Gruppo3">
+		<groupExpression><![CDATA[$F{tre_id_proc}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="99" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<image onErrorType="Blank">
+				<reportElement key="image" positionType="Float" stretchType="ContainerHeight" x="167" y="10" width="245" height="50" uuid="91091dc5-beb8-41fa-873f-a0a1a9944b9d">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA["./logos/"+ $P{codice_azienda} + ".png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="90" y="0" width="397" height="66" uuid="dea2a4ac-089e-4487-833e-fd5a6989ca61">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="69" width="535" height="30" backcolor="#CCFCED" uuid="768eae16-a437-4f85-8c43-bcecad6bab6d">
+					<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+					<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+					<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+					<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+					<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+					<property name="com.jasperassistant.designer.Grid" value="false"/>
+					<property name="ireport.scriptlethandling" value="0"/>
+					<property name="ireport.encoding" value="UTF-8"/>
+					<property name="businessObjectName" value="procedureAziendali"/>
+					<property name="ireport.zoom" value="1.0"/>
+					<property name="ireport.x" value="0"/>
+					<property name="ireport.y" value="0"/>
+					<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+					<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+					<property name="com.jaspersoft.studio.unit." value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Modello di Progetto]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="18">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="372" y="6" width="163" height="10" isRemoveLineWhenBlank="true" uuid="33cbd1cd-576a-4884-89a2-7c59c205708c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{uno_c}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="11" y="9" width="79" height="20" uuid="60ac1a9f-1ff5-420c-bbb2-3076fe4f7f41"/>
+				<textElement>
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="5" width="535" height="1" uuid="54a13e49-05fd-451c-a3b5-f06dbc30cdea">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
