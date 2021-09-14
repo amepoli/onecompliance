@@ -1250,7 +1250,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                     let body = null;
                     if(emailActionParameters.bodyKeys && emailActionParameters.bodyKeys.length) {
-                        body = emailActionParameters.bodyKeys.map(key => `${key.label}${formValues[key.key]}`).join('\n');
+                        body = emailActionParameters.bodyKeys.filter(key => formValues[key.key] && formValues[key.key].length).map(key => `${key.label}${formValues[key.key]}`).join('\n');
                     }
                     if(emailActionParameters.body && emailActionParameters.body.length) {
                         body = emailActionParameters.body;
