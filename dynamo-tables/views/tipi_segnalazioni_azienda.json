@@ -4,10 +4,96 @@
     "inheritsFrom": "tipi_segnalazioni",
     "predefinedQueries": [
         {
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "select ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, $stato$ as stato, entrasp.transcodifiche_transcodifica('STATO_COMPITI',$stato$) as stato_compito from entrasp.tipi_segnalazioni ts WHERE ts.id_tipo_segnalazione=$id_tipo_segnalazione$"
+        },
+        {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, entrasp.transcodifiche_transcodifica('STATO_COMPITI',cmp.stato) as stato_compito, count(cmp.codice_compito) as num_compiti from entrasp.tipi_segnalazioni ts inner join entrasp.compiti cmp on ts.id_tipo_segnalazione=cmp.id_tipo_segnalazione WHERE cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and cmp.codice_azienda='€global_codice_azienda€' group by ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, stato_compito"
+            "queryString": "select ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, entrasp.transcodifiche_transcodifica('STATO_COMPITI',cmp.stato) as stato_compito, cmp.stato, count(cmp.codice_compito) as num_compiti from entrasp.tipi_segnalazioni ts inner join entrasp.compiti cmp on ts.id_tipo_segnalazione=cmp.id_tipo_segnalazione WHERE cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and cmp.codice_azienda='€global_codice_azienda€' group by ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, stato_compito, cmp.stato"
         }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "id_tipo_segnalazione",
+            "key": "id_tipo_segnalazione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Codice",
+            "key": "codice",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Descrizione breve",
+            "key": "descrizione_breve",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Descrizione",
+            "key": "descrizione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Stato",
+            "key": "stato_compito",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Stato",
+            "key": "stato",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": true
+        }
+
     ],
     "table_keys": [
         {
@@ -45,7 +131,7 @@
                 "dataType": "text"
             },
             "isHidden": false,
-            "isPrimary": false,
+            "isPrimary": true,
             "key": "stato_compito",
             "label": "Stato",
             "width": "20%"
@@ -59,6 +145,15 @@
             "key": "num_compiti",
             "label": "N.segnalazioni",
             "width": "12%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "stato",
+            "label": "Stato"
         }
     ],
     "subTables": [
@@ -68,9 +163,13 @@
                 {
                      "parent": "id_tipo_segnalazione",
                      "son": "id_tipo_segnalazione"
+                 },
+                 {
+                     "parent": "stato",
+                     "son": "stato"
                  }
              ],
-             "label": "compiti"
+             "label": "Compiti"
          }
      ]
 }

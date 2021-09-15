@@ -6,7 +6,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select ts.prompt_priorita, (€global_id_anagrafiche€)::text as user_companies, cmp.id_tipo_segnalazione, true as check, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, cmp.codice_azienda, cmp.codice_azienda, foreseen_date, substring(cmp.titolo from 1 for 100) as titolo, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp INNER JOIN entrasp.tipi_segnalazioni ts ON cmp.id_tipo_segnalazione = ts.id_tipo_segnalazione WHERE cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and cmp.id_tipo_segnalazione=$id_tipo_segnalazione$ and cmp.codice_azienda='€global_codice_azienda€';"
+      "queryString": "select ts.prompt_priorita, (€global_id_anagrafiche€)::text as user_companies, cmp.id_tipo_segnalazione, true as check, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, cmp.codice_azienda, cmp.codice_azienda, foreseen_date, substring(cmp.titolo from 1 for 100) as titolo, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as descrizione_stato, cmp.stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp INNER JOIN entrasp.tipi_segnalazioni ts ON cmp.id_tipo_segnalazione = ts.id_tipo_segnalazione WHERE cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and cmp.id_tipo_segnalazione=$id_tipo_segnalazione$ and cmp.codice_azienda='€global_codice_azienda€' and cmp.stato=$stato$;"
     },
     {
       "operation": "selectForm",
@@ -32,6 +32,12 @@
       "operation": "stopEvent",
       "type": "main",
       "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "share",
+      "viewType": "form"
     }
   ],
   "table_keys": [
@@ -96,7 +102,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "stato",
+      "key": "descrizione_stato",
       "label": "Stato",
       "width": "5%",
       "style": [
@@ -253,6 +259,16 @@
       "isPrimary": false,
       "key": "id_tipo_segnalazione",
       "label": "id_tipo_segnalazione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "stato",
+      "label": "stato",
+      "width": "12%"
     }
   ],
   "querySuffixes": {"tableViewSuffix": "order by time_report_stop_active desc, foreseen_date asc"}
