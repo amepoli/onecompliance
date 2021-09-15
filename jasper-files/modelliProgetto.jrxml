@@ -29,7 +29,7 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select cg.descrizione as centro_gestionale,at1.codice_attivita_parent as uno_cap, at1.codice_azienda as uno_caz,at1.codice_attivita as uno_cat,at1.descrizione as uno_des, at1.data_inizio_validita as uno_div,at1.data_fine_validita as uno_dfv, at2.codice_azienda as due_caz,at2.codice_attivita_parent as due_cap,at2.codice_attivita as due_cat,at2.descrizione as due_des, at3.codice_azienda as tre_caz,at3.codice_attivita as tre_cat,at3.descrizione as tre_des, at3.codice_attivita_parent as tre_cap from entrasp.attivita at1 left join entrasp.attivita at2 on at1.codice_attivita=at2.codice_attivita_parent and at1.codice_azienda=at2.codice_azienda left join entrasp.attivita at3 on at2.codice_attivita=at3.codice_attivita_parent and at2.codice_azienda=at3.codice_azienda left join entrasp.centri_gestionali cg on at1.codice_part=cg.codice_part and at1.id_centro_gest=cg.id_centro_gest where at1.codice_azienda ='INVESTIRE' and at1.codice_attivita = '21' and at1.codice_attivita_parent is null"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select cg.descrizione as centro_gestionale, at1.codice_attivita_parent, entrasp.attivita_livello_calculate(at1.codice_azienda, at1.codice_attivita), at1.codice_attivita, at1.descrizione, at1.data_inizio_validita, at1.data_fine_validita from entrasp.attivita at1 left join entrasp.centri_gestionali cg on at1.id_centro_gest=cg.id_centro_gest where entrasp.grc_codice_attivita_parent(at1.codice_azienda, at1.codice_attivita) = '21' and at1.codice_azienda='INVESTIRE'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -42,82 +42,42 @@
 		<property name="com.jaspersoft.studio.field.label" value="centro_gestionale"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="centri_gestionali"/>
 	</field>
-	<field name="uno_cap" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="uno_cap"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_cap"/>
+	<field name="codice_attivita_parent" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_attivita_parent"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_attivita_parent"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
 	</field>
-	<field name="uno_caz" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="uno_caz"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_caz"/>
+	<field name="attivita_livello_calculate" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="attivita_livello_calculate"/>
+		<property name="com.jaspersoft.studio.field.label" value="attivita_livello_calculate"/>
+	</field>
+	<field name="codice_attivita" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_attivita"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_attivita"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
 	</field>
-	<field name="uno_cat" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="uno_cat"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_cat"/>
+	<field name="descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
 	</field>
-	<field name="uno_des" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="uno_des"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_des"/>
+	<field name="data_inizio_validita" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="data_inizio_validita"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_inizio_validita"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
 	</field>
-	<field name="uno_div" class="java.sql.Date">
-		<property name="com.jaspersoft.studio.field.name" value="uno_div"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_div"/>
+	<field name="data_fine_validita" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="data_fine_validita"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_fine_validita"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
 	</field>
-	<field name="uno_dfv" class="java.sql.Date">
-		<property name="com.jaspersoft.studio.field.name" value="uno_dfv"/>
-		<property name="com.jaspersoft.studio.field.label" value="uno_dfv"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
-	</field>
-	<field name="due_caz" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="due_caz"/>
-		<property name="com.jaspersoft.studio.field.label" value="due_caz"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
-	</field>
-	<field name="due_cap" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="due_cap"/>
-		<property name="com.jaspersoft.studio.field.label" value="due_cap"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
-	</field>
-	<field name="due_cat" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="due_cat"/>
-		<property name="com.jaspersoft.studio.field.label" value="due_cat"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
-	</field>
-	<field name="due_des" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="due_des"/>
-		<property name="com.jaspersoft.studio.field.label" value="due_des"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
-	</field>
-	<field name="tre_caz" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="tre_caz"/>
-		<property name="com.jaspersoft.studio.field.label" value="tre_caz"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
-	</field>
-	<field name="tre_cat" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="tre_cat"/>
-		<property name="com.jaspersoft.studio.field.label" value="tre_cat"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
-	</field>
-	<field name="tre_des" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="tre_des"/>
-		<property name="com.jaspersoft.studio.field.label" value="tre_des"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
-	</field>
-	<field name="tre_cap" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="tre_cap"/>
-		<property name="com.jaspersoft.studio.field.label" value="tre_cap"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="attivita"/>
-	</field>
+	<sortField name="attivita_livello_calculate"/>
 	<group name="Gruppo1">
-		<groupExpression><![CDATA[$F{uno_cat}]]></groupExpression>
+		<groupExpression><![CDATA[$F{codice_attivita_parent}]]></groupExpression>
 		<groupHeader>
 			<band height="119">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{uno_cap} == null]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{attivita_livello_calculate} == 1]]></printWhenExpression>
 				<textField textAdjust="StretchHeight">
 					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="110" y="34" width="425" height="20" backcolor="#FFFFFF" uuid="877b4a22-b792-4943-b0bc-6ceb48c0e425">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -134,7 +94,7 @@
 						<font fontName="Bold_arial" isBold="true"/>
 						<paragraph leftIndent="5" rightIndent="5"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{uno_des}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="0" y="34" width="100" height="20" backcolor="#FFFFFF" uuid="2464d46d-beee-4e63-bbeb-fa6d202e3902">
@@ -150,7 +110,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bold_arial" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{uno_cat}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{codice_attivita}]]></textFieldExpression>
 				</textField>
 				<line>
 					<reportElement x="0" y="10" width="535" height="1" uuid="d8502813-b711-4106-98ab-738e8f1b7e8b">
@@ -259,7 +219,7 @@
 						<font fontName="SansSerif"/>
 						<paragraph leftIndent="5"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{uno_div}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{data_inizio_validita}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement positionType="Float" mode="Opaque" x="255" y="92" width="115" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="18586279-1cd9-4489-889e-568abf1bebe4">
@@ -293,12 +253,12 @@
 						<font fontName="SansSerif"/>
 						<paragraph leftIndent="5"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{uno_dfv}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{data_fine_validita}]]></textFieldExpression>
 				</textField>
 			</band>
 			<band height="69">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<printWhenExpression><![CDATA[$F{due_cat} != null && ($F{uno_cat}!=$F{due_cap})]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{attivita_livello_calculate} == 2]]></printWhenExpression>
 				<textField textAdjust="StretchHeight">
 					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="150" y="34" width="385" height="20" backcolor="#FFFFFF" uuid="3cf66669-888f-4579-8f16-235dd9b172ec">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -315,7 +275,7 @@
 						<font fontName="Bold_arial" isBold="true"/>
 						<paragraph leftIndent="5" rightIndent="5"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{due_des}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="40" y="34" width="100" height="20" backcolor="#FFFFFF" uuid="1dde0e46-1f3a-4348-af7b-14b7be60dcbf">
@@ -331,7 +291,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bold_arial" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{due_cat}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{codice_attivita}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement mode="Opaque" x="40" y="14" width="100" height="20" forecolor="#FFFFFF" backcolor="#0AADFF" uuid="f54ca951-ebc0-4282-b2fc-55ce557db209">
@@ -369,7 +329,7 @@
 				</staticText>
 			</band>
 			<band height="54">
-				<printWhenExpression><![CDATA[$F{tre_cat} != null && ($F{due_cat}!=$F{tre_cap})]]></printWhenExpression>
+				<printWhenExpression><![CDATA[$F{attivita_livello_calculate} == 3 ]]></printWhenExpression>
 				<textField textAdjust="StretchHeight">
 					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="190" y="27" width="344" height="20" backcolor="#FFFFFF" uuid="3a6342c4-c5f1-4dce-ab12-9ddb24388c38">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -386,7 +346,7 @@
 						<font fontName="Bold_arial" isBold="true"/>
 						<paragraph leftIndent="5" rightIndent="5"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{tre_des}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="80" y="27" width="100" height="20" backcolor="#FFFFFF" uuid="3f72c7f3-6952-461e-ae94-0281fcc1e5e4">
@@ -402,7 +362,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bold_arial" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{tre_cat}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{codice_attivita}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement mode="Opaque" x="80" y="7" width="100" height="20" forecolor="#030303" backcolor="#C0F0FC" uuid="c53f6fb6-20a3-4e53-b489-acd32a530568">
