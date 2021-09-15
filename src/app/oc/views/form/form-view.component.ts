@@ -248,9 +248,12 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
             for (const value in values) {
                 if (values.hasOwnProperty(value)) {
                     const element = values[value];
-                    _this._console.log(element);
                     if (element == null) {
                         continue; // skip null entries
+                    }
+                    // make '' -> null
+                    if (element == '') {
+                        values[value] = null;
                     }
                     // decode combos
                     if (element['id'] != null) {
