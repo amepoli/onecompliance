@@ -16,3 +16,4 @@ export * from './time_tracker.service';
 export * from './toast.service';
 export * from './validations.service';
 export * from './documentation.service';
+export * from './window.service';
