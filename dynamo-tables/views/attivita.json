@@ -90,6 +90,16 @@
             "type": "preCheck",
             "queryString": "select codice_attivita from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_attivita=$codice_attivita$",
             "messageNotNull": "Aggiornamento: il modello è referenziato da un progetto. Cancellare i progetti associati prima di cancellare il presente modello!"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'attivita', '$codice_attivita$', '$codice_azienda$'::varchar) as play_time_report"
         }
     ],
     "form_keys": [
