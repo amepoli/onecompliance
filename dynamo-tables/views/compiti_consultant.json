@@ -19,7 +19,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select cmp.codice_azienda, cmp.foreseen_date, cmp.codice_compito, cmp.titolo, sustring(cmp.note from 1 to 239) as note, cmp.data_segnalazione, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as compiti_aperti, codice_compito_parent from entrasp.compiti cmp WHERE cmp.codice_compito_parent is null and cmp.codice_azienda in(€global_user_companies€)"
+      "queryString": "select cmp.codice_azienda, cmp.foreseen_date, cmp.codice_compito, cmp.titolo, sustring(cmp.note from 1 to 239) as note, cmp.data_segnalazione, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as compiti_aperti, codice_compito_parent from entrasp.compiti cmp WHERE cmp.codice_azienda in(€global_user_companies€)"
     },
     {
       "operation": "selectForm",
@@ -518,9 +518,20 @@
         "dataType": "text"
       },
       "label": "User",
-      "newLine": false,
+      "newLine": true,
       "queryCond": "codice_part||'-'||id_anagrafica in(select codice_part||'-'||id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€dynamo_user_s€')"
-    }
+    },
+    {
+      "fieldName": "main_s",
+      "format": {
+          "value": "0",
+          "viewType": "checkbox"
+      },
+      "label": "Principali (no sovracompiti)",
+      "newLine": false,
+      "size": 1,
+      "queryCond": "cmp.codice_compito_parent is null"
+  }
   ],
   "subTables": [
     {
