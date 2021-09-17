@@ -17,6 +17,7 @@ import { navigation } from 'app/navigation/navigation';
 import { Router, NavigationEnd } from '@angular/router';
 import { BackendService } from './oc/services/backend.service';
 import { ConsoleLoggerService } from './oc/services/console_logger.service';
+import { WindowService } from './oc/services';
 
 @Component({
     selector: 'app',
@@ -53,8 +54,13 @@ export class AppComponent implements OnInit, OnDestroy {
         private router: Router,
         private _authService: AuthService,
         private _backendService: BackendService,
-        private _console: ConsoleLoggerService
+        private _console: ConsoleLoggerService,
+        private _windowService: WindowService
     ) {
+
+        // Initialize Window service
+        this._windowService.Initialize();
+        
         // Add languages
         this._translateService.addLangs(['it', 'en']);
 
