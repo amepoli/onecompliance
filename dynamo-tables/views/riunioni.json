@@ -23,7 +23,17 @@
       "operation": "insert",
       "type": "postProcessing",
       "queryString": "update entrasp.riunioni cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda"
-    }
+    },
+    {
+			"type": "main",
+			"operation": "stopEvent",
+			"queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+		},
+		{
+			"type": "main",
+			"operation": "startEvent",
+			"queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'riunioni', $id_riunione$, '$codice_azienda$'::varchar)"
+		}
   ],
   "form_keys": [
     {
@@ -152,62 +162,6 @@
       "isHidden": false,
       "isPrimary": false,
       "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "play_arrow",
-      "key": "play_time_report",
-      "label": "",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "time_report_play",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "time_report_play",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'riunioni', $id_riunione$, $codice_azienda$) as play_time_report"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "stop",
-      "key": "stop_time_report",
-      "label": "",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "time_report_stop",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "time_report_stop",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
     },
     {
       "autoGenerate": false,
@@ -422,7 +376,21 @@
         }
       ],
       "label": "Punti all'ordine del giorno"
-    }
+    },
+		{
+			"entryKey": "consuntivazioni_sub_of_riunioni",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_riunione",
+					"son": "id_riunione"
+				}
+			],
+			"label": "Time Report"
+		}
   ],
   "table_keys": [
     {
