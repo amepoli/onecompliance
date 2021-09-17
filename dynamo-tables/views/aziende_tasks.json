@@ -6,7 +6,7 @@
 	"predefinedQueries": [
 		{
 			"operation": "selectTable",
-			"queryString": "select codice_azienda, codice_part, entrasp.count_sondaggi_open_azienda(codice_azienda) as sondaggi_aperti, entrasp.count_my_sondaggi_open_azienda(codice_azienda, €global_userid€) as my_sondaggi_aperti, entrasp.compiti_count_open_azienda_to_do(codice_azienda) as compiti_aperti_to_do, entrasp.compiti_count_open_azienda(codice_azienda) as compiti_aperti from entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda",
+			"queryString": "select codice_azienda, codice_part, entrasp.count_sondaggi_open_azienda(codice_azienda) as sondaggi_aperti, entrasp.count_my_sondaggi_open_azienda(codice_azienda, €global_userid€) as my_sondaggi_aperti, entrasp.compiti_count_open_azienda_to_do(codice_azienda) as compiti_aperti_to_do, entrasp.compiti_count_open_azienda(codice_azienda) as compiti_aperti from entrasp.aziende where codice_azienda in(€global_user_companies€)",
 			"type": "main"
 		}
 	],
@@ -260,5 +260,22 @@
 			"viewType": "table",
 			"tableActionType": "quick-add"
 		}
-	]
+	],
+	"search_keys": [
+		{
+			"fieldName": "codice_azienda_s",
+			"format": {
+			  "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+			  "options": [],
+			  "viewType": "combobox",
+			  "dataType": "text"
+			},
+			"label": "Azienda",
+			"newLine": false,
+			"queryCond": "codice_azienda='€codice_azienda_s€'"
+		  }
+	],
+	"querySuffixes": {
+		"tableViewSuffix": "order by codice_azienda"
+	}
 }

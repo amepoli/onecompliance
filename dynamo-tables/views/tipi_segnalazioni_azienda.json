@@ -11,7 +11,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, entrasp.transcodifiche_transcodifica('STATO_COMPITI',cmp.stato) as stato_compito, cmp.stato, count(cmp.codice_compito) as num_compiti from entrasp.tipi_segnalazioni ts inner join entrasp.compiti cmp on ts.id_tipo_segnalazione=cmp.id_tipo_segnalazione WHERE cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and cmp.codice_azienda='€global_codice_azienda€' group by ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, stato_compito, cmp.stato"
+            "queryString": "select ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, entrasp.transcodifiche_transcodifica('STATO_COMPITI',cmp.stato) as stato_compito, cmp.stato, count(cmp.codice_compito) as num_compiti from entrasp.tipi_segnalazioni ts inner join entrasp.compiti cmp on ts.id_tipo_segnalazione=cmp.id_tipo_segnalazione WHERE cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and cmp.codice_azienda='€global_codice_azienda€'"
         }
     ],
     "form_keys": [
@@ -95,6 +95,30 @@
         }
 
     ],
+    "search_keys": [
+        {
+            "label": "id_tipo_segnalazione",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "fieldName": "id_tipo_segnalazione",
+            "newLine": false,
+            "queryCond": "ts.id_tipo_segnalazione=$id_tipo_segnalazione$"
+        },
+        {
+			"fieldName": "codice_azienda_s",
+			"format": {
+			  "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+			  "options": [],
+			  "viewType": "combobox",
+			  "dataType": "text"
+			},
+			"label": "Azienda",
+			"newLine": false,
+			"queryCond": "cmp.codice_azienda='€codice_azienda_s€'"
+		  }
+    ],
     "table_keys": [
         {
             "format": {
@@ -171,5 +195,8 @@
              ],
              "label": "Compiti"
          }
-     ]
+     ],
+     "querySuffixes": {
+         "tableViewSuffix": "group by ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, stato_compito, cmp.stato"
+     }
 }
