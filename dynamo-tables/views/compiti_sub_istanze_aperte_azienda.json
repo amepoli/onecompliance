@@ -6,7 +6,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, $codice_azienda_erogante$ as codice_azienda_erogante, true as check, entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2021-12-31'::date, codice_compito) as time_consumed, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito,cmp.stato, cmp.codice_azienda, cmp.codice_azienda, foreseen_date, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp inner join entrasp.centri_gestionali cg on cmp.id_centro_gest=cg.id_centro_gest and cmp.codice_part=cg.codice_part where cg.codice_azienda_erogante=$codice_azienda_erogante$ and cmp.codice_azienda='€global_codice_azienda€';"
+      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, true as check, entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2021-12-31'::date, codice_compito) as time_consumed, entrasp.consuntivazioni_time_consumed_azienda_sotto_compiti(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2021-12-31'::date, codice_compito) as time_consumed_sotto_compiti, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito,cmp.stato, cmp.codice_azienda, cmp.codice_azienda, foreseen_date, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp inner join entrasp.centri_gestionali cg on cmp.id_centro_gest=cg.id_centro_gest and cmp.codice_part=cg.codice_part where cg.codice_azienda_erogante=$codice_azienda_erogante$ and cmp.codice_azienda='€global_codice_azienda€';"
     },
     {
       "operation": "selectForm",
@@ -157,17 +157,71 @@
       "label": "Titolo"
     },
     {
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "time_consumed",
-			"width": "15%",
-			"label": "Tempo impiegato"
-		}
-    
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "time_consumed",
+      "width": "15%",
+      "label": "Tempo impiegato"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "time_consumed_sotto_compiti",
+      "width": "15%",
+      "label": "Tempo impiegato sotto compiti"
+    }
   ],
-  "querySuffixes": {"tableViewSuffix": "order by cmp.stato"}
-
+  "subTables": [
+    {
+      "entryKey": "consuntivazioni_consultant_sub_of_compiti_consultant",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "codice_compito",
+          "son": "codice_compito"
+        }
+      ],
+      "label": "Aggiornamenti (Time report)"
+    },
+    {
+      "entryKey": "compiti_sub_of_compiti_sub_istanze_aperte_azienda",
+      "keys": [
+				{
+					"parent": "codice_compito",
+					"son": "codice_compito_parent"
+				},
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				}
+			],
+      "label": "Sotto Compiti"
+    },
+    {
+      "entryKey": "user_sub_of_compiti_consultant",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "codice_compito",
+          "son": "codice_compito"
+        }
+      ],
+      "label": "Utenti impegnati"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by cmp.stato"
+  }
 }
