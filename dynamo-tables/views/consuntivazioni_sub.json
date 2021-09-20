@@ -192,6 +192,22 @@
     {
       "autoGenerate": false,
       "format": {
+        "comboQuery": "SELECT thread FROM entrasp.consuntivazioni WHERE thread is not null;",
+        "options": [],
+        "viewType": "combobox",
+        "value": "-",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "thread",
+      "label": "Thread",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "dataType": "date",
         "viewType": "input",
         "value": "£CURRENT_DATE£",
@@ -712,6 +728,49 @@
       "width": "10%"
     },
     {
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "stato",
+			"queryFunct": "SELECT transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO' and codice=(SELECT stato FROM entrasp.consuntivazioni WHERE id_cons=$id_cons$ and codice_azienda=$codice_azienda$)",
+			"label": "Stato",
+			"width": "6%",
+			"style": [
+				{
+					"value": "Attivo",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Provvisorio",
+					"font_color": "#D97F02",
+					"font_weight": "500"
+				},
+				{
+					"value": "Chiuso",
+					"font_color": "red",
+					"font_weight": "500"
+				},
+				{
+					"value": "Eliminato",
+					"font_color": "red",
+					"font_weight": "500"
+				}
+			]
+		},
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "thread",
+      "label": "Thread",
+      "width": "30%"
+    },
+    {
       "format": {
         "dataType": "text"
       },
@@ -720,7 +779,7 @@
       "key": "note_restricted",
       "queryFunct": "substring(note from 1 for 100)",
       "label": "Note",
-      "width": "60%"
+      "width": "50%"
     },
     {
       "format": {
