@@ -1,0 +1,235 @@
+{
+	"$schema": "../views.schema.json",
+	"inheritsFrom": "progetti",
+	"entryKey": "progetti_sub_of_progetti_for_state_consultant",
+	"predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select *, entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as descr_stato, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) as descr_cliente, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest from entrasp.progetti pr where pr.stato=$stato$;"
+		},
+		{
+			"operation": "selectForm",
+			"type": "preProcessing",
+			"queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
+		},
+		{
+			"queryString": "select case when count(id_fase) >0 then true else false end as disable_button_attiva_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+			"type": "postProcessing",
+			"operation": "selectForm"
+		},
+		{
+			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+			"type": "preProcessing",
+			"operation": "selectForm"
+		},
+		{
+			"operation": "selectForm",
+			"type": "postProcessing",
+			"queryString": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "update entrasp.progetti prg set codice_part=az.codice_part from entrasp.aziende az where prg.codice_azienda=az.codice_azienda and prg.codice_part is null and prg.codice_azienda=$codice_azienda$ and prg.id_progetto=$id_progetto$",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "selectForm",
+			"type": "preProcessing",
+			"queryString": "select entrasp.progetti_fasi_stato_update($codice_azienda$, $id_progetto$);"
+		},
+		{
+			"operation": "delete",
+			"type": "main",
+			"queryString": "select entrasp.progetto_delete($codice_azienda$, $id_progetto$);"
+		},
+		{
+			"operation": "insert",
+			"type": "preCheck",
+			"queryString": "select codice_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£'",
+			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+		},
+		{
+			"operation": "update",
+			"type": "preCheck",
+			"queryString": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£' and id_progetto!=$id_progetto$",
+			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+		},
+		{
+			"type": "main",
+			"operation": "share",
+			"queryString": "select null;"
+		},
+		{
+			"type": "main",
+			"operation": "stopEvent",
+			"queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+		},
+		{
+			"type": "main",
+			"operation": "startEvent",
+			"queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, '$codice_azienda$'::varchar)"
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "Codice Azienda",
+			"width": "7%"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_inserimento",
+			"label": "Data Progetto",
+			"width": "8%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "stato",
+			"label": "Stato"
+		},
+	
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "descr_stato",
+			"queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
+			"label": "Stato",
+			"width": "6%",
+			"style": [
+				{
+					"value": "Chiuso",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Provvisorio",
+					"font_color": "#D97F02",
+					"font_weight": "500"
+				},
+				{
+					"value": "Confermato",
+					"font_color": "red",
+					"font_weight": "500"
+				}
+			]
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_tipo_progetto",
+			"label": "id_tipo_progetto",
+			"width": "6%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_attivita",
+			"label": "Codice Attività",
+			"width": "7%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_progetto",
+			"label": "Codice Progetto",
+			"width": "7%"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"key": "id_progetto",
+			"label": "Id Progetto",
+			"width": "5%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "codice_part",
+			"label": "codice_part"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "titolo",
+			"label": "Titolo",
+			"width": "28%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "descr_cliente",
+			"label": "Cliente",
+			"width": "17%",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente)"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "centro_gest",
+			"label": "Centro gestionale",
+			"width": "9%",
+			"queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_cliente",
+			"label": "Cliente"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "avanzamento",
+			"queryFunct": "entrasp.progetto_sal(codice_azienda, id_progetto)",
+			"label": "Prv/Cnf/Ris/Svl/Chs/Ann/Tot",
+			"width": "16%"
+		}
+	]
+}
