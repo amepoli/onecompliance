@@ -507,6 +507,22 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.showQuickAdd = !this.showQuickAdd;
     }
 
+    add() {
+        let keys = {};
+        this.viewKeys.filter(x => x.isPrimary).forEach(x => {
+            if(this.keysArray[0][x.key]) {
+                keys[x.key] = this.keysArray[0][x.key];
+            }
+        });
+        Object.keys(this.currentKeys).forEach( key => {
+            keys[key] = this.currentKeys[key];
+        });
+
+        
+        const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: keys, index: 0, total: 0 };
+        setTimeout(() => { this.sendEvent.emit({ eventType: 'add', queryParams: mergedParams }); }, 50);    
+    }
+
     search_submit(value: any) {
         this._console.log(value);
         // clean-up null or empty values
