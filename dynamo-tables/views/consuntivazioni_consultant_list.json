@@ -1008,6 +1008,44 @@
       "width": "10%"
     },
     {
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "stato",
+			"queryFunct": "SELECT transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI' and codice=(SELECT stato FROM entrasp.consuntivazioni WHERE id_cons=$id_cons$ and codice_azienda=$codice_azienda$ and stato is not null)",
+			"label": "Stato",
+			"width": "6%",
+			"style": [
+        {
+            "value": "Chiuso",
+            "font_color": "green",
+            "font_weight": "500"
+        },
+        {
+            "value": "Provvisorio",
+            "font_color": "#D97F02",
+            "font_weight": "500"
+        },
+        {
+            "value": "Confermato",
+            "font_color": "red",
+            "font_weight": "500"
+        }
+    ]
+		},
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "thread",
+      "label": "Thread",
+      "width": "30%"
+    },
+    {
       "format": {
         "dataType": "text"
       },
@@ -1147,6 +1185,17 @@
       "label": "User",
       "newLine": false,
       "queryCond": "csn.codice_part||'-'||csn.id_risorsa in(select codice_part||'-'||id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€dynamo_user_s€')"
+    },
+    {
+      "fieldName": "stato",
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "csn.stato='€stato€'"
     }
   ],
   "inputEvents": [

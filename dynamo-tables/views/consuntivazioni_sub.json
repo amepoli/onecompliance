@@ -176,7 +176,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO';",
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
         "options": [],
         "viewType": "combobox",
         "value": "A",
@@ -734,32 +734,27 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "stato",
-			"queryFunct": "SELECT transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO' and codice=(SELECT stato FROM entrasp.consuntivazioni WHERE id_cons=$id_cons$ and codice_azienda=$codice_azienda$)",
+			"queryFunct": "SELECT transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI' and codice=(SELECT stato FROM entrasp.consuntivazioni WHERE id_cons=$id_cons$ and codice_azienda=$codice_azienda$ and stato is not null)",
 			"label": "Stato",
 			"width": "6%",
 			"style": [
-				{
-					"value": "Attivo",
-					"font_color": "green",
-					"font_weight": "500"
-				},
-				{
-					"value": "Provvisorio",
-					"font_color": "#D97F02",
-					"font_weight": "500"
-				},
-				{
-					"value": "Chiuso",
-					"font_color": "red",
-					"font_weight": "500"
-				},
-				{
-					"value": "Eliminato",
-					"font_color": "red",
-					"font_weight": "500"
-				}
-			]
-		},
+        {
+            "value": "Chiuso",
+            "font_color": "green",
+            "font_weight": "500"
+        },
+        {
+            "value": "Provvisorio",
+            "font_color": "#D97F02",
+            "font_weight": "500"
+        },
+        {
+            "value": "Confermato",
+            "font_color": "red",
+            "font_weight": "500"
+        }
+      ]
+    },
     {
       "format": {
         "dataType": "text"
