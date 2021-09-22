@@ -1,0 +1,303 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "consuntivazioni_consultant_for_type",
+	"origin": "entrasp.argomenti",
+	"businessObjectName": "argomenti",
+	"predefinedQueries": [
+		{
+			"operation": "selectTable",
+            "type": "main",
+            "queryString": "select arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve ,count(cns.id_cons) as num_cons from entrasp.argomenti arg inner join entrasp.consuntivazioni cns on arg.id_argomento=cns.id_argomento group by arg.codice,arg.id_argomento,arg.descrizione,arg.descrizione_breve order by arg.id_argomento"
+        }
+	  ],
+	  "form_keys": [
+		{
+		  "autoGenerate": true,
+		  "format": {
+			"dataType": "number",
+			"viewType": "input"
+		  },
+		  "isHidden": false,
+		  "isPrimary": true,
+		  "key": "id_argomento",
+		  "label": "ID Argomento",
+		  "newLine": false,
+		  "readOnly": true,
+		  "size": 1.5
+		},
+		{
+		  "autoGenerate": false,
+		  "format": {
+			"dataType": "text",
+			"viewType": "input",
+			"validations": [
+			  {
+				"message": "Inserire una data pianificata di esecuzione!",
+				"name": "required",
+				"validator": "Validators.required"
+			  }
+			]
+		  },
+		  "isHidden": false,
+		  "isPrimary": false,
+		  "key": "codice",
+		  "label": "Codice",
+		  "newLine": false,
+		  "readOnly": false,
+		  "size": 1.5
+		},
+		{
+		  "autoGenerate": false,
+		  "format": {
+			"dataType": "text",
+			"viewType": "input"
+		  },
+		  "isHidden": false,
+		  "isPrimary": false,
+		  "key": "descrizione_breve",
+		  "label": "Descrizione breve",
+		  "newLine": true,
+		  "readOnly": false,
+		  "size": 1.5
+		},
+		{
+		  "autoGenerate": false,
+		  "format": {
+			"dataType": "text",
+			"viewType": "input"
+		  },
+		  "isHidden": false,
+		  "isPrimary": false,
+		  "key": "descrizione",
+		  "label": "Descrizione",
+		  "newLine": false,
+		  "readOnly": false,
+		  "size": 8
+		}
+	  ],
+	  "search_keys": [
+		{
+		  "fieldName": "id_argomento",
+		  "format": {
+			"dataType": "number",
+			"viewType": "input"
+		  },
+		  "label": "ID",
+		  "newLine": false,
+		  "queryCond": "id_argomento=$id_argomento$"
+		},
+		{
+		  "fieldName": "descr_rs",
+		  "format": {
+			"dataType": "text",
+			"viewType": "input"
+		  },
+		  "label": "Descrizione",
+		  "newLine": true,
+		  "queryCond": "(UPPER(descrizione) like '%'||UPPER('€descr_rs€')||'%' or UPPER(descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')"
+		},
+		{
+		  "fieldName": "categorie_modello_test_s",
+		  "format": {
+			"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3425 order by descrizione",
+			"options": [],
+			"viewType": "combobox",
+			"dataType": "text"
+		  },
+		  "label": "Categorie modelli test",
+		  "newLine": false,
+		  "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))"
+		},
+		{
+		  "fieldName": "categorie_modello_test_s2",
+		  "format": {
+			"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3425 order by descrizione",
+			"options": [],
+			"viewType": "combobox",
+			"dataType": "text"
+		  },
+		  "label": "Categorie modelli test 2",
+		  "newLine": true,
+		  "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s2$))"
+		},
+		{
+		  "fieldName": "centro_gestionale_s",
+		  "format": {
+			"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=349 order by descrizione",
+			"options": [],
+			"viewType": "combobox",
+			"dataType": "text"
+		  },
+		  "label": "Centro gestionale",
+		  "newLine": false,
+		  "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($centro_gestionale_s$))"
+		},
+		{
+		  "fieldName": "tipo_intermediario_s",
+		  "format": {
+			"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=133 order by descrizione",
+			"options": [],
+			"viewType": "combobox",
+			"dataType": "text"
+		  },
+		  "label": "Tipo intermediario",
+		  "newLine": true,
+		  "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($tipo_intermediario_s$))"
+		},
+		{
+		  "fieldName": "livello_controllo_s",
+		  "format": {
+			"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3368 order by descrizione",
+			"options": [],
+			"viewType": "combobox",
+			"dataType": "text"
+		  },
+		  "label": "Livello controllo",
+		  "newLine": false,
+		  "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($livello_controllo_s$))"
+		},
+		{
+		  "fieldName": "attivita_s",
+		  "format": {
+			"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3417 order by descrizione",
+			"options": [],
+			"viewType": "combobox",
+			"dataType": "text"
+		  },
+		  "label": "Tipo modello di progetto (attivita)",
+		  "newLine": true,
+		  "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($attivita_s$))"
+		},
+		{
+		  "fieldName": "categoria_calcolata_s",
+		  "format": {
+			"comboQuery": "SELECT codice AS id, nome_tabella AS name  FROM entrasp.tabelle where codice is not null order by codice",
+			"options": [],
+			"viewType": "combobox",
+			"dataType": "text"
+		  },
+		  "label": "Categoria calcolata",
+		  "newLine": false,
+		  "queryCond": "id_argomento in(select entrasp.argomenti_category_of($categoria_calcolata_s$))"
+		},
+		{
+		  "fieldName": "associati_to",
+		  "format": {
+			"comboQuery": "SELECT codice AS id, nome_tabella AS name  FROM entrasp.tabelle where codice is not null order by codice",
+			"options": [],
+			"viewType": "combobox",
+			"dataType": "text"
+		  },
+		  "label": "Associato a (modelli di verifica, attività, centri_gestionali, etc)",
+		  "newLine": true,
+		  "queryCond": "id_argomento in(select entrasp.argomenti_associated_to($associati_to$))"
+		},
+		{
+		  "fieldName": "flag_classificazione",
+		  "format": {
+			"value": "0",
+			"viewType": "checkbox"
+		  },
+		  "label": "Macro categorie",
+		  "newLine": false,
+		  "queryCond": "flag_classificazione=true"
+		}
+	  ],
+	  "subTables": [
+		  {
+			"entryKey": "consuntivazioni_sub_of_consuntivazioni",
+			"keys": [
+			  {
+				"parent": "id_argomento",
+				"son": "id_argomento"
+			  },
+			  {
+				"parent": "codice_azienda",
+				"son": "codice_azienda"
+			  }
+			],
+			"label": "Aggiornamenti e Time Report"
+		  }
+	  ],
+	  "table_keys": [
+		{
+		  "format": {
+			"dataType": "number"
+		  },
+		  "isHidden": false,
+		  "isPrimary": true,
+		  "key": "id_argomento",
+		  "label": "ID",
+		  "width": "10%"
+		},
+		{
+		  "format": {
+			"dataType": "text"
+		  },
+		  "isHidden": false,
+		  "isPrimary": false,
+		  "key": "codice",
+		  "label": "Codice",
+		  "width": "10%"
+		},
+		{
+		  "format": {
+			"dataType": "text"
+		  },
+		  "isHidden": false,
+		  "isPrimary": false,
+		  "key": "descrizione",
+		  "label": "Descrizione",
+		  "width": "30%"
+		},
+		{
+		  "format": {
+			"dataType": "text"
+		  },
+		  "isHidden": false,
+		  "isPrimary": false,
+		  "key": "descrizione_breve",
+		  "label": "Descrizione breve",
+		  "width": "30%"
+		},
+		{
+		  "format": {
+			"dataType": "boolean"
+		  },
+		  "isHidden": true,
+		  "isCheckbox": true,
+		  "isPrimary": false,
+		  "key": "flag_classificazione",
+		  "label": "Argomento di classificazione",
+		  "width": "10%"
+		},
+		{
+		  "format": {
+			"dataType": "number"
+		  },
+		  "isHidden": false,
+		  "isPrimary": false,
+		  "key": "num_cons",
+		  "label": "Numero consuntivazioni",
+		  "width": "10%"
+		}
+	  ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "quick-add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        }
+    ]
+}
