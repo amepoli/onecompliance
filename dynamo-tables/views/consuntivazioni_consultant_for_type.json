@@ -7,7 +7,7 @@
 		{
 			"operation": "selectTable",
             "type": "main",
-            "queryString": "select arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve ,count(cns.id_cons) as num_cons from entrasp.argomenti arg inner join entrasp.consuntivazioni cns on arg.id_argomento=cns.id_argomento group by arg.codice,arg.id_argomento,arg.descrizione,arg.descrizione_breve order by arg.id_argomento"
+            "queryString": "select arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve , count(cns.id_cons) as num_cons from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.consuntivazioni cns on arg.id_argomento=cns.id_argomento where id_argomento_father=3492 group by arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve"
         }
 	  ],
 	  "form_keys": [
@@ -205,15 +205,11 @@
 	  ],
 	  "subTables": [
 		  {
-			"entryKey": "consuntivazioni_sub_of_consuntivazioni",
+			"entryKey": "consuntivazioni_sub_of_argomenti",
 			"keys": [
 			  {
 				"parent": "id_argomento",
 				"son": "id_argomento"
-			  },
-			  {
-				"parent": "codice_azienda",
-				"son": "codice_azienda"
 			  }
 			],
 			"label": "Aggiornamenti e Time Report"
