@@ -7,6 +7,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,6 +28,7 @@ import { OneCompliancePipesModule } from 'app/oc/pipes/pipes.module';
     MatInputModule,
     MatProgressSpinnerModule,
     MatCardModule,
+    MatSlideToggleModule,
     MatSortModule,
     MatIconModule,
     MatButtonModule,
@@ -44,6 +46,7 @@ import { OneCompliancePipesModule } from 'app/oc/pipes/pipes.module';
     MatInputModule,
     MatProgressSpinnerModule,
     MatCardModule,
+    MatSlideToggleModule,
     MatSortModule,
     MatIconModule,
     MatButtonModule,
