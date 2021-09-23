@@ -2,7 +2,7 @@ import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleCha
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatRow } from '@angular/material/table';
-import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, SearchViewKey, TableViewKey, TableViewParams } from 'app/oc/interfaces';
+import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, SearchSwitch, SearchViewKey, TableViewKey, TableViewParams } from 'app/oc/interfaces';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -76,7 +76,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     viewKeys: TableViewKey[];  // view fields as specified by the backend
 
     searchKeys: SearchViewKey[];
-
+    searchSwitches: SearchSwitch[];
+    
     currentKeys: any; // relevant keys passed by the parent component 
 
     keysArray: any[];  // list of primary keys values, one entry for each table row
@@ -209,6 +210,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.searchKeys = null;
         this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
     
+        this.searchSwitches = null;
     }
 
     public loadData() {
@@ -224,6 +226,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this._console.table(params);
                     _this.viewKeys = params.table_keys;
                     _this.searchKeys = params.search_keys;
+                    _this.updateSearchSwitches(params.search_switches);
                     _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
                     _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
@@ -501,6 +504,42 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     advSearch() {
         this.showAdvSearch = !this.showAdvSearch;
+    }
+
+    updateSearchSwitches(searchSwitches: any[]) {
+        if(searchSwitches && searchSwitches.length > 0) {
+            this.searchSwitches = searchSwitches.map( x => {
+                x['checked'] = false;
+                return x;
+            });
+        }
+        else {
+            this.searchSwitches = [
+                {
+                    fieldName: 'nome',
+                    condition: 'equal',
+                    value: 'Poli1',
+                    label: 'Test toggle',
+                    checked: false
+                }
+            ];
+        }
+    }
+
+    toggleSearchSwitches(index: number, checked: boolean) {
+        this.searchSwitches[index].checked = checked;
+        this.applySearchSwitches();
+    }
+    
+    applySearchSwitches() {
+        if (this.dataSource && this.dataSource.data && this.dataSource.data.length) {
+            // filterValue = filterValue.trim(); // Remove whitespace
+            // filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+            // this.dataSource.filter = filterValue;
+            if (this.dataSource.paginator) {
+                this.dataSource.paginator.firstPage();
+            }
+        }
     }
 
     quickAdd(): void {
