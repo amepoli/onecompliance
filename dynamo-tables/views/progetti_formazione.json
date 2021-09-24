@@ -11,7 +11,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select data_inserimento,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)as descr_stato, id_tipo_progetto,att.id_argomento, pr.codice_attivita,pr.codice_progetto,pr.id_progetto,pr.codice_azienda,pr.codice_part,pr.titolo,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part,pr.id_cliente) as descr_cliente,entrasp.centri_gestionali_descr(pr.codice_part, pr.id_centro_gest) as centro_gest,entrasp.progetto_sal(pr.codice_azienda, pr.id_progetto) as avanzamento from entrasp.progetti pr inner join entrasp.attivita att on pr.codice_azienda=att.codice_azienda and pr.codice_attivita=att.codice_attivita where pr.codice_azienda=$codice_azienda$ and att.id_argomento=158"
+			"queryString": "select data_inserimento,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)as descr_stato, id_tipo_progetto,att.id_argomento, pr.codice_attivita,pr.codice_progetto,pr.id_progetto,pr.codice_azienda,pr.codice_part,pr.titolo,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part,pr.id_cliente) as descr_cliente,entrasp.centri_gestionali_descr(pr.codice_part, pr.id_centro_gest) as centro_gest,entrasp.progetto_sal(pr.codice_azienda, pr.id_progetto) as avanzamento from entrasp.progetti pr inner join entrasp.attivita att on pr.codice_azienda=att.codice_azienda and pr.codice_attivita=att.codice_attivita left join entrasp.argomenti_argomenti aa on att.id_argomento=aa.id_argomento_son where pr.codice_azienda=$codice_azienda$ and aa.id_argomento_father=158"
 		},
 		{
 			"queryString": "select case when count(id_fase) >0 then true else false end as disable_button_attiva_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
