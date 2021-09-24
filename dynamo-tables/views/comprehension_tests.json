@@ -1746,6 +1746,200 @@
         "label": "Aggiornamenti e Time Report"
     }
   ],
+  "search_keys": [
+    {
+      "fieldName": "id_modello_test",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Modello",
+      "newLine": false,
+      "queryCond": "snd.id_modello_test=$id_modello_test$"
+    },
+    {
+      "fieldName": "id_sondaggio_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Lezione",
+      "newLine": false,
+      "queryCond": "ss.id_sondaggio=$id_sondaggio_s$"
+    },
+    {
+      "fieldName": "id_somministrazione_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Verifica",
+      "newLine": false,
+      "queryCond": "ss.id_somministrazione=$id_somministrazione_s$"
+    },
+    {
+      "fieldName": "data_comp",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Competenza",
+      "newLine": false,
+      "queryCond": "snd.data_comp='€data_comp€'"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "fieldName": "stato_s",
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "ss.stato='€stato_s€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista>='€data_esec_prevista_min€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista entro il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista<='€data_esec_prevista_max€'"
+    },
+    {
+      "fieldName": "data_esec_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_esecuzione>='€data_esec_min€'"
+    },
+    {
+      "fieldName": "data_esec_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione entro il",
+      "newLine": false,
+      "queryCond": "(snd.data_esecuzione<='€data_esec_max€' and snd.data_esecuzione is not null) or (ss.data_esecuzione<='€data_esec_max€' and ss.data_esecuzione is not null)"
+    },
+    {
+      "fieldName": "object_description",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Partecipante",
+      "newLine": true,
+      "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+    },
+    {
+      "fieldName": "scaduto_s",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Scaduto",
+      "newLine": false,
+      "queryCond": "snd.data_prevista<=now() and ss.stato!='C'"
+    },
+    {
+      "fieldName": "flag_sondaggio_riprogrammato",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Riprogrammata",
+      "newLine": false,
+      "queryCond": "entrasp.sondaggio_riprogrammato(snd.codice_azienda, snd.id_sondaggio)"
+    },
+    {
+      "fieldName": "incompleto_s",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Incompleto",
+      "newLine": false,
+      "queryCond": "ss.somministrazione_completata!='Completo'"
+    },
+    {
+      "fieldName": "no_giudizio",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Senza giudizio",
+      "newLine": false,
+      "queryCond": "ss.giudizio is null"
+    },
+    {
+      "fieldName": "flag_ultimo_modello_test",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo Mod Ver-per Data",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_modello_test(ss.codice_azienda, ss.id_sondaggio)"
+    },
+    {
+      "fieldName": "flag_ultimo_modello_test_rett",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo Mod Ver -per ID",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_modello_test_rett(ss.codice_azienda, ss.id_sondaggio)"
+    },
+    {
+      "fieldName": "flag_ultimo_per_cliente",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo per Cliente/Sott.-per Data",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_object_key(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)"
+    },
+    {
+      "fieldName": "flag_ultimo_per_cliente_rett",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo per Cliente/Sott.-per ID",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_object_key_rett(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT distinct giudizio AS id, giudizio AS name  FROM entrasp.sondaggi_somministrati WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "fieldName": "giudizio_s",
+      "label": "Giudizio",
+      "newLine": false,
+      "queryCond": "ss.giudizio='€giudizio_s€'"
+    }
+  ],
   "inputEvents": [
     {
       "eventName": "sondaggi_somministrati_reload",
