@@ -1,7 +1,7 @@
 {
   "$schema": "../views.schema.json",
   "inheritsFrom": "sondaggi_somministrati",
-  "entryKey": "employees_evaluations",
+  "entryKey": "comprehension_tests",
   "dashboardTables": [
     "dashboard_sondaggi"
   ],
@@ -9,7 +9,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select case when snd.data_prevista<now() and ss.stato!='C' then 'Scaduto' else 'Non scaduto' end as scaduto, ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, snd.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test  where ((ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 53 and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and (mt.id_filtro_selezione=9 or id_argomento in (363, 548, 3408, 3407,3409,3411,3412)) and snd.data_prevista is null and ss.data_esecuzione is null))"
+      "queryString": "select case when snd.data_prevista<now() and ss.stato!='C' then 'Scaduto' else 'Non scaduto' end as scaduto, ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, snd.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test,entrasp.tipi_modelli_test_descr(mt.id_tipo_modello_test) as tipo_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test  where ((ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test in (5,53) and (snd.data_prevista<=CURRENT_DATE or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test in (5,53) and snd.data_prevista is null and ss.data_esecuzione is null))"
     },
     {
       "operation": "selectForm",
@@ -520,10 +520,10 @@
       "isPrimary": false,
       "key": "sondaggi_from_sondaggi_somministrati",
       "buttonIcon": "fact_check",
-      "label": "Sondaggio",
+      "label": "Lezione",
       "newLine": false,
       "outputEvent": {
-        "eventName": "to_sondaggi_from_sondaggi_somministrati",
+        "eventName": "to_lessons_from_comprehension_tests",
         "eventTrigger": "press"
       },
       "style": {
@@ -623,7 +623,7 @@
       "isPrimary": false,
       "buttonIcon": "report_problem",
       "key": "create_segnalazione",
-      "label": "Create Nota",
+      "label": "Crea Segnalazione",
       "newLine": true,
       "outputEvent": {
         "eventName": "compito_create",
@@ -877,7 +877,7 @@
           "outputEventWhenComplete": "sondaggi_somministrati_reload"
         }
       ],
-      "label": "ID Sondaggio",
+      "label": "ID Lezione",
       "newLine": true,
       "readOnly": true,
       "size": 1.25
@@ -1294,8 +1294,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_sondaggio",
-      "label": "ID Sondaggio",
-      "width": "5%",
+      "label": "ID Lezione",
+      "width": "4%",
       "style": [
         {
           "value": "*",
@@ -1310,8 +1310,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_somministrazione",
-      "label": "ID Verifica",
-      "width": "5%",
+      "label": "ID Ver.",
+      "width": "4%",
       "style": [
         {
           "value": "*",
@@ -1347,7 +1347,7 @@
       "isPrimary": false,
       "key": "titolo_sondaggio",
       "label": "Titolo",
-      "width": "28%"
+      "width": "32%"
     },
     {
       "format": {
@@ -1356,7 +1356,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "object_description",
-      "label": "Oggetto di Verifica",
+      "label": "Partecipanti",
       "width": "16%"
     },
     {
@@ -1375,7 +1375,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "stato",
-      "width": "8%",
+      "width": "7%",
       "label": "Stato",
       "style": [
         {
@@ -1397,13 +1397,23 @@
     },
     {
       "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "tipo_modello_test",
+      "label": "Tipo",
+      "width": "9%"
+    },
+    {
+      "format": {
         "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "somministrazione_completata",
       "label": "Completo Sì/No",
-      "width": "8%",
+      "width": "6%",
       "style": [
         {
           "value": "Completo",
@@ -1420,7 +1430,7 @@
       "isPrimary": false,
       "key": "giudizio",
       "label": "Giudizio automatico",
-      "width": "8%",
+      "width": "7%",
       "style": [
         {
           "value": "*",
@@ -1507,7 +1517,7 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "giudizio_manuale",
       "label": "Giudizio manuale",
@@ -1574,7 +1584,7 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "scaduto",
       "label": "Scaduto Sì/No",
@@ -1594,7 +1604,7 @@
       "format": {
           "dataType": "boolean"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "isCheckbox": true,
       "key": "sondaggio_riprogrammato",
@@ -1606,7 +1616,7 @@
       "format": {
           "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "id_somministrazione_precedente",
       "queryFunct": "entrasp.id_somministrazione_precedente(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)",
@@ -1700,7 +1710,7 @@
           "son": "id_sondaggio"
         }
       ],
-      "label": "Note associate"
+      "label": "Segnalazioni associate"
     },
     {
       "entryKey": "sondaggi_somministrati_attachments",
@@ -1722,20 +1732,6 @@
       "label": "Allegati Associati"
     },
     {
-      "entryKey": "seleziona_campione",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "id_sondaggio",
-          "son": "id_sondaggio"
-        }
-      ],
-      "label": "Seleziona Partecipanti"
-    },
-    {
         "entryKey": "consuntivazioni_sub_of_sondaggi",
         "keys": [
             {
@@ -1748,6 +1744,124 @@
             }
         ],
         "label": "Aggiornamenti e Time Report"
+    }
+  ],
+  "inputEvents": [
+    {
+      "eventName": "sondaggi_somministrati_reload",
+      "actionType": "reload"
+    },
+    {
+      "actionTarget": {
+        "name": "compiti",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito_created",
+            "destination": "codice_compito"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_compito_created"
+    },
+    {
+      "actionTarget": {
+        "name": "sondaggi_ulteriori_elementi",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_sondaggio",
+            "destination": "id_sondaggio"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "sondaggi_ulteriori_elementi"
+    },
+    {
+      "actionTarget": {
+        "name": "cpl_risultati_sondaggi",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_sondaggio",
+            "destination": "id_sondaggio"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_riepilogo_risultati"
+    },
+    {
+      "actionTarget": {
+        "name": "lessons",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_sondaggio",
+            "destination": "id_sondaggio"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_lessons_from_comprehension_tests"
+    },
+    {
+      "actionTarget": {
+        "name": "modelli_test_vr",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_modello_test",
+            "destination": "id_modello_test"
+          },
+          {
+            "source": "id_modello_test_vr",
+            "destination": "id_modello_test_vr"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_modello_test_from_sondaggi_somministrati"
+    },
+    {
+      "actionTarget": {
+        "name": "progetti",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_progetto",
+            "destination": "id_progetto"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_progetto_from_sondaggi_somministrati"
     }
   ]
 }
