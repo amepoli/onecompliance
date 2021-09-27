@@ -1,0 +1,28 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "consuntivazioni_sub_of_argomenti_tasks",
+  "origin": "entrasp.consuntivazioni",
+  "inheritsFrom": "consuntivazioni_sub",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select entrasp.anagrafiche_id_codcognnome(csn.codice_part,id_risorsa) as esecutore,csn.id_cons, csn.codice_compito, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',csn.stato) as descr_stato, csn.thread, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, csn.stato, csn.note, csn.id_argomento from entrasp.consuntivazioni csn WHERE csn.id_argomento=$id_argomento$ and csn.codice_azienda='€global_codice_azienda€'",
+      "type": "main"
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "insert",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    }
+  ]
+}
