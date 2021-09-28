@@ -3,5 +3,5 @@ export interface SearchSwitch {
     label: string;
     condition: "equal" | "notEqual" | "include";
     value: any;
-    checked?: boolean;
+    checked: boolean;
 }

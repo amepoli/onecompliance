@@ -226,7 +226,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this._console.table(params);
                     _this.viewKeys = params.table_keys;
                     _this.searchKeys = params.search_keys;
-                    _this.updateSearchSwitches(params.search_switches);
+                    _this.updateSearchSwitches(params.search_keys);
                     _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
                     _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
@@ -506,23 +506,21 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.showAdvSearch = !this.showAdvSearch;
     }
 
-    updateSearchSwitches(searchSwitches: any[]) {
-        if(searchSwitches && searchSwitches.length > 0) {
-            this.searchSwitches = searchSwitches.map( x => {
-                x['checked'] = false;
-                return x;
+    updateSearchSwitches(searchKeys: SearchViewKey[]) {
+        if(searchKeys && searchKeys.length > 0) {
+            
+            this.searchSwitches = searchKeys.filter(x => x.showSwitch).map( x => {
+                return {
+                    fieldName: x.fieldName,
+                    label: x.switchLabel,
+                    value: x.switchOnValue,
+                    condition: "equal",
+                    checked: false
+                };
             });
         }
         else {
-            this.searchSwitches = [
-                {
-                    fieldName: 'nome',
-                    condition: 'equal',
-                    value: 'Poli1',
-                    label: 'Test toggle',
-                    checked: false
-                }
-            ];
+            this.searchSwitches = [];
         }
     }
 
@@ -532,14 +530,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
     
     applySearchSwitches() {
-        if (this.dataSource && this.dataSource.data && this.dataSource.data.length) {
-            // filterValue = filterValue.trim(); // Remove whitespace
-            // filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
-            // this.dataSource.filter = filterValue;
-            if (this.dataSource.paginator) {
-                this.dataSource.paginator.firstPage();
-            }
-        }
+        this.search_submit({});        
     }
 
     quickAdd(): void {
@@ -574,12 +565,21 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 }
             }
         }
+
+        // Apply switches
+        if(this.searchSwitches && this.searchSwitches.length) {
+            this.searchSwitches.filter(x => x.checked).forEach( x => {
+                cleanedValues[x.fieldName] = x.value
+            });
+        }
+
         this.loadTable(cleanedValues);
         this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: cleanedValues } }); // pass search keys to parent view 
     }
 
     cancel_search() {
         this.showAdvSearch = false;
+        this.updateSearchSwitches(this.searchKeys);
         this.loadTable(null);
         this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
     }
@@ -824,6 +824,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         if (event.eventType === 'savedForm') { // quick add form view submitted the new record
             this.showQuickAdd = false; // hide quick add
             this._toastService.showSuccessToast('Saved successfully!'); // show success toast
+            this.updateSearchSwitches(this.searchKeys);
             this.loadTable(null); // reload the table to visualize the record
         }
         else { // forward to parent
