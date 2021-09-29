@@ -542,13 +542,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
     
     applySearchToggles(cleanedValues: any) {
-        // clean-up null or empty values
-        if(!cleanedValues) {
-            cleanedValues = {};
-        } 
-        
         // Apply toggles
         if(this.searchToggles && this.searchToggles.length) {
+            // clean-up null or empty values
+            if(!cleanedValues) {
+                cleanedValues = {};
+            }
+        
             this.searchToggles.filter(x => x.checked).forEach( x => {
                 cleanedValues[x.fieldName] = x.checked
             });
