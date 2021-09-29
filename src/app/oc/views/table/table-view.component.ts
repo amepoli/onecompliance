@@ -2,7 +2,7 @@ import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleCha
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatRow } from '@angular/material/table';
-import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, SearchSwitch, SearchViewKey, TableViewKey, TableViewParams } from 'app/oc/interfaces';
+import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, SearchToggle, SearchViewKey, TableViewKey, TableViewParams } from 'app/oc/interfaces';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -75,8 +75,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     isAuthorized: boolean = true;
     viewKeys: TableViewKey[];  // view fields as specified by the backend
 
-    searchKeys: SearchViewKey[];
-    searchSwitches: SearchSwitch[];
+    completeSearchKeys: SearchViewKey[]; // Also contains search toggles
+    advancedSearchKeys: SearchViewKey[]; // Search keys to show Advanced search
+    searchToggles: SearchToggle[];
     
     currentKeys: any; // relevant keys passed by the parent component 
 
@@ -199,7 +200,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.showAdvSearch = false;
 
         this.viewKeys = null;
-        this.searchKeys = null;
+        this.completeSearchKeys = null;
+        this.advancedSearchKeys = null;
+        this.searchToggles = null;
         this.displayedColumns = null;
         this.currentKeys = null;
 
@@ -207,10 +210,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.searchData = null;
         this.dataSource = null;
 
-        this.searchKeys = null;
         this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
     
-        this.searchSwitches = null;
     }
 
     public loadData() {
@@ -225,8 +226,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     const params = result.data;
                     _this._console.table(params);
                     _this.viewKeys = params.table_keys;
-                    _this.searchKeys = params.search_keys;
-                    _this.updateSearchSwitches(params.search_keys);
+                    _this.completeSearchKeys = params.search_keys;
+                    _this.updateAdvancedSearchKeys(params.search_keys);
+                    _this.loadSearchToggles(params.search_keys);
                     _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
                     _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
@@ -317,6 +319,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     loadTable(search_keys: any): void {
         const _this = this;
         _this.isLoading = true;
+
+        // Add search toggles if exist
+        search_keys = _this.applySearchToggles(search_keys);
+
         _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, search_keys, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
@@ -327,7 +333,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         _this.searchOptions = results.search_options; // store them
                         results = results.table_data; // and get the table data
                     }
-                    _this.searchData = _this.getSearchData(_this.searchKeys);
+                    _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
                     _this.dataSource = new MatTableDataSource(results);
                     _this.dataSource.sort = _this.sort;
                     _this.dataSource.paginator = _this.paginator;
@@ -506,31 +512,49 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.showAdvSearch = !this.showAdvSearch;
     }
 
-    updateSearchSwitches(searchKeys: SearchViewKey[]) {
+    updateAdvancedSearchKeys(searchKeys: SearchViewKey[]) {
         if(searchKeys && searchKeys.length > 0) {
-            
-            this.searchSwitches = searchKeys.filter(x => x.showSwitch).map( x => {
+            this.advancedSearchKeys = searchKeys.filter(x => x.format.viewType != 'toggle');
+        }
+        else {
+            this.advancedSearchKeys = [];
+        }
+    }
+
+    loadSearchToggles(searchKeys: SearchViewKey[]) {
+        if(searchKeys && searchKeys.length > 0) {
+            this.searchToggles = searchKeys.filter(x => x.format.viewType == 'toggle').map( x => {
                 return {
                     fieldName: x.fieldName,
-                    label: x.switchLabel,
-                    value: x.switchOnValue,
-                    condition: "equal",
-                    checked: false
+                    label: x.label,
+                    checked: (x.format.value == 'true' || x.format.value == true || x.format.value == '1' || x.format.value == 1) ? true: false
                 };
             });
         }
         else {
-            this.searchSwitches = [];
+            this.searchToggles = [];
         }
     }
 
-    toggleSearchSwitches(index: number, checked: boolean) {
-        this.searchSwitches[index].checked = checked;
-        this.applySearchSwitches();
+    updateSearchToggle(index: number, checked: boolean) {
+        this.searchToggles[index].checked = checked;
+        this.search_submit({});
     }
     
-    applySearchSwitches() {
-        this.search_submit({});        
+    applySearchToggles(cleanedValues: any) {
+        // clean-up null or empty values
+        if(!cleanedValues) {
+            cleanedValues = {};
+        } 
+        
+        // Apply toggles
+        if(this.searchToggles && this.searchToggles.length) {
+            this.searchToggles.filter(x => x.checked).forEach( x => {
+                cleanedValues[x.fieldName] = x.checked
+            });
+        }
+
+        return cleanedValues;
     }
 
     quickAdd(): void {
@@ -554,7 +578,6 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     search_submit(value: any) {
-        this._console.log(value);
         // clean-up null or empty values
         let cleanedValues = {};
         for (const key in value) {
@@ -565,21 +588,14 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 }
             }
         }
-
-        // Apply switches
-        if(this.searchSwitches && this.searchSwitches.length) {
-            this.searchSwitches.filter(x => x.checked).forEach( x => {
-                cleanedValues[x.fieldName] = x.value
-            });
-        }
-
+                
         this.loadTable(cleanedValues);
         this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: cleanedValues } }); // pass search keys to parent view 
     }
 
     cancel_search() {
         this.showAdvSearch = false;
-        this.updateSearchSwitches(this.searchKeys);
+        this.loadSearchToggles(this.completeSearchKeys);
         this.loadTable(null);
         this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
     }
@@ -824,7 +840,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         if (event.eventType === 'savedForm') { // quick add form view submitted the new record
             this.showQuickAdd = false; // hide quick add
             this._toastService.showSuccessToast('Saved successfully!'); // show success toast
-            this.updateSearchSwitches(this.searchKeys);
+            this.loadSearchToggles(this.completeSearchKeys);
             this.loadTable(null); // reload the table to visualize the record
         }
         else { // forward to parent
