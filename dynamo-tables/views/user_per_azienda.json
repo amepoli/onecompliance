@@ -6,7 +6,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select distinct ar.codice_azienda, coalesce(an.nome||' '||an.cognome, avr.ragione_sociale) as nmrs, an.dynamo_user, ae.codice_azienda as codice_azienda_erogante, entrasp.consuntivazioni_time_consumed_azienda(ar.codice_azienda,ae.codice_azienda, '2021-01-01'::date, '2021-12-31'::date, dynamouser=>an.dynamo_user) as time_consumed FROM (select codice_azienda from entrasp.aziende) ar,(select distinct codice_azienda from entrasp.employers) as ae, entrasp.anagrafiche_id an inner join entrasp.consuntivazioni csn on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica where csn.codice_azienda=ar.codice_azienda and csn.id_risorsa is not null and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica) and dynamo_user is not null and entrasp.consuntivazioni_time_consumed_azienda(ar.codice_azienda,ae.codice_azienda, '2021-01-01'::date, '2021-12-31'::date, dynamouser=>an.dynamo_user) is not null;"
+      "queryString": "select *, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>'2021-01-01', datafine =>'2021-12-31') as time_consumed_year from entrasp.employers;"
     }
   ],
   "table_keys": [
@@ -14,7 +14,7 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "Codice Azienda"
@@ -26,28 +26,7 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "dynamo_user",
-      "label": "Collaboratore",
-      "width": "20%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "nmrs",
-      "width": "30%",
-      "label": "Denominazione"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice_azienda_erogante",
-      "label": "Fornitore",
-      "width": "7%"
+      "label": "Collaboratore"
     },
     {
       "format": {
@@ -55,10 +34,62 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "time_consumed",
-      "width": "15%",
-      "label": "Tempo impiegato"
+      "key": "time_consumed_year",
+      "label": "Totali Giorni Impiegati Ultimo Anno"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "time_consumed_month",
+      "label": "Totali Giorni Impiegati Ultimo Mese"
     }
+  ],
+  "subTables": [
+    {
+      "entryKey": "consuntivazioni_consultant_sub_of_user_per_azienda",
+      "keys": [
+        {
+          "parent": "dynamo_user",
+          "son": "dynamo_user"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        }
+      ],
+      "label": "Aggiornamenti e Time Report"
+    },
+    {
+      "entryKey": "compiti_consultant_sub_of_compiti_consultant",
+      "keys": [
+        {
+          "parent": "dynamo_user",
+          "son": "dynamo_user"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        }
+      ],
+      "label": "Sotto Compiti"
+    },
+    {
+			"entryKey": "user_sub_of_compiti_consultant",
+			"keys": [
+				{
+          "parent": "dynamo_user",
+          "son": "dynamo_user"
+        },
+        {
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				}
+			],
+			"label": "Utenti impegnati"
+		}
   ],
   "querySuffixes": {
     "tableViewSuffix": "order by dynamo_user"
