@@ -233,7 +233,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
                     _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
-                    _this.loadTable(null);
+                    _this.loadTableInfo();
 
                     _this._console.log(_this.viewKeys);
 
@@ -314,6 +314,27 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         ));
         // Calculate table height
         _this.calculateTableHeight();
+    }
+
+    loadTableInfo(): void {
+        const _this = this;
+        _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
+            results => {
+                _this._console.log(results);
+                if (results.result === 'OK') {
+                    _this.showAdvSearch = false;
+                    results = results.data;
+                    if (results.search_options) { // got some search combobox options
+                        _this.searchOptions = results.search_options; // store them
+                    }
+                    _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
+                    _this.loadTable(null);
+                }
+            },
+            error => {
+                _this.isLoading = false;
+                _this._toastService.showErrorToast(error);
+            }));
     }
 
     loadTable(search_keys: any): void {
