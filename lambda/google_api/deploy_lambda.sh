@@ -26,7 +26,7 @@ SCHEMA=`cat ../../${1}.json | jq -r ".postgres.schema"`
 BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.import.s3.bucket"`
 REGION="eu-central-1"
 
-CSVDELIMITER="~"
+GOOGLE_API_KEY="null"
 
 #replace Variables
 cp index.js index.js.ori
@@ -42,6 +42,7 @@ sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
 sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js
 sed -i -e "s/REGION/${REGION}/g" index.js
 sed -i -e "s/SCHEMA/${SCHEMA}/g" index.js
+sed -i -e "s/GOOGLE_API_KEY/${GOOGLE_API_KEY}/g" index.js
 
 sed -i -e "s/CSV_DELIMITER/${CSVDELIMITER}/g" index.js
 

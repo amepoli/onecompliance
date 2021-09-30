@@ -1,4 +1,6 @@
+const https = require('https');
 const helperFuncts = require('./helperFuncts');
+const googleAPI = 'GOOGLE_API_KEY';
 
 exports.handler = async (event, context) => {
 
@@ -30,6 +32,7 @@ exports.handler = async (event, context) => {
     console.log('queryParams', queryParams);
 
     const requestType = queryParams['request_type'];
+    const directionsParams = queryParams['directions'];
 
     // If no Request type provided, exit with an error
     if (!requestType) {
@@ -46,6 +49,11 @@ exports.handler = async (event, context) => {
         try {
             if (requestType === 'GetDirections') {
                 // Get directions
+                const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${directionsParams['origin']}&destination=${directionsParams['destination']}?key=${googleAPI}`;
+                console.log('url: ', url);
+                const req = await https.get(url);
+                console.log(req);
+
                 body = { result: 'OK', result: { name: 'Unknown Path' } };
             }
             else {
