@@ -1,0 +1,536 @@
+{
+  "$schema": "../views.schema.json",
+  "businessObjectName": "centriGestionali",
+  "entryKey": "centri_gestionali_consultant",
+  "dashboardTables": [
+    "dashboard_centri_gestionali"
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_part",
+      "label": "codice_part",
+      "readOnly": true
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "size": 2,
+      "key": "id_centro_gest",
+      "label": "ID",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "validations": [
+          {
+              "message": "Tipo soggetto necessario",
+              "name": "required",
+              "validator": "Validators.required"
+          },
+          {
+            "name": "maxlength",
+            "message": "Massimo numero di caratteri: 35",
+            "validator": "Validators.maxLength(35)",
+            "value": 35
+          }
+      ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
+      "label": "Codice",
+      "size": 2,
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "validations": [
+          {
+              "message": "Tipo soggetto necessario",
+              "name": "required",
+              "validator": "Validators.required"
+          }
+      ]
+      },
+      "isHidden": false,
+      "size": 4.5,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Centro gestionale",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "size": 1.5,
+      "key": "email_cc",
+      "label": "email_cc",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "textarea"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione_estesa",
+      "label": "Descrizione",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part=$codice_part$ and id_centro_gest!=£id_centro_gest£;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_centro_gest_parent",
+      "label": "Centro Gestionale Superiore",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=349 order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "Codice esterno centro gestionale",
+      "readOnly": false,
+      "newLine": false,
+      "size": 5
+    },
+    {
+      "key": "id_responsabile",
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part=$codice_part$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Responsabile",
+      "newLine": false,
+      "readOnly": false,
+      "isPrimary": false,
+      "isHidden": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_azienda_erogante",
+      "label": "Azienda Erogante",
+      "newLine": true,
+      "readOnly": false,
+      "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "flag_grc_controller",
+      "label": "Controller",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "flag_grc_gestore",
+      "label": "Gestore",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_gruppo_lavoro",
+      "label": "Gruppo lavoro",
+      "readOnly": true
+    }
+  ],
+  "origin": "entrasp.centri_gestionali",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select * from entrasp.centri_gestionali;",
+      "type": "main"
+    },
+    {
+      "operation": "isInsert",
+      "queryString": "select $id_centro_gest$ is null as label;",
+      "type": "main"
+    },
+    {
+      "operation": "insert",
+      "queryString": "select entrasp.centro_gest_insert($codice_part$, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, $codice_azienda_erogante$)as id_centro_gest",
+      "type": "main"
+    },
+    {
+      "operation": "delete",
+      "queryString": "select entrasp.centro_gestionale_delete('€global_codice_part€', $id_centro_gest$);",
+      "type": "main"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "UPDATE entrasp.centri_gestionali cge set codice_part=az.codice_part from entrasp.aziende az where cge.codice_part=az.codice_part"
+    },
+    {
+			"operation": "insert",
+			"type": "preCheck",
+			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£'",
+			"messageNotNull": "Inserimento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+		},
+		{
+			"operation": "update",
+			"type": "preCheck",
+			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£' and id_centro_gest!=$id_centro_gest$",
+			"messageNotNull": "Aggiornamento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+		},
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "select entrasp.update_dynamo_user((€global_id_anagrafiche€)::text, (€global_user_companies€)::text, '€global_username€')"			
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "id_centro_gest",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID",
+      "newLine": false,
+      "queryCond": "id_centro_gest=$id_centro_gest$"
+    },
+    {
+      "fieldName": "codice",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Codice",
+      "newLine": true,
+      "queryCond": "codice=$codice$"
+    },
+    {
+      "fieldName": "descrizione",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Descrizione",
+      "newLine": true,
+      "queryCond": "descrizione Like '%€descrizione€%'"
+    },
+    {
+      "fieldName": "id_responsabile_s",
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part=$codice_part$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Responsabile",
+      "newLine": false,
+      "queryCond": "id_responsabile=$id_responsabile_s$"
+    },
+    {
+      "fieldName": "flag_principali",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Solo Principali",
+      "newLine": false,
+      "queryCond": "id_centro_gest_parent IS null"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "centri_gestionali_sub",
+      "keys": [
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest_parent"
+        },
+        {
+          "parent": "codice_part",
+          "son": "codice_part"
+        }
+      ],
+      "label": "Centri Gestionali Subordinati"
+    },
+    {
+      "entryKey": "gruppi_lavoro_membri",
+      "keys": [
+        {
+          "parent": "id_gruppo_lavoro",
+          "son": "id_gruppo_lavoro"
+        },
+        {
+          "parent": "codice_part",
+          "son": "codice_part"
+        }
+      ],
+      "label": "Elenco Personale"
+    },
+    {
+      "entryKey": "procedure_aziendali_sub_centri_gest",
+      "keys": [
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest"
+        },
+        {
+          "parent": "codice_part",
+          "son": "codice_part"
+        }
+      ],
+      "label": "Processi associati"
+    },
+    {
+      "entryKey": "presidi_sub_centri_gest",
+      "keys": [
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest"
+        },
+        {
+          "parent": "codice_part",
+          "son": "codice_part"
+        }
+      ],
+      "label": "Presidi"
+    },
+    {
+      "entryKey": "modelli_di_test_sub_centri_gest",
+      "keys": [
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest"
+        },
+        {
+          "parent": "codice_part",
+          "son": "codice_part"
+        }
+      ],
+      "label": "Modelli Di Verifiche"
+    },
+    {
+      "entryKey": "rischi",
+      "keys": [
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest"
+        },
+        {
+          "parent": "codice_part",
+          "son": "codice_part"
+        }
+      ],
+      "label": "Rischi associati"
+    },
+    {
+      "entryKey": "centri_gestionali_attachments",
+      "isHidden": false,
+      "keys": [
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest"
+        }
+      ],
+      "label": "Allegati Associati",
+      "type": "tableForm"
+    },
+    {
+      "entryKey": "sondaggi_sub_of_centri_gest",
+      "keys": [
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest"
+        },
+        {
+          "parent": "codice_part",
+          "son": "codice_part"
+        }
+      ],
+      "label": "Sondaggi aperti"
+    },
+    {
+      "entryKey": "sondaggi_somministrati_sub_of_centri_gest",
+      "keys": [
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest"
+        },
+        {
+          "parent": "codice_part",
+          "son": "codice_part"
+        }
+      ],
+      "label": "Verifiche aperte"
+    },
+    {
+      "entryKey": "compiti_aperti_sub_of_centri_gestionali",
+      "keys": [
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest"
+        },
+        {
+          "parent": "codice_part",
+          "son": "codice_part"
+        }
+      ],
+      "label": "Segnalazioni associate"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_part",
+      "label": "codice_part"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_centro_gest",
+      "label": "ID",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_anagrafica",
+      "label": "ID Anagrafica",
+      "sameOrigin": false,
+      "width": "0%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
+      "label": "Codice",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_azienda_erogante",
+      "label": "Azienda erogante",
+      "width": "12%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Descrizione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "responsabile",
+      "label": "Responsabile",
+      "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_responsabile)"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "parente",
+      "label": "Centro Superiore",
+      "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest_parent)"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "id_argomento"
+    }
+  ]
+}
