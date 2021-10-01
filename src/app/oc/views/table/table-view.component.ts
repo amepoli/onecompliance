@@ -236,7 +236,17 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.loadTableInfo();
 
                     _this._console.log(_this.viewKeys);
+                    
+                    const key_values = {};
+                    const primaryKeys = _this.viewKeys.filter(entry => {
+                        return entry.isPrimary;
+                    });
+                    // for (const primaryKey of primaryKeys) {
+                    //     key_values[primaryKey.key] = row[primaryKey.key];
+                    // }
+                    // return key_values;
 
+                    
                     _this.loadStyle(params.table_keys);
                     _this.loadLevel(params.table_keys);
                     _this.loadFormat(params.table_keys);
@@ -585,9 +595,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     add() {
         let keys = {};
         this.viewKeys.filter(x => x.isPrimary).forEach(x => {
-            if(this.keysArray[0][x.key]) {
-                keys[x.key] = this.keysArray[0][x.key];
+            if(this.tableData.keys && this.tableData.keys[x.key]) {
+                keys[x.key] = this.tableData.keys[x.key];
             }
+            // else if(this.keysArray && this.keysArray.length && this.keysArray[0][x.key]) {
+            //     keys[x.key] = this.keysArray[0][x.key];
+            // }
         });
         Object.keys(this.currentKeys).forEach( key => {
             keys[key] = this.currentKeys[key];
