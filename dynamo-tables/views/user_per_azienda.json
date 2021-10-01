@@ -1,12 +1,99 @@
 {
   "$schema": "../views.schema.json",
-  "inheritsFrom": "compiti_consultant",
+  "origin": "entrasp.employers",
   "entryKey": "user_per_azienda",
+  "businessObjectName": "employers",
   "predefinedQueries": [
     {
       "type": "main",
       "operation": "selectTable",
       "queryString": "select *, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>'2021-01-01', datafine =>'2021-12-31') as time_consumed_year from entrasp.employers;"
+    },
+    {
+      "type": "postProcessing",
+      "operation": "selectForm",
+      "queryString": "select entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>'2021-01-01', datafine =>'2021-12-31') as time_consumed_year,  entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>'2021-09-01', datafine =>'2021-09-30') as time_consumed_month from entrasp.employers where codice_azienda=$codice_azienda$ and dynamo_user=$dynamo_user$"
+    }
+  ],
+  "form_keys": [
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "readOnly": false,
+      "newLine": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda Erogante"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "readOnly": false,
+      "newLine": false,
+      "isPrimary": true,
+      "key": "dynamo_user",
+      "label": "Collaboratore"
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "readOnly": true,
+      "newLine": false,
+      "sameOrigin": false,
+      "key": "time_consumed_year",
+      "label": "Totali Giorni Impiegati Ultimo Anno"
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "readOnly": true,
+      "sameOrigin": false,
+      "isPrimary": false,
+      "key": "time_consumed_month",
+      "label": "Totali Giorni Impiegati Ultimo Mese"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "consuntivazioni_consultant_sub_of_user_per_azienda",
+      "keys": [
+        {
+          "parent": "dynamo_user",
+          "son": "dynamo_user"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda_erogante"
+        }
+      ],
+      "label": "Time report e aggiornamenti"
+    },
+    {
+      "entryKey": "compiti_sub_of_user_per_azienda",
+      "keys": [
+        {
+          "parent": "dynamo_user",
+          "son": "dynamo_user"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda_erogante"
+        }
+      ],
+      "label": "Time report e aggiornamenti"
     }
   ],
   "table_keys": [
@@ -46,50 +133,6 @@
       "key": "time_consumed_month",
       "label": "Totali Giorni Impiegati Ultimo Mese"
     }
-  ],
-  "subTables": [
-    {
-      "entryKey": "consuntivazioni_consultant_sub_of_user_per_azienda",
-      "keys": [
-        {
-          "parent": "dynamo_user",
-          "son": "dynamo_user"
-        },
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        }
-      ],
-      "label": "Aggiornamenti e Time Report"
-    },
-    {
-      "entryKey": "compiti_consultant_sub_of_compiti_consultant",
-      "keys": [
-        {
-          "parent": "dynamo_user",
-          "son": "dynamo_user"
-        },
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        }
-      ],
-      "label": "Sotto Compiti"
-    },
-    {
-			"entryKey": "user_sub_of_compiti_consultant",
-			"keys": [
-				{
-          "parent": "dynamo_user",
-          "son": "dynamo_user"
-        },
-        {
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			],
-			"label": "Utenti impegnati"
-		}
   ],
   "querySuffixes": {
     "tableViewSuffix": "order by dynamo_user"
