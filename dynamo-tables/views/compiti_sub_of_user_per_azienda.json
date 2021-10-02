@@ -18,7 +18,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select *, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti inner join entrasp.centri_gestionali cg on cmp.codice_part=cg.codice_part and cmp.id_centro_gest=cg.id_centro_gest where cg.codice_azienda_erogante=$codice_azienda_erogante$"
+      "queryString": "select *, cg.codice_azienda_erogante, entrasp.is_compito_worked_by_dynamo_user(codice_azienda, codice_compito, $dynamo_user$) as dynamo_user, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti cmp inner join entrasp.centri_gestionali cg on cmp.codice_part=cg.codice_part and cmp.id_centro_gest=cg.id_centro_gest where cg.codice_azienda_erogante=$codice_azienda_erogante$ and entrasp.is_compito_worked_by_dynamo_user(codice_azienda, codice_compito, $dynamo_user$)=$dynamo_user$"
     }
   ]
 }
