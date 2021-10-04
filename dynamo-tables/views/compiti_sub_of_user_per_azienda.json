@@ -18,7 +18,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select *, cg.codice_azienda_erogante, entrasp.is_compito_worked_by_dynamo_user(codice_azienda, codice_compito, $dynamo_user$) as dynamo_user, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti cmp inner join entrasp.centri_gestionali cg on cmp.codice_part=cg.codice_part and cmp.id_centro_gest=cg.id_centro_gest where cg.codice_azienda_erogante=$codice_azienda_erogante$ and entrasp.is_compito_worked_by_dynamo_user(codice_azienda, codice_compito, $dynamo_user$)=$dynamo_user$"
+      "queryString": "select *, cg.codice_azienda_erogante, entrasp.is_compito_worked_by_dynamo_user(codice_azienda, codice_compito, $dynamo_user$) as dynamo_user, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => codice_azienda, codicecompito=>codice_compito, dynamouser=>$dynamo_user$) as giorni_compito from entrasp.compiti cmp inner join entrasp.centri_gestionali cg on cmp.codice_part=cg.codice_part and cmp.id_centro_gest=cg.id_centro_gest where cg.codice_azienda_erogante=$codice_azienda_erogante$ and entrasp.is_compito_worked_by_dynamo_user(codice_azienda, codice_compito, $dynamo_user$)=$dynamo_user$"
     }
   ],
   "table_keys": [
@@ -176,6 +176,15 @@
       "key": "titolo",
       "width": "30%",
       "label": "Titolo"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "giorni_compito",
+      "label": "Giorni Impiegati"
     },
     {
       "format": {
