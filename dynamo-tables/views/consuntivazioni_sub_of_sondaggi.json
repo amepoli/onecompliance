@@ -160,19 +160,14 @@
       "label": "Stato",
       "newLine": false,
       "readOnly": false,
-      "outputEvent": {
-        "eventName": "consuntivazione_select_stato",
-        "eventTrigger": "select"
-      },
       "inputEvents": [
         {
           "eventName": "consuntivazione_select_stato",
           "actionType": "query",
-          "condition": "equalTo",
-          "values": [
-            "E"
-          ],
-          "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'cns_snd', 'E');"
+          "condition": "none",
+          "values": [],
+          "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'cns_snd', £stato£);",
+          "outputEventWhenComplete": "reload_sondaggio"
         }
       ]
     },
@@ -581,6 +576,12 @@
       "label": "codice_attivita",
       "newLine": false,
       "readOnly": false
+    }
+  ],
+  "outputEvents": [
+    {
+      "eventName": "onSaveConsuntivazione",
+      "eventTrigger": "onSave"
     }
   ]
 }
