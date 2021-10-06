@@ -26,7 +26,7 @@ SCHEMA=`cat ../../${1}.json | jq -r ".postgres.schema"`
 BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.import.s3.bucket"`
 REGION="eu-central-1"
 
-GOOGLE_API_KEY="null"
+GOOGLE_API_KEY="AIzaSyBoKjc4V546sCOf41JI7Rhe-h0nR4TJh9E"
 
 #replace Variables
 cp index.js index.js.ori
