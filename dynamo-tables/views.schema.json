@@ -1437,6 +1437,18 @@
                                     "required": [
                                         "message"
                                     ]
+                                },
+                                {
+                                    "properties": {
+                                        "actionType": {
+                                            "enum": [
+                                                "google_api"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "googleAPIParams"
+                                    ]
                                 }
                             ],
                             "additionalProperties": false,
@@ -1458,7 +1470,8 @@
                                         "query",
                                         "query_style",
                                         "show_message",
-                                        "update_time_tracker"
+                                        "update_time_tracker",
+                                        "google_api"
                                     ]
                                 },
                                 "condition": {
@@ -1699,6 +1712,119 @@
                                 "successMessage": {
                                     "type": "string",
                                     "description": "?: success message"
+                                },
+                                "googleAPIParams": {
+                                    "type": "object",
+                                    "description": "?: Google API Action Params",
+                                    "required": [
+                                        "actionType"
+                                    ],
+                                    "anyOf": [
+                                        {
+                                            "properties": {
+                                                "actionType": {
+                                                    "enum": [
+                                                        "get_directions"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "directionsParams"
+                                            ]
+                                        },
+                                        {
+                                            "properties": {
+                                                "actionType": {
+                                                    "enum": [
+                                                        "get_distance"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "distanceParams"
+                                            ]
+                                        },
+                                        {
+                                            "properties": {
+                                                "actionType": {
+                                                    "enum": [
+                                                        "get_email_thread"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "emailThreadParams"
+                                            ]
+                                        }
+                                    ],
+                                    "properties": {
+                                        "actionType": {
+                                            "type": "string",
+                                            "description": "M: action type when main actionType is google_api",
+                                            "enum": [
+                                                "get_distance",
+                                                "get_directions",
+                                                "get_email_thread"
+                                            ]
+                                        },
+                                        "directionsParams": {
+                                            "type": "object",
+                                            "description": "?: direction parameters",
+                                            "required": [
+                                                "originKey",
+                                                "destinationKey"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "originKey": {
+                                                    "description": "M: origin key",
+                                                    "type": "string"
+                                                },
+                                                "destinationKey": {
+                                                    "description": "M: destination key",
+                                                    "type": "string"
+                                                }                                                
+                                            }
+                                        },
+                                        "distanceParams": {
+                                            "type": "object",
+                                            "description": "?: distance parameters",
+                                            "required": [
+                                                "originKey",
+                                                "destinationKey"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "originKey": {
+                                                    "description": "M: origin key",
+                                                    "type": "string"
+                                                },
+                                                "destinationKey": {
+                                                    "description": "M: destination key",
+                                                    "type": "string"
+                                                }                                                
+                                            }
+                                        },
+                                        "emailThreadParams": {
+                                            "type": "object",
+                                            "description": "?: Email Thread parameters",
+                                            "required": [
+                                                "emailIdKey",
+                                                "threadIdKey"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "emailId": {
+                                                    "description": "M: Email address key",
+                                                    "type": "string"
+                                                },
+                                                "threadId": {
+                                                    "description": "M: Thread Id key",
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

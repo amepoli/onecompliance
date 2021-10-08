@@ -6,7 +6,7 @@ import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, Me
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimeTrackerService, ToastService } from 'app/oc/services';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, GoogleAPIService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimeTrackerService, ToastService } from 'app/oc/services';
 
 @Component({
     selector: 'table-view',
@@ -131,7 +131,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         private _dialogService: DialogService,
         private _console: ConsoleLoggerService,
         private httpClient: HttpClient,
-        private _timeTrackerService: TimeTrackerService
+        private _timeTrackerService: TimeTrackerService,
+        private _googleAPIService: GoogleAPIService
     ) {
         // Set selection model
         this.selection = new SelectionModel<any>(this.allowMultiSelect, this.initialSelection);
@@ -328,6 +329,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     loadTableInfo(): void {
         const _this = this;
+        _this._googleAPIService.getDistance('31.465166, 74.348047', '31.431137, 74.349175', null);
+
         _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
