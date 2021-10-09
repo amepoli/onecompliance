@@ -1,12 +1,111 @@
 {
   "$schema": "../views.schema.json",
-  "inheritsFrom": "compiti_consultant",
+  "origin": "entrasp.employers",
   "entryKey": "user_per_azienda",
+  "businessObjectName": "employers",
   "predefinedQueries": [
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select distinct ar.codice_azienda, coalesce(an.nome||' '||an.cognome, avr.ragione_sociale) as nmrs, an.dynamo_user, ae.codice_azienda as codice_azienda_erogante, entrasp.consuntivazioni_time_consumed_azienda(ar.codice_azienda,ae.codice_azienda, '2021-01-01'::date, '2021-12-31'::date, dynamouser=>an.dynamo_user) as time_consumed FROM (select codice_azienda from entrasp.aziende) ar,(select distinct codice_azienda from entrasp.employers) as ae, entrasp.anagrafiche_id an inner join entrasp.consuntivazioni csn on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica where csn.codice_azienda=ar.codice_azienda and csn.id_risorsa is not null and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica) and dynamo_user is not null and entrasp.consuntivazioni_time_consumed_azienda(ar.codice_azienda,ae.codice_azienda, '2021-01-01'::date, '2021-12-31'::date, dynamouser=>an.dynamo_user) is not null;"
+      "queryString": "select *, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_year(now()::date), datafine =>entrasp.last_day_year(now()::date)) as time_consumed_current_year, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_month(now()::date), datafine =>entrasp.last_day_month(now()::date)) as time_consumed_current_month, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_previous_month(now()::date), datafine =>entrasp.last_day_previous_month(now()::date)) as time_consumed_previous_month from entrasp.employers;"
+    },
+    {
+      "type": "postProcessing",
+      "operation": "selectForm",
+      "queryString": "select entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_year(now()::date), datafine =>entrasp.last_day_year(now()::date)) as time_consumed_current_year,  entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>first_day_month(now()::date), datafine =>entrasp.last_day_month(now()::date)) as time_consumed_current_month, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_previous_month(now()::date), datafine =>entrasp.last_day_previous_month(now()::date)) as time_consumed_previous_month from entrasp.employers where codice_azienda=$codice_azienda$ and dynamo_user=$dynamo_user$"
+    }
+  ],
+  "form_keys": [
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "readOnly": false,
+      "newLine": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda Erogante"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "readOnly": false,
+      "newLine": false,
+      "isPrimary": true,
+      "key": "dynamo_user",
+      "label": "Collaboratore"
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "readOnly": true,
+      "newLine": false,
+      "sameOrigin": false,
+      "key": "time_consumed_current_year",
+      "label": "Totali Giorni Impiegati Anno in Corso"
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "readOnly": true,
+      "sameOrigin": false,
+      "isPrimary": false,
+      "key": "time_consumed_current_month",
+      "label": "Totali Giorni Impiegati Mese in Corso"
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "readOnly": true,
+      "sameOrigin": false,
+      "isPrimary": false,
+      "key": "time_consumed_previous_month",
+      "label": "Totali Giorni Impiegati Mese Precedente"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "consuntivazioni_consultant_sub_of_user_per_azienda",
+      "keys": [
+        {
+          "parent": "dynamo_user",
+          "son": "dynamo_user"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda_erogante"
+        }
+      ],
+      "label": "Time report e aggiornamenti"
+    },
+    {
+      "entryKey": "compiti_sub_of_user_per_azienda",
+      "keys": [
+        {
+          "parent": "dynamo_user",
+          "son": "dynamo_user"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda_erogante"
+        }
+      ],
+      "label": "Compiti gestiti"
     }
   ],
   "table_keys": [
@@ -14,7 +113,7 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "Codice Azienda"
@@ -26,28 +125,7 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "dynamo_user",
-      "label": "Collaboratore",
-      "width": "20%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "nmrs",
-      "width": "30%",
-      "label": "Denominazione"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice_azienda_erogante",
-      "label": "Fornitore",
-      "width": "7%"
+      "label": "Collaboratore"
     },
     {
       "format": {
@@ -55,9 +133,26 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "time_consumed",
-      "width": "15%",
-      "label": "Tempo impiegato"
+      "key": "time_consumed_current_year",
+      "label": "Totali Giorni Impiegati Anno in Corso"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "time_consumed_current_month",
+      "label": "Totali Giorni Impiegati Mese in Corso"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "time_consumed_previous_month",
+      "label": "Totali Giorni Impiegati Mese Precedente"
     }
   ],
   "querySuffixes": {

@@ -22,6 +22,7 @@ export class BackendService {
   private emailApiName = appData.lambdas.email_trigger.apiName;
   private timeTrackerApiName = appData.lambdas.time_tracker.apiName;
   private archiflowApiName = appData.lambdas.archiflow.apiName;
+  private googleApiName = appData.lambdas.google_api.apiName;
 
   private myGetInit = { // OPTIONAL
     headers: {
@@ -299,4 +300,10 @@ export class BackendService {
     return from(this.amplifyService.api().get(this.apiName, '/' + this.archiflowApiName, this.myGetInit));
   }
 
+  getDistance(origin: string, destination: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { request_type: 'GetDistance', origin: origin, destination: destination };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
+  }
+  
 }

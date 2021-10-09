@@ -6,7 +6,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, count(cmp.codice_compito) as num_compiti from entrasp.tipi_segnalazioni ts inner join entrasp.compiti cmp on ts.id_tipo_segnalazione=cmp.id_tipo_segnalazione where cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) group by ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice"
+            "queryString": "select ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, count(cmp.codice_compito) as num_compiti from entrasp.tipi_segnalazioni ts inner join entrasp.compiti cmp on ts.id_tipo_segnalazione=cmp.id_tipo_segnalazione where cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)"
         }
     ],
     "table_keys": [
@@ -14,11 +14,10 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": true,
             "key": "id_tipo_segnalazione",
-            "label": "id_tipo_segnalazione",
-            "width": "8%"
+            "label": "id_tipo_segnalazione"
         },
         {
             "format": {
@@ -59,7 +58,17 @@
         {
             "formActionType": "stopEvent",
             "viewType": "form"
+        },
+        {
+            "formActionType": "quick-add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
         }
-
-    ]
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": " group by ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice"
+    }
 }

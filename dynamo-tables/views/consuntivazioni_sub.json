@@ -7,12 +7,12 @@
     {
       "operation": "update",
       "type": "postProcessing",
-      "queryString": "UPDATE entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda"
+      "queryString": "UPDATE entrasp.consuntivazioni cn set codice_part=az.codice_part,id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda"
     },
     {
       "operation": "insert",
       "type": "postProcessing",
-      "queryString": "UPDATE entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda"
+      "queryString": "UPDATE entrasp.consuntivazioni cn set codice_part=az.codice_part,id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda"
     }
   ],
   "querySuffixes": {
@@ -295,7 +295,7 @@
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "update entrasp.compiti set stato='C', data_chiusura=CURRENT_DATE where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+          "queryFunct": "update entrasp.compiti set stato='C', data_chiusura=CURRENT_DATE where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$; update entrasp.consuntivazioni set stato='C' where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$;",
           "outputEventWhenComplete": "update_button"
         },
         {
@@ -460,8 +460,24 @@
       "isPrimary": false,
       "key": "thread",
       "label": "Thread",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento || ' - ' || arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son  WHERE id_argomento_father=3492 ",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "Tipo Aggiornamento",
+      "newLine": true,
+      "readOnly": false,
+      "size": 4
     },
     {
       "autoGenerate": false,
@@ -650,7 +666,17 @@
       "label": "Note",
       "newLine": true,
       "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%'"
-    }
+    },
+    {
+      "fieldName": "toggle_consuntivazioni_aperte",
+      "format": {
+          "value": "1",
+          "viewType": "toggle"
+      },
+      "label": "Solo aperti",
+      "newLine": false,
+      "queryCond": "stato not in ('C', 'N')"
+  }
   ],
   "subTables": [],
   "table_keys": [
@@ -676,10 +702,10 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
       "key": "codice_azienda",
-      "label": "codice_azienda",
+      "label": "Codice Azienda",
       "width": "10%"
     },
     {
@@ -730,25 +756,40 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "stato",
+			"key": "descr_stato",
 			"queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
 			"label": "Stato",
 			"width": "6%",
 			"style": [
         {
-            "value": "Chiuso",
-            "font_color": "green",
-            "font_weight": "500"
+          "value": "Chiuso",
+          "font_color": "green",
+          "font_weight": "500"
         },
         {
-            "value": "Provvisorio",
-            "font_color": "#D97F02",
-            "font_weight": "500"
+          "value": "Provvisorio",
+          "font_color": "#FFE118",
+          "font_weight": "500"
         },
         {
-            "value": "Confermato",
-            "font_color": "red",
-            "font_weight": "500"
+          "value": "Pianificato",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Attesa Riscontro",
+          "font_color": "#FF0000",
+          "font_weight": "500"
+        },
+        {
+          "value": "In Svolgimento",
+          "font_color": " #A1A100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Annullato",
+          "font_color": "grey",
+          "font_weight": "500"
         }
       ]
     },
@@ -826,6 +867,21 @@
       "isPrimary": false,
       "key": "id_riunione",
       "label": "id_riunione"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "id_argomento"
+    }
+  ],
+  "hideActions": [
+    {
+      "tableActionType": "quick-add",
+      "viewType": "table"
     }
   ]
 }

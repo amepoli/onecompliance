@@ -2,11 +2,11 @@ import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleCha
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatRow } from '@angular/material/table';
-import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, SearchViewKey, TableViewKey, TableViewParams } from 'app/oc/interfaces';
+import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, SearchToggle, SearchViewKey, TableViewKey, TableViewParams } from 'app/oc/interfaces';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimeTrackerService, ToastService } from 'app/oc/services';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, GoogleAPIService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimeTrackerService, ToastService } from 'app/oc/services';
 
 @Component({
     selector: 'table-view',
@@ -75,8 +75,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     isAuthorized: boolean = true;
     viewKeys: TableViewKey[];  // view fields as specified by the backend
 
-    searchKeys: SearchViewKey[];
-
+    completeSearchKeys: SearchViewKey[]; // Also contains search toggles
+    advancedSearchKeys: SearchViewKey[]; // Search keys to show Advanced search
+    searchToggles: SearchToggle[];
+    
     currentKeys: any; // relevant keys passed by the parent component 
 
     keysArray: any[];  // list of primary keys values, one entry for each table row
@@ -129,7 +131,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         private _dialogService: DialogService,
         private _console: ConsoleLoggerService,
         private httpClient: HttpClient,
-        private _timeTrackerService: TimeTrackerService
+        private _timeTrackerService: TimeTrackerService,
+        private _googleAPIService: GoogleAPIService
     ) {
         // Set selection model
         this.selection = new SelectionModel<any>(this.allowMultiSelect, this.initialSelection);
@@ -198,7 +201,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.showAdvSearch = false;
 
         this.viewKeys = null;
-        this.searchKeys = null;
+        this.completeSearchKeys = null;
+        this.advancedSearchKeys = null;
+        this.searchToggles = null;
         this.displayedColumns = null;
         this.currentKeys = null;
 
@@ -206,7 +211,6 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.searchData = null;
         this.dataSource = null;
 
-        this.searchKeys = null;
         this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
     
     }
@@ -223,15 +227,27 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     const params = result.data;
                     _this._console.table(params);
                     _this.viewKeys = params.table_keys;
-                    _this.searchKeys = params.search_keys;
+                    _this.completeSearchKeys = params.search_keys;
+                    _this.updateAdvancedSearchKeys(params.search_keys);
+                    _this.loadSearchToggles(params.search_keys);
                     _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
                     _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
                     _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
-                    _this.loadTable(null);
+                    _this.loadTableInfo();
 
                     _this._console.log(_this.viewKeys);
+                    
+                    const key_values = {};
+                    const primaryKeys = _this.viewKeys.filter(entry => {
+                        return entry.isPrimary;
+                    });
+                    // for (const primaryKey of primaryKeys) {
+                    //     key_values[primaryKey.key] = row[primaryKey.key];
+                    // }
+                    // return key_values;
 
+                    
                     _this.loadStyle(params.table_keys);
                     _this.loadLevel(params.table_keys);
                     _this.loadFormat(params.table_keys);
@@ -311,9 +327,36 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         _this.calculateTableHeight();
     }
 
+    loadTableInfo(): void {
+        const _this = this;
+        _this._googleAPIService.getDistance('31.465166, 74.348047', '31.431137, 74.349175', null);
+
+        _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
+            results => {
+                _this._console.log(results);
+                if (results.result === 'OK') {
+                    _this.showAdvSearch = false;
+                    results = results.data;
+                    if (results.search_options) { // got some search combobox options
+                        _this.searchOptions = results.search_options; // store them
+                    }
+                    _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
+                    _this.loadTable(null);
+                }
+            },
+            error => {
+                _this.isLoading = false;
+                _this._toastService.showErrorToast(error);
+            }));
+    }
+
     loadTable(search_keys: any): void {
         const _this = this;
         _this.isLoading = true;
+
+        // Add search toggles if exist
+        search_keys = _this.applySearchToggles(search_keys);
+
         _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, search_keys, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
@@ -324,7 +367,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         _this.searchOptions = results.search_options; // store them
                         results = results.table_data; // and get the table data
                     }
-                    _this.searchData = _this.getSearchData(_this.searchKeys);
+                    _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
                     _this.dataSource = new MatTableDataSource(results);
                     _this.dataSource.sort = _this.sort;
                     _this.dataSource.paginator = _this.paginator;
@@ -503,12 +546,75 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.showAdvSearch = !this.showAdvSearch;
     }
 
+    updateAdvancedSearchKeys(searchKeys: SearchViewKey[]) {
+        if(searchKeys && searchKeys.length > 0) {
+            this.advancedSearchKeys = searchKeys.filter(x => x.format.viewType != 'toggle');
+        }
+        else {
+            this.advancedSearchKeys = [];
+        }
+    }
+
+    loadSearchToggles(searchKeys: SearchViewKey[]) {
+        if(searchKeys && searchKeys.length > 0) {
+            this.searchToggles = searchKeys.filter(x => x.format.viewType == 'toggle').map( x => {
+                return {
+                    fieldName: x.fieldName,
+                    label: x.label,
+                    checked: (x.format.value == 'true' || x.format.value == true || x.format.value == '1' || x.format.value == 1) ? true: false
+                };
+            });
+        }
+        else {
+            this.searchToggles = [];
+        }
+    }
+
+    updateSearchToggle(index: number, checked: boolean) {
+        this.searchToggles[index].checked = checked;
+        this.search_submit({});
+    }
+    
+    applySearchToggles(cleanedValues: any) {
+        // Apply toggles
+        if(this.searchToggles && this.searchToggles.length) {
+            // clean-up null or empty values
+            if(!cleanedValues) {
+                cleanedValues = {};
+            }
+        
+            this.searchToggles.filter(x => x.checked).forEach( x => {
+                cleanedValues[x.fieldName] = x.checked
+            });
+        }
+
+        return cleanedValues;
+    }
+
     quickAdd(): void {
         this.showQuickAdd = !this.showQuickAdd;
     }
 
+    add() {
+        let keys = {};
+        this.viewKeys.filter(x => x.isPrimary).forEach(x => {
+            if(this.tableData.keys && this.tableData.keys[x.key]) {
+                keys[x.key] = this.tableData.keys[x.key];
+            }
+            // else if(this.keysArray && this.keysArray.length && this.keysArray[0][x.key]) {
+            //     keys[x.key] = this.keysArray[0][x.key];
+            // }
+        });
+        Object.keys(this.currentKeys).forEach( key => {
+            keys[key] = this.currentKeys[key];
+        });
+
+        
+        const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: keys, index: 0, total: 0 };
+        setTimeout(() => { this.sendEvent.emit({ eventType: 'add', queryParams: mergedParams }); }, 50);    
+    }
+
     search_submit(value: any) {
-        this._console.log(value);
         // clean-up null or empty values
         let cleanedValues = {};
         for (const key in value) {
@@ -519,12 +625,14 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 }
             }
         }
+                
         this.loadTable(cleanedValues);
         this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: cleanedValues } }); // pass search keys to parent view 
     }
 
     cancel_search() {
         this.showAdvSearch = false;
+        this.loadSearchToggles(this.completeSearchKeys);
         this.loadTable(null);
         this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
     }
@@ -769,6 +877,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         if (event.eventType === 'savedForm') { // quick add form view submitted the new record
             this.showQuickAdd = false; // hide quick add
             this._toastService.showSuccessToast('Saved successfully!'); // show success toast
+            this.loadSearchToggles(this.completeSearchKeys);
             this.loadTable(null); // reload the table to visualize the record
         }
         else { // forward to parent

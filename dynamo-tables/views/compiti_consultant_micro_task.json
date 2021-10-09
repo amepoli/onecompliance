@@ -7,7 +7,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, foreseen_date, true as check, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, codice_compito_parent, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE (cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda))"
+      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, foreseen_date, true as check, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, codice_compito_parent, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE (cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda))"
     },
     {
       "operation": "selectForm",
@@ -104,7 +104,7 @@
       "isPrimary": false,
       "key": "id_centro_gest",
       "label": "Centro Gestionale",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false,
       "size": 3
     },
@@ -708,7 +708,7 @@
                 "values": []
               }
             ],
-            "label": "ID Responsabile",
+            "label": "Assegna a:",
             "newLine": false,
             "readOnly": false,
             "size": 2
@@ -821,7 +821,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "stato",
+      "key": "descr_stato",
       "width": "7%",
       "label": "Stato",
       "style": [
@@ -891,6 +891,16 @@
       "key": "titolo",
       "width": "35%",
       "label": "Titolo"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_responsabile",
+      "width": "8%",
+      "label": "Assegnato a"
     },
     {
       "format": {
@@ -1026,6 +1036,17 @@
       "queryCond": "titolo=$titolo$"
     },
     {
+      "fieldName": "stato",
+      "format": {
+          "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+          "options": [],
+          "viewType": "combobox"
+      },
+      "label": "Stato",
+      "newLine": false,
+      "queryCond": "stato='€stato€'"
+  },
+    {
       "fieldName": "id_tipo_segnalazione",
       "format": {
         "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni order by descrizione;",
@@ -1044,8 +1065,49 @@
         "viewType": "combobox"
       },
       "label": "Centro Gestionale",
-      "newLine": false,
+      "newLine": true,
       "queryCond": "id_centro_gest=$id_centro_gest_s$"
+    },
+    {
+        "fieldName": "flag_compiti_aperti",
+        "format": {
+            "value": "1",
+            "viewType": "toggle"
+        },
+        "label": "Compiti aperti",
+        "newLine": false,
+        "queryCond": "cmp.stato not in ('C', 'N')"
+    },
+    {
+        "fieldName": "flag_compiti_miei",
+        "format": {
+            "value": "0",
+            "viewType": "toggle"
+        },
+        "label": "Miei/Mio Ufficio",
+        "newLine": false,
+        "queryCond": "(cmp.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and cmp.codice_part='€global_codice_part€') or entrasp.verifica_id(cmp.id_responsabile,cmp.codice_part,(€global_id_anagrafiche€)::text))"
+    },
+    {
+      "fieldName": "azienda_corrente",
+      "format": {
+          "value": "0",
+          "viewType": "toggle"
+      },
+      "label": "Azienda corrente",
+      "newLine": false,
+      "queryCond": "cmp.codice_azienda='€global_codice_azienda€'"
+    },
+    {
+      "fieldName": "centri_gest_null",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Centro Gestionale Vuoto",
+      "newLine": true,
+      "size": 2,
+      "queryCond": "cmp.id_centro_gest is null"
     }
   ],
   "querySuffixes": {

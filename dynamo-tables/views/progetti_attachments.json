@@ -2,5 +2,119 @@
   "$schema": "../views.schema.json",
   "entryKey": "progetti_attachments",
   "origin": "entrasp.views_attachments_fast",
-  "inheritsFrom": "attachments"
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select vaf.codice_azienda, vaf.codice_part, vaf.id_risorsa, vaf.client_file_name, pf.titolo as titolo_fase, vaf.stringa, vaf.tipo_allegato, vaf.id_sondaggio, vaf.id_progetto from entrasp.views_attachments_fast vaf left join entrasp.progetti_fasi pf on vaf.codice_azienda=pf.codice_azienda and vaf.id_sondaggio=pf.id_sondaggio where vaf.codice_azienda=$codice_azienda$ and vaf.id_progetto=$id_progetto$"
+    }
+  ],
+  "inheritsFrom": "attachments",
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_part",
+      "label": "codice_part"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "width": "5%",
+      "key": "id_risorsa",
+      "label": "ID Allegato"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "client_file_name",
+      "width": "28%",
+      "label": "Nome file"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo_fase",
+      "width": "25%",
+      "label": "Fase",
+      "queryFunct": "entrasp.progetti_fasi_titolo(codice_azienda,id_fase)"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "6%",
+      "key": "stringa",
+      "label": "Download",
+      "isButton": true,
+      "style": [
+        {
+          "button_icon": "cloud_download",
+          "value": ""
+        }
+      ],
+      "buttonAction": {
+        "target": "attachments",
+        "viewType": "form",
+        "action": "downloadAttachment",
+        "keymap": []
+      }
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_allegato",
+      "width": "13%",
+      "label": "Tipo Allegato"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_sondaggio",
+      "width": "5%",
+      "label": "Sondaggio"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_progetto",
+      "width": "5%",
+      "label": "Progetto"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by pf.ordinamento"
+  }
 }

@@ -181,6 +181,17 @@
       "label": "ID Tipo Segnal.",
       "newLine": false,
       "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$"
+    },
+    {
+      "fieldName": "no_subject",
+      "format": {
+          "value": "0",
+          "viewType": "checkbox"
+      },
+      "label": "Non classificati",
+      "newLine": false,
+      "size": 1,
+      "queryCond": "id_argomento is null"
     }
   ],
   "subTables": [
@@ -203,7 +214,7 @@
       "label": "Sotto Ordini"
     },
     {
-      "entryKey": "riunioni",
+      "entryKey": "odg_associated_at_odg",
       "isHidden": false,
       "keys": [
         {
@@ -211,15 +222,11 @@
           "son": "codice_azienda"
         },
         {
-          "parent": "id_odg",
-          "son": "id_odg"
-        },
-        {
-          "parent": "id_riunione",
-          "son": "id_riunione"
+          "parent": "id_argomento",
+          "son": "id_argomento"
         }
       ],
-      "label": "Riunioni Associate"
+      "label": "Trattazioni del Medesimo Argomento"
     }
   ],
   "table_keys": [
@@ -292,6 +299,15 @@
         "dataType": "number"
       },
       "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "Argomento"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
       "isPrimary": true,
       "key": "id_riunione",
       "label": "ID riunione"
@@ -313,7 +329,8 @@
       "isPrimary": false,
       "key": "data_riunione",
       "queryFunct": "entrasp.odg_data(codice_azienda, id_odg)",
-      "label": "Data e ora riunione"
+      "label": "Data e ora riunione",
+      "width": "7%"
     },
     {
       "format": {
@@ -344,7 +361,7 @@
       "key": "riunione_descr",
       "queryFunct": "entrasp.riunioni_descr(id_riunione, codice_azienda)",
       "label": "Riunione",
-      "width": "10%"
+      "width": "15%"
     },
     {
       "format": {

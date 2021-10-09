@@ -347,7 +347,25 @@
 						},
 						"actionOnYes": {
 							"actionType": "query",
-							"queryFunct": "select id_progetto from entrasp.progetti_duplica($codice_azienda$, $id_progetto$)as id_progetto;"
+							"queryFunct": "select id_progetto from entrasp.progetti_duplica($codice_azienda$, $id_progetto$, false)as id_progetto;"
+						}
+					},
+					"outputEventWhenComplete": "navigate_to_new_progetto"
+				},
+				{
+					"eventName": "progetto_duplica_con_risposte",
+					"actionType": "show_message",
+					"condition": "none",
+					"values": [],
+					"message": {
+						"messageText": "Sei sicuro di voler duplicare questo progetto e relativi sondaggo e domande? (si verrà automaticamente trasferiti nel nuovo)",
+						"actionOnNo": {
+							"actionType": "query",
+							"queryFunct": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;"
+						},
+						"actionOnYes": {
+							"actionType": "query",
+							"queryFunct": "select id_progetto from entrasp.progetti_duplica($codice_azienda$, $id_progetto$, true)as id_progetto;"
 						}
 					},
 					"outputEventWhenComplete": "navigate_to_new_progetto"
@@ -357,7 +375,7 @@
 			"isHidden": false,
 			"isPrimary": true,
 			"newLine": false,
-			"size": 1.3
+			"size": 0.8
 		},
 		{
 			"autoGenerate": false,
@@ -531,9 +549,16 @@
 			"format": {
 				"comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi_nom(an.codice_part, an.id_anagrafica);",
 				"options": [],
-				"viewType": "combobox"
+				"viewType": "combobox",
+				"validations": [
+					{
+						"message": "Nome Cliente Richiesto",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
 			},
-			"label": "Id Cliente",
+			"label": "Cliente",
 			"key": "id_cliente",
 			"outputEvent": {
 				"eventTrigger": "select",
@@ -587,7 +612,7 @@
 			],
 			"readOnly": false,
 			"sameOrigin": false,
-			"size": 1.3
+			"size": 1.0
 		},
 		{
 			"autoGenerate": false,
@@ -622,7 +647,42 @@
 			},
 			"readOnly": false,
 			"sameOrigin": false,
-			"size": 1.3
+			"size": 1.0
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "duplica_progetto_con_risposte",
+			"buttonIcon": "content_copy",
+			"label": "Duplica progetto con risposte",
+			"attributeFuncts": [
+				{
+					"attributeType": "style",
+					"styleAttribute": "background_color",
+					"queryString": "select case when count(id_progetto) = 0 then '#698EC2' else '#25599C' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+				},
+				{
+					"attributeType": "style",
+					"styleAttribute": "font_color",
+					"queryString": "select case when count(id_progetto) = 0 then '#5b635a' else 'white'  end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+				}
+			],
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "progetto_duplica_con_risposte",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#698EC2",
+				"font_color": "#5b635a"
+			},
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 1.0
 		},
 		{
 			"autoGenerate": false,
@@ -794,6 +854,26 @@
 			"label": "Parola chiave",
 			"newLine": false,
 			"queryCond": "(UPPER(titolo) like '%'||UPPER('€parola_s€')||'%')"
+		},
+		{
+			"fieldName": "flag_progetti_aperti",
+			"format": {
+				"value": "0",
+				"viewType": "toggle"
+			},
+			"label": "Progetti aperti",
+			"newLine": false,
+			"queryCond": "stato not in ('C', 'N')"
+		},
+		{
+			"fieldName": "flag_progetti_miei",
+			"format": {
+				"value": "0",
+				"viewType": "toggle"
+			},
+			"label": "Miei/Mio Ufficio",
+			"newLine": false,
+			"queryCond": "(id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and codice_part='€global_codice_part€') or id_progetto in (select pf.id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi s on pf.codice_azienda=s.codice_azienda and pf.id_sondaggio=s.id_sondaggio where s.id_centro_gest=id_centro_gest and pf.codice_azienda=$codice_azienda$))"
 		}
 	],
 	"subTables": [
@@ -834,8 +914,8 @@
 					"son": "id_progetto"
 				},
 				{
-					"parent": "codice_part",
-					"son": "codice_part"
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
 				}
 			],
 			"label": "Allegati Associati"
@@ -861,7 +941,6 @@
 			"key": "stato",
 			"label": "Stato"
 		},
-	
 		{
 			"format": {
 				"dataType": "text"
@@ -884,7 +963,7 @@
 					"font_weight": "500"
 				},
 				{
-					"value": "Confermato",
+					"value": "Pianificato",
 					"font_color": "red",
 					"font_weight": "500"
 				}
@@ -1003,5 +1082,13 @@
 	],
 	"querySuffixes": {
 		"tableViewSuffix": "order by data_inserimento desc limit 150"
+	},
+	"exportQueries": {
+		"formQueries": [
+			{
+				"label": "Progetto-fasi-domande",
+				"queryString": "select pr.codice_progetto, pr.titolo as titolo_progetto, pf.codice as codice_fase,pf.titolo as titolo_fase, snd.id_sondaggio, snd.data_prevista, snd.titolo as titolo_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione, ds.descrizione as descrizione_sezione, ds.ordinamento as ordinamento_sezione, dmd.id_domanda, dmd.ordinamento as ordinamento_domanda, dmd.descrizione as domanda, dmd.note as note_domanda, dmd.id_domanda_rif from entrasp.progetti pr inner join entrasp.progetti_fasi pf on pr.codice_azienda=pf.codice_azienda and pr.id_progetto=pf.id_progetto left join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda left join entrasp.modelli_test_vr mvr on snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr and snd.codice_azienda=mvr.codice_azienda left join entrasp.domande dmd on mvr.id_modello_test=dmd.id_modello_test and mvr.id_modello_test_vr=dmd.id_modello_test_vr and mvr.codice_azienda=dmd.codice_azienda left join entrasp.domande_sezioni ds on dmd.id_modello_test=ds.id_modello_test and dmd.id_modello_test_vr=ds.id_modello_test_vr and dmd.codice_azienda=ds.codice_azienda and dmd.id_sezione=ds.id_sezione where pr.codice_azienda=$codice_azienda$ and pr.id_progetto=$id_progetto$ order by pf.ordinamento, ds.ordinamento, dmd.ordinamento"
+			}
+		]
 	}
 }

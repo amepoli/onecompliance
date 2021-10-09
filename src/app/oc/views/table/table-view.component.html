@@ -5,7 +5,15 @@
                 <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
             </mat-form-field>
 
-            <div *ngIf="!hideActions.includes('import_export')">
+            <div *ngIf="searchToggles && searchToggles.length">
+                <div *ngFor="let toggle of searchToggles; let i = index">
+                    <mat-slide-toggle [color]="'primary'" [checked]="toggle.checked"
+                        (change)="updateSearchToggle(i, $event.checked)">
+                        {{toggle.label}}
+                    </mat-slide-toggle>
+                </div>
+            </div>
+            <div *ngIf="isTabMode && !hideActions.includes('import_export')">
 
                 <button mat-button [matMenuTriggerFor]="downloadUploadMenu">
                     <mat-icon>import_export</mat-icon>
@@ -127,6 +135,14 @@
                 mat-button (click)="quickAdd()">
                 <mat-icon>add</mat-icon>
                 Quick Add
+            </button>
+
+
+            <button
+                *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && isTabMode && !hideActions.includes('add')"
+                mat-button (click)="add()">
+                <mat-icon>add</mat-icon>
+                Add
             </button>
 
             <button *ngIf="tableData.showFullScreenButton" mat-button (click)="fullScreen()">

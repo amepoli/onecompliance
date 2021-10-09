@@ -78,7 +78,7 @@
                         "format": {
                             "viewType": "combobox",
                             "options": [],
-                            "comboQuery": "select prg.id_progetto as id, concat (prg.id_progetto, ' - ', prg.titolo) as name from entrasp.progetti prg where prg.id_progetto in (select pf.id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi s on pf.codice_azienda=s.codice_azienda and pf.id_sondaggio=s.id_sondaggio where s.id_centro_gest=£id_centro_gest£ and pf.codice_azienda=$codice_azienda$)"
+                            "comboQuery": "select prg.id_progetto as id, concat (prg.id_progetto, ' - ', prg.titolo) as name from entrasp.progetti prg where prg.id_progetto in (select pf.id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi s on pf.codice_azienda=s.codice_azienda and pf.id_sondaggio=s.id_sondaggio where s.id_centro_gest=£id_centro_gest£ and pf.codice_azienda=$codice_azienda$) and prg.codice_azienda=$codice_azienda$"
                         },
                         "isHidden": false,
                         "isPrimary": false,
@@ -398,7 +398,7 @@
             "isPrimary": false,
             "buttonIcon": "add",
             "key": "ulteriori_elementi",
-            "label": "Additional data",
+            "label": "Dati avvio/impostazione",
             "newLine": false,
             "outputEvent": {
                 "eventName": "sondaggi_ulteriori_elementi",
@@ -642,6 +642,13 @@
                     "actionType": "query_style",
                     "styleAttribute": "background_color",
                     "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                },
+                {
+                    "eventName": "sondaggio_change_stato",
+                    "actionType": "query",
+                    "condition": "notEqualTo",
+                    "values": ["C"],
+                    "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'snd', '£stato£');"
                 }
             ],
             "isHidden": false,
@@ -751,7 +758,7 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "update entrasp.sondaggi_somministrati ss set data_esecuzione=snd.data_esecuzione from entrasp.sondaggi snd, entrasp.modelli_test mt where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
+                    "queryFunct": "update entrasp.sondaggi_somministrati ss set data_esecuzione=coalesce(ss.data_esecuzione,snd.data_esecuzione) from entrasp.sondaggi snd where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
                 }
             ],
             "newLine": false,
@@ -1371,6 +1378,36 @@
             "label": "Sondaggio riprogrammato",
             "newLine": false,
             "queryCond": "entrasp.sondaggio_riprogrammato(snd.codice_azienda, snd.id_sondaggio)"
+        },
+        {
+            "fieldName": "flag_sondaggi_scaduti",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Sondaggi scaduti",
+            "newLine": false,
+            "queryCond": "snd.data_prevista<CURRENT_DATE"
+        },
+        {
+            "fieldName": "flag_sondaggi_aperti",
+            "format": {
+                "value": "1",
+                "viewType": "toggle"
+            },
+            "label": "Sondaggi aperti",
+            "newLine": false,
+            "queryCond": "snd.stato not in ('C', 'N')"
+        },
+        {
+            "fieldName": "flag_sondaggi_miei",
+            "format": {
+                "value": "1",
+                "viewType": "toggle"
+            },
+            "label": "Miei/Mio Ufficio",
+            "newLine": false,
+            "queryCond": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€')"
         }
     ],
     "subTables": [
@@ -1666,17 +1703,32 @@
                     "value": "Chiuso",
                     "font_color": "green",
                     "font_weight": "500"
-                },
-                {
+                  },
+                  {
                     "value": "Provvisorio",
-                    "font_color": "#D97F02",
+                    "font_color": "#FFE118",
                     "font_weight": "500"
-                },
-                {
-                    "value": "Confermato",
-                    "font_color": "red",
+                  },
+                  {
+                    "value": "Pianificato",
+                    "font_color": "#FF8100",
                     "font_weight": "500"
-                }
+                  },
+                  {
+                    "value": "Attesa Riscontro",
+                    "font_color": "#FF0000",
+                    "font_weight": "500"
+                  },
+                  {
+                    "value": "In Svolgimento",
+                    "font_color": " #A1A100",
+                    "font_weight": "500"
+                  },
+                  {
+                    "value": "Annullato",
+                    "font_color": "grey",
+                    "font_weight": "500"
+                  }
             ]
         },
         {

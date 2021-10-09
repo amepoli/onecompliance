@@ -1,0 +1,266 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "progetti_formazione",
+	"inheritsFrom": "progetti",
+	"predefinedQueries": [
+		{
+			"operation": "selectForm",
+			"type": "preProcessing",
+			"queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
+		},
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select data_inserimento,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)as descr_stato, id_tipo_progetto,att.id_argomento, pr.codice_attivita,pr.codice_progetto,pr.id_progetto,pr.codice_azienda,pr.codice_part,pr.titolo,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part,pr.id_cliente) as descr_cliente,entrasp.centri_gestionali_descr(pr.codice_part, pr.id_centro_gest) as centro_gest,entrasp.progetto_sal(pr.codice_azienda, pr.id_progetto) as avanzamento from entrasp.progetti pr inner join entrasp.attivita att on pr.codice_azienda=att.codice_azienda and pr.codice_attivita=att.codice_attivita left join entrasp.argomenti_argomenti aa on att.id_argomento=aa.id_argomento_son where pr.codice_azienda=$codice_azienda$ and aa.id_argomento_father=158"
+		},
+		{
+			"queryString": "select case when count(id_fase) >0 then true else false end as disable_button_attiva_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+			"type": "postProcessing",
+			"operation": "selectForm"
+		},
+		{
+			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+			"type": "preProcessing",
+			"operation": "selectForm"
+		},
+		{
+			"operation": "selectForm",
+			"type": "postProcessing",
+			"queryString": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "update entrasp.progetti prg set codice_part=az.codice_part from entrasp.aziende az where prg.codice_azienda=az.codice_azienda and prg.codice_part is null and prg.codice_azienda=$codice_azienda$ and prg.id_progetto=$id_progetto$",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "selectForm",
+			"type": "preProcessing",
+			"queryString": "select entrasp.progetti_fasi_stato_update($codice_azienda$, $id_progetto$);"
+		},
+		{
+			"operation": "delete",
+			"type": "main",
+			"queryString": "select entrasp.progetto_delete($codice_azienda$, $id_progetto$);"
+		},
+		{
+			"operation": "insert",
+			"type": "preCheck",
+			"queryString": "select codice_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£'",
+			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+		},
+		{
+			"operation": "update",
+			"type": "preCheck",
+			"queryString": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£' and id_progetto!=$id_progetto$",
+			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+		},
+		{
+			"type": "main",
+			"operation": "share",
+			"queryString": "select null;"
+		},
+		{
+			"type": "main",
+			"operation": "stopEvent",
+			"queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+		},
+		{
+			"type": "main",
+			"operation": "startEvent",
+			"queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, '$codice_azienda$'::varchar)"
+		}
+	],
+	"search_keys": [
+		{
+			"fieldName": "stato",
+			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Stato",
+			"newLine": false,
+			"queryCond": "stato='€stato€'"
+		},
+		{
+			"label": "Id Progetto",
+			"format": {
+				"dataType": "number",
+				"viewType": "input"
+			},
+			"fieldName": "id_progetto_s",
+			"newLine": false,
+			"queryCond": "id_progetto=$id_progetto_s$"
+		},
+		{
+			"label": "Codice progetto",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"fieldName": "codice_progetto_s",
+			"newLine": false,
+			"queryCond": "codice_progetto=$codice_progetto_s$"
+		},
+		{
+			"fieldName": "codice_attivita_s",
+			"format": {
+				"comboQuery": "SELECT codice_attivita AS id, codice_attivita||'-'||descrizione AS name  FROM entrasp.attivita WHERE codice_azienda='€global_codice_azienda€' and codice_attivita_parent is null;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"label": "Modello di progetto",
+			"newLine": true,
+			"queryCond": "codice_attivita=$codice_attivita_s$"
+		},
+		{
+			"fieldName": "id_centro_gest",
+			"format": {
+				"comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Centro Gestionale",
+			"newLine": false,
+			"queryCond": "id_centro_gest=$id_centro_gest$"
+		},
+		{
+			"fieldName": "id_cliente",
+			"format": {
+				"comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Cliente",
+			"newLine": false,
+			"queryCond": "id_cliente=$id_cliente$"
+		},
+		{
+			"fieldName": "data_ins_min",
+			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"label": "Inserimento dopo il",
+			"newLine": false,
+			"queryCond": "data_inserimento>='€data_ins_min€'"
+		},
+		{
+			"fieldName": "data_ins_max",
+			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"label": "Inserimento entro il",
+			"newLine": true,
+			"queryCond": "data_inserimento<='€data_ins_max€'"
+		},
+		{
+			"fieldName": "progetti_con_fasi_incomplete",
+			"format": {
+				"viewType": "checkbox",
+				"value": "0"
+			},
+			"label": "Progetti con verifiche incomplete",
+			"newLine": false,
+			"queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi_somministrati ss on pf.id_sondaggio=ss.id_sondaggio and pf.codice_azienda=ss.codice_azienda where pf.codice_azienda=$codice_azienda$ and ss.somministrazione_completata!='Completo' and pf.id_sondaggio is not null)"
+		},
+		{
+			"fieldName": "progetti_con_fasi_confermate",
+			"format": {
+				"viewType": "checkbox",
+				"value": "0"
+			},
+			"label": "Progetti con verifiche confermate",
+			"newLine": false,
+			"queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where pf.codice_azienda=$codice_azienda$ and snd.stato ='A' and pf.id_sondaggio is not null)"
+		},
+		{
+			"fieldName": "data_comp",
+			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"label": "Data Competenza",
+			"newLine": false,
+			"queryCond": "data_competenza>='€data_comp€'"
+		},
+		{
+			"fieldName": "parola_s",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Parola chiave",
+			"newLine": false,
+			"queryCond": "(UPPER(titolo) like '%'||UPPER('€parola_s€')||'%')"
+		},
+        {
+            "fieldName": "flag_progetti_aperti",
+            "format": {
+                "value": "1",
+                "viewType": "toggle"
+            },
+            "label": "Progetti aperti",
+            "newLine": false,
+            "queryCond": "stato not in ('C', 'N')"
+        },
+		{
+			"fieldName": "flag_progetti_miei",
+			"format": {
+				"value": "1",
+				"viewType": "toggle"
+			},
+			"label": "Miei/Mio Ufficio",
+			"newLine": false,
+			"queryCond": "(pr.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and codice_part='€global_codice_part€') or pr.id_progetto in (select pf.id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi s on pf.codice_azienda=s.codice_azienda and pf.id_sondaggio=s.id_sondaggio where s.id_centro_gest=id_centro_gest and pf.codice_azienda=$codice_azienda$))"
+		}
+	],
+	"subTables": [
+		{
+			"entryKey": "progetti_fasi_formazione",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_progetto",
+					"son": "id_progetto"
+				}
+			],
+			"label": "Fasi del Progetto"
+		},
+		{
+			"entryKey": "consuntivazioni_sub_of_progetti",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_progetto",
+					"son": "id_progetto"
+				}
+			],
+			"label": "Aggiornamenti e Time Report"
+		},
+		{
+			"entryKey": "progetti_attachments",
+			"isHidden": false,
+			"keys": [
+				{
+					"parent": "id_progetto",
+					"son": "id_progetto"
+				},
+				{
+					"parent": "codice_part",
+					"son": "codice_part"
+				}
+			],
+			"label": "Allegati Associati"
+		}
+	]
+}

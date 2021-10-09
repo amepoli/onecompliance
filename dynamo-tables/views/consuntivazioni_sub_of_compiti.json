@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select entrasp.anagrafiche_id_codcognnome(csn.codice_part,id_risorsa) as esecutore,csn.id_cons, csn.codice_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, csn.stato from entrasp.consuntivazioni csn WHERE csn.codice_azienda=$codice_azienda$ and csn.codice_compito= $codice_compito$",
+      "queryString": "select entrasp.anagrafiche_id_codcognnome(csn.codice_part,id_risorsa) as esecutore,csn.id_cons, csn.codice_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', csn.stato) as descr_stato from entrasp.consuntivazioni csn WHERE csn.codice_azienda=$codice_azienda$ and csn.codice_compito= $codice_compito$",
       "type": "main"
     },
     {
@@ -15,12 +15,12 @@
     },
     {
       "operation": "insert",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part,id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
       "type": "postProcessing"
     },
     {
       "operation": "update",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part,id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
       "type": "postProcessing"
     }
   ]

@@ -208,4 +208,9 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
   }
+
+  setValue(value: any) {
+    this.field.value = value;
+    this.formatValue();
+  }
 }

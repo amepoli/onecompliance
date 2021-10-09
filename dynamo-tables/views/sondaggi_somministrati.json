@@ -357,6 +357,19 @@
           {
             "autoGenerate": false,
             "format": {
+              "viewType": "input",
+              "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "readOnly": false,
+            "sameOrigin": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
               "viewType": "button"
             },
             "isHidden": false,
@@ -489,6 +502,13 @@
           "actionType": "query_style",
           "styleAttribute": "background_color",
           "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+        },
+        {
+          "eventName": "close_associated_sondaggio_combo",
+          "actionType": "query",
+          "condition": "notEqualTo",
+          "values": ["C"],
+          "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'ss', '£stato£');"
         }
       ]
     },
@@ -725,7 +745,7 @@
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "update entrasp.sondaggi snd set data_esecuzione=ss.data_esecuzione from entrasp.sondaggi_somministrati ss, entrasp.modelli_test mt where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$",
+          "queryFunct": "update entrasp.sondaggi snd set data_esecuzione=coalesce(snd.data_esecuzione,ss.data_esecuzione) from entrasp.sondaggi_somministrati ss where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$",
           "outputEventWhenComplete": "data_prevista_update"
         },
         {
@@ -1176,7 +1196,16 @@
       "label": "Giudizio Manuale",
       "newLine": false,
       "readOnly": false,
-      "size": 1.5
+      "size": 1.5,
+      "inputEvents": [
+        {
+          "eventName": "onSaveSomministrazione",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.aggiorna_sondaggi_pre_loading($codice_azienda$, $id_sondaggio$);"
+        }
+      ]
     },
     {
       "autoGenerate": false,
@@ -1210,7 +1239,7 @@
       "isPrimary": false,
       "key": "ulteriori_elementi",
       "buttonIcon": "add",
-      "label": "Dati Accessori",
+      "label": "Dati avvio/impostazione",
       "newLine": false,
       "outputEvent": {
         "eventName": "sondaggi_ulteriori_elementi",
@@ -1523,7 +1552,17 @@
       "label": "Giudizio Manuale",
       "newLine": true,
       "queryCond": "ss.giudizio_manuale='€giudizio_manuale_s€'"
-    }
+    },
+    {
+      "fieldName": "flag_somministrazioni_mie",
+      "format": {
+          "value": "0",
+          "viewType": "toggle"
+      },
+      "label": "Mie/Mio Ufficio",
+      "newLine": false,
+      "queryCond": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€')"
+  }
   ],
   "subTables": [
     {
@@ -1648,7 +1687,7 @@
           "son": "object_key"
         }
       ],
-      "label": "Verifiche collegate",
+      "label": "Verifiche ripianificate",
       "type": "table"
     },
     {
@@ -1680,23 +1719,18 @@
       "label": "Seleziona Campione"
     },
     {
-      "entryKey": "compiti_sub_of_somministrazioni",
-      "type": "table",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "id_sondaggio",
-          "son": "id_sondaggio"
-        },
-        {
-          "parent": "id_somministrazione",
-          "son": "id_somministrazione"
-        }
-      ],
-      "label": "Segnalazioni associate"
+        "entryKey": "consuntivazioni_sub_of_sondaggi",
+        "keys": [
+            {
+                "parent": "codice_azienda",
+                "son": "codice_azienda"
+            },
+            {
+                "parent": "id_sondaggio",
+                "son": "id_sondaggio"
+            }
+        ],
+        "label": "Aggiornamenti e Time Report"
     }
   ],
   "table_keys": [
@@ -1807,12 +1841,27 @@
         },
         {
           "value": "Provvisorio",
-          "font_color": "#D97F02",
+          "font_color": "#FFE118",
           "font_weight": "500"
         },
         {
-          "value": "Confermato",
-          "font_color": "red",
+          "value": "Pianificato",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Attesa Riscontro",
+          "font_color": "#FF0000",
+          "font_weight": "500"
+        },
+        {
+          "value": "In Svolgimento",
+          "font_color": " #A1A100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Annullato",
+          "font_color": "grey",
           "font_weight": "500"
         }
       ]

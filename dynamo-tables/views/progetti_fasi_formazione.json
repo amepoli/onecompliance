@@ -1,0 +1,988 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "progetti_fasi_formazione",
+	"origin": "entrasp.progetti_fasi",
+	"businessObjectName": "progetti_fasi",
+	"outputEvents": [
+		{
+			"eventName": "onSaveProgettiFasi",
+			"eventTrigger": "onSave"
+		},
+		{
+			"eventName": "onLoadProgettiFasi",
+			"eventTrigger": "onReload"
+		}
+	],
+	"predefinedQueries": [
+		{
+			"operation": "selectForm",
+			"queryString": "select entrasp.progetti_fasi_stato_update($codice_azienda$, (select id_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase=$id_fase$ limit 1));",
+			"type": "preProcessing"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "select pf.*, snd.data_prevista, ss.id_somministrazione from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio  where pf.codice_azienda=$codice_azienda$ and pf.id_fase=$id_fase$ limit 1;",
+			"type": "main"
+		},
+		{
+			"operation": "insert",
+			"queryString": "select entrasp.progetti_fasi_order($codice_azienda$, $id_progetto$, $id_fase$);",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "delete",
+			"type": "main",
+			"queryString": "select entrasp.progetto_fase_delete($codice_azienda$, $id_fase$);"
+		},
+		{
+			"operation": "update",
+			"queryString": "select entrasp.progetti_fasi_order($codice_azienda$, $id_progetto$, $id_fase$);",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "selectTable",
+			"queryString": "select pf.*, true as delete_fase, (select case when id_somministrazione is null then false else true end as visible_button_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select case when id_somministrazione is null then false else true end as visible_button_modello_test from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio  from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$",
+			"type": "main"
+		}
+	],
+	"messages": [
+		{
+			"viewType": "form",
+			"formMessageType": "delete",
+			"message": {
+				"title": "Cancellazione fase e sondaggio",
+				"text": "Sei sicuro di voler cancellare la fase, il sondaggio associato e tutte le risposte?"
+			}
+		}
+	],
+	"querySuffixes": {
+		"tableViewSuffix": "order by pf.codice"
+	},
+	"form_keys": [
+		{
+			"autoGenerate": true,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "id_fase",
+			"key": "id_fase",
+			"inputEvents": [
+				{
+					"eventName": "fasi_button_duplica",
+					"actionType": "show_message",
+					"condition": "none",
+					"values": [],
+					"message": {
+						"messageText": "Sei sicuro di voler duplicare questa fase e relativo sondaggo? (si verrà automaticamente trasferiti nella nuova)",
+						"actionOnNo": {
+							"actionType": "query",
+							"queryFunct": "select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase=$id_fase$"
+						},
+						"actionOnYes": {
+							"actionType": "query",
+							"queryFunct": "select id_fase from entrasp.progetti_fasi_duplica($codice_azienda$, $id_fase$);"
+						}
+					},
+					"outputEventWhenComplete": "navigate_to_new_fase"
+				},
+				{
+					"eventName": "aggiorna_id_fase",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select max(id_fase) as id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_fase=$id_fase$"
+				}
+			],
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "Ordinamento",
+			"key": "ordinamento",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT id_fase AS id, id_fase||'-'||codice||'-'||titolo AS name FROM entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$ and id_progetto=£id_progetto£;",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "id_fase_sup",
+			"key": "id_fase_sup",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT id_progetto AS id, id_progetto||'-'||codice_progetto||'-'||titolo AS name FROM entrasp.progetti WHERE codice_azienda=$codice_azienda$;",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "id_progetto",
+			"key": "id_progetto",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "progetto_from_progetti_fasi",
+			"label": "Progetto associato",
+			"newLine": true,
+			"outputEvent": {
+				"eventName": "to_progetto_from_progetti_fasi",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Codice",
+			"key": "codice",
+			"inputEvents": [
+				{
+					"eventName": "onSaveProgettiFasi",
+					"actionType": "query",
+					"queryFunct": "select entrasp.progetti_fasi_order(codice_azienda, id_progetto, id_fase) from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$; update entrasp.progetti_fasi set codice=entrasp.calculate_progetto_fase_codice(codice_azienda, id_progetto, id_fase) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and id_fase=$id_fase$ returning codice;",
+					"condition": "none",
+					"values": [],
+					"outputEventWhenComplete": "progetti_fasi_Reload"
+				}
+			],
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 1.5
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "titolo",
+			"key": "titolo",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 5
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text",
+				"validations": [
+					{
+						"message": "Inserire stato della fase",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
+			},
+			"label": "Stato",
+			"key": "stato",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"size": 3.5,
+			"newLine": true,
+			"outputEvent": {
+				"eventName": "progetto_fase_change_stato",
+				"eventTrigger": "select"
+			},
+			"inputEvents": [
+				{
+					"eventName": "progetto_fase_change_stato",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "background_color",
+					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+				},
+				{
+					"eventName": "progetto_change_stato",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "font_color",
+					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+				}
+			]
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "codice_azienda",
+			"key": "codice_azienda",
+			"readOnly": false,
+			"isHidden": true,
+			"isPrimary": true,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "combobox",
+				"comboQuery": "select id_sondaggio as id, id_sondaggio||'-'||titolo as name from entrasp.sondaggi where codice_azienda=$codice_azienda$",
+				"options": []
+			},
+			"inputEvents": [
+				{
+					"eventName": "change_sondaggio_associato",
+					"actionType": "show",
+					"condition": "none",
+					"values": []
+				}
+			],
+			"outputEvent": {
+				"eventName": "sondaggio_associato_changed",
+				"eventTrigger": "change"
+			},
+			"label": "Lezione",
+			"key": "id_sondaggio",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 4.5
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"label": "Data scadenza",
+			"key": "data_prevista",
+			"sameOrigin": false,
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 2
+		},
+		{
+			"format": {
+				"viewType": "invisible"
+			},
+			"size": 3.5,
+			"isHidden": false,
+			"isPrimary": false,
+			"label": "invisible_1",
+			"key": "invisible_1",
+			"sameOrigin": false,
+			"readOnly": true,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "change_sondaggio_associato",
+			"label": "Cambia verifica associata",
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "change_sondaggio_associato",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "sondaggio_from_progetti_fasi",
+			"label": "Lezione",
+			"inputEvents": [
+				{
+					"eventName": "sondaggio_associato_changed",
+					"condition": "none",
+					"values": [],
+					"actionType": "readOnly",
+					"queryFunct": "select id_sondaggio::varchar='' then true else false"
+				},
+				{
+					"eventName": "onLoadProgettiFasi",
+					"condition": "none",
+					"values": [],
+					"actionType": "readOnly",
+					"queryFunct": "select id_sondaggio::varchar='' then true else false"
+				}
+			],
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "to_sondaggio_from_progetti_fasi",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "somministrazione_from_progetti_fasi",
+			"label": "Verifica",
+			"attributeFuncts": [
+				{
+					"attributeType": "isHidden",
+					"queryString": "select case when £id_somministrazione£ is null then 1 else 0 end as label;"
+				}
+			],
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "to_somministrazione_from_progetti_fasi",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "duplica_fasi",
+			"label": "Duplica fase",
+			"buttonIcon": "content_copy",
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "fasi_button_duplica",
+				"eventTrigger": "press"
+			},
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "id_somministrazione",
+			"key": "id_somministrazione",
+			"readOnly": true,
+			"sameOrigin": false,
+			"isHidden": true,
+			"isPrimary": false,
+			"newLine": false
+		}
+	],
+	"search_keys": [
+		{
+			"label": "Stato",
+			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"fieldName": "stato_s",
+			"newLine": false,
+			"queryCond": "snd.stato=$stato_s$"
+		},
+		{
+			"label": "Fase padre",
+			"format": {
+				"comboQuery": "SELECT id_fase AS id, titolo AS name FROM entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"fieldName": "id_fase_sup_s",
+			"newLine": false,
+			"queryCond": "(pf.id_fase=$id_fase_sup_s$ or pf.id_fase_sup=$id_fase_sup_s$)"
+		},
+		{
+			"fieldName": "flag_principali",
+			"format": {
+				"value": "0",
+				"viewType": "checkbox"
+			},
+			"label": "Solo Principali",
+			"newLine": false,
+			"queryCond": "pf.id_fase_sup IS null"
+		},
+		{
+			"fieldName": "dt_competenza_da",
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"label": "Data competenza DA",
+			"newLine": false,
+			"queryCond": "snd.data_comp >= $dt_competenza_da$"
+		},
+		{
+			"fieldName": "dt_competenza_a",
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"label": "Data competenza A",
+			"newLine": false,
+			"queryCond": "snd.data_comp <= $dt_competenza_a$"
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_progetto",
+			"label": "id_progetto"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "codice_azienda"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": true,
+			"key": "id_fase",
+			"label": "id_fase"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "6%",
+			"key": "delete_fase",
+			"label": "",
+			"style": [
+				{
+					"button_icon": "delete",
+					"value": "delete_icon"
+				}
+			],
+			"isButton": true,
+			"buttonAction": {
+				"target": "progetti_fasi",
+				"viewType": "form",
+				"confirmAction": true,
+				"confirmMessage": {
+					"text": "Sei sicuro di voler cancellare la fase, il sondaggio associato e tutte le risposte?",
+					"title": "Conferma cancellazione fase e sondaggio"
+				},
+				"query": "select entrasp.progetto_fase_delete('£codice_azienda£', £id_fase£)",
+				"action": "query",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_fase",
+						"destination": "id_fase"
+					}
+				],
+				"onSuccessAction": "reload"
+			}
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_fase_sup",
+			"label": "id_fase_sup"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isLevel": true,
+			"hasLevel": true,
+			"isPrimary": false,
+			"key": "codice",
+			"label": "Codice",
+			"width": "12%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "titolo",
+			"hasLevel": true,
+			"label": "Titolo",
+			"width": "25%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "stato_trans",
+			"label": "Stato",
+			"width": "6%",
+			"style": [
+				{
+					"value": "Chiuso",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Provvisorio",
+					"font_color": "#D97F02",
+					"font_weight": "500"
+				},
+				{
+					"value": "Pianificato",
+					"font_color": "red",
+					"font_weight": "500"
+				},
+				{
+					"value": "Annullato",
+					"font_color": "grey",
+					"font_weight": "500"
+				}
+			]
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "id_sondaggio",
+			"hasLevel": true,
+			"label": "ID Lezione",
+			"width": "6%"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "6%",
+			"key": "visible_button_somministrazione",
+			"label": "Lezione",
+			"isButton": true,
+			"buttonAction": {
+				"target": "lessons",
+				"viewType": "form",
+				"action": "navigate",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_sondaggio",
+						"destination": "id_sondaggio"
+					}
+				]
+			}
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "7.5%",
+			"key": "visible_button_modello_test",
+			"label": "Modello",
+			"isButton": true,
+			"buttonAction": {
+				"target": "modelli_test_vr",
+				"viewType": "form",
+				"action": "navigate",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_modello_test",
+						"destination": "id_modello_test"
+					},
+					{
+						"source": "id_modello_test_vr",
+						"destination": "id_modello_test_vr"
+					}
+				]
+			}
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_prevista",
+			"width": "6%",
+			"label": "Data prevista"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_esecuzione",
+			"width": "6%",
+			"label": "Data esecuzione"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "giudizio",
+			"width": "12%",
+			"label": "Giudizio",
+			"style": [
+				{
+					"value": "Favorevole",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Deliberato",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Basso",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Rischio basso",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Medio-basso",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Parzialmente favorevole",
+					"font_color": "#fde910",
+					"font_weight": "500"
+				},
+				{
+					"value": "Deliberato con garanzie",
+					"font_color": "orange",
+					"font_weight": "500"
+				},
+				{
+					"value": "In prevalenza favorevole",
+					"font_color": "#fde910",
+					"font_weight": "500"
+				},
+				{
+					"value": "Parzialmente sfavorevole",
+					"font_color": "orange",
+					"font_weight": "500"
+				},
+				{
+					"value": "Sfavorevole",
+					"font_color": "red",
+					"font_weight": "500"
+				},
+				{
+					"value": "Irrilevante",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Medio",
+					"font_color": "#D97F02",
+					"font_weight": "500"
+				},
+				{
+					"value": "Alto",
+					"font_color": "red",
+					"font_weight": "500"
+				},
+				{
+					"value": "Non significativo",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Poco significativo",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Abbastanza significativo",
+					"font_color": "#D97F02",
+					"font_weight": "500"
+				},
+				{
+					"value": "Molto significativo",
+					"font_color": "red",
+					"font_weight": "500"
+				},
+				{
+					"value": "Molto significativa",
+					"font_color": "violet",
+					"font_weight": "500"
+				}
+			]
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "10%",
+			"key": "sondaggio_completato",
+			"label": "Completo Sì/No",
+			"style": [
+				{
+					"value": "Completo",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Incompleto",
+					"font_color": "red",
+					"font_weight": "500"
+				}
+			]
+		}
+	],
+	"subTables": [
+		{
+			"entryKey": "progetti_fasi_sub_of_progetti_fasi",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_fase",
+					"son": "id_fase_sup"
+				}
+			],
+			"label": "Sotto fasi"
+		},
+		{
+			"entryKey": "consuntivazioni_sub_of_progetti_fasi",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_fase",
+					"son": "id_fase"
+				}
+			],
+			"label": "Time Report/ Aggiornamenti"
+		}
+	],
+	"inputEvents": [
+		{
+			"actionType": "reload",
+			"eventName": "progetti_fasi_Reload"
+		},
+		{
+			"actionTarget": {
+				"name": "sondaggi",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_sondaggio",
+						"destination": "id_sondaggio"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "to_sondaggio_from_progetti_fasi"
+		},
+		{
+			"actionTarget": {
+				"name": "progetti_fasi",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_fase",
+						"destination": "id_fase"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "navigate_to_new_fase"
+		},
+		{
+			"actionTarget": {
+				"name": "sondaggi_somministrati",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_sondaggio",
+						"destination": "id_sondaggio"
+					},
+					{
+						"source": "id_somministrazione",
+						"destination": "id_somministrazione"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "automatic_navigation_to_somministrazioni"
+		},
+		{
+			"actionTarget": {
+				"name": "sondaggi_somministrati",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_sondaggio",
+						"destination": "id_sondaggio"
+					},
+					{
+						"source": "id_somministrazione",
+						"destination": "id_somministrazione"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "to_somministrazione_from_progetti_fasi"
+		},
+		{
+			"actionTarget": {
+				"name": "progetti",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_progetto",
+						"destination": "id_progetto"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "to_progetto_from_progetti_fasi"
+		}
+	],
+	"hideActions": [
+		{
+			"formActionType": "startEvent",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "stopEvent",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "share",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "import_export",
+			"viewType": "form"
+		}
+	]
+}

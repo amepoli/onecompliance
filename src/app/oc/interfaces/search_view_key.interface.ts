@@ -17,4 +17,7 @@ export interface SearchViewKey { // as per API specification
     };
     isVisible: boolean;
     width: string;
+    showSwitch?: boolean;
+    switchLabel?: string;
+    switchOnValue?: any;
 }

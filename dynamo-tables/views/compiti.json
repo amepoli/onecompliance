@@ -26,7 +26,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select codice_compito,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$"
+      "queryString": "select codice_compito,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as descr_stato from entrasp.compiti where codice_azienda=$codice_azienda$"
     },
     {
       "operation": "update",
@@ -430,7 +430,17 @@
       "label": "Solo Principali",
       "newLine": false,
       "queryCond": "codice_compito_parent IS null"
-    }
+    },
+    {
+      "fieldName": "toggle_compiti_aperti",
+      "format": {
+          "value": "1",
+          "viewType": "toggle"
+      },
+      "label": "Compiti aperti",
+      "newLine": false,
+      "queryCond": "stato!='C'"
+  }
   ],
   "subTables": [
     {
@@ -537,6 +547,24 @@
       "format": {
         "dataType": "text"
       },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "dynamo_user",
+      "label": "dynamo_user"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_azienda_erogante",
+      "label": "codice_azienda_erogante"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
       "isHidden": false,
       "isPrimary": false,
       "key": "tipo_segnalazione",
@@ -582,7 +610,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "stato",
+      "key": "descr_stato",
       "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
       "label": "Stato",
       "width": "6%",
@@ -612,6 +640,15 @@
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "Codice Azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "user_companies",
+      "label": "user_companies"
     },
     {
       "format": {

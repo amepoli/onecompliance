@@ -17,3 +17,4 @@ export * from './toast.service';
 export * from './validations.service';
 export * from './documentation.service';
 export * from './window.service';
+export * from './google_api.service';

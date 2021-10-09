@@ -304,7 +304,30 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             // _this._cdr.detectChanges();
         }
 
-        if (event.eventType === 'navigate') {
+        if (event.eventType === 'add') {
+            // Clear tabs
+            _this.tabs = [];
+            _this.showTabs = false;
+            _this.fullScreenTab = false; // reset in case of fullScreen Tab view
+            _this.currentPrimaryKeys = [event.queryParams.keys]; // update
+            _this.tableName = event.queryParams.entry.name;
+            
+            _this.historyPush();            
+            _this.currentDescription = 'Nuovo elemento tabella ' + _this.tableName;
+            
+            newIndex = event.queryParams.index;
+            newTotal = event.queryParams.total;            
+            _this.formParams = {
+                entryName: _this.tableName,
+                index: 1,
+                keys: event.queryParams.keys,
+                total: 1,
+                isNew: true,
+                showNavBar: true,
+                navBarMode: 'add'
+            };
+            _this.tableType = 'form';
+        } else if (event.eventType === 'navigate') {
 
             // Clear tabs
             _this.tabs = [];
