@@ -878,7 +878,60 @@
             "label": "Km percorsi",
             "sameOrigin": true,
             "newLine": true,
-            "readOnly": false
+            "readOnly": false,
+            "inputEvents": [
+              {
+                "actionType": "google_api",
+                "eventName": "getDistance",
+                "condition": "none",
+                "values": [null],
+                "googleAPIParams": {
+                  "actionType": "get_distance",
+                  "distanceParams": {
+                    "originKey": "indirizzo_partenza",
+                    "destinationKey": "indirizzo_arrivo"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "get_distance",
+            "label": "Get distance",
+            "buttonIcon": "language",
+            "newLine": false,
+            "size": 1.5,
+            "outputEvent": {
+              "eventName": "getDistance",
+              "eventTrigger": "press"
+            },
+            "style": {
+              "background_color": "#25599C",
+              "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+          },
+          {
+            "format": {
+              "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPOLOGIE_VIAGGI';",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipologia_viaggio",
+            "label": "Tipologia Viaggio",
+            "readOnly": false,
+            "newLine": true,
+            "size": 2
           }
         ]
       },

@@ -3,11 +3,12 @@ import { DynamicFormComponent } from 'app/oc/dynamic-forms/components/dynamic-fo
 import { ComboboxComponent } from 'app/oc/dynamic-forms/components/combobox/combobox.component';
 import { Subscription } from 'rxjs';
 import { SubformComponent } from 'app/oc/dynamic-forms/components/subform/subform.component';
-import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, ImportItem, MessageView, OutputEvent } from 'app/oc/interfaces';
+import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, GoogleAPIParams, ImportItem, MessageView, OutputEvent } from 'app/oc/interfaces';
 import { FormDataType } from 'app/oc/types';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/oc/services';
 import { DynamicFieldDirective } from 'app/oc/directives';
 import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-field.directive';
+import { InputComponent } from 'app/oc/dynamic-forms/components/input/input.component';
 
 @Component({
     selector: 'form-getter',
@@ -1158,8 +1159,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (event.outputEventWhenComplete != null) {
                 _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
             }
-        }
-        else if (event.actionType === 'show_message' && conditionMet && event.message) {
+        } else if (event.actionType === 'show_message' && conditionMet && event.message) {
             // Show confirmation dialog
             _this._dialogService.showConfimationDialog('Confirm', event.message.messageText, 'Yes', 'No', 'info').then((result) => {
                 // Initialize with No action info
@@ -1354,6 +1354,112 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             });
 
 
+        
+        } else if (event.actionType === 'google_api') {
+            const googleAPIParams: GoogleAPIParams = event.googleAPIParams;
+            let formValues = _this.formArray.first.form.value;
+                    
+            // process the booleans (1/0 instead of true/false)
+            for (const value in formValues) {
+                if (formValues.hasOwnProperty(value)) {
+                    const element = formValues[value];
+                    if (element == null) {
+                        continue; // skip null entries
+                    }
+                    // decode combos
+                    if (element['id'] != null) {
+                        formValues[value] = element['id'];
+                    }
+                    // encode boolean
+                    else if (element === true) {
+                        formValues[value] = '1';
+                    }
+                    else if (element === false) {
+                        formValues[value] = '0';
+                    }
+                }
+            }
+
+            if(!googleAPIParams || !googleAPIParams.actionType) {
+                _this._toastService.showErrorToast("Missing Google API Params");
+            }
+            else {
+                if(googleAPIParams.actionType == 'get_directions') {
+                    if(!googleAPIParams.directionsParams) {
+                        _this._toastService.showErrorToast("Missing Google API Get Directions Params");
+                    }
+                    else {
+                        const origin = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.directionsParams.originKey);
+                        const destination = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.directionsParams.destinationKey);
+                    }
+                }
+                else if(googleAPIParams.actionType == 'get_distance') {
+                    if(!googleAPIParams.distanceParams) {
+                        _this._toastService.showErrorToast("Missing Google API Get Distance Params");
+                    }
+                    else {
+                        const origin = formValues[googleAPIParams.distanceParams.originKey];
+                        const destination = formValues[googleAPIParams.distanceParams.destinationKey];
+                        if(!origin || !destination) {
+                            _this._toastService.showErrorToast("Missing Google API Get Distance Params");
+                        }
+                        else {
+                            _this.backendService.getDistance(origin, destination).subscribe(
+                                response => {
+                                    console.log(response);
+                                    if (response.result === 'OK') {
+                                        let distance = 0;
+                                        if(response.data.rows && response.data.rows.length && response.data.rows[0].elements && response.data.rows[0].elements.length && response.data.rows[0].elements[0].distance && response.data.rows[0].elements[0].distance.value) {
+                                            distance = (response.data.rows[0].elements[0].distance.value) / 1000;                                        
+                                        }
+
+                                        let element = HelperService.findElement(this.filteredFormData[value.index], keyListener);
+                                        // const element = _this.filteredFormData[value.index].find(field => field.name === keyListener);
+                                        if (element != null) {
+                                            element.value = distance;
+                                        }
+                                        // Try this as well in future if value not set
+                                        // if(element.value != null) {
+                                        //     const childrenArray = _this.formArray.toArray();
+                                        //     const current_line = childrenArray.find(c => c.fields[0].index === 0);
+                    
+                                        //     let dynamicEl = <InputComponent>_this.findElementInDynamicFields(current_line.dynamicFields, keyListener);
+                                        //     if(dynamicEl && dynamicEl.setValue) {
+                                        //         dynamicEl.setValue(distance);                                        
+                                        //     }
+                                        // }
+
+                                        
+                                        if (event.outputEventWhenComplete != null) {
+                                            _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
+                                        }
+                                    }
+                                    else {
+                                        _this._toastService.showErrorToast(response.data);
+                                    }
+                                },
+                                error => {
+                                    console.log(error);
+                                    _this._toastService.showErrorToast(error);        
+                                }
+                            );
+                        }
+                        
+                    }
+                }
+                else if(googleAPIParams.actionType == 'get_email_thread') {
+                    if(!googleAPIParams.emailThreadParams) {
+                        _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");
+                    }
+                    else {
+                        const emailId = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.emailThreadParams.emailIdKey);
+                        const threadId = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.emailThreadParams.threadIdKey);
+                    }
+                }
+                else {
+                    _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");                    
+                }
+            }            
         }
     }
 
