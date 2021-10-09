@@ -329,8 +329,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     loadTableInfo(): void {
         const _this = this;
-        _this._googleAPIService.getDistance('31.465166, 74.348047', '31.431137, 74.349175', null);
-
+        
         _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
