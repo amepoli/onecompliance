@@ -197,6 +197,78 @@
     {
       "autoGenerate": false,
       "format": {
+        "comboQuery": "SELECT id_template_rp AS id, descrizione AS name from entrasp.template_risposte_previste WHERE codice_azienda=$codice_azienda$;",
+        "viewType": "combobox",
+        "options": [],
+        "value": 0
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_template_rp",
+      "label": "Template Risposte",
+      "newLine": false,
+      "attributeFuncts": [
+        {
+          "attributeType": "isHidden",
+          "queryString": "select case when £id_domanda£ is null or £id_domanda£::varchar ='' then true else false end as label"
+        }
+      ],
+      "size": 3.5,
+      "outputEvent": {
+        "eventName": "combobox_risposte",
+        "eventTrigger": "select"
+      },
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "value": " ",
+        "viewType": "textarea"
+      },
+      "inputEvents": [
+        {
+          "actionType": "query",
+          "eventName": "combobox_risposte",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select string_agg(concat(ordinamento,') ',risposta,' (',peso,'%)'), E'\n') as mostra_risposte from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$id_template_rp$;"
+        },
+        {
+          "actionType": "query",
+          "eventName": "onLoadDomande",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.risposte_previste_mostra($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as mostra_risposte"
+        },
+        {
+          "actionType": "query",
+          "eventName": "risposte_possibili_reload",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.risposte_previste_mostra($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as mostra_risposte"
+        }
+      ],
+      "queryFunct": "entrasp.risposte_previste_mostra(codice_azienda, id_modello_test, id_modello_test_vr,id_domanda)",
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "mostra_risposte",
+      "textareaHeight": "M",
+      "attributeFuncts": [
+        {
+          "attributeType": "isHidden",
+          "queryString": "select case when £id_domanda£ is null or £id_domanda£::varchar ='' then true else false end as label"
+        }
+      ],
+      "label": "Risposte Possibili",
+      "newLine": true,
+      "size": 4,
+      "readOnly": true,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "viewType": "textarea"
       },
       "isHidden": false,
