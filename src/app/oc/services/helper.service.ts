@@ -1,6 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FieldConfig, MarkerReplacer } from 'app/oc/interfaces';
+import { isObject } from 'rxjs/internal-compatibility';
 
 @Injectable({
     providedIn: 'root'
@@ -227,6 +228,23 @@ export class HelperService {
         }
         return formValues;
     }
+
+    /**
+     * Get value in ValueSet
+     * @param valueSet value set
+     * @param key key to find value
+     * @returns value
+     */
+    public static getValueInValueSet(valueSet: object, key: string) {
+        const valueEl = valueSet[key];
+        if(isObject(valueEl)) {
+            return valueEl['value'];
+        }
+        else {
+            return valueEl;
+        }
+    }
+
 
     /**
      * Refresh application

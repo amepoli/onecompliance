@@ -47,7 +47,7 @@ async function getDirections(queryParams) {
     const response = await client.directions(params);
     console.log(JSON.stringify(response.data));
     if (response.data.status == 'OK') {
-        return { result: 'OK', result: response.data };
+        return { result: 'OK', data: response.data };
     }
     else {
         return { result: 'KO', reason: response.data };
@@ -67,7 +67,7 @@ async function getDistance(queryParams) {
     const response = await client.distancematrix(params);
     console.log(JSON.stringify(response.data));
     if (response.data.status == 'OK') {
-        return { result: 'OK', result: response.data };
+        return { result: 'OK', data: response.data };
     }
     else {
         return { result: 'KO', reason: response.data };
