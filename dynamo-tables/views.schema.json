@@ -1115,7 +1115,8 @@
                 "type": "object",
                 "required": [
                     "viewType",
-                    "label"
+                    "label",
+                    "fieldName"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -1124,13 +1125,16 @@
                         "description": "M: type of the element",
                         "enum": [
                             "toggle",
-                            "button",
                             "combobox"
                         ]
                     },
                     "label": {
                         "type": "string",
                         "description": "M: element label, if toggle is primary lable on the left"
+                    },
+                    "fieldName": {
+                        "type": "string",
+                        "description": "M: form field name, might or not correspond to a postgres column"
                     },
                     "position": {
                         "type": "string",
@@ -1151,13 +1155,13 @@
                         "type": "string",
                         "description": "?: combobox query, must return an array of [{“id”: Number, “name”: String}], can contain both passed $key$ and local £key£"
                     },
-                    "buttonEvent": {
-                        "type": "string",
-                        "description": "?: generated event on button pressure, only for buttons"
-                    },
-                    "toggleSecondaryLabel": {
+                    "toggleOffLabel": {
                         "type": "string",
                         "description": "?: optional secondary label, only applicable for toggle elements"
+                    },
+                    "toggleOffQueryCond": {
+                        "type": "string",
+                        "description": "?: postgres query condition (after WHERE clause), only valid for two conditions toggles"
                     }
                 }
             }
@@ -1198,7 +1202,11 @@
                             },
                             "query": {
                                 "type": "string",
-                                "description": "?: query to define the value of the content, can use '$param' keys and be enriched by toolbar filters (as WHERE conditions)"
+                                "description": "?: query to define the value of the content, can use '$param' keys and be enriched by local queryCond  + toolbar filters (as WHERE conditions)"
+                            },
+                            "queryCond": {
+                                "type": "string",
+                                "description": "?: postgres local query condition (after WHERE clause)"
                             }
                         }
                     }
