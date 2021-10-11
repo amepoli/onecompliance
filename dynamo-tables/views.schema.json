@@ -1107,6 +1107,103 @@
                     }
                 }
             }
+        },
+        "toolbar_elements": {
+            "type": "array",
+            "description": "?: Set of page specific toolbar elements",
+            "items": {
+                "type": "object",
+                "required": [
+                    "viewType",
+                    "label"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "viewType": {
+                        "type": "string",
+                        "description": "M: type of the element",
+                        "enum": [
+                            "toggle",
+                            "button",
+                            "combobox"
+                        ]
+                    },
+                    "label": {
+                        "type": "string",
+                        "description": "M: element label, if toggle is primary lable on the left"
+                    },
+                    "position": {
+                        "type": "string",
+                        "description": "?: indicates the position of the element, default is left. Elements are displaced in the same order as the array",
+                        "enum": [
+                            "left",
+                            "right"
+                        ]
+                    },
+                    "options": {
+                        "$ref": "#/definitions/options"
+                    },
+                    "queryCond": {
+                        "type": "string",
+                        "description": "?: postgres query condition (after WHERE clause), only valid for toggle and combobox elements"
+                    },
+                    "comboQuery": {
+                        "type": "string",
+                        "description": "?: combobox query, must return an array of [{“id”: Number, “name”: String}], can contain both passed $key$ and local £key£"
+                    },
+                    "buttonEvent": {
+                        "type": "string",
+                        "description": "?: generated event on button pressure, only for buttons"
+                    },
+                    "toggleSecondaryLabel": {
+                        "type": "string",
+                        "description": "?: optional secondary label, only applicable for toggle elements"
+                    }
+                }
+            }
+        },
+        "tiles": {
+            "type": "array",
+            "description": "?: Set of tiles with their properties. Only considered if the view is of type 'homepage'",
+            "items": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "content"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "M: title label of the tile"
+                    },
+                    "content": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "contentType",
+                            "value"
+                        ],
+                        "properties": {
+                            "contentType": {
+                                "type": "string",
+                                "description": "M: type of the content",
+                                "enum": [
+                                    "value"
+                                ]
+                            },
+                            "value": {
+                                "type": "string",
+                                "description": "M: default value of the content"
+                            },
+                            "query": {
+                                "type": "string",
+                                "description": "?: query to define the value of the content, can use '$param' keys and be enriched by toolbar filters (as WHERE conditions)"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1954,26 +2051,7 @@
                     "$ref": "#/definitions/formKeysFormat"
                 },
                 "options": {
-                    "type": "array",
-                    "description": "?: only usable (mandatory at least empty) in case of combobox or radiobutton",
-                    "items": {
-                        "type": "object",
-                        "required": [
-                            "id",
-                            "name"
-                        ],
-                        "additionalProperties": false,
-                        "properties": {
-                            "id": {
-                                "type": "number",
-                                "description": "M: combobox/radiobutton entry ID"
-                            },
-                            "name": {
-                                "type": "string",
-                                "description": "M: displayed entry value"
-                            }
-                        }
-                    }
+                    "$ref": "#/definitions/options"
                 },
                 "comboQuery": {
                     "type": "string",
@@ -2043,6 +2121,28 @@
                                 "description": "?: Value in case of Min, Max, MinLength and MaxLength validators"
                             }
                         }
+                    }
+                }
+            }
+        },
+        "options": {
+            "type": "array",
+            "description": "?: only usable (mandatory at least empty) in case of combobox or radiobutton",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "description": "M: combobox/radiobutton entry ID"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "M: displayed entry value"
                     }
                 }
             }
