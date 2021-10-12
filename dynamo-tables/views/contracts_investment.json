@@ -8,6 +8,11 @@
 	  ],
 	"predefinedQueries": [
 		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "SELECT *,entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as tipi_contratto,entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario) as fondo_gestito,entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)) as giudizio,entrasp.anagrafica_key(id_cliente, codice_azienda, '|') as anagrafica_key,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as id_cliente,entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', stato) as descr_stato FROM entrasp.contratti WHERE codice_azienda=$codice_azienda$"
+		},
+		{
 			"operation": "update",
 			"type": "postProcessing",
 			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
@@ -111,7 +116,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_CONTRATTI';",
 				"options": [],
 				"viewType": "combobox",
 				"dataType": "text",
@@ -134,7 +139,7 @@
 					"values": [],
 					"actionType": "query_style",
 					"styleAttribute": "background_color",
-					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+					"queryFunct": ""
 				},
 				{
 					"eventName": "onSaveContratto",
@@ -142,7 +147,7 @@
 					"values": [],
 					"actionType": "query_style",
 					"styleAttribute": "background_color",
-					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+					"queryFunct": ""
 				},
 				{
 					"eventName": "onLoadContratto",
@@ -150,7 +155,7 @@
 					"values": [],
 					"actionType": "query_style",
 					"styleAttribute": "background_color",
-					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+					"queryFunct": ""
 				}
 			],
 			"isHidden": false,
@@ -198,20 +203,6 @@
 			"isPrimary": false,
 			"key": "data_stipulazione",
 			"label": "Data Stipula",
-			"newLine": false,
-			"size": 2,
-			"readOnly": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_cessazione",
-			"label": "Data Cessazione",
 			"newLine": false,
 			"size": 2,
 			"readOnly": false
@@ -340,6 +331,33 @@
 			"width": "35%",
 			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario)",
 			"label": "Strum.fin.sottoscritto/acquistato"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "descr_stato",
+			"sameOrigin": false,
+			"label": "Stato",
+			"style": [
+				{
+					"value": "Cessato",
+					"font_color": "grey",
+					"font_weight": "500"
+				},
+				{
+					"value": "Attivo",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "In Scadenza",
+					"font_color": "#FF0000",
+					"font_weight": "500"
+				}
+			]
 		},
 		{
 			"format": {
