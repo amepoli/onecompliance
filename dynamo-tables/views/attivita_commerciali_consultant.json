@@ -7,7 +7,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, foreseen_date, true as check, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as descr_cliente ,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, codice_compito_parent, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_AZIONI_COMMERCIALI', cmp.stato) as descr_stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE (cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) AND cmp.tipo_stato='STATO_AZIONI_COMMERCIALI'"
+      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, foreseen_date, true as check, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as descr_cliente ,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, codice_compito_parent, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_AZIONI_COMMERCIALI', cmp.stato) as descr_stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE (cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) AND cmp.id_tipo_segnalazione=13"
     },
     {
       "operation": "selectForm",
@@ -27,7 +27,7 @@
     {
       "operation": "startEvent",
       "type": "main",
-      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"     
+      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
     },
     {
       "operation": "stopEvent",
@@ -93,21 +93,21 @@
       "readOnly": false,
       "size": 1
     },
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€';",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Cliente",
-			"key": "id_cliente",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Cliente",
+      "key": "id_cliente",
+      "readOnly": false,
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": false,
       "size": 2
-		},
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -143,7 +143,8 @@
         "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_AZIONI_COMMERCIALI';",
         "options": [],
         "viewType": "combobox",
-        "dataType": "text"
+        "dataType": "text",
+        "value": "E"
       },
       "label": "Stato",
       "key": "stato",
@@ -153,6 +154,21 @@
       "newLine": false,
       "sameOrigin": true,
       "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "invisible",
+        "dataType": "text",
+        "value": "STATO_AZIONI_COMMERCIALI"
+      },
+      "label": "Stato Azioni Commerciali",
+      "key": "tipo_stato",
+      "readOnly": false,
+      "isHidden": true,
+      "isPrimary": false,
+      "newLine": false,
+      "sameOrigin": true
     },
     {
       "autoGenerate": false,
@@ -171,7 +187,6 @@
       "size": 3
     },
     {
-      
       "autoGenerate": false,
       "format": {
         "dataType": "number",
@@ -637,13 +652,13 @@
     {
       "fieldName": "id_cliente",
       "format": {
-          "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€';",
-          "options": [],
-          "viewType": "combobox"
+        "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
       },
       "label": "Cliente",
       "newLine": false,
-      "queryCond": "id_cliente=€id_cliente€"
+      "queryCond": "id_cliente=$id_cliente$"
     },
     {
       "fieldName": "id_tipo_segnalazione",
@@ -668,20 +683,20 @@
       "queryCond": "id_centro_gest=$id_centro_gest_s$"
     },
     {
-        "fieldName": "flag_compiti_miei",
-        "format": {
-            "value": "0",
-            "viewType": "toggle"
-        },
-        "label": "Miei/Mio Ufficio",
-        "newLine": false,
-        "queryCond": "(cmp.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and cmp.codice_part='€global_codice_part€') or entrasp.verifica_id(cmp.id_responsabile,cmp.codice_part,(€global_id_anagrafiche€)::text))"
+      "fieldName": "flag_compiti_miei",
+      "format": {
+        "value": "0",
+        "viewType": "toggle"
+      },
+      "label": "Miei/Mio Ufficio",
+      "newLine": false,
+      "queryCond": "(cmp.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and cmp.codice_part='€global_codice_part€') or entrasp.verifica_id(cmp.id_responsabile,cmp.codice_part,(€global_id_anagrafiche€)::text))"
     },
     {
       "fieldName": "azienda_corrente",
       "format": {
-          "value": "0",
-          "viewType": "toggle"
+        "value": "0",
+        "viewType": "toggle"
       },
       "label": "Azienda corrente",
       "newLine": false,
