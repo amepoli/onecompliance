@@ -349,7 +349,7 @@
       "label": "Tempo preventivato (min.)",
       "newLine": false,
       "readOnly": false,
-      "size": 1.5
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -362,9 +362,24 @@
       "key": "invested_time",
       "label": "Tempo investito (giorn.)",
       "queryFunct": "select round(sum(coalesce(durata,0))/480,2) from entrasp.consuntivazioni where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false,
-      "size": 1.5
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Cliente",
+      "key": "id_cliente",
+      "readOnly": false,
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": false,
+      "size": 8
     },
     {
       "autoGenerate": false,
