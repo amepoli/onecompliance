@@ -30,7 +30,7 @@ const scripts = {
     checkStatus: `select csn.id_cons, csn.codice_compito, csn.date_time_begin, csn.codice_azienda, entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as description,
         coalesce(date_time_end- date_time_begin, (now() - date_time_begin)) as elapsed_time, case when date_time_end is null then 'running' else 'paused' end as status from entrasp.consuntivazioni csn
         where csn.id_risorsa = entrasp.user_current_azienda((€global_id_anagrafiche€):: text, csn.codice_azienda)
-        and csn.date_time_begin = (select max(csn2.date_time_begin) from entrasp.consuntivazioni csn2 where csn2.id_risorsa = entrasp.user_current_azienda((€global_id_anagrafiche€):: text, csn2.codice_azienda))`,
+        and csn.date_time_begin = (select max(csn2.date_time_begin) from entrasp.consuntivazioni csn2 where csn2.date_time_begin<now() and csn2.id_risorsa = entrasp.user_current_azienda((€global_id_anagrafiche€):: text, csn2.codice_azienda))`,
     startTime: "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '£codice_compito£', '£codice_azienda£')",
     stopTime: "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
 };
