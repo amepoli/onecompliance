@@ -1,12 +1,12 @@
 {
   "$schema": "../views.schema.json",
-  "entryKey": "attivita_commerciali_consultant_to_do_open",
+  "entryKey": "attivita_commerciali_consultant_complete",
   "inheritsFrom": "compiti_consultant",
   "predefinedQueries": [
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, foreseen_date, true as check, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, codice_compito_parent, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_AZIONI_COMMERCIALI', cmp.stato) as descr_stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE (cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) AND cmp.id_tipo_segnalazione=13"
+      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, foreseen_date, true as check, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as descr_cliente ,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, codice_compito_parent, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_AZIONI_COMMERCIALI', cmp.stato) as descr_stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE (cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) AND cmp.id_tipo_segnalazione=13"
     },
     {
       "operation": "selectForm",
@@ -414,10 +414,10 @@
       ],
       "isButton": true,
       "buttonAction": {
-        "target": "attivita_commerciali_consultant_to_do_open",
+        "target": "compiti_consultant_micro_task",
         "viewType": "form",
         "action": "query",
-        "query": "update entrasp.compiti set stato='C' where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£'",
+        "query": "update entrasp.compiti set stato='C', data_chiusura=CURRENT_DATE where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£'",
         "keymap": [
           {
             "source": "codice_azienda",
@@ -448,19 +448,9 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "tipo_segnalazione",
-      "label": "Tipo",
-      "width": "12%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
       "key": "descr_stato",
+      "width": "8%",
       "label": "Stato",
-      "width": "5%",
       "style": [
         {
           "value": "Chiuso",
@@ -468,16 +458,32 @@
           "font_weight": "500"
         },
         {
-          "value": "Provvisorio",
+          "value": "Promozione",
           "font_color": "#D97F02",
           "font_weight": "500"
         },
         {
-          "value": "Aperto",
-          "font_color": "red",
+          "value": "Formulazione Offerta",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Riscontro Offerta",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Esecuzione Contratto",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Da Fatturare",
+          "font_color": "#D97F02",
           "font_weight": "500"
         }
-      ]
+      ],
+      "sameOrigin": false
     },
     {
       "format": {
@@ -485,9 +491,19 @@
       },
       "isHidden": false,
       "isPrimary": true,
-      "key": "codice_compito",
       "width": "5%",
+      "key": "codice_compito",
       "label": "Codice Compito"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_compito_parent",
+      "width": "5%",
+      "label": "Compito Parent"
     },
     {
       "format": {
@@ -496,7 +512,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "data_segnalazione",
-      "width": "8%",
+      "width": "5%",
       "label": "Data Segnalazione"
     },
     {
@@ -506,8 +522,19 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "foreseen_date",
-      "width": "8%",
+      "width": "5%",
       "label": "Data Scadenza"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descr_cliente",
+      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
+      "label": "Cliente",
+      "width": "12%"
     },
     {
       "format": {
@@ -518,6 +545,16 @@
       "key": "titolo",
       "width": "30%",
       "label": "Titolo"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_responsabile",
+      "label": "Assegnato a",
+      "width": "5%"
     },
     {
       "format": {
@@ -594,7 +631,7 @@
           }
         ],
         "confirmAction": false,
-        "onSuccessAction": "reload"
+        "onSuccessAction": "update_time_tracker_and_reload"
       }
     }
   ],
