@@ -1,65 +1,20 @@
 {
   "$schema": "../views.schema.json",
-  "entryKey": "compiti_consultant_to_do_open",
+  "entryKey": "compiti_consultant_sub_of_compiti_consultant",
   "inheritsFrom": "compiti_consultant",
   "predefinedQueries": [
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, foreseen_date, true as check, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, codice_compito_parent, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE (cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda))"
+      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito,cmp.codice_compito_parent, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_AZIONI_COMMERCIALI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE cmp.codice_compito_parent=$codice_compito_parent$ and cmp.codice_azienda=$codice_azienda$ and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)"
     },
     {
       "operation": "selectForm",
       "type": "preProcessing",
       "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda=az.codice_azienda and codice_compito=$codice_compito$;"
-    },
-    {
-      "operation": "startEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
-    },
-    {
-      "operation": "stopEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
     }
   ],
   "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "check",
-      "label": "",
-      "style": [
-        {
-          "button_icon": "check",
-          "value": "check"
-        }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "compiti_consultant_to_do_open",
-        "viewType": "form",
-        "action": "query",
-        "query": "update entrasp.compiti set stato='C' where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£'",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "codice_compito",
-            "destination": "codice_compito"
-          }
-        ],
-        "confirmAction": false,
-        "onSuccessAction": "reload"
-      }
-    },
     {
       "format": {
         "dataType": "text"
@@ -78,7 +33,7 @@
       "isPrimary": false,
       "key": "tipo_segnalazione",
       "label": "Tipo",
-      "width": "12%"
+      "width": "7%"
     },
     {
       "format": {
@@ -88,7 +43,7 @@
       "isPrimary": false,
       "key": "stato",
       "label": "Stato",
-      "width": "5%",
+      "width": "8%",
       "style": [
         {
           "value": "Chiuso",
@@ -96,16 +51,32 @@
           "font_weight": "500"
         },
         {
-          "value": "Provvisorio",
+          "value": "Promozione",
           "font_color": "#D97F02",
           "font_weight": "500"
         },
         {
-          "value": "Aperto",
-          "font_color": "red",
+          "value": "Formulazione Offerta",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Riscontro Offerta",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Esecuzione Contratto",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Da Fatturare",
+          "font_color": "#D97F02",
           "font_weight": "500"
         }
-      ]
+      ],
+      "sameOrigin": false
     },
     {
       "format": {
@@ -119,13 +90,13 @@
     },
     {
       "format": {
-        "dataType": "date"
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "data_segnalazione",
-      "width": "8%",
-      "label": "Data Segnalazione"
+      "key": "codice_compito_parent",
+      "width": "10%",
+      "label": "Codice Compito parent"
     },
     {
       "format": {
@@ -133,9 +104,9 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "foreseen_date",
+      "key": "data_segnalazione",
       "width": "8%",
-      "label": "Data Scadenza"
+      "label": "Data Segnalazione"
     },
     {
       "format": {
@@ -206,7 +177,7 @@
         "target": "compiti_consultant_to_do_open",
         "viewType": "form",
         "action": "query",
-        "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+        "query": "select select entrasp.time_report_stop(('£user_companies£')::text)",
         "keymap": [
           {
             "source": "codice_azienda",
@@ -222,11 +193,11 @@
           }
         ],
         "confirmAction": false,
-        "onSuccessAction": "reload"
+        "onSuccessAction": "update_time_tracker_and_reload"
       }
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "order by time_report_stop_active desc, foreseen_date asc"
+    "tableViewSuffix": "order by time_report_stop_active desc"
   }
 }

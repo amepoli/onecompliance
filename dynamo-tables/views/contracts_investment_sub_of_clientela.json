@@ -6,7 +6,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_contratto_a, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.tipi_contratto_descr(cnt.codice_azienda, cnt.id_tipo_contratto) as tipo_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_strumento_finanziario) from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part=$codice_part$ and cnt.id_cliente=$id_cliente$;"
+			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_contratto_a, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.tipi_contratto_descr(cnt.codice_azienda, cnt.id_tipo_contratto) as tipo_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_strumento_finanziario) ,entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part=$codice_part$ and cnt.id_cliente=$id_cliente$;"
 		}
 	],
 	"table_keys": [
@@ -14,7 +14,7 @@
 			"format": {
 				"dataType": "number"
 			},
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": true,
 			"key": "id_contratto",
 			"label": "ID"
@@ -65,7 +65,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "cliente",
-			"width": "34%",
+			"width": "30%",
 			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente)",
 			"label": "Cliente"
 		},
@@ -88,7 +88,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "data_stipulazione",
-			"width": "10%",
+			"width": "6%",
 			"label": "Data Stipula"
 			
 		},
@@ -99,7 +99,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "data_contratto_a",
-			"width": "10%",
+			"width": "6%",
 			"label": "Data Cessazione"
 			
 		},
@@ -113,11 +113,39 @@
 			"label": "id_strumento_finanziario"
 		},
 		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "descr_stato",
+			"label": "Stato",
+			"style": [
+				{
+					"value": "Cessato",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Attivo",
+					"font_color": "#FF0000",
+					"font_weight": "500"
+				},
+				{
+					"value": "In Scadenza",
+					"font_color": "#FFE118",
+					"font_weight": "500"
+				}
+			],
+			"sameOrigin": false,
+			"width": "8%"
+		},
+		{
 			"format": {	
 				"dataType": "text"
 			},
 			"label": "Giudizio Appropriatezza",
-			"width": "12%",
+			"width": "11%",
 			"key": "giudizio",
 			"queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto))",
 			"isHidden": false,
