@@ -15,12 +15,12 @@
     },
     {
       "operation": "insert",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part, id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
       "type": "postProcessing"
     },
     {
       "operation": "update",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part, id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
       "type": "postProcessing"
     }
   ],
@@ -211,14 +211,7 @@
       "format": {
         "comboQuery": "SELECT distinct an.id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id an inner join entrasp.ruoli_anagrafiche ra on an.id_anagrafica=ra.id_anagrafica and an.codice_part=ra.codice_part WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='RSRSA';",
         "options": [],
-        "viewType": "combobox",
-        "validations": [
-          {
-            "message": "Inserire una esecutore!",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -926,7 +919,7 @@
   ],
   "hideActions": [
     {
-      "tableActionType": "add",
+      "tableActionType": "quick-add",
       "viewType": "table"
     }
   ]
