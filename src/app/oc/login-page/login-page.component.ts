@@ -168,5 +168,7 @@ export class LoginPageComponent implements OnInit {
         // Sign in
         this.signingIn = true;
         this.authService.signIn();
+
+        // this.authService.signInWithGoogle();
     }
 }
