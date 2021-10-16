@@ -437,7 +437,7 @@
         "dataType": "text"
       },
       "isHidden": true,
-      "isPrimary": true,
+      "isPrimary": false,
       "key": "user_companies",
       "label": "user_companies"
     },
@@ -570,7 +570,7 @@
         "target": "attivita_commerciali_consultant_complete",
         "viewType": "form",
         "action": "query",
-        "query": "select entrasp.consuntivazione_blank_insert('£user_companies£', '£codice_compito£', '£codice_azienda£')",
+        "query": "select codice_compito, codice_azienda from entrasp.consuntivazione_blank_insert('£user_companies£', '£codice_compito£', '£codice_azienda£')",
         "keymap": [
           {
             "source": "user_companies",
@@ -585,7 +585,18 @@
             "destination": "codice_azienda"
           }
         ],
-        "confirmAction": false
+        "confirmAction": false,
+        "onSuccessAction": "navigate",
+        "onSuccessActionKeymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          }
+        ]
       }
     },
     {
