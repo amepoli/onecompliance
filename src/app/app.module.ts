@@ -25,9 +25,10 @@ import { ForgotPasswordModule } from 'app/oc/login-page/forgot-password.module';
 import { AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
 import { MainDashboardsModule } from 'app/oc/main-dashboards/main-dashboards.module';
 import { RedirectModule } from 'app/oc/redirect/redirect.module';
-
 import { ToastrModule } from 'ngx-toastr';
 
+import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
+import { GoogleLoginProvider } from 'angularx-social-login';
 
 const appRoutes: Routes = [];
 
@@ -82,10 +83,26 @@ const appRoutes: Routes = [];
         // Redirect
         RedirectModule,
 
+        // Social
+        SocialLoginModule
     ],
     providers: [
         AmplifyService,
-        { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }
+        { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
+        {
+            provide: 'SocialAuthServiceConfig',
+            useValue: {
+                autoLogin: false,
+                providers: [
+                {
+                    id: GoogleLoginProvider.PROVIDER_ID,
+                    provider: new GoogleLoginProvider(
+                    '380240687769-t5gsbc7upsc82fdsihll6svpk16sujkg.apps.googleusercontent.com'
+                    )
+                }
+                ]
+            } as SocialAuthServiceConfig,
+        }
     ],
     bootstrap: [
         AppComponent

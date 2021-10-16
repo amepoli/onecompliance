@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import { DialogService } from './dialog.service';
 import { ConsoleLoggerService } from './console_logger.service';
 import { ReportList } from '../interfaces';
+import { HelperService } from './helper.service';
 
 @Injectable({
     providedIn: 'root'
@@ -69,8 +70,12 @@ export class ReportService // implements Resolve<any>
                     const url = response.url; 
                     _this._httpClient.get(url, { responseType: 'blob' }).subscribe(
                         fileData => {
+                            console.log(keys);
+                            const keysString = Object.keys(keys).map(key => keys[key]).join("_");
+                            const entryNameLength = Math.min(entryName.length, 4);
+                            const entryNameShort = entryName.substring(0, entryNameLength);
                             // Save the file 
-                            saveAs(fileData, 'report.pdf');
+                            saveAs(fileData, `${keysString}_${entryNameShort}_${HelperService.getFormattedShortDate(new Date())}.pdf`);
 
                             // Close dialog and show success toast
                             _this._dialogService.closeDialog();
