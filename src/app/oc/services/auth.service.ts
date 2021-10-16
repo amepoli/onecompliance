@@ -11,7 +11,7 @@ import { ToastService } from 'app/oc/services/toast.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { ConsoleLoggerService } from './console_logger.service';
 import { UserInfo } from '../interfaces';
-import { GoogleLoginProvider, SocialAuthService, SocialUser } from 'angularx-social-login';
+import { BaseLoginProvider, GoogleLoginProvider, SocialAuthService, SocialUser } from 'angularx-social-login';
 
 @Injectable({
   providedIn: 'root'
@@ -363,12 +363,13 @@ export class AuthService {
   }
 
   signInWithGoogle(): void {
-    this.socialAuthService.authState.subscribe((user) => {
-      this.googleUser = user;
-      this.googleUserLoggedIn = (user != null);
+    let _this = this;
+    _this.socialAuthService.authState.subscribe((user) => {
+      _this.googleUser = user;
+      _this.googleUserLoggedIn = (user != null);
       console.log('user: ', user);
+      // _this.refreshGoogleToken();
     });
-    
     this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
 
