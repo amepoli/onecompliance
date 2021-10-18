@@ -100,14 +100,14 @@ export class HelperService {
      * @param datetime
      * @returns formatted date time
      */
-    public static getFormattedDateTime(dateTime) {
+    public static getFormattedDateTime(dateTime: any, timezone: string = 'Z') {
         // Example formatted date
         // "2017-09-25T00:00:00.000Z"
         let date = new Date(dateTime);
         //We use dayCorrector to remove the timezone. We want brut date without any timezone
         // let dayCorrector = (date.getHours()>12) ? (1) : (0); //(date.getHours()<=12) ? (-1) : (0);
         // date.setDate(date.getDate()+dayCorrector);
-        let dateTimeFinal = `${date.getFullYear()}-${this.getTwoDigitText(date.getMonth() + 1)}-${this.getTwoDigitText(date.getDate())}T${this.getTwoDigitText(date.getHours())}:${this.getTwoDigitText(date.getMinutes())}:${this.getTwoDigitText(date.getSeconds())}.000Z`;
+        let dateTimeFinal = `${date.getFullYear()}-${this.getTwoDigitText(date.getMonth() + 1)}-${this.getTwoDigitText(date.getDate())}T${this.getTwoDigitText(date.getHours())}:${this.getTwoDigitText(date.getMinutes())}:${this.getTwoDigitText(date.getSeconds())}.000${timezone}`;
         return dateTimeFinal;
 
         // Old method

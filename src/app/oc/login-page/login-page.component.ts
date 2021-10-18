@@ -6,6 +6,7 @@ import { fuseAnimations } from '@fuse/animations';
 
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService, DialogService } from '../services';
+import { TimezoneService } from '../services/timezone.service';
 
 
 @Component({
@@ -39,7 +40,8 @@ export class LoginPageComponent implements OnInit {
         private _formBuilder: FormBuilder,
         private router: Router,
         private _dialogService: DialogService,
-        private _route: ActivatedRoute
+        private _route: ActivatedRoute,
+        private _timezoneService: TimezoneService
     ) {
         // Configure the layout
         this._fuseConfigService.config = {
