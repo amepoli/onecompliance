@@ -6,7 +6,7 @@ import { AttachDialogComponent } from 'app/oc/dialogs/attach.dialog/attach.dialo
 import { FormGetterComponent } from '../form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
 import { FormGetterParams, FormViewParams, MessageElement, MessageItem, MessageView, TabType, TabViewKey } from 'app/oc/interfaces';
-import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, DocumentationService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, ToastService } from 'app/oc/services';
+import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, DocumentationService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimezoneService, ToastService } from 'app/oc/services';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 
 type savingStateType = 'save' | 'saving' | 'done';
@@ -64,7 +64,8 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         private _navigationService: NavigationService,
         private _messagesService: MessagesService,
         private _console: ConsoleLoggerService,
-        private _actionsService: ActionsService
+        private _actionsService: ActionsService,
+        private _timezoneService: TimezoneService
     ) {
 
     }
@@ -265,6 +266,9 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                     }
                     else if (element === false) {
                         values[value] = '0';
+                    }
+                    else if(element.includes('.000' + _this._timezoneService.timezoneInfo.utc_offset)) {
+                        values[value] = element.replace('.000' + _this._timezoneService.timezoneInfo.utc_offset, '.000Z');
                     }
                 }
             }

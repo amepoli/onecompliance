@@ -2,6 +2,8 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FieldConfig } from 'app/oc/interfaces';
 import { ConsoleLoggerService, HelperService, PubSubService, ValidationsService } from 'app/oc/services';
+import { TimezoneService } from 'app/oc/services/timezone.service';
+import * as moment from 'moment';
 import { Moment } from 'moment';
 import { Subscription } from 'rxjs';
 @Component({
@@ -101,7 +103,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   // For future use
   // @HostBinding('style.margin-right') marginRight = '1%';
 
-  constructor(private pubSubService: PubSubService,
+  constructor(private timezoneService: TimezoneService,
+              private pubSubService: PubSubService,
               private _console: ConsoleLoggerService) { }
   ngOnInit(): void {
     const _this = this;
@@ -173,7 +176,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
           _this.field.value = HelperService.getFormattedDate(dateValue);
         }
         if (_this.field.inputType === 'datetime') {
-          _this.field.value = HelperService.getFormattedDateTime(dateValue);
+          _this.field.value = HelperService.getFormattedDateTime(dateValue, _this.timezoneService.timezoneInfo.utc_offset);
         }
         if (_this.field.inputType === 'time') {
           _this.field.value = HelperService.getFormattedTime(dateValue);
@@ -196,6 +199,19 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     if (_this.field.inputType === 'date') {
       // Replace all found markers
       let newString = HelperService.getFormattedString(_this.field.value);
+
+      // If something was found, update values
+      if (newString !== _this.field.value) {
+        // Replace the field and form control value
+        _this.field.value = newString;
+        _this.group.get(_this.field.name).setValue(_this.field.value);
+
+        // If Event publish is required on startup
+        // _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'change' });
+      }
+    }
+    if (_this.field.inputType === 'datetime')  {
+      let newString = _this.field.value.replace('.000Z', '.000' + _this.timezoneService.timezoneInfo.utc_offset)
 
       // If something was found, update values
       if (newString !== _this.field.value) {
