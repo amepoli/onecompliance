@@ -6,7 +6,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, true as create_useless_contact, foreseen_date, true as check, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as descr_cliente ,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, codice_compito_parent, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_AZIONI_COMMERCIALI', cmp.stato) as descr_stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE (cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) AND cmp.id_tipo_segnalazione=13"
+      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, true as create_useless_contact, foreseen_date, true as check, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as descr_cliente ,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, codice_compito_parent, cmp.codice_azienda, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_AZIONI_COMMERCIALI', cmp.stato) as descr_stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp WHERE (cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) AND cmp.id_tipo_segnalazione=13"
     },
     {
       "operation": "selectForm",
@@ -379,7 +379,36 @@
       "isHidden": false,
       "isPrimary": false,
       "newLine": false,
-      "size": 8
+      "size": 6
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "inserisci_aggiornamento_k",
+      "buttonIcon": "edit",
+      "label": "Inserisci aggiornamento",
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "inserisci_aggiornamento",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "inserisci_aggiornamento",
+          "actionType": "query",
+          "queryFunct": "select codice_compito, codice_azienda from entrasp.consuntivazione_blank_insert((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$)",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "attCommercialiReload"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 2
     },
     {
       "autoGenerate": false,
@@ -394,6 +423,12 @@
       "label": "flag_manuale",
       "newLine": true,
       "readOnly": false
+    }
+  ],
+  "inputEvents": [
+    {
+      "eventName": "attCommercialiReload",
+      "actionType": "reload"
     }
   ],
   "table_keys": [
@@ -541,7 +576,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "descr_cliente",
-      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
+      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente)",
       "label": "Cliente",
       "width": "12%"
     },
@@ -564,7 +599,7 @@
       "width": "10%",
       "sameOrigin": false,
       "key": "create_useless_contact",
-      "label": "Failed contact",
+      "label": "Ins.aggiornamento",
       "isButton": true,
       "buttonAction": {
         "target": "attivita_commerciali_consultant_complete",
