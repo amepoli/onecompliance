@@ -267,9 +267,10 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                     else if (element === false) {
                         values[value] = '0';
                     }
-                    else if(element.includes('.000' + _this._timezoneService.timezoneInfo.utc_offset)) {
-                        values[value] = element.replace('.000' + _this._timezoneService.timezoneInfo.utc_offset, '.000Z');
-                    }
+                    // To keep the same datetime but add timezone in the end
+                    // else if(element.includes('.000' + _this._timezoneService.timezoneInfo.utc_offset)) {
+                        // values[value] = element.replace('.000' + _this._timezoneService.timezoneInfo.utc_offset, '.000Z');
+                    // }
                 }
             }
 
