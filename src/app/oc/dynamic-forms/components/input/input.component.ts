@@ -211,7 +211,11 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     if (_this.field.inputType === 'datetime')  {
-      let newString = _this.field.value.replace('.000Z', '.000' + _this.timezoneService.timezoneInfo.utc_offset)
+      // To keep the same written time but replace the timezone
+      // let newString = _this.field.value.replace('.000Z', '.000' + _this.timezoneService.timezoneInfo.utc_offset);
+      
+      // Load the date time with the included timezone
+      let newString = _this.field.value;
 
       // If something was found, update values
       if (newString !== _this.field.value) {
