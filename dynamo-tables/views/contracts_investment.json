@@ -435,6 +435,17 @@
             "queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
         },
 		{
+			"fieldName": "stato",
+			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_CONTRATTI';",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Stato",
+			"newLine": false,
+			"queryCond": "stato='€stato€'"
+		},
+		{
             "fieldName": "id_strumento_fin_s",
             "format": {
                 "comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and codice_ruolo = 'FONDO';",
