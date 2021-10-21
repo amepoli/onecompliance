@@ -380,7 +380,7 @@
       "key": "chiudi_compito",
       "label": "Chiudi Segnalazione",
       "newLine": false,
-      "size": 5,
+      "size": 3.3,
       "outputEvent": {
         "eventName": "chiudi_segnalazione",
         "eventTrigger": "press"
@@ -458,8 +458,8 @@
       "isPrimary": false,
       "key": "riapri_compito",
       "label": "Riapri Segnalazione",
-      "newLine": true,
-      "size": 5,
+      "newLine": false,
+      "size": 3.3,
       "outputEvent": {
         "eventName": "riapri_segnalazione",
         "eventTrigger": "press"
@@ -523,6 +523,38 @@
           "condition": "none",
           "values": [],
           "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as riapri_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "chiudi_cons_precedenti",
+      "label": "Chiudi consuntivazioni precedenti",
+      "newLine": false,
+      "size": 3.3,
+      "outputEvent": {
+        "eventName": "chiudi_cons_precedenti",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "inputEvents": [
+        {
+          "eventName": "chiudi_cons_precedenti",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "successMessage": "Done!",
+          "queryFunct": "update entrasp.consuntivazioni set stato='C' where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$ and data_intervento<$data_intervento$"
         }
       ],
       "readOnly": false,
