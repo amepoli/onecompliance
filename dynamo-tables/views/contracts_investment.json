@@ -10,7 +10,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "SELECT *,entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as tipi_contratto,entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario) as fondo_gestito,entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)) as giudizio,entrasp.anagrafica_key(id_cliente, codice_azienda, '|') as anagrafica_key,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as id_cliente,entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', stato) as descr_stato FROM entrasp.contratti WHERE codice_azienda=$codice_azienda$"
+			"queryString": "SELECT *,entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as tipi_contratto,entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario) as fondo_gestito,entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)) as giudizio,entrasp.anagrafica_key(id_cliente, codice_azienda, '|') as anagrafica_key,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as id_cliente,entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', stato) as descr_stato FROM entrasp.contratti WHERE array[id_argomento_contratto] <@ any(select entrasp.sotto_argomenti(3429)) and id_argomento_contratto is not null and codice_azienda=$codice_azienda$"
 		},
 		{
 			"operation": "update",
