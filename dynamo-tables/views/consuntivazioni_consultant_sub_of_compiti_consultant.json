@@ -112,7 +112,37 @@
       "key": "stato",
       "label": "Stato",
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "consuntivazione_change_stato",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "eventName": "consuntivazione_change_stato",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+        },
+        {
+          "eventName": "onSaveConsuntivazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+        },
+        {
+          "eventName": "onLoadConsuntivazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+        }
+      ]
     },
     {
       "autoGenerate": false,
@@ -135,19 +165,18 @@
       "insertUpdateFunct": "coalesce('£data_intervento£'::date, CURRENT_DATE)",
       "newLine": false,
       "readOnly": false,
-      "outputEvent": 
-          {
-            "eventName": "cambia_data_intervento",
-            "eventTrigger": "change"
-          },
+      "outputEvent": {
+        "eventName": "cambia_data_intervento",
+        "eventTrigger": "change"
+      },
       "inputEvents": [
-         {
-           "eventName": "cambia_data_intervento",
-           "actionType": "query",
-           "condition": "none",
-           "values": [],
-           "queryFunct": "update entrasp.compiti set foreseen_date='£data_intervento£'::date+ interval '7 days' where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$"
-         }
+        {
+          "eventName": "cambia_data_intervento",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "update entrasp.compiti set foreseen_date='£data_intervento£'::date+ interval '7 days' where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$"
+        }
       ]
     },
     {

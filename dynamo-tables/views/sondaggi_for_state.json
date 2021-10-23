@@ -4,32 +4,32 @@
 	"origin": "entrasp.transcodifiche",
 	"businessObjectName": "transcodifiche",
 	"predefinedQueries": [
-        {
-            "operation": "selectTable",
-            "type": "main",
-            "queryString": "select ts.tipo_dato, ts.codice,ts.transcodifica,count(snd.id_sondaggio) as num_sondaggi from entrasp.transcodifiche ts inner join entrasp.sondaggi snd on ts.codice=snd.stato inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where dynamo_user='€global_username€' and ts.tipo_dato='STATO_SONDAGGI' group by ts.tipo_dato, ts.codice, ts.transcodifica, ts.ordinamento order by ts.ordinamento"
-        }
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select ts.tipo_dato, ts.codice,ts.transcodifica,count(snd.id_sondaggio) as num_sondaggi from entrasp.transcodifiche ts inner join entrasp.sondaggi snd on ts.codice=snd.stato inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where dynamo_user='€global_username€' and ts.tipo_dato='STATO_SONDAGGI' group by ts.tipo_dato, ts.codice, ts.transcodifica, ts.ordinamento order by ts.ordinamento"
+		}
 	],
 	"form_keys": [
-		  {
+		{
 			"autoGenerate": false,
 			"format": {
-			  "viewType": "input",
-			  "dataType": "text"
+				"viewType": "input",
+				"dataType": "text"
 			},
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": true,
 			"key": "codice",
 			"label": "Codice",
 			"readOnly": false,
 			"newLine": false,
 			"size": 1
-		  }, 
-		  {
+		},
+		{
 			"autoGenerate": false,
 			"format": {
-			  "viewType": "input",
-			  "dataType": "text"
+				"viewType": "input",
+				"dataType": "text"
 			},
 			"isHidden": true,
 			"isPrimary": true,
@@ -37,20 +37,34 @@
 			"label": "Tipo Dato",
 			"readOnly": false,
 			"newLine": false
-		  },
-		  {
+		},
+		{
 			"autoGenerate": false,
 			"format": {
-			  "viewType": "input",
-			  "dataType": "text"
+				"viewType": "input",
+				"dataType": "text"
 			},
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "transcodifica",
-			"label": "Transcodifica",
-			"readOnly": false,
-			"newLine": true
-		  }
+			"label": "Stato",
+			"readOnly": true,
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "onChangeStato",
+				"eventTrigger": "change"
+			},
+			"inputEvents": [
+				{
+					"eventName": "onChangeStato",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "background_color",
+					"queryFunct": "select background_color as transcodifica_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$codice$"
+				}
+			]
+		}
 	],
 	"table_keys": [
 		{
@@ -81,35 +95,35 @@
 			"label": "Stato",
 			"style": [
 				{
-					"value": "Annullato",
-					"font_color": "grey",
-					"font_weight": "500"
-				},
-				{
 					"value": "Chiuso",
 					"font_color": "green",
 					"font_weight": "500"
-				},
-				{
-					"value": "In Svolgimento",
-					"font_color": "red",
-					"font_weight": "500"
-				},
-				{
-					"value": "Attesa Riscontro",
-					"font_color": "red",
-					"font_weight": "500"
-				},
-				{
-					"value": "Pianificato",
-					"font_color": "red",
-					"font_weight": "500"
-				},
-				{
+				  },
+				  {
 					"value": "Provvisorio",
-					"font_color": "#D97F02",
+					"font_color": "#FFE118",
 					"font_weight": "500"
-				}
+				  },
+				  {
+					"value": "Pianificato",
+					"font_color": "#FF8100",
+					"font_weight": "500"
+				  },
+				  {
+					"value": "Attesa Riscontro",
+					"font_color": "#FF0000",
+					"font_weight": "500"
+				  },
+				  {
+					"value": "In Svolgimento",
+					"font_color": " #A1A100",
+					"font_weight": "500"
+				  },
+				  {
+					"value": "Annullato",
+					"font_color": "grey",
+					"font_weight": "500"
+				  }
 			]
 		},
 		{
@@ -124,56 +138,62 @@
 	],
 	"search_keys": [
 		{
-            "fieldName": "tipo_dato_s",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "Parola Chiave",
-            "newLine": false,
-            "queryCond": "(UPPER(tipo_dato) like '%'||UPPER('€tipo_dato_s€')||'%' or UPPER(transcodifica) like '%'||UPPER('€tipo_dato_s€')||'%') "
+			"fieldName": "tipo_dato_s",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Parola Chiave",
+			"newLine": false,
+			"queryCond": "(UPPER(tipo_dato) like '%'||UPPER('€tipo_dato_s€')||'%' or UPPER(transcodifica) like '%'||UPPER('€tipo_dato_s€')||'%') "
 		},
 		{
-            "fieldName": "tipo_dato_s2",
-            "format": {
-                "dataType": "text",
+			"fieldName": "tipo_dato_s2",
+			"format": {
+				"dataType": "text",
 				"comboQuery": "select distinct tipo_dato as id from entrasp.transcodifiche order by tipo_dato",
 				"options": [],
 				"viewType": "combobox"
-            },
-            "label": "Tipo Dato",
-            "newLine": false,
-            "queryCond": "tipo_dato ='€tipo_dato_s2€'"
-        }
+			},
+			"label": "Tipo Dato",
+			"newLine": false,
+			"queryCond": "tipo_dato ='€tipo_dato_s2€'"
+		}
 	],
 	"subTables": [
 		{
 			"entryKey": "sondaggi_consultant_sub_of_sondaggi_for_state",
 			"keys": [
-			  {
-				"parent": "codice",
-				"son": "stato"
-			  }
+				{
+					"parent": "codice",
+					"son": "stato"
+				}
 			],
 			"label": "Sondaggi"
-		  }
+		}
 	],
-    "hideActions": [
-        {
-            "formActionType": "add",
-            "viewType": "form"
-        },
-        {
-            "tableActionType": "add",
-            "viewType": "table"
-        },
-        {
-            "formActionType": "quick-add",
-            "viewType": "form"
-        },
-        {
-            "tableActionType": "quick-add",
-            "viewType": "table"
-        }
-    ]
+	"hideActions": [
+		{
+			"formActionType": "add",
+			"viewType": "form"
+		},
+		{
+			"tableActionType": "add",
+			"viewType": "table"
+		},
+		{
+			"formActionType": "quick-add",
+			"viewType": "form"
+		},
+		{
+			"tableActionType": "quick-add",
+			"viewType": "table"
+		}
+	],
+	"outputEvents": [
+		{
+			"eventName": "onLoadTipoSondaggi",
+			"eventTrigger": "onReload"
+		}
+	]
 }

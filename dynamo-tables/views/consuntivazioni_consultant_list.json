@@ -57,6 +57,16 @@
       "type": "postProcessing"
     }
   ],
+  "outputEvents": [
+		{
+			"eventName": "onSaveConsuntivazione",
+			"eventTrigger": "onSave"
+		},
+		{
+			"eventName": "onLoadConsuntivazione",
+			"eventTrigger": "onReload"
+		}
+	],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -188,14 +198,44 @@
       "key": "stato",
       "label": "Stato",
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "consuntivazione_change_stato",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "eventName": "consuntivazione_change_stato",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+        },
+        {
+          "eventName": "onSaveConsuntivazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+        },
+        {
+          "eventName": "onLoadConsuntivazione",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+        }
+      ]
     },
     {
       "autoGenerate": false,
       "format": {
         "dataType": "date",
         "viewType": "input",
-        "value": "CURRENT_DATE",
+        
         "validations": [
           {
             "message": "Inserire una data intervento!",
@@ -222,7 +262,7 @@
            "actionType": "query",
            "condition": "none",
            "values": [],
-           "queryFunct": "update entrasp.compiti set foreseen_date='£data_intervento£'::date+ interval '7 days' where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$"
+           "queryFunct": "update entrasp.compiti set foreseen_date='£data_intervento£'::date + interval '7 days' where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$"
          }
       ]
     },
@@ -393,7 +433,7 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "codice_azienda",
-      "label": "codice_azienda",
+      "label": "Azienda",
       "newLine": false,
       "readOnly": true,
       "size": 2
