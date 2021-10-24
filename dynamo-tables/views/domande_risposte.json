@@ -303,6 +303,10 @@
                 "viewType": "input",
                 "dataType": "number"
             },
+            "outputEvent": {
+                "eventName": "idRispostaChange",
+                "eventTrigger": "change"
+            },
             "inputEvents": [
                 {
                     "eventName": "onSaveD_R",
@@ -403,7 +407,19 @@
                 "background_color": "#25599C",
                 "font_color": "white"
             },
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when $id_risposta$ is null or $id_risposta$::varchar ='' then true else false end as label"
+                }
+            ],
             "inputEvents": [
+                {
+                    "eventName": "idRispostaChange",
+                    "actionType": "show",
+                    "condition": "notEqualTo",
+                    "values": [null]
+                },
                 {
                     "eventName": "onSaveD_R",
                     "condition": "none",
