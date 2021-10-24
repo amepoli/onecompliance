@@ -251,10 +251,10 @@ exports.handler = async (event, context) => {
 
                     query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, 
                         descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, 
-                        content_type, flag_indexed, id_tipo_allegato)
+                        content_type, flag_indexed, id_argomento_tipo_allegato)
                     values ('${company}', ${nextId}, '${requestBody.nickname}',1, '${requestBody.descrizione}', '${requestBody.autore}', 
                     '${date}', '${date}', '${requestBody.url}','${requestBody.descrizione_breve}', '${date}', '${requestBody.content_type}', 1, 
-                    ${requestBody.id_tipo_allegato}) returning id_risorsa;`;
+                    ${requestBody.id_argomento_tipo_allegato}) returning id_risorsa;`;
                     response = await client.query(query);
                     console.log(query);
 

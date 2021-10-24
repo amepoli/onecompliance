@@ -1,5 +1,12 @@
 {
 	"$schema": "../views.schema.json",
+	"predefinedQueries": [
+		{
+			"type": "main",
+			"operation": "selectTable",
+			"queryString": "select * from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3543 and (codice_azienda is null or codice_azienda='€global_codice_azienda€');"
+		}
+	],
 	"entryKey": "tipi_allegati",
 	"form_keys": [
 		{
@@ -48,7 +55,7 @@
 				"dataType": "number"
 			},
 			"label": "ID",
-			"key": "id_tipo_allegato",
+			"key": "id_argomento_tipo_allegato",
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": true,
@@ -68,27 +75,27 @@
 			"newLine": true
 		}
 	],
-	"origin": "entrasp.tipi_allegati",
+	"origin": "entrasp.argomenti",
 	"search_keys": [
 		{
-			"label": "codice_azienda",
+			"label": "codice_azienda_s",
 			"format": {
 				"dataType": "text",
 				"viewType": "input"
 			},
 			"fieldName": "codice_azienda",
 			"newLine": true,
-			"queryCond": "codice_azienda=$codice_azienda$"
+			"queryCond": "codice_azienda=$codice_azienda_s$"
 		},
 		{
-			"label": "ID",
+			"label": "ID Allegato",
 			"format": {
 				"dataType": "number",
 				"viewType": "input"
 			},
-			"fieldName": "id_tipo_allegato",
+			"fieldName": "id_argomento_s",
 			"newLine": true,
-			"queryCond": "id_tipo_allegato=$id_tipo_allegato$"
+			"queryCond": "id_argomento=$id_argomento_s$"
 		}
 	],
 	"subTables": [
@@ -100,8 +107,8 @@
 					"son": "codice_azienda"
 				},
 				{
-					"parent": "id_tipo_allegato",
-					"son": "id_tipo_allegato"
+					"parent": "id_argomento",
+					"son": "id_argomento_tipo_allegato"
 				}
 			],
 			"label": "cdms_risorse"
@@ -114,8 +121,8 @@
 					"son": "codice_azienda"
 				},
 				{
-					"parent": "id_tipo_allegato",
-					"son": "id_tipo_allegato"
+					"parent": "id_argomento",
+					"son": "id_argomento_tipo_allegato"
 				}
 			],
 			"label": "domande"
@@ -146,7 +153,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": true,
-			"key": "id_tipo_allegato",
+			"key": "id_argomento",
 			"label": "ID"
 		},
 		{
