@@ -30,6 +30,70 @@
       "label": "ID Documento",
       "newLine": false,
       "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (codice_azienda is null or codice_azienda='€global_codice_azienda€');",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento_tipo_allegato",
+      "label": "Tipo Allegato",
+      "newLine": false,
+      "size": 5,
+      "readOnly": false
+    },
+    {
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "readOnly": false,
+      "isPrimary": false,
+      "newLine": true,
+      "key": "data_rif",
+      "size": 1.5,
+      "label": "Data Riferimento"
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione_breve",
+      "label": "Descrizione",
+      "newLine": false,
+      "size": 7,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox",
+        "validations": [
+          {
+            "message": "Indicare il centro gestionale!",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_centro_gest",
+      "label": "Centro Gestionale",
+      "newLine": true,
+      "size": 3,
+      "readOnly": false
     }
   ],
   "table_keys": [
@@ -70,7 +134,7 @@
       "key": "data_rif",
       "width": "7%",
       "label": "Data Riferimento"
-    }, 
+    },
     {
       "format": {
         "dataType": "text"
@@ -92,7 +156,7 @@
       "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
       "width": "15%",
       "label": "Centro gestionale"
-    } 
+    }
   ],
   "search_keys": [
     {
