@@ -154,20 +154,22 @@ export class LoginPageComponent implements OnInit {
     }
 
     onSubmit(e): void {
-        this.authService.setUsername(this.loginForm.value.username);
-        this.authService.setPassword(this.loginForm.value.password);
-
-        this.loginButtonText = 'PLEASE WAIT';
-
-        // Show loading Alert
-        this._dialogService.showLoadingDialog("Signing in", "Please wait...");
-
         // Cognito fix
         e.preventDefault();
         
-        // Sign in
-        this.signingIn = true;
-        this.authService.signIn();
+        // this.authService.setUsername(this.loginForm.value.username);
+        // this.authService.setPassword(this.loginForm.value.password);
+
+        // this.loginButtonText = 'PLEASE WAIT';
+
+        // // Show loading Alert
+        // this._dialogService.showLoadingDialog("Signing in", "Please wait...");
+
+        // // Sign in
+        // this.signingIn = true;
+        // this.authService.signIn();
+
+        this.authService.fetchGoogleUser();
 
         // this.authService.signInWithGoogle();
     }
