@@ -410,8 +410,8 @@ export class AuthService {
                 const oAuthUser = await gAuth.signIn();
                 console.log(oAuthUser);
                 
-                var auth_code = await gAuth.grantOfflineAccess();
-                console.log(auth_code);
+                // var auth_code = await gAuth.grantOfflineAccess();
+                // console.log(auth_code);
 
                 // const options = new gapi.auth2.SigninOptionsBuilder();
                 // options.setScope('profile email https://mail.google.com/');
@@ -426,7 +426,7 @@ export class AuthService {
                 sessionStorage.setItem('googleAccessToken', authResponse.access_token);
                 
                 
-                this.loadLabels();
+                // this.loadLabels();
                 resolve(authResponse);
             } catch (e) {
                 reject(e);
