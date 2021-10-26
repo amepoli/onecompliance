@@ -3,6 +3,13 @@
   "entryKey": "rischi_sub_of_compiti",
   "origin": "entrasp.compiti_rischi",
   "businessObjectName": "compitiRischi",
+  "predefinedQueries": [
+    {
+      "type": "main",
+      "queryString": "select cmr.codice_azienda, cmr.codice_compito, cmr.codice_rischio, rsc.titolo, rsc.descrizione, true as cancella_rischio_compito from entrasp.compiti_rischi cmr inner join entrasp.rischi rsc on cmr.codice_rischio=rsc.codice_rischio and cmr.codice_azienda=rsc.codice_azienda where cmr.codice_azienda=$codice_azienda$ and cmr.codice_compito=$codice_compito$",
+      "operation": "selectTable"
+    }
+  ],
   "inputEvents": [
     {
       "eventName": "update_compiti_rischi",
@@ -80,5 +87,101 @@
       "newLine": false,
       "readOnly": true
     }
-  ]  
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "width": "10%",
+      "label": "Codice Compito"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_rischio",
+      "label": "Rischio",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "titolo",
+      "label": "Titolo",
+      "width": "20%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "descrizione",
+      "label": "Descrizione",
+      "width": "40%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "20%",
+      "key": "cancella_rischio_compito",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "", 
+          "font_color": "red",
+          "background_color": "red"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "rischi_sub_of_compiti",
+        "viewType": "form",
+        "action": "query",
+        "query": "delete from entrasp.compiti_rischi where codice_azienda='£codice_azienda£' and codice_rischio='£codice_rischio£' and codice_compito='£codice_compito£'",
+        "keymap": [
+          {
+            "source": "codice_rischio",
+            "destination": "codice_rischio"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          },
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          }
+        ],
+        "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Elimina",
+                    "text": "Si vuole cancellare il rischio associato?"
+                },
+        "onSuccessAction": "reload"
+      }
+    }
+  ]
 }
