@@ -291,6 +291,10 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                                 // Show success snackbar
                                                 _this._toastService.showSuccessToast("File uploaded successfully!");
                                             }
+                                            else if(responseCheck.reason == 'File already loaded!') {
+                                                // Show success snackbar
+                                                _this._toastService.showSuccessToast(responseCheck.reason);
+                                            }
                                             else {
                                                 // Show error snackbar
                                                 _this._toastService.showErrorToast(responseCheck.reason);
