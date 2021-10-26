@@ -5,7 +5,7 @@
 	"origin": "entrasp.contratti",
 	"dashboardTables": [
 		"dashboard_contracts_investment"
-	  ],
+	],
 	"predefinedQueries": [
 		{
 			"operation": "selectTable",
@@ -38,7 +38,7 @@
 			"eventTrigger": "onReload"
 		}
 	],
-		"form_keys": [
+	"form_keys": [
 		{
 			"autoGenerate": false,
 			"format": {
@@ -126,9 +126,9 @@
 						"name": "required",
 						"validator": "Validators.required"
 					}
-				]			
+				]
 			},
-				"outputEvent": {
+			"outputEvent": {
 				"eventName": "contratto_change_stato",
 				"eventTrigger": "select"
 			},
@@ -218,7 +218,8 @@
 			"key": "data_contratto_da",
 			"label": "Data Contratto Da",
 			"newLine": false,
-			"size": 2,			"readOnly": false
+			"size": 2,
+			"readOnly": false
 		},
 		{
 			"autoGenerate": false,
@@ -248,7 +249,68 @@
 			"queryFunct": "entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)",
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"label": "Data Cessazione",
+			"key": "data_cessazione",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 4,
+			"outputEvent": {
+				"eventName": "expiry_date_change",
+				"eventTrigger": "change"
+			}
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "close_contract",
+			"buttonIcon": "assignment_return",
+			"label": "Chiudi Contratto",
+			"readOnly": true,
+			"sameOrigin": false,
+			"newLine": false,
+			"size": 1,
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"attributeFuncts": [],
+			"outputEvent": {
+				"eventName": "close_contract_today",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"eventName": "close_contract_today",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "UPDATE entrasp.contratti SET data_cessazione='£data_cessazione£', stato='C' WHERE id_contratto=$id_contratto$ and codice_azienda=$codice_azienda$",
+					"successMessage": "Contratto chiuso",
+					"outputEventWhenComplete": "survey_reload"
+				},
+				{
+					"eventName": "expiry_date_change",
+					"actionType": "readOnly",
+					"condition": "equalTo",
+					"values": [
+						null
+					]
+				}
+			]
 		}
 	],
 	"table_keys": [
@@ -338,6 +400,16 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
+			"key": "data_cessazione",
+			"width": "10%",
+			"label": "Data Cessazione"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
 			"key": "descr_stato",
 			"label": "Stato",
 			"style": [
@@ -370,24 +442,24 @@
 			"isHidden": false,
 			"style": [
 				{
-				  "value": "Appropriato",
-				  "font_color": "green",
-				  "font_weight": "500"
+					"value": "Appropriato",
+					"font_color": "green",
+					"font_weight": "500"
 				},
 				{
-				  "value": "Adeguato",
-				  "font_color": "green",
-				  "font_weight": "500"
+					"value": "Adeguato",
+					"font_color": "green",
+					"font_weight": "500"
 				},
 				{
-				  "value": "Non Appropriato",
-				  "font_color": "red",
-				  "font_weight": "500"
+					"value": "Non Appropriato",
+					"font_color": "red",
+					"font_weight": "500"
 				},
 				{
-				  "value": "Non Adeguato",
-				  "font_color": "red",
-				  "font_weight": "500"
+					"value": "Non Adeguato",
+					"font_color": "red",
+					"font_weight": "500"
 				}
 			],
 			"isPrimary": false
@@ -404,36 +476,36 @@
 		}
 	],
 	"search_keys": [
-        {
-            "fieldName": "id_anagrafica_s",
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "label": "ID Cliente",
-            "newLine": false,
-            "queryCond": "avr.id_cliente=$id_anagrafica_s$"
-        },
-        {
-            "fieldName": "nome_rs",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "Nome/Cognome/Ragione Sociale",
-            "newLine": true,
-            "queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')"
-        },
-        {
-            "fieldName": "numero_contratto_s",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "Numero Contratto",
-            "newLine": false,
-            "queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
-        },
+		{
+			"fieldName": "id_anagrafica_s",
+			"format": {
+				"dataType": "number",
+				"viewType": "input"
+			},
+			"label": "ID Cliente",
+			"newLine": false,
+			"queryCond": "avr.id_cliente=$id_anagrafica_s$"
+		},
+		{
+			"fieldName": "nome_rs",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Nome/Cognome/Ragione Sociale",
+			"newLine": true,
+			"queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')"
+		},
+		{
+			"fieldName": "numero_contratto_s",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Numero Contratto",
+			"newLine": false,
+			"queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
+		},
 		{
 			"fieldName": "stato",
 			"format": {
@@ -446,20 +518,30 @@
 			"queryCond": "stato='€stato€'"
 		},
 		{
-            "fieldName": "id_strumento_fin_s",
-            "format": {
-                "comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and codice_ruolo = 'FONDO';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Fondo/strumento finanziario",
-            "newLine": false,
-            "queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
-        }  
-    ],
-	"hideActions": [{
-		"tableActionType": "add",
-		"viewType": "table"
-	}],
-	"querySuffixes": {"tableViewSuffix": "limit 100"}
+			"fieldName": "id_strumento_fin_s",
+			"format": {
+				"comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and codice_ruolo = 'FONDO';",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Fondo/strumento finanziario",
+			"newLine": false,
+			"queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
+		}
+	],
+	"hideActions": [
+		{
+			"tableActionType": "add",
+			"viewType": "table"
+		}
+	],
+	"querySuffixes": {
+		"tableViewSuffix": "limit 100"
+	},
+	"inputEvents": [
+		{
+            "actionType": "reload",
+            "eventName": "survey_reload"
+        }
+	]
 }
