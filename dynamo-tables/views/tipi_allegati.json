@@ -115,7 +115,7 @@
 			"isPrimary": false,
 			"key": "argomento_unifica_k",
 			"buttonIcon": "merge_type",
-			"label": "Unifica argomento",
+			"label": "Unifica tipo allegato",
 			"newLine": false,
 			"outputEvent": {
 			  "eventName": "argomento_unifica",
@@ -145,7 +145,7 @@
 			},
 			"fieldName": "codice_azienda",
 			"newLine": true,
-			"queryCond": "codice_azienda=$codice_azienda_s$"
+			"queryCond": "arg.codice_azienda=$codice_azienda_s$"
 		},
 		{
 			"label": "ID Allegato",
@@ -155,33 +155,7 @@
 			},
 			"fieldName": "id_argomento_s",
 			"newLine": true,
-			"queryCond": "id_argomento=$id_argomento_s$"
-		}
-	],
-	"subTables": [
-		{
-			"entryKey": "cdms_risorse_sub",
-			"keys": [
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento_tipo_allegato"
-				}
-			],
-			"label": "Documenti associati"
-		},
-		{
-			"entryKey": "domande_sub",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento_tipo_allegato"
-				}
-			],
-			"label": "Domande"
+			"queryCond": "arg.id_argomento=$id_argomento_s$"
 		}
 	],
 	"table_keys": [
@@ -226,8 +200,34 @@
 			"width": "15%"
 		}
 	],
+	"subTables": [
+		{
+			"entryKey": "cdms_risorse_sub",
+			"keys": [
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento_tipo_allegato"
+				}
+			],
+			"label": "Documenti associati"
+		},
+		{
+			"entryKey": "domande_sub_of_argomenti",
+			"keys": [
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				},
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento_tipo_allegato"
+				}
+			],
+			"label": "Domande"
+		}
+	],
 	"querySuffixes": {
-		"tableViewSuffix": "order by codice_azienda, descrizione"
+		"tableViewSuffix": "order by arg.codice_azienda, arg.descrizione"
 	},
 	"hideActions": [
 		{
