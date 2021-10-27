@@ -97,7 +97,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             if (_this.listFiles != null) {
                 const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
-                    _this.backendService.getFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.data.keys, fileDesc.file_id).subscribe(
+                    _this.backendService.getFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, fileDesc.file_id).subscribe(
                         url => {
                             if (url != null) {
                                 _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
@@ -117,7 +117,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             if (_this.listFiles != null) {
                 const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
-                    _this.backendService.deleteFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.currentKeys), selected.id_risorsa, selected.file_id, _this.data.keys).subscribe(
+                    _this.backendService.deleteFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), selected.id_risorsa, selected.file_id, _this.data.keys).subscribe(
                         urlResponse => {
                             if (urlResponse.result == 'OK') {
                                 _this._console.table(urlResponse);
@@ -200,7 +200,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     getAttachList() {
-        const subscription = this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(this.currentKeys), this.data.keys).subscribe(
+        const subscription = this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(this.data.keys), this.data.keys).subscribe(
             result => {
                 this._console.log(result);
                 if (result.result === 'OK') {
@@ -245,7 +245,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.attach = false;
         if (_this.file != null) {
             // get the S3 URL 
-            const subscription = _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.data.keys).subscribe(
+            const subscription = _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys).subscribe(
                 responseURL => {
                     _this._console.log(responseURL);
                     if (responseURL != null && responseURL.result === 'OK') {
@@ -282,7 +282,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                         dimensione: _this.form.value.dimension,
                                         autore: _this.authService.getUsername()
                                     };
-                                    _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
+                                    _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
                                         responseCheck => {
                                             if(responseCheck.result === 'OK')
                                             {
@@ -344,7 +344,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         }
-        const subscription = this.backendService.updateData(this.newTypeParams.entryName, this.authService.getCurrentCompany(this.currentKeys), this.currentKeys, [values]).subscribe(  // backend expects an array of data
+        const subscription = this.backendService.updateData(this.newTypeParams.entryName, this.authService.getCurrentCompany(this.data.keys), this.currentKeys, [values]).subscribe(  // backend expects an array of data
             result => {
                 this.newTypeParams.isVisible = false; // hide the view 
                 setTimeout(() => {
