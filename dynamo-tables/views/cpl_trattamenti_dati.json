@@ -55,9 +55,10 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=2813 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=2813 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
         "options": [],
-        "viewType": "combobox"
+        "viewType": "combobox",
+        "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -303,10 +304,13 @@
     {
       "entryKey": "categorie_dati_sub_of_cpl_trattamenti_dati",
       "keys": [
-      
         {
-          "parent": "id_argomento_trattamento_dato",
-          "son": "id_argomento"
+          "parent": "id_argomento_tipo_trattamento_dato",
+          "son": "id_argomento_father"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
         }
       ],
       "label": "Categorie Dati Personali"

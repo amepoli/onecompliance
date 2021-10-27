@@ -2,6 +2,13 @@
     "$schema": "../views.schema.json",
     "entryKey": "categorie_dati_sub_of_cpl_trattamenti_dati",
     "origin": "entrasp.argomenti_argomenti",
+    "predefinedQueries": [
+      {
+        "operation": "selectTable",
+        "type": "main",
+        "queryString": "select id_argomento_son, id_argomento_father from entrasp.argomenti where id_argomento_father=$id_argomento_father$ and (codice_azienda is null or codice_azienda=$codice_azienda$) and position( $codice_azienda$ in codice_aziende_escluse)=0"
+      }
+    ],
     "form_keys": [
       {
         "autoGenerate": false,
@@ -22,14 +29,27 @@
           "viewType": "combobox",
           "dataType": "number",
           "options": [],
-          "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3596 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
+          "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3596 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and pos('€global_codice_azienda€',arg.codice_azienda_escluse, 1)=0"
         },
         "isHidden": false,
-        "isPrimary": false,
-        "key": "id_argomento",
+        "isPrimary": true,
+        "key": "id_argomento_son",
         "label": "Categorie Dati Personali",
         "readOnly": false,
         "newLine": false
+      },
+      {
+        "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "id_argomento_father",
+            "key": "id_argomento_father",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
       }
     ],
     "table_keys": [
@@ -62,12 +82,16 @@
         "buttonAction": {
           "target": "cpl_trattamenti_dati_categorie_dati_personali",
           "viewType": "form",
-          "query": "delete from entrasp.argomenti_argomenti where id_argomento=£id_argomento£",
+          "query": "delete from entrasp.argomenti_argomenti where id_argomento_son=£id_argomento_son£ and id_argomento_father=£id_argomento_father£",
           "action": "query",
           "keymap": [
             {
-              "source": "id_argomento",
-              "destination": "id_argomento"
+              "source": "id_argomento_son",
+              "destination": "id_argomento_son"
+            },
+            {
+              "source": "id_argomento_father",
+              "destination": "id_argomento_father"
             }
           ],
           "onSuccessAction": "reload"
@@ -79,9 +103,27 @@
         },
         "isHidden": false,
         "isPrimary": false,
-        "key": "id_argomento",
-        "queryFunct": "entrasp.argomenti_descr_breve(id_argomento)",
+        "key": "descr_categoria",
+        "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_son)",
         "width": "8%",
+        "label": "Categoria"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_argomento_son",
+        "label": "ID"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_argomento_father",
         "label": "ID"
       }
     ]
