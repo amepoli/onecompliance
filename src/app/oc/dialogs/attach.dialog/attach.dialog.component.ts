@@ -275,6 +275,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     const fileParams = {
                                         nickname: _this.form.value.fileName,
                                         descrizione: _this.form.value.description,
+                                        data_scadenza: _this.form.value.data_scadenza,
                                         url: _this.form.value.docURL,
                                         descrizione_breve: _this.form.value.shortDesc,
                                         content_type: mime.lookup(_this.form.value.fileName),
@@ -284,16 +285,12 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
                                         responseCheck => {
-                                            if(responseCheck.result === 'OK')
+                                            if(responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!')
                                             {
                                                 _this.fileService.requestReload(_this.data.entryName);
                                                 _this._console.log(responseCheck);
                                                 // Show success snackbar
                                                 _this._toastService.showSuccessToast("File uploaded successfully!");
-                                            }
-                                            else if(responseCheck.reason == 'File already loaded!') {
-                                                // Show success snackbar
-                                                _this._toastService.showSuccessToast(responseCheck.reason);
                                             }
                                             else {
                                                 // Show error snackbar

@@ -209,7 +209,8 @@ exports.handler = async (event, context) => {
             }
 
             if (requestType === 'getFileList') {
-                query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' AND nome_business_object='${bus_object}' AND chiave='${chiave}';`;
+                query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' AND nome_business_object='${bus_object}'
+                 AND chiave='${chiave}';`;
                 response = await client.query(query);
                 console.log(query, response);
                 let ids = response['rows'].map(f => f['id_risorsa']);
@@ -239,7 +240,7 @@ exports.handler = async (event, context) => {
                 body = { result: 'OK', url: signedUrl, filename: filename };
 
             } else if (requestType === 'fileCheck') {
-                query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}'`;
+                query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`;
                 response = await client.query(query);
                     
                 let filesCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count): 0;
@@ -248,7 +249,7 @@ exports.handler = async (event, context) => {
                 console.log('count: '+ response.rows[0].count);
                 if(filesCount > 0) {
                     try {
-                        query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}'`
+                        query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`
                         response = await client.query(query);
                         let existingRows = response.rows;
                         if(existingRows && existingRows.length) {
