@@ -2,11 +2,12 @@
     "$schema": "../views.schema.json",
     "entryKey": "categorie_dati_sub_of_cpl_trattamenti_dati",
     "origin": "entrasp.argomenti_argomenti",
+    "businessObjectName": "argomenti_argomenti",
     "predefinedQueries": [
       {
         "operation": "selectTable",
         "type": "main",
-        "queryString": "select id_argomento_son, id_argomento_father from entrasp.argomenti where id_argomento_father=$id_argomento_father$ and (codice_azienda is null or codice_azienda=$codice_azienda$) and position( $codice_azienda$ in codice_aziende_escluse)=0"
+        "queryString": "select id_argomento_son, id_argomento_father from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father$ and (codice_azienda is null or codice_azienda=$codice_azienda$) and position( $codice_azienda$ in codice_aziende_escluse)=0"
       }
     ],
     "form_keys": [
@@ -29,7 +30,7 @@
           "viewType": "combobox",
           "dataType": "number",
           "options": [],
-          "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3596 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and pos('€global_codice_azienda€',arg.codice_azienda_escluse, 1)=0"
+          "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3596 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and (position('€global_codice_azienda€' in arg.codice_aziende_escluse)=0 or position('€global_codice_azienda€' in arg.codice_aziende_escluse) is null)"
         },
         "isHidden": false,
         "isPrimary": true,
