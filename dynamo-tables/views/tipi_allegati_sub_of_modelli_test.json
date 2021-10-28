@@ -1,12 +1,71 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "tipi_allegati_sub_of_modelli_test",
-    "origin": "entrasp.argomenti",
+    "origin": "entrasp.modelli_test_argomenti_documenti",
+    "businessObjectName": "modelli_test_argomenti_documenti",
     "predefinedQueries": [
       {
         "queryString": "select distinct id_argomento_tipo_allegato, entrasp.argomenti_descr_breve(id_argomento_tipo_allegato) as tipo_allegato from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$",
         "type": "main",
         "operation": "selectTable"
+      },
+      {
+        "queryString": "INSERT INTO entrasp.modelli_test_argomenti_documenti(codice_azienda, id_modello_test, id_argomento) select distinct codice_azienda, id_modello_test, id_argomento_tipo_allegato from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ on conflict do nothing;",
+        "type": "preProcessing",
+        "operation": "selectForm"
+      }
+    ],
+    "form_keys": [
+      {
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "id_argomento_tipo_allegato",
+        "label": "ID Tipo Allegato"
+      },
+      {
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "tipo_allegato",
+        "label": "Allegato"
+      },
+      {
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda"
+      },
+      {
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_modello_test",
+        "label": "id_modello_test"
+      },
+      {
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "readOnly": true,
+        "key": "id_modello_test_vr",
+        "label": "id_modello_test_vr"
       }
     ],
     "table_keys": [

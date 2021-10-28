@@ -1,13 +1,13 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "categorie_dati_sub_of_cpl_trattamenti_dati",
-    "origin": "entrasp.argomenti_argomenti",
-    "businessObjectName": "argomenti_argomenti",
+    "origin": "entrasp.cpl_trattamenti_dati_categorie_dati_personali",
+    "businessObjectName": "cpl_trattamenti_dati_categorie_dati_personali",
     "predefinedQueries": [
       {
         "operation": "selectTable",
         "type": "main",
-        "queryString": "select cd.codice_azienda, true as delete_trattamenti_dati_categorie, cd.id_argomento_son, cd.id_argomento_father, entrasp.argomenti_descr_breve(cd.id_argomento_son) as descr_categoria from entrasp.argomenti_argomenti cd inner join entrasp.argomenti_argomenti cdf on cd.id_argomento_son=cdf.id_argomento_son where cd.id_argomento_father=$id_argomento_father$ and (cd.codice_azienda is null or cd.codice_azienda=$codice_azienda$) and (position( $codice_azienda$ in cd.codice_aziende_escluse)=0 or position( $codice_azienda$ in cd.codice_aziende_escluse) is null) and cdf.id_argomento_father=3596 and cd.id_argomento_father!=3596"
+        "queryString": "select cd.codice_azienda, true as delete_trattamenti_dati_categorie, cd.id_trattamento_dati, entrasp.argomenti_descr_breve(cd.id_argomento_categorie) as descr_categoria from entrasp.cpl_trattamenti_dati_categorie_dati_personali cd where cd.id_trattamento_dati=$id_trattamento_dati$ and cd.codice_azienda=$codice_azienda$"
       }
     ],
     "form_keys": [
@@ -21,7 +21,7 @@
             "key": "codice_azienda",
             "readOnly": false,
             "isHidden": true,
-            "isPrimary": false,
+            "isPrimary": true,
             "newLine": false
       },
       {
@@ -34,7 +34,7 @@
         },
         "isHidden": false,
         "isPrimary": true,
-        "key": "id_argomento_son",
+        "key": "id_argomento_categorie",
         "label": "Categorie Dati Personali",
         "readOnly": false,
         "newLine": false
@@ -45,8 +45,8 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "id_argomento_father",
-            "key": "id_argomento_father",
+            "label": "id_trattamento_dati",
+            "key": "id_trattamento_dati",
             "readOnly": false,
             "isHidden": true,
             "isPrimary": true,
@@ -83,16 +83,20 @@
         "buttonAction": {
           "target": "cpl_trattamenti_dati_categorie_dati_personali",
           "viewType": "form",
-          "query": "delete from entrasp.argomenti_argomenti where id_argomento_son=£id_argomento_son£ and id_argomento_father=£id_argomento_father£",
+          "query": "delete from entrasp.cpl_trattamenti_dati_categorie_dati_personali where id_trattamento_dati=£id_trattamento_dati£ and id_argomento_categorie=£id_argomento_categorie£ and codice_azienda='£codice_azienda£'",
           "action": "query",
           "keymap": [
             {
-              "source": "id_argomento_son",
-              "destination": "id_argomento_son"
+              "source": "id_trattamento_dati",
+              "destination": "id_trattamento_dati"
             },
             {
-              "source": "id_argomento_father",
-              "destination": "id_argomento_father"
+              "source": "id_argomento_categorie",
+              "destination": "id_argomento_categorie"
+            },
+            {
+              "source": "codice_azienda",
+              "destination": "codice_azienda"
             }
           ],
           "onSuccessAction": "reload"
@@ -105,7 +109,7 @@
         "isHidden": false,
         "isPrimary": false,
         "key": "descr_categoria",
-        "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_son)",
+        "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_categoria)",
         "width": "25%",
         "label": "Categoria"
       },
@@ -115,7 +119,7 @@
         },
         "isHidden": true,
         "isPrimary": true,
-        "key": "id_argomento_son",
+        "key": "id_argomento_categoria",
         "label": "ID"
       },
       {
@@ -124,8 +128,17 @@
         },
         "isHidden": true,
         "isPrimary": true,
-        "key": "id_argomento_father",
+        "key": "id_trattamento_dati",
         "label": "ID"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda"
       }
     ]
   }
