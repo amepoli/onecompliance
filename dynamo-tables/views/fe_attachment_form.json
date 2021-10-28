@@ -16,6 +16,27 @@
       "readOnly": false
     },
     {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox",
+        "validations": [
+          {
+            "message": "Indicare il centro gestionale!",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_centro_gest",
+      "label": "Centro Gestionale",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
       "format": {
         "dataType": "text",
         "viewType": "input"
@@ -93,28 +114,6 @@
       "newLine": true,
       "readOnly": false
     },
-
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox",
-        "validations": [
-          {
-            "message": "Indicare il centro gestionale!",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-      "label": "Centro Gestionale",
-      "newLine": true,
-      "readOnly": false
-    },
     {
       "format": {
         "viewType": "input",
@@ -138,6 +137,36 @@
       "label": "Data Riferimento",
       "readOnly": false,
       "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "options": [],
+        "viewType": "combobox",
+        "comboQuery": "select id_riunione as id, id_riunione||'-'||oggetto as name from entrasp.riunioni where codice_azienda = $codice_azienda$"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_riunione",
+      "label": "Riunione",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "options": [],
+        "viewType": "combobox",
+        "comboQuery": "select id_odg as id, id_odg||'-'||titolo as name from entrasp.odg_riunioni where codice_azienda = $codice_azienda$ and id_riunione=£id_riunione£"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_odg",
+      "label": "Ordine del giorno",
+      "newLine": true,
+      "readOnly": false
     },
     {
       "format": {
