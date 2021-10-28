@@ -7,7 +7,7 @@
       {
         "operation": "selectTable",
         "type": "main",
-        "queryString": "select id_argomento_son, id_argomento_father from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father$ and (codice_azienda is null or codice_azienda=$codice_azienda$) and (position( $codice_azienda$ in codice_aziende_escluse)=0 or position( $codice_azienda$ in codice_aziende_escluse) is null)"
+        "queryString": "select codice_azienda, true as delete_trattamenti_dati_categorie, id_argomento_son, id_argomento_father, entrasp.argomenti_descr_breve(id_argomento_son) as descr_categoria from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father$ and (codice_azienda is null or codice_azienda=$codice_azienda$) and (position( $codice_azienda$ in codice_aziende_escluse)=0 or position( $codice_azienda$ in codice_aziende_escluse) is null)"
       }
     ],
     "form_keys": [
@@ -106,7 +106,7 @@
         "isPrimary": false,
         "key": "descr_categoria",
         "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_son)",
-        "width": "8%",
+        "width": "25%",
         "label": "Categoria"
       },
       {
