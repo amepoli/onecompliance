@@ -10,7 +10,7 @@
         "operation": "selectTable"
       },
       {
-        "queryString": "select distinct id_argomento_documento, entrasp.argomenti_descr_breve(id_argomento_documento) as tipo_allegato from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
+        "queryString": "select distinct id_argomento_documento, entrasp.argomenti_descr_breve(id_argomento_documento) as tipo_allegato, true as cancella_associazione_documento, id_modello_test, codice_azienda from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
         "type": "main",
         "operation": "selectTable"
       }
@@ -90,6 +90,51 @@
         "isPrimary": true,
         "key": "id_modello_test",
         "label": "id_modello_test"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "width": "20%",
+        "key": "cancella_associazione_documento",
+        "label": "",
+        "style": [
+          {
+            "button_icon": "delete",
+            "value": "", 
+            "font_color": "red",
+            "background_color": "red"
+          }
+        ],
+        "isButton": true,
+        "buttonAction": {
+          "target": "tipi_allegati_sub_of_modelli_test",
+          "viewType": "form",
+          "action": "query",
+          "query": "delete from entrasp.modelli_test_argomenti_documenti where codice_azienda='£codice_azienda£' and id_argomento_documento=£id_argomento_documento£ and id_modello_test=£id_modello_test£",
+          "keymap": [
+            {
+              "source": "id_modello_test",
+              "destination": "id_modello_test"
+            },
+            {
+              "source": "id_argomento_documento",
+              "destination": "id_argomento_documento"
+            },
+            {
+              "source": "codice_azienda",
+              "destination": "codice_azienda"
+            }
+          ],
+          "confirmAction": true,
+                  "confirmMessage": {
+                      "title": "Elimina",
+                      "text": "Si vuole cancellare il documento associato?"
+                  },
+          "onSuccessAction": "reload"
+        }
       }
     ]
   }
