@@ -116,12 +116,16 @@ exports.handler = async (event, context) => {
     let keys = JSON.parse(queryParams['keys']);
     const entryName = queryParams['entry_name'];
     const checksum = queryParams['checksum'];
+    const request_type = queryParams['request_type'];
     const company = queryParams['company'];
     var filename = queryParams['filename'];
     var id_risorsa = queryParams['id_risorsa'];
     var requestType = '';
 
-    if (filename == null) {
+    if (request_type) {
+        requestType = request_type;
+    }
+    else if (filename == null) {
         if (event.httpMethod === 'GET') {
             requestType = 'getFileList';
         } else if (event.httpMethod === 'POST') { // POST and no file provided, create a new file
@@ -239,6 +243,40 @@ exports.handler = async (event, context) => {
                 const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
                 body = { result: 'OK', url: signedUrl, filename: filename };
 
+            } else if(requestType === 'loadFileDataIfExists') {
+                query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`;
+                response = await client.query(query);
+                    
+                let filesCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count): 0;
+                console.log('response of file exists by checksum_sha1:', response);
+                console.log('row: '+ response.rows[0]);
+                console.log('count: '+ response.rows[0].count);
+                if (filesCount > 0) {
+                    body = {result: 'OK', data: {}};
+                    try {
+                        query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`
+                        response = await client.query(query);
+                        let existingRows = response.rows;
+                        if(existingRows && existingRows.length) {
+                            const codiceAziendaExisting = existingRows[0]['codice_azienda'];
+                            const idRisorsaExisting = existingRows[0]['id_risorsa'];
+                            
+                            query = `select * from entrasp.cdms_risorse where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting}`;
+                    
+                            // query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
+                            //     values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}');`;
+                            console.log(query);
+                            response = await client.query(query);
+                            body = {result: 'OK', data: response.rows[0]};
+                            console.log(JSON.stringify(response));
+                        }    
+                    }
+                    catch(e) {
+                        console.log(e);
+                    }
+
+                    // body = { result: 'KO', reason: 'File does not exist!' };
+                }
             } else if (requestType === 'fileCheck') {
                 query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`;
                 response = await client.query(query);
