@@ -1,41 +1,40 @@
-{
-	"$schema": "../views.schema.json",
+{	"$schema": "../views.schema.json",
 	"origin": "entrasp.argomenti",
-	"entryKey": "tipi_allegati",
+	"entryKey": "misure_tecniche_privacy",
 	"businessObjectName": "argomenti",
 	"predefinedQueries": [
 		{
 			"type": "main",
 			"operation": "selectTable",
-			"queryString": "select * from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
+			"queryString": "select * from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3968 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
 		},
 		{
 			"operation": "insert",
-			"queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, 3576) as id_argomento;",
+			"queryString": "select entrasp.argomenti_classification_insert($descrizione_breve$, $descrizione$, $codice$, 3968) as id_argomento;",
 			"type": "main"
-		},
-		{
+		  },
+		  {
 			"operation": "delete",
-			"queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=3576 and id_argomento_son=$id_argomento$;",
+			"queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=3968 and id_argomento_son=$id_argomento$;",
 			"type": "preProcessing"
-		},
-		{
+		  },
+		  {
 			"operation": "isInsert",
 			"queryString": "select $id_argomento$ is null as label;",
 			"type": "main"
-		},
-		{
+		  },
+		  {
 			"operation": "insert",
 			"type": "preCheck",
 			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
 			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-		},
-		{
+		  },
+		  {
 			"operation": "update",
 			"type": "preCheck",
 			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
 			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-		}
+		  }   
 	],
 	"form_keys": [
 		{
@@ -106,48 +105,48 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
+			  "viewType": "combobox",
+			  "options": [],
+			  "comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3968 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
 			},
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "id_argomento_nuovo",
-			"label": "Argomento con cui unire il presente",
+			"label": "Misura tecnica da unire con la presente",
 			"sameOrigin": false,
 			"newLine": false,
 			"readOnly": false,
 			"size": 8
-		},
-		{
+		  },
+		  {
 			"autoGenerate": false,
 			"format": {
-				"viewType": "button"
+			  "viewType": "button"
 			},
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "argomento_unifica_k",
 			"buttonIcon": "merge_type",
-			"label": "Unifica tipo allegato",
+			"label": "Unifica",
 			"newLine": false,
 			"outputEvent": {
-				"eventName": "argomento_unifica",
-				"eventTrigger": "press"
+			  "eventName": "argomento_unifica",
+			  "eventTrigger": "press"
 			},
 			"inputEvents": [
-				{
-					"eventName": "argomento_unifica",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.unifica_argomento($id_argomento$, $id_argomento_nuovo$)",
-					"successMessage": "Done!"
-				}
+			  {
+				"eventName": "argomento_unifica",
+				"actionType": "query",
+				"condition": "none",
+				"values": [],
+				"queryFunct": "select entrasp.unifica_argomento($id_argomento$, $id_argomento_nuovo$)",
+				"successMessage": "Done!"
+			  }
 			],
 			"readOnly": false,
 			"sameOrigin": false,
 			"size": 2
-		}
+		  }
 	],
 	"search_keys": [
 		{
@@ -158,7 +157,7 @@
 			},
 			"fieldName": "codice_azienda",
 			"newLine": true,
-			"queryCond": "arg.codice_azienda=$codice_azienda_s$"
+			"queryCond": "codice_azienda=$codice_azienda_s$"
 		},
 		{
 			"label": "ID Allegato",
@@ -168,7 +167,7 @@
 			},
 			"fieldName": "id_argomento_s",
 			"newLine": true,
-			"queryCond": "arg.id_argomento=$id_argomento_s$"
+			"queryCond": "id_argomento=$id_argomento_s$"
 		}
 	],
 	"table_keys": [
@@ -211,32 +210,6 @@
 			"key": "codice_azienda",
 			"label": "Azienda",
 			"width": "15%"
-		}
-	],
-	"subTables": [
-		{
-			"entryKey": "cdms_risorse_sub",
-			"keys": [
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento_tipo_allegato"
-				}
-			],
-			"label": "Documenti associati"
-		},
-		{
-			"entryKey": "domande_sub_of_argomenti",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento_tipo_allegato"
-				}
-			],
-			"label": "Domande"
 		}
 	],
 	"querySuffixes": {

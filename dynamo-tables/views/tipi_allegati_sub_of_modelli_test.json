@@ -10,9 +10,15 @@
         "operation": "selectTable"
       },
       {
-        "queryString": "select distinct id_argomento_documento, entrasp.argomenti_descr_breve(id_argomento_documento) as tipo_allegato, true as cancella_associazione_documento, id_modello_test, codice_azienda from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
+        "queryString": "select distinct id_argomento_documento, note, entrasp.argomenti_descr_breve(id_argomento_documento) as tipo_allegato, true as cancella_associazione_documento, id_modello_test, codice_azienda from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
         "type": "main",
         "operation": "selectTable"
+      },
+      {
+        "type": "preCheck",
+        "operation": "insert",
+        "messageNotNull": "Attenzione tipo documento già inserito",
+        "queryString": "select id_argomento_documento from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_argomento_documento='£id_argomento_documento£'"
       }
     ],
     "form_keys": [
@@ -20,12 +26,24 @@
         "format": {
           "viewType": "combobox",
           "options": [],
-          "comboQuery": "select id_argomento as ID , id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and id_argomento not in(select id_argomento_documento from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$);"
+          "comboQuery": "select id_argomento as ID , id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
       },
         "isHidden": false,
         "isPrimary": true,
         "key": "id_argomento_documento",
         "label": "ID Tipo Allegato",
+        "readOnly": false,
+        "newLine": false
+      },
+      {
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "note",
+        "label": "Note (ulteriori specificazioni)",
         "readOnly": false
       },
       {
@@ -57,7 +75,7 @@
           "dataType": "number"
         },
         "isHidden": false,
-        "isPrimary": false,
+        "isPrimary": true,
         "key": "id_argomento_documento",
         "label": "ID Tipo Allegato",
         "width": "8%"
@@ -71,6 +89,16 @@
         "key": "tipo_allegato",
         "label": "Allegato",
         "width": "30%"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "note",
+        "label": "Note",
+        "width": "40%"
       },
       {
         "format": {
