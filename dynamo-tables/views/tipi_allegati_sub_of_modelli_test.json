@@ -5,36 +5,28 @@
     "businessObjectName": "modelli_test_argomenti_documenti",
     "predefinedQueries": [
       {
-        "queryString": "select distinct id_argomento_tipo_allegato, entrasp.argomenti_descr_breve(id_argomento_tipo_allegato) as tipo_allegato from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$",
-        "type": "main",
+        "queryString": "INSERT INTO entrasp.modelli_test_argomenti_documenti(codice_azienda, id_modello_test, id_argomento_documento) select distinct codice_azienda, id_modello_test, id_argomento_tipo_allegato from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test is not null and id_argomento_tipo_allegato is not null on conflict do nothing;",
+        "type": "preProcessing",
         "operation": "selectTable"
       },
       {
-        "queryString": "INSERT INTO entrasp.modelli_test_argomenti_documenti(codice_azienda, id_modello_test, id_argomento) select distinct codice_azienda, id_modello_test, id_argomento_tipo_allegato from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ on conflict do nothing;",
-        "type": "preProcessing",
-        "operation": "selectForm"
+        "queryString": "select distinct id_argomento_documento, entrasp.argomenti_descr_breve(id_argomento_documento) as tipo_allegato from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
+        "type": "main",
+        "operation": "selectTable"
       }
+      
     ],
     "form_keys": [
       {
         "format": {
-          "dataType": "number",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "id_argomento_tipo_allegato",
-        "label": "ID Tipo Allegato"
+          "viewType": "combobox",
+          "options": [],
+          "comboQuery": "select id_argomento as ID ,descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and id_argomento not in(select id_argomento_documento from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$);"
       },
-      {
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
         "isHidden": false,
-        "isPrimary": false,
-        "key": "tipo_allegato",
-        "label": "Allegato"
+        "isPrimary": true,
+        "key": "id_argomento_documento",
+        "label": "ID Tipo Allegato"
       },
       {
         "format": {
@@ -55,17 +47,6 @@
         "isPrimary": true,
         "key": "id_modello_test",
         "label": "id_modello_test"
-      },
-      {
-        "format": {
-          "dataType": "number",
-          "viewType": "input"
-        },
-        "isHidden": true,
-        "isPrimary": true,
-        "readOnly": true,
-        "key": "id_modello_test_vr",
-        "label": "id_modello_test_vr"
       }
     ],
     "table_keys": [
@@ -75,7 +56,7 @@
         },
         "isHidden": false,
         "isPrimary": false,
-        "key": "id_argomento_tipo_allegato",
+        "key": "id_argomento_documento",
         "label": "ID Tipo Allegato",
         "width": "8%"
       },
@@ -106,15 +87,6 @@
         "isPrimary": true,
         "key": "id_modello_test",
         "label": "id_modello_test"
-      },
-      {
-        "format": {
-          "dataType": "number"
-        },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "id_modello_test_vr",
-        "label": "id_modello_test_vr"
       }
     ]
   }

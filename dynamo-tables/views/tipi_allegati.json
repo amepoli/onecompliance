@@ -1,5 +1,8 @@
 {
 	"$schema": "../views.schema.json",
+	"origin": "entrasp.argomenti",
+	"entryKey": "tipi_allegati",
+	"businessObjectName": "argomenti",
 	"predefinedQueries": [
 		{
 			"type": "main",
@@ -10,33 +13,30 @@
 			"operation": "insert",
 			"queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, 3576) as id_argomento;",
 			"type": "main"
-		  },
-		  {
+		},
+		{
 			"operation": "delete",
 			"queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=3576 and id_argomento_son=$id_argomento$;",
 			"type": "preProcessing"
-		  },
-		  {
+		},
+		{
 			"operation": "isInsert",
 			"queryString": "select $id_argomento$ is null as label;",
 			"type": "main"
-		  },
-		  {
+		},
+		{
 			"operation": "insert",
 			"type": "preCheck",
 			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
 			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-		  },
-		  {
+		},
+		{
 			"operation": "update",
 			"type": "preCheck",
 			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
 			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-		  }   
+		}
 	],
-	"origin": "entrasp.argomenti",
-	"entryKey": "tipi_allegati",
-	"businessObjectName": "argomenti",
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -93,9 +93,9 @@
 		{
 			"autoGenerate": false,
 			"format": {
-			  "viewType": "combobox",
-			  "options": [],
-			  "comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
+				"viewType": "combobox",
+				"options": [],
+				"comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
 			},
 			"isHidden": false,
 			"isPrimary": false,
@@ -105,11 +105,11 @@
 			"newLine": false,
 			"readOnly": false,
 			"size": 8
-		  },
-		  {
+		},
+		{
 			"autoGenerate": false,
 			"format": {
-			  "viewType": "button"
+				"viewType": "button"
 			},
 			"isHidden": false,
 			"isPrimary": false,
@@ -118,23 +118,23 @@
 			"label": "Unifica tipo allegato",
 			"newLine": false,
 			"outputEvent": {
-			  "eventName": "argomento_unifica",
-			  "eventTrigger": "press"
+				"eventName": "argomento_unifica",
+				"eventTrigger": "press"
 			},
 			"inputEvents": [
-			  {
-				"eventName": "argomento_unifica",
-				"actionType": "query",
-				"condition": "none",
-				"values": [],
-				"queryFunct": "select entrasp.unifica_argomento($id_argomento$, $id_argomento_nuovo$)",
-				"successMessage": "Done!"
-			  }
+				{
+					"eventName": "argomento_unifica",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.unifica_argomento($id_argomento$, $id_argomento_nuovo$)",
+					"successMessage": "Done!"
+				}
 			],
 			"readOnly": false,
 			"sameOrigin": false,
 			"size": 2
-		  }
+		}
 	],
 	"search_keys": [
 		{
