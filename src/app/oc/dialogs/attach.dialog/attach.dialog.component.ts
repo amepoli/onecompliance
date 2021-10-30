@@ -275,11 +275,11 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     var mime = require('mime-types');
                                     const fileParams = {
                                         nickname: _this.form.value.fileName,
-                                        descrizione: _this.form.value.description,
+                                        descrizione: _this.form.value.descrizione,
                                         data_scadenza: _this.form.value.data_scadenza,
                                         data_rif: _this.form.value.data_rif,
                                         url: _this.form.value.docURL,
-                                        descrizione_breve: _this.form.value.shortDesc,
+                                        descrizione_breve: _this.form.value.descrizione_breve,
                                         content_type: mime.lookup(_this.form.value.fileName),
                                         id_odg: _this.form.value.id_odg,
                                         id_riunione: _this.form.value.id_riunione,
@@ -342,8 +342,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                         _this.form = _this.formRef.formArray.first.form; // getting the FormGroup
                         _this.form.patchValue(
                             {
-                                shortDesc: data.descrizione_breve,
-                                description: data.descrizione,
+                                descrizione_breve: data.descrizione_breve,
+                                descrizione: data.descrizione,
                                 data_scadenza: data.data_scadenza,
                                 docURL: data.url,
                                 content_type: data.content_type,
