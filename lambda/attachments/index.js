@@ -232,9 +232,9 @@ exports.handler = async (event, context) => {
                 const requestBody = JSON.parse(event.body);
                 query = `update entrasp.cdms_risorse set 
                    nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
-                   data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica=${date},
-                   id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza='${requestBody.data_scadenza}', 
-                   data_scadenza='${requestBody.data_rif}', id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
+                   data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica='${date}'',
+                   id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
+                   data_scadenza=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
                    where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa}`;
                 response = await client.query(query);
                 body = { result: 'OK' };
@@ -300,13 +300,6 @@ exports.handler = async (event, context) => {
                             console.log(query);
                             response = await client.query(query);
 
-                            query = `update entrasp.cdms_risorse set 
-                            nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
-                            data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica=${date},
-                            id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza='${requestBody.data_scadenza}', 
-                            data_scadenza='${requestBody.data_rif}', id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
-                            where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa}`;
-                            response = await client.query(query);
                         }    
                     }
                     catch(e) {
