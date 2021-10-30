@@ -60,7 +60,7 @@ export class AuthService {
 
     this.authStateChange$ = this.amplifyService.authStateChange$;
 
-    this.initGoogleOAuth();
+    // this.initGoogleOAuth();
   }
 
   public setUsername(username: string): void {

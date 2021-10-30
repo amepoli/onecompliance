@@ -277,7 +277,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                         nickname: _this.form.value.fileName,
                                         descrizione: _this.form.value.description,
                                         data_scadenza: _this.form.value.data_scadenza,
-                                        dat_rif: _this.form.value.dat_rif,
+                                        data_rif: _this.form.value.data_rif,
                                         url: _this.form.value.docURL,
                                         descrizione_breve: _this.form.value.shortDesc,
                                         content_type: mime.lookup(_this.form.value.fileName),
@@ -341,7 +341,26 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                         let data = responseCheck.data;
                         _this.form = _this.formRef.formArray.first.form; // getting the FormGroup
                         _this.form.patchValue(
-                            data
+                            {
+                                shortDesc: data.descrizione_breve,
+                                description: data.descrizione,
+                                data_scadenza: data.data_scadenza,
+                                docURL: data.url,
+                                content_type: data.content_type,
+                                id_odg: data.id_odg,
+                                id_riunione: data.id_riunione,
+                                id_centro_gest: data.id_centro_gest,
+                                id_argomento_tipo_allegato: data.id_argomento_tipo_allegato,
+                                data_rif: data.data_rif,
+                                //type: 
+                                //key:  
+                                //codice_azienda:
+                                //codice_part: 
+                                //fileName: 
+                                //dimension: 
+                                //addType
+
+                            }
                             // {
                             //    codice_part: data.codice_part,
                             //     content_type: data.content_type,
