@@ -232,10 +232,11 @@ exports.handler = async (event, context) => {
                 const requestBody = JSON.parse(event.body);
                 query = `update entrasp.cdms_risorse set 
                    nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
-                   data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica=${date}
+                   data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica=${date},
+                   id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza='${requestBody.data_scadenza}', 
+                   data_scadenza='${requestBody.data_rif}', id_riunione=${requestBody.id_riunione}, id_riunione=${requestBody.id_odg}
                    where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa}`;
                 response = await client.query(query);
-
                 body = { result: 'OK' };
 
             } else if (requestType === 'createNewFile') {
@@ -332,12 +333,12 @@ exports.handler = async (event, context) => {
                         response = await client.query(query);
                         const nextId = response['rows'][0]['id_risorsa'];
     
-                        query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, 
-                            descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, 
-                            content_type, flag_indexed, id_argomento_tipo_allegato)
-                        values ('${company}', ${nextId}, '${requestBody.nickname}',1, '${requestBody.descrizione}', '${requestBody.autore}', 
-                        '${date}', '${date}', '${requestBody.url}','${requestBody.descrizione_breve}', '${date}', '${requestBody.content_type}', 1, 
-                        ${requestBody.id_argomento_tipo_allegato}) returning id_risorsa;`;
+                        query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, id_argomento_tipo_allegato, id_centro_gest, nickname, revisione_corrente, 
+                            descrizione_breve, descrizione, autore, data_creazione, data_ultima_revisione, url,  ts_ultima_modifica, 
+                            content_type, flag_indexed, data_scadenza, data_rif, id_riunione, id_odg)
+                        values ('${company}', ${nextId}, ${requestBody.id_argomento_tipo_allegato}, ${requestBody.id_centro_gest}, '${requestBody.nickname}',1, 
+                        '${requestBody.descrizione_breve}', '${requestBody.descrizione}', '${requestBody.autore}', '${date}', '${date}', '${requestBody.url}','${date}', 
+                        '${requestBody.content_type}', 1, '${requestBody.data_scadenza}', '${requestBody.data_rif}', ${requestBody.id_riunione}, ${requestBody.id_odg}) returning id_risorsa;`;
                         response = await client.query(query);
                         console.log(query);
     
