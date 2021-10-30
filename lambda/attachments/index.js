@@ -4,10 +4,10 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
-    host: 'HOST_NAME',
-    database: 'DB_NAME',
-    user: 'USER_NAME',
-    password: 'PASSWORD',
+    host: 'onecompliance-aurora-proxy.proxy-caxbbckt9xen.eu-central-1.rds.amazonaws.com',
+    database: 'Gorico',
+    user: 'postgres',
+    password: 'et2themax',
     port: 5432,
     max: 1,
     min: 0,
@@ -31,7 +31,7 @@ async function overrideTable(son) {
     }
 
     const DynamoParams = {
-        TableName: 'VIEWS_NAME',
+        TableName: 'views',
         Key: {
             entryKey: son.inheritsFrom
         }
@@ -63,7 +63,7 @@ async function tableName2BusinessObject(table_name) {
     }
 
     const DynamoParams = {
-        TableName: 'VIEWS_NAME',
+        TableName: 'views',
         Key: {
             entryKey: table_name
         }
@@ -163,12 +163,12 @@ exports.handler = async (event, context) => {
     }
 
     const s3ParamsInsert = {
-        Bucket: 'BUCKET_NAME',
+        Bucket: 'gorico2.core',
         Key: company + '/' + filename
     };
 
     const s3ParamsGetList = {
-        Bucket: 'BUCKET_NAME',
+        Bucket: 'gorico2.core',
         Key: company + '/' + filename
     };
 
@@ -298,6 +298,14 @@ exports.handler = async (event, context) => {
                             query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
                                 values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}');`;
                             console.log(query);
+                            response = await client.query(query);
+
+                            query = `update entrasp.cdms_risorse set 
+                            nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
+                            data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica='${date}'',
+                            id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
+                            data_scadenza=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
+                            where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa}`;
                             response = await client.query(query);
 
                         }    
