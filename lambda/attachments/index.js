@@ -234,7 +234,7 @@ exports.handler = async (event, context) => {
                    nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
                    data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica=${date},
                    id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza='${requestBody.data_scadenza}', 
-                   data_scadenza='${requestBody.data_rif}', id_riunione=${requestBody.id_riunione}, id_riunione=${requestBody.id_odg}
+                   data_scadenza='${requestBody.data_rif}', id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
                    where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa}`;
                 response = await client.query(query);
                 body = { result: 'OK' };
