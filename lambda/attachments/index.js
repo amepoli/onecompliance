@@ -294,28 +294,30 @@ exports.handler = async (event, context) => {
                         if(existingRows && existingRows.length) {
                             const codiceAziendaExisting = existingRows[0]['codice_azienda'];
                             const idRisorsaExisting = existingRows[0]['id_risorsa'];
-                            
+                          
                             query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
-                                values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}');`;
+                            values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}');`;
                             console.log(query);
                             response = await client.query(query);
-
-                            query = `update entrasp.cdms_risorse set 
-                            nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
-                            data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica='${date}'',
-                            id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
-                            data_scadenza=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
-                            where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting};`;
-                            console.log(query);
-                            response = await client.query(query);
-
-                        }    
+                        } 
+                   
                     }
                     catch(e) {
                         console.log(e);
+                    
+                    
                     }
 
                     body = { result: 'KO', reason: 'File already loaded!' };
+
+
+                    query = `update  entrasp.cdms_risorse set nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
+                            data_ultima_revisione='${date}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica='${date}',
+                            id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
+                            data_rif=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
+                            where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting};`;
+                    console.log(query);
+                    response = await client.query(query);
 
 
                     // query = `SELECT coalesce(max(id_risorsa),0) + 1 as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
