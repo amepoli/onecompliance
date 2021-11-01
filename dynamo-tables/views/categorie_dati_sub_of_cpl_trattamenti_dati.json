@@ -1,158 +1,163 @@
 {
-    "$schema": "../views.schema.json",
-    "entryKey": "categorie_dati_sub_of_cpl_trattamenti_dati",
-    "origin": "entrasp.cpl_trattamenti_dati_categorie",
-    "businessObjectName": "cpl_trattamenti_dati_categorie",
-    "predefinedQueries": [
-      {
-        "operation": "selectTable",
-        "type": "main",
-        "queryString": "select cd.codice_azienda, id_argomento_categoria, true as delete_trattamenti_dati_categorie, cd.id_trattamento_dati, entrasp.argomenti_descr_breve(cd.id_argomento_categoria) as descr_categoria from entrasp.cpl_trattamenti_dati_categorie cd inner join entrasp.argomenti_argomenti aa on cd.id_argomento_categoria=id_argomento_son where cd.id_trattamento_dati=$id_trattamento_dati$ and cd.codice_azienda=$codice_azienda$ and aa.id_argomento_father=3596"
-      }
-    ],
-    "form_keys": [
-      {
-        "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "label": "codice_azienda",
-            "key": "codice_azienda",
-            "readOnly": false,
-            "isHidden": true,
-            "isPrimary": true,
-            "newLine": false
+  "$schema": "../views.schema.json",
+  "entryKey": "categorie_dati_sub_of_cpl_trattamenti_dati",
+  "origin": "entrasp.cpl_trattamenti_dati_categorie",
+  "businessObjectName": "cpl_trattamenti_dati_categorie",
+  "define": {
+    "id_argomento_categoria": "3596",
+    "categoria_dati": "categorie_dati_personali",
+    "Categoria": "Categoria dati"
+  },
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select cd.codice_azienda, id_argomento_categoria, true as delete_trattamenti_dati_categorie, cd.id_trattamento_dati, entrasp.argomenti_descr_breve(cd.id_argomento_categoria) as descr_categoria from entrasp.cpl_trattamenti_dati_categorie cd inner join entrasp.argomenti_argomenti aa on cd.id_argomento_categoria=id_argomento_son where cd.id_trattamento_dati=$id_trattamento_dati$ and cd.codice_azienda=$codice_azienda$ and aa.id_argomento_father=$P{id_argomento_categoria} and tipo='$P{categoria_dati}'"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
       },
-      {
-        "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text",
-                "value": "categorie_dati_personali"
-            },
-            "label": "tipo",
-            "key": "tipo",
-            "readOnly": false,
-            "isHidden": true,
-            "isPrimary": false,
-            "newLine": false
+      "label": "codice_azienda",
+      "key": "codice_azienda",
+      "readOnly": false,
+      "isHidden": true,
+      "isPrimary": true,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text",
+        "value": "$P{categoria_dati}"
       },
-      {
-        "autoGenerate": false,
-        "format": {
-          "viewType": "combobox",
-          "dataType": "number",
-          "options": [],
-          "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3596 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and (position('€global_codice_azienda€' in arg.codice_aziende_escluse)=0 or position('€global_codice_azienda€' in arg.codice_aziende_escluse) is null)"
-        },
-        "isHidden": false,
-        "isPrimary": true,
-        "key": "id_argomento_categoria",
-        "label": "Categorie Dati Personali",
-        "readOnly": false,
-        "newLine": false
+      "label": "tipo",
+      "key": "tipo",
+      "readOnly": false,
+      "isHidden": true,
+      "isPrimary": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "dataType": "number",
+        "options": [],
+        "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_categoria} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and (position('€global_codice_azienda€' in arg.codice_aziende_escluse)=0 or position('€global_codice_azienda€' in arg.codice_aziende_escluse) is null)"
       },
-      {
-        "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "number"
-            },
-            "label": "id_trattamento_dati",
-            "key": "id_trattamento_dati",
-            "readOnly": false,
-            "isHidden": true,
-            "isPrimary": true,
-            "newLine": false
-      }
-    ],
-    "table_keys": [
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": true,
-        "isPrimary": false,
-        "key": "codice_azienda",
-        "label": "codice_azienda"
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_argomento_categoria",
+      "label": "Categorie Dati Personali",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
       },
-      {
-        "format": {
-          "dataType": "number"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "width": "4%",
-        "queryFunct": "select true",
-        "key": "delete_trattamenti_dati_categorie",
-        "label": "",
-        "style": [
+      "label": "id_trattamento_dati",
+      "key": "id_trattamento_dati",
+      "readOnly": false,
+      "isHidden": true,
+      "isPrimary": true,
+      "newLine": false
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "4%",
+      "queryFunct": "select true",
+      "key": "delete_trattamenti_dati_categorie",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "delete_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "categorie_sub_of_cpl_trattamenti_dati",
+        "viewType": "form",
+        "query": "delete from entrasp.cpl_trattamenti_dati_categorie where id_trattamento_dati=£id_trattamento_dati£ and id_argomento_categoria=£id_argomento_categoria£ and codice_azienda='£codice_azienda£'",
+        "action": "query",
+        "keymap": [
           {
-            "button_icon": "delete",
-            "value": "delete_icon"
+            "source": "id_trattamento_dati",
+            "destination": "id_trattamento_dati"
+          },
+          {
+            "source": "id_argomento_categoria",
+            "destination": "id_argomento_categoria"
+          },
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
           }
         ],
-        "isButton": true,
-        "buttonAction": {
-          "target": "categorie_sub_of_cpl_trattamenti_dati",
-          "viewType": "form",
-          "query": "delete from entrasp.cpl_trattamenti_dati_categorie where id_trattamento_dati=£id_trattamento_dati£ and id_argomento_categoria=£id_argomento_categoria£ and codice_azienda='£codice_azienda£'",
-          "action": "query",
-          "keymap": [
-            {
-              "source": "id_trattamento_dati",
-              "destination": "id_trattamento_dati"
-            },
-            {
-              "source": "id_argomento_categoria",
-              "destination": "id_argomento_categoria"
-            },
-            {
-              "source": "codice_azienda",
-              "destination": "codice_azienda"
-            }
-          ],
-          "onSuccessAction": "reload"
-        }
-      },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "descr_categoria",
-        "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_categoria)",
-        "width": "25%",
-        "label": "Categoria"
-      },
-      {
-        "format": {
-          "dataType": "number"
-        },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "id_argomento_categoria",
-        "label": "ID"
-      },
-      {
-        "format": {
-          "dataType": "number"
-        },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "id_trattamento_dati",
-        "label": "ID"
-      },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "codice_azienda",
-        "label": "codice_azienda"
+        "onSuccessAction": "reload"
       }
-    ]
-  }
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descr_categoria",
+      "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_categoria)",
+      "width": "25%",
+      "label": "$P{Categoria}"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento_categoria",
+      "label": "ID"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_trattamento_dati",
+      "label": "ID"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    }
+  ]
+}
