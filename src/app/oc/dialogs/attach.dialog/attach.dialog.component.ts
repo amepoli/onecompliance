@@ -174,7 +174,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.fileUploader.registerOnChange(function (file: File): void {
                 _this.file = file;
                 _this.form = _this.formRef.formArray.first.form; // getting the FormGroup
-                _this.form.patchValue({ fileName: file.name, dimension: file.size });
+                _this.form.patchValue({ fileName: file.name, dimensione: file.size });
                 _this.onFileSelected();
             });
         }
@@ -278,14 +278,14 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                         descrizione: _this.form.value.descrizione,
                                         data_scadenza: _this.form.value.data_scadenza,
                                         data_rif: _this.form.value.data_rif,
-                                        url: _this.form.value.docURL,
+                                        url: _this.form.value.url,
                                         descrizione_breve: _this.form.value.descrizione_breve,
                                         content_type: mime.lookup(_this.form.value.fileName),
-                                        id_odg: _this.form.value.id_odg,
-                                        id_riunione: _this.form.value.id_riunione,
-                                        id_centro_gest: _this.form.value.id_centro_gest,
-                                        id_argomento_tipo_allegato: _this.form.value.type != null ? _this.form.value.type.id : null,                                        
-                                        dimensione: _this.form.value.dimension,
+                                        id_odg: _this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
+                                        id_riunione: _this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
+                                        id_centro_gest:  _this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
+                                        id_argomento_tipo_allegato: _this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,                                        
+                                        dimensione: _this.form.value.dimensione,
                                         autore: _this.authService.getUsername()
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
