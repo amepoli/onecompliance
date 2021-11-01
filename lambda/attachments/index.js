@@ -294,7 +294,8 @@ exports.handler = async (event, context) => {
                         if(existingRows && existingRows.length) {
                             const codiceAziendaExisting = existingRows[0]['codice_azienda'];
                             const idRisorsaExisting = existingRows[0]['id_risorsa'];
-                          
+                            const requestBody = JSON.parse(event.body);
+
                             query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
                             values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}');`;
                             console.log(query);
