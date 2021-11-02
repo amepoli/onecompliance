@@ -18,6 +18,10 @@ const pool = new Pool({
 var crypto = require('crypto');
 
 
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+  }
+
 function getDateFormat() {
     var d = new Date();
     var month = d.getMonth() + 1;
@@ -231,7 +235,7 @@ exports.handler = async (event, context) => {
                 // fill postgresql tables
                 const requestBody = JSON.parse(event.body);
                 query = `update entrasp.cdms_risorse set 
-                   nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
+                   nickname='${replaceAll(requestBody.nickname, "'", "''")}', descrizione='${requestBody.descrizione}', 
                    data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica='${date}'',
                    id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
                    data_scadenza=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
@@ -301,7 +305,7 @@ exports.handler = async (event, context) => {
                             console.log(query);
                             response = await client.query(query);
 
-                            query = `update  entrasp.cdms_risorse set nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
+                            query = `update  entrasp.cdms_risorse set nickname='${replaceAll(requestBody.nickname, "'", "''")}', descrizione='${requestBody.descrizione}', 
                             data_ultima_revisione='${date}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica='${date}',
                             id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
                             data_rif=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
@@ -342,32 +346,37 @@ exports.handler = async (event, context) => {
                         
                         query = `SELECT coalesce(max(id_risorsa),0) + 1 as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
                         // query = `SELECT (MAX(id_risorsa)+1) as         id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
+                        console.log(query);
                         response = await client.query(query);
                         const nextId = response['rows'][0]['id_risorsa'];
+                        console.log(JSON.stringify(response));
     
                         query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, id_argomento_tipo_allegato, id_centro_gest, nickname, revisione_corrente, 
                             descrizione_breve, descrizione, autore, data_creazione, data_ultima_revisione, url,  ts_ultima_modifica, 
                             content_type, flag_indexed, data_scadenza, 
                             data_rif, id_riunione, id_odg)
-                        values ('${company}', ${nextId}, ${requestBody.id_argomento_tipo_allegato}, ${requestBody.id_centro_gest}, '${requestBody.nickname}',1, 
+                        values ('${company}', ${nextId}, ${requestBody.id_argomento_tipo_allegato}, ${requestBody.id_centro_gest}, '${replaceAll(requestBody.nickname, "'", "''")}',1, 
                         '${requestBody.descrizione_breve}', '${requestBody.descrizione}', '${requestBody.autore}', '${date}', '${date}', '${requestBody.url}','${date}', 
                         '${requestBody.content_type}', 1, nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
                         nullif('${requestBody.data_rif}','null')::timestamp without time zone, ${requestBody.id_riunione}, ${requestBody.id_odg}) returning id_risorsa;`;
-                        response = await client.query(query);
                         console.log(query);
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
     
                         query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
                         values ('${company}', ${nextId}, '${bus_object}','${chiave}');`;
-                        response = await client.query(query);
                         console.log(query);
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
     
                         query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, 
                             file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1) 
                       values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
-                              '${requestBody.autore}', '${requestBody.nickname}', '${requestBody.content_type}', ${requestBody.dimensione}, 
+                              '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${requestBody.dimensione}, 
                               '${checksum}');`;
-                        response = await client.query(query);
                         console.log(query);
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
                         body = { result: 'OK' };
                     } else { // wrong checksum 
                         body = { result: 'KO', reason: 'Error with file checksum' };
