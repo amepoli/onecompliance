@@ -174,7 +174,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.fileUploader.registerOnChange(function (file: File): void {
                 _this.file = file;
                 _this.form = _this.formRef.formArray.first.form; // getting the FormGroup
-                _this.form.patchValue({ fileName: file.name, dimension: file.size });
+                _this.form.patchValue({ fileName: file.name, dimensione: file.size });
+                _this.onFileSelected();
             });
         }
         let ext_subscription = _this.newTypeRef.changes.subscribe(
@@ -274,26 +275,27 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     var mime = require('mime-types');
                                     const fileParams = {
                                         nickname: _this.form.value.fileName,
-                                        descrizione: _this.form.value.description,
-                                        url: _this.form.value.docURL,
-                                        descrizione_breve: _this.form.value.shortDesc,
+                                        descrizione: _this.form.value.descrizione,
+                                        data_scadenza: _this.form.value.data_scadenza,
+                                        data_rif: _this.form.value.data_rif,
+                                        url: _this.form.value.url,
+                                        descrizione_breve: _this.form.value.descrizione_breve,
                                         content_type: mime.lookup(_this.form.value.fileName),
-                                        id_argomento_tipo_allegato: _this.form.value.type != null ? _this.form.value.type.id : null,                                        
-                                        dimensione: _this.form.value.dimension,
+                                        id_odg: _this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
+                                        id_riunione: _this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
+                                        id_centro_gest:  _this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
+                                        id_argomento_tipo_allegato: _this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,                                        
+                                        dimensione: _this.form.value.dimensione,
                                         autore: _this.authService.getUsername()
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
                                         responseCheck => {
-                                            if(responseCheck.result === 'OK')
+                                            if(responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!')
                                             {
                                                 _this.fileService.requestReload(_this.data.entryName);
                                                 _this._console.log(responseCheck);
                                                 // Show success snackbar
                                                 _this._toastService.showSuccessToast("File uploaded successfully!");
-                                            }
-                                            else if(responseCheck.reason == 'File already loaded!') {
-                                                // Show success snackbar
-                                                _this._toastService.showSuccessToast(responseCheck.reason);
                                             }
                                             else {
                                                 // Show error snackbar
@@ -320,6 +322,110 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
             this.subscriptions.push(subscription);
         }
+    }
+
+    onFileSelected() {
+        let _this = this;
+        const blob = new Blob([_this.file]);
+                        
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const content = reader.result;
+            const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+            _this._console.log(hash);
+            
+            _this.backendService.loadFileDataIfExists(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash).subscribe(
+                responseCheck => {
+                    if(responseCheck.result === 'OK')
+                    {
+                        let data = responseCheck.data;
+                        _this.form = _this.formRef.formArray.first.form; // getting the FormGroup
+                        _this.form.patchValue(
+                            {
+                                descrizione_breve: data.descrizione_breve,
+                                descrizione: data.descrizione,
+                                data_scadenza: data.data_scadenza,
+                                docURL: data.url,
+                                content_type: data.content_type,
+                                id_odg: data.id_odg,
+                                id_riunione: data.id_riunione,
+                                id_centro_gest: data.id_centro_gest,
+                                id_argomento_tipo_allegato: data.id_argomento_tipo_allegato,
+                                data_rif: data.data_rif,
+                                //type: 
+                                //key:  
+                                //codice_azienda:
+                                //codice_part: 
+                                //fileName: 
+                                //dimension: 
+                                //addType
+
+                            }
+                            // {
+                            //    codice_part: data.codice_part,
+                            //     content_type: data.content_type,
+                            //     data_creazione: data.data_creazione,
+                            //     data_ins: data.data_ins,
+                            //     data_rif: data.data_rif,
+                            //     data_scadenza: data.data_scadenza,
+                            //     data_ultima_revisione: data.data_ultima_revisione,
+                            //     data_ultimo_accesso: data.data_ultimo_accesso,
+                            //     data_upd: data.data_upd,
+                            //     descrizione: data.descrizione,
+                            //     descrizione_breve: data.descrizione_breve,
+                            //     filtro_dati: data.filtro_dati,
+                            //     flag_indexed: data.flag_indexed,
+                            //     flag_link: data.flag_link,
+                            //     flag_verifica: data.flag_verifica,
+                            //     id_argomento: data.id_argomento,
+                            //     id_argomento_tipo_allegato: data.id_argomento_tipo_allegato,
+                            //     id_centro_gest: data.id_centro_gest,
+                            //     id_odg: data.id_odg,
+                            //     id_risorsa: data.id_risorsa,
+                            //     id_riunione: data.id_riunione,
+                            //     id_tipo_allegato: data.id_tipo_allegato,
+                            //     nickname: data.nickname,
+
+                            //     nome_vista: data.nome_vista,
+                            //     ordinamento_dati: data.ordinamento_dati,
+                            //     parole_chiave: data.parole_chiave,
+
+                            //     revisione_corrente: data.revisione_corrente,
+                            //     tag: data.tag,
+                            //     template_name: data.template_name,
+                            //     ts_cestinato: data.ts_cestinato,
+                            //     ts_checkout: data.ts_checkout,
+                            //     ts_ultima_modifica: data.ts_ultima_modifica,
+                            //     url: data.url,
+                            //     ute_ins: data.ute_ins,
+                            //     ute_upd: data.ute_upd,
+                            //     utente_checkout: data.utente_checkout,
+                            //     utente_ultimo_accesso: data.utente_ultimo_accesso,
+                            //     utenti_esclusi: data.utenti_esclusi,
+                            // }
+                        );
+                        // _this.fileService.requestReload(_this.data.entryName);
+                        _this._console.log(responseCheck);
+                        // Show success snackbar
+                        // _this._toastService.showSuccessToast("File already loaded!");
+                    }
+                    else {
+                        // Show error snackbar
+                        _this._toastService.showErrorToast(responseCheck.reason);
+                    }
+                    
+                },
+                error => {
+                    // Show error snackbar
+                    _this._toastService.showErrorToast(error);
+                }
+            );
+
+        };
+        reader.readAsArrayBuffer(blob);
+
+
+        
     }
 
     onNewType(event: any) {

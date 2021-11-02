@@ -124,6 +124,12 @@ export class BackendService {
     return from(this.amplifyService.api().get(this.apiName, '/' + this.attachApiName, this.myGetInit));
   }
 
+  loadFileDataIfExists(entryName: string, company: string, keys: any, checksum: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, request_type: 'loadFileDataIfExists', keys: JSON.stringify(keys), checksum: checksum };
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
+  }
+
   createFileURL(entryName: string, company: string, keys: any): Observable<any> {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys) };

@@ -4,10 +4,10 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
-    host: 'HOST_NAME',
-    database: 'DB_NAME',
-    user: 'USER_NAME',
-    password: 'PASSWORD',
+    host: 'onecompliance-aurora-proxy.proxy-caxbbckt9xen.eu-central-1.rds.amazonaws.com',
+    database: 'Gorico',
+    user: 'postgres',
+    password: 'et2themax',
     port: 5432,
     max: 1,
     min: 0,
@@ -17,6 +17,10 @@ const pool = new Pool({
 
 var crypto = require('crypto');
 
+
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+  }
 
 function getDateFormat() {
     var d = new Date();
@@ -31,7 +35,7 @@ async function overrideTable(son) {
     }
 
     const DynamoParams = {
-        TableName: 'VIEWS_NAME',
+        TableName: 'views',
         Key: {
             entryKey: son.inheritsFrom
         }
@@ -63,7 +67,7 @@ async function tableName2BusinessObject(table_name) {
     }
 
     const DynamoParams = {
-        TableName: 'VIEWS_NAME',
+        TableName: 'views',
         Key: {
             entryKey: table_name
         }
@@ -116,12 +120,16 @@ exports.handler = async (event, context) => {
     let keys = JSON.parse(queryParams['keys']);
     const entryName = queryParams['entry_name'];
     const checksum = queryParams['checksum'];
+    const request_type = queryParams['request_type'];
     const company = queryParams['company'];
     var filename = queryParams['filename'];
     var id_risorsa = queryParams['id_risorsa'];
     var requestType = '';
 
-    if (filename == null) {
+    if (request_type) {
+        requestType = request_type;
+    }
+    else if (filename == null) {
         if (event.httpMethod === 'GET') {
             requestType = 'getFileList';
         } else if (event.httpMethod === 'POST') { // POST and no file provided, create a new file
@@ -159,12 +167,12 @@ exports.handler = async (event, context) => {
     }
 
     const s3ParamsInsert = {
-        Bucket: 'BUCKET_NAME',
+        Bucket: 'gorico2.core',
         Key: company + '/' + filename
     };
 
     const s3ParamsGetList = {
-        Bucket: 'BUCKET_NAME',
+        Bucket: 'gorico2.core',
         Key: company + '/' + filename
     };
 
@@ -209,7 +217,8 @@ exports.handler = async (event, context) => {
             }
 
             if (requestType === 'getFileList') {
-                query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' AND nome_business_object='${bus_object}' AND chiave='${chiave}';`;
+                query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' AND nome_business_object='${bus_object}'
+                 AND chiave='${chiave}';`;
                 response = await client.query(query);
                 console.log(query, response);
                 let ids = response['rows'].map(f => f['id_risorsa']);
@@ -226,11 +235,12 @@ exports.handler = async (event, context) => {
                 // fill postgresql tables
                 const requestBody = JSON.parse(event.body);
                 query = `update entrasp.cdms_risorse set 
-                   nickname='${requestBody.nickname}', descrizione='${requestBody.descrizione}', 
-                   data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica=${date}
+                   nickname='${replaceAll(requestBody.nickname, "'", "''")}', descrizione='${requestBody.descrizione}', 
+                   data_ultima_revisione='${date}', url='${requestBody.url}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica='${date}'',
+                   id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
+                   data_scadenza=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
                    where codice_azienda='${company}' and id_risorsa=${requestBody.id_risorsa}`;
                 response = await client.query(query);
-
                 body = { result: 'OK' };
 
             } else if (requestType === 'createNewFile') {
@@ -238,8 +248,42 @@ exports.handler = async (event, context) => {
                 const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
                 body = { result: 'OK', url: signedUrl, filename: filename };
 
+            } else if(requestType === 'loadFileDataIfExists') {
+                query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`;
+                response = await client.query(query);
+                    
+                let filesCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count): 0;
+                console.log('response of file exists by checksum_sha1:', response);
+                console.log('row: '+ response.rows[0]);
+                console.log('count: '+ response.rows[0].count);
+                if (filesCount > 0) {
+                    body = {result: 'OK', data: {}};
+                    try {
+                        query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`
+                        response = await client.query(query);
+                        let existingRows = response.rows;
+                        if(existingRows && existingRows.length) {
+                            const codiceAziendaExisting = existingRows[0]['codice_azienda'];
+                            const idRisorsaExisting = existingRows[0]['id_risorsa'];
+                            
+                            query = `select * from entrasp.cdms_risorse where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting}`;
+                    
+                            // query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
+                            //     values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}');`;
+                            console.log(query);
+                            response = await client.query(query);
+                            body = {result: 'OK', data: response.rows[0]};
+                            console.log(JSON.stringify(response));
+                        }    
+                    }
+                    catch(e) {
+                        console.log(e);
+                    }
+
+                    // body = { result: 'KO', reason: 'File does not exist!' };
+                }
             } else if (requestType === 'fileCheck') {
-                query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}'`;
+                query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`;
                 response = await client.query(query);
                     
                 let filesCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count): 0;
@@ -248,25 +292,37 @@ exports.handler = async (event, context) => {
                 console.log('count: '+ response.rows[0].count);
                 if(filesCount > 0) {
                     try {
-                        query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}'`
+                        query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`
                         response = await client.query(query);
                         let existingRows = response.rows;
                         if(existingRows && existingRows.length) {
                             const codiceAziendaExisting = existingRows[0]['codice_azienda'];
                             const idRisorsaExisting = existingRows[0]['id_risorsa'];
-                            
+                            const requestBody = JSON.parse(event.body);
+
                             query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
-                                values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}');`;
+                            values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}');`;
                             console.log(query);
                             response = await client.query(query);
-                        }    
+
+                            query = `update  entrasp.cdms_risorse set nickname='${replaceAll(requestBody.nickname, "'", "''")}', descrizione='${requestBody.descrizione}', 
+                            data_ultima_revisione='${date}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica='${date}',
+                            id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
+                            data_rif=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
+                            where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting};`; 
+                            console.log(query);
+                            response = await client.query(query);
+
+                        } 
+                   
                     }
                     catch(e) {
                         console.log(e);
+                    
+                    
                     }
 
                     body = { result: 'KO', reason: 'File already loaded!' };
-
 
                     // query = `SELECT coalesce(max(id_risorsa),0) + 1 as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
                     // // query = `SELECT (MAX(id_risorsa)+1) as         id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
@@ -290,30 +346,37 @@ exports.handler = async (event, context) => {
                         
                         query = `SELECT coalesce(max(id_risorsa),0) + 1 as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
                         // query = `SELECT (MAX(id_risorsa)+1) as         id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
+                        console.log(query);
                         response = await client.query(query);
                         const nextId = response['rows'][0]['id_risorsa'];
+                        console.log(JSON.stringify(response));
     
-                        query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, nickname, revisione_corrente, 
-                            descrizione, autore, data_creazione, data_ultima_revisione, url, descrizione_breve, ts_ultima_modifica, 
-                            content_type, flag_indexed, id_argomento_tipo_allegato)
-                        values ('${company}', ${nextId}, '${requestBody.nickname}',1, '${requestBody.descrizione}', '${requestBody.autore}', 
-                        '${date}', '${date}', '${requestBody.url}','${requestBody.descrizione_breve}', '${date}', '${requestBody.content_type}', 1, 
-                        ${requestBody.id_argomento_tipo_allegato}) returning id_risorsa;`;
-                        response = await client.query(query);
+                        query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, id_argomento_tipo_allegato, id_centro_gest, nickname, revisione_corrente, 
+                            descrizione_breve, descrizione, autore, data_creazione, data_ultima_revisione, url,  ts_ultima_modifica, 
+                            content_type, flag_indexed, data_scadenza, 
+                            data_rif, id_riunione, id_odg)
+                        values ('${company}', ${nextId}, ${requestBody.id_argomento_tipo_allegato}, ${requestBody.id_centro_gest}, '${replaceAll(requestBody.nickname, "'", "''")}',1, 
+                        '${requestBody.descrizione_breve}', '${requestBody.descrizione}', '${requestBody.autore}', '${date}', '${date}', '${requestBody.url}','${date}', 
+                        '${requestBody.content_type}', 1, nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
+                        nullif('${requestBody.data_rif}','null')::timestamp without time zone, ${requestBody.id_riunione}, ${requestBody.id_odg}) returning id_risorsa;`;
                         console.log(query);
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
     
                         query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
                         values ('${company}', ${nextId}, '${bus_object}','${chiave}');`;
-                        response = await client.query(query);
                         console.log(query);
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
     
                         query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, 
                             file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1) 
                       values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
-                              '${requestBody.autore}', '${requestBody.nickname}', '${requestBody.content_type}', ${requestBody.dimensione}, 
+                              '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${requestBody.dimensione}, 
                               '${checksum}');`;
-                        response = await client.query(query);
                         console.log(query);
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
                         body = { result: 'OK' };
                     } else { // wrong checksum 
                         body = { result: 'KO', reason: 'Error with file checksum' };

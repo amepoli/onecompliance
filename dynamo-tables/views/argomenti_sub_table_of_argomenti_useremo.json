@@ -1,0 +1,131 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "argomenti_sub_table_of_argomenti_useremo",
+    "origin": "entrasp.argomenti_argomenti",
+    "businessObjectName": "argomenti_argomenti",
+    "predefinedQueries": [
+      {
+        "operation": "selectTable",
+        "type": "main",
+        "queryString": "select cd.codice_azienda, true as delete_trattamenti_dati_categorie, cd.id_argomento_son, cd.id_argomento_father, entrasp.argomenti_descr_breve(cd.id_argomento_son) as descr_categoria from entrasp.argomenti_argomenti cd inner join entrasp.argomenti_argomenti cdf on cd.id_argomento_son=cdf.id_argomento_son where cd.id_argomento_father=$id_argomento_father$ and (cd.codice_azienda is null or cd.codice_azienda=$codice_azienda$) and (position( $codice_azienda$ in cd.codice_aziende_escluse)=0 or position( $codice_azienda$ in cd.codice_aziende_escluse) is null) and cdf.id_argomento_father=3596 and cd.id_argomento_father!=3596"
+      }
+    ],
+    "form_keys": [
+      {
+        "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "viewType": "combobox",
+          "dataType": "number",
+          "options": [],
+          "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3596 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and (position('€global_codice_azienda€' in arg.codice_aziende_escluse)=0 or position('€global_codice_azienda€' in arg.codice_aziende_escluse) is null)"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "id_argomento_son",
+        "label": "Categorie Dati Personali",
+        "readOnly": false,
+        "newLine": false
+      },
+      {
+        "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "id_argomento_father",
+            "key": "id_argomento_father",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+      }
+    ],
+    "table_keys": [
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "codice_azienda",
+        "label": "codice_azienda"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "width": "4%",
+        "queryFunct": "select true",
+        "key": "delete_trattamenti_dati_categorie",
+        "label": "",
+        "style": [
+          {
+            "button_icon": "delete",
+            "value": "delete_icon"
+          }
+        ],
+        "isButton": true,
+        "buttonAction": {
+          "target": "cpl_trattamenti_dati_categorie_dati_personali",
+          "viewType": "form",
+          "query": "delete from entrasp.argomenti_argomenti where id_argomento_son=£id_argomento_son£ and id_argomento_father=£id_argomento_father£",
+          "action": "query",
+          "keymap": [
+            {
+              "source": "id_argomento_son",
+              "destination": "id_argomento_son"
+            },
+            {
+              "source": "id_argomento_father",
+              "destination": "id_argomento_father"
+            }
+          ],
+          "onSuccessAction": "reload"
+        }
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "descr_categoria",
+        "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_son)",
+        "width": "25%",
+        "label": "Categoria"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_argomento_son",
+        "label": "ID"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_argomento_father",
+        "label": "ID"
+      }
+    ]
+  }

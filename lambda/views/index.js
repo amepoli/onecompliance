@@ -135,6 +135,26 @@ async function overrideTable(son) {
     return father;
 }
 
+function replaceJSONParams(JSONString, paramsObject) {
+    if (paramsObject == null) {
+        return JSONString
+    } 
+
+    JSONString = JSON.stringify(JSONString);
+
+    for (const param in paramsObject) {
+        if (Object.hasOwnProperty.call(paramsObject, param)) {
+            const value = paramsObject[param];
+            const toReplace = new RegExp("\$P\{" + param + "\}", "g");
+            JSONString = JSONString.replace(toReplace, value);
+        }
+    }
+
+    JSONString = JSON.parse(JSONString);
+
+    return JSONString;
+}
+
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
@@ -178,6 +198,8 @@ exports.handler = async (event, context) => {
         data = await dynamo.get(DynamoParams).promise();
 
         data = await overrideTable(data.Item);
+
+        data = replaceJSONParams(data,data.define)
 
         data = processPermissions(data, profile, entry_name);
         data['profileHideActions'] = getProfileHideActions(entry_name, profile);

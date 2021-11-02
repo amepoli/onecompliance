@@ -146,6 +146,26 @@ function replaceKeysArray(queryString, keysArray, keyTypes) {
     }
 }
 
+function replaceJSONParams(JSONString, paramsObject) {
+    if (paramsObject == null) {
+        return JSONString
+    } 
+
+    JSONString = JSON.stringify(JSONString);
+
+    for (const param in paramsObject) {
+        if (Object.hasOwnProperty.call(paramsObject, param)) {
+            const value = paramsObject[param];
+            const toReplace = new RegExp("\$P\{" + param + "\}", "g");
+            JSONString = JSONString.replace(toReplace, value);
+        }
+    }
+
+    JSONString = JSON.parse(JSONString);
+
+    return JSONString;
+}
+
 function getKeyTypes(entry_keys) {
     let keyTypes = entry_keys.map(k => {
         return { key: k.key, viewType: k.format.viewType, dataType: k.format.dataType, subKeys: k.subKeys, isPrimary: k.isPrimary, isCalculated: k.queryFunct != null, sameOrigin: k.sameOrigin };
@@ -1770,6 +1790,9 @@ exports.handler = async (event, context) => {
 
         // complete table if inherited
         entry_params = await overrideTable(entry_params.Item);
+
+        // replace constants
+        entry_params = replaceJSONParams(entry_params, entry_params.define)
 
         // retrieve codice_azienda and codice_part from company if needed
 
