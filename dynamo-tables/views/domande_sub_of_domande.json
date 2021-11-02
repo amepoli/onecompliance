@@ -72,27 +72,29 @@
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "input",
-        "dataType": "number"
+        "comboQuery": "SELECT id_modello_test AS id, codice||'-'||titolo AS name FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "id_modello_test_son",
       "label": "ID Modello Test",
-      "readOnly": true,
+      "readOnly": false,
       "newLine": false
     },
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "input",
-        "dataType": "number"
+        "comboQuery": "SELECT id_modello_test_vr AS id, id_modello_test_vr AS name FROM entrasp.modelli_test_vr WHERE codice_azienda=$codice_azienda$ and id_modello_test=£id_modello_test_son£;",
+        "options": [],
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "id_modello_test_vr_son",
       "label": "Versione Modello",
-      "readOnly": true,
+      "readOnly": false,
       "newLine": true
     },
     {
@@ -100,7 +102,7 @@
       "format": {
         "dataType": "text",
         "viewType": "combobox",
-        "comboQuery": "SELECT id_domanda as id, id_domanda||'-'||substring (descrizione,1,100)as descrizione FROM entrasp.domande WHERE codice_azienda=$codice_azienda$",
+        "comboQuery": "SELECT id_domanda as id, id_domanda||'-'||substring (descrizione,1,130) as name FROM entrasp.domande WHERE codice_azienda=$codice_azienda$ and id_modello_test=£id_modello_test_son£ and id_modello_test_vr=£id_modello_test_vr_son£",
         "options": []
       },
       "isHidden": false,
@@ -198,6 +200,12 @@
       "width": "76%",
       "sameOrigin": false,
       "queryFunct": "substring(entrasp.domande_descrizione(codice_azienda, id_modello_test_son, id_modello_test_vr_son, id_domanda_son), 1, 130)"
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "add",
+      "viewType": "table"
     }
   ]
 }
