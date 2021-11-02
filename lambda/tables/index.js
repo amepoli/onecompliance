@@ -156,7 +156,7 @@ function replaceJSONParams(JSONString, paramsObject) {
     for (const param in paramsObject) {
         if (Object.hasOwnProperty.call(paramsObject, param)) {
             const value = paramsObject[param];
-            const toReplace = new RegExp("\$P\{" + param + "\}", "g");
+            const toReplace = new RegExp("\\\$P\\\{" + param + "\\\}", "g");
             JSONString = JSONString.replace(toReplace, value);
         }
     }
