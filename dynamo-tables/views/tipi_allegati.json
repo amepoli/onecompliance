@@ -3,20 +3,26 @@
 	"origin": "entrasp.argomenti",
 	"entryKey": "tipi_allegati",
 	"businessObjectName": "argomenti",
+	"define": {
+		"id_argomento_father": "3576",
+		"label_id": "ID Allegato",
+		"campo_id_argomento": "id_argomento_tipo_allegato",
+		"label_unifica": "Unifica id_allegato"
+	  },
 	"predefinedQueries": [
 		{
 			"type": "main",
 			"operation": "selectTable",
-			"queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
+			"queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
 		},
 		{
 			"operation": "insert",
-			"queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, 3576) as id_argomento;",
+			"queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, $P{id_argomento_father}) as id_argomento;",
 			"type": "main"
 		},
 		{
 			"operation": "delete",
-			"queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=3576 and id_argomento_son=$id_argomento$;",
+			"queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=$P{id_argomento_father} and id_argomento_son=$id_argomento$;",
 			"type": "preProcessing"
 		},
 		{
@@ -108,7 +114,7 @@
 			"format": {
 				"viewType": "combobox",
 				"options": [],
-				"comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
+				"comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
 			},
 			"isHidden": false,
 			"isPrimary": false,
@@ -128,7 +134,7 @@
 			"isPrimary": false,
 			"key": "argomento_unifica_k",
 			"buttonIcon": "merge_type",
-			"label": "Unifica tipo allegato",
+			"label": "$P{label_unifica}",
 			"newLine": false,
 			"outputEvent": {
 				"eventName": "argomento_unifica",
@@ -161,7 +167,7 @@
 			"queryCond": "arg.codice_azienda=$codice_azienda_s$"
 		},
 		{
-			"label": "ID Allegato",
+			"label": "$P{label_id}",
 			"format": {
 				"dataType": "number",
 				"viewType": "input"
@@ -219,7 +225,7 @@
 			"keys": [
 				{
 					"parent": "id_argomento",
-					"son": "id_argomento_tipo_allegato"
+					"son": "$P{campo_id_argomento}"
 				}
 			],
 			"label": "Documenti associati"
@@ -233,7 +239,7 @@
 				},
 				{
 					"parent": "id_argomento",
-					"son": "id_argomento_tipo_allegato"
+					"son": "$P{campo_id_argomento}"
 				}
 			],
 			"label": "Domande"
