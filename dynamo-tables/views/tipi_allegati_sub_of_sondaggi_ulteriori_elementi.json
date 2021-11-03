@@ -1,44 +1,166 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "tipi_allegati_sub_of_sondaggi_ulteriori_elementi",
-    "origin": "entrasp.argomenti",
+    "origin": "entrasp.cdms_risorse",
+    "inheritsFrom": "documents",
     "predefinedQueries": [
       {
-        "queryString": "select distinct dmd.id_argomento_tipo_allegato, entrasp.argomenti_descr_breve(id_argomento_tipo_allegato) as tipo_allegato, snd.data_riferimento_da,snd.data_riferimento_a from entrasp.domande dmd inner join entrasp.modelli_test_vr mtv on dmd.codice_azienda=mtv.codice_azienda and dmd.id_modello_test_vr=mtv.id_modello_test_vr inner join entrasp.modelli_test mt on dmd.codice_azienda=mt.codice_azienda and dmd.id_modello_test = mt.id_modello_test inner join entrasp.sondaggi snd on dmd.codice_azienda=snd.codice_azienda and dmd.id_modello_test = snd.id_modello_test and dmd.id_modello_test_vr=snd.id_modello_test_vr WHERE dmd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and id_argomento_tipo_allegato is not null",
-        "type": "main",
-        "operation": "selectTable"
+        "operation": "selectTable",
+        "queryString": "select crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND cdr.id_sondaggio=$id_sondaggio$",
+        "type": "main"
       }
     ],
-    "table_keys": [
+    "form_keys": [
       {
+        "autoGenerate": false,
         "format": {
-          "dataType": "number"
+          "dataType": "text",
+          "viewType": "input"
         },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "id_argomento_tipo_allegato",
-        "label": "ID Tipo Allegato",
-        "width": "8%"
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "codice_azienda",
+        "label": "codice_azienda",
+        "newLine": false,
+        "readOnly": true
       },
       {
+        "autoGenerate": false,
         "format": {
-          "dataType": "number"
+          "dataType": "number",
+          "viewType": "input"
         },
         "isHidden": true,
         "isPrimary": false,
         "key": "id_sondaggio",
-        "label": "id_sondaggio"
+        "label": "id_sondaggio",
+        "newLine": false,
+        "readOnly": true,
+        "sameOrigin": false
       },
       {
+        "autoGenerate": true,
         "format": {
-          "dataType": "text"
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "isHidden": true,
+        "isPrimary": true,
+        "key": "id_risorsa",
+        "label": "ID Documento",
+        "newLine": false,
+        "readOnly": true,
+        "size": 1.5
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+          "options": [],
+          "viewType": "combobox"
         },
         "isHidden": false,
         "isPrimary": false,
-        "key": "tipo_allegato",
-        "label": "Allegato",
-        "width": "30%"
+        "key": "id_argomento_tipo_allegato",
+        "label": "Tipo Allegato",
+        "newLine": false,
+        "size": 4.5,
+        "readOnly": false
       },
+      {
+        "format": {
+          "dataType": "date",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "readOnly": false,
+        "isPrimary": false,
+        "newLine": false,
+        "key": "data_rif",
+        "size": 2,
+        "label": "Data Riferimento"
+      },
+      {
+        "format": {
+          "viewType": "input",
+          "dataType": "date"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "data_scadenza",
+        "label": "Data Scadenza",
+        "readOnly": false,
+        "newLine": true,
+        "size": 2
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "descrizione_breve",
+        "label": "Descrizione",
+        "newLine": false,
+        "size": 6,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+          "options": [],
+          "viewType": "combobox",
+          "validations": [
+            {
+              "message": "Indicare il centro gestionale!",
+              "name": "required",
+              "validator": "Validators.required"
+            }
+          ]
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "id_centro_gest",
+        "label": "Centro Gestionale",
+        "newLine": true,
+        "size": 4,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "options": [],
+          "viewType": "combobox",
+          "comboQuery": "select id_riunione as id, id_riunione||'-'||oggetto as name from entrasp.riunioni where codice_azienda = $codice_azienda$"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "id_riunione",
+        "label": "Riunione",
+        "newLine": false,
+        "readOnly": false
+      },
+      {
+        "autoGenerate": false,
+        "format": {
+          "dataType": "number",
+          "options": [],
+          "viewType": "combobox",
+          "comboQuery": "select id_odg as id, id_odg||'-'||titolo as name from entrasp.odg_riunioni where codice_azienda = $codice_azienda$ and id_riunione=£id_riunione£"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "id_odg",
+        "label": "Ordine del giorno",
+        "newLine": true,
+        "readOnly": false
+      }
+    ],
+    "table_keys": [
       {
         "format": {
           "dataType": "text"
@@ -50,21 +172,180 @@
       },
       {
         "format": {
-          "dataType": "number"
+          "dataType": "text"
         },
         "isHidden": true,
-        "isPrimary": true,
-        "key": "id_modello_test",
-        "label": "id_modello_test"
+        "isPrimary": false,
+        "key": "id_sondaggio",
+        "label": "id_sondaggio"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "codice_part",
+        "label": "codice_part"
       },
       {
         "format": {
           "dataType": "number"
         },
-        "isHidden": true,
+        "isHidden": false,
         "isPrimary": true,
-        "key": "id_modello_test_vr",
-        "label": "id_modello_test_vr"
+        "width": "5%",
+        "key": "id_risorsa",
+        "label": "ID Allegato"
+      },
+      {
+        "format": {
+          "dataType": "date"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "data_rif",
+        "width": "7%",
+        "label": "Data Riferimento"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "tipo_allegato",
+        "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_allegato)",
+        "width": "13%",
+        "label": "Tipo allegato"
+      },
+      {
+        "format": {
+          "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "centro_gest",
+        "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
+        "width": "15%",
+        "label": "Centro gestionale"
+      },
+      {
+        "format": {
+          "dataType": "date"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "data_scadenza",
+        "width": "15%",
+        "label": "Data Scadenza"
       }
-    ]
+    ],
+    "search_keys": [
+      {
+        "fieldName": "id_risorsa_s",
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "label": "ID Allegato",
+        "newLine": false,
+        "queryCond": "id_risorsa=$id_risorsa_s$"
+      },
+      {
+        "fieldName": "id_argomento_tipo_allegato_s",
+        "format": {
+          "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+          "options": [],
+          "viewType": "combobox"
+        },
+        "label": "Tipo Allegato",
+        "newLine": true,
+        "queryCond": "id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
+      },
+      {
+        "fieldName": "id_anagrafica_s",
+        "format": {
+          "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+          "options": [],
+          "viewType": "combobox"
+        },
+        "label": "Cliente/Fornitore/Dipendente",
+        "newLine": false,
+        "queryCond": "id_anagrafica=$id_anagrafica_s$"
+      },
+      {
+        "fieldName": "id_anagrafica_s",
+        "format": {
+          "dataType": "number",
+          "viewType": "input"
+        },
+        "label": "ID Anagrafica",
+        "newLine": false,
+        "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
+      },
+      {
+        "fieldName": "autore_s",
+        "format": {
+          "comboQuery": "select distinct autore as id, autore as name from entrasp.cdms_risorse where codice_azienda=$codice_azienda$;",
+          "options": [],
+          "viewType": "combobox",
+          "dataType": "text"
+        },
+        "label": "Utente",
+        "newLine": true,
+        "queryCond": "autore=$autore_s$"
+      },
+      {
+        "fieldName": "data_da_s",
+        "format": {
+          "dataType": "date",
+          "viewType": "input"
+        },
+        "label": "Data da",
+        "newLine": false,
+        "queryCond": "data_creazione>=$data_da_s$"
+      },
+      {
+        "fieldName": "data_a_s",
+        "format": {
+          "dataType": "date",
+          "viewType": "input"
+        },
+        "label": "Data a",
+        "newLine": false,
+        "queryCond": "data_creazione<=$data_a_s$"
+      },
+      {
+        "fieldName": "parola_search_s",
+        "format": {
+          "dataType": "text",
+          "viewType": "input"
+        },
+        "label": "Parola chiave",
+        "newLine": false,
+        "queryCond": "(upper(client_file_name) like '%'||upper('€parola_search_s€')||'%')"
+      }
+    ],
+    "hideActions": [
+      {
+        "formActionType": "add",
+        "viewType": "form"
+      },
+      {
+        "formActionType": "delete",
+        "viewType": "form"
+      },
+      {
+        "formActionType": "share",
+        "viewType": "form"
+      },
+      {
+        "tableActionType": "quick-add",
+        "viewType": "table"
+      }
+    ],
+    "querySuffixes": {
+      "tableViewSuffix": "limit 100"
+    }
   }
