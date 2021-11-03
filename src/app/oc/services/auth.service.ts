@@ -60,7 +60,7 @@ export class AuthService {
 
     this.authStateChange$ = this.amplifyService.authStateChange$;
 
-    // this.initGoogleOAuth();
+    this.initGoogleOAuth();
   }
 
   public setUsername(username: string): void {
@@ -387,105 +387,182 @@ export class AuthService {
     this.socialAuthService.refreshAuthToken(GoogleLoginProvider.PROVIDER_ID);
   }
 
-  initGoogleOAuth(): Promise<any> {
-      return new Promise((resolve, reject) => {
-          gapi.load('auth2', async () => {
-              const gAuth = await gapi.auth2.init({
-                  client_id: appData.GAPI_CLIENT_ID,
-                  fetch_basic_profile: true,
-                  offline_access: true,
-                  scope: 'profile email https://mail.google.com/'
-              });
-              resolve(gAuth);
-          }, reject);
+  saveGoogleAuth(googleAuth) {
+    sessionStorage.setItem('googleAuth', JSON.stringify(googleAuth));            
+  }
+
+  loadGoogleAuth() {
+    const timeNow = (new Date()).getTime()/1000;
+    // sessionStorage.removeItem('googleAuth');
+    let sessionAuthResponse = sessionStorage.getItem('googleAuth');
+    if(sessionAuthResponse) {
+      // console.log(sessionAuthResponse);
+      sessionAuthResponse = JSON.parse(sessionAuthResponse);
+
+      if(sessionAuthResponse['expires_at'] > timeNow)
+      {        
+        // Not expired, return the auth token
+        return sessionAuthResponse;
+      }
+      else {
+        // Session expired, removed the auth token
+        sessionStorage.removeItem('googleAuth');
+      }
+    }
+
+    return null;
+  }
+  
+  gAuth: any = null;
+
+  initGoogleOAuth(hidden = false): Promise<any> {
+    let _this = this;
+    return new Promise((resolve, reject) => {
+      gapi.load('auth2', async () => {
+          const gAuth = await gapi.auth2.init({
+              client_id: appData.GAPI_CLIENT_ID,
+              fetch_basic_profile: true,
+              offline_access: true,
+              prompt: 'none',
+              scope: 'profile email https://mail.google.com/'
+          });
+          _this.gAuth = gAuth;
+          resolve(gAuth);
+      }, reject);
+    });
+  }
+
+  async loginGoogle(): Promise<any> {
+    let _this = this;
+    
+    let sessionGoogleAuth = _this.loadGoogleAuth();
+    if(sessionGoogleAuth)
+    {
+      // await _this.initGoogleOAuth(true);
+      // const oAuthUser = _this.gAuth.signIn();
+                  
+      _this.loadEmailThreads(null);
+      // _this.loadMessages(['INBOX'], 0, 'fanatical');
+      console.log('already logged in!');
+      return null;
+    }
+    else {
+      const gAuth = await _this.initGoogleOAuth();                
+      const oAuthUser = await gAuth.signIn();
+      console.log(oAuthUser);
+      
+      // var auth_code = await gAuth.grantOfflineAccess();
+      // console.log(auth_code);
+
+      // const options = new gapi.auth2.SigninOptionsBuilder();
+      // options.setScope('profile email https://mail.google.com/');
+
+      // let googleUser = gAuth.currentUser.get();
+      // const optionsResult = await googleUser.grant(options);
+      // console.log(optionsResult);
+                      
+      const authResponse = gAuth.currentUser.get().getAuthResponse();
+      console.log(authResponse);
+      _this.saveGoogleAuth(authResponse);
+      
+      _this.loadEmailThreads(null);
+      // _this.loadLabels();
+      // _this.loadMessages(['INBOX'], 0, 'fanatical');
+
+      // return new Promise(async (resolve, reject) => {
+      //   try {
+      //       const gAuth = await _this.initGoogleOAuth();                
+      //       const oAuthUser = await gAuth.signIn();
+      //       console.log(oAuthUser);
+            
+      //       // var auth_code = await gAuth.grantOfflineAccess();
+      //       // console.log(auth_code);
+
+      //       // const options = new gapi.auth2.SigninOptionsBuilder();
+      //       // options.setScope('profile email https://mail.google.com/');
+
+      //       // let googleUser = gAuth.currentUser.get();
+      //       // const optionsResult = await googleUser.grant(options);
+      //       // console.log(optionsResult);
+                            
+      //       const authResponse = gAuth.currentUser.get().getAuthResponse();
+      //       console.log(authResponse);
+      //       _this.saveGoogleAuth(authResponse);
+            
+      //       // _this.loadLabels();
+      //       _this.loadMessages(['INBOX'], 0, 'fanatical');
+
+      //       resolve(authResponse);
+      //   } catch (e) {
+      //       reject(e);
+      //   }
+      // });
+    }
+  }
+
+
+  private pageTokens: Array<string | number | null> = [null];
+
+  loadEmailThreads(search: string = null) {
+    this.backendService.getEmailThreads(search, this.loadGoogleAuth()).subscribe(
+      result => {
+        console.log(result);
+      },
+      error => {
+        console.error(error);
+      }
+    )
+  }
+
+  loadMessages(labelIds: string[], pageNumber: number = 0, searchText: string = ''): Promise<any> {
+    return new Promise((resolve, reject) => {
+           gapi.client.gmail.users.messages.list({
+              userId: 'me',
+              format: 'full',
+              maxResults: 50,
+              labelIds: labelIds,
+              pageToken: this.pageTokens[pageNumber],
+              q: searchText
+          }).then(res => {
+              // store page tokens in array to navigate back & forth, 
+              // do something with the list
+              console.log(JSON.stringify(res));
+              resolve(res);
+          }).catch(err => {
+            // handle error
+              reject(err);
+          });
       });
   }
 
-    fetchGoogleUser(): Promise<any> {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const gAuth = await this.initGoogleOAuth();
-
-                
-                const oAuthUser = await gAuth.signIn();
-                console.log(oAuthUser);
-                
-                // var auth_code = await gAuth.grantOfflineAccess();
-                // console.log(auth_code);
-
-                // const options = new gapi.auth2.SigninOptionsBuilder();
-                // options.setScope('profile email https://mail.google.com/');
-
-                // let googleUser = gAuth.currentUser.get();
-                // const optionsResult = await googleUser.grant(options);
-                // console.log(optionsResult);
-                                
-                const authResponse = gAuth.currentUser.get().getAuthResponse();
-                console.log(authResponse);
-                
-                sessionStorage.setItem('googleAccessToken', authResponse.access_token);
-                
-                
-                // this.loadLabels();
-                resolve(authResponse);
-            } catch (e) {
-                reject(e);
-            }
-        });
-    }
-
-
-    private pageTokens: Array<string | number | null> = [null];
-
-    loadMessages(labelIds: string[], pageNumber: number = 0, searchText: string = ''): Promise<any> {
-      return new Promise((resolve, reject) => {
-            gapi.client.gmail.users.messages.list({
-                userId: 'me',
-                format: 'full',
-                maxResults: 50,
-                labelIds: labelIds,
-                pageToken: this.pageTokens[pageNumber],
-                q: searchText
-            }).then(res => {
-                // store page tokens in array to navigate back & forth, 
-                // do something with the list
-                resolve(res);
-            }).catch(err => {
-              // handle error
-                reject(err);
-            });
-        });
-    }
-
-    loadLabels() {
-      const accessToken = sessionStorage.getItem('googleAccessToken');
-      gapi.load('client', () => {
-        gapi.client.setToken({ access_token: accessToken});
-        gapi.client.init({
-            // apiKey: '<FIREBASE_API_KEY_HERE>',
-            clientId: appData.GAPI_CLIENT_ID,
-            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'],
-            scope: 'https://mail.google.com/'
-        });
-
-        gapi.client.load('gmail', 'v1', () => {
-          return new Promise((resolve, reject) => {
-            gapi.client.gmail.users.labels.list({
-                userId: 'me',
-                format: 'full',
-                maxResults: 15
-            }).then(async labelList => {
-                // loop through label list, 
-                // get single label (using Gmail API method 'gapi.client.gmail.users.labels.get') 
-                // push detailed label data to array
-                console.log(labelList);
-                resolve(labelList);
-            }).catch(err => {
-                reject(err);
-            });
-        });
+  loadLabels() {
+    const accessToken = sessionStorage.getItem('googleAccessToken');
+    gapi.load('client', () => {
+      gapi.client.setToken({ access_token: accessToken});
+      gapi.client.init({
+          // apiKey: '<FIREBASE_API_KEY_HERE>',
+          clientId: appData.GAPI_CLIENT_ID,
+          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'],
+          scope: 'https://mail.google.com/'
       });
-      
+
+      gapi.client.load('gmail', 'v1', () => {
+        return new Promise((resolve, reject) => {
+          gapi.client.gmail.users.labels.list({
+              userId: 'me',
+              format: 'full',
+              maxResults: 15
+          }).then(async labelList => {
+              // loop through label list, 
+              // get single label (using Gmail API method 'gapi.client.gmail.users.labels.get') 
+              // push detailed label data to array
+              console.log(labelList);
+              resolve(labelList);
+          }).catch(err => {
+              reject(err);
+          });
+        });
+      });      
     });                
   }
 

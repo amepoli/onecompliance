@@ -311,5 +311,18 @@ export class BackendService {
     this.myGetInit.queryStringParameters = { request_type: 'GetDistance', origin: origin, destination: destination };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
   }
+
+  getEmailThreads(search: string, authToken: any) {
+    this.amplifyService.auth();
+    console.log(search, authToken);
+    
+    this.myPutPostInit.queryStringParameters = { request_type: 'GetEmailThreads', search: search };
+    this.myPutPostInit.body = authToken;
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
+  
+    // this.myGetInit.queryStringParameters = { request_type: 'GetEmailThreads' };
+    // return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
+  
+  }
   
 }

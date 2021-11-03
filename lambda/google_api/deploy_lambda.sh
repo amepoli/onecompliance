@@ -27,6 +27,8 @@ BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.import.s3.bucket"`
 REGION="eu-central-1"
 
 GOOGLE_API_KEY="AIzaSyBoKjc4V546sCOf41JI7Rhe-h0nR4TJh9E"
+CLIENT_ID="380240687769-t5gsbc7upsc82fdsihll6svpk16sujkg.apps.googleusercontent.com"
+CLIENT_SECRET="F56L14ZUTbykHAdTTSiAPBUb"
 
 #replace Variables
 cp index.js index.js.ori
@@ -43,6 +45,8 @@ sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js
 sed -i -e "s/REGION/${REGION}/g" index.js
 sed -i -e "s/SCHEMA/${SCHEMA}/g" index.js
 sed -i -e "s/GOOGLE_API_KEY/${GOOGLE_API_KEY}/g" index.js
+sed -i -e "s/CLIENT_ID/${CLIENT_ID}/g" index.js
+sed -i -e "s/CLIENT_SECRET/${CLIENT_SECRET}/g" index.js
 
 sed -i -e "s/CSV_DELIMITER/${CSVDELIMITER}/g" index.js
 
@@ -61,10 +65,10 @@ npm install
 
 zip -r nodejs.zip node_modules index.js package.json helperFuncts.js
 
+aws lambda update-function-code --function-name $LAMBDANAME --zip-file fileb://./nodejs.zip
+
 #restore the original file
 
 mv index.js.ori index.js
-
-aws lambda update-function-code --function-name $LAMBDANAME --zip-file fileb://./nodejs.zip
 
 rm helperFuncts.js helperFuncts.js-e
