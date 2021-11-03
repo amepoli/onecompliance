@@ -43,8 +43,8 @@ npm install
 
 zip -r nodejs.zip index.js package.json node_modules
 
-aws lambda update-function-code --function-name $LAMBDANAME --zip-file fileb://./nodejs.zip
-
 #restore the original file
 
 mv index.js.ori index.js
+
+aws lambda update-function-code --function-name $LAMBDANAME --zip-file fileb://./nodejs.zip
