@@ -175,7 +175,14 @@
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "update entrasp.compiti set foreseen_date='£data_intervento£'::date+ interval '7 days' where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$"
+          "queryFunct": "update entrasp.consuntivazioni set data_intervento=CURRENT_DATE where id_cons=$id_cons$ and codice_azienda=$codice_azienda$ and data_intervento is null"
+        },
+        {
+          "eventName": "cambia_data_intervento",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "update entrasp.compiti set foreseen_date='£data_intervento£'::date + interval '7 days' where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$"
         }
       ]
     },
