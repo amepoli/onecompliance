@@ -86,6 +86,12 @@
             "queryString": "select entrasp.grc_accoda_attivita_e_relativi_modelli('$codice_azienda$', '$chosen_azienda$', '$codice_attivita$');"
         },
         {
+            "type": "preCheck",
+            "operation": "share",
+            "queryString": "select distinct mt.codice_azienda, mt.id_modello_test from entrasp.attivita att inner join entrasp.modelli_test mt on att.codice_azienda=mt.codice_azienda and att.id_modello_test=mt.id_modello_test where att.codice_azienda=$codice_azienda$ and entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita)=$codice_attivita$ and mt.id_argomento is null;",
+            "messageNotNull": "Attenzione esistono modelli di test associati a questo modello di progetto senza argomento!"
+        },
+        {
             "operation": "delete",
             "type": "preCheck",
             "queryString": "select codice_attivita from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_attivita=$codice_attivita$",
