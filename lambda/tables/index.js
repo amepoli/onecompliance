@@ -496,6 +496,17 @@ function getCustomQuery(entry_params, customQueryButtonKey) {
     return null;
 }
 
+function getHomepageQuery(entry_params) {
+    let queryString = {};
+    let homepage = entry_params.Item;    
+    if (homepage != null && homepage.tabs != null && homepage.tabs.length > 0) {
+        queryString['tabBadgeQueries'] = homepage.tabs.map( tab => {
+            return {entry: tab.entry, query: replaceGlobalkeys(tab.badgeQuery)}
+        });
+    }
+    return queryString;
+}
+
 function getLazyComboQuery(entry_keys, table_keys, keyTypes, lazy_key) {
 
     let comboQueries = [];
@@ -1315,6 +1326,41 @@ async function processCustomQuery(queryString, keys, client) {
     }
 }
 
+async function processHomepageQuery(entry_params, queryString, client) {
+    return {
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "statusCode": 200,
+        "body": JSON.stringify({ result: 'OK', response: entry_params.Item, queryString: queryString })
+    };
+
+    if (queryString != null) {
+        queryString = replaceGlobalkeys(queryString);
+        queryString = replaceLocalKeys(queryString, keys);
+        try {
+            let result = await client.query(queryString);
+            if (result.rows != null && result.rows.length > 0) {
+                result = result.rows[0];
+            }
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 200,
+                "body": JSON.stringify({ result: 'OK', response: result, queryString: queryString })
+            };
+        }
+        catch (e) {
+            console.log('Custom Query Error: ', e);
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 200,
+                "body": JSON.stringify({ result: 'KO', error: e, queryString: queryString })
+            };
+        }
+    }
+}
+
 async function processFormActionQuery(formActionType, queryString, keys, client) {
     if (queryString != null) {
         console.log('queryString: ', queryString);
@@ -1697,13 +1743,6 @@ exports.handler = async (event, context) => {
 
     console.log('queryParams: ', queryParams);
 
-    const DynamoParams = {
-        TableName: 'VIEWS_NAME',
-        Key: {
-            entryKey: queryParams['entry_name']
-        }
-    };
-
     var search_keys = queryParams['search_keys'];
     if (search_keys) {
         search_keys = JSON.parse(search_keys); // production scenario only
@@ -1717,6 +1756,8 @@ exports.handler = async (event, context) => {
 
     var isEventUpdate = (queryParams['event'] != null);
 
+    var isHomepage =  (queryParams['homepage'] === '1');
+    
     var dashboardIndex = queryParams['dashboard_index'];
 
     var isExcel = (queryParams['excel'] === '1');
@@ -1737,7 +1778,7 @@ exports.handler = async (event, context) => {
 
     const profileData = await getProfileData(profile);
 
-    var authorized = isAuthorized(queryParams.entry_name, profileData);
+    var authorized = isHomepage? true: (isAuthorized(queryParams.entry_name, profileData));
 
     if (!authorized) {
         console.log(method, ' request for ', queryParams.entry_name, ' not authorized!');
@@ -1785,28 +1826,42 @@ exports.handler = async (event, context) => {
 
         var client = await pool.connect();
 
+        const DynamoParams = {
+            TableName: isHomepage? 'HOMEPAGES_NAME': 'VIEWS_NAME',
+            Key: {
+                entryKey: queryParams['entry_name']
+            }
+        };
+    
+        console.log('DynamoParams: ', DynamoParams);
+        
         // read the entry params from DynamoDB view table
         let entry_params = await dynamo.get(DynamoParams).promise();
 
-        // complete table if inherited
-        entry_params = await overrideTable(entry_params.Item);
+        if(!isHomepage) {
+            // complete table if inherited
+            entry_params = await overrideTable(entry_params.Item);
 
-        // replace constants
-        entry_params = replaceJSONParams(entry_params, entry_params.define)
+            // replace constants
+            entry_params = replaceJSONParams(entry_params, entry_params.define)
 
-        // retrieve codice_azienda and codice_part from company if needed
+            // retrieve codice_azienda and codice_part from company if needed
 
-        await addCodiceAzienda(table_keys, company, entry_params, client, isFormRecord || isNewRecord || isEventUpdate);
+            await addCodiceAzienda(table_keys, company, entry_params, client, isFormRecord || isNewRecord || isEventUpdate);
 
+            // retrieve additional query conditions from profile (if any)
+
+            additionalQueryCond = getAdditionalQueryCond(queryParams.entry_name, profileData);        
+        }
+        
         global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
-
-        // retrieve additional query conditions from profile (if any)
-
-        additionalQueryCond = getAdditionalQueryCond(queryParams.entry_name, profileData);
-
+        console.log('global_variables: ', global_variables);
+        
         if (method === 'GET') {
             if (dashboardIndex != null) {
                 queryString = getDashboardQuery(entry_params, table_keys, dashboardIndex);
+            } else if (isHomepage) {
+                queryString = getHomepageQuery(entry_params);
             } else if (isFormAction) {
                 queryString = getFormActionQuery(formActionType, table_keys, entry_params);
             } else if (isSearchRequest) {
@@ -1849,6 +1904,11 @@ exports.handler = async (event, context) => {
         if (dashboardIndex != null) {
             // process dashboard queries
             queryData = await processDashboard(queryString, client);
+        } else if (isHomepage) {
+            let response = await processHomepageQuery(entry_params, queryString, client);
+            console.log(response);
+            await client.release();
+            return response;
         } else if (isCustomQuery) {
             let response = await processCustomQuery(queryString, JSON.parse(event.body), client);
             console.log(response);
