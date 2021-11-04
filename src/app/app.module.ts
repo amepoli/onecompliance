@@ -29,6 +29,7 @@ import { ToastrModule } from 'ngx-toastr';
 
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
 import { GoogleLoginProvider } from 'angularx-social-login';
+import { HomepageModule } from './oc/homepage/homepage.module';
 
 const appRoutes: Routes = [];
 
@@ -76,6 +77,7 @@ const appRoutes: Routes = [];
         RegisterModule,
         MailConfirmModule,
         ForgotPasswordModule,
+        HomepageModule,
         MainTableModule,
         AmplifyAngularModule,
         MainDashboardsModule,
