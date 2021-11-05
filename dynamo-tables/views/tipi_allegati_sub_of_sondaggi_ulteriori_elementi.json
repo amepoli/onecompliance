@@ -6,7 +6,7 @@
     "predefinedQueries": [
       {
         "operation": "selectTable",
-        "queryString": "select crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND cdr.id_sondaggio=$id_sondaggio$",
+        "queryString": "select crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND cdr.id_sondaggio=$id_sondaggio$",
         "type": "main"
       }
     ],
@@ -216,8 +216,17 @@
         "isPrimary": false,
         "key": "tipo_allegato",
         "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_allegato)",
-        "width": "13%",
+        "width": "25%",
         "label": "Tipo allegato"
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "id_argomento_tipo_allegato",
+        "label": "id_argomento_tipo_allegato"
       },
       {
         "format": {
@@ -239,6 +248,23 @@
         "key": "data_scadenza",
         "width": "15%",
         "label": "Data Scadenza"
+      }
+    ],
+    "subTables": [
+      {
+        "entryKey": "attachments_sub_of_sondaggi_ulteriori_elementi",
+        "keys": [
+          {
+            "parent": "codice_azienda",
+            "son": "codice_azienda"
+          },
+          {
+            "parent": "id_argomento_tipo_allegato",
+            "son": "id_argomento_tipo_allegato"
+          }
+        ],
+        "isHidden": false,
+        "label": "Documenti Associabili"
       }
     ],
     "search_keys": [
