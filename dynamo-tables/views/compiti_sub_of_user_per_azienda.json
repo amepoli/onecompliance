@@ -18,7 +18,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select *, cg.codice_azienda_erogante, entrasp.is_compito_worked_by_dynamo_user(codice_azienda, codice_compito, $dynamo_user$) as dynamo_user, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => codice_azienda, codicecompito=>codice_compito, dynamouser=>$dynamo_user$) as giorni_compito from entrasp.compiti cmp inner join entrasp.centri_gestionali cg on cmp.codice_part=cg.codice_part and cmp.id_centro_gest=cg.id_centro_gest where cg.codice_azienda_erogante=$codice_azienda_erogante$ and entrasp.is_compito_worked_by_dynamo_user(codice_azienda, codice_compito, $dynamo_user$)=$dynamo_user$"
+      "queryString": "select *, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as descr_stato, entrasp.centri_gestionali_descr(cg.codice_part, cg.id_centro_gest) as descr_centro_gest, cg.codice_azienda_erogante, entrasp.is_compito_worked_by_dynamo_user(codice_azienda, codice_compito, $dynamo_user$) as dynamo_user, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => codice_azienda, codicecompito=>codice_compito, dynamouser=>$dynamo_user$) as giorni_compito from entrasp.compiti cmp inner join entrasp.centri_gestionali cg on cmp.codice_part=cg.codice_part and cmp.id_centro_gest=cg.id_centro_gest where cg.codice_azienda_erogante=$codice_azienda_erogante$ and entrasp.is_compito_worked_by_dynamo_user(codice_azienda, codice_compito, $dynamo_user$)=$dynamo_user$ and codice_azienda in(€global_user_companies€)"
     }
   ],
   "table_keys": [
@@ -54,11 +54,31 @@
         "dataType": "text"
       },
       "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "width": "7%",
+      "label": "Codice"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "width": "30%",
+      "label": "Compito"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
       "isPrimary": false,
       "key": "tipo_segnalazione",
       "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
-      "label": "Tipo",
-      "width": "10%"
+      "label": "Tipo Compito",
+      "width": "15%"
     },
     {
       "format": {
@@ -66,9 +86,9 @@
       },
       "isHidden": false,
       "isPrimary": true,
-      "key": "codice_compito",
-      "width": "5%",
-      "label": "Codice Compito"
+      "width": "12%",
+      "key": "codice_azienda",
+      "label": "Cliente"
     },
     {
       "format": {
@@ -79,18 +99,7 @@
       "key": "descr_centro_gest",
       "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
       "label": "Centro Gest",
-      "width": "8%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_centro_gest_monitor",
-      "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor)",
-      "label": "Centro Gest",
-      "width": "8%"
+      "width": "15%"
     },
     {
       "format": {
@@ -125,15 +134,6 @@
         "dataType": "text"
       },
       "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
       "isPrimary": false,
       "key": "user_companies",
       "label": "user_companies"
@@ -154,28 +154,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "data_segnalazione",
-      "width": "6%",
-      "label": "Data"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_chiusura",
-      "width": "6%",
-      "label": "Chiusura"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-      "width": "30%",
-      "label": "Titolo"
+      "width": "8%",
+      "label": "Data inizio"
     },
     {
       "format": {
@@ -184,6 +164,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "giorni_compito",
+      "width": "10%",
       "label": "Giorni Impiegati"
     },
     {
@@ -273,5 +254,8 @@
         "onSuccessAction": "reload"
       }
     }
-  ]
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by giorni_compito desc"
+  }
 }
