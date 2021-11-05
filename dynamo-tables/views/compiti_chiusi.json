@@ -18,5 +18,97 @@
       "type": "main",
       "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
     }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "stato",
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "stato='€stato€'"
+    },
+    {
+      "fieldName": "note_search",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Note",
+      "newLine": false,
+      "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
+    },
+    {
+      "fieldName": "codice_compito",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Codice Compito",
+      "newLine": false,
+      "queryCond": "codice_compito=$codice_compito$"
+    },
+    {
+      "fieldName": "titolo",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Titolo",
+      "newLine": true,
+      "queryCond": "titolo=$titolo$"
+    },
+    {
+      "fieldName": "id_tipo_segnalazione_s",
+      "format": {
+        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni where id_tipo_segnalazione!=0 order by descrizione;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "ID Tipo Segnal.",
+      "newLine": false,
+      "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$"
+    },
+    {
+      "fieldName": "id_centro_gest",
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Centro Gestionale",
+      "newLine": false,
+      "queryCond": "id_centro_gest=$id_centro_gest$"
+    },
+    {
+      "fieldName": "flag_compiti_aperti",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Solo Principali",
+      "newLine": false,
+      "queryCond": "codice_compito_parent IS null"
+    }
+  ],
+  "hideActions": [
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "quick-add",
+      "viewType": "table"
+    },
+    {
+      "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "quick-add",
+      "viewType": "form"
+    }
   ]
 }

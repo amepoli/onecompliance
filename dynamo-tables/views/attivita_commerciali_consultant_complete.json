@@ -28,6 +28,30 @@
     {
       "autoGenerate": false,
       "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "label": "id_cons",
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_cons",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false,
+      "inputEvents": [
+        {
+          "eventName": "inserisci_aggiornamento",
+          "actionType": "query",
+          "queryFunct": "select id_cons from entrasp.consuntivazione_blank_insert((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$)",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "navigate_to_new_cons"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
         "options": [],
         "viewType": "combobox",
@@ -396,16 +420,6 @@
         "eventName": "inserisci_aggiornamento",
         "eventTrigger": "press"
       },
-      "inputEvents": [
-        {
-          "eventName": "inserisci_aggiornamento",
-          "actionType": "query",
-          "queryFunct": "select codice_compito, codice_azienda from entrasp.consuntivazione_blank_insert((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$)",
-          "condition": "none",
-          "values": [],
-          "outputEventWhenComplete": "attCommercialiReload"
-        }
-      ],
       "readOnly": false,
       "sameOrigin": false,
       "size": 2
@@ -429,6 +443,24 @@
     {
       "eventName": "attCommercialiReload",
       "actionType": "reload"
+    },
+    {
+      "actionType": "navigate",
+      "eventName": "navigate_to_new_cons",
+      "actionTarget": {
+        "name": "consuntivazioni_consultant_sub_of_compiti_consultant",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "id_cons",
+            "destination": "id_cons"
+          },
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          }
+        ]
+      }
     }
   ],
   "table_keys": [
