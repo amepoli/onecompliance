@@ -1,13 +1,19 @@
 {
   "$schema": "../views.schema.json",
-  "entryKey": "argomenti_sub_of_argomenti_son",
+  "entryKey": "documenti_sub_of_tipi_odg",
   "origin": "entrasp.argomenti_argomenti",
   "businessObjectName": "argomenti_argomenti",
+  "define": {
+		"id_argomento_relazione": "4036",
+    "label_titolo_argomento": "Tipo documento",
+    "label_codice_argomento": "Codice documento",
+    "id_argomento_oggetto_collegato": "3576"
+	},
   "predefinedQueries": [
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select *, entrasp.argomenti_descr_breve(id_argomento_son) as titolo, entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father$"
+      "queryString": "select *, entrasp.argomenti_descr_breve(id_argomento_son) as titolo, entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father$ and id_argomento_relazione=$P{id_argomento_relazione}"
     }
   ],
   "form_keys": [
@@ -17,7 +23,7 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "id_argomento_father",
       "label": "id_argomento_father",
@@ -26,71 +32,32 @@
       "size": 1.5
     },
     {
-      "autoGenerate": false,
       "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "select id_argomento as ID , id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_oggetto_collegato} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') order by descrizione;"
+    },
       "isHidden": false,
       "isPrimary": true,
       "key": "id_argomento_son",
-      "label": "ID Argomento Son",
-      "newLine": false,
+      "label": "$P{label_titolo_argomento}",
       "readOnly": false,
-      "size": 1.5
+      "newLine": false
     },
     {
       "autoGenerate": false,
       "format": {
         "dataType": "text",
-        "viewType": "input"
+        "viewType": "input",
+        "value": "$P{id_argomento_relazione}"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
-      "key": "codice",
-      "queryFunct": "select codice from entrasp.argomenti where id_argomento=$id_argomento_son$",
-      "label": "Codice",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione_breve",
-      "label": "Descrizione breve",
-      "queryFunct": "select descrizione_breve from entrasp.argomenti where id_argomento=$id_argomento_son$",
+      "key": "id_argomento_relazione",
+      "label": "id_argomento_relazione",
       "newLine": true,
-      "readOnly": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "dettaglio",
-      "label": "Dettaglio",
-      "newLine": true,
-      "outputEvent": {
-        "eventName": "argomenti_dettaglio",
-        "eventTrigger": "press"
-      },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "size": 1,
-      "sameOrigin": false
-    }
+      "readOnly": false
+    }  
   ],
   "table_keys": [
     {
@@ -118,7 +85,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "codice",
-      "label": "Cod.Arg.Figlio",
+      "label": "$P{label_codice_argomento}",
       "width": "10%"
     },
     {
@@ -126,20 +93,10 @@
         "dataType": "text"
       },
       "isHidden": false,
-  		"width": "30%",
+  		"width": "40%",
       "isPrimary": false,
       "key": "titolo",
-      "label": "Titolo argomento Figlio"     
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-  		"width": "45%",
-      "isPrimary": false,
-      "key": "argomento",
-      "label": "Titolo argomento Figlio"     
+      "label": "$P{label_titolo_argomento}"     
     },
     {
 			"format": {
@@ -149,7 +106,6 @@
 			"isPrimary": false,
 			"width": "5%",
 			"key": "button_argomento",
-      "label": "Tipo modello test",
   	  "isButton": true,
 			"buttonAction": {
 				"target": "classification_mdt",
