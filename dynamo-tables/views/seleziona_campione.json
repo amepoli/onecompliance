@@ -65,7 +65,7 @@
         {
             "operation": "insert",
             "type": "main",
-            "queryString": "select entrasp.campione_insert($codice_azienda$, $id_sondaggio$, $object_key$) as id_somministrazione;"
+            "queryString": "select entrasp.campione_insert($codice_azienda$, $id_sondaggio$, $object_key$, $id_anagrafica$) as id_somministrazione;"
         }
     ],
     "form_keys": [
@@ -164,8 +164,23 @@
             ],
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1.5
+            "size": 1
         },
+        {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "Incaricato risposta",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+          },
         {
             "autoGenerate": false,
             "format": {
@@ -184,7 +199,7 @@
             "label": "Verifica su/di",
             "newLine": false,
             "readOnly": false,
-            "size": 5.5
+            "size": 4
         },
         {
             "autoGenerate": false,
@@ -206,31 +221,8 @@
                 }
               ],
             "newLine": false,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "somministrazione_completata",
-            "label": "Completo sì/no",
-            "newLine": false,
-            "readOnly": true,
-            "inputEvents": [
-                {
-                  "eventName": "onLoadSelezionaCampione",
-                  "condition": "none",
-                  "values": [],
-                  "actionType": "query_style",
-                  "styleAttribute": "background_color",
-                  "queryFunct": "SELECT colore_somministrazione_completa as somministrazione_completata_background_color FROM entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
-                }
-             ],
-             "size": 1.5
+            "readOnly": false,
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -269,7 +261,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1.5
+            "size": 1
         }
     ],
     "table_keys": [
@@ -305,10 +297,21 @@
                 "dataType": "text"
             },
             "isHidden": false,
-            "width": "40%",
+            "width": "30%",
             "isPrimary": false,
             "key": "object_description",
             "label": "Verifica su/di"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "20%",
+            "isPrimary": false,
+            "key": "incaricato_risposta",
+            "queryFunct": "entrasp.anagrafiche_id_codcognnome('€global_codice_part€', id_anagrafica)",
+            "label": "Incaricato a rispondere"
         },
         {
             "format": {
