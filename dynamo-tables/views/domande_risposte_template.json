@@ -1,0 +1,945 @@
+{
+    "entryKey": "domande_risposte",
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.domande",
+    "businessObjectName": "domandeRisposte",
+    "define": {
+		"is_hidden_risultato": "false"
+	  },
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "delete",
+            "viewType": "form"
+        }
+    ],
+    "outputEvents": [
+        {
+            "eventName": "onSaveD_R",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoadD_R",
+            "eventTrigger": "onReload"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionType": "reload",
+            "eventName": "triggerReload"
+        },
+        {
+            "actionTarget": {
+                "name": "risposte",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "id_modello_test_vr",
+                        "destination": "id_modello_test_vr"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "id_somministrazione",
+                        "destination": "id_somministrazione"
+                    },
+                    {
+                        "source": "id_domanda",
+                        "destination": "id_domanda"
+                    },
+                    {
+                        "source": "id_risposta",
+                        "destination": "id_risposta"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_risposta"
+        },
+        {
+            "actionTarget": {
+                "name": "domande_dettaglio",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "id_modello_test_vr",
+                        "destination": "id_modello_test_vr"
+                    },
+                    {
+                        "source": "id_domanda",
+                        "destination": "id_domanda"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "domande_button_dettaglio"
+        },
+        {
+            "actionTarget": {
+                "name": "compiti",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_compito_created",
+                        "destination": "codice_compito"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_compito_created"
+        }
+    ],
+    "predefinedQueries": [
+        {
+            "operation": "selectForm",
+            "queryString": "select * from entrasp.select_domande_risposte($codice_azienda$, $id_sondaggio$, $id_somministrazione$) where id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$ and codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
+            "type": "main"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select true as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "select entrasp.aggiorna_punteggi_somministrazioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
+            "type": "postProcessingAllRows"
+        },
+        {
+            "operation": "delete",
+            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
+            "type": "main"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by ordinamento asc",
+        "formViewSuffix": "order by ordinamento asc"
+    },
+    "formRowProperties": [
+        {
+            "propertyType": "isHidden",
+            "queryString": "select case when entrasp.domanda_active(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_somministrazione$)=1 then false else true end as label from entrasp.domande dm where dm.codice_azienda=$codice_azienda$ and dm.id_modello_test=$id_modello_test$ and dm.id_modello_test_vr=$id_modello_test_vr$ order by dm.ordinamento;",
+            "inputEvents": [
+                {
+                    "eventName": "toggle_question",
+                    "actionType": "showRow",
+                    "condition": "equalTo",
+                    "keys": [
+                        {
+                            "sender": "id_domanda",
+                            "receiver": "id_domanda_rif"
+                        },
+                        {
+                            "sender": "%value%",
+                            "receiver": "id_risposta_prev_rif"
+                        }
+                    ]
+                },
+                {
+                    "eventName": "toggle_question_mc",
+                    "actionType": "showRow",
+                    "condition": "equalTo",
+                    "keys": [
+                        {
+                            "sender": "id_domanda",
+                            "receiver": "id_domanda_rif"
+                        },
+                        {
+                            "sender": "%value%",
+                            "receiver": "id_risposta_prev_rif"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "form_keys": [
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "newLine": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "id_tipo_domanda",
+            "label": "id_tipo_domanda",
+            "outputEvent": {
+                "eventName": "domande_risposte_multipla_aperta",
+                "eventTrigger": "change"
+            },
+            "newLine": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "id_risultato",
+            "label": "id_risultato",
+            "sameOrigin": false,
+            "newLine": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "id_domanda_rif",
+            "label": "id_domanda_rif",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "label": "id_modello_test",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "label": "id_modello_test_vr",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "newLine": true,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "id_sezione",
+            "label": "id_sezione",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_risposta",
+            "label": "id_risposta",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "outputEvent": {
+                "eventName": "idRispostaChange",
+                "eventTrigger": "change"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "onSaveD_R",
+                    "queryFunct": "select id_risposta from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$ limit 1",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": []
+                }
+            ]
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "id_risposta_prev_rif",
+            "label": "id_risposta_prev_rif",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": true,
+            "key": "id_domanda",
+            "label": "id_domanda",
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "value": "0"
+            }
+        },
+        {
+            "isHidden": false,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "N.",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "style": {
+                "font_color": "black",
+                "font_weight": "600"
+            },
+            "newLine": false,
+            "size": 0.75
+        },
+        {
+            "isHidden": false,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Domanda",
+            "format": {
+                "viewType": "textarea",
+                "dataType": "text"
+            },
+            "style": {
+                "font_color": "black",
+                "font_weight": "600"
+            },
+            "newLine": false,
+            "textareaHeight": "M",
+            "size": 6.5
+        },
+        {
+            "isHidden": false,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "punteggio",
+            "label": "Punteggio",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "newLine": false,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dettaglio",
+            "buttonIcon": "info",
+            "label": "Dettaglio",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "to_risposta",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            
+            "inputEvents": [
+                {
+                    "eventName": "idRispostaChange",
+                    "actionType": "readOnly",
+                    "condition": "equalTo",
+                    "values": [null]
+                },
+                {
+                    "eventName": "onSaveD_R",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select case when count(id_risposta)=0 then '#698EC2' else '#25599C' end as dettaglio_background_color from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=$id_domanda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+                },
+                {
+                    "eventName": "onSaveD_R",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "queryFunct": "select case when count(id_risposta)=0 then '#5b635a' else 'white' end as dettaglio_font_color from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=$id_domanda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+                },
+                {
+                    "eventName": "onSaveD_R",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "readOnly",
+                    "queryFunct": "select case when count(id_risposta)=0 then true else false end as label from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=$id_domanda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+                },
+                {
+                    "eventName": "onSave_D_R",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.aggiorna_punteggi_somministrazioni($codice_azienda$, $id_somministrazione$,$id_sondaggio$, $id_sezione$)"
+                },
+                {
+                    "eventName": "onLoadD_R",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select case when count(id_risposta)=0 then '#698EC2' else '#25599C' end as dettaglio_background_color from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+                },
+                {
+                    "eventName": "onLoadD_R",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "queryFunct": "select case when count(id_risposta)=0 then '#5b635a' else 'white' end as dettaglio_font_color from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+                },
+                {
+                    "eventName": "onLoadD_R",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "readOnly",
+                    "queryFunct": "select case when count(id_risposta)=0 then true else false end as label from entrasp.risposte where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+                }
+            ],
+            "readOnly": true,
+            "sameOrigin": false,
+            "size": 0.875
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": "$P{is_hidden_risultato}",
+            "isPrimary": false,
+            "key": "dett_domanda",
+            "buttonIcon": "quiz",
+            "label": "Modifica domanda",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "domande_button_dettaglio",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "size": 0.875,
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 0.75,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_1",
+            "key": "invisible_1",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": false
+        },
+        {
+            "isHidden": false,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "note_domanda",
+            "label": "Annotazioni Esplicative Domanda",
+            "sameOrigin": false,
+            "size": 7.5,
+            "format": {
+                "viewType": "textarea",
+                "dataType": "text"
+            },
+            "style": {
+                "font_color": "black",
+                "font_weight": "500",
+                "font_style": "italic"
+            },
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "attachment",
+            "label": "",
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when £num_allegati£=0 then true else false end as label"
+                }
+            ],
+            "newLine": false,
+            "buttonIcon": "attachment",
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+        },
+        {
+            "isHidden": false,
+            "readOnly": true,
+            "isPrimary": false,
+            "key": "num_allegati",
+            "label": "Numero Allegati",
+            "sameOrigin": false,
+            "size": 1,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "inputEvents": [
+                {
+                    "eventName": "compito_create",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.compiti_rif_bo_insert('riepilogoRisposte', $descrizione$, $codice_azienda$, $id_sondaggio$, $id_somministrazione$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as codice_compito_created",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "to_compito_created"
+                }
+            ],
+            "key": "codice_compito_created",
+            "label": "codice_compito_created",
+            "sameOrigin": false,
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "isHidden": true,
+            "readOnly": false,
+            "isPrimary": false,
+            "key": "risposte_radiobutton",
+            "sameOrigin": false,
+            "label": "risposta_radiobutton",
+            "saveWhenHidden": false,
+            "inputEvents": [
+                {
+                    "eventName": "domande_risposte_multipla_aperta",
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "values": [
+                        1
+                    ]
+                }
+            ],
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "key": "id_risposta_prev_radio",
+                        "label": "Risposta",
+                        "size": 8.5,
+                        "newLine": false,
+                        "format": {
+                            "viewType": "radiobutton",
+                            "options": [],
+                            "comboQuery": "select id_risposta_prev as id, risposta as name from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£;"
+                        },
+                        "outputEvent": {
+                            "eventName": "toggle_question",
+                            "eventTrigger": "change"
+                        }
+                    },
+                    {
+                        "isHidden": "$P{is_hidden_risultato}",
+                        "isPrimary": false,
+                        "readOnly": true,
+                        "newLine": false,
+                        "key": "peso_rb",
+                        "inputEvents": [
+                            {
+                                "eventName": "toggle_question",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select peso as peso_rb from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_radio', '$id_risposta_prev_radio$') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
+                            },
+                            {
+                                "eventName": "toggle_question",
+                                "condition": "none",
+                                "values": [],
+                                "actionType": "query_style",
+                                "styleAttribute": "background_color",
+                                "queryFunct": "select codice_colore as peso_rb_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select peso from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_radio', '$id_risposta_prev_radio$') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
+                            },
+                            {
+                                "eventName": "toggle_question",
+                                "actionType": "readOnly",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when flag_risposta_aperta='1' then false else true end  from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_radio', '£id_risposta_prev_radio£') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
+                            }
+                        ],
+                        "sameOrigin": false,
+                        "label": "Risultato %",
+                        "size": 1,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "number"
+                        }
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": "$P{is_hidden_risultato}",
+                        "isPrimary": false,
+                        "buttonIcon": "report_problem",
+                        "key": "create_segnalazione",
+                        "label": "Crea Segnalazione",
+                        "newLine": true,
+                        "outputEvent": {
+                            "eventName": "compito_create",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 0.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "codice_colore_peso_rb_k",
+                        "outputEvent": {
+                            "eventName": "codice_colore_change_peso_rb",
+                            "eventTrigger": "change"
+                        },
+                        "label": "codice_colore",
+                        "sameOrigin": false,
+                        "newLine": true,
+                        "readOnly": false
+                    },
+                    {
+                        "isHidden": false,
+                        "readOnly": false,
+                        "isPrimary": false,
+                        "sameOrigin": false,
+                        "key": "note_rb",
+                        "label": "Note Risposta",
+                        "format": {
+                            "viewType": "textarea",
+                            "dataType": "text"
+                        },
+                        "textareaHeight": "M",
+                        "newLine": true,
+                        "size": 10
+                    }
+                ]
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": false,
+            "isPrimary": false,
+            "key": "risposte_aperta",
+            "sameOrigin": false,
+            "label": "risposte_aperta",
+            "saveWhenHidden": false,
+            "inputEvents": [
+                {
+                    "eventName": "domande_risposte_multipla_aperta",
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "values": [
+                        3
+                    ]
+                }
+            ],
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "isHidden": "$P{is_hidden_risultato}",
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "newLine": false,
+                        "key": "risposta",
+                        "label": "Risposta",
+                        "size": 8.5,
+                        "format": {
+                            "viewType": "textarea",
+                            "dataType": "text",
+                            "value": "--",
+                            "validations": [
+                                {
+                                    "message": "Inserire una breve nota!",
+                                    "validator": "Validators.required",
+                                    "name": "required"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "newLine": false,
+                        "key": "peso_oa",
+                        "sameOrigin": false,
+                        "label": "Risultato %",
+                        "inputEvents": [
+                            {
+                                "eventName": "codice_colore_change_peso_oa",
+                                "condition": "none",
+                                "values": [],
+                                "actionType": "update_style",
+                                "styleAttribute": "background_color",
+                                "updateFunct": "'£codice_colore_peso_oa£'"
+                            }
+                        ],
+                        "size": 1,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "number",
+                            "validations": [
+                                {
+                                    "message": "Indicare risultato % ottenuto!",
+                                    "validator": "Validators.required",
+                                    "name": "required"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "buttonIcon": "report_problem",
+                        "key": "create_segnalazione",
+                        "label": "Crea Segnalazione",
+                        "newLine": true,
+                        "outputEvent": {
+                            "eventName": "compito_create",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 0.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "codice_colore_peso_oa_k",
+                        "outputEvent": {
+                            "eventName": "codice_colore_change_peso_oa",
+                            "eventTrigger": "change"
+                        },
+                        "label": "codice_colore",
+                        "sameOrigin": false,
+                        "newLine": true,
+                        "readOnly": true
+                    }
+                ]
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": false,
+            "isPrimary": false,
+            "key": "risposta_multipla_form",
+            "sameOrigin": false,
+            "label": "Risposta Multipla",
+            "saveWhenHidden": false,
+            "inputEvents": [
+                {
+                    "eventName": "domande_risposte_multipla_aperta",
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "values": [
+                        2
+                    ]
+                }
+            ],
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "isHidden": "$P{is_hidden_risultato}",
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "key": "risposta_multipla",
+                        "label": "Risposta",
+                        "newLine": false,
+                        "size": 8.5,
+                        "format": {
+                            "viewType": "checkboxgroup",
+                            "options": [],
+                            "comboQuery": "select id_risposta_prev::int as id, risposta as name from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£;"
+                        },
+                        "outputEvent": {
+                            "eventName": "toggle_question_mc",
+                            "eventTrigger": "change"
+                        }
+                    },
+                    {
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": true,
+                        "newLine": false,
+                        "key": "peso_mc",
+                        "sameOrigin": false,
+                        "label": "Risultato %",
+                        "size": 1,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "number"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "toggle_question_mc",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select sum(peso) as peso_mc from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=any(entrasp.evaluate_given_field_multiple('risposta_multipla', '$risposta_multipla$')) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
+                            },
+                            {
+                                "eventName": "toggle_question_mc",
+                                "condition": "none",
+                                "values": [],
+                                "actionType": "query_style",
+                                "styleAttribute": "background_color",
+                                "queryFunct": "select codice_colore as peso_mc_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select sum(peso) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=any(entrasp.evaluate_given_field_multiple('risposta_multipla', '$risposta_multipla$')) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
+                            }
+                        ]
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "buttonIcon": "report_problem",
+                        "key": "create_segnalazione",
+                        "label": "Crea Segnalazione",
+                        "newLine": true,
+                        "outputEvent": {
+                            "eventName": "compito_create",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 0.5
+                    },
+                    {
+                        "isHidden": false,
+                        "readOnly": false,
+                        "isPrimary": false,
+                        "key": "note_mc",
+                        "sameOrigin": false,
+                        "label": "Note",
+                        "format": {
+                            "viewType": "textarea",
+                            "dataType": "text"
+                        },
+                        "newLine": true,
+                        "size": 10
+                    }
+                ]
+            }
+        }
+    ]
+}
