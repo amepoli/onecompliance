@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select *, entrasp.calcola_stato(codice_azienda,id_risorsa,id_argomento_tipo_allegato) as stato from entrasp.views_attachments_fast where id_argomento_tipo_allegato = $id_argomento_tipo_allegato$ and codice_azienda=$codice_azienda$",
+      "queryString": "select *, entrasp.calcola_stato(codice_azienda,id_risorsa,id_argomento_tipo_allegato) as stato, true as unifica_risorse from entrasp.views_attachments_fast where id_argomento_tipo_allegato = $id_argomento_tipo_allegato$ and codice_azienda=$codice_azienda$",
       "type": "main"
     }
   ],
@@ -218,7 +218,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "client_file_name",
-      "width": "21%",
+      "width": "18%",
       "label": "Nome file"
     },
     {
@@ -292,7 +292,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "tipo_allegato",
-      "width": "20%",
+      "width": "18%",
       "label": "Tipo Allegato"
     },
     {
@@ -354,6 +354,45 @@
       "key": "id_argomento_tipo_allegato",
       "width": "5%",
       "label": "id_argomento_tipo_allegato"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "unifica_risorse",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "join_full",
+          "value": "darkViolet"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "attachments_sub_of_sondaggi_ulteriori_elementi",
+        "viewType": "form",
+        "action": "query",
+        "query": "select from entrasp.unifica_risorse($id_risorsa$,£id_risorsa£,$codice_azienda$,true::boolean)",
+        "keymap": [
+          {
+            "source": "id_risorsa",
+            "destination": "id_risorsa"
+          },
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          }
+        ],
+        "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Unifica",
+                    "text": "Si vuole unificare con questa risorsa?"
+                },
+        "onSuccessAction": "reload"
+      }
     }
   ],
   "search_keys": [
