@@ -178,9 +178,21 @@
 				"viewType": "input"
 			},
 			"fieldName": "id_argomento_s",
-			"newLine": true,
+			"newLine": false,
 			"queryCond": "arg.id_argomento=$id_argomento_s$"
-		}
+		},
+		{
+            "fieldName": "argomento_s",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti  aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father} where arg.flag_classificazione=true order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Argomento",
+            "newLine": true,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
+        }
 	],
 	"table_keys": [
 		{
