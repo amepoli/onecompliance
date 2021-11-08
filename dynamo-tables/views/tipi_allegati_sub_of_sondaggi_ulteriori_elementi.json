@@ -6,7 +6,7 @@
     "predefinedQueries": [
       {
         "operation": "selectTable",
-        "queryString": "select crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND cdr.id_sondaggio=$id_sondaggio$",
+        "queryString": "select crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND cdr.id_sondaggio=$id_sondaggio$",
         "type": "main"
       }
     ],
@@ -44,10 +44,10 @@
           "dataType": "number",
           "viewType": "input"
         },
-        "isHidden": true,
+        "isHidden": false,
         "isPrimary": true,
         "key": "id_risorsa",
-        "label": "ID Documento",
+        "label": "ID Allegato",
         "newLine": false,
         "readOnly": true,
         "size": 1.5
@@ -261,6 +261,10 @@
           {
             "parent": "id_argomento_tipo_allegato",
             "son": "id_argomento_tipo_allegato"
+          },
+          {
+            "parent": "id_risorsa",
+            "son": "id_risorsa_sopra"
           }
         ],
         "isHidden": false,

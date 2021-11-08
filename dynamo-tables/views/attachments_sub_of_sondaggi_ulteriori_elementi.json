@@ -5,7 +5,12 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select *, entrasp.calcola_stato(codice_azienda,id_risorsa,id_argomento_tipo_allegato) as stato, true as unifica_risorse from entrasp.views_attachments_fast where id_argomento_tipo_allegato = $id_argomento_tipo_allegato$ and codice_azienda=$codice_azienda$",
+      "queryString": "select distinct codice_azienda,codice_part,id_risorsa,$id_risorsa_sopra$ as id_risorsa_sopra,client_file_name,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as denominazione, entrasp.argomenti_descr_stato(entrasp.calcola_id_argomento_stato(codice_azienda,id_risorsa,id_argomento_tipo_allegato)) as descr_stato, data_creazione, autore, stringa, tipo_allegato, nome_business_object, true as unifica_risorse from entrasp.views_attachments_fast where id_argomento_tipo_allegato = $id_argomento_tipo_allegato$ and codice_azienda=$codice_azienda$ and id_risorsa != $id_risorsa_sopra$",
+      "type": "main"
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "SELECT codice_azienda,codice_part,id_risorsa,id_anagrafica,id_progetto,stringa,client_file_name,tipo_allegato,autore,data_creazione,data_ultimo_accesso,nome_business_object,id_argomento_tipo_allegato,entrasp.argomenti_descr_stato(entrasp.calcola_id_argomento_stato(codice_azienda,id_risorsa,id_argomento_tipo_allegato)) as descr_stato FROM entrasp.views_attachments_fast WHERE codice_azienda=$codice_azienda$ AND id_risorsa=$id_risorsa$;",
       "type": "main"
     }
   ],
@@ -179,7 +184,33 @@
       "key": "id_argomento_tipo_allegato",
       "size": 4,
       "label": "Id Argomento",
-      "readOnly": false
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+        "autoGenerate": false,
+        "format": {
+            "options": [],
+            "viewType": "input",
+            "dataType": "text"
+        },
+        "inputEvents": [
+            {
+                "eventName": "onLoad",
+                "condition": "none",
+                "values": [],
+                "actionType": "query_style",
+                "styleAttribute": "background_color",
+                "queryFunct": "select background_color as descr_stato_background_color from entrasp.argomenti where id_argomento IN (SELECT entrasp.calcola_id_argomento_stato($codice_azienda$,$id_risorsa$,$id_argomento_tipo_allegato$))"
+            }
+        ],
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "descr_stato",
+        "label": "Stato",
+        "newLine": false,
+        "readOnly": false,
+        "size": 1
     }
   ],
   "table_keys": [
@@ -213,6 +244,16 @@
     },
     {
       "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "id_risorsa_sopra",
+      "label": "Id risorsa sopra"
+    },
+    {
+      "format": {
         "dataType": "text"
       },
       "isHidden": false,
@@ -228,19 +269,36 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "denominazione",
-      "width": "18%",
+      "width": "13%",
       "label": "Nome/rag sociale",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)"
     },
     {
       "format": {
-        "dataType": "date"
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "stato",
+      "key": "descr_stato",
       "width": "6%",
-      "label": "Stato"
+      "label": "Stato",
+      "style": [
+        {
+          "value": "Non Presente",
+          "font_color": "grey",
+          "font_weight": "500"
+        },
+        {
+          "value": "Da Associare",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Associato",
+          "font_color": "green",
+          "font_weight": "500"
+        }
+      ]
     },
     {
       "format": {
@@ -312,7 +370,6 @@
       "isHidden": true,
       "isPrimary": false,
       "key": "id_sondaggio",
-      "width": "5%",
       "label": "Sondaggio"
     },
     {
@@ -322,7 +379,6 @@
       "isHidden": true,
       "isPrimary": false,
       "key": "id_somministrazione",
-      "width": "5%",
       "label": "Verifica"
     },
     {
@@ -332,7 +388,6 @@
       "isHidden": true,
       "isPrimary": false,
       "key": "id_anagrafica",
-      "width": "5%",
       "label": "Cliente"
     },
     {
@@ -342,7 +397,6 @@
       "isHidden": true,
       "isPrimary": false,
       "key": "id_progetto",
-      "width": "5%",
       "label": "Progetto"
     },
     {
@@ -352,7 +406,6 @@
       "isHidden": true,
       "isPrimary": false,
       "key": "id_argomento_tipo_allegato",
-      "width": "5%",
       "label": "id_argomento_tipo_allegato"
     },
     {
@@ -361,13 +414,13 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "5%",
+      "width": "10%",
       "key": "unifica_risorse",
-      "label": "",
+      "label": "Associa Documento",
       "style": [
         {
           "button_icon": "join_full",
-          "value": "darkViolet"
+          "value": "red"
         }
       ],
       "isButton": true,
@@ -375,22 +428,26 @@
         "target": "attachments_sub_of_sondaggi_ulteriori_elementi",
         "viewType": "form",
         "action": "query",
-        "query": "select from entrasp.unifica_risorse($id_risorsa$,£id_risorsa£,$codice_azienda$,true::boolean)",
+        "query": "select entrasp.unifica_risore(£id_risorsa_sopra£,£id_risorsa£,'£codice_azienda£'::varchar,true)",
         "keymap": [
           {
-            "source": "id_risorsa",
-            "destination": "id_risorsa"
+            "source": "id_risorsa_sopra",
+            "destination": "id_risorsa_sopra"
           },
           {
             "source": "codice_azienda",
             "destination": "codice_azienda"
+          },
+          {
+            "source": "id_risorsa",
+            "destination": "id_risorsa"
           }
         ],
         "confirmAction": true,
-                "confirmMessage": {
-                    "title": "Unifica",
-                    "text": "Si vuole unificare con questa risorsa?"
-                },
+        "confirmMessage": {
+          "title": "Unifica",
+          "text": "Si vuole unificare con questa risorsa?"
+        },
         "onSuccessAction": "reload"
       }
     }
@@ -527,6 +584,16 @@
       "viewType": "table"
     }
   ],
+    "outputEvents": [
+        {
+            "eventName": "onSave",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoad",
+            "eventTrigger": "onReload"
+        }
+    ],
   "querySuffixes": {
     "tableViewSuffix": "limit 100"
   }
