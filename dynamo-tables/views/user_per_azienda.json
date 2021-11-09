@@ -157,5 +157,13 @@
   ],
   "querySuffixes": {
     "tableViewSuffix": "order by dynamo_user"
+  },
+  "exportQueries": {
+    "tableQueries": [
+      {
+        "queryString": "select em.*, entrasp.first_day_nth_previous_month(now()::date, i::integer) as inizio, entrasp.last_day_nth_previous_month(now()::date, i::integer) as fine, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as time_consumed_nth_previous_month from entrasp.employers em, (select generate_series(0, 12) as i) serie;",
+        "label": "Ore per utente ultimi 12 mesi"
+      }
+    ]
   }
 }
