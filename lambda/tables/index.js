@@ -507,6 +507,17 @@ function getHomepageQuery(entry_params) {
     return queryString;
 }
 
+function getHomepageTabQuery(entry_params) {
+    let queryString = {};
+    let homepageTab = entry_params.Item;    
+    if (homepageTab != null && homepageTab.tiles != null && homepageTab.tiles.length > 0) {
+        queryString['tabTilesQueries'] = homepageTab.tiles.filter(tile => tile.content && tile.content.query).map( tile => {
+            return {entry: tile.content.fieldName, query: replaceGlobalkeys(tile.content.query)}
+        });
+    }
+    return queryString;
+}
+
 function getLazyComboQuery(entry_keys, table_keys, keyTypes, lazy_key) {
 
     let comboQueries = [];
@@ -1361,6 +1372,63 @@ async function processHomepageQuery(entry_params, queryString, client) {
     }
 }
 
+async function processHomepageTabQuery(entry_params, queryString, client) {
+    let tilesView = entry_params.Item;
+    if (queryString != null) {
+        if(queryString['tabTilesQueries'] && queryString['tabTilesQueries'].length) {
+            for(let tileIndex = 0; tileIndex < queryString['tabTilesQueries'].length; tileIndex++) {
+                try {
+                    console.log('Running query: ' + queryString['tabTilesQueries'][tileIndex].query);                    
+                    let result = await client.query(queryString['tabTilesQueries'][tileIndex].query);
+                    console.log('Result: ', JSON.stringify(result));
+                    if (result != null && result.rowCount > 0) {                        
+                        let key = Object.keys(result.rows[0])[0];
+                        let data = result.rows[0][key];
+                        for(let i = 0; i < tilesView.tiles.length; i++) {
+                            if(tilesView.tiles[i].content.fieldName === queryString['tabTilesQueries'][tileIndex].entry) {
+                                tilesView.tiles[i].content.value = data;
+                            }
+                        }
+                    }
+                }
+                catch(e) {
+                    console.log('Error occured while running query: ' + queryString['tabTilesQueries'][i].query);
+                }
+            }
+        }
+
+        // queryString = replaceGlobalkeys(queryString);
+        // queryString = replaceLocalKeys(queryString, keys);
+        // try {
+        //     let result = await client.query(queryString);
+        //     if (result.rows != null && result.rows.length > 0) {
+        //         result = result.rows[0];
+        //     }
+        //     return {
+        //         "isBase64Encoded": false,
+        //         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        //         "statusCode": 200,
+        //         "body": JSON.stringify({ result: 'OK', response: result, queryString: queryString })
+        //     };
+        // }
+        // catch (e) {
+        //     console.log('Custom Query Error: ', e);
+        //     return {
+        //         "isBase64Encoded": false,
+        //         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        //         "statusCode": 200,
+        //         "body": JSON.stringify({ result: 'KO', error: e, queryString: queryString })
+        //     };
+        // }
+    }
+    return {
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "statusCode": 200,
+        "body": JSON.stringify({ result: 'OK', response: tilesView, queryString: queryString })
+    }
+}
+
 async function processFormActionQuery(formActionType, queryString, keys, client) {
     if (queryString != null) {
         console.log('queryString: ', queryString);
@@ -1758,6 +1826,8 @@ exports.handler = async (event, context) => {
 
     var isHomepage =  (queryParams['homepage'] === '1');
     
+    var isHomepageTab =  (queryParams['homepagetab'] === '1');
+    
     var dashboardIndex = queryParams['dashboard_index'];
 
     var isExcel = (queryParams['excel'] === '1');
@@ -1778,7 +1848,7 @@ exports.handler = async (event, context) => {
 
     const profileData = await getProfileData(profile);
 
-    var authorized = isHomepage? true: (isAuthorized(queryParams.entry_name, profileData));
+    var authorized = (isHomepage || isHomepageTab)? true: (isAuthorized(queryParams.entry_name, profileData));
 
     if (!authorized) {
         console.log(method, ' request for ', queryParams.entry_name, ' not authorized!');
@@ -1838,7 +1908,7 @@ exports.handler = async (event, context) => {
         // read the entry params from DynamoDB view table
         let entry_params = await dynamo.get(DynamoParams).promise();
 
-        if(!isHomepage) {
+        if(!isHomepage && !isHomepageTab) {
             // complete table if inherited
             entry_params = await overrideTable(entry_params.Item);
 
@@ -1862,6 +1932,8 @@ exports.handler = async (event, context) => {
                 queryString = getDashboardQuery(entry_params, table_keys, dashboardIndex);
             } else if (isHomepage) {
                 queryString = getHomepageQuery(entry_params);
+            } else if (isHomepageTab) {
+                queryString = getHomepageTabQuery(entry_params);
             } else if (isFormAction) {
                 queryString = getFormActionQuery(formActionType, table_keys, entry_params);
             } else if (isSearchRequest) {
@@ -1906,6 +1978,11 @@ exports.handler = async (event, context) => {
             queryData = await processDashboard(queryString, client);
         } else if (isHomepage) {
             let response = await processHomepageQuery(entry_params, queryString, client);
+            console.log(response);
+            await client.release();
+            return response;
+        } else if (isHomepageTab) {
+            let response = await processHomepageTabQuery(entry_params, queryString, client);
             console.log(response);
             await client.release();
             return response;

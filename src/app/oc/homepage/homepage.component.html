@@ -10,14 +10,25 @@
                 </svg>
             </span>
         </ins>
-        <div style="height: 256px; background-color: white;">
-
+        <div style="display: flex; flex-direction: row; height: 332px; background-color: #fafafa; justify-content: center;">
+            <mat-card *ngFor="let tile of tiles; let i = index" class="homepage-card">
+                <mat-card-header>
+                  <mat-card-title>{{tile.title}}</mat-card-title>
+                  <mat-card-subtitle></mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <p class="homepage-card-value" [ngStyle]="{'color': tile.content.color || 'black'}">
+                    {{tile.content.value}}
+                  </p>
+                </mat-card-content>
+               
+              </mat-card>
         </div>
     </div>    
 
-    <div class=homepage-tab-container>
+    <div *ngIf="tabs" class=homepage-tab-container>
         <ul class="tabs clearfix" >
-            <li *ngFor="let tab of homepage.tabs; let i = index" [class]="i == activeTab? 'active': ''"  (click)="changeTab(i)" style="width: 256px;">
+            <li *ngFor="let tab of tabs; let i = index" [class]="i == activeTab? 'active': ''"  (click)="changeTab(i)" style="width: 256px;">
                 {{tab.entry}}
             </li>
             <li (click)="changeTab(1)" [class]="1 == activeTab? 'active': ''" style="width: 256px;">
