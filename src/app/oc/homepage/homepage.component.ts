@@ -20,8 +20,9 @@ import { AuthService, BackendService, ConsoleLoggerService, DialogService, Helpe
 
 export class HomepageComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    homepage: any = null;
+    tabs: any = null;
     activeTab = 0;
+    tiles: any = [];
 
     constructor(
         protected route: ActivatedRoute,
@@ -45,9 +46,11 @@ export class HomepageComponent implements OnInit, AfterViewInit, OnDestroy {
 
         const _this = this;
 
+        this.tiles = [];
+        
         _this.backendService.loadHomePage('zee', _this.authService.getCurrentCompany({})).subscribe(
             result => {
-                _this.homepage = result.response;
+                _this.tabs = result.response.tabs;
                 console.log(result)
             },
             error => {
@@ -73,7 +76,19 @@ export class HomepageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     changeTab(i) {
-        this.activeTab = i;
+        let _this = this;
+        _this.activeTab = i;
+        _this.backendService.loadHomePageTab(_this.tabs[i].entry,  _this.authService.getCurrentCompany({})).subscribe(
+            response => {
+                console.log(response);
+                if(response.result === 'OK') {
+                    _this.tiles = response.response.tiles;
+                }
+            },
+            error => {
+                _this._toastService.showErrorToast(error);
+            }
+        )
     }
 
 }
