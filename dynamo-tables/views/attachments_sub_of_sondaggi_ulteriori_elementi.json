@@ -5,13 +5,18 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select distinct codice_azienda,codice_part,id_risorsa,$id_risorsa_sopra$ as id_risorsa_sopra,client_file_name,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as denominazione, entrasp.argomenti_descr_stato(entrasp.calcola_id_argomento_stato(codice_azienda,id_risorsa,id_argomento_tipo_allegato)) as descr_stato, data_creazione, autore, stringa, tipo_allegato, nome_business_object, true as unifica_risorse from entrasp.views_attachments_fast where id_argomento_tipo_allegato = $id_argomento_tipo_allegato$ and codice_azienda=$codice_azienda$ and id_risorsa != $id_risorsa_sopra$",
+      "queryString": "select distinct codice_azienda,id_risorsa,$id_risorsa_sopra$ as id_risorsa_sopra,codice_part,client_file_name,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as denominazione, entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, data_creazione, autore, stringa, tipo_allegato, nome_business_object, true as unifica_risorse from entrasp.views_attachments_fast where id_argomento_tipo_allegato = $id_argomento_tipo_allegato$ and codice_azienda=$codice_azienda$ and id_risorsa != $id_risorsa_sopra$",
       "type": "main"
     },
     {
       "operation": "selectForm",
-      "queryString": "SELECT codice_azienda,codice_part,id_risorsa,id_anagrafica,id_progetto,stringa,client_file_name,tipo_allegato,autore,data_creazione,data_ultimo_accesso,nome_business_object,id_argomento_tipo_allegato,entrasp.argomenti_descr_stato(entrasp.calcola_id_argomento_stato(codice_azienda,id_risorsa,id_argomento_tipo_allegato)) as descr_stato FROM entrasp.views_attachments_fast WHERE codice_azienda=$codice_azienda$ AND id_risorsa=$id_risorsa$;",
+      "queryString": "SELECT codice_azienda,codice_part,id_risorsa,id_anagrafica,id_progetto,stringa,client_file_name,tipo_allegato,autore,data_creazione,data_ultimo_accesso,nome_business_object,id_argomento_tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato FROM entrasp.views_attachments_fast WHERE codice_azienda=$codice_azienda$ AND id_risorsa=$id_risorsa$;",
       "type": "main"
+    },
+    {
+      "operation": "selectTable",
+      "queryString": "SELECT entrasp.calcola_id_argomento_stato(codice_azienda,id_risorsa,id_argomento_tipo_allegato) from entrasp.views_attachments_fast where id_argomento_tipo_allegato = $id_argomento_tipo_allegato$ and codice_azienda=$codice_azienda$ and id_risorsa != $id_risorsa_sopra$",
+      "type": "preProcessing"
     }
   ],
   "businessObjectName": "cdms_risorse",
@@ -74,7 +79,7 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "id_progetto",
       "label": "ID Progetto",
@@ -188,6 +193,19 @@
       "newLine": false
     },
     {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento_stato",
+      "size": 4,
+      "label": "id_argomento_stato",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
         "autoGenerate": false,
         "format": {
             "options": [],
@@ -201,7 +219,7 @@
                 "values": [],
                 "actionType": "query_style",
                 "styleAttribute": "background_color",
-                "queryFunct": "select background_color as descr_stato_background_color from entrasp.argomenti where id_argomento IN (SELECT entrasp.calcola_id_argomento_stato($codice_azienda$,$id_risorsa$,$id_argomento_tipo_allegato$))"
+                "queryFunct": "select background_color as descr_stato_background_color from entrasp.argomenti where id_argomento IN(SELECT id_argomento_stato FROM entrasp.cdms_risorse WHERE id_risorsa=$id_risorsa$ and codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato=$id_argomento_tipo_allegato$);"
             }
         ],
         "isHidden": false,
@@ -259,14 +277,14 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "client_file_name",
-      "width": "18%",
+      "width": "20%",
       "label": "Nome file"
     },
     {
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "denominazione",
       "width": "13%",
@@ -316,7 +334,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "8%",
+      "width": "7%",
       "key": "autore",
       "label": "Utente"
     },
@@ -425,10 +443,10 @@
       ],
       "isButton": true,
       "buttonAction": {
-        "target": "attachments_sub_of_sondaggi_ulteriori_elementi",
+        "target": "sondaggi_ulteriori_elementi",
         "viewType": "form",
         "action": "query",
-        "query": "select entrasp.unifica_risore(£id_risorsa_sopra£,£id_risorsa£,'£codice_azienda£'::varchar,true)",
+        "query": "select entrasp.unifica_risorse(£id_risorsa_sopra£,£id_risorsa£,'£codice_azienda£',true)",
         "keymap": [
           {
             "source": "id_risorsa_sopra",
