@@ -606,6 +606,24 @@ function replaceLocalKeys(queryString, keys) {
     return queryString;
 }
 
+
+function replaceGlobalkeys(queryString) {
+    if (queryString) {
+        // first replace the global variables, must be €-contoured
+        for (var key in global_variables) {
+            let toReplace = '€' + key + '€';
+            let replacement = global_variables[key];
+            let newString = queryString.replace(toReplace, replacement);
+            while (newString !== queryString) { // handle multiple occurrences
+                queryString = newString;
+                newString = queryString.replace(toReplace, replacement);
+            }
+        }
+    }
+
+    return queryString;
+}
+
 function replaceKeys(queryString, keys, keyTypes) {
 
     console.log(keys);
@@ -1298,13 +1316,13 @@ exports.handler = async (event, context) => {
                 entry_params = await overrideTable(entry_params.Item);
 
                 await addCodiceAzienda(table_keys, company, entry_params, client, isForm);
+                global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
 
                 fullValueSet = Object.assign(fullValueSet, table_keys);
 
                 console.log('Full value set: ', fullValueSet);
 
-                global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
-
+                
                 additionalQueryCond = getAdditionalQueryCond(entry_name, profileData);
 
                 let queryString = null;
@@ -1394,7 +1412,10 @@ exports.handler = async (event, context) => {
                     }
 
                     console.log('queryString3', queryString);
-
+                    
+                    queryString = replaceGlobalkeys(queryString);
+                    console.log('queryString4', queryString);
+                    
                     queryData = await runQuery(queryString, client);
                     // console.log('queryData', queryData);
 
