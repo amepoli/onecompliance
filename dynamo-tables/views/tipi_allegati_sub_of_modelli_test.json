@@ -19,6 +19,11 @@
         "operation": "insert",
         "messageNotNull": "Attenzione tipo documento già inserito",
         "queryString": "select id_argomento_documento from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_argomento_documento='£id_argomento_documento£'"
+      },
+      {
+        "type": "postProcessing",
+        "queryString": "UPDATE entrasp.modelli_test SET documentazione_necessaria = (select string_agg (distinct entrasp.argomenti_descr_breve(id_argomento_documento),'; ') from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$) WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+        "operation": "insert"
       }
     ],
     "form_keys": [
