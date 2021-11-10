@@ -160,6 +160,7 @@ function replaceJSONParams(JSONString, paramsObject) {
             JSONString = JSONString.replace(toReplace, value);
             toReplace = new RegExp("\\\"\\\$Q\\\{" + param + "\\\}\\\"", "g");
             JSONString = JSONString.replace(toReplace, value);
+        }
     }
 
     JSONString = JSON.parse(JSONString);
