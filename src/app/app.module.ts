@@ -30,6 +30,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
 import { GoogleLoginProvider } from 'angularx-social-login';
 import { HomepageModule } from './oc/homepage/homepage.module';
+import { HomepageTabModule } from './oc/homepage-tab/homepage-tab.module';
+import { ToolbarElementsModule } from './oc/toolbar-elements/toolbar-elements.module';
 
 const appRoutes: Routes = [];
 
@@ -77,11 +79,15 @@ const appRoutes: Routes = [];
         RegisterModule,
         MailConfirmModule,
         ForgotPasswordModule,
-        HomepageModule,
         MainTableModule,
         AmplifyAngularModule,
         MainDashboardsModule,
 
+        // zee modules
+        HomepageModule,
+        HomepageTabModule,
+        ToolbarElementsModule,
+        
         // Redirect
         RedirectModule,
 
