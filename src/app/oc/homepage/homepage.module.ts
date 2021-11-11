@@ -12,6 +12,8 @@ import { FormViewModule } from '../views/form/form-view.module';
 import { FormViewToolbarModule } from '../views/form-view-toolbar/form-view-toolbar.module';
 import { BottomTabsModule } from 'app/oc/bottom-tabs/bottom-tabs.module';
 import { ImportDialogModule } from '../dialogs/import.dialog/import.dialog.module';
+import { HomepageTabModule } from '../homepage-tab/homepage-tab.module';
+import { MatBadgeModule } from '@angular/material/badge';
 
 const routes = [
   {
@@ -27,13 +29,16 @@ const routes = [
     RouterModule.forChild(routes),
     MatProgressSpinnerModule,
     MatIconModule,
+    MatBadgeModule,
     MatButtonModule,
     MatCardModule,
     TableViewModule,
     FormViewModule,
     FormViewToolbarModule,
     BottomTabsModule,
-    ImportDialogModule
+    ImportDialogModule,
+
+    HomepageTabModule
   ],
   exports: [
     CommonModule,
