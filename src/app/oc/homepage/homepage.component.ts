@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FormViewParams, MessageView, TableViewParams, TabType } from '../interfaces';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, ReportService, ScrollService, TimeTrackerService, ToastService } from '../services';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
     selector: 'homepage',
@@ -21,7 +22,7 @@ import { AuthService, BackendService, ConsoleLoggerService, DialogService, Helpe
 export class HomepageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     tabs: any = null;
-    activeTab = 0;
+    activeIndex = 0;
     tiles: any = [];
 
     constructor(
@@ -77,7 +78,7 @@ export class HomepageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     changeTab(i) {
         let _this = this;
-        _this.activeTab = i;
+        _this.activeIndex = i;
         _this.backendService.loadHomePageTab(_this.tabs[i].entry,  _this.authService.getCurrentCompany({})).subscribe(
             response => {
                 console.log(response);
@@ -91,4 +92,13 @@ export class HomepageComponent implements OnInit, AfterViewInit, OnDestroy {
         )
     }
 
+    tabChanged(tabChangeEvent: MatTabChangeEvent): void {
+        if (this.tabs && this.tabs.length && tabChangeEvent.index > -1) {  // at least one tab visible
+            this.activeIndex = tabChangeEvent.index >= 0 ? tabChangeEvent.index : 0;  // might get a -1
+        }
+    }
+
+    loadTab() {
+        
+    }
 }
