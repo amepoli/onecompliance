@@ -4,7 +4,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { HomepageComponent } from './homepage.component';
+import { HomepageTabComponent } from './homepage-tab.component';
 import { TableViewModule } from 'app/oc/views/table/table-view.module';
 import { MatCardModule } from '@angular/material/card';
 import { RouterModule } from '@angular/router';
@@ -12,24 +12,22 @@ import { FormViewModule } from '../views/form/form-view.module';
 import { FormViewToolbarModule } from '../views/form-view-toolbar/form-view-toolbar.module';
 import { BottomTabsModule } from 'app/oc/bottom-tabs/bottom-tabs.module';
 import { ImportDialogModule } from '../dialogs/import.dialog/import.dialog.module';
-import { HomepageTabModule } from '../homepage-tab/homepage-tab.module';
-import { MatBadgeModule } from '@angular/material/badge';
+import { ToolbarElementsModule } from '../toolbar-elements/toolbar-elements.module';
 
 const routes = [
   {
-    path: 'oc/homepage',
-    component: HomepageComponent
+    path: 'oc/homepage-tab',
+    component: HomepageTabComponent
   }
 ];
 
 @NgModule({
-  declarations: [HomepageComponent],
+  declarations: [HomepageTabComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
     MatProgressSpinnerModule,
     MatIconModule,
-    MatBadgeModule,
     MatButtonModule,
     MatCardModule,
     TableViewModule,
@@ -38,7 +36,7 @@ const routes = [
     BottomTabsModule,
     ImportDialogModule,
 
-    HomepageTabModule
+    ToolbarElementsModule
   ],
   exports: [
     CommonModule,
@@ -50,9 +48,9 @@ const routes = [
     TableViewModule,
     FormViewModule,
     FormViewToolbarModule,
-    HomepageComponent,
+    HomepageTabComponent,
   ],
 
 })
 
-export class HomepageModule { }
+export class HomepageTabModule { }

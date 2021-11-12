@@ -1,0 +1,21 @@
+<div style="display: flex; flex-direction: row; align-items: center; background-color: #fafafa;" *ngIf="toolbar_elements && toolbar_elements.length">
+  <div *ngFor="let toolbar_element of toolbar_elements; let i = index" [style.flex]="toolbar_element.viewType == 'spacer'? '1 1 0%': ''"  [ngStyle]="{'margin-left': '16px', 'margin-right': '16px'}" >
+    <div *ngIf="toolbar_element.viewType === 'toggle'">
+      {{toolbar_element.toggleOffLabel || ""}}
+      <mat-slide-toggle [color]="'primary'" [checked]="toolbar_element.checked"
+          (change)="updateSearchToggle(i, $event.checked)">
+          {{toolbar_element.label}}
+      </mat-slide-toggle>
+    </div>
+    <div *ngIf="toolbar_element.viewType === 'combobox'" style="width: 256px;">
+      <mat-form-field appearance="fill" style="width: 256px;">
+        <mat-label>{{toolbar_element.label}}</mat-label>
+        <mat-select [(value)]="toolbar_element.selected">
+          <mat-option *ngFor="let option of toolbar_element.options" [value]="option.id">
+            {{option.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>    
+</div>
