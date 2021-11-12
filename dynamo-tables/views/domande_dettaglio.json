@@ -324,6 +324,19 @@
       "key": "id_argomento_tipo_allegato",
       "label": "Tipi Allegati Previsti",
       "newLine": false,
+      "outputEvent": {
+        "eventName": "argomentoTipoAllegato",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "eventName": "argomentoTipoAllegato",
+          "queryFunct": "update entrasp.cdms_risorse rs set id_argomento_tipo_allegato=dm.id_argomento_tipo_allegato from entrasp.cdms_risorse_oggetti ro inner join entrasp.domande dm on ro.id_modello_test=dm.id_modello_test and ro.id_modello_test_vr=dm.id_modello_test_vr and ro.id_domanda=dm.id_domanda and ro.codice_azienda=dm.codice_azienda where rs.id_argomento_tipo_allegato is null and dm.id_argomento_tipo_allegato is not null and ro.nome_business_object='riepilogoRisposte' and rs.id_risorsa=ro.id_risorsa and rs.codice_azienda=ro.codice_azienda;",
+          "actionType": "query",
+          "condition": "none",
+          "values": []
+        } 
+      ],
       "size": 5,
       "readOnly": false
     },

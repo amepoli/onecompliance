@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select cdr.id_anagrafica,cdr.id_progetto,cdr.id_sondaggio,cdr.id_domanda,cdr.id_modello_test,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND crs.id_argomento_tipo_allegato is not null",
+      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND crs.id_argomento_tipo_allegato is not null",
       "type": "main"
     },
     {
@@ -160,11 +160,11 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "key": "id_argomento_stato",
       "size": 4,
-      "label": "id_argomento_stato",
+      "label": "Stato",
       "readOnly": false,
       "newLine": false
     }
@@ -261,7 +261,7 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "key": "anagrafica_descr",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica)",
@@ -283,44 +283,8 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "id_modello_test",
-      "label": "Modello di Verifica"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-      "label": "Sondaggio Associato"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_domanda",
-      "label": "Domanda Associata"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
       "key": "id_anagrafica",
       "label": "Anagrafica Associata"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_progetto",
-      "label": "Progetto Associato"
     }
   ],
   "subTables": [
