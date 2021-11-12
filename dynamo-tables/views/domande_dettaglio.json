@@ -149,6 +149,39 @@
     {
       "autoGenerate": false,
       "format": {
+          "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "create_associate_argomento_k",
+      "buttonIcon": "class",
+      "label": "Crea e associa argomento",
+      "newLine": true,
+      "outputEvent": {
+          "eventName": "create_associate_argomento",
+          "eventTrigger": "press"
+      },
+      "inputEvents": [
+          {
+              "eventName": "create_associate_argomento",
+              "actionType": "query",
+              "condition": "none",
+              "values": [],
+              "outputEventWhenComplete": "domande_reload",
+              "queryFunct": "select entrasp.argomenti_create_and_update_domande($codice_azienda$, $id_domanda$, $id_modello_test$, $id_modello_test_vr$, $descrizione_breve$, $descrizione_$, 574)"
+          }
+      ],
+      "style": {
+          "background_color": "#25599C",
+          "font_color": "white"
+      },
+      "readOnly": false,
+      "size": 1,
+      "sameOrigin": false
+  },
+    {
+      "autoGenerate": false,
+      "format": {
         "comboQuery": "SELECT id_modello_test AS id, titolo AS name  FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$;",
         "options": [],
         "viewType": "combobox"
@@ -739,7 +772,11 @@
       },
       "actionType": "navigate",
       "eventName": "to_modello_test_from_domanda"
-    }
+    },
+    {
+      "actionType": "reload",
+      "eventName": "domande_reload"
+  }
   ],
   "origin": "entrasp.domande"
 }
