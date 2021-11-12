@@ -5,18 +5,18 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND crs.id_argomento_tipo_allegato is not null",
+      "queryString": "select cdr.id_anagrafica,cdr.id_progetto,cdr.id_sondaggio,cdr.id_domanda,cdr.id_modello_test,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND crs.id_argomento_tipo_allegato is not null",
       "type": "main"
     },
     {
-        "operation": "stopEvent",
-        "type": "main",
-        "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
+      "operation": "stopEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
     },
     {
-        "operation": "startEvent",
-        "type": "main",
-        "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'risorse', $id_risorsa$, '$codice_azienda$'::varchar) as play_time_report"
+      "operation": "startEvent",
+      "type": "main",
+      "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'risorse', $id_risorsa$, '$codice_azienda$'::varchar) as play_time_report"
     }
   ],
   "businessObjectName": "cdms_risorse",
@@ -154,6 +154,19 @@
       "label": "Ordine del giorno",
       "newLine": true,
       "readOnly": false
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento_stato",
+      "size": 4,
+      "label": "id_argomento_stato",
+      "readOnly": false,
+      "newLine": false
     }
   ],
   "table_keys": [
@@ -203,17 +216,35 @@
       "isPrimary": false,
       "key": "tipo_allegato",
       "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_allegato)",
-      "width": "25%",
+      "width": "20%",
       "label": "Tipo allegato"
     },
     {
       "format": {
-        "dataType": "number"
+        "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
-      "key": "id_argomento_tipo_allegato",
-      "label": "id_argomento_tipo_allegato"
+      "key": "descr_stato",
+      "width": "6%",
+      "label": "Stato",
+      "style": [
+        {
+          "value": "Non presente",
+          "font_color": "grey",
+          "font_weight": "500"
+        },
+        {
+          "value": "Da Associare",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Associato",
+          "font_color": "green",
+          "font_weight": "500"
+        }
+      ]
     },
     {
       "format": {
@@ -223,7 +254,7 @@
       "isPrimary": false,
       "key": "centro_gest",
       "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
-      "width": "15%",
+      "width": "10%",
       "label": "Centro gestionale"
     },
     {
@@ -234,7 +265,6 @@
       "isPrimary": false,
       "key": "anagrafica_descr",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica)",
-      "width": "0%",
       "label": "Cliente/Fornitore/Dipendente"
     },
     {
@@ -244,8 +274,53 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "data_scadenza",
-      "width": "15%",
+      "width": "10%",
       "label": "Data Scadenza"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_modello_test",
+      "label": "Modello di Verifica"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_sondaggio",
+      "label": "Sondaggio Associato"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_domanda",
+      "label": "Domanda Associata"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_anagrafica",
+      "label": "Anagrafica Associata"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_progetto",
+      "label": "Progetto Associato"
     }
   ],
   "subTables": [
@@ -278,7 +353,7 @@
       },
       "label": "ID Allegato",
       "newLine": false,
-      "queryCond": "id_risorsa=$id_risorsa_s$"
+      "queryCond": "crs.id_risorsa=$id_risorsa_s$"
     },
     {
       "fieldName": "id_argomento_tipo_allegato_s",
@@ -289,7 +364,7 @@
       },
       "label": "Tipo Allegato",
       "newLine": false,
-      "queryCond": "id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
+      "queryCond": "crs.id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
     },
     {
       "fieldName": "id_centro_gest_s",
@@ -300,7 +375,7 @@
       },
       "label": "Centro Gestionale Responsabile",
       "newLine": false,
-      "queryCond": "id_centro_gest=$id_centro_gest_s$"
+      "queryCond": "crs.id_centro_gest=$id_centro_gest_s$"
     },
     {
       "fieldName": "id_anagrafica_s",
@@ -311,7 +386,7 @@
       },
       "label": "Cliente/Fornitore/Dipendente",
       "newLine": false,
-      "queryCond": "id_anagrafica=$id_anagrafica_s$"
+      "queryCond": "crs.id_anagrafica=$id_anagrafica_s$"
     },
     {
       "fieldName": "id_anagrafica_s",
@@ -321,7 +396,7 @@
       },
       "label": "ID Anagrafica",
       "newLine": true,
-      "queryCond": "id_anagrafica=$id_anagrafica_s$"
+      "queryCond": "crs.id_anagrafica=$id_anagrafica_s$"
     },
     {
       "fieldName": "autore_s",
@@ -333,7 +408,7 @@
       },
       "label": "Utente",
       "newLine": false,
-      "queryCond": "autore=$autore_s$"
+      "queryCond": "crs.autore=$autore_s$"
     },
     {
       "fieldName": "data_da_s",
@@ -343,7 +418,7 @@
       },
       "label": "Data creazione da",
       "newLine": false,
-      "queryCond": "data_creazione>=$data_da_s$"
+      "queryCond": "crs.data_creazione>=$data_da_s$"
     },
     {
       "fieldName": "data_a_s",
@@ -353,7 +428,7 @@
       },
       "label": "Data creazione a",
       "newLine": false,
-      "queryCond": "data_creazione<=$data_a_s$"
+      "queryCond": "crs.data_creazione<=$data_a_s$"
     },
     {
       "fieldName": "data_scad_da_s",
@@ -363,7 +438,7 @@
       },
       "label": "Data scad. da",
       "newLine": false,
-      "queryCond": "data_scadenza>=$data_scad_da_s$"
+      "queryCond": "crs.data_scadenza>=$data_scad_da_s$"
     },
     {
       "fieldName": "data_scad_a_s",
@@ -373,7 +448,7 @@
       },
       "label": "Data scad. a",
       "newLine": false,
-      "queryCond": "data_scadenza<=$data_scad_a_s$"
+      "queryCond": "crs.data_scadenza<=$data_scad_a_s$"
     },
     {
       "fieldName": "parola_search_s",
@@ -383,7 +458,19 @@
       },
       "label": "Parola chiave",
       "newLine": false,
-      "queryCond": "(upper(client_file_name) like '%'||upper('€parola_search_s€')||'%')"
+      "queryCond": "(upper(crs.client_file_name) like '%'||upper('€parola_search_s€')||'%')"
+    },
+    {
+      "fieldName": "stato_search",
+      "format": {
+        "dataType": "text",
+        "viewType": "combobox",
+        "comboQuery": "select distinct id_argomento_stato as id, entrasp.argomenti_descr_stato(id_argomento_stato) as name from entrasp.cdms_risorse where codice_azienda=$codice_azienda$;",
+        "options": []
+      },
+      "label": "Stato",
+      "newLine": false,
+      "queryCond": "crs.id_argomento_stato=$stato_search$"
     }
   ],
   "hideActions": [
