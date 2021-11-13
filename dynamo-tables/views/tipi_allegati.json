@@ -7,14 +7,10 @@
 		"id_argomento_father": "3576",
 		"label_id": "ID Allegato",
 		"campo_id_argomento": "id_argomento_tipo_allegato",
-		"label_unifica": "Unifica id_allegato"
+		"label_unifica": "Unifica id_allegato",
+		"is_hidden_unifica_all": "false"
 	  },
 	"predefinedQueries": [
-		{
-			"type": "preProcessing",
-			"operation": "selectTable",
-			"queryString": "select entrasp.unifica_argomento(a1.id_argomento, a2.id_argomento) from entrasp.argomenti a1 inner join entrasp.argomenti a2 on trim(a1.descrizione_breve)=trim(a2.descrizione_breve) where a1.id_argomento!=a2.id_argomento and a1.id_argomento<a2.id_argomento"
-		},
 		{
 			"type": "main",
 			"operation": "selectTable",
@@ -60,7 +56,7 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true
+			"newLine": false
 		},
 		{
 			"autoGenerate": false,
@@ -73,7 +69,7 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true
+			"newLine": false
 		},
 		{
 			"autoGenerate": false,
@@ -128,7 +124,7 @@
 			"sameOrigin": false,
 			"newLine": false,
 			"readOnly": false,
-			"size": 8
+			"size": 6
 		},
 		{
 			"autoGenerate": false,
@@ -152,6 +148,35 @@
 					"condition": "none",
 					"values": [],
 					"queryFunct": "select entrasp.unifica_argomento($id_argomento$, $id_argomento_nuovo$)",
+					"successMessage": "Done!"
+				}
+			],
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 2
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": "$Q{is_hidden_unifica_all}",
+			"isPrimary": false,
+			"key": "argomento_unifica_all_k",
+			"buttonIcon": "merge_type",
+			"label": "Unifica tutti i duplicati",
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "argomento_unifica_all",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"eventName": "argomento_unifica_all",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.unifica_argomento(a1.id_argomento, a2.id_argomento) from entrasp.argomenti a1 inner join entrasp.argomenti a2 on trim(a1.descrizione_breve)=trim(a2.descrizione_breve) where a1.id_argomento!=a2.id_argomento and a1.id_argomento<a2.id_argomento",
 					"successMessage": "Done!"
 				}
 			],
