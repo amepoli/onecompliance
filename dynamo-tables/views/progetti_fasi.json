@@ -41,7 +41,7 @@
 		},
 		{
 			"operation": "selectTable",
-			"queryString": "select pf.*, snd.id_anagrafica_assegnataria, true as delete_fase, (select case when id_somministrazione is null then false else true end as visible_button_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select case when id_somministrazione is null then false else true end as visible_button_modello_test from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica_assegnataria) as id_anagrafica_assegnataria from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$",
+			"queryString": "select pf.*,true as time_report_play,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text),snd.id_anagrafica_assegnataria,(€global_id_anagrafiche€)::text as user_companies, true as delete_fase, (select case when id_somministrazione is null then false else true end as visible_button_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select case when id_somministrazione is null then false else true end as visible_button_modello_test from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica_assegnataria) as id_anagrafica_assegnataria from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$",
 			"type": "main"
 		}
 	],
@@ -587,7 +587,7 @@
 			"key": "titolo",
 			"hasLevel": true,
 			"label": "Titolo",
-			"width": "23%"
+			"width": "20%"
 		},
 		{
 			"format": {
@@ -719,7 +719,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "giudizio",
-			"width": "9%",
+			"width": "7%",
 			"label": "Giudizio",
 			"style": [
 				{
@@ -822,7 +822,7 @@
 			"isPrimary": false,
 			"key": "id_anagrafica_assegnataria",
 			"label": "Assegnato a",
-			"width": "8%"
+			"width": "5%"
 		},
 		{
 			"format": {
@@ -845,6 +845,84 @@
 					"font_weight": "500"
 				}
 			]
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "3%",
+			"key": "time_report_play",
+			"label": "",
+			"style": [
+				{
+					"button_icon": "play_arrow",
+					"value": "play_arrow"
+				}
+			],
+			"isButton": true,
+			"buttonAction": {
+				"target": "progetti_fasi",
+				"viewType": "table",
+				"action": "query",
+				"query": "select entrasp.business_object_play(('£user_companies£')::text, 'progetti_fasi', £id_fase£, '£codice_azienda£'::varchar)",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_fase",
+						"destination": "id_fase"
+					},
+					{
+						"source": "user_companies",
+						"destination": "user_companies"
+					}
+				],
+				"confirmAction": false,
+				"onSuccessAction": "update_time_tracker_and_reload"
+			}
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "5%",
+			"key": "time_report_stop_active",
+			"label": "",
+			"style": [
+				{
+					"button_icon": "stop",
+					"value": "stop"
+				}
+			],
+			"isButton": true,
+			"buttonAction": {
+				"target": "progetti_fasi",
+				"viewType": "table",
+				"action": "query",
+				"query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_fase",
+						"destination": "id_fase"
+					},
+					{
+						"source": "user_companies",
+						"destination": "user_companies"
+					}
+				],
+				"confirmAction": false,
+				"onSuccessAction": "update_time_tracker_and_reload"
+			}
 		}
 	],
 	"subTables": [
