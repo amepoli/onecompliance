@@ -1,0 +1,12 @@
+{
+  "$schema": "../views.schema.json",
+  "inheritsFrom": "risposte",
+  "entryKey": "risposte_liv_superiore",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select rp.*, dd.id_domanda_father, dd.id_modello_test_father, dd.id_domanda_son, dd.id_modello_test_son, substring (entrasp.domande_descrizione(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda),1,200) as descr_domanda, entrasp.risposte_previste_risposta(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda, rp.id_risposta_prev) as risposta_prev_descr, substring (rp.risposta,1,150) as risposta_sint, substring(rp.note,1,100) as note_sint from entrasp.risposte rp inner join entrasp.sondaggi snd on rp.codice_azienda=snd.codice_azienda and rp.id_sondaggio=snd.id_sondaggio inner join entrasp.sondaggi_somministrati ss on ss.codice_azienda=snd.codice_azienda and snd.id_sondaggio=ss.id_sondaggio inner join entrasp.domande_domande dd on rp.id_domanda=dd.id_domanda_father and rp.id_modello_test=dd.id_modello_test_father and rp.codice_azienda=dd.codice_azienda where rp.codice_azienda=$codice_azienda$ and dd.id_domanda_son=$id_domanda_son$ and dd.id_modello_test_son=$id_modello_test_son$",
+      "type": "main"
+    }
+  ]
+}
