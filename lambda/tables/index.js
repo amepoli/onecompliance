@@ -517,6 +517,11 @@ function getHomepageTabQuery(entry_params) {
             return {entry: tile.content.fieldName, query: replaceGlobalkeys(tile.content.query)}
         });
     }
+    if (homepageTab != null && homepageTab.toolbar_elements != null && homepageTab.toolbar_elements.length > 0) {
+        queryString['tabToolbarElementsQueries'] = homepageTab.toolbar_elements.filter(toolbar_element => toolbar_element.comboQuery).map( toolbar_element => {
+            return {entry: toolbar_element.fieldName, query: replaceGlobalkeys(toolbar_element.comboQuery)}
+        });
+    }
     return queryString;
 }
 
@@ -1389,6 +1394,34 @@ async function processHomepageTabQuery(entry_params, queryString, client) {
                         for(let i = 0; i < tilesView.tiles.length; i++) {
                             if(tilesView.tiles[i].content.fieldName === queryString['tabTilesQueries'][tileIndex].entry) {
                                 tilesView.tiles[i].content.value = data;
+                            }
+                        }
+                    }
+                }
+                catch(e) {
+                    console.log('Error occured while running query: ' + queryString['tabTilesQueries'][i].query);
+                }
+            }
+        }
+
+        if(queryString['tabToolbarElementsQueries'] && queryString['tabToolbarElementsQueries'].length) {
+            for(let elementIndex = 0; elementIndex < queryString['tabToolbarElementsQueries'].length; elementIndex++) {
+                try {
+                    console.log('Running query: ' + queryString['tabToolbarElementsQueries'][elementIndex].query);                    
+                    let result = await client.query(queryString['tabToolbarElementsQueries'][elementIndex].query);
+                    console.log('Result: ', JSON.stringify(result));
+                    if (result != null && result.rowCount > 0) {                        
+                        let keyId = Object.keys(result.rows[0])[0];
+                        let keyName = Object.keys(result.rows[0])[1];
+                        let data = result.rows.map(row => {
+                            return {
+                                id: row[0],
+                                name: row[1]
+                            }
+                        });
+                        for(let i = 0; i < tilesView.tiles.length; i++) {
+                            if(tilesView["toolbar_elements"][i].fieldName === queryString['tabToolbarElementsQueries'][elementIndex].entry) {
+                                tilesView["toolbar_elements"][i]["options"] = result.rows;
                             }
                         }
                     }
