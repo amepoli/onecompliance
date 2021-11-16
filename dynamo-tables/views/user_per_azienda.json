@@ -225,7 +225,7 @@
       },
       {
         "queryString": "select em.dynamo_user as Utente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, current_date - serie.i * interval '1 day' AS data_riferimento, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>(current_date - serie.i * interval '1 day')::DATE, datafine => (current_date - serie.i * interval '1 day')::DATE)*480 as minuti_svolti from entrasp.employers em, (select generate_series(0, 10) as i) serie where em.codice_azienda in('€global_codice_azienda€') group by em.dynamo_user, em.codice_azienda, em.nome||' '||em.cognome, current_date - serie.i * interval '1 day', entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>(current_date - serie.i * interval '1 day')::DATE, datafine => (current_date - serie.i * interval '1 day')::DATE) having entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>(current_date - serie.i * interval '1 day')::DATE, datafine => (current_date - serie.i * interval '1 day')::DATE)*480 < em.minuti_richiesti_giornalieri order by current_date - serie.i * interval '1 day';",
-        "label": "Per collaboratore con ore minori del previsto"
+        "label": "Giornate anomale per collaboratore"
       }
     ]
   }
