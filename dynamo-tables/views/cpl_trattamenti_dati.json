@@ -3,6 +3,19 @@
   "entryKey": "cpl_trattamenti_dati",
   "form_keys": [
     {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
       "autoGenerate": true,
       "format": {
         "dataType": "number",
@@ -79,7 +92,7 @@
       "key": "titolo",
       "label": "Titolo",
       "newLine": false,
-      "size": 8.5,
+      "size": 8.0,
       "readOnly": false
     },
     {
@@ -92,144 +105,234 @@
       "key": "flag_trattamento_conto_terzi",
       "label": "Trattamento conto Terzi",
       "readOnly": false,
-      "size": 1.5,
-      "newLine": true
+      "size": 1.0,
+      "newLine": false
     },
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "textarea"
+        "viewType": "button"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_titolare_trattamento",
-      "label": "Titolare Trattamento",
+      "key": "activate_dettagli_td_k",
+      "label": "Maggiori dettagli",
+      "buttonIcon": "add",
       "newLine": false,
-      "readOnly": false
+      "size": 1,
+      "outputEvent": {
+        "eventName": "activate_dettagli_td",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "hide",
+          "eventName": "activate_dettagli_td",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "show",
+          "eventName": "hide_dettagli_td",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
     },
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT ann.id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(ann.codice_part, ann.id_anagrafica) AS name  FROM entrasp.anagrafiche_id ann inner join entrasp.ruoli_anagrafiche ruo on ann.codice_part = ruo.codice_part and ann.id_anagrafica = ruo.id_anagrafica WHERE ann.codice_part='€global_codice_part€' and ruo.codice_ruolo in ('DIP', 'RSRSA');",
-        "options": [],
-        "viewType": "combobox", 
-        "dataType": "number"
+        "viewType": "button"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
-      "key": "id_contitolare_trattamento",
-      "label": "Contitolare Trattamento",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT ann.id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(ann.codice_part, ann.id_anagrafica) AS name  FROM entrasp.anagrafiche_id ann inner join entrasp.ruoli_anagrafiche ruo on ann.codice_part = ruo.codice_part and ann.id_anagrafica = ruo.id_anagrafica WHERE ann.codice_part='€global_codice_part€' and ruo.codice_ruolo in ('DIP', 'RSRSA');",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_rappresentante_titolare",
-      "label": "Rappresentante Titolare Trattamento",
+      "key": "hide_valutazione_rischi_k",
+      "label": "Nascondi dettagli",
+      "buttonIcon": "minimize",
       "newLine": false,
-      "size": 5,
-      "readOnly": false
+      "size": 1.0,
+      "outputEvent": {
+        "eventName": "hide_dettagli_td",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "activate_dettagli_td",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "eventName": "hide_dettagli_td",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
     },
     {
-      "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "input"
+        "viewType": "subform",
+        "subform_keys": [
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "newLine": true,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_titolare_trattamento",
+            "label": "Titolare Trattamento",
+            "newLine": false,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT ann.id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(ann.codice_part, ann.id_anagrafica) AS name  FROM entrasp.anagrafiche_id ann inner join entrasp.ruoli_anagrafiche ruo on ann.codice_part = ruo.codice_part and ann.id_anagrafica = ruo.id_anagrafica WHERE ann.codice_part='€global_codice_part€' and ruo.codice_ruolo in ('DIP', 'RSRSA');",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_contitolare_trattamento",
+            "label": "Contitolare Trattamento",
+            "newLine": true,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT ann.id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(ann.codice_part, ann.id_anagrafica) AS name  FROM entrasp.anagrafiche_id ann inner join entrasp.ruoli_anagrafiche ruo on ann.codice_part = ruo.codice_part and ann.id_anagrafica = ruo.id_anagrafica WHERE ann.codice_part='€global_codice_part€' and ruo.codice_ruolo in ('DIP', 'RSRSA');",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_rappresentante_titolare",
+            "label": "Rappresentante Titolare Trattamento",
+            "newLine": false,
+            "size": 5,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "trasferimenti",
+            "label": "Trasferimenti",
+            "newLine": true,
+            "size": 5,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "newLine": true,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "termini_ultimi_cancellazione",
+            "label": "Termini ultimi cancellazione",
+            "newLine": true,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "annotazioni",
+            "label": "Note",
+            "newLine": true,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "val_prop_trat",
+            "label": "Valutazione della necessità e proporzionalità dei trattamenti (art. 35, par. 2, lett. b)",
+            "readOnly": false
+          }
+        ]
       },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "trasferimenti",
-      "label": "Trasferimenti",
-      "newLine": true,
-      "size": 5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "condition": "none",
+          "eventName": "activate_dettagli_td",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "hide_dettagli_td",
+          "values": []
+        }
+      ],
       "isHidden": true,
       "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
+      "key": "dettagli_td",
+      "label": "Associazioni",
       "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "termini_ultimi_cancellazione",
-      "label": "Termini ultimi cancellazione",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "annotazioni",
-      "label": "Note",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "val_prop_trat",
-      "label": "Valutazione della necessità e proporzionalità dei trattamenti (art. 35, par. 2, lett. b)",
-      "readOnly": false
+      "readOnly": false,
+      "sameOrigin": true,
+      "saveWhenHidden": true
     }
   ],
   "origin": "entrasp.cpl_trattamenti_dati",
@@ -267,14 +370,14 @@
     {
       "fieldName": "id_centro_gest",
       "format": {
-          "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-          "options": [],
-          "viewType": "combobox"
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
       },
       "label": "Centro Gestionale",
       "newLine": true,
       "queryCond": "(select id_centro_gest from entrasp.modello_test_fields(codice_azienda, id_modello_test))= $id_centro_gest$"
-  }
+    }
   ],
   "subTables": [
     {
@@ -418,7 +521,7 @@
       ],
       "label": "Processi"
     }
-   ],
+  ],
   "table_keys": [
     {
       "format": {
