@@ -435,15 +435,54 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "date",
+        "dataType": "datetime",
         "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "date_time_begin",
-      "label": "Data Inizio",
+      "label": "Inizio",
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "date_time_begin_edit",
+        "eventTrigger": "change"
+      },
+      "inputEvents": [
+        {
+          "eventName": "date_time_begin_edit",
+          "actionType": "query",
+          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif('£date_time_begin£', 'null')::timestamp with time zone, nullif('£date_time_end£', 'null')::timestamp with time zone);",
+          "outputEventWhenComplete": "reload_durata",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "eventName": "date_time_end_edit",
+          "actionType": "query",
+          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif('£date_time_begin£', 'null')::timestamp with time zone, nullif('£date_time_end£', 'null')::timestamp with time zone);",
+          "outputEventWhenComplete": "reload_durata",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "datetime",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "date_time_end",
+      "label": "Fine",
+      "readOnly": false,
       "newLine": false,
-      "readOnly": false
+      "outputEvent": {
+        "eventName": "date_time_end_edit",
+        "eventTrigger": "change"
+      }
     },
     {
       "autoGenerate": false,
