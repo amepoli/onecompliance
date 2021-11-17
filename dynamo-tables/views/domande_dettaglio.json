@@ -315,7 +315,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
         "options": [],
         "viewType": "combobox"
       },
@@ -331,7 +331,7 @@
       "inputEvents": [
         {
           "eventName": "argomentoTipoAllegato",
-          "queryFunct": "update entrasp.cdms_risorse rs set id_argomento_tipo_allegato=dm.id_argomento_tipo_allegato from entrasp.cdms_risorse_oggetti ro inner join entrasp.domande dm on ro.id_modello_test=dm.id_modello_test and ro.id_modello_test_vr=dm.id_modello_test_vr and ro.id_domanda=dm.id_domanda and ro.codice_azienda=dm.codice_azienda where (rs.id_argomento_tipo_allegato is null or rs.id_argomento_tipo_allegato=3981) and dm.id_argomento_tipo_allegato is not null and ro.nome_business_object='riepilogoRisposte' and rs.id_risorsa=ro.id_risorsa and rs.codice_azienda=ro.codice_azienda;",
+          "queryFunct": "update entrasp.domande set id_argomento_tipo_allegato=£id_argomento_tipo_allegato£ where codice_azienda=$codice_azienda$ and id_domanda=$id_domanda$ and id_modello_test=$id_modello_test$;update entrasp.cdms_risorse rs set id_argomento_tipo_allegato=dm.id_argomento_tipo_allegato from entrasp.cdms_risorse_oggetti ro inner join entrasp.domande dm on ro.id_modello_test=dm.id_modello_test and ro.id_modello_test_vr=dm.id_modello_test_vr and ro.id_domanda=dm.id_domanda and ro.codice_azienda=dm.codice_azienda where (rs.id_argomento_tipo_allegato is null or rs.id_argomento_tipo_allegato=3981) and dm.id_argomento_tipo_allegato is not null and ro.nome_business_object='riepilogoRisposte' and rs.id_risorsa=ro.id_risorsa and rs.codice_azienda=ro.codice_azienda;",
           "actionType": "query",
           "condition": "none",
           "values": []
@@ -776,6 +776,16 @@
       "label": "Associate ad indicatore",
       "newLine": false,
       "queryCond": "id_domanda in(select id_domanda from entrasp.indicatori where codice_azienda=$codice_azienda$)"
+    },
+    {
+      "fieldName": "domande_tipo_allegato_non_definito",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Relative a allegati non definiti",
+      "newLine": true,
+      "queryCond": "codice_azienda||'-'||id_modello_test||'-'||id_domanda in(select distinct dm.codice_azienda||'-'||dm.id_modello_test||'-'||dm.id_domanda from entrasp.domande dm inner join entrasp.cdms_risorse_oggetti ro on ro.id_modello_test=dm.id_modello_test and ro.id_modello_test_vr=dm.id_modello_test_vr and ro.id_domanda=dm.id_domanda and ro.codice_azienda=dm.codice_azienda inner join entrasp.cdms_risorse rs on ro.id_risorsa=rs.id_risorsa and ro.codice_azienda=ro.codice_azienda where (rs.id_argomento_tipo_allegato is null or rs.id_argomento_tipo_allegato=3981) and dm.id_argomento_tipo_allegato is null and ro.nome_business_object='riepilogoRisposte' and rs.id_risorsa=ro.id_risorsa and rs.codice_azienda=ro.codice_azienda and rs.codice_azienda=$codice_azienda$)"
     },
     {
       "fieldName": "id_domanda_s",
