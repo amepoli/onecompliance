@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, GoogleAPIService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimeTrackerService, ToastService } from 'app/oc/services';
+import { DataSharingService } from 'app/oc/services/data_sharing.service';
 
 @Component({
     selector: 'table-view',
@@ -132,7 +133,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         private _console: ConsoleLoggerService,
         private httpClient: HttpClient,
         private _timeTrackerService: TimeTrackerService,
-        private _googleAPIService: GoogleAPIService
+        private _googleAPIService: GoogleAPIService,
+        private _dataSharingService: DataSharingService
     ) {
         // Set selection model
         this.selection = new SelectionModel<any>(this.allowMultiSelect, this.initialSelection);
@@ -355,6 +357,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
         // Add search toggles if exist
         search_keys = _this.applySearchToggles(search_keys);
+        search_keys = _this.applyHomepageKeys(search_keys);
 
         _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, search_keys, false, false, null, false).subscribe(
             results => {
@@ -585,6 +588,26 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             this.searchToggles.filter(x => x.checked).forEach( x => {
                 cleanedValues[x.fieldName] = x.checked
             });
+        }
+
+        return cleanedValues;
+    }
+
+    applyHomepageKeys(cleanedValues: any) {
+        let keys = this._dataSharingService.getData('homepageSearchKeys');
+        // Apply toggles
+        if(keys && Object.keys(keys).length) {
+            // clean-up null or empty values
+            if(!cleanedValues) {
+                cleanedValues = {};
+            }
+        
+            cleanedValues = {
+                ...cleanedValues,
+                ...keys
+            }
+
+            this._dataSharingService.clearData('homepageSearchKeys');
         }
 
         return cleanedValues;
