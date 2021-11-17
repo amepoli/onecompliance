@@ -22,18 +22,18 @@
       "type": "main",
       "operation": "delete",
       "queryString": "select entrasp.domanda_delete($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$);"
-    }  
+    }
   ],
   "messages": [
     {
-        "viewType": "form",
-        "formMessageType": "delete",
-        "message": {
-            "title": "Cancellazione domanda",
-            "text": "Cancellare la domanda e tutte le risposte collegate nei sondaggi legati a questa versione di modello di verifica?"
-        }
+      "viewType": "form",
+      "formMessageType": "delete",
+      "message": {
+        "title": "Cancellazione domanda",
+        "text": "Cancellare la domanda e tutte le risposte collegate nei sondaggi legati a questa versione di modello di verifica?"
+      }
     }
-],
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -149,7 +149,7 @@
     {
       "autoGenerate": false,
       "format": {
-          "viewType": "button"
+        "viewType": "button"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -158,27 +158,27 @@
       "label": "Crea e associa argomento",
       "newLine": true,
       "outputEvent": {
-          "eventName": "create_associate_argomento",
-          "eventTrigger": "press"
+        "eventName": "create_associate_argomento",
+        "eventTrigger": "press"
       },
       "inputEvents": [
-          {
-              "eventName": "create_associate_argomento",
-              "actionType": "query",
-              "condition": "none",
-              "values": [],
-              "outputEventWhenComplete": "domande_reload",
-              "queryFunct": "select entrasp.argomenti_create_and_update_domande($codice_azienda$, $id_domanda$, $id_modello_test$, $id_modello_test_vr$, left($descrizione$,120), $descrizione$, 574)"
-          }
+        {
+          "eventName": "create_associate_argomento",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "domande_reload",
+          "queryFunct": "select entrasp.argomenti_create_and_update_domande($codice_azienda$, $id_domanda$, $id_modello_test$, $id_modello_test_vr$, left($descrizione$,120), $descrizione$, 574)"
+        }
       ],
       "style": {
-          "background_color": "#25599C",
-          "font_color": "white"
+        "background_color": "#25599C",
+        "font_color": "white"
       },
       "readOnly": false,
       "size": 1,
       "sameOrigin": false
-  },
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -335,7 +335,7 @@
           "actionType": "query",
           "condition": "none",
           "values": []
-        } 
+        }
       ],
       "size": 5,
       "readOnly": false
@@ -599,7 +599,6 @@
           "parent": "id_modello_test_vr",
           "son": "id_modello_test_vr"
         }
-      
       ],
       "label": "Presidi Associabili"
     },
@@ -622,7 +621,6 @@
           "parent": "id_modello_test_vr",
           "son": "id_modello_test_vr_father"
         }
-      
       ],
       "label": "Domande (controlli) di livello inferiore",
       "type": "table"
@@ -811,21 +809,21 @@
     {
       "fieldName": "domanda_search",
       "format": {
-          "dataType": "text",
-          "viewType": "input"
+        "dataType": "text",
+        "viewType": "input"
       },
       "label": "Domanda",
       "newLine": false,
       "queryCond": "(upper(descrizione) like '%'||upper('€domanda_search€')||'%' or upper(note) like '%'||upper('€domanda_search€')||'%')"
-  },
+    },
     {
       "format": {
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=574 order by descrizione",
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father in(574, 4038) order by descrizione",
         "options": [],
         "viewType": "combobox"
       },
       "fieldName": "id_argomento_s",
-      "label": "Argomento",
+      "label": "Argomenti domande",
       "newLine": true,
       "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($id_argomento_s$))"
     }
@@ -856,7 +854,7 @@
     {
       "actionType": "reload",
       "eventName": "domande_reload"
-  }
+    }
   ],
   "origin": "entrasp.domande"
 }
