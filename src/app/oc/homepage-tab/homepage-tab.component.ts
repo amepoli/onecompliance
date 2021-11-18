@@ -11,6 +11,8 @@ import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FormViewParams, MessageView, TableViewParams, TabType } from '../interfaces';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, ReportService, ScrollService, TimeTrackerService, ToastService } from '../services';
+import { DataSharingService } from '../services/data_sharing.service';
+import { ToolbarElementsComponent } from '../toolbar-elements/toolbar-elements.component';
 
 @Component({
     selector: 'homepage-tab',
@@ -28,7 +30,8 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() entry: string;
     @Input() keys: any = null;
     @Output() tabLoaded = new EventEmitter<any>();
-    
+    @ViewChild('toolbarElements') toolbarElements: ToolbarElementsComponent;
+
 
     constructor(
         protected route: ActivatedRoute,
@@ -45,7 +48,8 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
         private _navigationService: NavigationService,
         private _cdr: ChangeDetectorRef,
         private _timeTrackerService: TimeTrackerService,
-        private _console: ConsoleLoggerService) {
+        private _console: ConsoleLoggerService,
+        private _dataSharingService: DataSharingService) {
     }
 
     ngOnInit(): void {
@@ -136,7 +140,7 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
             else {
                 this.toolbar_elements.push({
                     ...element,
-                    selected: -1
+                    selected: null
                 });
             }
         });
@@ -153,7 +157,7 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
             else {
                 this.toolbar_elements.push({
                     ...element,
-                    selected: -1
+                    selected: null
                 });
             }
         });
@@ -165,6 +169,18 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
         this.toolbar_elements[index].checked = checked;
     }
     
-    
+    gotoTile(i: number) {
+        let keys = {};
+        this.toolbarElements.toolbar_elements.filter( element => element.viewType === "toggle" && element.checked).forEach( element => {
+            keys[element.fieldName] = true
+        });
+
+        this.toolbarElements.toolbar_elements.filter( element => element.viewType === "combobox" && element.selected).forEach( element => {
+            keys[element.fieldName] = element.selected
+        });
+        
+        this._dataSharingService.setData('homepageSearchKeys', keys);
+        this.router.navigate(['/oc/main-table/progetti']);   
+    }
 
 }
