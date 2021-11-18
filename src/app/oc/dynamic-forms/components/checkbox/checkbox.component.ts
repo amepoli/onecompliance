@@ -7,7 +7,7 @@ import { PubSubService } from 'app/oc/services';
   selector: 'app-checkbox',
   template: `
 <span [formGroup]="group" >
-  <mat-checkbox *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" [ngModel]="field.value" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" (change)="onCheck($event)">{{field.label}}</mat-checkbox>
+  <mat-checkbox color="primary" *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" [ngModel]="field.value" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" (change)="onCheck($event)">{{field.label}}</mat-checkbox>
 </span>`,
   styles: [],
   host: {
