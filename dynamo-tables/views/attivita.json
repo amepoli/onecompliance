@@ -63,7 +63,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select *, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest  from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent is null and data_fine_validita is null;"
+            "queryString": "select *, (select case when id_modello_test is null then false else true end) as visible_button_modello_test, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest  from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita_parent is null and data_fine_validita is null;"
         },
         {
             "operation": "insert",
@@ -617,7 +617,7 @@
             "isPrimary": true,
             "key": "codice_attivita",
             "label": "Cod. attività (PK)",
-            "width": "8%"
+            "width": "7%"
         },
         {
             "format": {
@@ -627,7 +627,7 @@
             "isPrimary": false,
             "key": "codice",
             "label": "Codice",
-            "width": "10%"
+            "width": "8%"
         },
         {
             "format": {
@@ -637,7 +637,7 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "width": "30%"
+            "width": "25%"
         },
         {
             "format": {
@@ -648,7 +648,7 @@
             "key": "centro_gest",
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest)",
             "label": "Centro Gestionale",
-            "width": "15%"
+            "width": "10%"
         },
         {
             "format": {
@@ -658,7 +658,7 @@
             "isPrimary": false,
             "key": "codice_attivita_principale",
             "label": "Cod att. principale",
-            "width": "10%"
+            "width": "8%"
         },
         {
             "format": {
@@ -684,7 +684,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "15%",
+            "width": "12%",
             "sameOrigin": false,
             "key": "create_progetto",
             "label": "Nuovo Progetto",
@@ -718,6 +718,36 @@
                     {
                         "source": "id_progetto",
                         "destination": "id_progetto"
+                    }
+                ]
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6.5%",
+            "key": "visible_button_modello_test",
+            "label": "Mod.Verifica",
+            "isButton": true,
+            "buttonAction": {
+                "target": "modelli_test_vr",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "id_modello_test_vr",
+                        "destination": "id_modello_test_vr"
                     }
                 ]
             }
