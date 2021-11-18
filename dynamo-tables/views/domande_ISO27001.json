@@ -1,0 +1,44 @@
+{
+  "$schema": "../views.schema.json",
+  "inheritsFrom": "domande_dettaglio",
+  "entryKey": "domande_ISO27001",
+  "predefinedQueries": [
+    {
+      "operation": "insert",
+      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$)",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$)",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.risposte rp set punteggio = dm.punteggio from entrasp.domande dm where rp.codice_azienda= dm.codice_azienda and rp.id_domanda = dm.id_domanda and rp.id_modello_test = dm.id_modello_test and rp.id_modello_test_vr = dm.id_modello_test_vr and rp.punteggio!=dm.punteggio and rp.codice_azienda = $codice_azienda$ and rp.id_modello_test =$id_modello_test$ and rp.id_domanda =$id_domanda$ and rp.id_modello_test_vr = $id_modello_test_vr$;",
+      "type": "postProcessing"
+    },
+    {
+      "type": "main",
+      "operation": "delete",
+      "queryString": "select entrasp.domanda_delete($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$);"
+    },
+    {
+      "type": "main",
+      "operation": "selectTable",
+      "queryString": "select * from entrasp.domande where codice_azienda=$codice_azienda$ and id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=4038)"
+    }  
+  ],
+  "exportQueries": {
+    "tableQueries": [
+          {
+            "queryString": "select distinct aa.id_argomento_son , (select entrasp.argomenti_descr(aa.id_argomento_son)),(select count(id_domanda) from entrasp.domande dmd where dmd.id_argomento in (select distinct id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father = aa.id_argomento_son) and dmd.id_argomento in(select distinct dm.id_argomento from entrasp.domande dm inner join entrasp.modelli_test mt_dm on dm.id_modello_test=mt_dm.id_modello_test and dm.codice_azienda=mt_dm.codice_azienda inner join entrasp.argomenti_argomenti aa_dm_liv on mt_dm.id_argomento=aa_dm_liv.id_argomento_son where dm.codice_azienda='AUDITFT' and aa_dm_liv.id_argomento_father=1300)) from entrasp.argomenti_argomenti aa where aa.id_argomento_father=5328;",
+            "label": "Conteggio controlli 1° livello"
+          },
+          {
+            "queryString": "select distinct aa.id_argomento_son , (select entrasp.argomenti_descr(aa.id_argomento_son)),(select count(id_domanda) from entrasp.domande dmd where dmd.id_argomento in (select distinct id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father = aa.id_argomento_son) and dmd.id_argomento in(select distinct dm.id_argomento from entrasp.domande dm inner join entrasp.modelli_test mt_dm on dm.id_modello_test=mt_dm.id_modello_test and dm.codice_azienda=mt_dm.codice_azienda inner join entrasp.argomenti_argomenti aa_dm_liv on mt_dm.id_argomento=aa_dm_liv.id_argomento_son where dm.codice_azienda='AUDITFT' and aa_dm_liv.id_argomento_father=162)) from entrasp.argomenti_argomenti aa where aa.id_argomento_father=5328;",
+            "label": "Conteggio controlli 2° livello"
+          }
+    ]
+}
+}

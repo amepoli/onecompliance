@@ -22,18 +22,18 @@
       "type": "main",
       "operation": "delete",
       "queryString": "select entrasp.domanda_delete($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$);"
-    }  
+    }
   ],
   "messages": [
     {
-        "viewType": "form",
-        "formMessageType": "delete",
-        "message": {
-            "title": "Cancellazione domanda",
-            "text": "Cancellare la domanda e tutte le risposte collegate nei sondaggi legati a questa versione di modello di verifica?"
-        }
+      "viewType": "form",
+      "formMessageType": "delete",
+      "message": {
+        "title": "Cancellazione domanda",
+        "text": "Cancellare la domanda e tutte le risposte collegate nei sondaggi legati a questa versione di modello di verifica?"
+      }
     }
-],
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -149,7 +149,7 @@
     {
       "autoGenerate": false,
       "format": {
-          "viewType": "button"
+        "viewType": "button"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -158,27 +158,27 @@
       "label": "Crea e associa argomento",
       "newLine": true,
       "outputEvent": {
-          "eventName": "create_associate_argomento",
-          "eventTrigger": "press"
+        "eventName": "create_associate_argomento",
+        "eventTrigger": "press"
       },
       "inputEvents": [
-          {
-              "eventName": "create_associate_argomento",
-              "actionType": "query",
-              "condition": "none",
-              "values": [],
-              "outputEventWhenComplete": "domande_reload",
-              "queryFunct": "select entrasp.argomenti_create_and_update_domande($codice_azienda$, $id_domanda$, $id_modello_test$, $id_modello_test_vr$, left($descrizione$,120), $descrizione$, 574)"
-          }
+        {
+          "eventName": "create_associate_argomento",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "domande_reload",
+          "queryFunct": "select entrasp.argomenti_create_and_update_domande($codice_azienda$, $id_domanda$, $id_modello_test$, $id_modello_test_vr$, left($descrizione$,120), $descrizione$, 574)"
+        }
       ],
       "style": {
-          "background_color": "#25599C",
-          "font_color": "white"
+        "background_color": "#25599C",
+        "font_color": "white"
       },
       "readOnly": false,
       "size": 1,
       "sameOrigin": false
-  },
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -315,7 +315,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
         "options": [],
         "viewType": "combobox"
       },
@@ -331,11 +331,11 @@
       "inputEvents": [
         {
           "eventName": "argomentoTipoAllegato",
-          "queryFunct": "update entrasp.cdms_risorse rs set id_argomento_tipo_allegato=dm.id_argomento_tipo_allegato from entrasp.cdms_risorse_oggetti ro inner join entrasp.domande dm on ro.id_modello_test=dm.id_modello_test and ro.id_modello_test_vr=dm.id_modello_test_vr and ro.id_domanda=dm.id_domanda and ro.codice_azienda=dm.codice_azienda where rs.id_argomento_tipo_allegato is null and dm.id_argomento_tipo_allegato is not null and ro.nome_business_object='riepilogoRisposte' and rs.id_risorsa=ro.id_risorsa and rs.codice_azienda=ro.codice_azienda;",
+          "queryFunct": "update entrasp.domande set id_argomento_tipo_allegato=£id_argomento_tipo_allegato£ where codice_azienda=$codice_azienda$ and id_domanda=$id_domanda$ and id_modello_test=$id_modello_test$;update entrasp.cdms_risorse rs set id_argomento_tipo_allegato=dm.id_argomento_tipo_allegato from entrasp.cdms_risorse_oggetti ro inner join entrasp.domande dm on ro.id_modello_test=dm.id_modello_test and ro.id_modello_test_vr=dm.id_modello_test_vr and ro.id_domanda=dm.id_domanda and ro.codice_azienda=dm.codice_azienda where (rs.id_argomento_tipo_allegato is null or rs.id_argomento_tipo_allegato=3981) and dm.id_argomento_tipo_allegato is not null and ro.nome_business_object='riepilogoRisposte' and rs.id_risorsa=ro.id_risorsa and rs.codice_azienda=ro.codice_azienda;",
           "actionType": "query",
           "condition": "none",
           "values": []
-        } 
+        }
       ],
       "size": 5,
       "readOnly": false
@@ -599,7 +599,6 @@
           "parent": "id_modello_test_vr",
           "son": "id_modello_test_vr"
         }
-      
       ],
       "label": "Presidi Associabili"
     },
@@ -622,9 +621,65 @@
           "parent": "id_modello_test_vr",
           "son": "id_modello_test_vr_father"
         }
-      
       ],
       "label": "Domande (controlli) di livello inferiore",
+      "type": "table"
+    },
+    {
+      "entryKey": "risposte_sub_of_domande",
+      "keys": [
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        }
+      ],
+      "label": "Risposte nelle verifiche",
+      "type": "table"
+    },
+    {
+      "entryKey": "risposte_liv_inferiore",
+      "keys": [
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda_father"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test_father"
+        }
+      ],
+      "label": "Risposte liv inferiore nelle verifiche",
+      "type": "table"
+    },
+    {
+      "entryKey": "risposte_liv_superiore",
+      "keys": [
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda_son"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test_son"
+        }
+      ],
+      "label": "Risp.liv.sup.altre verifiche",
       "type": "table"
     }
   ],
@@ -721,6 +776,16 @@
       "queryCond": "id_domanda in(select id_domanda from entrasp.indicatori where codice_azienda=$codice_azienda$)"
     },
     {
+      "fieldName": "domande_tipo_allegato_non_definito",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Relative a allegati non definiti",
+      "newLine": true,
+      "queryCond": "codice_azienda||'-'||id_modello_test||'-'||id_domanda in(select distinct dm.codice_azienda||'-'||dm.id_modello_test||'-'||dm.id_domanda from entrasp.domande dm inner join entrasp.cdms_risorse_oggetti ro on ro.id_modello_test=dm.id_modello_test and ro.id_modello_test_vr=dm.id_modello_test_vr and ro.id_domanda=dm.id_domanda and ro.codice_azienda=dm.codice_azienda inner join entrasp.cdms_risorse rs on ro.id_risorsa=rs.id_risorsa and ro.codice_azienda=ro.codice_azienda where (rs.id_argomento_tipo_allegato is null or rs.id_argomento_tipo_allegato=3981) and dm.id_argomento_tipo_allegato is null and ro.nome_business_object='riepilogoRisposte' and rs.id_risorsa=ro.id_risorsa and rs.codice_azienda=ro.codice_azienda and rs.codice_azienda=$codice_azienda$)"
+    },
+    {
       "fieldName": "id_domanda_s",
       "format": {
         "viewType": "input",
@@ -744,23 +809,45 @@
     {
       "fieldName": "domanda_search",
       "format": {
-          "dataType": "text",
-          "viewType": "input"
+        "dataType": "text",
+        "viewType": "input"
       },
       "label": "Domanda",
       "newLine": false,
       "queryCond": "(upper(descrizione) like '%'||upper('€domanda_search€')||'%' or upper(note) like '%'||upper('€domanda_search€')||'%')"
-  },
+    },
     {
       "format": {
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=574 order by descrizione",
+        "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||codice||'-'||descrizione AS name, descrizione  FROM entrasp.argomenti arg order by descrizione",
         "options": [],
         "viewType": "combobox"
       },
       "fieldName": "id_argomento_s",
-      "label": "Argomento",
+      "label": "Argomenti tuti",
       "newLine": true,
       "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($id_argomento_s$))"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||codice||'-'||descrizione AS name, descrizione  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father in(574, 4038) order by descrizione",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "fieldName": "id_argomento_s",
+      "label": "Argomenti ISO27001",
+      "newLine": false,
+      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($id_argomento_s$))"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione AS name, descrizione  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3368 order by descrizione",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "fieldName": "id_argomento_tc_s",
+      "label": "Tipi controllo",
+      "newLine": true,
+      "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($id_argomento_tc_s$))"
     }
   ],
   "inputEvents": [
@@ -789,7 +876,10 @@
     {
       "actionType": "reload",
       "eventName": "domande_reload"
-  }
+    }
   ],
-  "origin": "entrasp.domande"
+  "origin": "entrasp.domande",
+  "querySuffixes": {
+    "tableViewSuffix": "limit 500"
+  }
 }

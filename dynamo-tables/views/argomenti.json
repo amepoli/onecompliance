@@ -71,7 +71,7 @@
       "autoGenerate": false,
       "format": {
         "dataType": "text",
-        "viewType": "input"
+        "viewType": "textarea"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -91,7 +91,7 @@
       "key": "flag_classificazione",
       "label": "Argomento padre (di classificazione)",
       "newLine": false,
-      "readOnly": false,     
+      "readOnly": false,
       "insertUpdateFunct": "£flag_classificazione£::boolean",
       "isPrimary": false,
       "isHidden": false,
@@ -107,7 +107,7 @@
       "key": "flag_no_delete",
       "label": "Non cancellare",
       "newLine": true,
-      "readOnly": false,     
+      "readOnly": false,
       "insertUpdateFunct": "£flag_no_delete£::boolean",
       "isPrimary": false,
       "isHidden": false,
@@ -161,14 +161,34 @@
   ],
   "search_keys": [
     {
-      "fieldName": "id_argomento",
+      "fieldName": "id_argomento_s",
       "format": {
         "dataType": "number",
         "viewType": "input"
       },
-      "label": "ID",
+      "label": "Maggiore di ID_argomento",
       "newLine": false,
-      "queryCond": "id_argomento=$id_argomento$"
+      "queryCond": "id_argomento>=$id_argomento_s$"
+    },
+    {
+      "fieldName": "codice_s",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Codice",
+      "newLine": false,
+      "queryCond": "codice like '%$codice_s$%'"
+    },
+    {
+      "fieldName": "id_argomento_father_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Con argomento padre pari a",
+      "newLine": false,
+      "queryCond": "id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father_s$)"
     },
     {
       "fieldName": "descr_rs",
@@ -347,47 +367,47 @@
         }
       ],
       "label": "Contratti"
-      },
-      {
-        "entryKey": "centri_gestionali_sub_of_argomenti",
-        "keys": [
-          {
-            "parent": "id_argomento",
-            "son": "id_argomento"
-          }
-        ],
-        "label": "Centri Gestionali"
-      },
-      {
-        "entryKey": "domande_sub_of_argomenti",
-        "keys": [
-          {
-            "parent": "id_argomento",
-            "son": "id_argomento"
-          }
-        ],
-        "label": "Domande"
-      },
-      {
-        "entryKey": "attivita_sub_of_argomenti",
-        "keys": [
-          {
-            "parent": "id_argomento",
-            "son": "id_argomento"
-          }
-        ],
-        "label": "Attività"
-      },
-      {
-        "entryKey": "aziende_tasks_sub_of_argomenti",
-        "keys": [
-          {
-            "parent": "id_argomento",
-            "son": "id_argomento"
-          }
-        ],
-        "label": "Azienda"
-      }
+    },
+    {
+      "entryKey": "centri_gestionali_sub_of_argomenti",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento"
+        }
+      ],
+      "label": "Centri Gestionali"
+    },
+    {
+      "entryKey": "domande_sub_of_argomenti",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento"
+        }
+      ],
+      "label": "Domande"
+    },
+    {
+      "entryKey": "attivita_sub_of_argomenti",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento"
+        }
+      ],
+      "label": "Attività"
+    },
+    {
+      "entryKey": "aziende_tasks_sub_of_argomenti",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento"
+        }
+      ],
+      "label": "Azienda"
+    }
   ],
   "table_keys": [
     {
@@ -443,6 +463,6 @@
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "limit 100"
-  }
+    "tableViewSuffix": "order by id_argomento asc limit 500"
+}
 }
