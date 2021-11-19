@@ -79,7 +79,6 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.loadTab();
     }
     
 
@@ -117,7 +116,19 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     loadTiles(tiles: any) {
-        this.tiles = tiles;
+        this.tiles = [];
+        if(tiles && tiles.length) {
+            tiles.forEach(tile => {
+                this.tiles.push(tile);
+                if(tile.new_line) {
+                    this.tiles.push(
+                        {
+                            isNewLineTile: true
+                        }
+                    )
+                }
+            })
+        }
     }
 
     loadToolbarElements(toolbar_elements: any) {
