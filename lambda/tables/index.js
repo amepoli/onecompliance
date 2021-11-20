@@ -1345,37 +1345,35 @@ async function processCustomQuery(queryString, keys, client) {
 }
 
 async function processHomepageQuery(entry_params, queryString, client) {
+   let homepage = entry_params.Item;
+    if (queryString != null) {
+        if(queryString['tabBadgeQueries'] && queryString['tabBadgeQueries'].length) {
+            for(let tabIndex = 0; tabIndex < queryString['tabBadgeQueries'].length; tabIndex++) {
+                try {
+                    console.log('Running query: ' + queryString['tabBadgeQueries'][tabIndex].query);                    
+                    let result = await client.query(queryString['tabBadgeQueries'][tabIndex].query);
+                    console.log('Result: ', JSON.stringify(result));
+                    if (result != null && result.rowCount > 0) {                        
+                        let key = Object.keys(result.rows[0])[0];
+                        let data = result.rows[0][key];
+                        for(let i = 0; i < homepage.tabs.length; i++) {
+                            if(homepage.tabs[i].entry === queryString['tabBadgeQueries'][tabIndex].entry) {
+                                homepage.tabs[i].badgeValue = data;
+                            }
+                        }
+                    }
+                }
+                catch(e) {
+                    console.log('Error occured while running query: ' + queryString['tabBadgeQueries'][tabIndex].query);
+                }
+            }
+        }        
+    }
     return {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
-        "body": JSON.stringify({ result: 'OK', response: entry_params.Item, queryString: queryString })
-    };
-
-    if (queryString != null) {
-        queryString = replaceGlobalkeys(queryString);
-        queryString = replaceLocalKeys(queryString, keys);
-        try {
-            let result = await client.query(queryString);
-            if (result.rows != null && result.rows.length > 0) {
-                result = result.rows[0];
-            }
-            return {
-                "isBase64Encoded": false,
-                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-                "statusCode": 200,
-                "body": JSON.stringify({ result: 'OK', response: result, queryString: queryString })
-            };
-        }
-        catch (e) {
-            console.log('Custom Query Error: ', e);
-            return {
-                "isBase64Encoded": false,
-                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-                "statusCode": 200,
-                "body": JSON.stringify({ result: 'KO', error: e, queryString: queryString })
-            };
-        }
+        "body": JSON.stringify({ result: 'OK', response: homepage, queryString: queryString })
     }
 }
 
@@ -1399,7 +1397,7 @@ async function processHomepageTabQuery(entry_params, queryString, client) {
                     }
                 }
                 catch(e) {
-                    console.log('Error occured while running query: ' + queryString['tabTilesQueries'][i].query);
+                    console.log('Error occured while running query: ' + queryString['tabTilesQueries'][tileIndex].query);
                 }
             }
         }
@@ -1427,7 +1425,7 @@ async function processHomepageTabQuery(entry_params, queryString, client) {
                     }
                 }
                 catch(e) {
-                    console.log('Error occured while running query: ' + queryString['tabTilesQueries'][i].query);
+                    console.log('Error occured while running query: ' + queryString['tabToolbarElementsQueries'][elementIndex].query);
                 }
             }
         }
