@@ -10,15 +10,15 @@
             "label": "Status",
             "options": [],
             "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
-            "queryCond": "stato = '$stato$'"
+            "queryCond": "snd.stato = '$stato$'"
         },
         {
-            "fieldName": "flag_progetti_aperti",
+            "fieldName": "flag_sondaggi_aperti",
             "viewType": "toggle",
             "position": "right",
             "label": "Progetti aperti",
             "toggleOffLabel": "Tutti Progetti",            
-            "queryCond": "stato not in ('C', 'N')"
+            "queryCond": "snd.stato not in ('C', 'N')"
         }
     ],
     "tiles": [
@@ -27,40 +27,28 @@
             "content": {
                 "contentType": "value",
                 "value": "Scooby Doo",
-                "query": "select count(id_sondaggi) from entrasp.sondaggi WHERE stato='C'",
+                "query": "select count(id_sondaggio) as sondaggi_chiusi from entrasp.sondaggi WHERE stato='C'",
                 "queryCond": "",
-                "fieldName": "id_argomento",
+                "fieldName": "sondaggi_chiusi",
                 "value_color": "green",
 				"title_color": "green",
 				"background_color": "lightblue"		
             },
-			"new_line": true
+			"new_line": false
         },
 		{
             "title": "Sondaggi aperti",
             "content": {
                 "contentType": "value",
                 "value": "Scooby Doo",
-                "query": "select count(id_sondaggi) from entrasp.progetti WHERE stato!='C'",
+                "query": "select count(id_sondaggio) as sondaggi_aperti from entrasp.sondaggi WHERE stato!='C'",
                 "queryCond": "",
-                "fieldName": "id_argomento",
-                "value_color": "green",
-				"title_color": "green",
-				"background_color": "lightblue"		
+                "fieldName": "sondaggi_aperti",
+                "value_color": "red",
+				"title_color": "red",
+				"background_color": "white"		
             },
 			"new_line": true
-        },
-        {
-            "title": "Temperature",
-            "content": {
-                "contentType": "value",
-                "value": "Scooby Doo",
-                "query": "select 15",
-                "fieldName": "temp",
-                "value_color": "crimson",
-				"title_color": "black",
-				"background_color": "lightblue"	
-            }
         }
     ]
 }

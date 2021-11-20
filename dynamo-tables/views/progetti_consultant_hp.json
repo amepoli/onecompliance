@@ -4,6 +4,13 @@
 	"entryKey": "progetti_consultant_hp",
 	"inheritsFrom": "progetti_consultant",
 	"businessObjectName": "progetti",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select * from entrasp.sondaggi limit 100",
+            "type": "main"
+        }
+    ],
 	"toolbar_elements": [
         {
             "fieldName": "stato",
@@ -29,40 +36,28 @@
             "content": {
                 "contentType": "value",
                 "value": "Scooby Doo",
-                "query": "select count(id_progetto) from entrasp.progetti WHERE codice_azienda='€global_codice_azienda€' and stato='C'",
+                "query": "select count(id_progetto) from entrasp.progetti WHERE stato!='C'",
                 "queryCond": "",
-                "fieldName": "id_argomento",
+                "fieldName": "progetti_aperti",
                 "value_color": "green",
 				"title_color": "green",
 				"background_color": "lightblue"		
             },
-			"new_line": true
+			"new_line": false
         },
 		{
-            "title": "Progetti chiusi",
+            "title": "Progetti aperti",
             "content": {
                 "contentType": "value",
                 "value": "Scooby Doo",
-                "query": "select count(id_progetto) from entrasp.progetti WHERE codice_azienda='€global_codice_azienda€' and stato='C'",
+                "query": "select count(id_progetto) as progetti_chiusi from entrasp.progetti WHERE stato='C'",
                 "queryCond": "",
-                "fieldName": "id_argomento",
-                "value_color": "green",
-				"title_color": "green",
-				"background_color": "lightblue"		
+                "fieldName": "progetti_chiusi",
+                "value_color": "red",
+				"title_color": "red",
+				"background_color": "white"		
             },
 			"new_line": true
-        },      
-        {
-            "title": "Temperature",
-            "content": {
-                "contentType": "value",
-                "value": "Scooby Doo",
-                "query": "select 15",
-                "fieldName": "temp",
-                "value_color": "crimson",
-				"title_color": "black",
-				"background_color": "lightblue"	
-            }
         }
     ]
 }
