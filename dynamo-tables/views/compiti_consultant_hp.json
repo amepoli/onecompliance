@@ -1,0 +1,54 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "compiti_consultant_hp",
+	"inheritsFrom": "compiti_consultant_micro_task",
+     "toolbar_elements": [
+        {
+            "fieldName": "stato",
+            "viewType": "combobox",
+            "position": "left",
+            "label": "Status",
+            "options": [],
+            "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+            "queryCond": "stato = '$stato$'"
+        },
+        {
+            "fieldName": "flag_progetti_aperti",
+            "viewType": "toggle",
+            "position": "right",
+            "label": "Progetti aperti",
+            "toggleOffLabel": "Tutti Progetti",            
+            "queryCond": "stato not in ('C', 'N')"
+        }
+    ],
+    "tiles": [
+        {
+            "title": "Compiti chiusi",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(cmp.codice_compito) FROM entrasp.compiti cmp WHERE (cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) and cmp.stato='C'",
+                "queryCond": "",
+                "fieldName": "compiti_chiusi",
+                "value_color": "green",
+				"title_color": "green",
+				"background_color": "lightblue"		
+            },
+			"new_line": false
+        },
+		{
+            "title": "Compiti aperti",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(cmp.codice_compito) FROM entrasp.compiti cmp WHERE (cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) and cmp.stato!='C'",
+                "queryCond": "",
+                "fieldName": "compiti_aperti",
+                "value_color": "red",
+				"title_color": "red",
+				"background_color": "white"		
+            },
+			"new_line": true
+        }
+    ]
+}
