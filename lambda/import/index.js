@@ -70,7 +70,12 @@ async function getProfileData(profile) {
         }
     };
     let data = await dynamo.get(profileParams).promise();
-    return data.Item;
+    
+    data = await helperFuncts.overrideTable('PROFILES_NAME', data.Item, dynamo);
+
+    data = await helperFuncts.includeTable('PROFILES_NAME', data, dynamo);
+
+    return data;
 }
 
 

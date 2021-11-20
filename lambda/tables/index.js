@@ -1550,7 +1550,12 @@ async function getProfileData(profile) {
         }
     };
     let data = await dynamo.get(profileParams).promise();
-    return data.Item;
+
+    data = await helperFuncts.overrideTable('PROFILES_NAME', data.Item, dynamo);
+
+    data = await helperFuncts.includeTable('PROFILES_NAME', data, dynamo);
+
+    return data;
 }
 
 
@@ -1751,39 +1756,6 @@ function getAdditionalQueryCond(entry_name, profileData) {
     return queryConds;
 }
 
-async function overrideTable(son) {
-
-    if (son.inheritsFrom == null) {
-        return son;
-    }
-
-    const DynamoParams = {
-        TableName: 'VIEWS_NAME',
-        Key: {
-            entryKey: son.inheritsFrom
-        }
-    };
-
-    var father = await dynamo.get(DynamoParams).promise();
-
-    father = father.Item;
-    if (father == null) {
-        return son;
-    }
-
-    if (father.inheritsFrom != null) {
-        father = await overrideTable(father);
-    }
-
-    for (const field in son) {
-        if (son.hasOwnProperty(field) && field != "inheritsFrom" && field != "$schema") {
-            father[field] = son[field];
-        }
-    }
-    return father;
-}
-
-
 function hasIsInsertQuery(entry_params, keys, queryString) {
 
     let entry_keys = entry_params.form_keys;
@@ -1943,7 +1915,7 @@ exports.handler = async (event, context) => {
 
         if(!isHomepage && !isHomepageTab) {
             // complete table if inherited
-            entry_params = await overrideTable(entry_params.Item);
+            entry_params = await helperFuncts.overrideTable('VIEWS_NAME', entry_params.Item, dynamo);
 
             // replace constants
             entry_params = replaceJSONParams(entry_params, entry_params.define)

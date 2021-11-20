@@ -1,5 +1,4 @@
 const https = require('https');
-const helperFuncts = require('./helperFuncts');
 const { Client } = require("@googlemaps/google-maps-services-js");
 const googleMapsClient = new Client({});
 const { OAuth2Client } = require('google-auth-library');
