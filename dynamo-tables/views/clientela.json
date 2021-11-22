@@ -130,6 +130,17 @@
             "newLine": false,
             "size": 1,
             "queryCond": "(data_scadenza_documento<CURRENT_DATE and data_scadenza_documento is not null)"
+        },
+        {
+            "fieldName": "senza_profilazioni",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza profilazioni",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "an.id_anagrafica not in(select distinct entrasp.field_value_from_key(ss_prof.object_key, ss_prof.object_name, 'id_anagrafica','|')::numeric from entrasp.sondaggi_somministrati ss_prof where ss_prof.codice_azienda='€global_codice_azienda€')"
         }
     ],
     "form_keys": [
