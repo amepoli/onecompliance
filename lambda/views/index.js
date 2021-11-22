@@ -83,7 +83,7 @@ function processPermissions(data, profile, entry_name) {
 
 function getProfileHideActions(entry_name, profileData) {
     let profileHideActions = [];
-    if (profileData != null && profileData.tables.form_actions != null) {
+    if (profileData != null && profileData.tables != null && profileData.tables.form_actions != null) {
         let formActions = profileData.tables.form_actions;
         let entryFormActions = formActions.filter(x => x.entry == entry_name);
         if (entryFormActions != null && entryFormActions.length > 0) {
@@ -98,7 +98,7 @@ function getProfileHideActions(entry_name, profileData) {
 
 function getExternalSource(entry_name, profileData) {
     let externalSource;
-    if (profileData != null && profileData.tables.externalSources != null) {
+    if (profileData != null && profileData.tables != null && profileData.tables.externalSources != null) {
         let externalSources = profileData.tables.externalSources;
         externalSource = externalSources.find(x => x.entry == entry_name);
         if (externalSource != null) {
