@@ -24,6 +24,7 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
 
     tiles: any = [];
     toolbar_elements: any = [];
+    entryKey: string = '';
 
     isLoading: boolean = false;
 
@@ -94,6 +95,7 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
                 response => {
                     console.log(response);
                     if(response.result === 'OK') {
+                        _this.entryKey = response.response.entryKey;
                         _this.loadTiles(response.response.tiles);
                         _this.loadToolbarElements(response.response.toolbar_elements);
                     }
@@ -191,7 +193,7 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
         });
         
         this._dataSharingService.setData('homepageSearchKeys', keys);
-        this.router.navigate(['/oc/main-table/progetti']);   
+        this.router.navigate([`/oc/main-table/${this.entryKey}`]);   
     }
 
 }
