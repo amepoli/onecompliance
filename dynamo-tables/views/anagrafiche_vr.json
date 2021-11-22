@@ -698,6 +698,11 @@
             "type": "main"
         },
         {
+            "operation": "update",
+            "queryString": "update entrasp.anagrafiche_vr avr set codice_fiscale=$codice_fiscale$ from entrasp.anagrafiche_id an where avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica and dynamo_user='€global_userid€' and length(avr.codice_fiscale)<16 and an.tipo_soggetto='P' and length($codice_fiscale$)=16;",
+            "type": "postProcessing"
+        },
+        {
             "operation": "isInsert",
             "queryString": "select $id_anagrafica$ is null as label;",
             "type": "main"
