@@ -159,6 +159,8 @@ exports.handler = async (event, context) => {
 
         const profile = await getProfile(userid, company);
 
+        console.log(profile);
+
         if (profile == null) {
             return {
                 "isBase64Encoded": false,
@@ -175,7 +177,7 @@ exports.handler = async (event, context) => {
         data = await helperFuncts.overrideTable('VIEWS_NAME', data.Item, dynamo);
 
         data = replaceJSONParams(data,data.define)
-
+        
         data = processPermissions(data, profile, entry_name);
         data['profileHideActions'] = getProfileHideActions(entry_name, profile);
         externalUpdate = getExternalSource(entry_name, profile);

@@ -74,9 +74,13 @@ async function _getCodicePart (company, client) {
 
 async function _overrideTable(dynamoTable,son,dynamo) {
 
+    if (son == null) {
+        return null;
+    }
+
     if (son.inheritsFrom == null) {
         return son;
-    }
+    } 
 
     const DynamoParams = {
         TableName: dynamoTable,
@@ -92,8 +96,8 @@ async function _overrideTable(dynamoTable,son,dynamo) {
         return son;
     }
 
-    if (father.inheritsFrom != null) {
-        father = await overrideTable(father);
+    if (father.inheritsFrom != null) { 
+        father = await _overrideTable(father);
     }
 
     for (const field in son) {
@@ -112,36 +116,38 @@ function customizer(objValue, srcValue) {
 
 async function _includeTable(dynamoTable,jsonEntry,dynamo) {
     
-    if (jsonEntry.include == null || !Array.isArray(jsonEntry.include)) {
+    if (jsonEntry.includes == null || !Array.isArray(jsonEntry.includes)) {
         return jsonEntry;
     }
 
-    var includes = jsonEntry.include;
+    var includes = jsonEntry.includes;
 
     for (let index = 0; index < includes.length; index++) {
-        const include = includes[index];
+
         const DynamoParams = {
             TableName: dynamoTable,
             Key: {
-                entryKey: include
+                name: includes[index]
             }
         };
+
         var included = await dynamo.get(DynamoParams).promise();
         included = included.Item;
         if (included == null) {
             continue;
         }
         var merging = await _includeTable(dynamoTable,included);
+        //console.log("Merging: ", merging, "  with  ", jsonEntry);
 
         for (const field in merging) {
-            if (Object.hasOwnProperty.call(merging, field)) {
+            if (merging.hasOwnProperty(field) && field != "inheritsFrom" && field != "$schema" && field != "includes") {
                 if (jsonEntry[field] == null) {
                     jsonEntry[field] = merging[field];
                 } 
                 else if (Array.isArray(jsonEntry[field]) && Array.isArray(merging[field])) {
                     jsonEntry[field] = jsonEntry[field].concat(merging[field]);
                 } 
-                else if (Object.isObject(jsonEntry[field]) && Object.isObject(merging[field])) {
+                else if (typeof(jsonEntry[field]) === "object" && typeof(merging[field]) === "object") {
                     mergeWith(jsonEntry[field], merging[field],customizer);
                 } 
                 else {
@@ -149,8 +155,9 @@ async function _includeTable(dynamoTable,jsonEntry,dynamo) {
                 }
             }
         }
+        //console.log("Merged: ", jsonEntry);
     }    
 
-    return jsonEntry;
+    return jsonEntry; 
 
 }
