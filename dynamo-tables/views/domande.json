@@ -28,6 +28,11 @@
       "operation": "update",
       "queryString": "update entrasp.risposte rp set punteggio = dm.punteggio from entrasp.domande dm where rp.codice_azienda= dm.codice_azienda and rp.id_domanda = dm.id_domanda and rp.id_modello_test = dm.id_modello_test and rp.id_modello_test_vr = dm.id_modello_test_vr and rp.punteggio!=dm.punteggio and rp.codice_azienda = $codice_azienda$ and rp.id_modello_test =$id_modello_test$ and rp.id_domanda =$id_domanda$ and rp.id_modello_test_vr = $id_modello_test_vr$;",
       "type": "postProcessing"
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "select id_argomento_interval_value as intervalvalue, interval_multiplier as intervalmultiplier, id_argomento_stato as idargomentostato, id_argomento_tipo_allegato as idargomentotipoallegato, flag_non_applicabile_domanda as flagnonapplicabiledomanda from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test =$id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$;",
+      "type": "postProcessing"
     }
   ],
   "orderBy": {
@@ -215,19 +220,6 @@
       "newLine": false,
       "readOnly": true,
       "size": 0.3
-    }, 
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "checkbox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_non_applicabile_domanda",
-      "label": "Domanda Non Applicabile",
-      "readOnly": false,
-      "size": 1,
-      "newLine": false
     },
     {
       "autoGenerate": false,
@@ -350,7 +342,7 @@
       "isPrimary": false,
       "key": "dettaglio",
       "label": "Dettaglio",
-      "newLine": true,
+      "newLine": false,
       "outputEvent": {
         "eventName": "domande_button_dettaglio",
         "eventTrigger": "press"
@@ -362,6 +354,267 @@
       "readOnly": false,
       "size": 1,
       "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "activate_dettagli_d_k",
+      "label": "Maggiori dettagli",
+      "buttonIcon": "add",
+      "newLine": true,
+      "size": 1,
+      "outputEvent": {
+        "eventName": "activate_dettagli_d",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "hide",
+          "eventName": "activate_dettagli_d",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "show",
+          "eventName": "hide_dettagli_d",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "hide_dettagli_d_k",
+      "label": "Nascondi dettagli",
+      "buttonIcon": "minimize",
+      "newLine": false,
+      "size": 1.0,
+      "outputEvent": {
+        "eventName": "hide_dettagli_d",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "activate_dettagli_d",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "eventName": "hide_dettagli_d",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "intervalvalue",
+      "label": "intervalvalue",
+      "sameOrigin": false,
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "intervalmultiplier",
+      "label": "intervalmultiplier",
+      "sameOrigin": false,
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "idargomentostato",
+      "label": "idargomentostato",
+      "sameOrigin": false,
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "idargomentotipoallegato",
+      "label": "idargomentotipoallegato",
+      "sameOrigin": false,
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "checkbox"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "flagnonapplicabiledomanda",
+      "label": "Domanda Non Applicabile",
+      "readOnly": false,
+      "sameOrigin": false,
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "subform",
+        "subform_keys": [
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_non_applicabile_domanda",
+            "label": "Domanda Non Applicabile",
+            "readOnly": false,
+            "size": 1,
+            "newLine": false,
+            "sameOrigin": true
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE aa.id_argomento_father=5390;",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_interval_value",
+            "sameOrigin": true,
+            "label": "Unità misura intervalli (days, weeks, months)",
+            "newLine": false,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_multiplier",
+            "label": "Numero intervalli",
+            "sameOrigin": true,
+            "newLine": false,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE aa.id_argomento_father=5386;",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_stato",
+            "sameOrigin": true,
+            "label": "Stato",
+            "newLine": false,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": true,
+            "key": "id_argomento_tipo_allegato",
+            "label": "Tipi Allegati Previsti",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "argomentoTipoAllegato",
+              "eventTrigger": "select"
+            },
+            "inputEvents": [
+              {
+                "eventName": "argomentoTipoAllegato",
+                "queryFunct": "update entrasp.domande set id_argomento_tipo_allegato=£id_argomento_tipo_allegato£ where codice_azienda=$codice_azienda$ and id_domanda=$id_domanda$ and id_modello_test=$id_modello_test$;update entrasp.cdms_risorse rs set id_argomento_tipo_allegato=dm.id_argomento_tipo_allegato from entrasp.cdms_risorse_oggetti ro inner join entrasp.domande dm on ro.id_modello_test=dm.id_modello_test and ro.id_modello_test_vr=dm.id_modello_test_vr and ro.id_domanda=dm.id_domanda and ro.codice_azienda=dm.codice_azienda where (rs.id_argomento_tipo_allegato is null or rs.id_argomento_tipo_allegato=3981) and dm.id_argomento_tipo_allegato is not null and ro.nome_business_object='riepilogoRisposte' and rs.id_risorsa=ro.id_risorsa and rs.codice_azienda=ro.codice_azienda;",
+                "actionType": "query",
+                "condition": "none",
+                "values": []
+              }
+            ],
+            "size": 5,
+            "readOnly": false
+          }
+        ]
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "condition": "none",
+          "eventName": "activate_dettagli_d",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "hide_dettagli_d",
+          "values": []
+        }
+      ],
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "dettagli_d",
+      "label": "Ulteriori",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": true,
+      "saveWhenHidden": true
     }
   ],
   "inputEvents": [
@@ -460,10 +713,10 @@
         "dataType": "boolean"
       },
       "isHidden": false,
-	  "isCheckbox": true,
+      "isCheckbox": true,
       "isPrimary": false,
       "key": "boolean_non_applicabile_domande",
-	  "queryFunct": "flag_non_applicabile_domande::boolean",
+      "queryFunct": "flag_non_applicabile_domande::boolean",
       "width": "5%",
       "label": ""
     },
