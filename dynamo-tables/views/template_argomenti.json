@@ -15,7 +15,7 @@
 		{
 			"type": "main",
 			"operation": "selectTable",
-			"queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') $P{id_argomento_bigger_than};"
+			"queryString": "select arg.*, (select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento) as num_argomenti_padre from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') $P{id_argomento_bigger_than};"
 		},
 		{
 			"operation": "insert",
@@ -222,8 +222,18 @@
                 "viewType": "combobox"
             },
             "label": "Argomento",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
+        },
+		{
+            "fieldName": "num_argomenti_padre_max",
+            "format": {
+                "viewType": "input",
+				"dataType": "number"
+            },
+            "label": "Numero argomenti padre minore di",
+            "newLine": true,
+            "queryCond": "(select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento)<=$num_argomenti_padre_max$"
         }
 	],
 	"table_keys": [
@@ -235,7 +245,7 @@
 			"isPrimary": false,
 			"key": "codice",
 			"label": "Codice",
-			"width": "10%"
+			"width": "8%"
 		},
 		{
 			"format": {
@@ -245,7 +255,17 @@
 			"isPrimary": true,
 			"key": "id_argomento",
 			"label": "ID",
-			"width": "10%"
+			"width": "8%"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"key": "num_argomenti_padre",
+			"label": "num_argomenti_padre",
+			"width": "8%"
 		},
 		{
 			"format": {
