@@ -2,6 +2,8 @@ const AWS = require('aws-sdk');
 AWS.config.update({region: 'eu-central-1'});
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
+const helperFuncts = require('./helperFuncts');
+
 function getMenuWithPermissions(menu, permissions) {
     let filteredMenu;
     let id = menu.id; 
@@ -104,7 +106,11 @@ exports.handler = async (event, context) => {
         if (profile != null) {
             profileParams.Key.name = profile;
             let permissions = await dynamo.get(profileParams).promise();
-            permissions = permissions.Item;
+
+            permissions = await helperFuncts.overrideTable('PROFILES_NAME', permissions.Item, dynamo);
+
+            permissions = await helperFuncts.includeTable('PROFILES_NAME', permissions, dynamo);
+
             if (permissions != null) {
                 let menu = await dynamo.get(menuParams).promise();
                 menu = getMenuWithPermissions(menu.Item.menu, permissions.menu);

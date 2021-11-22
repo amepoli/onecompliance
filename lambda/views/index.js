@@ -2,6 +2,8 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
+const helperFuncts = require('./helperFuncts');
+
 async function getProfile(userid, company) {
 
     var userParams = {
@@ -34,7 +36,10 @@ async function getProfile(userid, company) {
             }
         };
         let permissions = await dynamo.get(profileParams).promise();
-        profile = permissions.Item;
+
+        profile = await helperFuncts.overrideTable('PROFILES_NAME', permissions.Item, dynamo);
+
+        profile = await helperFuncts.includeTable('PROFILES_NAME', profile, dynamo);
     }
 
     return profile;
@@ -103,38 +108,6 @@ function getExternalSource(entry_name, profileData) {
     return externalSource;
 }
 
-async function overrideTable(son) {
-
-    if (son.inheritsFrom == null) {
-        return son;
-    }
-
-    const DynamoParams = {
-        TableName: 'VIEWS_NAME',
-        Key: {
-            entryKey: son.inheritsFrom
-        }
-    };
-
-    var father = await dynamo.get(DynamoParams).promise();
-
-    father = father.Item;
-    if (father == null) {
-        return son;
-    }
-
-    if (father.inheritsFrom != null) {
-        father = await overrideTable(father);
-    }
-
-    for (const field in son) {
-        if (son.hasOwnProperty(field) && field != "inheritsFrom" && field != "$schema") {
-            father[field] = son[field];
-        }
-    }
-    return father;
-}
-
 function replaceJSONParams(JSONString, paramsObject) {
     if (paramsObject == null) {
         return JSONString
@@ -199,7 +172,7 @@ exports.handler = async (event, context) => {
 
         data = await dynamo.get(DynamoParams).promise();
 
-        data = await overrideTable(data.Item);
+        data = await helperFuncts.overrideTable('VIEWS_NAME', data.Item, dynamo);
 
         data = replaceJSONParams(data,data.define)
 
