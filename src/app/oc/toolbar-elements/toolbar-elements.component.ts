@@ -21,6 +21,7 @@ import { AuthService, BackendService, ConsoleLoggerService, DialogService, Helpe
 export class ToolbarElementsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() toolbar_elements: any = [];
+    @Output() onChange: EventEmitter<any> = new EventEmitter();
 
     constructor(
         protected route: ActivatedRoute,
@@ -69,8 +70,20 @@ export class ToolbarElementsComponent implements OnInit, AfterViewInit, OnDestro
 
     updateSearchToggle(index: number, checked: boolean) {
         this.toolbar_elements[index].checked = checked;
+        this.emitSearchKeys();        
     }
     
-    
+    emitSearchKeys() {
+        let keys = {};
+        this.toolbar_elements.filter( element => element.viewType === "toggle" && element.checked).forEach( element => {
+            keys[element.fieldName] = true
+        });
+
+        this.toolbar_elements.filter( element => element.viewType === "combobox" && element.selected).forEach( element => {
+            keys[element.fieldName] = element.selected
+        });
+
+        this.onChange.emit(keys);
+    }
 
 }

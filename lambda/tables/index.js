@@ -1377,14 +1377,39 @@ async function processHomepageQuery(entry_params, queryString, client) {
     }
 }
 
-async function processHomepageTabQuery(entry_params, queryString, client) {
+async function processHomepageTabQuery(entry_params, queryString, search_keys, client) {
     let tilesView = entry_params.Item;
+    
+    let searchQueries = [];
+
+    if (search_keys != null) {
+        let search_keys_keys = Object.keys(search_keys);
+        let toolBarElementsIncludedInQuery = tilesView.toolbar_elements.filter(e => search_keys_keys.includes(e.fieldName));
+        for(let i = 0; i < toolBarElementsIncludedInQuery.length; i++) {
+            search_keys_keys.forEach( k => {
+                toolBarElementsIncludedInQuery[i].queryCond = toolBarElementsIncludedInQuery[i].queryCond.replace('$' + k + '$', search_keys[k]);
+            });
+            searchQueries.push(toolBarElementsIncludedInQuery[i].queryCond);
+        }
+
+    }
+    
     if (queryString != null) {
         if(queryString['tabTilesQueries'] && queryString['tabTilesQueries'].length) {
             for(let tileIndex = 0; tileIndex < queryString['tabTilesQueries'].length; tileIndex++) {
-                try {
-                    console.log('Running query: ' + queryString['tabTilesQueries'][tileIndex].query);                    
-                    let result = await client.query(queryString['tabTilesQueries'][tileIndex].query);
+                let tileQuery = queryString['tabTilesQueries'][tileIndex].query;
+                if(searchQueries.length){
+                    if(tileQuery.toLowerCase().includes(' where ')) {
+                        tileQuery += ' AND ' + searchQueries.join(' AND '); 
+                    }
+                    else {
+                        tileQuery += ' WHERE ' + searchQueries.join(' AND '); 
+                    }
+                }
+                tileQuery += ';';
+                try {                    
+                    console.log('Running query: ' + tileQuery);
+                    let result = await client.query(tileQuery);
                     console.log('Result: ', JSON.stringify(result));
                     if (result != null && result.rowCount > 0) {                        
                         let key = Object.keys(result.rows[0])[0];
@@ -1397,7 +1422,7 @@ async function processHomepageTabQuery(entry_params, queryString, client) {
                     }
                 }
                 catch(e) {
-                    console.log('Error occured while running query: ' + queryString['tabTilesQueries'][tileIndex].query);
+                    console.log('Error occured while running query: ' + tileQuery);
                 }
             }
         }
@@ -1821,7 +1846,7 @@ exports.handler = async (event, context) => {
         search_keys = JSON.parse(search_keys); // production scenario only
     }
 
-    var isSearchRequest = search_keys ? true : false;
+    var isSearchRequest = (!isHomepage && !isHomepageTab && search_keys) ? true : false;
 
     var isNewRecord = (queryParams['new'] === '1');
 
@@ -1987,7 +2012,7 @@ exports.handler = async (event, context) => {
             await client.release();
             return response;
         } else if (isHomepageTab) {
-            let response = await processHomepageTabQuery(entry_params, queryString, client);
+            let response = await processHomepageTabQuery(entry_params, queryString, search_keys, client);
             console.log(response);
             await client.release();
             return response;
