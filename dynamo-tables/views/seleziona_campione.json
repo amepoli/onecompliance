@@ -58,6 +58,11 @@
             "queryString": "select round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, £id_somministrazione£);"
         },
         {
+            "operation": "selectTable",
+            "type": "preProcessing",
+            "queryString": "update entrasp.sondaggi_somministrati ss set codice_part=az.codice_part from entrasp.aziende az WHERE ss.codice_azienda=az.codice_azienda and id_somministrazione=$id_somministrazione$ and_id_sondaggio=$id_sondaggio$;"
+        },
+        {
             "operation": "isInsert",
             "queryString": "select $id_somministrazione$ is null as label;",
             "type": "main"
@@ -169,7 +174,7 @@
         {
             "autoGenerate": false,
             "format": {
-              "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+              "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
               "options": [],
               "viewType": "combobox"
             },
@@ -310,7 +315,7 @@
             "width": "20%",
             "isPrimary": false,
             "key": "incaricato_risposta",
-            "queryFunct": "entrasp.anagrafiche_id_codcognnome('€global_codice_part€', id_anagrafica)",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica)",
             "label": "Incaricato a rispondere"
         },
         {
