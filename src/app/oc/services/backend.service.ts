@@ -331,9 +331,12 @@ export class BackendService {
     return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
   }
 
-  loadHomePageTab(entryName: string, company: string): Observable<any> {
+  loadHomePageTab(entryName: string, company: string, search_keys: any): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, homepagetab: 1};
+    if (search_keys != null) {
+      this.myGetInit.queryStringParameters['search_keys'] = JSON.stringify(search_keys);
+    }
     return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
   }
   

@@ -29,7 +29,7 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
     isLoading: boolean = false;
 
     @Input() entry: string;
-    @Input() keys: any = null;
+    searchKeys: any = null;
     @Output() tabLoaded = new EventEmitter<any>();
     @ViewChild('toolbarElements') toolbarElements: ToolbarElementsComponent;
 
@@ -87,17 +87,29 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
         
     }
 
-    loadTab() {
+    loadTab(updateTileOnly: boolean = false) {
         const _this = this;
+        let keys = {};
+        if(this.toolbarElements && this.toolbarElements.toolbar_elements && this.toolbarElements.toolbar_elements.length) {
+            this.toolbarElements.toolbar_elements.filter( element => element.viewType === "toggle" && element.checked).forEach( element => {
+                keys[element.fieldName] = true
+            });
+            this.toolbarElements.toolbar_elements.filter( element => element.viewType === "combobox" && element.selected).forEach( element => {
+                keys[element.fieldName] = element.selected
+            });
+        }
+        
         if(_this.entry) {
             _this.isLoading = true;
-            _this.backendService.loadHomePageTab(_this.entry,  _this.authService.getCurrentCompany({})).subscribe(
+            _this.backendService.loadHomePageTab(_this.entry,  _this.authService.getCurrentCompany({}), keys).subscribe(
                 response => {
                     console.log(response);
                     if(response.result === 'OK') {
-                        _this.entryKey = response.response.entryKey;
+                        _this.entryKey = _this.entry;
                         _this.loadTiles(response.response.tiles);
-                        _this.loadToolbarElements(response.response.toolbar_elements);
+                        if(!updateTileOnly) {
+                            _this.loadToolbarElements(response.response.toolbar_elements);
+                        }
                     }
                     _this.isLoading = false;
                 },
@@ -115,6 +127,11 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
 
     reload() {
         this._console.log('onReload: homepage-tab');
+    }
+
+    loadSearchKeys(keys) {
+        this.searchKeys = keys;
+        this.loadTab(true);
     }
 
     loadTiles(tiles: any) {
@@ -178,21 +195,17 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
         console.log(this.toolbar_elements);
     }
 
-    updateSearchToggle(index: number, checked: boolean) {
-        this.toolbar_elements[index].checked = checked;
-    }
-    
     gotoTile(i: number) {
-        let keys = {};
-        this.toolbarElements.toolbar_elements.filter( element => element.viewType === "toggle" && element.checked).forEach( element => {
-            keys[element.fieldName] = true
-        });
+        // let keys = {};
+        // this.toolbarElements.toolbar_elements.filter( element => element.viewType === "toggle" && element.checked).forEach( element => {
+        //     keys[element.fieldName] = true
+        // });
 
-        this.toolbarElements.toolbar_elements.filter( element => element.viewType === "combobox" && element.selected).forEach( element => {
-            keys[element.fieldName] = element.selected
-        });
+        // this.toolbarElements.toolbar_elements.filter( element => element.viewType === "combobox" && element.selected).forEach( element => {
+        //     keys[element.fieldName] = element.selected
+        // });
         
-        this._dataSharingService.setData('homepageSearchKeys', keys);
+        this._dataSharingService.setData('homepageSearchKeys', this.searchKeys);
         this.router.navigate([`/oc/main-table/${this.entryKey}`]);   
     }
 

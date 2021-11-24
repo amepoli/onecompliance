@@ -76,21 +76,21 @@ export class HomepageComponent implements OnInit, AfterViewInit, OnDestroy {
         this._console.log('onReload: homepage');
     }
 
-    changeTab(i) {
-        let _this = this;
-        _this.activeIndex = i;
-        _this.backendService.loadHomePageTab(_this.tabs[i].entry,  _this.authService.getCurrentCompany({})).subscribe(
-            response => {
-                console.log(response);
-                if(response.result === 'OK') {
-                    _this.tiles = response.response.tiles;
-                }
-            },
-            error => {
-                _this._toastService.showErrorToast(error);
-            }
-        )
-    }
+    // changeTab(i) {
+    //     let _this = this;
+    //     _this.activeIndex = i;
+    //     _this.backendService.loadHomePageTab(_this.tabs[i].entry,  _this.authService.getCurrentCompany({})).subscribe(
+    //         response => {
+    //             console.log(response);
+    //             if(response.result === 'OK') {
+    //                 _this.tiles = response.response.tiles;
+    //             }
+    //         },
+    //         error => {
+    //             _this._toastService.showErrorToast(error);
+    //         }
+    //     )
+    // }
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
         if (this.tabs && this.tabs.length && tabChangeEvent.index > -1) {  // at least one tab visible
