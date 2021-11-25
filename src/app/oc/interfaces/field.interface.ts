@@ -1,4 +1,4 @@
-import { GoogleAPIParams } from ".";
+import { GoogleAPIParams, MenuOption } from ".";
 import { EmailActionParameters } from "./email_action_parameters";
 
 export interface Validator {
@@ -71,6 +71,7 @@ export interface FieldConfig {
   width?: number;
   style?: { background_color?: string, font_color?: string, font_size?: string, font_style?: 'italic' | 'normal', font_weight?: string };
   options?: Item[];
+  menuOptions?: MenuOption[],
   collections?: any;
   type: string;
   value?: any;
