@@ -27,7 +27,7 @@
             "content": {
                 "contentType": "value",
                 "value": "Scooby Doo",
-                "query": "select count(id_progetto) from entrasp.progetti WHERE stato!='C'",
+                "query": "select count(id_progetto) from entrasp.progetti prg inner join entrasp.centri_gestionali cg on prg.codice_part=cg.codice_part and prg.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part WHERE stato='C'and an.dynamo_user='€global_username€",
                 "queryCond": "",
                 "fieldName": "progetti_aperti",
                 "value_color": "green",
@@ -41,7 +41,7 @@
             "content": {
                 "contentType": "value",
                 "value": "Scooby Doo",
-                "query": "select count(id_progetto) as progetti_chiusi from entrasp.progetti WHERE stato='C'",
+                "query": "select count(id_progetto) as progetti_chiusi from entrasp.progetti WHERE stato!='C'",
                 "queryCond": "",
                 "fieldName": "progetti_chiusi",
                 "value_color": "red",
