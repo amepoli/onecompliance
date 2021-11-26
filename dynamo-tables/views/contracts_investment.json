@@ -82,7 +82,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "select id_tipo_contratto as id, descrizione as name from entrasp.tipi_contratto where codice_azienda = $codice_azienda$;",
+				"comboQuery": "select id_argomento_son as id, descrizione as name from entrasp.argomenti_argomenti where id_argomento_father=",
 				"options": [],
 				"viewType": "combobox",
 				"validations": [
@@ -95,7 +95,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "id_tipo_contratto",
+			"key": "id_argomento_contratto",
 			"label": "Tipo Contratto",
 			"newLine": false,
 			"readOnly": false
@@ -361,7 +361,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"width": "10%",
-			"key": "tipo_contratto",
+			"key": "tipi_contratto",
 			"queryFunct": "entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto)",
 			"label": "Tipo Contratto"
 		},
@@ -480,13 +480,14 @@
 		{
 			"fieldName": "id_anagrafica_s",
 			"format": {
-				"dataType": "number",
-				"viewType": "input"
+			  "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+			  "options": [],
+			  "viewType": "combobox"
 			},
-			"label": "ID Cliente",
+			"label": "Cliente",
 			"newLine": false,
-			"queryCond": "avr.id_cliente=$id_anagrafica_s$"
-		},
+			"queryCond": "id_anagrafica=$id_anagrafica_s$"
+		  },
 		{
 			"fieldName": "nome_rs",
 			"format": {
@@ -494,8 +495,19 @@
 				"viewType": "input"
 			},
 			"label": "Nome/Cognome/Ragione Sociale",
-			"newLine": true,
+			"newLine": false,
 			"queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')"
+		},
+		{
+			"fieldName": "tipi_contratto_s",
+			"format": {
+				"comboQuery": "select id_tipo_contratto as id, descrizione as name from entrasp.tipi_contratto where codice_azienda = $codice_azienda$;",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Tipo Contratti",
+			"newLine": true,
+			"queryCond": "id_tipo_contratto='€tipi_contratto_s€'"
 		},
 		{
 			"fieldName": "numero_contratto_s",
