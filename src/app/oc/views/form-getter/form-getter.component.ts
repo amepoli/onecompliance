@@ -684,6 +684,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 style: attributeStyle != null ? Object.assign(field.style, attributeStyle) : (field.style != null) ? field.style : null,
                 width: (field.size != null) ? (field.size * 10) : null, // leave a 1% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],
+                menuOptions: (field.format != null && field.format.menuOptions != null) ? field.format.menuOptions : [],
                 lazyLoading: (element != null && element.lazyLoading) ? true : false,
                 validations: (field.format.validations != null) ? field.format.validations : [],
                 eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null,  // output events are directly handled by the target field component

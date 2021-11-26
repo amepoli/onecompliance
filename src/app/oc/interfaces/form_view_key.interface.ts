@@ -1,3 +1,4 @@
+import { MenuOption } from "./menu_option.interface";
 import { EventTriggerType, FormDataType, FormViewType } from "../types";
 import { FieldInputEvent } from "./field.interface";
 
@@ -46,6 +47,7 @@ export interface FormViewKey { // as per API specification
                 name: string
             }
         ],
+        menuOptions?: MenuOption[],
         comboQuery?: string,
         validations?: [
             {

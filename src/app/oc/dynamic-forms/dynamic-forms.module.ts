@@ -15,6 +15,7 @@ import { DynamicFormComponent } from './components/dynamic-form/dynamic-form.com
 import { ComboboxComponent } from './components/combobox/combobox.component';
 import { TextAreaComponent } from './components/textarea/textarea.component';
 import { InvisibleComponent } from './components/invisible/invisible.component';
+import { MenuComponent } from "./components/menu/menu.component";
 import { LabelComponent } from './components/label/label.component';
 import { SubformComponent } from './components/subform/subform.component';
 
@@ -23,6 +24,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { OneCompliancePipesModule } from '../pipes/pipes.module';
 import { DynamicFieldDirective } from '../directives';
 import { SubFormDynamicFieldDirective } from '../directives/subform-dynamic-field.directive';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,7 @@ import { SubFormDynamicFieldDirective } from '../directives/subform-dynamic-fiel
     RadiobuttonComponent,
     CheckboxGroupComponent,
     CheckboxComponent,
+    MenuComponent,
     DynamicFieldDirective,
     SubFormDynamicFieldDirective,
     DynamicFormComponent,
@@ -48,6 +51,7 @@ import { SubFormDynamicFieldDirective } from '../directives/subform-dynamic-fiel
     MaterialModule,
     ReactiveFormsModule,
     FormsModule,
+    MatMenuModule,
     NgxMatSelectSearchModule,
     OneCompliancePipesModule
   ],
@@ -75,6 +79,7 @@ import { SubFormDynamicFieldDirective } from '../directives/subform-dynamic-fiel
     RadiobuttonComponent,
     CheckboxGroupComponent,
     CheckboxComponent,
+    MenuComponent,
     ComboboxComponent,
     TextAreaComponent,
     InvisibleComponent,
