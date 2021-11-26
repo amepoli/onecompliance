@@ -10,7 +10,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "SELECT *,entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as tipi_contratto,entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario) as fondo_gestito,entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)) as giudizio,entrasp.anagrafica_key(id_cliente, codice_azienda, '|') as anagrafica_key,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as id_cliente,entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', stato) as descr_stato FROM entrasp.contratti WHERE array[id_argomento_contratto] <@ any(select entrasp.sotto_argomenti(3429)) and id_argomento_contratto is not null and codice_azienda=$codice_azienda$"
+			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, id_argomento_contratto, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_strumento_finanziario) ,entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(3429))order by id_contratto"
 		},
 		{
 			"operation": "update",
