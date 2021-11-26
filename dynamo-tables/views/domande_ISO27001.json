@@ -32,16 +32,8 @@
   "exportQueries": {
     "tableQueries": [
           {
-            "queryString": "select distinct aa.id_argomento_son , (select entrasp.argomenti_descr(aa.id_argomento_son)),(select count(id_domanda) from entrasp.domande dmd where dmd.id_argomento in (select distinct id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father = aa.id_argomento_son) and dmd.id_argomento in(select distinct dm.id_argomento from entrasp.domande dm inner join entrasp.modelli_test mt_dm on dm.id_modello_test=mt_dm.id_modello_test and dm.codice_azienda=mt_dm.codice_azienda inner join entrasp.argomenti_argomenti aa_dm_liv on mt_dm.id_argomento=aa_dm_liv.id_argomento_son where dm.codice_azienda='AUDITFT' and aa_dm_liv.id_argomento_father=1300)) from entrasp.argomenti_argomenti aa where aa.id_argomento_father=5328;",
-            "label": "Conteggio controlli 1° livello"
-          },
-          {
-            "queryString": "select distinct aa.id_argomento_son , (select entrasp.argomenti_descr(aa.id_argomento_son)),(select count(id_domanda) from entrasp.domande dmd where dmd.id_argomento in (select distinct id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father = aa.id_argomento_son) and dmd.id_argomento in(select distinct dm.id_argomento from entrasp.domande dm inner join entrasp.modelli_test mt_dm on dm.id_modello_test=mt_dm.id_modello_test and dm.codice_azienda=mt_dm.codice_azienda inner join entrasp.argomenti_argomenti aa_dm_liv on mt_dm.id_argomento=aa_dm_liv.id_argomento_son where dm.codice_azienda='AUDITFT' and aa_dm_liv.id_argomento_father=162)) from entrasp.argomenti_argomenti aa where aa.id_argomento_father=5328;",
-            "label": "Conteggio controlli 2° livello"
-          },
-          {
-            "queryString": "select distinct aa.id_argomento_son , (select entrasp.argomenti_descr(aa.id_argomento_son)),(select count(id_domanda) from entrasp.domande dmd where dmd.id_argomento in (select distinct id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father = aa.id_argomento_son) and dmd.id_argomento in(select distinct dm.id_argomento from entrasp.domande dm inner join entrasp.modelli_test mt_dm on dm.id_modello_test=mt_dm.id_modello_test and dm.codice_azienda=mt_dm.codice_azienda inner join entrasp.argomenti_argomenti aa_dm_liv on mt_dm.id_argomento=aa_dm_liv.id_argomento_son where dm.codice_azienda='AUDITFT' and aa_dm_liv.id_argomento_father in(162,1300))) from entrasp.argomenti_argomenti aa where aa.id_argomento_father=5328;",
-            "label": "Conteggio totale controlli"
+            "queryString": "select * from entrasp.controlli_domande_ISO27001 where codice_azienda=$codice_azienda$",
+            "label": "Conteggio controlli complessivi"
           }
     ]
 }
