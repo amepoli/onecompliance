@@ -10,7 +10,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "SELECT *,entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as tipi_contratto,entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario) as fondo_gestito,entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)) as giudizio,entrasp.anagrafica_key(id_cliente, codice_azienda, '|') as anagrafica_key,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as id_cliente,entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', stato) as descr_stato FROM entrasp.contratti WHERE array[id_argomento_contratto] <@ any(select entrasp.sotto_argomenti(3429)) and id_argomento_contratto is not null and codice_azienda=$codice_azienda$"
+			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito ,entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408))"
 		},
 		{
 			"operation": "update",
@@ -82,12 +82,12 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "select id_argomento_son as id, descrizione as name from entrasp.argomenti_argomenti where id_argomento_father=",
+				"comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in (5402,3526)",
 				"options": [],
 				"viewType": "combobox",
 				"validations": [
 					{
-						"message": "Inserire uno stato!",
+						"message": "Inserire un argomento!",
 						"name": "required",
 						"validator": "Validators.required"
 					}
@@ -347,9 +347,19 @@
 			"format": {
 				"dataType": "text"
 			},
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": false,
 			"key": "id_cliente",
+			"label": "Cliente",
+			"width": "20%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "cliente",
 			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
 			"label": "Cliente",
 			"width": "20%"
@@ -361,8 +371,8 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"width": "10%",
-			"key": "tipi_contratto",
-			"queryFunct": "entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto)",
+			"key": "id_argomento_contratto",
+			"queryFunct": "entrasp.argomenti_descr(id_argomento_contratto)",
 			"label": "Tipo Contratto"
 		},
 		{
@@ -501,13 +511,13 @@
 		{
 			"fieldName": "tipi_contratto_s",
 			"format": {
-				"comboQuery": "select id_tipo_contratto as id, descrizione as name from entrasp.tipi_contratto where codice_azienda = $codice_azienda$;",
+				"comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in (5402,3526)",
 				"options": [],
 				"viewType": "combobox"
 			},
 			"label": "Tipo Contratti",
 			"newLine": true,
-			"queryCond": "id_tipo_contratto='€tipi_contratto_s€'"
+			"queryCond": "id_argomento_contratto='€tipi_contratto_s€'"
 		},
 		{
 			"fieldName": "numero_contratto_s",
@@ -549,7 +559,7 @@
 		}
 	],
 	"querySuffixes": {
-		"tableViewSuffix": "limit 100"
+		"tableViewSuffix": "order by id_contratto desc limit 100"
 	},
 	"inputEvents": [
 		{
