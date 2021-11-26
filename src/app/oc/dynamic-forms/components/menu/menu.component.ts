@@ -7,13 +7,17 @@ import { PubSubService } from 'app/oc/services';
   selector: "app-menu",
   template: `
   <div align="center" [ngStyle]="{'display': 'inline-block', 'width': '100%'}">
-    <button mat-button color="primary" [disabled]="field.readonly" [matMenuTriggerFor]="matMenu1"
+    <button mat-icon-button color="primary" [disabled]="field.readonly" [matMenuTriggerFor]="matMenu1"
     [style.width]="'100%'" [style.height.px]="'64'" [style.padding]="'16px'" [style.border-radius]="'4px'" [style.background-color]="field.style && field.style.background_color? field.style.background_color: 'transparent'" [style.color]="field.style && field.style.font_color? field.style.font_color: null">
-            {{field.label}}
+      {{field.label}}<mat-icon>{{field.buttonIcon}}</mat-icon>
     </button>
     <mat-menu #matMenu1="matMenu">
       <ng-container *ngFor="let item of field.menuOptions">
-          <button mat-menu-item (click)="onClick(item)">{{item.label}}</button>
+          <button mat-menu-item (click)="onClick(item)">
+            <span>
+              <mat-icon>{{item.icon}}</mat-icon>
+            </span>{{item.label}}
+          </button>
       </ng-container>
     </mat-menu>
   </div>
