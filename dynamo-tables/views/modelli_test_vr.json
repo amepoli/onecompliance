@@ -250,6 +250,14 @@
                     "values": [],
                     "queryFunct": "select sondaggio_insert as new_id_sondaggio from entrasp.sondaggio_insert(codiceazienda=>$codice_azienda$, titolo=>$titolo$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, documentazione=>$documentazione_necessaria$, descrizione=>$descrizione$, idcentrogest=>$id_centro_gest$, username => '€global_username€');",
                     "outputEventWhenComplete": "calculate_new_id_somministrazione"
+                },
+                {
+                    "actionType": "show",
+                    "eventName": "flag_applicazione_singola",
+                    "condition": "equalTo",
+                    "values": [
+                        "0"
+                    ]
                 }
             ],
             "readOnly": false,
@@ -282,6 +290,22 @@
         {
             "autoGenerate": false,
             "format": {
+                "comboQuery": "SELECT id_tipo_modello_test AS id, entrasp.tipo_modello_test_descr(id_tipo_modello_test) AS name  FROM entrasp.tipi_modello_test;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "queryFunct": "SELECT id_tipo_modello_test from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo_modello_test",
+            "label": "Tipo Modello Verifica",
+            "newLine": false,
+            "size": 1.8,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "dataType": "text",
                 "viewType": "input",
                 "validations": [
@@ -304,16 +328,32 @@
         {
             "autoGenerate": false,
             "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "queryFunct": "SELECT id_centro_gest from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "dataType": "date",
                 "value": "£CURRENT_DATE£",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "data_ins",
             "label": "Data Inserimento",
             "newLine": false,
-            "size": 1.2,
+            "size": 0,
             "readOnly": false
         },
         {
@@ -370,21 +410,65 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "button"
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
+                "options": [],
+                "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_somministrazione_new_button",
-            "buttonIcon": "question_answer",
-            "label": "Crea Verifica",
+            "key": "id_argomento",
+            "queryFunct": "SELECT id_argomento from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "label": "Argomento",
+            "readOnly": false,
             "newLine": false,
-            "outputEvent": {
-                "eventName": "somministrazione_new",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "question_answer",
+                        "label": "Crea Verifica",
+                        "outputEventName": "somministrazione_new"
+                    },
+                    {
+                        "icon": "question_answer",
+                        "label": "Crea Sondaggio",
+                        "outputEventName": "sondaggio_new"
+                    },
+                     {
+                        "icon": "add_circle_",
+                        "label": "Nuova versione",
+                        "outputEventName": "modelli_test_button_nuova_versione"
+                    },
+                    {
+                        "icon": "content_copy",
+                        "label": "Duplica modello",
+                        "outputEventName": "modelli_test_button_duplica"
+                    },
+                    {
+                        "icon": "sync",
+                        "label": "Allin.Trasversale Mod. Verifica",
+                        "outputEventName": "allinea_codici_esterni"
+                    },
+                    {
+                        "icon": "link",
+                        "label": "Unisci con altro modello di verifica",
+                        "outputEventName": "unifica_mdt_show"
+                    },
+                    {
+                        "icon": "poll",
+                        "label": "Criterio di analisi",
+                        "outputEventName": "navigate_to_criterio_analisi"
+                    },
+                    {
+                        "icon": "class",
+                        "label": "Crea e associa argomento",
+                        "outputEventName": "create_associate_argomento"
+                    }
+                ]
             },
             "inputEvents": [
                 {
@@ -394,64 +478,7 @@
                     "values": [
                         "0"
                     ]
-                }
-            ],
-            "readOnly": false,
-            "size": 1,
-            "sameOrigin": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_sondaggio_new_button",
-            "label": "Crea Sondaggio",
-            "newLine": false,
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "eventName": "flag_applicazione_singola",
-                    "condition": "equalTo",
-                    "values": [
-                        "0"
-                    ]
-                }
-            ],
-            "outputEvent": {
-                "eventName": "sondaggio_new",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "size": 0.9,
-            "sameOrigin": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "buttonIcon": "sync",
-            "key": "allinea_codici_esterni",
-            "label": "Allin.Trasversale Mod.Verifica",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "allinea_codici_esterni",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "inputEvents": [
+                },
                 {
                     "eventName": "allinea_codici_esterni",
                     "actionType": "query",
@@ -459,108 +486,25 @@
                     "successMessage": "Allineamento effettuato",
                     "values": [],
                     "queryFunct": "select entrasp.modelli_test_new_version_same_argomento($codice_azienda$,$id_modello_test$, $id_modello_test_vr$, $id_argomento$);"
+                },
+                {
+                    "eventName": "create_associate_argomento",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "modelli_test_vr_reload",
+                    "queryFunct": "select entrasp.argomenti_create_and_update($codice_azienda$, $id_modello_test$, $titolo$, $descrizione$ , $codice$, 45)"
                 }
             ],
-            "readOnly": false,
-            "size": 1.4,
-            "sameOrigin": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
             "isHidden": false,
             "isPrimary": false,
-            "key": "duplica_mdt",
-            "buttonIcon": "content_copy",
-            "label": "Duplica",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "modelli_test_button_duplica",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "size": 1,
-            "sameOrigin": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "nuova_versione_mdt",
-            "buttonIcon": "add_circle",
-            "label": "Nuova Versione",
-            "size": 1,
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "modelli_test_button_nuova_versione",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "unifica_mdt_show_k",
-            "buttonIcon": "link",
-            "label": "Unisci con altro modello test",
+            "buttonIcon": "more_vert",
+            "key": "modelli_test_vr_actions",
+            "label": "Actions",
             "newLine": true,
-            "outputEvent": {
-                "eventName": "unifica_mdt_show",
-                "eventTrigger": "press"
-            },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 0.8
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_tipo_modello_test AS id, entrasp.tipo_modello_test_descr(id_tipo_modello_test) AS name  FROM entrasp.tipi_modello_test;",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "queryFunct": "SELECT id_tipo_modello_test from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_tipo_modello_test",
-            "label": "Tipo Modello Verifica",
-            "newLine": false,
-            "size": 1.8,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "queryFunct": "SELECT id_centro_gest from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_centro_gest",
-            "label": "Centro Gestionale",
-            "newLine": false,
-            "size": 2,
-            "readOnly": false
+            "size": 0.4
         },
         {
             "autoGenerate": false,
@@ -586,74 +530,9 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "size": 5,
-            "newLine": true,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "textarea"
-            },
-            "queryFunct": "SELECT descrizione from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descrizione",
-            "label": "Descrizione",
-            "size": 6,
-            "textareaHeight": "L",
+            "size": 4,
             "newLine": false,
             "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_argomento",
-            "queryFunct": "SELECT id_argomento from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "label": "Argomento",
-            "readOnly": false,
-            "newLine": false,
-            "size": 3
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "create_associate_argomento_k",
-            "buttonIcon": "class",
-            "label": "Crea e associa argomento",
-            "newLine": true,
-            "outputEvent": {
-                "eventName": "create_associate_argomento",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "create_associate_argomento",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "outputEventWhenComplete": "modelli_test_vr_reload",
-                    "queryFunct": "select entrasp.argomenti_create_and_update($codice_azienda$, $id_modello_test$, $titolo$, $descrizione$ , $codice$, 45)"
-                }
-            ],
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "size": 1,
-            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -667,7 +546,7 @@
             "key": "documentazione_necessaria",
             "label": "Documentazione Necessaria",
             "newLine": false,
-            "size": 6,
+            "size": 5,
             "textareaHeight": "L",
             "readOnly": false
         },
@@ -683,6 +562,22 @@
             "key": "giorni_anticipo_pres_doc",
             "label": "Giorni anticipo documentaz",
             "size": 1,
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "queryFunct": "SELECT descrizione from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "size": 7,
+            "textareaHeight": "L",
             "newLine": false,
             "readOnly": false
         },
@@ -705,48 +600,9 @@
             "isPrimary": false,
             "key": "id_risultato",
             "label": "Criterio di analisi",
-            "newLine": false,
-            "size": 2,
+            "newLine": true,
+            "size": 3,
             "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "navigate_to_criterio_analisi_key",
-            "buttonIcon": "poll",
-            "label": "Criterio di analisi",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "navigate_to_criterio_analisi",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "size": 1,
-            "attributeFuncts": [
-                {
-                    "attributeType": "style",
-                    "styleAttribute": "background_color",
-                    "queryString": "select case when id_risultato is null then '#698EC2' else '#25599C' end as label from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test=$id_modello_test_vr$ limit 1;"
-                },
-                {
-                    "attributeType": "style",
-                    "styleAttribute": "font_color",
-                    "queryString": "select case when id_risultato is null then '#25599C' else 'white' end as label from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test=$id_modello_test_vr$ limit 1;"
-                },
-                {
-                    "attributeType": "readOnly",
-                    "queryString": "select case when id_risultato is null then true else false end as label from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test=$id_modello_test_vr$ limit 1;"
-                }
-            ],
-            "sameOrigin": false
         },
         {
             "format": {
