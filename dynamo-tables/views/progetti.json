@@ -356,13 +356,43 @@
 		{
 			"autoGenerate": false,
 			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"buttonIcon": "update",
+			"key": "avvia_progetti",
+			"label": "Avvia/aggiorna",
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "progetti_avvia",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"eventName": "progetti_avvia",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
+					"outputEventWhenComplete": "formReload"
+				},
+				{
+					"eventName": "onAddNewProgetti",
+					"actionType": "hide",
+					"condition": "none",
+					"values": []
+				}
+			],
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 1.0
+		},
+		{
+			"autoGenerate": false,
+			"format": {
 				"viewType": "menu",
 				"menuOptions": [
-					{
-						"icon": "update",
-						"label": "Avvia/aggiorna progetto",
-						"outputEventName": "progetti_avvia"
-					},
 					{
 						"icon": "sync_alt",
 						"label": "Aggiorna codici",
@@ -417,14 +447,6 @@
 							"queryFunct": "select entrasp.annulla_progetto($id_progetto$, $codice_azienda$)"
 						}
 					}
-				},
-				{
-					"eventName": "progetti_avvia",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
-					"outputEventWhenComplete": "formReload"
 				},
 				{
 					"eventName": "onAddNewProgetti",
