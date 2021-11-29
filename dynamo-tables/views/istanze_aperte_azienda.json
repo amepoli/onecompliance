@@ -316,5 +316,21 @@
 	],
 	"querySuffixes": {
 		"tableViewSuffix": "order by codice_azienda"
-	}
+	},
+	"exportQueries": {
+		"tableQueries": [
+		  {
+			"queryString": "select em.dynamo_user as Utente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, (select generate_series(0, 12) as i) serie where em.codice_azienda in(€global_user_companies€);",
+			"label": "Per azienda erogante ultimi 12 mesi"
+		  },
+		  {
+			"queryString": "select em.dynamo_user as Utente, az.codice_azienda as Azienda_cliente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, entrasp.aziende az, (select generate_series(0, 5) as i) serie where em.codice_azienda in(€global_user_companies€) and az.codice_azienda in(€global_user_companies€) and entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer))!=0;",
+			"label": "*Ultimi 6* Per azienda erogante e ricevente ultimi 12 mesi"
+		  },
+		  {
+			"queryString": "select em.dynamo_user as Utente, az.codice_azienda as Azienda_cliente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, entrasp.aziende az, (select generate_series(7, 12) as i) serie where em.codice_azienda in(€global_user_companies€) and az.codice_azienda in(€global_user_companies€) and entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer))!=0;",
+			"label": "*Primi 6* Per azienda erogante e ricevente ultimi 12 mesi"
+		  }
+		]
+	  }
 }

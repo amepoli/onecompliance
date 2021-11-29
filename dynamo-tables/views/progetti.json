@@ -4,9 +4,9 @@
 	"entryKey": "progetti",
 	"businessObjectName": "progetti",
 	"define": {
-        "is_hidden_codice_azienda": "true",
+		"is_hidden_codice_azienda": "true",
 		"width_codice_azienda": "5%"
-    },
+	},
 	"predefinedQueries": [
 		{
 			"operation": "selectForm",
@@ -155,27 +155,6 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "menu",
-				"menuOptions": [
-					{
-						"icon": "history",
-						"label": "Annulla progetto",
-						"outputEventName": "progetto_annulla"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "progetti_actions",
-			"label": "Progetti Actions",
-			"newLine": false,
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1.3
-		},
-		{
-			"autoGenerate": false,
-			"format": {
 				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
 				"options": [],
 				"viewType": "combobox",
@@ -234,49 +213,6 @@
 					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
 				}
 			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"buttonIcon": "history",
-			"key": "annulla_progetto",
-			"label": "Annulla Progetto",
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "progetto_annulla",
-				"eventTrigger": "press"
-			},
-			"inputEvents": [
-				{
-					"eventName": "progetto_annulla",
-					"actionType": "show_message",
-					"values": [],
-					"condition": "none",
-					"outputEventWhenComplete": "formReload",
-					"message": {
-						"messageText": "Vuoi annullare il progetto e tutti i sondaggi associati?",
-						"actionOnNo": {
-							"actionType": "query",
-							"queryFunct": "select 1"
-						},
-						"actionOnYes": {
-							"actionType": "query",
-							"queryFunct": "select entrasp.annulla_progetto($id_progetto$, $codice_azienda$)"
-						}
-					}
-				}
-			],
-			"style": {
-				"background_color": "#25599C",
-				"font_color": "white"
-			},
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1.3
 		},
 		{
 			"autoGenerate": false,
@@ -368,7 +304,142 @@
 			},
 			"label": "Id Progetto",
 			"key": "id_progetto",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false,
+			"size": 0.8
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "id_argomento",
+			"queryFunct": "select entrasp.argomenti_descr_breve(att.id_argomento) from entrasp.progetti pr inner join entrasp.attivita att on att.codice_azienda=pr.codice_azienda and att.codice_attivita=pr.codice_attivita where id_progetto=$id_progetto$ and pr.codice_azienda=$codice_azienda$",
+			"label": "Argomento",
+			"readOnly": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date",
+				"value": "£CURRENT_DATE£"
+			},
+			"label": "Data Inserimento",
+			"key": "data_inserimento",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 1.3
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"label": "Data Competenza",
+			"key": "data_competenza",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 1.3
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "menu",
+				"menuOptions": [
+					{
+						"icon": "update",
+						"label": "Avvia/aggiorna progetto",
+						"outputEventName": "progetti_avvia"
+					},
+					{
+						"icon": "sync_alt",
+						"label": "Aggiorna codici",
+						"outputEventName": "codici_aggiorna"
+					},
+					{
+						"icon": "history",
+						"label": "Annulla progetto",
+						"outputEventName": "progetto_annulla"
+					},
+					{
+						"icon": "stacked_line_chart",
+						"label": "Modello di progetto associato",
+						"outputEventName": "to_attivita_associata"
+					},
+					{
+						"icon": "content_copy",
+						"label": "Duplica (SENZA risposte)",
+						"outputEventName": "progetto_duplica"
+					},
+					{
+						"icon": "copy_all",
+						"label": "Duplica (CON risposte)",
+						"outputEventName": "progetto_duplica_con_risposte"
+					}
+				]
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"buttonIcon": "more_vert",
+			"key": "progetti_actions",
+			"label": "Actions",
+			"newLine": true,
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 0.4,
 			"inputEvents": [
+				{
+					"eventName": "progetto_annulla",
+					"actionType": "show_message",
+					"values": [],
+					"condition": "none",
+					"outputEventWhenComplete": "formReload",
+					"message": {
+						"messageText": "Vuoi annullare il progetto e tutti i sondaggi associati?",
+						"actionOnNo": {
+							"actionType": "query",
+							"queryFunct": "select 1"
+						},
+						"actionOnYes": {
+							"actionType": "query",
+							"queryFunct": "select entrasp.annulla_progetto($id_progetto$, $codice_azienda$)"
+						}
+					}
+				},
+				{
+					"eventName": "progetti_avvia",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
+					"outputEventWhenComplete": "formReload"
+				},
+				{
+					"eventName": "onAddNewProgetti",
+					"actionType": "hide",
+					"condition": "none",
+					"values": []
+				},
+				{
+					"eventName": "codici_aggiorna",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.progetti_fasi_order(codice_azienda, id_progetto, id_fase) from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$; update entrasp.progetti_fasi set codice=entrasp.calculate_progetto_fase_codice(codice_azienda, id_progetto, id_fase) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;",
+					"outputEventWhenComplete": "formReload"
+				},
 				{
 					"eventName": "progetto_duplica",
 					"actionType": "show_message",
@@ -405,55 +476,7 @@
 					},
 					"outputEventWhenComplete": "navigate_to_new_progetto"
 				}
-			],
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": true,
-			"newLine": false,
-			"size": 0.8
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date",
-				"value": "£CURRENT_DATE£"
-			},
-			"label": "Data Inserimento",
-			"key": "data_inserimento",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 1.3
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date"
-			},
-			"label": "Data Competenza",
-			"key": "data_competenza",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 1.3
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_argomento",
-			"queryFunct": "select entrasp.argomenti_descr_breve(att.id_argomento) from entrasp.progetti pr inner join entrasp.attivita att on att.codice_azienda=pr.codice_azienda and att.codice_attivita=pr.codice_attivita where id_progetto=$id_progetto$ and pr.codice_azienda=$codice_azienda$",
-			"label": "Argomento",
-			"readOnly": true,
-			"newLine": true
+			]
 		},
 		{
 			"autoGenerate": false,
@@ -468,47 +491,8 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"size": 8.5,
+			"size": 5,
 			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "modello_progetto",
-			"buttonIcon": "stacked_line_chart",
-			"label": "Modello di progetto",
-			"size": 1.5,
-			"attributeFuncts": [
-				{
-					"attributeType": "style",
-					"styleAttribute": "background_color",
-					"queryString": "select case when codice_attivita is null then '#698EC2' else '#25599C' end as label from entrasp.progetti where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;"
-				},
-				{
-					"attributeType": "style",
-					"styleAttribute": "font_color",
-					"queryString": "select case when codice_attivita is null then '#25599C' else 'white' end as label from entrasp.progetti where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;"
-				},
-				{
-					"attributeType": "readOnly",
-					"queryString": "select case when codice_attivita is null then true else false end as label from entrasp.progetti where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;"
-				}
-			],
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "to_attivita_associata",
-				"eventTrigger": "press"
-			},
-			"style": {
-				"background_color": "#698EC2",
-				"font_color": "#5b635a"
-			},
-			"readOnly": true,
-			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -521,7 +505,8 @@
 			"readOnly": false,
 			"isHidden": true,
 			"isPrimary": false,
-			"newLine": true
+			"newLine": false,
+			"size": 0
 		},
 		{
 			"autoGenerate": false,
@@ -534,7 +519,8 @@
 			"readOnly": false,
 			"isHidden": "$Q{is_hidden_codice_azienda}",
 			"isPrimary": true,
-			"newLine": true
+			"newLine": false,
+			"size": 0
 		},
 		{
 			"autoGenerate": false,
@@ -555,7 +541,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 8
+			"size": 3
 		},
 		{
 			"autoGenerate": false,
@@ -613,140 +599,6 @@
 			"isPrimary": false,
 			"newLine": false,
 			"size": 5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"buttonIcon": "update",
-			"key": "avvia_progetti",
-			"label": "Avvia/aggiorna",
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "progetti_avvia",
-				"eventTrigger": "press"
-			},
-			"inputEvents": [
-				{
-					"eventName": "progetti_avvia",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
-					"outputEventWhenComplete": "formReload"
-				},
-				{
-					"eventName": "onAddNewProgetti",
-					"actionType": "hide",
-					"condition": "none",
-					"values": []
-				}
-			],
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1.0
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "duplica_progetto",
-			"buttonIcon": "content_copy",
-			"label": "Duplica",
-			"attributeFuncts": [
-				{
-					"attributeType": "style",
-					"styleAttribute": "background_color",
-					"queryString": "select case when count(id_progetto) = 0 then '#698EC2' else '#25599C' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-				},
-				{
-					"attributeType": "style",
-					"styleAttribute": "font_color",
-					"queryString": "select case when count(id_progetto) = 0 then '#5b635a' else 'white'  end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-				}
-			],
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "progetto_duplica",
-				"eventTrigger": "press"
-			},
-			"style": {
-				"background_color": "#698EC2",
-				"font_color": "#5b635a"
-			},
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 0.8
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "duplica_progetto_con_risposte",
-			"buttonIcon": "content_copy",
-			"label": "Duplica con risposte",
-			"attributeFuncts": [
-				{
-					"attributeType": "style",
-					"styleAttribute": "background_color",
-					"queryString": "select case when count(id_progetto) = 0 then '#698EC2' else '#25599C' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-				},
-				{
-					"attributeType": "style",
-					"styleAttribute": "font_color",
-					"queryString": "select case when count(id_progetto) = 0 then '#5b635a' else 'white'  end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-				}
-			],
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "progetto_duplica_con_risposte",
-				"eventTrigger": "press"
-			},
-			"style": {
-				"background_color": "#698EC2",
-				"font_color": "#5b635a"
-			},
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1.0
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"buttonIcon": "sync_alt",
-			"key": "aggiorna_codici",
-			"label": "Aggiorna codici ",
-			"newLine": true,
-			"outputEvent": {
-				"eventName": "codici_aggiorna",
-				"eventTrigger": "press"
-			},
-			"inputEvents": [
-				{
-					"eventName": "codici_aggiorna",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.progetti_fasi_order(codice_azienda, id_progetto, id_fase) from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$; update entrasp.progetti_fasi set codice=entrasp.calculate_progetto_fase_codice(codice_azienda, id_progetto, id_fase) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;",
-					"outputEventWhenComplete": "formReload"
-				}
-			],
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1.4
 		},
 		{
 			"autoGenerate": false,
@@ -958,15 +810,15 @@
 	],
 	"table_keys": [
 		{
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": "$Q{is_hidden_codice_azienda}",
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "label": "codice_azienda",
-            "width": "7%"
-        },
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": "$Q{is_hidden_codice_azienda}",
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "codice_azienda",
+			"width": "7%"
+		},
 		{
 			"format": {
 				"dataType": "date"
