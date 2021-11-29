@@ -8,7 +8,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select ts.tipo_dato, ts.codice,ts.transcodifica,count(snd.id_sondaggio) as num_sondaggi from entrasp.transcodifiche ts inner join entrasp.sondaggi snd on ts.codice=snd.stato inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where snd.codice_azienda='€global_codice_azienda€' and dynamo_user='€global_username€' and ts.tipo_dato='STATO_SONDAGGI' group by ts.tipo_dato, ts.codice, ts.transcodifica, ts.ordinamento order by ts.ordinamento"
+            "queryString": "select ts.tipo_dato, ts.codice,ts.transcodifica,count(snd.id_sondaggio) as num_sondaggi from entrasp.transcodifiche ts inner join entrasp.sondaggi snd on ts.codice=snd.stato inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where snd.codice_azienda='€global_codice_azienda€' and dynamo_user='€global_username€' and ts.tipo_dato='STATO_SONDAGGI' group by ts.tipo_dato, ts.codice, ts.transcodifica, ts.ordinamento"
         }
 	],
 	"subTables": [
@@ -22,5 +22,8 @@
 			],
 			"label": "Sondaggi"
 		  }
-	]
+	],
+	"querySuffixes": {
+		"tableViewSuffix": "order by ts.ordinamento"
+	}
 }
