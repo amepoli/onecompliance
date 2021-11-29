@@ -23,7 +23,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select cmp.codice_azienda, cmp.foreseen_date, cmp.codice_compito, cmp.titolo, sustring(cmp.note from 1 to 239) as note, cmp.data_segnalazione, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as compiti_aperti, codice_compito_parent from entrasp.compiti cmp WHERE cmp.codice_azienda in(€global_user_companies€)"
+      "queryString": "select cmp.codice_azienda, cmp.foreseen_date, cmp.codice_compito, cmp.codice, cmp.titolo, sustring(cmp.note from 1 to 239) as note, cmp.data_segnalazione, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as compiti_aperti, codice_compito_parent from entrasp.compiti cmp WHERE cmp.codice_azienda in(€global_user_companies€)"
     },
     {
       "operation": "selectForm",
@@ -245,12 +245,26 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "codice_compito",
+      "label": "codice_compito",
+      "newLine": false,
+      "readOnly": false,
+      "size": 0
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
       "label": "Codice Segnalazione",
       "newLine": false,
-      "readOnly": true,
+      "readOnly": false,
       "size": 1
     },
     {
@@ -688,9 +702,18 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "codice_compito",
+      "label": "codice_compito"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
       "width": "5%",
       "label": "Codice Compito"
     },

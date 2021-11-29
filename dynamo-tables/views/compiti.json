@@ -26,7 +26,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select codice_compito,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as descr_stato from entrasp.compiti where codice_azienda=$codice_azienda$"
+      "queryString": "select codice_compito, codice, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as descr_stato from entrasp.compiti where codice_azienda=$codice_azienda$"
     },
     {
       "operation": "update",
@@ -191,6 +191,20 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "codice_compito",
+      "label": "codice_compito",
+      "newLine": false,
+      "readOnly": false,
+      "size": 0
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
       "label": "Codice Segnalazione",
       "newLine": false,
       "readOnly": false,
@@ -434,13 +448,13 @@
     {
       "fieldName": "toggle_compiti_aperti",
       "format": {
-          "value": "1",
-          "viewType": "toggle"
+        "value": "1",
+        "viewType": "toggle"
       },
       "label": "Compiti aperti",
       "newLine": false,
       "queryCond": "stato!='C'"
-  }
+    }
   ],
   "subTables": [
     {
@@ -576,9 +590,18 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "codice_compito",
+      "label": "codice_compito"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
       "width": "5%",
       "label": "Codice Compito"
     },
