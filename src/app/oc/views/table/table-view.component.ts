@@ -100,9 +100,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     pubMsgCmdTopic = '/toolbar/in/cmd';
 
     // Selection
+    showSelection: boolean = false;
     initialSelection: any = [];
     allowMultiSelect = true;
-    selection = null;
+    selection = new SelectionModel<any>(true, []);;
 
     /** Whether the number of selected elements matches the total number of rows. */
     isAllSelected() {
@@ -116,6 +117,14 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.isAllSelected() ?
             this.selection.clear() :
             this.dataSource.data.forEach(row => this.selection.select(row));
+    }
+
+    /** The label for the checkbox on the passed row */
+    checkboxLabel(row?: any): string {
+        if (!row) {
+        return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+        }
+        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
     }
 
     subscriptions: Subscription[] = [];
@@ -228,7 +237,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.importDataSource = result.externalUpdate;
                     const params = result.data;
                     _this._console.table(params);
-                    _this.viewKeys = params.table_keys;
+                    _this.loadViewKeys(params.table_keys);
                     _this.completeSearchKeys = params.search_keys;
                     _this.updateAdvancedSearchKeys(params.search_keys);
                     _this.loadSearchToggles(params.search_keys);
@@ -507,6 +516,23 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
         }
         return styles;
+    }
+
+    private loadViewKeys(table_keys: any[]) {
+        if(this.showSelection) {
+            let selectTableKey: TableViewKey = {
+                format: {dataType: 'checkbox'},
+                isHidden: false,
+                isPrimary: false,
+                isSelectCheckbox: true,
+                key:'selectCheckbox',
+                label:'Select Checkbox'
+            };
+            this.viewKeys = [selectTableKey].concat(table_keys);    
+        }
+        else {
+            this.viewKeys = table_keys;
+        }
     }
 
     private getSearchData(searchKeys: SearchViewKey[]): FieldConfig[] {
@@ -865,9 +891,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     getColumnLabels(viewKeys: TableViewKey[]) {
         let colLabels = viewKeys.map(c => c.key);
-        // return ['select', ...colLabels];
         return colLabels;
-
     }
 
     getCurrentKeys(validKeysArray: TableViewKey[], inputKeys: any) {

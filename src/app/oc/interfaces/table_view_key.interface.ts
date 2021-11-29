@@ -9,6 +9,8 @@ export interface TableViewKey { // as per API specification
     label: string;
     queryFunct?: string;
     isButton?: boolean;
+    isCheckbox?: boolean;
+    isSelectCheckbox?: boolean;
     buttonAction?: {
         action: "navigate" | "delete" | "query" | 'downloadAttachment',
         target: string,
