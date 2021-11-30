@@ -1,0 +1,77 @@
+{
+  "$schema": "../views.schema.json",
+  "businessObjectName": "compiti",
+  "origin": "entrasp.azienda",
+  "entryKey": "aziende_sub_of_user",
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE an.dynamo_user=$dynamo_user$;"
+    },
+    {
+      "operation": "selectForm",
+      "type": "main",
+      "queryString": "select * from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$ and id_tipo_segnalazione!=0"
+    },
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select distinct codice_azienda, entrasp.consuntivazioni_time_consumed_new(codiceazienda=> codice_azienda, dynamouser=>$dynamo_user$, datainizio=>(current_date - interval '12 months')::date, datafine=>current_date::date) as dd_12_months, entrasp.consuntivazioni_time_consumed_new(codiceazienda=> codice_azienda,  dynamouser=>$dynamo_user$, datainizio=>(current_date - interval '1 months')::date, datafine=>current_date::date) as dd_1_months, entrasp.consuntivazioni_time_consumed_new(codiceazienda=> codice_azienda, dynamouser=>$dynamo_user$, datainizio=>(current_date - interval '3 months')::date, datafine=>current_date::date) as dd_3_months from entrasp.aziende WHERE codice_azienda in(€global_user_companies€) and codice_azienda in(select distinct codice_azienda from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where an.dynamo_user=$dynamo_user$)"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "dynamo_user",
+      "label": "dynamo_user"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "width": "10%",
+      "key": "codice_azienda",
+      "label": "Cliente"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "dd_12_months",
+      "label": "Giorni eq. ultimi 12 mesi",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "dd_3_months",
+      "label": "Giorni eq. ultimi 3 mesi",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "dd_1_months",
+      "label": "Giorni eq. ultimo mese",
+      "width": "10%"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by codice_azienda desc limit 100"
+  }
+}
