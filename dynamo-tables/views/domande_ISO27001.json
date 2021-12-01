@@ -2,37 +2,12 @@
   "$schema": "../views.schema.json",
   "inheritsFrom": "domande_dettaglio",
   "entryKey": "domande_ISO27001",
-  "define": {
-    "elenco_argomenti": "dmd.id_argomento IN ( SELECT UNNEST (  entrasp.union_of_descendants_of_argomenti( (select distinct array_agg (id_argomento_antecedents) from entrasp.antecedents_of_argomento($id_argomento_domanda$,1) WHERE id_argomento_antecedents not in(196,4038,5328,574,1300,162,$id_argomento_domanda$)))))AND dmd.id_argomento IN ( SELECT DISTINCT dm.id_argomento FROM entrasp.domande dm JOIN entrasp.modelli_test mt_dm ON dm.id_modello_test = mt_dm.id_modello_test AND dm.codice_azienda::text = mt_dm.codice_azienda::text JOIN entrasp.argomenti_argomenti aa_dm_liv ON mt_dm.id_argomento = aa_dm_liv.id_argomento_son WHERE aa_dm_liv.id_argomento_father = 162::numeric AND dm.codice_azienda = $codice_azienda$) AND codice_azienda=$codice_azienda$"
-  },
-  "predefinedQueries": [
-    {
-      "operation": "insert",
-      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$)",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "update",
-      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$)",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "update",
-      "queryString": "update entrasp.risposte rp set punteggio = dm.punteggio from entrasp.domande dm where rp.codice_azienda= dm.codice_azienda and rp.id_domanda = dm.id_domanda and rp.id_modello_test = dm.id_modello_test and rp.id_modello_test_vr = dm.id_modello_test_vr and rp.punteggio!=dm.punteggio and rp.codice_azienda = $codice_azienda$ and rp.id_modello_test =$id_modello_test$ and rp.id_domanda =$id_domanda$ and rp.id_modello_test_vr = $id_modello_test_vr$;",
-      "type": "postProcessing"
-    },
-    {
-      "type": "main",
-      "operation": "delete",
-      "queryString": "select entrasp.domanda_delete($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$);"
-    } 
-  ],
   "exportQueries": {
     "tableQueries": [
-          {
-            "queryString": "select * from entrasp.controlli_domande_ISO27001 where codice_azienda=$codice_azienda$",
-            "label": "Conteggio controlli complessivi"
-          }
+      {
+        "queryString": "select * from entrasp.controlli_domande_ISO27001 where codice_azienda=$codice_azienda$",
+        "label": "Conteggio controlli complessivi"
+      }
     ]
-}
+  }
 }

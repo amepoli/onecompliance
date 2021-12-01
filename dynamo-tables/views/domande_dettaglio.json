@@ -2,9 +2,6 @@
   "$schema": "../views.schema.json",
   "businessObjectName": "domande",
   "entryKey": "domande_dettaglio",
-  "define": {
-    "elenco_argomenti": "true"
-  },
   "predefinedQueries": [
     {
       "operation": "insert",
@@ -561,14 +558,16 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "input"
+        "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE aa.id_argomento_father=5390;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "interval_value",
-      "label": "",
-      "sameOrigin": false,
+      "key": "id_argomento_interval_value",
+      "sameOrigin": true,
+      "label": "Unità misura intervalli (days, weeks, months)",
       "newLine": false,
       "readOnly": false
     },
@@ -581,36 +580,24 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "interval_multiplier",
-      "label": "",
-      "sameOrigin": false,
+      "label": "Numero intervalli",
+      "sameOrigin": true,
       "newLine": false,
       "readOnly": false
     },
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "number",
-        "viewType": "input"
+        "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE aa.id_argomento_father=5386;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "id_argomento_stato",
-      "label": "",
-      "sameOrigin": false,
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento_tipo_allegato",
-      "label": "",
-      "sameOrigin": false,
+      "sameOrigin": true,
+      "label": "Stato",
       "newLine": false,
       "readOnly": false
     },
@@ -679,7 +666,7 @@
       "keys": [
         {
           "parent": "id_domanda",
-          "son": "id_domanda_father"
+          "son": "id_domanda"
         },
         {
           "parent": "codice_azienda",
@@ -687,18 +674,45 @@
         },
         {
           "parent": "id_modello_test",
-          "son": "id_modello_test_father"
+          "son": "id_modello_test"
         },
         {
           "parent": "id_modello_test_vr",
-          "son": "id_modello_test_vr_father"
+          "son": "id_modello_test_vr"
         },
         {
           "parent": "id_argomento",
-          "son": "id_argomento_domanda"
+          "son": "id_argomento"
         }
       ],
       "label": "Domande (controlli) di livello inferiore",
+      "type": "table"
+    },
+    {
+      "entryKey": "domande_above_domande_secondo",
+      "keys": [
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        },
+        {
+          "parent": "id_modello_test_vr",
+          "son": "id_modello_test_vr"
+        },
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento"
+        }
+      ],
+      "label": "Domande (controlli) di livello superiore",
       "type": "table"
     },
     {
@@ -736,7 +750,7 @@
           "son": "id_modello_test_father"
         }
       ],
-      "label": "Risposte liv inferiore nelle verifiche",
+      "label": "Risposte liv. inferiore altre verifiche",
       "type": "table"
     },
     {
@@ -755,7 +769,7 @@
           "son": "id_modello_test_son"
         }
       ],
-      "label": "Risp.liv.sup.altre verifiche",
+      "label": "Risposte liv.superiore altre verifiche",
       "type": "table"
     }
   ],
@@ -764,10 +778,9 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "codice_azienda",
-      "width": "10%",
       "label": "Azienda"
     },
     {
@@ -825,7 +838,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "60%",
+      "width": "72%",
       "key": "descrizione",
       "label": "Domanda"
     },
@@ -974,6 +987,6 @@
   ],
   "origin": "entrasp.domande",
   "querySuffixes": {
-    "tableViewSuffix": "limit 900"
+    "tableViewSuffix": "order by id_argomento asc limit 900"
   }
 }

@@ -1,13 +1,13 @@
 {
   "$schema": "../views.schema.json",
-  "entryKey": "domande_sub_of_domande",
+  "entryKey": "domande_above_domande",
   "origin": "entrasp.domande",
   "businessObjectName": "domande",
   "predefinedQueries": [
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "SELECT dmd.codice_azienda, dmd.id_modello_test, dmd.id_modello_test_vr, dmd.id_domanda, dmd.descrizione, dmd.id_argomento, dmd.punteggio FROM entrasp.domande dmd WHERE (CASE WHEN $id_argomento$ IS NULL THEN false ELSE dmd.id_argomento IN ( SELECT UNNEST (  entrasp.union_of_descendants_of_argomenti( (select distinct array_agg (id_argomento_antecedents) from entrasp.antecedents_of_argomento($id_argomento$,1) WHERE id_argomento_antecedents not in(196,4038,5328,574,1300,162,$id_argomento$)))))AND dmd.id_argomento IN ( SELECT DISTINCT dm.id_argomento FROM entrasp.domande dm JOIN entrasp.modelli_test mt_dm ON dm.id_modello_test = mt_dm.id_modello_test AND dm.codice_azienda::text = mt_dm.codice_azienda::text JOIN entrasp.argomenti_argomenti aa_dm_liv ON mt_dm.id_argomento = aa_dm_liv.id_argomento_son WHERE aa_dm_liv.id_argomento_father = 162::numeric AND dm.codice_azienda = $codice_azienda$) AND codice_azienda=$codice_azienda$ END) "
+      "queryString": "SELECT dmd.codice_azienda, dmd.id_modello_test,  dmd.id_modello_test_vr, dmd.id_domanda, dmd.descrizione, dmd.id_argomento, dmd.punteggio FROM entrasp.domande dmd WHERE (CASE WHEN $id_argomento$ IS NULL THEN false ELSE dmd.id_argomento IN ( SELECT UNNEST (  entrasp.union_of_descendants_of_argomenti( (select distinct array_agg (id_argomento_antecedents) from entrasp.antecedents_of_argomento($id_argomento$,1) WHERE id_argomento_antecedents not in(196,4038,5328,574,1300,162,$id_argomento$)))))AND dmd.id_argomento IN ( SELECT DISTINCT dm.id_argomento FROM entrasp.domande dm JOIN entrasp.modelli_test mt_dm ON dm.id_modello_test = mt_dm.id_modello_test AND dm.codice_azienda::text = mt_dm.codice_azienda::text JOIN entrasp.argomenti_argomenti aa_dm_liv ON mt_dm.id_argomento = aa_dm_liv.id_argomento_son WHERE aa_dm_liv.id_argomento_father = 1300::numeric AND dm.codice_azienda = $codice_azienda$) AND codice_azienda=$codice_azienda$ END);"
     } 
   ],
   "form_keys": [
