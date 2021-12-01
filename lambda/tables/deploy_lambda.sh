@@ -25,6 +25,7 @@ USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
 PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
 
 BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.tables.s3.bucket"`
+COMPANY_QUERY="select entrasp.update_dynamo_user((€global_id_anagrafiche€)::text, (€global_user_companies€)::text, '€global_username€')"
 
 #replace Variables
 cp index.js index.js.ori
@@ -40,6 +41,8 @@ sed -i -e "s/HOMEPAGES_NAME/${DYN_HOMEPAGESNAME}/g" index.js
 
 
 sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js
+
+sed -i -e "s/COMPANY_QUERY/${COMPANY_QUERY}/g" index.js
 
 rm index.js-e
 

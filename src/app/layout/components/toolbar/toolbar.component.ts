@@ -227,7 +227,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
 
     setCompany(company: string, fromInterface: boolean): void {
-
         this.currentCompany = company;
         // update the user infos and left menu 
         this._authService.updateUserInfo(company);
@@ -236,8 +235,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
             this.router.navigate(['/login']);
         }
 
-
-
+        this._backendService.runCompanyChangeQuery(company);
     }
 
     /**
