@@ -112,6 +112,13 @@ export class BackendService {
     this.myPutPostInit.body = keys;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.tablesApiName, this.myPutPostInit));
   }
+  
+  runCompanyChangeQuery(company: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { company_change_query: 1, company: company};
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
+  }  
+
   getAttachList(entryName: string, company: string, keys: any): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys) };

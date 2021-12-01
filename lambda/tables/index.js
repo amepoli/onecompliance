@@ -11,6 +11,8 @@ const pool = new Pool({
     connectionTimeoutMillis: 1000
 });
 
+const queryOnCompanyChange = `COMPANY_QUERY`;
+
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
@@ -507,6 +509,10 @@ function getHomepageQuery(entry_params) {
         });
     }
     return queryString;
+}
+
+function getCompanyChangeQuery() {
+    return replaceGlobalkeys(queryOnCompanyChange);
 }
 
 function getHomepageTabQuery(entry_params) {
@@ -1454,36 +1460,23 @@ async function processHomepageTabQuery(entry_params, queryString, search_keys, c
                 }
             }
         }
-
-        // queryString = replaceGlobalkeys(queryString);
-        // queryString = replaceLocalKeys(queryString, keys);
-        // try {
-        //     let result = await client.query(queryString);
-        //     if (result.rows != null && result.rows.length > 0) {
-        //         result = result.rows[0];
-        //     }
-        //     return {
-        //         "isBase64Encoded": false,
-        //         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-        //         "statusCode": 200,
-        //         "body": JSON.stringify({ result: 'OK', response: result, queryString: queryString })
-        //     };
-        // }
-        // catch (e) {
-        //     console.log('Custom Query Error: ', e);
-        //     return {
-        //         "isBase64Encoded": false,
-        //         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-        //         "statusCode": 200,
-        //         "body": JSON.stringify({ result: 'KO', error: e, queryString: queryString })
-        //     };
-        // }
     }
     return {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         "statusCode": 200,
-        "body": JSON.stringify({ result: 'OK', response: tilesView, queryString: queryString })
+        "body": JSON.stringify({ result: 'OK', response: tilesView })
+    }
+}
+
+async function processCompanyChangeQuery(queryString, client) {
+    let queryResult = await client.query(queryString);
+    console.log('CompanyChangeQuery Result: ', JSON.stringify(queryResult));
+    return {
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "statusCode": 200,
+        "body": JSON.stringify({ result: 'OK', response: queryResult })
     }
 }
 
@@ -1846,7 +1839,7 @@ exports.handler = async (event, context) => {
         search_keys = JSON.parse(search_keys); // production scenario only
     }
 
-    var isSearchRequest = (!isHomepage && !isHomepageTab && search_keys) ? true : false;
+    var isSearchRequest = (!isHomepage && !isHomepageTab && !isCompanyChangeQuery && search_keys) ? true : false;
 
     var isNewRecord = (queryParams['new'] === '1');
 
@@ -1865,7 +1858,8 @@ exports.handler = async (event, context) => {
     var isCustomQuery = (queryParams['custom_query'] === '1');;
     var customQueryButtonKey = queryParams['custom_query_key'];
 
-
+    var isCompanyChangeQuery = (queryParams['company_change_query'] === '1');;
+        
     var isFormAction = queryParams['isFormAction'] === '1';
     var formActionType = queryParams['formActionType'];
 
@@ -1878,7 +1872,7 @@ exports.handler = async (event, context) => {
 
     const profileData = await getProfileData(profile);
 
-    var authorized = (isHomepage || isHomepageTab)? true: (isAuthorized(queryParams.entry_name, profileData));
+    var authorized = (isHomepage || isHomepageTab || isCompanyChangeQuery)? true: (isAuthorized(queryParams.entry_name, profileData));
 
     if (!authorized) {
         console.log(method, ' request for ', queryParams.entry_name, ' not authorized!');
@@ -1894,7 +1888,7 @@ exports.handler = async (event, context) => {
         console.log(method, ' request for ', queryParams.entry_name, ' authorized!');
     }
 
-    var readOnly = isReadOnly(queryParams.entry_name, profileData);
+    var readOnly = isCompanyChangeQuery? true: isReadOnly(queryParams.entry_name, profileData);
 
     // avoid update, insert or delete if read only
     if (readOnly && (method === 'DELETE' || (method === 'POST' && !isEventUpdate))) {
@@ -1926,19 +1920,24 @@ exports.handler = async (event, context) => {
 
         var client = await pool.connect();
 
-        const DynamoParams = {
-            TableName: isHomepage? 'HOMEPAGES_NAME': 'VIEWS_NAME',
-            Key: {
-                entryKey: queryParams['entry_name']
-            }
-        };
-    
-        console.log('DynamoParams: ', DynamoParams);
+        let DynamoParams = null;    
+        let entry_params = null;
         
-        // read the entry params from DynamoDB view table
-        let entry_params = await dynamo.get(DynamoParams).promise();
+        if(!isCompanyChangeQuery) {
+            DynamoParams = {
+                TableName: isHomepage? 'HOMEPAGES_NAME': 'VIEWS_NAME',
+                Key: {
+                    entryKey: queryParams['entry_name']
+                }
+            };
+        
+            console.log('DynamoParams: ', DynamoParams);
+            
+            // read the entry params from DynamoDB view table
+            entry_params = await dynamo.get(DynamoParams).promise();    
+        }
 
-        if(!isHomepage && !isHomepageTab) {
+        if(!isHomepage && !isHomepageTab && !isCompanyChangeQuery) {
             // complete table if inherited
             entry_params = await helperFuncts.overrideTable('VIEWS_NAME', entry_params.Item, dynamo);
 
@@ -1964,6 +1963,8 @@ exports.handler = async (event, context) => {
                 queryString = getHomepageQuery(entry_params);
             } else if (isHomepageTab) {
                 queryString = getHomepageTabQuery(entry_params);
+            } else if(isCompanyChangeQuery) {
+                queryString = getCompanyChangeQuery();
             } else if (isFormAction) {
                 queryString = getFormActionQuery(formActionType, table_keys, entry_params);
             } else if (isSearchRequest) {
@@ -2013,6 +2014,11 @@ exports.handler = async (event, context) => {
             return response;
         } else if (isHomepageTab) {
             let response = await processHomepageTabQuery(entry_params, queryString, search_keys, client);
+            console.log(response);
+            await client.release();
+            return response;
+        } else if(isCompanyChangeQuery) {
+            let response = await processCompanyChangeQuery(queryString, client);
             console.log(response);
             await client.release();
             return response;
