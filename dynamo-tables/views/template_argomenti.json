@@ -9,7 +9,9 @@
 		"campo_id_argomento": "id_argomento_tipo_allegato",
 		"label_unifica": "Unifica id_allegato",
 		"is_hidden_unifica_all": "false",
-		"id_argomento_bigger_than": "and true"
+		"id_argomento_bigger_than": "and true",
+		"id_argomento_father_s2": "3368",
+		"label_argomento_s2": "Livello di controllo"				
 	  },
 	"predefinedQueries": [
 		{
@@ -201,9 +203,19 @@
 				"viewType": "input"
 			},
 			"fieldName": "codice_azienda",
-			"newLine": true,
+			"newLine": false,
 			"queryCond": "arg.codice_azienda=$codice_azienda_s$"
 		},
+		{
+            "fieldName": "stringa_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Stringa di ricerca",
+            "newLine": true,
+            "queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€stringa_s€')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€stringa_s€')||'%')"
+        },
 		{
 			"label": "$P{label_id}",
 			"format": {
@@ -217,13 +229,24 @@
 		{
             "fieldName": "argomento_s",
             "format": {
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father} where arg.flag_classificazione=true order by descrizione",
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father} order by descrizione",
                 "options": [],
                 "viewType": "combobox"
             },
             "label": "Argomento",
             "newLine": false,
             "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
+        },
+		{
+            "fieldName": "argomento_s2",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father_s2} order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "$P{label_argomento_s2}",
+            "newLine": false,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s2$))"
         },
 		{
             "fieldName": "num_argomenti_padre_max",
