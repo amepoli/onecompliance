@@ -3,79 +3,94 @@
     "entryKey": "sondaggi_attachments",
     "origin": "entrasp.views_attachments_fast",
     "predefinedQueries": [
+        {
+          "operation": "selectTable",
+          "type": "main",
+          "queryString": "select vaf.codice_azienda, vaf.codice_part, vaf.id_risorsa, vaf.client_file_name, vaf.stringa, vaf.tipo_allegato, vaf.id_sondaggio, vaf.id_progetto from entrasp.views_attachments_fast vaf where vaf.codice_azienda=$codice_azienda$ and vaf.id_sondaggio=$id_sondaggio$"
+        }
       ],
-    "search_keys": [ 
-    ],
-    "form_keys": [
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
+      "inheritsFrom": "attachments",
+      "table_keys": [
+        {
+          "format": {
+            "dataType": "text"
+          },
+          "isHidden": true,
+          "isPrimary": true,
+          "key": "codice_azienda",
+          "label": "codice_azienda"
         },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "codice_azienda",
-        "label": "codice_azienda",
-        "newLine": true,
-        "readOnly": true
-      },
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "number",
-          "viewType": "input"
+        {
+          "format": {
+            "dataType": "text"
+          },
+          "isHidden": true,
+          "isPrimary": false,
+          "key": "codice_part",
+          "label": "codice_part"
         },
-        "isHidden": true,
-        "isPrimary": false,
-        "key": "id_sondaggio",
-        "label": "id_sondaggio",
-        "newLine": true,
-        "readOnly": true
-      },
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
+        {
+          "format": {
+            "dataType": "number"
+          },
+          "isHidden": true,
+          "isPrimary": true,
+          "width": "5%",
+          "key": "id_risorsa",
+          "label": "ID Allegato"
         },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "client_file_name",
-        "label": "Nome file",
-        "newLine": false,
-        "readOnly": true
-      },
-      {
-        "autoGenerate": false,
-        "format": {
-          "viewType": "button"
+        {
+          "format": {
+            "dataType": "text"
+          },
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "client_file_name",
+          "width": "28%",
+          "label": "Nome file"
         },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "stringa",
-        "label": "Download",
-        "isDownloadButton": true,
-        "readOnly": false
-      }
-      
-    ],
-    "hideActions": [
-      {
-          "formActionType": "add",
-          "viewType": "form"
-      },
-      {
-        "formActionType": "save",
-        "viewType": "form"
-      },
-      {
-        "formActionType": "delete",
-        "viewType": "form"
-      },
-      {
-        "formActionType": "share",
-        "viewType": "form"
-      }
-  ]
+        {
+          "format": {
+            "dataType": "number"
+          },
+          "isHidden": false,
+          "isPrimary": false,
+          "width": "6%",
+          "key": "stringa",
+          "label": "Download",
+          "isButton": true,
+          "style": [
+            {
+              "button_icon": "cloud_download",
+              "value": ""
+            }
+          ],
+          "buttonAction": {
+            "target": "attachments",
+            "viewType": "form",
+            "action": "downloadAttachment",
+            "keymap": []
+          }
+        },
+        {
+          "format": {
+            "dataType": "text"
+          },
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "tipo_allegato",
+          "width": "13%",
+          "label": "Tipo Allegato"
+        },
+        {
+          "format": {
+            "dataType": "number"
+          },
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "id_sondaggio",
+          "width": "5%",
+          "label": "Sondaggio"
+        }
+      ]
   }
