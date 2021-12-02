@@ -10,7 +10,7 @@
     },
     {
       "operation": "update",
-      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$)",
+      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$, $id_template_rp$)",
       "type": "postProcessing"
     },
     {
@@ -260,6 +260,13 @@
         "viewType": "textarea"
       },
       "inputEvents": [
+        {
+          "actionType": "query",
+          "eventName": "combobox_risposte",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select string_agg(concat(ordinamento,') ',risposta,' (',peso,'%)'), E'\n') as mostra_risposte from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$id_template_rp$;"
+        },
         {
           "actionType": "query",
           "eventName": "combobox_risposte",
