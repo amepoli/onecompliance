@@ -34,3 +34,4 @@ export * from './email_body_key_parameters';
 export * from './search_toggle';
 export * from './google_api_params';
 export * from './menu_option.interface';
+export * from './selection_action.interface';

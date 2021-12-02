@@ -2,7 +2,7 @@ import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleCha
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatRow } from '@angular/material/table';
-import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, SearchToggle, SearchViewKey, TableViewKey, TableViewParams } from 'app/oc/interfaces';
+import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, SearchToggle, SearchViewKey, SelectionAction, TableViewKey, TableViewParams } from 'app/oc/interfaces';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -75,7 +75,6 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     isAuthorized: boolean = true;
     viewKeys: TableViewKey[];  // view fields as specified by the backend
-
     completeSearchKeys: SearchViewKey[]; // Also contains search toggles
     advancedSearchKeys: SearchViewKey[]; // Search keys to show Advanced search
     searchToggles: SearchToggle[];
@@ -100,15 +99,15 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     pubMsgCmdTopic = '/toolbar/in/cmd';
 
     // Selection
-    showSelection: boolean = false;
+    selectionActions: SelectionAction[] = [];
     initialSelection: any = [];
     allowMultiSelect = true;
-    selection = new SelectionModel<any>(true, []);;
+    selection = new SelectionModel<any>(true, []);
 
     /** Whether the number of selected elements matches the total number of rows. */
     isAllSelected() {
         const numSelected = this.selection.selected.length;
-        const numRows = this.dataSource.data.length;
+        const numRows = (this.dataSource && this.dataSource.data && this.dataSource.data.length)? this.dataSource.data.length: 0;
         return numSelected == numRows;
     }
 
@@ -237,6 +236,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.importDataSource = result.externalUpdate;
                     const params = result.data;
                     _this._console.table(params);
+                    _this.loadSelectionActions(params.table_multiselection_actions);
                     _this.loadViewKeys(params.table_keys);
                     _this.completeSearchKeys = params.search_keys;
                     _this.updateAdvancedSearchKeys(params.search_keys);
@@ -319,7 +319,6 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         _this._navigationService.updateToolbarHideActions(_this.hideActions);
                         
                         _this.onMessagesUpdated.emit(params.messages);
-
                     }
                 }
                 else {
@@ -518,8 +517,23 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         return styles;
     }
 
+    private loadSelectionActions(actions: any) {
+        if(actions && actions.length) {
+            this.selectionActions = actions.map( x => {
+                return {
+                    key: x.key,
+                    label: x.label,
+                    icon: x.icon
+                }
+            });
+        }
+        else {
+            this.selectionActions = null;
+        }
+    }
+
     private loadViewKeys(table_keys: any[]) {
-        if(this.showSelection) {
+        if(this.selectionActions && this.selectionActions.length) {
             let selectTableKey: TableViewKey = {
                 format: {dataType: 'checkbox'},
                 isHidden: false,

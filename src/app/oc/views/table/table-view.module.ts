@@ -16,6 +16,7 @@ import { TableViewComponent } from './table-view.component';
 import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
 import { FormViewModule } from '../form/form-view.module';
 import { OneCompliancePipesModule } from 'app/oc/pipes/pipes.module';
+import { TableMultiselectToolbarModule } from '../table-multiselect-toolbar/table-multiselect-toolbar.module';
 
 @NgModule({
   declarations: [TableViewComponent],
@@ -35,6 +36,7 @@ import { OneCompliancePipesModule } from 'app/oc/pipes/pipes.module';
     MatCheckboxModule,
     DynamicFormsModule,
     FormViewModule,
+    TableMultiselectToolbarModule,
     OneCompliancePipesModule
   ],
   exports: [
