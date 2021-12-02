@@ -6,6 +6,11 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
+      "type": "preProcessing",
+      "queryString": "update entrasp.cdms_risorse cd set codice_part=az.codice_part from entrasp.aziende az where cd.codice_azienda=az.codice_azienda and cd.codice_part is null;"
+    },
+    {
+      "operation": "selectTable",
       "queryString": "select entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND cdr.id_sondaggio=$id_sondaggio$",
       "type": "main"
     },
