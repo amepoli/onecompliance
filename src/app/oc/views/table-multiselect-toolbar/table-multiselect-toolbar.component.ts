@@ -32,7 +32,25 @@ export class TableMultiselectToolbarComponent implements DoCheck {
         this.cdr.detectChanges();
     }
 
-    performAction(key: string) {
+    performButtonAction(key: string) {
+        if(this.viewKeys) {
+            const primaryKeys = this.viewKeys.filter(entry => {
+                return entry.isPrimary;
+            });
+            if(primaryKeys.length > 0) {
+                let key_values = primaryKeys.map( x => x.key);
+                let params = key_values.join(" || '-' || ");
+                let dataRows = this.selection.selected.map( s => {
+                    return `'${key_values.map( key => s[key]).join('-')}'`;
+                });
+                let data = dataRows.join(',');
+                let finalCondition = ` WHERE (${params}) IN (${data});`;
+                console.log(finalCondition);
+            }
+        }
+    }
+
+    performMenuAction(key: string) {
         if(this.viewKeys) {
             const primaryKeys = this.viewKeys.filter(entry => {
                 return entry.isPrimary;
