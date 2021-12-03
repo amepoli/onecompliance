@@ -1,0 +1,130 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "tr_hp_manager",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select csn.date_time_begin::date, tr_inc.dynamo_user, sum(csn.durata) as minuti_rendicontati, em.min_rich as minuti_richiesti, (em.min_rich- sum(csn.durata)) as minuti_mancanti from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id tr_inc on csn.id_risorsa=tr_inc.id_anagrafica and csn.codice_part=tr_inc.codice_part inner join (select emp.dynamo_user, data_avvio_collaborazione, sum(emp.minuti_richiesti_giornalieri) min_rich from entrasp.employers emp group by emp.dynamo_user, emp.data_avvio_collaborazione)  em on tr_inc.dynamo_user=em.dynamo_user where extract (dow from csn.date_time_begin) not in (0,6) and csn.date_time_begin>em.data_avvio_collaborazione and tr_inc.dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€')) group by csn.date_time_begin::date, tr_inc.dynamo_user, em.min_rich, em.data_avvio_collaborazione having sum(csn.durata)<em.min_rich;",
+      "type": "main"
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "insert",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    }
+  ],
+  "toolbar_elements": [
+    {
+        "fieldName": "dynamo_s",
+        "viewType": "combobox",
+        "position": "left",
+        "label": "Miei",
+        "options": [],
+        "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.employers where dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'));",
+        "queryCond": "tr_inc.dynamo_user = '$dynamo_s$'"
+    }
+],
+"tiles": [
+    {
+        "title": "Giorni incompleti",
+        "content": {
+            "contentType": "value",
+            "value": "Scooby Doo",
+            "query": "select count (tr_inc.dynamo_user) as conta_giorni_incompleti from (select csn.date_time_begin::date, an.dynamo_user, sum(csn.durata) as ore_giornata from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part inner join (select emp.dynamo_user, data_avvio_collaborazione, sum(emp.minuti_richiesti_giornalieri) min_rich from entrasp.employers emp group by emp.dynamo_user, emp.data_avvio_collaborazione)  em on an.dynamo_user=em.dynamo_user where extract (dow from csn.date_time_begin) not in (0,6) and csn.date_time_begin>em.data_avvio_collaborazione and an.dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€')) group by csn.date_time_begin::date, an.dynamo_user, em.min_rich, em.data_avvio_collaborazione having sum(csn.durata)<em.min_rich) tr_inc where 1=1",
+            "queryCond": "",
+            "fieldName": "conta_giorni_incompleti",
+            "value_color": "red",
+    "title_color": "green",
+    "background_color": "lightblue"		
+        },
+  "new_line": false
+    }
+],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "date_time_begin",
+      "label": "Inizio",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "dynamo_user",
+      "width": "10%",
+      "label": "Utente"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "minuti_rendicontati",
+      "label": "Minuti rendicontati",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "minuti_richiesti",
+      "label": "Minuti richiesti",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "minuti_mancanti",
+      "label": "Minuti mancanti",
+      "width": "8%"
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "date_from",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "A partire dal",
+      "newLine": false,
+      "queryCond": "csn.date_time_begin::date>$date_from$"
+    },
+    {
+      "format": {
+        "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.employers where dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'));",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "queryCond": "tr_inc.dynamo_user=$dynamo_s$",
+      "fieldName": "dynamo_s",
+      "label": "Utente",
+      "newLine": false,
+      "size": 2
+    }
+  ]
+}
