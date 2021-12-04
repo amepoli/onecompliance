@@ -1,5 +1,7 @@
 export interface MenuOption {
+  key?: string;
   icon: string;
   label: string;
-  outputEventName: string;
+  query?: string;
+  outputEventName?: string;
 }

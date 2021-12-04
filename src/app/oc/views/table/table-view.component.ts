@@ -521,9 +521,11 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         if(actions && actions.length) {
             this.selectionActions = actions.map( x => {
                 return {
+                    viewType: x.viewType,
                     key: x.key,
                     label: x.label,
-                    icon: x.icon
+                    icon: x.icon,
+                    menuOptions: x.menuOptions
                 }
             });
         }

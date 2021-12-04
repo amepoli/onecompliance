@@ -2182,13 +2182,47 @@
             "items": {
                 "type": "object",
                 "required": [
+                    "viewType",
                     "key",
                     "label",
-                    "icon",
-                    "query"
+                    "icon"                    
+                ],
+                "anyOf": [
+                    {
+                        "properties": {
+                            "viewType": {
+                                "enum": [
+                                    "menu"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "menuOptions"
+                        ]
+                    },
+                    {
+                        "properties": {
+                            "viewType": {
+                                "enum": [
+                                    "button"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "query"
+                        ]
+                    }  
                 ],
                 "additionalProperties": false,
                 "properties": {
+                    "viewType": {
+                        "type": "string",
+                        "description": "M: form view type, if 'input' also set dataType below, if combobox or radiobutton also set (also empty) options below",
+                        "enum": [
+                            "button",
+                            "menu"
+                        ]
+                    },
                     "key": {
                         "type": "string",
                         "description": "M: action key"
@@ -2204,7 +2238,10 @@
                     "query": {
                         "type": "string",
                         "description": "M: query"
-                    }
+                    },
+                    "menuOptions": {
+                        "$ref": "#/definitions/selectionMenuOptions"
+                    }                    
                 }
             }
         },
@@ -2253,6 +2290,38 @@
                     "outputEventName": {
                         "type": "string",
                         "description": "M: menu entry output event"
+                    }
+                }
+            }
+        },
+        "selectionMenuOptions": {
+            "type": "array",
+            "description": "?: only usable (mandatory at least empty) in case of combobox or radiobutton",
+            "items": {
+                "type": "object",
+                "required": [
+                    "key",
+                    "label",
+                    "icon",
+                    "query"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "description": "M: menu entry key"
+                    },
+                    "label": {
+                        "type": "string",
+                        "description": "M: displayed menu entry value"
+                    },
+                    "icon": {
+                        "type": "string",
+                        "description": "M: displayed menu entry icon"
+                    },
+                    "query": {
+                        "type": "string",
+                        "description": "M: menu entry query"
                     }
                 }
             }
