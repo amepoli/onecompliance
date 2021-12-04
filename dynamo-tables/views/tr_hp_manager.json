@@ -25,31 +25,31 @@
   ],
   "toolbar_elements": [
     {
-        "fieldName": "dynamo_s",
-        "viewType": "combobox",
-        "position": "left",
-        "label": "Miei",
-        "options": [],
-        "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.employers where dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'));",
-        "queryCond": "tr_inc.dynamo_user = '$dynamo_s$'"
+      "fieldName": "dynamo_s",
+      "viewType": "combobox",
+      "position": "left",
+      "label": "Miei",
+      "options": [],
+      "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.employers where dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'));",
+      "queryCond": "tr_inc.dynamo_user = '$dynamo_s$'"
     }
-],
-"tiles": [
+  ],
+  "tiles": [
     {
-        "title": "Giorni incompleti",
-        "content": {
-            "contentType": "value",
-            "value": "Scooby Doo",
-            "query": "select count (tr_inc.dynamo_user) as conta_giorni_incompleti from (select csn.date_time_begin::date, an.dynamo_user, sum(csn.durata) as ore_giornata from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part inner join (select emp.dynamo_user, data_avvio_collaborazione, sum(emp.minuti_richiesti_giornalieri) min_rich from entrasp.employers emp group by emp.dynamo_user, emp.data_avvio_collaborazione)  em on an.dynamo_user=em.dynamo_user where extract (dow from csn.date_time_begin) not in (0,6) and csn.date_time_begin>em.data_avvio_collaborazione and an.dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€')) group by csn.date_time_begin::date, an.dynamo_user, em.min_rich, em.data_avvio_collaborazione having sum(csn.durata)<em.min_rich) tr_inc where 1=1",
-            "queryCond": "",
-            "fieldName": "conta_giorni_incompleti",
-            "value_color": "red",
-    "title_color": "green",
-    "background_color": "lightblue"		
-        },
-  "new_line": false
+      "title": "Giorni incompleti",
+      "content": {
+        "contentType": "value",
+        "value": "Scooby Doo",
+        "query": "select count (tr_inc.dynamo_user) as conta_giorni_incompleti from (select csn.date_time_begin::date, an.dynamo_user, sum(csn.durata) as ore_giornata from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part inner join (select emp.dynamo_user, data_avvio_collaborazione, sum(emp.minuti_richiesti_giornalieri) min_rich from entrasp.employers emp group by emp.dynamo_user, emp.data_avvio_collaborazione)  em on an.dynamo_user=em.dynamo_user where extract (dow from csn.date_time_begin) not in (0,6) and csn.date_time_begin>em.data_avvio_collaborazione and an.dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€')) group by csn.date_time_begin::date, an.dynamo_user, em.min_rich, em.data_avvio_collaborazione having sum(csn.durata)<em.min_rich) tr_inc where 1=1",
+        "queryCond": "",
+        "fieldName": "conta_giorni_incompleti",
+        "value_color": "red",
+        "title_color": "red",
+        "background_color": "white"
+      },
+      "new_line": false
     }
-],
+  ],
   "table_keys": [
     {
       "format": {
