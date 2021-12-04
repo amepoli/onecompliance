@@ -1,0 +1,81 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "mie_ferie",
+	"inheritsFrom": "festivita",
+	"predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select * from entrasp.festivita where dynamo_user='€global_username€'"
+		},
+		{
+			"operation": "insert",
+			"type": "postProcessing",
+			"queryString": "update entrasp.festivita set dynamo_user='€global_username€' where codice=$codice$"
+		}
+	],
+	"form_keys": [
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.employers where dynamo_user='€global_username€' order by codice_azienda;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text",
+				"validations": [
+					{
+						"message": "Codice azienda necessario",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
+			},
+			"label": "Azienda",
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_azienda",
+			"newLine": false,
+			"readOnly": false,
+			"size": 2
+		},
+		{
+			"autoGenerate": true,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Codice",
+			"key": "codice",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": true,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Utente",
+			"key": "dynamo_user",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"label": "Data",
+			"key": "data",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true
+		}
+	]
+}

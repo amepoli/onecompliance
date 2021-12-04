@@ -1,0 +1,101 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "festivita",
+	"origin": "entrasp.festivita",
+	"businessObjectName": "festivita",
+	"predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select * from entrasp.festivita where dynamo_user is null and (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
+		}
+	],
+	"form_keys": [
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "codice_azienda",
+			"key": "codice_azienda",
+			"readOnly": false,
+			"isHidden": true,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": true,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Codice",
+			"key": "codice",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"label": "Data",
+			"key": "data",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true
+		}
+	],
+	"search_keys": [
+		{
+            "fieldName": "flag_anno_corrente",
+            "format": {
+                "value": "1",
+                "viewType": "toggle"
+            },
+            "label": "Anno corrente",
+            "newLine": false,
+            "queryCond": "extract(year from data)=extract( year from current_date)"
+        }
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"label": "codice_azienda",
+			"key": "codice_azienda",
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"label": "Codice",
+			"key": "codice",
+			"isHidden": false,
+			"isPrimary": true,
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"label": "Data",
+			"key": "data",
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "15%"
+		}
+	],
+	"querySuffixes": {
+		"tableViewSuffix": "order by data asc"
+	}
+}
