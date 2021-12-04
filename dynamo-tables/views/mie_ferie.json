@@ -9,9 +9,14 @@
 			"queryString": "select * from entrasp.festivita where dynamo_user='€global_username€'"
 		},
 		{
+            "operation": "isInsert",
+            "queryString": "select true",
+            "type": "main"
+        },
+		{
 			"operation": "insert",
-			"type": "postProcessing",
-			"queryString": "update entrasp.festivita set dynamo_user='€global_username€' where codice=$codice$"
+			"type": "main",
+			"queryString": "select entrasp.inserisci_ferie($data$, $codice_azienda$, '€global_username€')"
 		}
 	],
 	"form_keys": [
@@ -47,7 +52,7 @@
 			"label": "Codice",
 			"key": "codice",
 			"readOnly": false,
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": true,
 			"newLine": false
 		},
@@ -60,7 +65,7 @@
 			"label": "Utente",
 			"key": "dynamo_user",
 			"readOnly": false,
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": false,
 			"newLine": false
 		},
