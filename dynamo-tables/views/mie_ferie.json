@@ -3,9 +3,9 @@
 	"entryKey": "mie_ferie",
 	"inheritsFrom": "festivita",
 	"define": {
-        "is_hidden_codice_azienda": "false",
+		"is_hidden_codice_azienda": "false",
 		"is_hidden_dynamo_user": "true"
-    },
+	},
 	"predefinedQueries": [
 		{
 			"operation": "selectTable",
@@ -13,10 +13,10 @@
 			"queryString": "select * from entrasp.festivita where dynamo_user='€global_username€'"
 		},
 		{
-            "operation": "isInsert",
-            "queryString": "select true",
-            "type": "main"
-        },
+			"operation": "isInsert",
+			"queryString": "select $codice$ is null as label;",
+			"type": "main"
+		},
 		{
 			"operation": "insert",
 			"type": "main",
@@ -24,29 +24,6 @@
 		}
 	],
 	"form_keys": [
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.employers where dynamo_user='€global_username€' order by codice_azienda;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text",
-				"validations": [
-					{
-						"message": "Codice azienda necessario",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"label": "Azienda",
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_azienda",
-			"newLine": false,
-			"readOnly": false,
-			"size": 2
-		},
 		{
 			"autoGenerate": true,
 			"format": {
@@ -76,6 +53,29 @@
 		{
 			"autoGenerate": false,
 			"format": {
+				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.employers where dynamo_user='€global_username€' order by codice_azienda;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text",
+				"validations": [
+					{
+						"message": "Codice azienda necessario",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
+			},
+			"label": "Azienda",
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_azienda",
+			"newLine": false,
+			"readOnly": false,
+			"size": 2
+		},
+		{
+			"autoGenerate": false,
+			"format": {
 				"viewType": "input",
 				"dataType": "date"
 			},
@@ -84,7 +84,312 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "serie_ferie_k",
+			"label": "Più giorni di ferie",
+			"buttonIcon": "add",
+			"newLine": true,
+			"size": 1,
+			"outputEvent": {
+				"eventName": "serie_ferie_show",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"actionType": "hide",
+					"eventName": "serie_ferie_show",
+					"condition": "none",
+					"values": []
+				},
+				{
+					"actionType": "show",
+					"eventName": "serie_ferie_hide",
+					"condition": "none",
+					"values": []
+				}
+			],
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "serie_ferie_hide_k",
+			"label": "Nascondi serie ferie",
+			"buttonIcon": "minimize",
+			"newLine": false,
+			"size": 1.5,
+			"outputEvent": {
+				"eventName": "serie_ferie_hide",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"actionType": "show",
+					"eventName": "serie_ferie_show",
+					"condition": "none",
+					"values": []
+				},
+				{
+					"actionType": "hide",
+					"eventName": "serie_ferie_hide",
+					"condition": "none",
+					"values": []
+				}
+			],
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"format": {
+				"viewType": "subform",
+				"subform_keys": [
+					{
+						"autoGenerate": false,
+						"format": {
+							"dataType": "date",
+							"viewType": "input"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "data_inizio_ferie",
+						"queryFunct": "select data",
+						"size": 2,
+						"label": "Data inizio ferie",
+						"readOnly": false,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"dataType": "number",
+							"viewType": "input"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "n_giorni_ferie",
+						"sameOrigin": false,
+						"size": 2,
+						"label": "Numero giorni ferie",
+						"readOnly": false,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "button"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "genera_serie_k",
+						"buttonIcon": "list",
+						"label": "Genera serie",
+						"newLine": false,
+						"outputEvent": {
+							"eventName": "genera_serie",
+							"eventTrigger": "press"
+						},
+						"inputEvents": [
+							{
+								"eventName": "genera_serie",
+								"actionType": "query",
+								"queryFunct": "select entrasp.inserisci_ferie(('£data£'::date+generate_series(0, coalesce(£n_giorni_ferie£,0))* interval '1 day')::date, $codice_azienda$, '€global_username€');",
+								"condition": "none",
+								"values": [],
+								"successMessage": "Done!"
+							}
+						],
+						"readOnly": false,
+						"sameOrigin": false,
+						"size": 1
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "button"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "serie_ferie_hide_k",
+						"buttonIcon": "close",
+						"label": "Maschera principale",
+						"newLine": false,
+						"outputEvent": {
+							"eventName": "serie_ferie_hide",
+							"eventTrigger": "press"
+						},
+						"readOnly": false,
+						"sameOrigin": false,
+						"size": 1
+					}
+				]
+			},
+			"inputEvents": [
+				{
+					"actionType": "show",
+					"condition": "none",
+					"eventName": "serie_ferie_show",
+					"values": []
+				},
+				{
+					"actionType": "hide",
+					"condition": "none",
+					"eventName": "serie_ferie_hide",
+					"values": []
+				},
+				{
+					"actionType": "hide",
+					"condition": "none",
+					"eventName": "associa_sondaggio_show",
+					"values": []
+				}
+			],
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "serie_ferie_sub_form",
+			"label": "serie_ferie_sub_form",
+			"newLine": true,
+			"readOnly": false,
+			"sameOrigin": false,
+			"saveWhenHidden": true
+		},
+		{
+			"format": {
+				"dataType": "text",
+				"viewType": "label"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "Permessi",
+			"label": "Permessi",
+			"style": {
+				"background_color": "#03a9f4",
+				"font_color": "white",
+				"font_size": "1.3em",
+				"font_style": "italic",
+				"font_weight": "400"
+			},
+			"newLine": true,
+			"readOnly": true,
+			"sameOrigin": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "datetime",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "date_time_begin",
+			"size": 2,
+			"label": "Ora inizio permesso",
+			"readOnly": false,
+			"outputEvent": {
+				"eventName": "date_time_begin_edit",
+				"eventTrigger": "change"
+			},
+			"inputEvents": [
+				{
+					"eventName": "date_time_begin_edit",
+					"actionType": "query",
+					"queryFunct": "select entrasp.permesso_calcola_durata($codice$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
+					"outputEventWhenComplete": "reload_durata",
+					"condition": "none",
+					"values": []
+				},
+				{
+					"eventName": "date_time_end_edit",
+					"actionType": "query",
+					"queryFunct": "select entrasp.permesso_calcola_durata($codice$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone);",
+					"outputEventWhenComplete": "reload_durata",
+					"condition": "none",
+					"values": []
+				}
+			],
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "datetime",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "date_time_end",
+			"size": 2,
+			"label": "Ora fine permesso",
+			"readOnly": false,
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "date_time_end_edit",
+				"eventTrigger": "change"
+			}
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "time",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "durata_interval",
+			"size": 2,
+			"label": "Durata permesso",
+			"readOnly": true,
+			"newLine": false,
+			"inputEvents": [
+				{
+					"eventName": "date_time_begin_edit",
+					"actionType": "query",
+					"queryFunct": "select entrasp.permesso_calcola_durata($codice$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone) as durata_interval;",
+					"outputEventWhenComplete": "reload_durata",
+					"condition": "none",
+					"values": []
+				},
+				{
+					"eventName": "date_time_end_edit",
+					"actionType": "query",
+					"queryFunct": "select entrasp.permesso_calcola_durata($codice$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone) as durata_interval;",
+					"outputEventWhenComplete": "reload_durata",
+					"condition": "none",
+					"values": []
+				}
+			]
+		},
+		{
+			"format": {
+				"viewType": "invisible"
+			},
+			"isHidden": false,
+			"key": "invisible",
+			"readOnly": true,
+			"isPrimary": false,
+			"size": 4,
+			"label": "invisible_element",
+			"sameOrigin": false
 		}
 	]
 }

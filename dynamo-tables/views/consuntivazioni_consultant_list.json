@@ -4,7 +4,7 @@
   "origin": "entrasp.consuntivazioni",
   "businessObjectName": "consuntivazioni",
   "define": {
-    "_and_":"true"
+    "_and_": "true"
   },
   "dashboardTables": [
     "dashboard_consuntivazioni"
@@ -61,15 +61,15 @@
     }
   ],
   "outputEvents": [
-		{
-			"eventName": "onSaveConsuntivazione",
-			"eventTrigger": "onSave"
-		},
-		{
-			"eventName": "onLoadConsuntivazione",
-			"eventTrigger": "onReload"
-		}
-	],
+    {
+      "eventName": "onSaveConsuntivazione",
+      "eventTrigger": "onSave"
+    },
+    {
+      "eventName": "onLoadConsuntivazione",
+      "eventTrigger": "onReload"
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -238,7 +238,6 @@
       "format": {
         "dataType": "date",
         "viewType": "input",
-        
         "validations": [
           {
             "message": "Inserire una data intervento!",
@@ -254,13 +253,12 @@
       "insertUpdateFunct": "coalesce('£data_intervento£'::date, CURRENT_DATE)",
       "newLine": false,
       "readOnly": false,
-      "outputEvent": 
-          {
-            "eventName": "cambia_data_intervento",
-            "eventTrigger": "change"
-          },
+      "outputEvent": {
+        "eventName": "cambia_data_intervento",
+        "eventTrigger": "change"
+      },
       "inputEvents": [
-         {
+        {
           "eventName": "cambia_data_intervento",
           "actionType": "query",
           "condition": "none",
@@ -343,7 +341,7 @@
         {
           "eventName": "date_time_begin_edit",
           "actionType": "query",
-          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), 'null')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), 'null')::timestamp with time zone);",
+          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
           "outputEventWhenComplete": "reload_durata",
           "condition": "none",
           "values": []
@@ -351,7 +349,7 @@
         {
           "eventName": "date_time_end_edit",
           "actionType": "query",
-          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), 'null')::timestamp with time zone, nullif(replace('£date_time_begin£', 'null',''), 'null')::timestamp with time zone);",
+          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone);",
           "outputEventWhenComplete": "reload_durata",
           "condition": "none",
           "values": []
