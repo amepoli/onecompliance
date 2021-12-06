@@ -2,11 +2,15 @@
   "$schema": "../views.schema.json",
   "entryKey": "documents",
   "origin": "entrasp.cdms_risorse",
+  "define": {
+    "toggle_miei_uffici": "1",
+    "is_hidden_codice_azienda": "true"
+  },
   "predefinedQueries": [
     {
       "operation": "selectTable",
       "type": "preProcessing",
-      "queryString": "select entrasp.aggiorna_cdms_bo_cdms_risorse(rs.codice_azienda, rs.id_risorsa, true) from entrasp.cdms_risorse_oggetti ro, entrasp.cdms_risorse rs where rs.codice_azienda=$codice_azienda$  and ro.codice_azienda=rs.codice_azienda and ro.id_risorsa=rs.id_risorsa and ro.nome_business_object='cdms_risorse'"
+      "queryString": "select entrasp.aggiorna_cdms_bo_cdms_risorse(rs.codice_azienda, rs.id_risorsa, true) from entrasp.cdms_risorse_oggetti ro, entrasp.cdms_risorse rs where rs.codice_azienda=$codice_azienda$  and ro.codice_azienda=rs.codice_azienda and ro.id_risorsa=rs.id_risorsa and rs.id_argomento_stato != 4035"
     },
     {
       "operation": "selectTable",
@@ -118,14 +122,7 @@
       "format": {
         "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
         "options": [],
-        "viewType": "combobox",
-        "validations": [
-          {
-            "message": "Indicare il centro gestionale!",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -565,7 +562,7 @@
     {
       "fieldName": "my_offices_t",
       "format": {
-        "value": "1",
+        "value": "$P{toggle_miei_uffici}",
         "viewType": "toggle"
       },
       "label": "Miei uffici",
