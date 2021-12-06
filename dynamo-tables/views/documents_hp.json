@@ -10,11 +10,11 @@
     {
       "operation": "selectTable",
       "type": "preProcessing",
-      "queryString": "select entrasp.aggiorna_cdms_bo_cdms_risorse(rs.codice_azienda, rs.id_risorsa, true) from entrasp.cdms_risorse_oggetti ro, entrasp.cdms_risorse rs where rs.codice_azienda=$codice_azienda$  and ro.codice_azienda=rs.codice_azienda and ro.id_risorsa=rs.id_risorsa and rs.id_argomento_stato != 4035"
+      "queryString": "select entrasp.aggiorna_cdms_bo_cdms_risorse(rs.codice_azienda, rs.id_risorsa, true) from entrasp.cdms_risorse_oggetti ro, entrasp.cdms_risorse rs where rs.codice_azienda=$codice_azienda$  and ro.codice_azienda=rs.codice_azienda and ro.id_risorsa=rs.id_risorsa and ro.nome_business_object='cdms_risorse' and rs.codice_azienda in (€global_user_companies€)"
     },
     {
       "operation": "selectTable",
-      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs",
+      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs where crs.codice_azienda in (€global_user_companies€)",
       "type": "main"
     },
     {
@@ -50,7 +50,7 @@
       "content": {
         "contentType": "value",
         "value": "Scooby Doo",
-        "query": "select count(crs.id_risorsa) as documenti_completi FROM entrasp.cdms_risorse crs where id_argomento_stato!=4034",
+        "query": "select count(crs.id_risorsa) as documenti_completi FROM entrasp.cdms_risorse crs where id_argomento_stato!=4034 and crs.codice_azienda in (€global_user_companies€)",
         "queryCond": "",
         "fieldName": "documenti_completi",
         "value_color": "red",
@@ -64,7 +64,7 @@
       "content": {
         "contentType": "value",
         "value": "Scooby Doo",
-        "query": "select count(crs.id_risorsa) as documenti_non_allegati FROM entrasp.cdms_risorse crs where id_argomento_stato=4034",
+        "query": "select count(crs.id_risorsa) as documenti_non_allegati FROM entrasp.cdms_risorse crs where id_argomento_stato=4034 and crs.codice_azienda in (€global_user_companies€)",
         "queryCond": "",
         "fieldName": "documenti_non_allegati",
         "value_color": "red",
