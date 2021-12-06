@@ -59,9 +59,16 @@ export class TimezoneService {
             result => {
                 console.log(result);
                 _this.timezoneInfo = result.body;
+                localStorage.setItem('timezoneInfo', JSON.stringify(result.body));
             },
             error => {
-                _this._toastService.showErrorToast(error);
+                let timezoneInfoLocal = localStorage.getItem('timezoneInfo');
+                if(timezoneInfoLocal && timezoneInfoLocal.length > 10) {
+                    _this.timezoneInfo = JSON.parse(timezoneInfoLocal);
+                }
+                else {
+                    _this._toastService.showErrorToast(error);
+                }
             }
         );
     }
