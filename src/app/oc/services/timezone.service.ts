@@ -1,17 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-// import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
-import { Observable, BehaviorSubject } from 'rxjs';
 import { ToastService } from './toast.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { BackendService } from './backend.service';
-import { PubSubService } from 'app/oc/services/pubsub.service';
-import { AuthService } from './auth.service';
-import { DialogService } from './dialog.service';
-import { MatDialog } from '@angular/material/dialog';
-import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
-import { ConsoleLoggerService } from './console_logger.service';
-import { ExportItem, ExportList, ImportItem, ImportList } from '../interfaces';
 
 @Injectable({
     providedIn: 'root'
@@ -46,7 +35,7 @@ export class TimezoneService {
         private _toastService: ToastService
     ) {
         const _this = this;
-        _this.getTimezoneInfo();
+        setTimeout(() => _this.getTimezoneInfo(), 2000);
     }
 
     /**
@@ -55,7 +44,8 @@ export class TimezoneService {
      */
     getTimezoneInfo() {
         let _this = this;
-        _this._http.get(_this.apiInfoUrl, { observe: 'response' }).subscribe(
+        _this._http.get(_this.apiInfoUrl, { observe: 'response' })
+        .subscribe(
             result => {
                 console.log(result);
                 _this.timezoneInfo = result.body;
