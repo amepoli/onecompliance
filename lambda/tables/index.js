@@ -500,6 +500,44 @@ function getCustomQuery(entry_params, customQueryButtonKey) {
     return null;
 }
 
+function getTableMultiSelectionActionQuery(entry_params, tableMultiSelectionActionParams) {
+    let queryString = null;
+    let tableMultiSelectionActions = entry_params.Item.table_multiselection_actions;
+    
+    if (tableMultiSelectionActions != null && tableMultiSelectionActions.length > 0) {        
+        if(tableMultiSelectionActionParams.viewType === 'button') {
+            let buttonEl = tableMultiSelectionActions.filter(el => el.key == tableMultiSelectionActionParams.key);
+            if (buttonEl != null && buttonEl.length > 0) {
+                buttonEl = buttonEl[0];
+                queryString = buttonEl.query;                
+            }
+        }
+        else {
+            let menuEl = tableMultiSelectionActions.filter(el => el.key == tableMultiSelectionActionParams.menuKey);
+            if (menuEl != null && menuEl.length > 0) {
+                menuEl = menuEl[0];
+                if (menuEl.menuOptions && menuEl.menuOptions.length > 0) {
+                    let buttonEl = menuEl.menuOptions.filter(el => el.key == tableMultiSelectionActionParams.key);
+                    if (buttonEl != null && buttonEl.length > 0) {
+                        buttonEl = buttonEl[0];
+                        queryString = buttonEl.query;                
+                    }
+                }
+            }
+        }
+    }
+
+    if(queryString != null && tableMultiSelectionActionParams != null && tableMultiSelectionActionParams.keys) {
+        queryString = replaceGlobalkeys(queryString);        
+        Object.keys(tableMultiSelectionActionParams.keys).forEach(key => {
+            queryString = queryString.replace(`$${key}$`, tableMultiSelectionActionParams.keys[key]);
+        });
+    }
+
+    console.log('TableMultiSelectionActionQuery: ', queryString);
+    return queryString;
+}
+
 function getHomepageQuery(entry_params) {
     let queryString = {};
     let homepage = entry_params.Item;    
@@ -1480,6 +1518,18 @@ async function processCompanyChangeQuery(queryString, client) {
     }
 }
 
+async function processTableMultiSelectionActionQuery(queryString, client) {
+    let queryResult = await client.query(queryString);
+    console.log('TableMultiSelectionActionQuery Result: ', JSON.stringify(queryResult));
+    return {
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "statusCode": 200,
+        "body": JSON.stringify({ result: 'OK', response: queryResult })
+    }
+}
+
+
 async function processFormActionQuery(formActionType, queryString, keys, client) {
     if (queryString != null) {
         console.log('queryString: ', queryString);
@@ -1834,38 +1884,45 @@ exports.handler = async (event, context) => {
 
     console.log('queryParams: ', queryParams);
 
-    var search_keys = queryParams['search_keys'];
-    if (search_keys) {
-        search_keys = JSON.parse(search_keys); // production scenario only
-    }
-
-    var isSearchRequest = (!isHomepage && !isHomepageTab && !isCompanyChangeQuery && search_keys) ? true : false;
-
-    var isNewRecord = (queryParams['new'] === '1');
-
+    
+    
     var isFormRecord = (queryParams['form'] === '1');
-
+    
     var isEventUpdate = (queryParams['event'] != null);
-
+    
     var isHomepage =  (queryParams['homepage'] === '1');
     
     var isHomepageTab =  (queryParams['homepagetab'] === '1');
     
+    var isTableMultiSelectionActionQuery = (queryParams['table_multi_selection_action_query'] === '1');
+    var tableMultiSelectionActionParams = null;
+    
+    if(isTableMultiSelectionActionQuery) {
+        tableMultiSelectionActionParams = JSON.parse(event.body);
+    }
+
     var dashboardIndex = queryParams['dashboard_index'];
-
+    
     var isExcel = (queryParams['excel'] === '1');
-
+    
     var isCustomQuery = (queryParams['custom_query'] === '1');;
     var customQueryButtonKey = queryParams['custom_query_key'];
-
+    
     var isCompanyChangeQuery = (queryParams['company_change_query'] === '1');;
-        
+    
     var isFormAction = queryParams['isFormAction'] === '1';
     var formActionType = queryParams['formActionType'];
+    
+    var search_keys = queryParams['search_keys'];
+    if (search_keys) {
+        search_keys = JSON.parse(search_keys); // production scenario only
+    }
+    var isSearchRequest = (!isHomepage && !isHomepageTab && !isCompanyChangeQuery && !isTableMultiSelectionActionQuery && search_keys) ? true : false;
 
+    var isNewRecord = (queryParams['new'] === '1');
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
-
+    
     var company = queryParams['company'];
 
     const profile = await getProfile(userid, company);
@@ -1937,7 +1994,7 @@ exports.handler = async (event, context) => {
             entry_params = await dynamo.get(DynamoParams).promise();    
         }
 
-        if(!isHomepage && !isHomepageTab && !isCompanyChangeQuery) {
+        if(!isTableMultiSelectionActionQuery &&  !isHomepage && !isHomepageTab && !isCompanyChangeQuery) {
             // complete table if inherited
             entry_params = await helperFuncts.overrideTable('VIEWS_NAME', entry_params.Item, dynamo);
 
@@ -1997,6 +2054,8 @@ exports.handler = async (event, context) => {
                 queryString = getEventQuery(entry_params, JSON.parse(event.body), JSON.parse(queryParams['event']), queryParams);
             } else if (isCustomQuery) {
                 queryString = getCustomQuery(entry_params, customQueryButtonKey);
+            } else if(isTableMultiSelectionActionQuery) {
+                queryString = getTableMultiSelectionActionQuery(entry_params, tableMultiSelectionActionParams);
             } else {
                 // process later
             }
@@ -2014,6 +2073,11 @@ exports.handler = async (event, context) => {
             return response;
         } else if (isHomepageTab) {
             let response = await processHomepageTabQuery(entry_params, queryString, search_keys, client);
+            console.log(response);
+            await client.release();
+            return response;
+        } else if(isTableMultiSelectionActionQuery) {
+            let response = await processTableMultiSelectionActionQuery(queryString, client);
             console.log(response);
             await client.release();
             return response;
@@ -2096,7 +2160,7 @@ exports.handler = async (event, context) => {
 
         if (method === 'POST' && !isEventUpdate) {
             let body = JSON.parse(event.body); // production scenario 
-            //console.log('BODY values: ', body);
+            console.log('BODY values: ', body);
             //let body = event.body; // test scenario
             let queryStrings = [];
             let newRecord = false;
