@@ -113,6 +113,13 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.tablesApiName, this.myPutPostInit));
   }
   
+  runTableMultiSelectionActionQuery(entryName: string, company: string, selection_params: any): Observable<any> {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, table_multi_selection_action_query: 1};
+    this.myPutPostInit.body = selection_params;
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.tablesApiName, this.myPutPostInit));
+  }
+  
   runCompanyChangeQuery(company: string): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { company_change_query: 1, company: company};
