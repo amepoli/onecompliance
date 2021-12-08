@@ -435,6 +435,22 @@
       "label": "Azienda"
     }
   ],
+  "table_multiselection_actions": [
+    {
+      "viewType": "menu",
+      "key": "menutest",
+      "label": "Options",
+      "icon": "more_vert",
+      "menuOptions": [
+        {
+          "key": "Unifica argomenti",
+          "icon": "merge_type",
+          "label": "Unifica argomenti",
+          "query": "SELECT entrasp.unifica_argomenti(array_agg(id_argomento)) FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+        }
+      ]
+    }
+  ],
   "table_keys": [
     {
       "format": {
@@ -474,7 +490,7 @@
       "isPrimary": false,
       "key": "descrizione_breve",
       "label": "Descrizione breve",
-      "width": "30%"
+      "width": "20%"
     },
     {
       "format": {
@@ -486,9 +502,20 @@
       "key": "flag_classificazione",
       "label": "Argomento di classificazione",
       "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isCheckbox": true,
+      "isPrimary": false,
+      "key": "flag_no_delete",
+      "label": "Non cancellare",
+      "width": "10%"
     }
   ],
   "querySuffixes": {
     "tableViewSuffix": "order by id_argomento desc limit 200"
-}
+  }
 }

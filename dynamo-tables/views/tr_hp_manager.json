@@ -50,6 +50,42 @@
       "new_line": false
     }
   ],
+  "table_multiselection_actions": [
+    {
+      "viewType": "button",
+      "key": "test",
+      "label": "Test",
+      "icon": "done",
+      "query": "SELECT * FROM entrasp.attivita WHERE ($selected_rows_primary_keys$) IN ($selected_rows_data$)"
+    },
+    {
+      "viewType": "button",
+      "key": "delete",
+      "label": "delete",
+      "icon": "delete",
+      "query": "SELECT * FROM entrasp.attivita WHERE ($selected_rows_primary_keys$) IN ($selected_rows_data$)"
+    },
+    {
+      "viewType": "menu",
+      "key": "menutest",
+      "label": "Options",
+      "icon": "more_vert",
+      "menuOptions": [
+        {
+          "key": "delete",
+          "icon": "delete",
+          "label": "Delete",
+          "query": "SELECT * FROM entrasp.attivita WHERE ($selected_rows_primary_keys$) IN ($selected_rows_data$)"
+        },
+        {
+          "key": "view_timeline",
+          "icon": "view_timeline",
+          "label": "Demo",
+          "query": "SELECT * FROM entrasp.attivita WHERE ($selected_rows_primary_keys$) IN ($selected_rows_data$)"
+        }
+      ]
+    }
+  ],
   "table_keys": [
     {
       "format": {
@@ -254,13 +290,13 @@
     {
       "fieldName": "miei_aggiornamenti",
       "format": {
-          "value": "1",
-          "viewType": "toggle"
+        "value": "1",
+        "viewType": "toggle"
       },
       "label": "Miei aggiornamenti",
       "newLine": false,
       "queryCond": "tr_inc.dynamo_user='€global_username€'"
-  }
+    }
   ],
   "querySuffixes": {
     "tableViewSuffix": "group by fest.durata, csn.date_time_begin::date, tr_inc.dynamo_user, em.min_rich, em.data_avvio_collaborazione, em.codice_azienda having sum(csn.durata)<(em.min_rich-coalesce(fest.durata,0));"
