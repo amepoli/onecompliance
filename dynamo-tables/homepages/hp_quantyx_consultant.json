@@ -6,6 +6,11 @@
       "entry": "tr_hp_manager",
       "badgeQuery": "select count (tr_inc.dynamo_user) as conta_giorni_incompleti from (select csn.date_time_begin::date, an.dynamo_user, sum(csn.durata) as ore_giornata from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part inner join (select emp.dynamo_user, data_avvio_collaborazione, sum(emp.minuti_richiesti_giornalieri) min_rich from entrasp.employers emp group by emp.dynamo_user, emp.data_avvio_collaborazione)  em on an.dynamo_user=em.dynamo_user where extract (dow from csn.date_time_begin) not in (0,6) and csn.date_time_begin>em.data_avvio_collaborazione and an.dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€')) group by csn.date_time_begin::date, an.dynamo_user, em.min_rich, em.data_avvio_collaborazione having sum(csn.durata)<em.min_rich) tr_inc",
       "title": "Giorni incompleti (TR)"
+    },
+    {
+      "entry": "progetti_consultant_hp",
+      "badgeQuery": "select count(id_progetto) as conta_progetti_mio_ufficio_aperti from entrasp.progetti prg inner join entrasp.centri_gestionali cg on prg.codice_part=cg.codice_part and prg.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where an.dynamo_user='€global_username€' and prg.stato!='C'",
+      "title": "Progetti"
     }
   ]
 }
