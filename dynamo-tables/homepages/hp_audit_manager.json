@@ -1,0 +1,31 @@
+{
+  "$schema": "../homepage.schema.json",
+  "entryKey": "hp_audit_manager",
+  "tabs": [
+    {
+      "entry": "progetti_consultant_hp",
+      "badgeQuery": "select count(id_progetto) as conta_progetti_mio_ufficio_aperti from entrasp.progetti prg inner join entrasp.centri_gestionali cg on prg.codice_part=cg.codice_part and prg.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where an.dynamo_user='€global_username€' and prg.stato!='C'",
+      "title": "Progetti"
+    },
+    {
+      "entry": "sondaggi_consultant_hp",
+      "badgeQuery": "select count(snd.id_sondaggio) from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where dynamo_user='€global_username€' and snd.stato!='C'",
+      "title": "Sondaggi"
+    },
+    {
+      "entry": "compiti_consultant_hp",
+      "badgeQuery": "select count(codice_compito) FROM entrasp.compiti cmp WHERE (cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) and cmp.stato!='C'",
+      "title": "Compiti"
+    },
+    {
+      "entry": "tr_hp_manager",
+      "badgeQuery": "select count(tr_inc.dynamo_user) from (select tr_inc.dynamo_user from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id tr_inc on csn.id_risorsa=tr_inc.id_anagrafica and csn.codice_part=tr_inc.codice_part inner join (select emp.dynamo_user, data_avvio_collaborazione, sum(emp.minuti_richiesti_giornalieri) min_rich, emp.codice_azienda from entrasp.employers emp group by emp.dynamo_user, emp.data_avvio_collaborazione, emp.codice_azienda)  em on tr_inc.dynamo_user=em.dynamo_user left join (select * from entrasp.festivita where date_time_begin is not null and codice_azienda is not null) fest on csn.date_time_begin::date =fest.date_time_begin::date and em.codice_azienda=fest.codice_azienda where csn.date_time_begin::date not in ((select data from entrasp.festivita where codice_azienda is null) union (select data from entrasp.festivita where codice_azienda=em.codice_azienda and dynamo_user is null) union (select data from entrasp.festivita where dynamo_user=tr_inc.dynamo_user and date_time_begin is null)) and extract (dow from csn.date_time_begin) not in (0,6) and csn.date_time_begin>em.data_avvio_collaborazione and tr_inc.dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€')) group by fest.durata, csn.date_time_begin::date, tr_inc.dynamo_user, em.min_rich, em.data_avvio_collaborazione, em.codice_azienda having sum(csn.durata)<(em.min_rich-coalesce(fest.durata,0))) tr_inc",
+      "title": "Giorni incompleti (TR)"
+    },
+    {
+      "entry": "documents_hp",
+      "badgeQuery": "select count(crs.id_risorsa) FROM entrasp.cdms_risorse crs where id_argomento_stato=4034 and codice_azienda in (€global_user_companies€)",
+      "title": "Documenti non consegnati"
+    }
+  ]
+}
