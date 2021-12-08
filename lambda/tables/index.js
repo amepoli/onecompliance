@@ -1981,17 +1981,49 @@ exports.handler = async (event, context) => {
         let entry_params = null;
         
         if(!isCompanyChangeQuery) {
-            DynamoParams = {
-                TableName: isHomepage? 'HOMEPAGES_NAME': 'VIEWS_NAME',
-                Key: {
-                    entryKey: queryParams['entry_name']
-                }
-            };
-        
-            console.log('DynamoParams: ', DynamoParams);
+            if(isHomepage) {
+                // Load homepage
+                DynamoParams = {
+                    TableName: 'HOMEPAGES_NAME',
+                    Key: {
+                        entryKey: 'hp_' + global_variables.global_profile
+                    }
+                };
             
-            // read the entry params from DynamoDB view table
-            entry_params = await dynamo.get(DynamoParams).promise();    
+                console.log('DynamoParams: ', DynamoParams);
+                
+                // read the entry params from DynamoDB view table
+                entry_params = await dynamo.get(DynamoParams).promise();
+
+                if(!entry_params || !entry_params.Item) {
+                    // Load default homepage
+                    DynamoParams = {
+                        TableName: 'HOMEPAGES_NAME',
+                        Key: {
+                            entryKey: 'default'
+                        }
+                    };
+                
+                    console.log('DynamoParams: ', DynamoParams);
+                    
+                    // read the entry params from DynamoDB view table
+                    entry_params = await dynamo.get(DynamoParams).promise();
+                }
+            }
+            else {
+
+                DynamoParams = {
+                    TableName: 'VIEWS_NAME',
+                    Key: {
+                        entryKey: queryParams['entry_name']
+                    }
+                };
+            
+                console.log('DynamoParams: ', DynamoParams);
+                
+                // read the entry params from DynamoDB view table
+                entry_params = await dynamo.get(DynamoParams).promise();    
+            }
         }
 
         if(!isTableMultiSelectionActionQuery &&  !isHomepage && !isHomepageTab && !isCompanyChangeQuery) {
