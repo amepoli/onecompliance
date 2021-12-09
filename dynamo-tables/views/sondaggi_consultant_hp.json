@@ -4,21 +4,13 @@
 	"inheritsFrom": "sondaggi_consultant",
 	"toolbar_elements": [
         {
-            "fieldName": "stato",
+            "fieldName": "codice_azienda_s",
             "viewType": "combobox",
             "position": "left",
-            "label": "Status",
+            "label": "Azienda",
             "options": [],
-            "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
-            "queryCond": "snd.stato = '$stato$'"
-        },
-        {
-            "fieldName": "flag_sondaggi_aperti",
-            "viewType": "toggle",
-            "position": "right",
-            "label": "Progetti aperti",
-            "toggleOffLabel": "Tutti Progetti",            
-            "queryCond": "snd.stato not in ('C', 'N')"
+            "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name  FROM entrasp.aziende WHERE codice_azienda in(€global_user_companies€) order by codice_azienda;",
+            "queryCond": "snd.codice_azienda = '$codice_azienda_s$'"
         }
     ],
     "tiles": [
