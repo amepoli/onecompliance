@@ -4,21 +4,21 @@
 	"inheritsFrom": "compiti_consultant_micro_task",
      "toolbar_elements": [
         {
-            "fieldName": "stato",
+            "fieldName": "tipo_s",
             "viewType": "combobox",
             "position": "left",
-            "label": "Status",
+            "label": "Tipo",
             "options": [],
-            "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
-            "queryCond": "stato = '$stato$'"
+            "comboQuery": "SELECT id_tipo_segnalazione AS id, descrizione AS name  FROM entrasp.tipi_segnalazioni order by descrizione;",
+            "queryCond": "cmp.id_tipo_segnalazione = '$tipo_s$'"
         },
         {
             "fieldName": "flag_progetti_aperti",
             "viewType": "toggle",
             "position": "right",
-            "label": "Progetti aperti",
-            "toggleOffLabel": "Tutti Progetti",            
-            "queryCond": "stato not in ('C', 'N')"
+            "label": "Solo Anomalie",
+            "toggleOffLabel": "Tutti i compiti aperti",            
+            "queryCond": "cmp.id_tipo_segnalazione in(5, 11, 50, 86, 300)"
         }
     ],
     "tiles": [
