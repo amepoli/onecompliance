@@ -97,7 +97,7 @@ async function _overrideTable(dynamoTable,son,dynamo) {
     }
 
     if (father.inheritsFrom != null) { 
-        father = await _overrideTable(father);
+        father = await _overrideTable(dynamoTable,father,dynamo);
     }
 
     for (const field in son) {
