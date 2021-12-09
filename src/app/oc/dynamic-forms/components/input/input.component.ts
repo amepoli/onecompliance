@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-input',
   template: `
-<mat-form-field *ngIf="field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field (click)="onPress()" *ngIf="field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
   <input [required]="isRequired" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
@@ -21,7 +21,7 @@ import { Subscription } from 'rxjs';
   </ng-container>
 </mat-form-field>
 
-<mat-form-field *ngIf="field.isVisible != false && field.inputType === 'date'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field (click)="onPress()" *ngIf="field.isVisible != false && field.inputType === 'date'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
 
@@ -37,7 +37,7 @@ import { Subscription } from 'rxjs';
   </ng-container>
 </mat-form-field>
 
-<mat-form-field *ngIf="field.isVisible != false && (field.inputType === 'datetime')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field (click)="onPress()" *ngIf="field.isVisible != false && (field.inputType === 'datetime')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
 
@@ -57,7 +57,7 @@ import { Subscription } from 'rxjs';
   </ng-container>
 </mat-form-field>
 
-<mat-form-field *ngIf="field.isVisible != false && (field.inputType === 'time')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field (click)="onPress()" *ngIf="field.isVisible != false && (field.inputType === 'time')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
 
@@ -160,6 +160,13 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     const _this = this;
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'focus') {
       _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'focus' });
+    }
+  }
+
+  onPress(): void {
+    const _this = this;
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'press') {
+      _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'press' });
     }
   }
 
