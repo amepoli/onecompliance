@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-input',
   template: `
-<mat-form-field (click)="onPress()" *ngIf="field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" (click)="onPress()" *ngIf="field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
   <input [required]="isRequired" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
@@ -21,7 +21,7 @@ import { Subscription } from 'rxjs';
   </ng-container>
 </mat-form-field>
 
-<mat-form-field (click)="onPress()" *ngIf="field.isVisible != false && field.inputType === 'date'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" (click)="onPress()" *ngIf="field.isVisible != false && field.inputType === 'date'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
 
@@ -37,7 +37,7 @@ import { Subscription } from 'rxjs';
   </ng-container>
 </mat-form-field>
 
-<mat-form-field (click)="onPress()" *ngIf="field.isVisible != false && (field.inputType === 'datetime')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" (click)="onPress()" *ngIf="field.isVisible != false && (field.inputType === 'datetime')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
 
@@ -57,7 +57,7 @@ import { Subscription } from 'rxjs';
   </ng-container>
 </mat-form-field>
 
-<mat-form-field (click)="onPress()" *ngIf="field.isVisible != false && (field.inputType === 'time')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" (click)="onPress()" *ngIf="field.isVisible != false && (field.inputType === 'time')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
 
@@ -79,10 +79,34 @@ import { Subscription } from 'rxjs';
 
 `,
   styles: [`
-    :host ::ng-deep .mat-form-field-flex {
+    :host ::ng-deep .mat-form-field-wrapper .mat-form-field-flex {
       background-color: aliceblue;
       border-radius: 8px;
     }
+    
+    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex {
+      background-color: transparent !important;
+      border-radius: 8px;
+    }
+
+    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-start {
+      border: none !important;
+    }
+
+    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-gap {
+      border: none !important;
+    }
+
+    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-end {
+      border: none !important;
+    }
+
+    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix input {
+      color: #2196f3 !important;
+      cursor: pointer;
+      font-weight: 500 !important;
+    }
+
   `],
   host: {
     '[style.padding-top.px]': 'field.isVisible? "10": "0"',
