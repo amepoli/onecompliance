@@ -3,6 +3,28 @@
 	"origin": "entrasp.argomenti",
 	"entryKey": "ISO_27001_controls_questions",
 	"inheritsFrom": "template_argomenti",
+	"table_multiselection_actions": [
+		{
+		  "viewType": "menu",
+		  "key": "menutest",
+		  "label": "Azioni",
+		  "icon": "more_vert",
+		  "menuOptions": [
+			{
+			  "key": "segna_auto_su_domande_associate",
+			  "icon": "autorenew",
+			  "label": "Segna il controllo come automatico",
+			  "query": "insert into entrasp.argomenti_argomenti(id_argomento_son, id_argomento_father) select unnest(string_to_array(btrim(($selected_rows_data$)::text, '()'), ','))::numeric, 5387 on conflict do nothing;"
+			},
+			{
+				"key": "Unifica argomenti",
+				"icon": "merge_type",
+				"label": "Unifica argomenti",
+				"query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+			}
+		  ]
+		}
+	  ],
 	"define": {
 		"id_argomento_father": "4038",	
 		"array_argomenti_father_da_aggiungere": "array[4038]",
