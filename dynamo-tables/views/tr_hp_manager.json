@@ -50,6 +50,22 @@
       "new_line": false
     }
   ],
+  "table_multiselection_actions": [
+    {
+      "viewType": "menu",
+      "key": "menutest",
+      "label": "Azioni",
+      "icon": "more_vert",
+      "menuOptions": [
+        {
+          "key": "aggiungi_minuti_mancanti_per_utente",
+          "icon": "merge_type",
+          "label": "Aggiungi minuti mancanti utente corrente",
+          "query": "select entrasp.inserisci_ferie(csn.date_time_begin::date, em.codice_azienda, tr_inc.dynamo_user, csn.date_time_begin::date +interval '1080 minutes', csn.date_time_begin::date + interval '1080 minutes' + (em.min_rich- sum(csn.durata))*interval '1 minute') from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id tr_inc on csn.id_risorsa=tr_inc.id_anagrafica and csn.codice_part=tr_inc.codice_part inner join (select emp.dynamo_user, data_avvio_collaborazione, sum(emp.minuti_richiesti_giornalieri) min_rich, emp.codice_azienda from entrasp.employers emp group by emp.dynamo_user, emp.data_avvio_collaborazione, emp.codice_azienda)  em on tr_inc.dynamo_user=em.dynamo_user left join (select * from entrasp.festivita where date_time_begin is not null and codice_azienda is not null) fest on csn.date_time_begin::date =fest.date_time_begin::date and em.codice_azienda=fest.codice_azienda where csn.date_time_begin::date not in ((select data from entrasp.festivita where codice_azienda is null) union (select data from entrasp.festivita where codice_azienda=em.codice_azienda and dynamo_user is null) union (select data from entrasp.festivita where dynamo_user=tr_inc.dynamo_user and date_time_begin is null)) and extract (dow from csn.date_time_begin) not in (0,6) and csn.date_time_begin>em.data_avvio_collaborazione and tr_inc.dynamo_user='€global_username€' group by fest.durata, csn.date_time_begin::date, tr_inc.dynamo_user, em.min_rich, em.data_avvio_collaborazione, em.codice_azienda having sum(csn.durata)<(em.min_rich-coalesce(fest.durata,0));"
+        }
+      ]
+    }
+  ],
   "table_keys": [
     {
       "format": {
@@ -225,7 +241,18 @@
         ],
         "onSuccessAction": "reload"
       }
-    }
+    },
+    {
+      "format": {
+          "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "queryFunct": "select null",
+      "width": "20%",
+      "key": "vuoto",
+      "label": " "
+  }
   ],
   "search_keys": [
     {
