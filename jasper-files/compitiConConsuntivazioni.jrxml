@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="compiti" pageWidth="595" pageHeight="800" columnWidth="567" columnSpacing="567" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="compiti"/>
+	<property name="ireport.zoom" value="1.2100000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="it.interprise.core.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="PATH_IMG" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new String ("http://localhost/core/images/SICC/")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String"/>
+	<field name="dataSegnalazione" class="java.util.Date"/>
+	<field name="note" class="java.lang.String"/>
+	<field name="centroGestionale.descrizione" class="java.lang.String"/>
+	<field name="tipoSegnalazione.descrizione" class="java.lang.String"/>
+	<field name="prioritaSla.descrizione" class="java.lang.String"/>
+	<field name="stato" class="java.lang.String"/>
+	<field name="cliente.denominazione" class="java.lang.String">
+		<fieldDescription><![CDATA[Cliente]]></fieldDescription>
+	</field>
+	<field name="cliente.ragioneSociale" class="java.lang.String">
+		<fieldDescription><![CDATA[Cliente]]></fieldDescription>
+	</field>
+	<field name="codiceCompito" class="java.lang.String"/>
+	<field name="dataScadenza" class="java.util.Date"/>
+	<field name="progetto.codiceProgetto" class="java.lang.String"/>
+	<field name="progetto.titolo" class="java.lang.String"/>
+	<field name="progetto" class="java.lang.Object"/>
+	<field name="cliente" class="java.lang.Object"/>
+	<field name="titolo" class="java.lang.String"/>
+	<field name="titoloMan" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="55" splitType="Stretch">
+			<rectangle radius="5">
+				<reportElement x="0" y="0" width="567" height="50" forecolor="#D4F3F3" backcolor="#D4F3F3" uuid="e56dd32a-b44d-493b-b5aa-6e01ba50231c"/>
+			</rectangle>
+			<image vAlign="Middle">
+				<reportElement x="3" y="0" width="100" height="50" uuid="a7b115e5-e219-4982-944e-66403e58abb9"/>
+				<imageExpression><![CDATA[$P{PATH_IMG} + $P{LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="346" y="0" width="218" height="30" forecolor="#808080" uuid="d03ed60f-560e-4b9b-8ef7-85c366661458"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="14" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[COMPITI e SEGNALAZIONI]]></text>
+			</staticText>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="346" y="30" width="218" height="20" uuid="e86a35d9-912f-4c79-abb2-4a182e4d2df5"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="98" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3" y="51" width="561" height="20" uuid="da16cca5-af12-4611-a828-ca83c63c6b4e"/>
+				<box topPadding="4" bottomPadding="4">
+					<pen lineWidth="1.0" lineStyle="Dotted" lineColor="#00CED1"/>
+					<topPen lineWidth="0.0" lineStyle="Dotted" lineColor="#00CED1"/>
+					<leftPen lineWidth="0.0" lineStyle="Dotted" lineColor="#00CED1"/>
+					<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#00CED1"/>
+					<rightPen lineWidth="0.0" lineStyle="Dotted" lineColor="#00CED1"/>
+				</box>
+				<textElement>
+					<font pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="0" width="561" height="18" forecolor="#808080" uuid="ddc9ec75-bed7-467b-b618-87dc112fd561"/>
+				<box bottomPadding="0"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="12" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoSegnalazione.descrizione}+" "+$F{codiceCompito}+" del "+$F{dataSegnalazione} + ": "+($F{titoloMan}!=null? $F{titoloMan} : $F{titolo}+"...")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="3" y="21" width="73" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="9c4a66af-de5d-4e8d-a4b9-577a2bac44c4">
+					<printWhenExpression><![CDATA[$F{prioritaSla.descrizione} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Priorità / SLA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="76" y="21" width="107" height="15" isRemoveLineWhenBlank="true" uuid="66000b33-e6b9-465b-8945-b568e68330db"/>
+				<textElement>
+					<font pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prioritaSla.descrizione}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="3" y="36" width="73" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="1c3eb832-27a8-4d93-a20d-17f3cc4c8c79">
+					<printWhenExpression><![CDATA[$F{dataScadenza} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" spacingAfter="4"/>
+				</textElement>
+				<text><![CDATA[Scadenza]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="76" y="36" width="107" height="15" isRemoveLineWhenBlank="true" uuid="8e8b1edb-3a6b-4eee-86b3-e7fc9338b547"/>
+				<textElement>
+					<font pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dataScadenza}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="183" y="21" width="57" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="e2636b6d-2276-4eed-b0c3-90191ecf9feb">
+					<printWhenExpression><![CDATA[$F{cliente.ragioneSociale}!=null && $F{cliente.ragioneSociale}.length()>1]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" rightIndent="4"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="240" y="36" width="324" height="15" isRemoveLineWhenBlank="true" uuid="a3d4fad7-0a04-4630-8033-af1cc2b70d39">
+					<printWhenExpression><![CDATA[$F{progetto} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{progetto.titolo}+" ("+$F{progetto.codiceProgetto}+")"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="240" y="21" width="324" height="15" isRemoveLineWhenBlank="true" uuid="acf9e734-2ef4-4f66-be15-ec763824b95f"/>
+				<textElement>
+					<font pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cliente.ragioneSociale}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="183" y="36" width="57" height="15" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="80201521-5e29-42eb-9d63-16e3aacf0cb9">
+					<printWhenExpression><![CDATA[$F{progetto.codiceProgetto} != null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Progetto]]></text>
+			</staticText>
+			<subreport>
+				<reportElement positionType="Float" x="3" y="71" width="561" height="27" uuid="4e02c915-c013-4d1b-836c-2745c27ca492"/>
+				<parametersMapExpression><![CDATA[new HashMap($P{REPORT_PARAMETERS_MAP})]]></parametersMapExpression>
+				<dataSourceExpression><![CDATA[((JRDataSourceExt)$P{REPORT_DATA_SOURCE}).getDataSource("consuntivazioni")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{REPORTS_MAP}.get("consuntivazioni")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

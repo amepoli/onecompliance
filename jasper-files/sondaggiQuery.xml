@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<ViewGroup>
+  <View name="sondaggiQuery" type="query" businessObjectName="sondaggi"
+    title="Sondaggi" listViewName="sondaggiList" detailViewName="sondaggiDetail"
+    gridSize="2" wikiLink="sondaggi">
+    <ViewItem content="idSondaggio" size="10" prompt="ID:" />
+    <ViewItem tag="dataEsecuzioneDa" content="dataEsecuzione"
+      queryCriteria="GT" size="12" prompt="Data esecuzione da:"
+      hint="Ricerca per intervallo di date esecuzione: maggiori o uguali" />
+    <ViewItem tag="dataEsecuzioneA" content="dataEsecuzione" queryCriteria="LT"
+      newLine="false" size="12" prompt="a:" promptSize="6"
+      hint="Ricerca per intervallo di date esecuzione: minori o uguali" />
+	<ViewItem tag="dataComp" content="dataComp" size="12"
+      prompt="Data competenza:" hint="Ricerca per singola data" />
+    <ViewItem tag="dataCompDa" content="dataComp"
+      queryCriteria="GT" newLine="false" size="12" prompt="da:"
+      promptSize="6" hint="Ricerca per intervallo di date: maggiori o uguali" />
+    <ViewItem tag="dataCompA" content="dataComp" queryCriteria="LT"
+      newLine="false" size="12" prompt="a:" promptSize="6"
+      hint="Ricerca per intervallo di date: minori o uguali" />
+    <ViewItem content="titolo" prompt="Titolo" />
+    <ViewItem content="descrizione" prompt="Descrizione:" />
+    <ViewItem content="modelloTest.tipoModelloTest" size="60"
+      controlType="List" prompt="Tipo di modello di test:" />
+    <ViewItem content="modelloTest" size="60" controlType="List"
+      prompt="Modello di test:" />
+    <ViewItem content="centroGestionale" size="60" reload="true"
+      controlType="List" isVisible="?$user.esercizioRif.flagCentriGestionali != 'N'"
+      contentViewName="centriGestionaliDetail" prompt="?$user.esercizioRif.descCentriGestionali" />
+    <ViewItem content="gruppoLavoro" size="60" controlType="List"
+      isEditable="?idCentroGest = null" prompt="Gruppo di lavoro:" />
+    <ViewItem controlType="CheckFilter" content="exists(sondaggiSomministrati[sondaggioSomministratoPrec.idSondaggio != null])"
+      prompt="Sondaggi riprogrammati automaticamente" />
+    <ViewItem content="this" size="30" controlType="WorkflowStatus"
+      prompt="Stato:" />
+  </View>
+</ViewGroup>
