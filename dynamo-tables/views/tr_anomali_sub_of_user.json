@@ -1,0 +1,30 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "tr_anomali_sub_of_user",
+  "inheritsFrom": "tr_hp_manager",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select true as insert_missing_mins, true as segna_ferie, true as segna_permesso, csn.date_time_begin::date, an.dynamo_user, entrasp.dynamo_employer(an.dynamo_user) as employer, sum(csn.durata) as minuti_rendicontati, entrasp.minuti_richiesti_user(an.dynamo_user, csn.date_time_begin::date) as minuti_richiesti, greatest(0,(entrasp.minuti_richiesti_user(an.dynamo_user, csn.date_time_begin::date)- sum(csn.durata))) as minuti_mancanti from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part and an.dynamo_user in(select entrasp.colleghi('€global_username€')) where csn.date_time_begin<=current_date  and csn.date_time_begin>'2021-01-01' and an.dynamo_user=$dynamo_user$",
+      "type": "main"
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "insert",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "group by csn.date_time_begin::date, an.dynamo_user, entrasp.dynamo_employer(an.dynamo_user) having sum(csn.durata)>570 order by sum(csn.durata) desc"
+  }
+}
