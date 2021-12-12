@@ -4,7 +4,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select true as insert_missing_mins, true as segna_ferie, true as segna_permesso, csn.date_time_begin::date, tr_inc.dynamo_user, sum(csn.durata) as minuti_rendicontati, em.min_rich as minuti_richiesti, (em.min_rich- sum(csn.durata)) as minuti_mancanti, em.codice_azienda as employer from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id tr_inc on csn.id_risorsa=tr_inc.id_anagrafica and csn.codice_part=tr_inc.codice_part inner join (select emp.dynamo_user, data_avvio_collaborazione, sum(emp.minuti_richiesti_giornalieri) min_rich, emp.codice_azienda from entrasp.employers emp group by emp.dynamo_user, emp.data_avvio_collaborazione, emp.codice_azienda)  em on tr_inc.dynamo_user=em.dynamo_user left join (select * from entrasp.festivita where date_time_begin is not null and codice_azienda is not null) fest on csn.date_time_begin::date =fest.date_time_begin::date and em.codice_azienda=fest.codice_azienda where csn.date_time_begin::date not in ((select data from entrasp.festivita where codice_azienda is null) union (select data from entrasp.festivita where codice_azienda=em.codice_azienda and dynamo_user is null) union (select data from entrasp.festivita where dynamo_user=tr_inc.dynamo_user and date_time_begin is null)) and extract (dow from csn.date_time_begin) not in (0,6) and csn.date_time_begin>em.data_avvio_collaborazione and tr_inc.dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'))",
+      "queryString": "select true as insert_missing_mins, true as segna_ferie, true as segna_permesso, csn.date_time_begin::date, an.dynamo_user, entrasp.dynamo_employer(an.dynamo_user) as employer, sum(csn.durata) as minuti_rendicontati, entrasp.minuti_richiesti_user(an.dynamo_user, csn.date_time_begin::date) as minuti_richiesti, greatest(0,(entrasp.minuti_richiesti_user(an.dynamo_user, csn.date_time_begin::date)- sum(csn.durata))) as minuti_mancanti from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part and an.dynamo_user in(select entrasp.colleghi('€global_username€')) where csn.date_time_begin<=current_date  and csn.date_time_begin>'2021-01-01'",
       "type": "main"
     },
     {
@@ -31,7 +31,7 @@
       "label": "Miei",
       "options": [],
       "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.employers where dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'));",
-      "queryCond": "tr.dynamo_user = '$dynamo_s$'"
+      "queryCond": "tr_inc.dynamo_user = '$dynamo_s$'"
     }
   ],
   "tiles": [
@@ -40,7 +40,7 @@
       "content": {
         "contentType": "value",
         "value": "Scooby Doo",
-        "query": "select count(tr.dynamo_user) from (select tr_inc.dynamo_user from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id tr_inc on csn.id_risorsa=tr_inc.id_anagrafica and csn.codice_part=tr_inc.codice_part inner join (select emp.dynamo_user, data_avvio_collaborazione, sum(emp.minuti_richiesti_giornalieri) min_rich, emp.codice_azienda from entrasp.employers emp group by emp.dynamo_user, emp.data_avvio_collaborazione, emp.codice_azienda)  em on tr_inc.dynamo_user=em.dynamo_user left join (select * from entrasp.festivita where date_time_begin is not null and codice_azienda is not null) fest on csn.date_time_begin::date =fest.date_time_begin::date and em.codice_azienda=fest.codice_azienda where csn.date_time_begin::date not in ((select data from entrasp.festivita where codice_azienda is null) union (select data from entrasp.festivita where codice_azienda=em.codice_azienda and dynamo_user is null) union (select data from entrasp.festivita where dynamo_user=tr_inc.dynamo_user and date_time_begin is null)) and extract (dow from csn.date_time_begin) not in (0,6) and csn.date_time_begin>em.data_avvio_collaborazione and tr_inc.dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€')) group by fest.durata, csn.date_time_begin::date, tr_inc.dynamo_user, em.min_rich, em.data_avvio_collaborazione, em.codice_azienda having sum(csn.durata)<(em.min_rich-coalesce(fest.durata,0))) tr where 1=1",
+        "query": "select count(tr_inc.dynamo_user) from (select an.dynamo_user, csn.date_time_begin::date from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part and an.dynamo_user in(select entrasp.colleghi('€global_username€')) where csn.date_time_begin<=current_date  and csn.date_time_begin>'2021-01-01' group by an.dynamo_user, csn.date_time_begin::date having greatest(0,(entrasp.minuti_richiesti_user(an.dynamo_user, csn.date_time_begin::date)- sum(csn.durata)))>0) tr_inc WHERE true",
         "queryCond": "",
         "fieldName": "conta_giorni_incompleti",
         "value_color": "red",
@@ -286,10 +286,10 @@
       },
       "label": "Miei aggiornamenti",
       "newLine": false,
-      "queryCond": "tr_inc.dynamo_user='€global_username€'"
+      "queryCond": "an.dynamo_user='€global_username€'"
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "group by fest.durata, csn.date_time_begin::date, tr_inc.dynamo_user, em.min_rich, em.data_avvio_collaborazione, em.codice_azienda having sum(csn.durata)<(em.min_rich-coalesce(fest.durata,0));"
+    "tableViewSuffix": "group by csn.date_time_begin::date, an.dynamo_user, entrasp.dynamo_employer(an.dynamo_user) having greatest(0,(entrasp.minuti_richiesti_user(an.dynamo_user, csn.date_time_begin::date)- sum(csn.durata)))>0 order by csn.date_time_begin::date"
   }
 }
