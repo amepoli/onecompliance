@@ -442,7 +442,7 @@
                         "label": "Crea Sondaggio",
                         "outputEventName": "sondaggio_new"
                     },
-                     {
+                    {
                         "icon": "add_circle_",
                         "label": "Nuova versione",
                         "outputEventName": "modelli_test_button_nuova_versione"
@@ -759,17 +759,187 @@
             "readOnly": false
         },
         {
+            "autoGenerate": false,
             "format": {
-                "viewType": "invisible"
+                "viewType": "button"
             },
             "isHidden": false,
             "isPrimary": false,
-            "readOnly": true,
-            "sameOrigin": false,
-            "key": "new_line",
-            "label": "new_line",
+            "key": "activate_oggetti_collegati_k",
+            "label": "Oggetti collegati",
+            "buttonIcon": "add",
+            "newLine": false,
+            "size": 1,
+            "outputEvent": {
+                "eventName": "activate_oggetti_collegati",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "activate_oggetti_collegati",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "actionType": "show",
+                    "eventName": "hide_oggetti_collegati",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "hide_oggetti_collegati_k",
+            "label": "Nascondi dettagli",
+            "buttonIcon": "minimize",
             "newLine": true,
-            "size": 0.1
+            "size": 1.5,
+            "outputEvent": {
+                "eventName": "hide_oggetti_collegati",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "activate_oggetti_collegati",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "eventName": "hide_oggetti_collegati",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "n_sondaggi_associati",
+                        "label": "N.sondaggi Associati",
+                        "style": {
+                            "background_color": "white"
+                        },
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "to_sondaggi_from_modelli_test",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": true,
+                        "queryFunct": "select count(id_sondaggio) from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+                    },
+                    {
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "n_presidi_associati",
+                        "label": "N.presidi associati",
+                        "style": {
+                            "background_color": "white"
+                        },
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "to_presidi_from_modelli_test",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": true,
+                        "queryFunct": "select count(id_presidio) from entrasp.domande_presidi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
+                    },
+                    {
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "n_fasi_mod_proge",
+                        "label": "N.fasi (mod.progetto) associate",
+                        "style": {
+                            "background_color": "white"
+                        },
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "to_fasi_associate",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": true,
+                        "queryFunct": "select count(codice_attivita) from entrasp.attivita where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and data_fine_validita is null"
+                    },
+                    {
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "n_procedure_associate",
+                        "label": "N.procedure associate",
+                        "newLine": true,
+                        "outputEvent": {
+                            "eventName": "to_procedure_associate",
+                            "eventTrigger": "press"
+                        },
+                        "style": {
+                            "background_color": "white"
+                        },
+                        "readOnly": true,
+                        "queryFunct": "select count(id_procedura) from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+                    }                    
+                ]
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "condition": "none",
+                    "eventName": "activate_oggetti_collegati",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "hide_oggetti_collegati",
+                    "values": []
+                }
+            ],
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "oggetti_collegati",
+            "label": "Oggetti collegati",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "saveWhenHidden": true
         }
     ],
     "search_keys": [
@@ -992,21 +1162,6 @@
             "label": "Domande - Sezioni"
         },
         {
-            "entryKey": "sondaggi_sub_of_modelli_test",
-            "isHidden": false,
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_modello_test",
-                    "son": "id_modello_test"
-                }
-            ],
-            "label": "Sondaggi Associati"
-        },
-        {
             "entryKey": "tipi_allegati_sub_of_modelli_test",
             "isHidden": false,
             "keys": [
@@ -1026,22 +1181,6 @@
             "label": "Documenti necessari per la verifica"
         },
         {
-            "entryKey": "modelli_test_vr_attachments",
-            "isHidden": false,
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_modello_test",
-                    "son": "id_modello_test"
-                }
-            ],
-            "label": "Allegati Associati",
-            "type": "table"
-        },
-        {
             "entryKey": "consuntivazioni_sub_of_modelli_test",
             "keys": [
                 {
@@ -1054,54 +1193,6 @@
                 }
             ],
             "label": "Aggiornamenti e Time Report"
-        },
-        {
-            "entryKey": "presidi_sub_of_modelli_test",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_modello_test",
-                    "son": "id_modello_test"
-                },
-                {
-                    "parent": "id_modello_test_vr",
-                    "son": "id_modello_test_vr"
-                }
-            ],
-            "label": "Presidi associati"
-        },
-        {
-            "entryKey": "procedure_sub_modelli_test",
-            "isHidden": false,
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_modello_test",
-                    "son": "id_modello_test"
-                }
-            ],
-            "label": "Processi Associati"
-        },
-        {
-            "entryKey": "attivita_sub_of_modelli_test",
-            "isHidden": false,
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_modello_test",
-                    "son": "id_modello_test"
-                }
-            ],
-            "label": "Fasi mod.prog.associate"
         }
     ],
     "table_keys": [
@@ -1360,6 +1451,64 @@
             },
             "actionType": "navigate",
             "eventName": "navigate_to_new_modello_test_vr"
+        },
+        {
+            "actionTarget": {
+                "name": "sondaggi_sub_of_modelli_test",
+                "type": "table",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_sondaggi_from_modelli_test"
+        },
+        {
+            "actionTarget": {
+                "name": "attivita_sub_of_modelli_test",
+                "type": "table",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_fasi_associate"
+        },
+        {
+            "actionTarget": {
+                "name": "presidi_sub_of_modelli_test",
+                "type": "table",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "id_modello_test_vr",
+                        "destination": "id_modello_test_vr"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_presidi_from_modelli_test"
         },
         {
             "actionType": "reload",
