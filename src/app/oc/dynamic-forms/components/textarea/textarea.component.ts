@@ -1,18 +1,21 @@
 import { AfterViewInit, Component, ElementRef, HostBinding, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { ConsoleLoggerService } from "app/oc/services";
+import { ConsoleLoggerService, DialogService, HelperService, PubSubService, TimezoneService } from "app/oc/services";
 import { FieldConfig } from 'app/oc/interfaces';
+import { Subscription } from 'rxjs';
+
 @Component({
   selector: "app-textarea",
   template: `
-<mat-form-field *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" (click)="onPress()" *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
 <textarea class="text-area" (input)="setHeights()" #textAreaEl
  matInput [formControlName]="field.name" [readonly]="field.readonly || readOnlyPage" matTextareaAutosize
  matAutosizeMinRows="1" matAutosizeMaxRows="5" [style.padding]="'4px'" [style.border-radius]="'4px'"
  [style.background-color]="style.background_color" [style.color]="style.font_color"
  [style.font-size]="style.font_size" [style.font-style]="style.font_style"
- [style.font-weight]="style.font_weight"></textarea>
+ [style.font-weight]="style.font_weight"
+ (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()"></textarea>
 <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
 <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
 </ng-container>
@@ -24,6 +27,28 @@ import { FieldConfig } from 'app/oc/interfaces';
       border-radius: 8px;
     }
   
+    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex {
+      background-color: transparent !important;
+      border-radius: 8px;
+    }
+
+    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-start {
+      border: none !important;
+    }
+
+    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-gap {
+      border: none !important;
+    }
+
+    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-end {
+      border: none !important;
+    }
+
+    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix textarea {
+      color: #2196f3 !important;
+      cursor: pointer;
+      font-weight: 500 !important;
+    }
     .text-area {
       min-height: 18px !important;
       max-height: 256px !important;
@@ -50,18 +75,27 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
     font_weight: 'unset'
   };
 
+  subscription: Subscription;
+
   @ViewChild('textAreaEl') textAreaEl: ElementRef;
   @HostBinding('style.height.px') textAreaComponentHeight = '0';
   
-  constructor(private _console: ConsoleLoggerService) { }
+  constructor(private timezoneService: TimezoneService,
+    private pubSubService: PubSubService,
+    private _console: ConsoleLoggerService,
+    private _dialogService: DialogService) { }
   
   ngOnInit() {
-    this._console.log('textareaHeight:', this.field.textareaHeight);
-  }
-
-  ngAfterViewInit(){
-    this.setHeights();
-    this.loadStyles();
+    const _this = this;
+    _this._console.log('textareaHeight:', _this.field.textareaHeight);
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
+      _this.subscription = _this.group.get(_this.field.name).valueChanges.subscribe(value => {
+        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: value, type: 'change' });
+      });
+    }
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
+      setTimeout(() => _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'blur' }), 50);
+    }
   }
 
   setHeights() {
@@ -82,6 +116,121 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
     this.textAreaEl.nativeElement.style.height = height + 'px';
     this.textAreaComponentHeight = (height + 78) + "";
   }
+
+  ngAfterViewInit(): void {
+    const _this = this;
+    // publish a change event to start if expected
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
+      setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
+        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
+      }, 500);
+    }
+
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'press') {
+      console.log(this.field);
+    }
+    _this.setHeights();
+    _this.loadStyles();
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription != null) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+  onBlur(): void {
+    const _this = this;
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
+      _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur' });
+    }
+  }
+
+  onFocus(): void {
+    const _this = this;
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'focus') {
+      _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'focus' });
+    }
+  }
+
+  onPress(): void {
+    const _this = this;
+    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'press') {
+      _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'press' });
+    }
+  }
+  
+  updateValue() {
+    const _this = this;
+
+    // Extra work needed to convert date type input
+    if (_this.field.inputType === 'date' || _this.field.inputType === 'datetime' || _this.field.inputType === 'time') {
+      let dateValue: any = _this.group.get(_this.field.name).value;
+      let dateType = typeof dateValue;
+      // Check if date in Moment type
+      if (dateValue != null && dateType === 'object') {
+        if (_this.field.inputType === 'date') {
+          _this.field.value = HelperService.getFormattedDate(dateValue);
+        }
+        if (_this.field.inputType === 'datetime') {
+          _this.field.value = HelperService.getFormattedDateTime(dateValue, _this.timezoneService.timezoneInfo.utc_offset);
+        }
+        if (_this.field.inputType === 'time') {
+          _this.field.value = HelperService.getFormattedTime(dateValue);
+        }
+        _this.group.get(_this.field.name).setValue(_this.field.value);
+      }
+      else {
+        // Copy as it is
+        _this.field.value = _this.group.get(_this.field.name).value;
+      }
+    }
+    else {
+      // Copy as it is
+      _this.field.value = _this.group.get(_this.field.name).value;
+    }
+  }
+
+  formatValue() {
+    let _this = this;
+    if (_this.field.inputType === 'date') {
+      // Replace all found markers
+      let newString = HelperService.getFormattedString(_this.field.value);
+
+      // If something was found, update values
+      if (newString !== _this.field.value) {
+        // Replace the field and form control value
+        _this.field.value = newString;
+        _this.group.get(_this.field.name).setValue(_this.field.value);
+
+        // If Event publish is required on startup
+        // _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'change' });
+      }
+    }
+    if (_this.field.inputType === 'datetime')  {
+      // To keep the same written time but replace the timezone
+      // let newString = _this.field.value.replace('.000Z', '.000' + _this.timezoneService.timezoneInfo.utc_offset);
+      
+      // Load the date time with the included timezone
+      let newString = _this.field.value;
+
+      // If something was found, update values
+      if (newString !== _this.field.value) {
+        // Replace the field and form control value
+        _this.field.value = newString;
+        _this.group.get(_this.field.name).setValue(_this.field.value);
+
+        // If Event publish is required on startup
+        // _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'change' });
+      }
+    }
+  }
+
+  setValue(value: any) {
+    this.field.value = value;
+    this.formatValue();
+  }
+  
   loadStyles() {
     if(this.field.style) {
       if(this.field.style.background_color) {
