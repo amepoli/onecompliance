@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FieldConfig } from 'app/oc/interfaces';
-import { ConsoleLoggerService, HelperService, PubSubService, ValidationsService } from 'app/oc/services';
+import { ConsoleLoggerService, DialogService, HelperService, PubSubService, ValidationsService } from 'app/oc/services';
 import { TimezoneService } from 'app/oc/services/timezone.service';
 import * as moment from 'moment';
 import { Moment } from 'moment';
@@ -129,7 +129,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private timezoneService: TimezoneService,
               private pubSubService: PubSubService,
-              private _console: ConsoleLoggerService) { }
+              private _console: ConsoleLoggerService,
+              private _dialogService: DialogService) { }
   ngOnInit(): void {
     const _this = this;
     _this.field.style = _this.field.style == null ? { background_color: 'transparent', font_color: 'black' } : _this.field.style;
@@ -190,7 +191,20 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   onPress(): void {
     const _this = this;
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'press') {
-      _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'press' });
+      // Confirm first if confirmation is true before performing action
+      if (_this.field.confirmButtonAction) {
+        // Show confirmation dialog
+        _this._dialogService.showConfimationDialog(_this.field.value ? _this.field.value : _this.field.label ? _this.field.label :_this.field.name, 'Are you sure you want to perform this action?', 'Yes', 'No', 'info').then((result) => {
+          if (result.value === true) {
+            // User clicked yes
+            _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'press' });
+          }
+        });
+      }
+      else {
+        // Perform action without confirmation
+        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'press' });
+      }
     }
   }
 
