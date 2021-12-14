@@ -2,7 +2,7 @@
     <mat-toolbar [hidden]="!actions || !actions.length" class="p-0 mat-elevation-z1 table-multiselect-toolbar">
         <ng-container *ngFor="let action of actions; let i = index">
             <ng-container *ngIf="action.viewType === 'button'">
-                <button mat-button color="primary" [disabled]="!selection || selection.isEmpty()" (click)="performButtonAction(action.key)">
+                <button mat-button color="primary" [disabled]="!selection || selection.isEmpty()" (click)="performButtonAction(action)">
                     <mat-icon>{{action.icon}}</mat-icon> {{action.label}}
                 </button>
             </ng-container>
@@ -12,7 +12,7 @@
                 </button>
                 <mat-menu #matMenu1="matMenu">
                 <ng-container *ngFor="let item of action.menuOptions">
-                    <button mat-menu-item (click)="performMenuAction(action.key, item.key)">
+                    <button mat-menu-item (click)="performMenuAction(action, item)">
                         <span>
                         <mat-icon>{{item.icon}}</mat-icon>
                         </span>{{item.label}}

@@ -517,7 +517,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         return styles;
     }
 
-    private loadSelectionActions(actions: any) {
+    private loadSelectionActions(actions: SelectionAction[]) {
         if(actions && actions.length) {
             this.selectionActions = actions.map( x => {
                 return {
@@ -525,7 +525,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     key: x.key,
                     label: x.label,
                     icon: x.icon,
-                    menuOptions: x.menuOptions
+                    menuOptions: x.menuOptions,
+                    confirmAction: x.confirmAction,
+                    confirmActionMessage: x.confirmActionMessage
                 }
             });
         }

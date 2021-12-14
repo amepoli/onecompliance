@@ -5,5 +5,7 @@ export interface SelectionAction {
     key: string;
     label: string;
     icon: string;
+    confirmAction?: boolean;
+    confirmActionMessage?: string;
     menuOptions: MenuOption[];
 };
