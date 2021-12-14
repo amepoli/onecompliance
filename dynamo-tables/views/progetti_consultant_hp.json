@@ -42,5 +42,84 @@
             },
 			"new_line": true
         }
-    ]
+    ],
+    "predefinedQueries": [
+		{
+			"operation": "selectForm",
+			"type": "preProcessing",
+			"queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
+		},
+		{
+			"operation": "selectForm",
+			"type": "preProcessing",
+			"queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) from entrasp.sondaggi_somministrati ss inner join entrasp.progetti_fasi pf on ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio where ss.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$;"
+		},
+		{
+			"operation": "selectForm",
+			"type": "preProcessing",
+			"queryString": "select entrasp.aggiorna_sondaggi_pre_loading(codice_azienda, id_sondaggio) from entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
+		},
+		{
+			"queryString": "select case when count(id_fase) >0 then true else false end as disable_button_attiva_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+			"type": "postProcessing",
+			"operation": "selectForm"
+		},
+		{
+			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+			"type": "preProcessing",
+			"operation": "selectForm"
+		},
+		{
+			"operation": "selectForm",
+			"type": "postProcessing",
+			"queryString": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "update entrasp.progetti prg set codice_part=az.codice_part from entrasp.aziende az where prg.codice_azienda=az.codice_azienda and prg.codice_part is null and prg.codice_azienda=$codice_azienda$ and prg.id_progetto=$id_progetto$",
+			"type": "postProcessing"
+		},
+		{
+			"operation": "selectForm",
+			"type": "preProcessing",
+			"queryString": "select entrasp.progetti_fasi_stato_update($codice_azienda$, $id_progetto$);"
+		},
+		{
+			"operation": "delete",
+			"type": "main",
+			"queryString": "select entrasp.progetto_delete($codice_azienda$, $id_progetto$);"
+		},
+		{
+			"operation": "insert",
+			"type": "preCheck",
+			"queryString": "select codice_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£'",
+			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+		},
+		{
+			"operation": "update",
+			"type": "preCheck",
+			"queryString": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£' and id_progetto!=$id_progetto$",
+			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+		},
+		{
+			"type": "main",
+			"operation": "share",
+			"queryString": "select null;"
+		},
+		{
+			"type": "main",
+			"operation": "stopEvent",
+			"queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+		},
+		{
+			"type": "main",
+			"operation": "startEvent",
+			"queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, '$codice_azienda$'::varchar)"
+		},
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select prg.*, entrasp.progetto_sal(prg.codice_azienda, prg.id_progetto) as avanzamento, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)as stato, entrasp.centri_gestionali_descr(prg.codice_part, prg.id_centro_gest) as centro_gest from entrasp.progetti prg inner join entrasp.centri_gestionali cg on prg.codice_part=cg.codice_part and prg.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where an.dynamo_user='€global_username€' and stato!='C'"
+		}
+	]
 }
