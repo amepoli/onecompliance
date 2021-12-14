@@ -470,6 +470,11 @@
                         "icon": "class",
                         "label": "Crea e associa argomento",
                         "outputEventName": "create_associate_argomento"
+                    },
+                    {
+                        "icon": "delete",
+                        "label": "Elimina versione corrente",
+                        "outputEventName": "elimina_ver_corrente_mdt"
                     }
                 ]
             },
@@ -497,7 +502,16 @@
                     "values": [],
                     "outputEventWhenComplete": "modelli_test_vr_reload",
                     "queryFunct": "select entrasp.argomenti_create_and_update($codice_azienda$, $id_modello_test$, $titolo$, $descrizione$ , $codice$, 45)"
+                },
+                {
+                    "eventName": "elimina_ver_corrente_mdt",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Versione eliminata",
+                    "values": [],
+                    "queryFunct": "select entrasp.modelli_test_elimina_versione_corrente($codice_azienda$,$id_modello_test$, $id_modello_test_vr$);"
                 }
+
             ],
             "isHidden": false,
             "isPrimary": false,
@@ -1159,6 +1173,21 @@
                 }
             ],
             "label": "Domande - Sezioni"
+        },
+        {
+            "entryKey": "sondaggi_sub_of_modelli_test",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                }
+            ],
+            "label": "Sondaggi Associati"
         },
         {
             "entryKey": "tipi_allegati_sub_of_modelli_test",
