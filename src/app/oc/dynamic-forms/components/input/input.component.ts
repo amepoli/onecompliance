@@ -105,6 +105,7 @@ import { Subscription } from 'rxjs';
       color: #2196f3 !important;
       cursor: pointer;
       font-weight: 500 !important;
+      text-decoration: underline;
     }
 
   `],
