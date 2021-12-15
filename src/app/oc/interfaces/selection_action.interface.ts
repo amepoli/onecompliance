@@ -7,5 +7,6 @@ export interface SelectionAction {
     icon: string;
     confirmAction?: boolean;
     confirmActionMessage?: string;
+    reloadOnSuccess?: boolean;
     menuOptions: MenuOption[];
 };
