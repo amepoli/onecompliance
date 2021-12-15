@@ -527,6 +527,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     icon: x.icon,
                     menuOptions: x.menuOptions,
                     confirmAction: x.confirmAction,
+                    reloadOnSuccess: x.reloadOnSuccess,
                     confirmActionMessage: x.confirmActionMessage
                 }
             });

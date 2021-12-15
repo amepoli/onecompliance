@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { I } from '@angular/cdk/keycodes';
-import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, Output, EventEmitter } from '@angular/core';
 import { MenuOption, SelectionAction, SelectionActionParams, TableViewKey } from 'app/oc/interfaces';
 import { AuthService, BackendService, DialogService, ToastService } from 'app/oc/services';
 
@@ -20,6 +20,9 @@ export class TableMultiselectToolbarComponent implements DoCheck {
     @Input("actions") actions: SelectionAction[];
     @Input("viewKeys") viewKeys: TableViewKey[];
 
+    @Output() onReload = new EventEmitter<any>();
+
+
     userCompanies: string[] = [];
     userdata: any;
     
@@ -34,15 +37,16 @@ export class TableMultiselectToolbarComponent implements DoCheck {
     }
 
     async performButtonAction(action: SelectionAction) {
-        if(await this.isConfirmed(action)) {
-            if(this.viewKeys) {
-                const primaryKeys = this.viewKeys.filter(entry => {
+        const _this = this;
+        if(await _this.isConfirmed(action)) {
+            if(_this.viewKeys) {
+                const primaryKeys = _this.viewKeys.filter(entry => {
                     return entry.isPrimary;
                 });
                 if(primaryKeys.length > 0) {
                     let key_values = primaryKeys.map( x => x.key);
                     let params = key_values.join(" || '-' || ");
-                    let dataRows = this.selection.selected.map( s => {
+                    let dataRows = _this.selection.selected.map( s => {
                         return `'${key_values.map( key => s[key]).join('-')}'`;
                     });
                     let data = dataRows.join(',');
@@ -56,19 +60,22 @@ export class TableMultiselectToolbarComponent implements DoCheck {
                             selected_rows_data: data
                         }
                     }
-                    let subscription = this._backendService.runTableMultiSelectionActionQuery(this.entryKey, this._authService.getCurrentCompany(), selectionParams).subscribe(
+                    let subscription = _this._backendService.runTableMultiSelectionActionQuery(_this.entryKey, _this._authService.getCurrentCompany(), selectionParams).subscribe(
                         result => {
                             if(result.result == 'OK') {
-                                this._toastService.showSuccessToast('Success!');
+                                _this._toastService.showSuccessToast('Success!');
+                                if(action.reloadOnSuccess) {
+                                    _this.onReload.emit(true);
+                                }
                             }
                             else {
-                                this._toastService.showErrorToast(result);
+                                _this._toastService.showErrorToast(result);
                             }
                             subscription.unsubscribe();
                             console.log(result);
                         },
                         error => {
-                            this._toastService.showErrorToast(error);
+                            _this._toastService.showErrorToast(error);
                             subscription.unsubscribe();
                             console.error(error);
                         }
@@ -80,15 +87,16 @@ export class TableMultiselectToolbarComponent implements DoCheck {
     }
 
     async performMenuAction(action: SelectionAction, menu: MenuOption) {
-        if(await this.isConfirmed(menu)) {
-            if(this.viewKeys) {
-                const primaryKeys = this.viewKeys.filter(entry => {
+        const _this = this;
+        if(await _this.isConfirmed(menu)) {
+            if(_this.viewKeys) {
+                const primaryKeys = _this.viewKeys.filter(entry => {
                     return entry.isPrimary;
                 });
                 if(primaryKeys.length > 0) {
                     let key_values = primaryKeys.map( x => x.key);
                     let params = key_values.join(" || '-' || ");
-                    let dataRows = this.selection.selected.map( s => {
+                    let dataRows = _this.selection.selected.map( s => {
                         return `'${key_values.map( key => s[key]).join('-')}'`;
                     });
                     let data = dataRows.join(',');
@@ -103,13 +111,16 @@ export class TableMultiselectToolbarComponent implements DoCheck {
                             selected_rows_data: data
                         }
                     }
-                    let subscription = this._backendService.runTableMultiSelectionActionQuery(this.entryKey, this._authService.getCurrentCompany(), selectionParams).subscribe(
+                    let subscription = _this._backendService.runTableMultiSelectionActionQuery(_this.entryKey, _this._authService.getCurrentCompany(), selectionParams).subscribe(
                         result => {
                             if(result.result == 'OK') {
-                                this._toastService.showSuccessToast('Success!');
+                                _this._toastService.showSuccessToast('Success!');
+                                if(menu.reloadOnSuccess) {
+                                    _this.onReload.emit(true);
+                                }
                             }
                             else {
-                                this._toastService.showErrorToast(result);
+                                _this._toastService.showErrorToast(result);
                             }
                             subscription.unsubscribe();
                             console.log(result);

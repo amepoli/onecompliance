@@ -4,5 +4,6 @@ export interface MenuOption {
   label: string;
   confirmAction?: boolean;
   confirmActionMessage?: string;
+  reloadOnSuccess?: boolean;
   outputEventName?: string;
 }
