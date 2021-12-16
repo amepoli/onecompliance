@@ -9,37 +9,25 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-input',
   template: `
-  <!-- <mat-form-field [ngClass]="(!field.eventTrigger && field.readonly) ? 'readOnly': ''" *ngIf="field.readonly == true && field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+  <mat-form-field [ngClass]="field.eventTrigger === 'press' ? 'readOnlyPressable': ''" [ngClass]="(field.readonly === true)? 'readOnly': ''" (click)="onPress()" *ngIf="field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
   <input [required]="isRequired" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
     (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()"
-    [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
-  <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
-  <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
-    <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
-  </ng-container>
-</mat-form-field> -->
-
-  <mat-form-field [ngClass]="field.eventTrigger === 'press'  && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" (click)="onPress()" *ngIf="field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
-  <mat-label>{{field.label}}</mat-label>
-  <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
-  <input [required]="isRequired" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
-    (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()"
-    [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
+    [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color">
   <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
   <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
     <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
   </ng-container>
 </mat-form-field>
 
-<mat-form-field [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" (click)="onPress()" *ngIf="field.isVisible != false && field.inputType === 'date'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field [ngClass]="field.eventTrigger === 'press' ? 'readOnlyPressable': ''" [ngClass]="(field.readonly === true)? 'readOnly': ''"  (click)="onPress()" *ngIf="field.isVisible != false && field.inputType === 'date'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
 
   <input [required]="isRequired" matInput [matDatepicker]="datepicker" [value]="field.value" [placeholder]="field.label" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" 
     (blur)="onBlur()" (focus)="onFocus()" (dateChange)="updateValue()"
-    [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
+    [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color">
   <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
   <mat-datepicker matInput [matDatepicker]="datepicker" #datepicker></mat-datepicker>
 
@@ -49,7 +37,7 @@ import { Subscription } from 'rxjs';
   </ng-container>
 </mat-form-field>
 
-<mat-form-field [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" (click)="onPress()" *ngIf="field.isVisible != false && (field.inputType === 'datetime')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+<mat-form-field [ngClass]="field.eventTrigger === 'press' ? 'readOnlyPressable': ''" [ngClass]="(field.readonly || readOnlyPage)? 'readOnly': ''" (click)="onPress()" *ngIf="field.isVisible != false && (field.inputType === 'datetime')" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
 
@@ -101,15 +89,15 @@ import { Subscription } from 'rxjs';
       border-radius: 8px;
     }
 
-    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-start {
+    :host ::ng-deep .readOnly .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-start {
       border: none !important;
     }
 
-    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-gap {
+    :host ::ng-deep .readOnly .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-gap {
       border: none !important;
     }
 
-    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-end {
+    :host ::ng-deep .readOnly .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-end {
       border: none !important;
     }
 
@@ -117,12 +105,6 @@ import { Subscription } from 'rxjs';
       color: #2196f3 !important;
       cursor: pointer;
       font-weight: 500 !important;
-      text-decoration: underline;
-    }
-
-    :host ::ng-deep .readOnly .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix input-ro {
-      color: black !important;
-      font-weight: bold !important;
     }
 
   `],
@@ -137,7 +119,7 @@ import { Subscription } from 'rxjs';
 export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   field: FieldConfig;
   group: FormGroup;
-  readOnlyPage: boolean; // field.readonly overridden by page
+  readOnlyPage: boolean = false; // field.readonly overridden by page
   isRequired = false; // field is required or not
 
   subscription: Subscription;
