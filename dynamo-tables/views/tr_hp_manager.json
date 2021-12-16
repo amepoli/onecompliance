@@ -4,7 +4,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select true as insert_missing_mins, true as segna_ferie, true as segna_permesso, csn.date_time_begin::date, an.dynamo_user, entrasp.dynamo_employer(an.dynamo_user) as employer, sum(csn.durata) as minuti_rendicontati, entrasp.minuti_richiesti_user(an.dynamo_user, csn.date_time_begin::date) as minuti_richiesti, greatest(0,(entrasp.minuti_richiesti_user(an.dynamo_user, csn.date_time_begin::date)- sum(csn.durata))) as minuti_mancanti from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part and an.dynamo_user in(select entrasp.colleghi('€global_username€')) where csn.date_time_begin<=current_date  and csn.date_time_begin>'2021-01-01'",
+      "queryString": "select true as insert_missing_mins, true as segna_ferie, true as segna_permesso, dd.giorno, coll.dynamo_user, entrasp.dynamo_employer(coll.dynamo_user) as employer,  csn.minuti_rendicontati, entrasp.minuti_richiesti_user(coll.dynamo_user, dd.giorno) as minuti_richiesti, greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, dd.giorno)- coalesce(csn.minuti_rendicontati,0))) as minuti_mancanti from (SELECT date_trunc('day', gg):: date as giorno FROM generate_series ( current_date-400*interval '1 day', current_date, '1 day'::interval) gg)  dd left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on dd.giorno::date=csn.date_time_begin::date,(select entrasp.colleghi('amedeo.poli') as dynamo_user) coll where dd.giorno<=current_date and dd.giorno>entrasp.dynamo_data_assunzione(coll.dynamo_user)",
       "type": "main"
     },
     {
@@ -40,7 +40,7 @@
       "content": {
         "contentType": "value",
         "value": "Scooby Doo",
-        "query": "select count(tr_inc.dynamo_user) from (select an.dynamo_user, csn.date_time_begin::date from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part and an.dynamo_user in(select entrasp.colleghi('€global_username€')) where csn.date_time_begin<=current_date  and csn.date_time_begin>'2021-01-01' group by an.dynamo_user, csn.date_time_begin::date having greatest(0,(entrasp.minuti_richiesti_user(an.dynamo_user, csn.date_time_begin::date)- sum(csn.durata)))>0) tr_inc WHERE true",
+        "query": "select count(tr_inc.dynamo_user) from (select true as insert_missing_mins, true as segna_ferie, true as segna_permesso, dd.giorno, coll.dynamo_user, entrasp.dynamo_employer(coll.dynamo_user) as employer,  csn.minuti_rendicontati, entrasp.minuti_richiesti_user(coll.dynamo_user, dd.giorno) as minuti_richiesti, greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, dd.giorno)- coalesce(csn.minuti_rendicontati,0))) as minuti_mancanti from (SELECT date_trunc('day', gg):: date as giorno FROM generate_series ( current_date-400*interval '1 day', current_date, '1 day'::interval) gg)  dd left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on dd.giorno::date=csn.date_time_begin::date,(select entrasp.colleghi('amedeo.poli') as dynamo_user) coll where dd.giorno<=current_date and dd.giorno>entrasp.dynamo_data_assunzione(coll.dynamo_user) group by dd.giorno, coll.dynamo_user, entrasp.dynamo_employer(coll.dynamo_user),  csn.minuti_rendicontati, entrasp.minuti_richiesti_user(coll.dynamo_user, dd.giorno) having greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, dd.giorno)- csn.minuti_rendicontati))>0) tr_inc WHERE true",
         "queryCond": "",
         "fieldName": "conta_giorni_incompleti",
         "value_color": "red",
@@ -263,7 +263,7 @@
       },
       "label": "A partire dal",
       "newLine": false,
-      "queryCond": "trc_inc.date_time_begin::date>$date_from$"
+      "queryCond": "dd.giorno::date>$date_from$"
     },
     {
       "format": {
@@ -272,7 +272,7 @@
         "viewType": "combobox",
         "dataType": "text"
       },
-      "queryCond": "tr_inc.dynamo_user=$dynamo_s$",
+      "queryCond": "coll.dynamo_user=$dynamo_s$",
       "fieldName": "dynamo_s",
       "label": "Utente",
       "newLine": false,
@@ -286,10 +286,10 @@
       },
       "label": "Miei aggiornamenti",
       "newLine": false,
-      "queryCond": "an.dynamo_user='€global_username€'"
+      "queryCond": "coll.dynamo_user='€global_username€'"
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "group by csn.date_time_begin::date, an.dynamo_user, entrasp.dynamo_employer(an.dynamo_user) having greatest(0,(entrasp.minuti_richiesti_user(an.dynamo_user, csn.date_time_begin::date)- sum(csn.durata)))>0 order by csn.date_time_begin::date"
+    "tableViewSuffix": "group by dd.giorno, coll.dynamo_user, entrasp.dynamo_employer(coll.dynamo_user),  csn.minuti_rendicontati, entrasp.minuti_richiesti_user(coll.dynamo_user, dd.giorno) having greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, dd.giorno)- csn.minuti_rendicontati))>0 order by dd.giorno desc limit 100"
   }
 }
