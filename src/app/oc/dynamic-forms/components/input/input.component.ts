@@ -9,7 +9,19 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-input',
   template: `
-<mat-form-field [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" (click)="onPress()" *ngIf="field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+  <!-- <mat-form-field [ngClass]="(!field.eventTrigger && field.readonly) ? 'readOnly': ''" *ngIf="field.readonly == true && field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
+  <mat-label>{{field.label}}</mat-label>
+  <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
+  <input [required]="isRequired" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
+    (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()"
+    [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
+  <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
+  <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+    <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
+  </ng-container>
+</mat-form-field> -->
+
+  <mat-form-field [ngClass]="field.eventTrigger === 'press'  && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" (click)="onPress()" *ngIf="field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
   <mat-label>{{field.label}}</mat-label>
   <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
   <input [required]="isRequired" matInput [value]="field.value" [formControlName]="field.name" [placeholder]="field.label" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage" 
@@ -106,6 +118,11 @@ import { Subscription } from 'rxjs';
       cursor: pointer;
       font-weight: 500 !important;
       text-decoration: underline;
+    }
+
+    :host ::ng-deep .readOnly .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix input-ro {
+      color: black !important;
+      font-weight: bold !important;
     }
 
   `],
