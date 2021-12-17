@@ -2,33 +2,10 @@
   "$schema": "../views.schema.json",
   "entryKey": "policy",
   "inheritsFrom": "documents",
-  
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "type": "preProcessing",
-      "queryString": "select entrasp.aggiorna_cdms_bo_cdms_risorse(rs.codice_azienda, rs.id_risorsa, true) from entrasp.cdms_risorse_oggetti ro, entrasp.cdms_risorse rs where rs.codice_azienda=$codice_azienda$  and ro.codice_azienda=rs.codice_azienda and ro.id_risorsa=rs.id_risorsa and rs.id_argomento_stato != 4035 and rs.codice_azienda in(€global_user_companies€)"
-    },
-    {
-      "operation": "selectTable",
-      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs inner join entrasp.argomenti arg on crs.id_argomento_tipo_allegato=arg.id_argomento inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son WHERE crs.codice_azienda=$codice_azienda$  and aa.id_argomento_father = 3511",
-      "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "select entrasp.calcola_id_argomento_stato($codice_azienda$, $id_risorsa$, false);",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "stopEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
-    },
-    {
-      "operation": "startEvent",
-      "type": "main",
-      "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'risorse', $id_risorsa$, '$codice_azienda$'::varchar) as play_time_report"
-    }
-  ]
-
+  "define": {
+    "toggle_miei_uffici": "1",
+    "is_hidden_codice_azienda": "true",
+    "id_argomento_father": "3511",
+    "id_argomento_escluso": "100000"
+  }
 }
