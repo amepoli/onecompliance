@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { FieldConfig, Item } from 'app/oc/interfaces';
 import { ConsoleLoggerService, PubSubService, ValidationsService } from 'app/oc/services';
@@ -26,8 +26,12 @@ import { takeUntil } from 'rxjs/operators';
 </mat-form-field>
 `,
   styles: [`
-    :host ::ng-deep .mat-form-field-flex {
-      background-color: aliceblue;
+  :host ::ng-deep .mat-form-field-type-mat-select:not(.mat-form-field-disabled) .mat-form-field-flex {
+      background-color: aliceblue !important;
+      border-radius: 8px;
+    }  
+  :host ::ng-deep .mat-form-field-flex {
+      background-color: aliceblue !important;
       border-radius: 8px;
     }
   `],
