@@ -98,14 +98,14 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
         // Show confirmation dialog
         _this._dialogService.showConfimationDialog(_this.field.value ? _this.field.value : _this.field.label ? _this.field.label :_this.field.name, 'Are you sure you want to perform this action?', 'Yes', 'No', 'info').then((result) => {
           if (result.value === true) {
-            // User clicked yes
-            _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'press' });
+            // provide index in case of multiple instances of the button                    
+            _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'press' });
           }
         });
       }
       else {
         // Perform action without confirmation
-        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'press' });
+        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'press' });
       }
     }
   }
