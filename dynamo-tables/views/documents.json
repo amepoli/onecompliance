@@ -509,7 +509,7 @@
         "viewType": "input"
       },
       "label": "Data scad. a",
-      "newLine": false,
+      "newLine": true,
       "queryCond": "crs.data_scadenza<=$data_scad_a_s$"
     },
     {
@@ -531,8 +531,20 @@
         "options": []
       },
       "label": "Stato",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "crs.id_argomento_stato=$stato_search$"
+    },
+    {
+      "fieldName": "tipo_oggetto_collegato_s",
+      "format": {
+        "dataType": "text",
+        "viewType": "combobox",
+        "comboQuery": "select distinct nome_business_object as id, nome_business_object as name from entrasp.cdms_risorse_oggetti where codice_azienda=$codice_azienda$;",
+        "options": []
+      },
+      "label": "Nome business object",
+      "newLine": true,
+      "queryCond": "crs.id_risorsa in(select bos.id_risorsa from entrasp.cdms_risorse_oggetti bos where bos.nome_business_object=$tipo_oggetto_collegato_s$ and bos.codice_azienda=crs.codice_azienda)"
     },
     {
       "fieldName": "scaduto_s",
