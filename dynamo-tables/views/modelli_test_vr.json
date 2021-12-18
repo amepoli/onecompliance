@@ -367,8 +367,6 @@
             "key": "id_modello_test",
             "label": "ID",
             "newLine": false,
-            "size": 1,
-            "readOnly": true,
             "inputEvents": [
                 {
                     "eventName": "modelli_test_button_duplica",
@@ -376,10 +374,11 @@
                     "condition": "none",
                     "values": [],
                     "successMessage": "Duplicato!",
-                    "queryFunct": "select idnew as id_modello_test, cod as codice from entrasp.grc_accoda_singolo_modello_test($codice_azienda$, $codice_azienda$, $id_modello_test$, $id_modello_test_vr$);",
-                    "outputEventWhenComplete": "navigate_to_new_modello_test"
+                    "queryFunct": "select idnew as id_modello_test, cod as codice, 1 as id_modello_test_vr from entrasp.grc_accoda_singolo_modello_test($codice_azienda$, $codice_azienda$, $id_modello_test$, $id_modello_test_vr$);"
                 }
-            ]
+            ],
+            "size": 1,
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -398,17 +397,7 @@
             "label": "Versione",
             "newLine": false,
             "size": 1,
-            "readOnly": false,
-            "inputEvents": [
-                {
-                    "eventName": "modelli_test_button_nuova_versione",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "successMessage": "Creata!",
-                    "queryFunct": "select entrasp.modello_test_new_version($codice_azienda$,$id_modello_test$, $id_modello_test_vr$) as id_modello_test_vr"
-                }
-            ]
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -953,7 +942,47 @@
             "readOnly": false,
             "sameOrigin": false,
             "saveWhenHidden": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test_new",
+            "label": "id_modello_test_new",
+            "newLine": false,
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test_vr_new",
+            "label": "id_modello_test_vr_new",
+            "inputEvents": [
+                {
+                    "eventName": "modelli_test_button_nuova_versione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "successMessage": "Creata!",
+                    "queryFunct": "select entrasp.modello_test_new_version($codice_azienda$,$id_modello_test$, $id_modello_test_vr$) as id_modello_test_vr_new",
+                    "outputEventWhenComplete": "navigate_to_new_modello_test_vr"
+                }
+            ],
+            "newLine": false,
+            "readOnly": false,
+            "sameOrigin": false
         }
+     
     ],
     "search_keys": [
         {
@@ -1187,7 +1216,8 @@
                     "son": "id_modello_test"
                 }
             ],
-            "label": "Sondaggi Associati"
+            "label": "Sondaggi Associati",
+            "type": "table"
         },
         {
             "entryKey": "tipi_allegati_sub_of_modelli_test",
@@ -1442,7 +1472,7 @@
         },
         {
             "actionTarget": {
-                "name": "modelli_test_vr",
+                "name": "modelli_test_vr_new_temp",
                 "type": "form",
                 "keymap": [
                     {
@@ -1450,8 +1480,12 @@
                         "destination": "codice_azienda"
                     },
                     {
-                        "source": "id_modello_test",
+                        "source": "id_modello_test_new",
                         "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "1",
+                        "destination": "id_modello_test_vr"
                     }
                 ]
             },
@@ -1472,7 +1506,7 @@
                         "destination": "id_modello_test"
                     },
                     {
-                        "source": "id_modello_test_vr",
+                        "source": "id_modello_test_vr_new",
                         "destination": "id_modello_test_vr"
                     }
                 ]
