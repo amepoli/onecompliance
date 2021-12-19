@@ -4,7 +4,7 @@
 	"entryKey": "template_argomenti",
 	"businessObjectName": "argomenti",
 	"define": {
-		"id_argomento_father": "3576",	
+		"id_argomento_father": "3576",
 		"array_argomenti_father_da_aggiungere": "array[3576]",
 		"label_id": "ID Allegato",
 		"campo_id_argomento": "id_argomento_tipo_allegato",
@@ -12,8 +12,8 @@
 		"is_hidden_unifica_all": "false",
 		"id_argomento_bigger_than": "and true",
 		"id_argomento_father_s2": "3368",
-		"label_argomento_s2": "Livello di controllo"				
-	  },
+		"label_argomento_s2": "Livello di controllo"
+	},
 	"predefinedQueries": [
 		{
 			"type": "main",
@@ -69,10 +69,10 @@
 				"dataType": "text",
 				"validations": [
 					{
-                        "message": "Codice necessario",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
+						"message": "Codice necessario",
+						"name": "required",
+						"validator": "Validators.required"
+					}
 				]
 			},
 			"label": "Codice",
@@ -208,15 +208,15 @@
 			"queryCond": "arg.codice_azienda=$codice_azienda_s$"
 		},
 		{
-            "fieldName": "stringa_s",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "Stringa di ricerca",
-            "newLine": true,
-            "queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€stringa_s€')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€stringa_s€')||'%')"
-        },
+			"fieldName": "stringa_s",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Stringa di ricerca",
+			"newLine": true,
+			"queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€stringa_s€')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€stringa_s€')||'%')"
+		},
 		{
 			"label": "$P{label_id}",
 			"format": {
@@ -228,54 +228,54 @@
 			"queryCond": "arg.id_argomento=$id_argomento_s$"
 		},
 		{
-            "fieldName": "argomento_s",
-            "format": {
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father} order by descrizione",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Argomento",
-            "newLine": false,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
-        },
+			"fieldName": "argomento_s",
+			"format": {
+				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father} order by descrizione",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Argomento",
+			"newLine": false,
+			"queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
+		},
 		{
-            "fieldName": "argomento_s2",
-            "format": {
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father_s2} order by descrizione",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "$P{label_argomento_s2}",
-            "newLine": false,
-            "queryCond": "id_argomento in(select id_argomento_descendants from entrasp.descendants_of_argomento($argomento_s2$, 1))"
-        },
+			"fieldName": "argomento_s2",
+			"format": {
+				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father_s2} order by descrizione",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "$P{label_argomento_s2}",
+			"newLine": false,
+			"queryCond": "id_argomento in(select id_argomento_descendants from entrasp.descendants_of_argomento($argomento_s2$, 1))"
+		},
 		{
-            "fieldName": "num_argomenti_padre_max",
-            "format": {
-                "viewType": "input",
+			"fieldName": "num_argomenti_padre_max",
+			"format": {
+				"viewType": "input",
 				"dataType": "number"
-            },
-            "label": "Numero argomenti padre minore di",
-            "newLine": true,
-            "queryCond": "(select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento)<=$num_argomenti_padre_max$"
-        }
+			},
+			"label": "Numero argomenti padre minore di",
+			"newLine": true,
+			"queryCond": "(select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento)<=$num_argomenti_padre_max$"
+		}
 	],
 	"table_multiselection_actions": [
-          {
-            "viewType": "menu",
-            "key": "menutest",
-            "label": "Options",
-            "icon": "more_vert",
-            "menuOptions": [
-                {
-                    "key": "Unifica argomenti",
-                    "icon": "merge_type",
-                    "label": "Unifica argomenti",
-                    "query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
-                }
-            ]
-        }
-    ],
+		{
+			"viewType": "menu",
+			"key": "menutest",
+			"label": "Options",
+			"icon": "more_vert",
+			"menuOptions": [
+				{
+					"key": "Unifica argomenti",
+					"icon": "merge_type",
+					"label": "Unifica argomenti",
+					"query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+				}
+			]
+		}
+	],
 	"table_keys": [
 		{
 			"format": {
@@ -342,23 +342,23 @@
 		{
 			"entryKey": "argomenti_sub_of_argomenti_father_sterile",
 			"keys": [
-			  {
-				"parent": "id_argomento",
-				"son": "id_argomento_son"
-			  }
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento_son"
+				}
 			],
 			"label": "Argomenti padre"
-		  },
-		  {
+		},
+		{
 			"entryKey": "argomenti_sub_of_argomenti_son",
 			"keys": [
-			  {
-				"parent": "id_argomento",
-				"son": "id_argomento_father"
-			  }
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento_father"
+				}
 			],
 			"label": "Argomenti figli"
-		  }
+		}
 	],
 	"querySuffixes": {
 		"tableViewSuffix": "order by arg.codice_azienda, arg.descrizione"
@@ -367,6 +367,18 @@
 		{
 			"tableActionType": "quick-add",
 			"viewType": "table"
+		},
+		{
+			"formActionType": "startEvent",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "stopEvent",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "share",
+			"viewType": "form"
 		}
 	]
 }
