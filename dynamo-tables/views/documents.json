@@ -11,8 +11,7 @@
   "define": {
     "toggle_miei_uffici": "1",
     "is_hidden_codice_azienda": "true",
-    "id_argomento_father": "3576",
-    "id_argomento_escluso": "3511"
+    "id_argomento_father": "3576"
   },
   "predefinedQueries": [
     {
@@ -22,7 +21,7 @@
     },
     {
       "operation": "selectTable",
-      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1)) and id_argomento_tipo_allegato not in(select entrasp.descendants_of_argomento($P{id_argomento_escluso}, 1))",
+      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1))",
       "type": "main"
     },
     {
@@ -73,7 +72,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg where arg.id_argomento in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1)) and id_argomento not in(select entrasp.descendants_of_argomento($P{id_argomento_escluso}, 1));",
+        "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg where arg.id_argomento in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1));",
         "options": [],
         "viewType": "combobox"
       },
