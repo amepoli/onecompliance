@@ -1,0 +1,43 @@
+{
+  "$schema": "../views.schema.json",
+  "inheritsFrom": "domande_dettaglio",
+  "entryKey": "questions_231",
+  "define": {
+    "id_argomento_dom_controllo": "121"
+},
+  "predefinedQueries": [
+    {
+      "operation": "insert",
+      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$)",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "selectTable",
+      "queryString": "select id_modello_test, id_modello_test_vr, id_domanda, descrizione, punteggio from entrasp.domande where codice_azienda= $codice_azienda$ and id_argomento in(select entrasp.descendants_of_argomento($P{id_argomento_dom_controllo}))",
+      "type": "main"
+    },
+    {
+      "operation": "update",
+      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$, $id_template_rp$)",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.risposte rp set punteggio = dm.punteggio from entrasp.domande dm where rp.codice_azienda= dm.codice_azienda and rp.id_domanda = dm.id_domanda and rp.id_modello_test = dm.id_modello_test and rp.id_modello_test_vr = dm.id_modello_test_vr and rp.punteggio!=dm.punteggio and rp.codice_azienda = $codice_azienda$ and rp.id_modello_test =$id_modello_test$ and rp.id_domanda =$id_domanda$ and rp.id_modello_test_vr = $id_modello_test_vr$;",
+      "type": "postProcessing"
+    },
+    {
+      "type": "main",
+      "operation": "delete",
+      "queryString": "select entrasp.domanda_delete($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$);"
+    }
+  ],
+  "exportQueries": {
+    "tableQueries": [
+      {
+        "queryString": "select c1.* from entrasp.controlli c1 inner join (select max(data_riferimento) as maxdata from entrasp.controlli where codice_azienda=$codice_azienda$) c2 on c1.data_riferimento=c2.maxdata where c1.codice_azienda=$codice_azienda$ order by primo_strato_controllo",
+        "label": "Conteggio controlli complessivi"
+      }
+    ]
+  }
+}
