@@ -41,6 +41,16 @@
       "queryString": "select entrasp.assegna_compito_user_centro_gest_default((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$);"
     },
     {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "update entrasp.compiti cmp set perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "update entrasp.compiti cmp set perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+    },
+    {
       "operation": "startEvent",
       "type": "main",
       "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$')"
@@ -475,7 +485,6 @@
         "eventName": "inserisci_aggiornamento",
         "eventTrigger": "press"
       },
-      
       "readOnly": false,
       "sameOrigin": false,
       "size": 1.5
@@ -493,6 +502,231 @@
       "label": "flag_manuale",
       "newLine": true,
       "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "label": "id_cons",
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_cons",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false,
+      "inputEvents": [
+        {
+          "eventName": "inserisci_aggiornamento",
+          "actionType": "query",
+          "queryFunct": "select id_cons from entrasp.consuntivazione_blank_insert((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$, '[Scrivere Aggiornamento]')",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "navigate_to_new_cons"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "activate_detail_k",
+      "label": "Maggiori Dettagli",
+      "buttonIcon": "add",
+      "newLine": true,
+      "size": 1,
+      "outputEvent": {
+        "eventName": "activate_detail",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "hide",
+          "eventName": "activate_detail",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "show",
+          "eventName": "hide_detail",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "hide_detail_k",
+      "label": "Nascondi Dettagli",
+      "buttonIcon": "minimize",
+      "newLine": true,
+      "size": 1,
+      "outputEvent": {
+        "eventName": "hide_detail",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "activate_detail",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "eventName": "hide_detail",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "format": {
+        "viewType": "subform",
+        "subform_keys": [
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "input",
+              "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "perdita_diretta_potenziale",
+            "label": "Perdita Diretta Potenziale",
+            "newLine": false,
+            "readOnly": false,
+            "sameOrigin": true
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "input",
+              "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "perdita_diretta_effettiva",
+            "label": "Perdita Diretta Effettiva",
+            "newLine": false,
+            "readOnly": false,
+            "sameOrigin": true
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "input",
+              "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "perdita_indiretta_potenziale",
+            "label": "Perdita Indiretta Potenziale",
+            "newLine": false,
+            "readOnly": false,
+            "sameOrigin": true
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "input",
+              "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "perdita_indiretta_effettiva",
+            "label": "Perdita Indiretta Effettiva",
+            "newLine": false,
+            "readOnly": false,
+            "sameOrigin": true
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "value": "0",
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_reclamo",
+            "label": "Reclamo",
+            "readOnly": false,
+            "newLine": false,
+            "sameOrigin": true
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "value": "0",
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_causa_legale",
+            "label": "Causa Legale",
+            "readOnly": false,
+            "newLine": false,
+            "sameOrigin": true
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "value": "0",
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_progetto_informatico",
+            "label": "Progetto Informatico",
+            "readOnly": false,
+            "newLine": false,
+            "sameOrigin": true
+          }
+        ]
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "condition": "none",
+          "eventName": "activate_detail",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "hide_detail",
+          "values": []
+        }
+      ],
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "sezione_detail",
+      "label": "Maggiori Dettagli",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": true,
+      "saveWhenHidden": true
     }
   ],
   "search_keys": [
