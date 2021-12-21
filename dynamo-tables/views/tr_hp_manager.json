@@ -58,10 +58,16 @@
       "icon": "more_vert",
       "menuOptions": [
         {
+          "key": "aggiungi_ferie_per_utente",
+          "icon": "merge_type",
+          "label": "Aggiungi ferie",
+          "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno||'-'||coll.dynamo_user||'-' in(select unnest(string_to_array($selected_rows_data$), ','));"
+        },
+        {
           "key": "aggiungi_minuti_mancanti_per_utente",
           "icon": "merge_type",
-          "label": "Aggiungi minuti mancanti utente corrente",
-          "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user, coll.giorno::date +interval '1080 minutes', coll.giorno::date + interval '1080 minutes' + (greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- sum(csn.durata))))*interval '1 minute') from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg, entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno||'-'||coll.dynamo_user=$selected_rows_data$ group by coll.giorno::date, coll.dynamo_user, entrasp.dynamo_employer(coll.dynamo_user),  csn.minuti_rendicontati, entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date);"
+          "label": "Aggiungi ferie",
+          "query": "select entrasp.inserisci_consuntivazione('£employer£','£giorno£', 5440, £minuti_mancanti£, '£dynamo_user£');"
         }
       ]
     }
