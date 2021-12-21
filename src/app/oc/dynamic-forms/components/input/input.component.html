@@ -1,6 +1,7 @@
 <mat-form-field 
     [ngClass]="field.eventTrigger === 'press' ? 'readOnlyPressable': ''"
-    [ngClass]="(field.readonly === true)? 'readOnly': ''" (click)="onPress()"
+    [ngClass]="(field.readonly === true)? 'readOnly': 'notReadOnly'" 
+    (click)="onPress()"
     *ngIf="field.isVisible != false && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'"
     [ngStyle]="{'width': '100%'}" 
     appearance="outline" 
@@ -19,7 +20,7 @@
 </mat-form-field>
 
 <mat-form-field [ngClass]="field.eventTrigger === 'press' ? 'readOnlyPressable': ''"
-    [ngClass]="(field.readonly === true)? 'readOnly': ''" (click)="onPress()"
+    [ngClass]="(field.readonly === true)? 'readOnly': 'notReadOnly'" (click)="onPress()"
     *ngIf="field.isVisible != false && field.inputType === 'date'" [ngStyle]="{'width': '100%'}" appearance="outline"
     [formGroup]="group">
     <mat-label>{{field.label}}</mat-label>
@@ -40,7 +41,7 @@
 </mat-form-field>
 
 <mat-form-field [ngClass]="field.eventTrigger === 'press' ? 'readOnlyPressable': ''"
-    [ngClass]="(field.readonly || readOnlyPage)? 'readOnly': ''" (click)="onPress()"
+    [ngClass]="(field.readonly || readOnlyPage)? 'readOnly': 'notReadOnly'" (click)="onPress()"
     *ngIf="field.isVisible != false && (field.inputType === 'datetime')" [ngStyle]="{'width': '100%'}"
     appearance="outline" [formGroup]="group">
     <mat-label>{{field.label}}</mat-label>
@@ -62,7 +63,8 @@
     </ng-container>
 </mat-form-field>
 
-<mat-form-field [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''"
+<mat-form-field 
+    [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': 'notReadOnly'"
     (click)="onPress()" *ngIf="field.isVisible != false && (field.inputType === 'time')" [ngStyle]="{'width': '100%'}"
     appearance="outline" [formGroup]="group">
     <mat-label>{{field.label}}</mat-label>
