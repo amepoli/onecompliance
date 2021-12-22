@@ -136,7 +136,7 @@ async function _includeTable(dynamoTable,jsonEntry,dynamo) {
         if (included == null) {
             continue;
         }
-        var merging = await _includeTable(dynamoTable,included);
+        var merging = await _includeTable(dynamoTable,included, dynamo);
         //console.log("Merging: ", merging, "  with  ", jsonEntry);
 
         for (const field in merging) {
