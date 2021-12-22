@@ -26,6 +26,8 @@ import { DynamicFieldDirective } from '../directives';
 import { SubFormDynamicFieldDirective } from '../directives/subform-dynamic-field.directive';
 import { MatMenuModule } from '@angular/material/menu';
 
+import { AngularEditorModule } from '@kolkov/angular-editor';
+
 @NgModule({
   declarations: [
     InputComponent,
@@ -53,7 +55,8 @@ import { MatMenuModule } from '@angular/material/menu';
     FormsModule,
     MatMenuModule,
     NgxMatSelectSearchModule,
-    OneCompliancePipesModule
+    OneCompliancePipesModule,
+    AngularEditorModule
   ],
   exports: [
     InputComponent,

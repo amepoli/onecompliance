@@ -678,6 +678,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 isVisible: (attribute != null && attribute.isHidden != null && attribute.isHidden[index] != null) ? !attribute.isHidden[index] : field.isHidden != null ? !field.isHidden : true,
                 newLine: (field.newLine != null) ? field.newLine : true,
                 textareaHeight: (field.textareaHeight != null) ? field.textareaHeight : 'S',
+                showTextAreaRichFormatter: field.showTextAreaRichFormatter || false,
                 buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
                 confirmButtonAction: (field.confirmButtonAction != null) ? field.confirmButtonAction : false,
                 isDownloadButton: (field.isDownloadButton != null) ? field.isDownloadButton : false,
