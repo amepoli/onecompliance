@@ -26,6 +26,10 @@
   "dashboardTables": [
     "dashboard_compiti"
   ],
+  "define": {
+    "is_hidden_compiti": "false",
+    "is_hidden_compiti_consultant": "true"
+  },
   "hideActions": [
     {
       "formActionType": "share",
@@ -37,11 +41,6 @@
       "operation": "selectForm",
       "type": "preProcessing",
       "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda=az.codice_azienda and codice_compito=$codice_compito$;"
-    },
-    {
-      "operation": "selectForm",
-      "type": "main",
-      "queryString": "select * from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
     },
     {
       "operation": "selectTable",
@@ -61,12 +60,12 @@
     {
       "operation": "insert",
       "type": "postProcessing",
-      "queryString": "update entrasp.compiti cmp set perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+      "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
     },
     {
       "operation": "update",
       "type": "postProcessing",
-      "queryString": "update entrasp.compiti cmp set perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+      "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0)  where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
     },
     {
       "operation": "startEvent",
@@ -83,23 +82,74 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni order by descrizione;",
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
         "options": [],
         "viewType": "combobox",
+        "dataType": "text",
         "validations": [
           {
-            "message": "Inserire almeno un tipo",
+            "message": "Codice azienda necessario",
             "name": "required",
             "validator": "Validators.required"
           }
         ]
       },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_tipo_segnalazione",
-      "label": "Tipo Segnalazione",
+      "label": "Azienda",
+      "isHidden": "$P{is_hidden_compiti_consultant}",
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "outputEvent": {
+        "eventName": "change_azienda",
+        "eventTrigger": "select"
+      },
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Azienda fatturante",
+      "isHidden": "$P{is_hidden_compiti_consultant}",
+      "isPrimary": false,
+      "key": "codice_azienda_fatturante",
+      "newLine": false,
+      "readOnly": false,
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": "$P{is_hidden_compiti_consultant}",
+      "isPrimary": false,
+      "key": "budgeted_time",
+      "label": "Tempo preventivato (min.)",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": "$P{is_hidden_compiti_consultant}",
+      "isPrimary": false,
+      "key": "invested_time",
+      "label": "Tempo investito (giorn.)",
+      "queryFunct": "select round(sum(coalesce(durata,0))/480,2) from entrasp.consuntivazioni where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$",
+      "newLine": true,
+      "readOnly": false,
+      "size": 1.5
     },
     {
       "autoGenerate": false,
@@ -113,7 +163,54 @@
       "key": "data_segnalazione",
       "label": "Data segnalazione",
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_competenza",
+      "label": "Data Competenza",
+      "insertUpdateFunct": "select date_trunc('year', current_date::date) + interval '12 month' - interval '1 day'",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Titolo (max 100 caratteri) necessario",
+            "name": "required",
+            "validator": "Validators.required"
+          },
+          {
+            "name": "maxlength",
+            "message": "Massimo numero di caratteri: 100",
+            "validator": "Validators.maxLength(100)",
+            "value": 100
+          }
+        ]
+      },
+      "outputEvent": {
+        "eventName": "change_titolo",
+        "eventTrigger": "blur"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "label": "Titolo",
+      "newLine": false,
+      "readOnly": false,
+      "size": 5
     },
     {
       "autoGenerate": false,
@@ -150,66 +247,41 @@
       "readOnly": false,
       "isHidden": false,
       "isPrimary": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_responsabile",
-      "label": "ID Responsabile",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_cliente",
-      "label": "Cliente",
       "newLine": false,
-      "readOnly": false,
-      "size": 5
+      "size": 1
     },
+    
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni order by descrizione;",
         "options": [],
-        "viewType": "combobox"
+        "viewType": "combobox",
+        "validations": [
+          {
+            "message": "Inserire almeno un tipo",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "id_centro_gest",
-      "label": "Centro Gestionale",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest_monitor",
-      "label": "Centro Gestionale Monitoraggio",
+      "key": "id_tipo_segnalazione",
+      "label": "Tipo Segnalazione",
       "newLine": true,
       "readOnly": false,
-      "size": 2.5
+      "size": 2,
+      "insertUpdateFunct": "select coalesce(£id_tipo_segnalazione£, 0)",
+      "inputEvents": [
+        {
+          "eventName": "change_azienda",
+          "actionType": "query",
+          "queryFunct": "select coalesce(£id_tipo_segnalazione£, 0)",
+          "condition": "none",
+          "values": []
+        }
+      ]
     },
     {
       "autoGenerate": true,
@@ -222,8 +294,8 @@
       "key": "codice_compito",
       "label": "codice_compito",
       "newLine": false,
-      "readOnly": false,
-      "size": 0
+      "readOnly": true,
+      "size": 1
     },
     {
       "autoGenerate": true,
@@ -236,8 +308,8 @@
       "key": "codice",
       "label": "Codice Segnalazione",
       "newLine": false,
-      "readOnly": false,
-      "size": 2.5
+      "readOnly": true,
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -252,177 +324,124 @@
       "key": "codice_compito_parent",
       "label": "Codice Segnalazione Parent",
       "newLine": false,
+      "readOnly": true,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_cliente",
+      "label": "Cliente",
+      "newLine": false,
+      "readOnly": false,
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part=(select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$);",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_responsabile",
+      "insertUpdateFunct": "select coalesce(£id_responsabile£, €global_userid€)",
+      "inputEvents": [
+        {
+          "eventName": "change_azienda",
+          "actionType": "query",
+          "queryFunct": "select coalesce(£id_responsabile£, €global_userid€);",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "eventName": "compiti_consultant_load",
+          "actionType": "query",
+          "queryFunct": "select coalesce(£id_responsabile£, €global_userid€) as id_responsabile;",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "label": "ID Responsabile",
+      "newLine": false,
+      "readOnly": false,
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_centro_gest",
+      "label": "Centro Gestionale",
+      "newLine": true,
       "readOnly": false,
       "size": 2.5
     },
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "date",
-        "viewType": "input"
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "data_chiusura",
-      "label": "Data Chiusura",
+      "key": "id_centro_gest_monitor",
+      "label": "Centro Gestionale Monitoraggio",
       "newLine": false,
       "readOnly": false,
-      "size": 1.5
+      "size": 2
     },
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "date",
-        "viewType": "input"
+        "dataType": "text",
+        "viewType": "textarea"
       },
       "isHidden": false,
-      "isPrimary": false,
-      "key": "data_competenza",
-      "label": "Data Competenza",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_ins",
-      "label": "Data Inserimento",
-      "insertUpdateFunct": "select CURRENT_DATE",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "value": "£global_userid£",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "ute_ins",
-      "label": "Utente_ins",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "validations": [
-          {
-            "message": "Titolo (max 100 caratteri) necessario",
-            "name": "required",
-            "validator": "Validators.required"
-          },
-          {
-            "name": "maxlength",
-            "message": "Massimo numero di caratteri: 100",
-            "validator": "Validators.maxLength(100)",
-            "value": 100
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-      "label": "Titolo",
-      "newLine": true,
-      "readOnly": false,
-      "size": 10
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea",
-        "validations": [
-          {
-            "message": "Breve descrizione necessaria",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
+      "textareaHeight": "L",
       "isPrimary": false,
       "key": "note",
-      "label": "Note",
-      "newLine": true,
-      "readOnly": false,
-      "size": 10
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "trattamento",
-      "label": "Trattamento -azione intrapresa per risolvere il problema o ridurne gli effetti",
-      "newLine": true,
-      "readOnly": false,
-      "size": 10
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "analisi_cause",
-      "label": "Analisi Cause",
-      "newLine": true,
-      "readOnly": false,
-      "size": 10
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "label": "id_cons",
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_cons",
-      "newLine": false,
-      "readOnly": false,
-      "sameOrigin": false,
+      "insertUpdateFunct": "select coalesce('£note£', '£titolo£')",
       "inputEvents": [
         {
-          "eventName": "inserisci_aggiornamento",
+          "eventName": "change_titolo",
           "actionType": "query",
-          "queryFunct": "select id_cons from entrasp.consuntivazione_blank_insert((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$, '[Scrivere Aggiornamento]')",
           "condition": "none",
           "values": [],
-          "outputEventWhenComplete": "navigate_to_new_cons"
+          "queryFunct": "select coalesce('£note£', '£titolo£')"
         }
-      ]
+      ],
+      "label": "Descrizione estesa",
+      "newLine": false,
+      "readOnly": false,
+      "size": 5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "foreseen_date",
+      "label": "Data Scadenza",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -441,7 +460,7 @@
       },
       "readOnly": false,
       "sameOrigin": false,
-      "size": 1.5
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -521,6 +540,49 @@
       "format": {
         "viewType": "subform",
         "subform_keys": [
+          
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_chiusura",
+      "label": "Data Chiusura",
+      "newLine": false,
+      "readOnly": false,
+      "size": 2
+    },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "trattamento",
+            "label": "Trattamento -azione intrapresa per risolvere il problema o ridurne gli effetti",
+            "newLine": true,
+            "readOnly": false,
+            "size": 8
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "analisi_cause",
+            "label": "Analisi Cause",
+            "newLine": true,
+            "readOnly": false,
+            "size": 10
+          },
           {
             "autoGenerate": false,
             "format": {
@@ -643,6 +705,58 @@
       "readOnly": false,
       "sameOrigin": true,
       "saveWhenHidden": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "label": "id_cons",
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_cons",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false,
+      "inputEvents": [
+        {
+          "eventName": "inserisci_aggiornamento",
+          "actionType": "query",
+          "queryFunct": "select id_cons from entrasp.consuntivazione_blank_insert((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$, '[Scrivere Aggiornamento]')",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "navigate_to_new_cons"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "data_ins",
+      "label": "Data Inserimento",
+      "insertUpdateFunct": "select CURRENT_DATE",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "value": "£global_userid£",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "ute_ins",
+      "label": "Utente_ins",
+      "newLine": false,
+      "readOnly": false
     }
   ],
   "search_keys": [
@@ -731,6 +845,7 @@
   ],
   "subTables": [
     {
+      
       "entryKey": "consuntivazioni_sub_of_compiti",
       "keys": [
         {
@@ -745,6 +860,7 @@
       "label": "Aggiornamenti e Time Report"
     },
     {
+      
       "entryKey": "rischi_sub_of_compiti",
       "type": "tableForm",
       "keys": [
@@ -760,6 +876,7 @@
       "label": "Rischi Associati"
     },
     {
+      
       "entryKey": "compiti_sub_of_compiti",
       "keys": [
         {
@@ -775,7 +892,7 @@
     },
     {
       "entryKey": "sondaggi_sub_of_compiti",
-      "isHidden": false,
+     
       "keys": [
         {
           "parent": "codice_azienda",
@@ -790,7 +907,7 @@
     },
     {
       "entryKey": "somministrazioni_sub_of_compiti",
-      "isHidden": false,
+      
       "keys": [
         {
           "parent": "codice_azienda",
@@ -805,7 +922,6 @@
     },
     {
       "entryKey": "progetti_sub_of_compiti",
-      "isHidden": false,
       "keys": [
         {
           "parent": "codice_azienda",
