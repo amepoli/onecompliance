@@ -62,6 +62,7 @@ export interface FieldConfig {
   isVisible?: boolean;
   newLine?: boolean;
   textareaHeight?: "S" | "M" | "L" | "XL";
+  showTextAreaRichFormatter?: boolean;
   buttonIcon?: string;
   prefix?: string;
   suffix?: string;

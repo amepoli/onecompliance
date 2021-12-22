@@ -12,6 +12,7 @@ export interface FormViewKey { // as per API specification
     hasLevel?: boolean;
     newLine: boolean;
     textareaHeight?: 'S' | 'M' | 'L' | 'XL';
+    showTextAreaRichFormatter?: boolean;
     buttonIcon?: string;
     confirmButtonAction?: boolean;
     isDownloadButton?: boolean;

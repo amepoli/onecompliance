@@ -1,0 +1,32 @@
+<ng-container *ngIf="field.isVisible && field.showTextAreaRichFormatter">
+    <angular-editor 
+        [id]="'editor_' + field.name"
+        [(ngModel)]="htmlContent"
+        [config]="editorConfig"
+        class="rich-text-editor"
+        (blur)="onBlur()"
+        [readonly]="field.readonly || readOnlyPage">
+    </angular-editor>
+</ng-container>
+
+<ng-container *ngIf="field.isVisible && !field.showTextAreaRichFormatter" >
+    <mat-form-field 
+        [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" 
+        (click)="onPress()"
+        [ngStyle]="{'width': '100%'}"
+        appearance="outline"
+        [formGroup]="group">
+        <mat-label>{{field.label}}</mat-label>
+        <textarea class="text-area" (input)="setHeights()" #textAreaEl
+            matInput [formControlName]="field.name" [readonly]="field.readonly || readOnlyPage" matTextareaAutosize
+            matAutosizeMinRows="1" matAutosizeMaxRows="5" [style.padding]="'4px'" [style.border-radius]="'4px'"
+            [style.background-color]="style.background_color" [style.color]="style.font_color"
+            [style.font-size]="style.font_size" [style.font-style]="style.font_style"
+            [style.font-weight]="style.font_weight"
+            (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()">
+        </textarea>
+        <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+            <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
+        </ng-container>
+    </mat-form-field>
+</ng-container>

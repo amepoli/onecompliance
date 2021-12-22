@@ -3,58 +3,12 @@ import { FormGroup } from "@angular/forms";
 import { ConsoleLoggerService, DialogService, HelperService, PubSubService, TimezoneService } from "app/oc/services";
 import { FieldConfig } from 'app/oc/interfaces';
 import { Subscription } from 'rxjs';
+import { AngularEditorConfig } from "@kolkov/angular-editor";
 
 @Component({
   selector: "app-textarea",
-  template: `
-<mat-form-field [ngClass]="field.eventTrigger === 'press' && (field.readonly || readOnlyPage)? 'readOnlyPressable': ''" (click)="onPress()" *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" appearance="outline" [formGroup]="group">
-<mat-label>{{field.label}}</mat-label>
-<textarea class="text-area" (input)="setHeights()" #textAreaEl
- matInput [formControlName]="field.name" [readonly]="field.readonly || readOnlyPage" matTextareaAutosize
- matAutosizeMinRows="1" matAutosizeMaxRows="5" [style.padding]="'4px'" [style.border-radius]="'4px'"
- [style.background-color]="style.background_color" [style.color]="style.font_color"
- [style.font-size]="style.font_size" [style.font-style]="style.font_style"
- [style.font-weight]="style.font_weight"
- (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()"></textarea>
-<ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
-<mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
-</ng-container>
-</mat-form-field>
-`,
-  styles: [`
-    :host ::ng-deep .mat-form-field-flex {
-      background-color: aliceblue;
-      border-radius: 8px;
-    }
-  
-    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex {
-      background-color: transparent !important;
-      border-radius: 8px;
-    }
-
-    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-start {
-      border: none !important;
-    }
-
-    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-gap {
-      border: none !important;
-    }
-
-    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-outline .mat-form-field-outline-end {
-      border: none !important;
-    }
-
-    :host ::ng-deep .readOnlyPressable .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix textarea {
-      color: #2196f3 !important;
-      cursor: pointer;
-      font-weight: 500 !important;
-      text-decoration: underline;
-    }
-    .text-area {
-      min-height: 18px !important;
-      max-height: 256px !important;
-    }
-  `],
+  templateUrl: './textarea.component.html',
+  styleUrls: ['./textarea.component.scss'],
   host: {
     '[style.padding-top.px]': 'field.isVisible? "16": "0"',
     '[style.margin-right]': 'field.isVisible? "1%": "0"',
@@ -79,8 +33,43 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   subscription: Subscription;
 
   @ViewChild('textAreaEl') textAreaEl: ElementRef;
-  @HostBinding('style.height.px') textAreaComponentHeight = '0';
+  @HostBinding('style.height') textAreaComponentHeight = '256px';
   
+  htmlContent: string = "";
+
+  editorConfig: AngularEditorConfig = {
+    editable: true,
+    spellcheck: true,
+    height: '140px',
+    minHeight: '140px',
+    maxHeight: '140px',
+    width: '100%',
+    minWidth: '100%',
+    translate: 'yes',
+    enableToolbar: true,
+    showToolbar: true,
+    placeholder: 'Enter text here...',
+    defaultParagraphSeparator: '',
+    defaultFontName: '',
+    defaultFontSize: '',
+    customClasses: [
+      
+    ],
+    fonts: [
+      {class: 'arial', name: 'Arial'},
+      {class: 'times-new-roman', name: 'Times New Roman'},
+      {class: 'calibri', name: 'Calibri'},
+      {class: 'comic-sans-ms', name: 'Comic Sans MS'}
+    ],
+    uploadWithCredentials: false,
+    sanitize: true,
+    toolbarPosition: 'top',
+    toolbarHiddenButtons: [
+      ['bold', 'italic'],
+      ['fontSize']
+    ]
+  };
+
   constructor(private timezoneService: TimezoneService,
     private pubSubService: PubSubService,
     private _console: ConsoleLoggerService,
@@ -101,21 +90,27 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
 
   setHeights() {
     // Reset field height
-    this.textAreaEl.nativeElement.style.height = 'inherit';
+    if(!this.field.showTextAreaRichFormatter) {
+      this.textAreaEl.nativeElement.style.height = 'inherit';
 
-    // Get the computed styles for the element
-    var computed = window.getComputedStyle(this.textAreaEl.nativeElement);
-
-    // Calculate the height
-    var height = Math.min(parseInt(computed.getPropertyValue('border-top-width'), 10)
-      + parseInt(computed.getPropertyValue('padding-top'), 10)
-      + this.textAreaEl.nativeElement.scrollHeight
-      + parseInt(computed.getPropertyValue('padding-bottom'), 10)
-      + parseInt(computed.getPropertyValue('border-bottom-width'), 10), this.maxHeight);
-
-    // Apply heights
-    this.textAreaEl.nativeElement.style.height = height + 'px';
-    this.textAreaComponentHeight = (height + 78) + "";
+      // Get the computed styles for the element
+      var computed = window.getComputedStyle(this.textAreaEl.nativeElement);
+  
+      // Calculate the height
+      var height = Math.min(parseInt(computed.getPropertyValue('border-top-width'), 10)
+        + parseInt(computed.getPropertyValue('padding-top'), 10)
+        + this.textAreaEl.nativeElement.scrollHeight
+        + parseInt(computed.getPropertyValue('padding-bottom'), 10)
+        + parseInt(computed.getPropertyValue('border-bottom-width'), 10), this.maxHeight);
+  
+      // Apply heights
+      this.textAreaEl.nativeElement.style.height = height + 'px';
+      this.textAreaComponentHeight = (height + 78) + "px";
+    }
+    else {
+      this.textAreaComponentHeight = "256px";
+    }
+    console.log('height set to:', this.textAreaComponentHeight);
   }
 
   ngAfterViewInit(): void {
@@ -127,11 +122,13 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
       }, 500);
     }
 
-    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'press') {
-      console.log(this.field);
+    if(_this.field.showTextAreaRichFormatter) {
+      _this.htmlContent = _this.field.value;
     }
+
     _this.setHeights();
     _this.loadStyles();
+
   }
 
   ngOnDestroy(): void {
@@ -144,6 +141,9 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
     const _this = this;
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
       _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur' });
+    }
+    if(_this.field.showTextAreaRichFormatter) {
+      _this.updateValue();
     }
   }
 
@@ -177,8 +177,13 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   updateValue() {
     const _this = this;
 
-    // Extra work needed to convert date type input
-    if (_this.field.inputType === 'date' || _this.field.inputType === 'datetime' || _this.field.inputType === 'time') {
+    if(_this.field.showTextAreaRichFormatter) {
+      // Copy from html content
+      _this.field.value = _this.htmlContent;
+      _this.group.get(_this.field.name).setValue(_this.field.value);
+    }
+    else if (_this.field.inputType === 'date' || _this.field.inputType === 'datetime' || _this.field.inputType === 'time') {
+      // Extra work needed to convert date type input
       let dateValue: any = _this.group.get(_this.field.name).value;
       let dateType = typeof dateValue;
       // Check if date in Moment type
