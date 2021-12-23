@@ -1,7 +1,11 @@
 {
   "$schema": "../views.schema.json",
-  "inheritsFrom": "compiti_consultant",
+  "inheritsFrom": "compiti",
   "entryKey": "compiti_aperti_to_do_sub_of_aziende_tasks",
+  "define": {
+    "is_hidden_compiti": "true",
+    "is_hidden_compiti_consultant": "false"
+  },
   "predefinedQueries": [
     {
       "type": "main",
@@ -22,6 +26,16 @@
       "operation": "update",
       "type": "postProcessing",
       "queryString": "select entrasp.assegna_compito_user_centro_gest_default((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$);"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0)  where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
     },
     {
       "operation": "startEvent",
