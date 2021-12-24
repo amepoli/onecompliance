@@ -378,16 +378,15 @@ exports.handler = async (event, context) => {
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
 
-                        query = `select entrasp.after_lambda_attachments('${company}',  ${nextId});`;
-                        console.log(query);
-                        response = await client.query(query);
-                        console.log(JSON.stringify(response));
                         body = { result: 'OK' };
                     } else { // wrong checksum 
                         body = { result: 'KO', reason: 'Error with file checksum' };
                     }
                 }
-
+                query = `select entrasp.after_lambda_attachments('${company}',  ${nextId});`;
+                        console.log(query);
+                        response = await client.query(query);
+                        //console.log(JSON.stringify(response));
 
             } else if (requestType === 'deleteFile') {
                 // create a temporary signed URL for the object 
