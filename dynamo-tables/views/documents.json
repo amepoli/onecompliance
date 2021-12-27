@@ -17,7 +17,7 @@
     {
       "operation": "selectTable",
       "type": "preProcessing",
-      "queryString": "select entrasp.aggiorna_cdms_bo_cdms_risorse(rs.codice_azienda, rs.id_risorsa, true) from entrasp.cdms_risorse_oggetti ro, entrasp.cdms_risorse rs where rs.codice_azienda=$codice_azienda$ and ro.codice_azienda=rs.codice_azienda and ro.id_risorsa=rs.id_risorsa and rs.id_argomento_stato != 4035"
+      "queryString": "select true as delete_documents, entrasp.aggiorna_cdms_bo_cdms_risorse(rs.codice_azienda, rs.id_risorsa, true) from entrasp.cdms_risorse_oggetti ro, entrasp.cdms_risorse rs where rs.codice_azienda=$codice_azienda$ and ro.codice_azienda=rs.codice_azienda and ro.id_risorsa=rs.id_risorsa and rs.id_argomento_stato != 4035"
     },
     {
       "operation": "selectTable",
@@ -238,6 +238,41 @@
     }
   ],
   "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "6%",
+      "queryFunct": "select true",
+      "key": "delete_documents",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "delete_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "argomenti_sub_of_argomenti_father",
+        "viewType": "form",
+        "query": "delete from entrasp.argomenti_argomenti where id_argomento_son=£id_argomento_son£ and id_argomento_father=£id_argomento_father£",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "id_argomento_son",
+            "destination": "id_argomento_son"
+          },
+          {
+            "source": "id_argomento_father",
+            "destination": "id_argomento_father"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
     {
       "format": {
         "dataType": "text"
