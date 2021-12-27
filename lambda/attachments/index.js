@@ -183,7 +183,8 @@ exports.handler = async (event, context) => {
 
     try {
 
-        if (requestType === 'getFileURL') {
+        if (requestType === 'getFileURL') {                                         
+            //console.log('IN: getFileURL');
             var url = s3.getSignedUrl('getObject', s3ParamsGetList);
             if (url == null) {
                 body = { result: 'KO', reason: 'Something wrong with cloud storage' };
@@ -191,6 +192,7 @@ exports.handler = async (event, context) => {
                 body = { result: 'OK', url: url };
             }
         } else {
+            //console.log('IN: else of getFileURL');    //often here
             const bus_object = await tableName2BusinessObject(entryName);
 
             client = await pool.connect();
@@ -216,7 +218,8 @@ exports.handler = async (event, context) => {
                 }
             }
 
-            if (requestType === 'getFileList') {
+            if (requestType === 'getFileList') {    
+                //console.log('requestType: getFileList');      //When load some page with attach icon OR "click" on attach icon
                 query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' AND nome_business_object='${bus_object}'
                  AND chiave='${chiave}';`;
                 response = await client.query(query);
@@ -232,6 +235,7 @@ exports.handler = async (event, context) => {
                 }
                 body = { result: 'OK', list: decnames };
             } else if (requestType === 'updateFile') {
+                //console.log('requestType: updateFile');       //NO more in this requestType from OneCompliance
                 // fill postgresql tables
                 const requestBody = JSON.parse(event.body);
                 query = `update entrasp.cdms_risorse set 
@@ -244,11 +248,13 @@ exports.handler = async (event, context) => {
                 body = { result: 'OK' };
 
             } else if (requestType === 'createNewFile') {
+                //console.log('requestType: createNewFile');        //onSave(), *** BUG: Also on update existing file, remove putObject ***
                 // create a temporary signed URL for the object 
                 const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
                 body = { result: 'OK', url: signedUrl, filename: filename };
 
             } else if (requestType === 'loadFileDataIfExists') {
+                //console.log('requestType: loadFileDataIfExist');      //When open a file from "Choose File"
                 query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`;
                 response = await client.query(query);
 
@@ -283,6 +289,7 @@ exports.handler = async (event, context) => {
                     // body = { result: 'KO', reason: 'File does not exist!' };
                 }
             } else if (requestType === 'fileCheck') {
+                //console.log('requestType: fileCheck');        //OnSave, so on INSERT a new file  AND  also on UPDATE an existing file
                 query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`;
                 response = await client.query(query);
 
@@ -291,6 +298,7 @@ exports.handler = async (event, context) => {
                 console.log('row: ' + response.rows[0]);
                 console.log('count: ' + response.rows[0].count);
                 if (filesCount > 0) {
+                    //Here Update existing file
                     try {
                         query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`
                         response = await client.query(query);
@@ -338,6 +346,7 @@ exports.handler = async (event, context) => {
 
                 }
                 else {
+                    //Here Insert new file
                     const object = await s3.getObject(s3ParamsGetList).promise();
                     const actualChecksum = shasum.update(object.Body).digest('hex');
                     const requestBody = JSON.parse(event.body);
@@ -378,31 +387,41 @@ exports.handler = async (event, context) => {
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
 
+                        query = `select entrasp.after_lambda_attachments('${company}',  ${nextId});`;
+                        console.log(query);
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
+
                         body = { result: 'OK' };
                     } else { // wrong checksum 
                         body = { result: 'KO', reason: 'Error with file checksum' };
                     }
                 }
-                query = `select entrasp.after_lambda_attachments('${company}',  ${nextId});`;
-                        console.log(query);
-                        response = await client.query(query);
-                        //console.log(JSON.stringify(response));
 
             } else if (requestType === 'deleteFile') {
+                //console.log('requestType: deleteFile');       //OnDelete existing file, ***BUG: Delete also all of link id_risorsa-other_object***
                 // create a temporary signed URL for the object 
                 const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsInsert);
 
                 const requestBody = JSON.parse(event.body);
 
-                query = `delete from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+                query = `delete from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${id_risorsa} and nome_business_object='${bus_object}' and chiave='${chiave}';`;
                 response = await client.query(query);
 
-                query = `delete from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+                query = `select count(id_risorsa) from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
                 response = await client.query(query);
 
-                query = `delete from entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
-                response = await client.query(query);
+                let objectCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count) : 0;
+                console.log('response of file exists by checksum_sha1:', response);
+                console.log('row: ' + response.rows[0]);
+                console.log('count: ' + response.rows[0].count);
+                if (objectCount = 0) {
+                    query = `delete from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+                    response = await client.query(query);
 
+                    query = `delete from entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+                    response = await client.query(query);
+                }
                 body = { result: 'OK', url: signedUrl };
             }
         }
