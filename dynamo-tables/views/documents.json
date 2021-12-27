@@ -62,14 +62,14 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg where arg.id_argomento in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1));",
+        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg where arg.id_argomento in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1)) order by arg.descrizione;",
         "options": [],
         "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "id_argomento_tipo_allegato",
-      "label": "Tipo Allegato",
+      "label": "Tipo Documento",
       "outputEvent": {
         "eventName": "aggiorna_id_tipo_allegato_documents",
         "eventTrigger": "select"
@@ -254,7 +254,7 @@
       "isPrimary": true,
       "width": "5%",
       "key": "id_risorsa",
-      "label": "ID Allegato"
+      "label": "ID Documento"
     },
     {
       "format": {
@@ -275,7 +275,7 @@
       "key": "tipo_allegato",
       "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_allegato)",
       "width": "15%",
-      "label": "Tipo allegato"
+      "label": "Tipo documento"
     },
     {
       "format": {
@@ -421,7 +421,7 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "label": "ID Allegato",
+      "label": "ID Documento",
       "newLine": false,
       "queryCond": "crs.id_risorsa=$id_risorsa_s$"
     },
@@ -432,7 +432,7 @@
         "options": [],
         "viewType": "combobox"
       },
-      "label": "Tipo Allegato",
+      "label": "Tipo Documento",
       "newLine": false,
       "queryCond": "crs.id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
     },
@@ -580,9 +580,9 @@
         "value": "0",
         "viewType": "checkbox"
       },
-      "label": "Non allegato",
+      "label": "Da allegare",
       "newLine": false,
-      "queryCond": "id_argomento_stato!=4035"
+      "queryCond": "id_argomento_stato=4034"
     },
     {
       "fieldName": "non_richiesto",
