@@ -16,7 +16,7 @@
     },
     {
       "operation": "selectTable",
-      "queryString": "select entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.descrizione, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND cdr.id_sondaggio=$id_sondaggio$",
+      "queryString": "select case when crs.id_argomento_stato!=4035 then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs INNER JOIN entrasp.cdms_risorse_oggetti cdr ON cdr.codice_azienda=crs.codice_azienda and cdr.id_risorsa=crs.id_risorsa WHERE crs.codice_azienda=$codice_azienda$ AND cdr.id_sondaggio=$id_sondaggio$",
       "type": "main"
     },
     {
@@ -33,6 +33,41 @@
   "table_keys": [
     {
       "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "6%",
+      "queryFunct": "select true",
+      "key": "delete_documents",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "delete_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "documents",
+        "viewType": "form",
+        "query": "delete from entrasp.cdms_risorse_oggetti where id_risorsa=£id_risorsa£ and codice_azienda='£codice_azienda£'; delete from entrasp.cdms_risorse where id_risorsa=£id_risorsa£ and codice_azienda='£codice_azienda£'",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "id_risorsa",
+            "destination": "id_risorsa"
+          },
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
         "dataType": "text"
       },
       "isHidden": true,
@@ -42,7 +77,7 @@
     },
     {
       "format": {
-        "dataType": "text"
+        "dataType": "number"
       },
       "isHidden": true,
       "isPrimary": false,

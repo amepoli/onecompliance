@@ -21,7 +21,7 @@
     },
     {
       "operation": "selectTable",
-      "queryString": "select true as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1))",
+      "queryString": "select case when crs.id_argomento_stato!=4035 then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1))",
       "type": "main"
     },
     {
@@ -127,7 +127,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "descrizione_breve",
-      "label": "Descrizione",
+      "label": "Descrizione breve",
       "newLine": false,
       "size": 6,
       "readOnly": false
@@ -161,6 +161,19 @@
       "label": "Stato",
       "readOnly": false,
       "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "Descrizione",
+      "label": "Descrizione",
+      "newLine": true,
+      "readOnly": false
     },
     {
       "key": "id_anagrafica",
@@ -253,7 +266,7 @@
       "buttonAction": {
         "target": "documents",
         "viewType": "form",
-        "query": "delete from entrasp.cdms_risorse where id_risorsa=£id_risorsa£ and codice_azienda=£codice_azienda£",
+        "query": "delete from entrasp.cdms_risorse_oggetti where id_risorsa=£id_risorsa£ and codice_azienda='£codice_azienda£'; delete from entrasp.cdms_risorse where id_risorsa=£id_risorsa£ and codice_azienda='£codice_azienda£'",
         "action": "query",
         "keymap": [
           {
@@ -323,8 +336,8 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "descrizione",
-      "width": "20%",
+      "key": "descrizione_breve",
+      "width": "25%",
       "label": "Descrizione documento"
     },
     {
@@ -377,6 +390,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "anagrafica_descr",
+      "width": "15%",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica)",
       "label": "Cliente/Fornitore/Dipendente"
     },
