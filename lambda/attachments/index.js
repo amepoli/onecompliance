@@ -399,7 +399,7 @@ exports.handler = async (event, context) => {
                 }
 
             } else if (requestType === 'deleteFile') {
-                //console.log('requestType: deleteFile');       //OnDelete existing file, ***BUG: Delete also all of link id_risorsa-other_object***
+                //console.log('requestType: deleteFile');       //OnDelete existing file
                 // create a temporary signed URL for the object 
                 const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsInsert);
 
