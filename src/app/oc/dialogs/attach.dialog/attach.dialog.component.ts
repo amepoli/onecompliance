@@ -244,7 +244,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         const _this = this;
         _this._console.log(event);
         _this.attach = false;
-        if (_this.file != null) {
+        if (_this.file != null ) {
             // get the S3 URL 
             const subscription = _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys).subscribe(
                 responseURL => {
