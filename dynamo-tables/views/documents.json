@@ -16,15 +16,12 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-<<<<<<< HEAD
       "type": "preProcessing",
-      "queryString": "select true as delete_documents, entrasp.aggiorna_cdms_bo_cdms_risorse(rs.codice_azienda, rs.id_risorsa, true) from entrasp.cdms_risorse_oggetti ro, entrasp.cdms_risorse rs where rs.codice_azienda=$codice_azienda$ and ro.codice_azienda=rs.codice_azienda and ro.id_risorsa=rs.id_risorsa and rs.id_argomento_stato != 4035"
+      "queryString": "select entrasp.aggiorna_cdms_bo_cdms_risorse(rs.codice_azienda, rs.id_risorsa, true) from entrasp.cdms_risorse_oggetti ro, entrasp.cdms_risorse rs where rs.codice_azienda=$codice_azienda$ and ro.codice_azienda=rs.codice_azienda and ro.id_risorsa=rs.id_risorsa and rs.id_argomento_stato != 4035"
     },
     {
       "operation": "selectTable",
-=======
->>>>>>> ed563a593348d700540c945515b35460d7e14948
-      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1))",
+      "queryString": "select true as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.id_argomento_tipo_allegato,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1))",
       "type": "main"
     },
     {
@@ -254,18 +251,18 @@
       ],
       "isButton": true,
       "buttonAction": {
-        "target": "argomenti_sub_of_argomenti_father",
+        "target": "documents",
         "viewType": "form",
-        "query": "delete from entrasp.argomenti_argomenti where id_argomento_son=£id_argomento_son£ and id_argomento_father=£id_argomento_father£",
+        "query": "delete from entrasp.cdms_risorse where id_risorsa=£id_risorsa£ and codice_azienda=£codice_azienda£",
         "action": "query",
         "keymap": [
           {
-            "source": "id_argomento_son",
-            "destination": "id_argomento_son"
+            "source": "id_risorsa",
+            "destination": "id_risorsa"
           },
           {
-            "source": "id_argomento_father",
-            "destination": "id_argomento_father"
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
           }
         ],
         "onSuccessAction": "reload"
