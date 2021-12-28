@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2018-08-09T09:25:31 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="fontiRischio" pageWidth="500" pageHeight="842" columnWidth="498" leftMargin="1" rightMargin="1" topMargin="1" bottomMargin="1" whenResourceMissingType="Empty" uuid="7d574a1d-f666-41c0-8bf5-ec734796af28">
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports5.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="compiti" pageWidth="600" pageHeight="842" columnWidth="570" leftMargin="15" rightMargin="15" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="376ede0d-23cd-4d7b-a1bf-664463cad42c">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
 	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
@@ -10,37 +9,65 @@
 	<property name="com.jasperassistant.designer.Grid" value="false"/>
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="businessObjectName" value="articoli"/>
+	<property name="businessObjectName" value="compiti"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
-	<import value="it.interprise.core.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
-	<parameter name="PATH_IMG" class="java.lang.String">
-		<defaultValueExpression><![CDATA[new String ("http://localhost/core/images/SICC/")]]></defaultValueExpression>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["FINAFARM"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="LOGO" class="java.lang.String"/>
+	<parameter name="codice_compito" class="java.lang.String">
+		<defaultValueExpression><![CDATA["224"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
-		<![CDATA[]]>
+		<![CDATA[select data_intervento, note from entrasp.consuntivazioni where codice_azienda=$P{codice_azienda} and codice_compito=$P{codice_compito}]]>
 	</queryString>
-	<field name="dataIntervento" class="java.util.Date"/>
-	<field name="note" class="java.lang.String"/>
-	<field name="noteTecniche" class="java.lang.String"/>
-	<sortField name="dataIntervento" order="Descending"/>
+	<field name="data_intervento" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="data_intervento"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_intervento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="consuntivazioni"/>
+	</field>
+	<field name="note" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="note"/>
+		<property name="com.jaspersoft.studio.field.label" value="note"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="consuntivazioni"/>
+	</field>
+	<sortField name="data_intervento" order="Descending"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="20">
+		<band height="30">
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="3" width="111" height="16" backcolor="#000000" uuid="a433af99-e326-41fd-9df7-408c17b18f34"/>
-				<textElement verticalAlignment="Middle">
-					<font size="11" isBold="true"/>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="5" width="390" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="e6105f57-42c3-4c31-ab7b-62f10ecb0759">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Consuntivazioni]]></text>
+				<text><![CDATA[  Aggiornamenti/ azioni correttive]]></text>
 			</staticText>
 		</band>
 	</pageHeader>
@@ -48,7 +75,7 @@
 		<band height="28" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="1" y="0" width="68" height="20" isRemoveLineWhenBlank="true" uuid="6f144570-98fc-4f44-938e-7ec8d8206db8"/>
-				<textFieldExpression><![CDATA[$F{dataIntervento}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{data_intervento}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement positionType="Float" x="1" y="22" width="480" height="1" uuid="efc9d7b1-dbe2-4b3a-a736-ffecab88b01f"/>
