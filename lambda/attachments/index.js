@@ -321,6 +321,10 @@ exports.handler = async (event, context) => {
                             console.log(query);
                             response = await client.query(query);
 
+                            query = `select entrasp.after_lambda_attachments('${company}',  ${nextId});`;
+                            console.log(query);
+                            response = await client.query(query);
+                            console.log(JSON.stringify(response));
                         }
 
                     }
