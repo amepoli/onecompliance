@@ -228,7 +228,16 @@
                                     <mat-icon *ngIf="doesButtonIconExist(entry.key)">{{getButtonIcon(entry.key)}}</mat-icon>
                                     {{entry.label}}
                                 </button>
-                                <p *ngIf="!entry.isButton && !entry.isCheckbox" style="width: 100%; text-align: left;"
+                                    
+                                
+                                <p *ngIf="entry.isInputButton" style="width: 100%; text-align: left;"
+                                    [style.padding-left.px]="getLevel(row, entry.key)"
+                                    [ngStyle]="getElementStyle(entry.key, row[entry.key])"
+                                    class="input-clickable"
+                                    (click)="onButtonClick(entry.key, i, row)">
+                                    {{row[entry.key] | onecompliance: format[entry.key]}}
+                                </p>
+                                <p *ngIf="!entry.isInputButton && !entry.isButton && !entry.isCheckbox" style="width: 100%; text-align: left;"
                                     [style.padding-left.px]="getLevel(row, entry.key)"
                                     [ngStyle]="getElementStyle(entry.key, row[entry.key])">
                                     {{row[entry.key] | onecompliance: format[entry.key]}}
