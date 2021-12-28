@@ -15,6 +15,7 @@ export class TimeTrackerComponent implements DoCheck, AfterViewInit, OnDestroy {
 
     data: any = null;
     elapsedTime: string = null;
+    descriptionColor: string = 'black';
     
     private subscriptions: Subscription[] = [];
 
@@ -30,6 +31,13 @@ export class TimeTrackerComponent implements DoCheck, AfterViewInit, OnDestroy {
             _this.data = status.data;
             _this.elapsedTime = status.elapsedTime;
         }));
+
+        // Receive Event Time Tracker Description color()
+        _this.subscriptions.push(_this._timeTrackerService.descriptionColorUpdated.subscribe((status) => {
+            _this.descriptionColor = status || 'blue';
+        }));
+
+        
         
     }
 

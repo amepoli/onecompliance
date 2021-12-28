@@ -816,11 +816,11 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
         }
         else if(action == 'update_time_tracker') {
-            _this._timeTrackerService.checkTimerStatus();
+            _this._timeTrackerService.checkStatus();
         }
         else if(action == 'update_time_tracker_and_reload') {
             // check Timer Status first
-            _this._timeTrackerService.checkTimerStatus();
+            _this._timeTrackerService.checkStatus();
             
             // reload
             _this.loadData();

@@ -29,7 +29,7 @@ export class WindowService {
      * Run Focus events
      */
     public runFocusEvent(ev: any) {
-        this._timeTrackerService.checkTimerStatus();
+        this._timeTrackerService.checkStatus();
     }
     
     /**

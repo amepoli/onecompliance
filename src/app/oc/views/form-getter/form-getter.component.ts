@@ -945,7 +945,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
             }
         } else if(event.actionType === 'update_time_tracker') {
-            _this._timeTrackerService.checkTimerStatus();
+            _this._timeTrackerService.checkStatus();
         } else if (event.actionType === 'navigate' && conditionMet) {
             const formLine = _this.filteredFormData[value.index];
             const navigationKeys = {};
@@ -1185,7 +1185,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                 }
                 else if(action === 'update_time_tracker') {
-                    _this._timeTrackerService.checkTimerStatus();
+                    _this._timeTrackerService.checkStatus();
                 }
                 else if (actionType === 'email') {
                     

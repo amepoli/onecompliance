@@ -32,7 +32,8 @@ const scripts = {
         where csn.id_risorsa = entrasp.user_current_azienda((€global_id_anagrafiche€):: text, csn.codice_azienda)
         and csn.date_time_begin = (select max(csn2.date_time_begin) from entrasp.consuntivazioni csn2 where csn2.date_time_begin<now() and csn2.id_risorsa = entrasp.user_current_azienda((€global_id_anagrafiche€):: text, csn2.codice_azienda))`,
     startTime: "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '£codice_compito£', '£codice_azienda£')",
-    stopTime: "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+    stopTime: "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
+    isTrDayComplete: `select entrasp.is_tr_day_complete('£user_name£', '£date_time£')` 
 };
 
 var global_variables = {};
@@ -181,6 +182,8 @@ exports.handler = async (event, context) => {
 
     const company = queryParams['company'] ? queryParams['company'] : null;
     const codice_compito = queryParams['codice_compito'] ? queryParams['codice_compito'] : null;
+    const user_name = queryParams['user_name'] ? queryParams['user_name'] : null;
+    const date_time = queryParams['date_time'] ? queryParams['date_time'] : null;
 
     var queryData = null;
 
@@ -235,6 +238,8 @@ exports.handler = async (event, context) => {
             let keys = {}; //getKeyTypes(entry_keys);
             keys['codice_azienda'] = company;
             keys['codice_compito'] = codice_compito;
+            keys['user_name'] = user_name;
+            keys['date_time'] = date_time;
 
             console.log('keys: ', keys);
 
