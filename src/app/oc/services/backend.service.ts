@@ -296,6 +296,13 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.emailApiName, this.myPutPostInit));
   }
 
+  
+  isTrDayComplete(username: string, date_time: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = {request_type: 'isTrDayComplete', user_name: username, date_time: date_time };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.timeTrackerApiName, this.myGetInit));
+  }
+
   checkTimerStatus(company: string): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = {request_type: 'checkStatus', company: company };

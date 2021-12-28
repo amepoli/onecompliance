@@ -55,7 +55,7 @@ export class ActionsService {
                     _this._toastService.showSuccessToast(actionType + " successful!");
 
                     if(actionType === 'startEvent' || actionType === 'stopEvent') {
-                        _this._timeTrackerService.checkTimerStatus();
+                        _this._timeTrackerService.checkStatus();
                     }
                 }
                 else {

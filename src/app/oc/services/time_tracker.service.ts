@@ -1,5 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { TimezoneService } from './timezone.service';
 import { TimeTrackerStatus } from '../interfaces';
 import { AuthService } from './auth.service';
 import { BackendService } from './backend.service';
@@ -15,6 +16,9 @@ export class TimeTrackerService {
     // Event Emitter for naviate requests
     public statusUpdated: EventEmitter<TimeTrackerStatus> = new EventEmitter();
 
+    // Event Emitter for description color
+    public descriptionColorUpdated: EventEmitter<string> = new EventEmitter();
+
     public lastStatus: TimeTrackerStatus;
     public lastStatusUpdate: number;
     
@@ -27,63 +31,78 @@ export class TimeTrackerService {
     constructor(
         private _authService: AuthService,
         private _backendService: BackendService,
-        private _toastService: ToastService
+        private _toastService: ToastService,
+        private _timezoneService: TimezoneService
     ) {
     }
 
-
     /**
-     * Check Timer Status
+     * Check Status
      */
-    checkTimerStatus() {
+    checkStatus() {
         let _this = this;
+        const userName = _this._authService.getUsername();
+        const dateTimeNow =   HelperService.getFormattedDateTime((new Date()).toString(), _this._timezoneService.timezoneInfo.utc_offset);
         const company = _this._authService.getCurrentCompany();
         
-        if(company) {
+        if(userName && dateTimeNow && company) {
             if(_this.lastStatus) {
                 _this.updateStatusLocally();
             }
-            let subscription = _this._backendService.checkTimerStatus(company).subscribe(
-                result => {
-                    if (result.result === 'OK' && result.data) {
-                        let status: TimeTrackerStatus = {data: null, elapsedTime: null};
-                        if (Array.isArray(result.data)) {
-                            status.data = result.data[0];
-                        }
-                        else {
-                            status.data = result.data;
-                        }
-                        
-                        if(!_this.lastStatus || _this.isStatusDifferent(_this.lastStatus, status)) {
-                            status.elapsedTime = HelperService.getTwoDigitText(status.data.elapsed_time.hours? status.data.elapsed_time.hours: 0) + ':' +
-                            HelperService.getTwoDigitText(status.data.elapsed_time.minutes? status.data.elapsed_time.minutes: 0) + ':' +
-                            HelperService.getTwoDigitText(status.data.elapsed_time.seconds? status.data.elapsed_time.seconds: 0)
-                            
-                            _this.lastStatusUpdate = Date.now();
-                            _this.lastStatus = status;
-                            _this.lastStatus.data.elapsed_time.hours = _this.lastStatus.data.elapsed_time.hours || 0;
-                            _this.lastStatus.data.elapsed_time.minutes = _this.lastStatus.data.elapsed_time.minutes || 0;
-                            _this.lastStatus.data.elapsed_time.seconds = _this.lastStatus.data.elapsed_time.seconds || 0;
-                            _this.lastStatus.data.elapsed_time.milliseconds = _this.lastStatus.data.elapsed_time.milliseconds || 0;
-                            
-                            _this.statusUpdated.emit(status);
-
-                        }
-                        else {
-                            _this.updateStatusLocally();
-                        }
+            let isTrDayCompleteSubscription = _this._backendService.isTrDayComplete(userName, dateTimeNow).subscribe(
+                isTrDayCompleteResponse => {
+                    if(isTrDayCompleteResponse.result === 'OK' && isTrDayCompleteResponse.data && isTrDayCompleteResponse.data.length && isTrDayCompleteResponse.data[0]['is_tr_day_complete']) {
+                        let color = isTrDayCompleteResponse.data[0]['is_tr_day_complete'];
+                        _this.descriptionColorUpdated.emit(color);
+                        let subscription = _this._backendService.checkTimerStatus(company).subscribe(
+                            result => {
+                                if (result.result === 'OK' && result.data) {
+                                    let status: TimeTrackerStatus = {data: null, elapsedTime: null};
+                                    if (Array.isArray(result.data)) {
+                                        status.data = result.data[0];
+                                    }
+                                    else {
+                                        status.data = result.data;
+                                    }
+                                    
+                                    if(!_this.lastStatus || _this.isStatusDifferent(_this.lastStatus, status)) {
+                                        status.elapsedTime = HelperService.getTwoDigitText(status.data.elapsed_time.hours? status.data.elapsed_time.hours: 0) + ':' +
+                                        HelperService.getTwoDigitText(status.data.elapsed_time.minutes? status.data.elapsed_time.minutes: 0) + ':' +
+                                        HelperService.getTwoDigitText(status.data.elapsed_time.seconds? status.data.elapsed_time.seconds: 0)
+                                        
+                                        _this.lastStatusUpdate = Date.now();
+                                        _this.lastStatus = status;
+                                        _this.lastStatus.data.elapsed_time.hours = _this.lastStatus.data.elapsed_time.hours || 0;
+                                        _this.lastStatus.data.elapsed_time.minutes = _this.lastStatus.data.elapsed_time.minutes || 0;
+                                        _this.lastStatus.data.elapsed_time.seconds = _this.lastStatus.data.elapsed_time.seconds || 0;
+                                        _this.lastStatus.data.elapsed_time.milliseconds = _this.lastStatus.data.elapsed_time.milliseconds || 0;
+                                        
+                                        _this.statusUpdated.emit(status);
+            
+                                    }
+                                    else {
+                                        _this.updateStatusLocally();
+                                    }
+                                }
+                                else{
+                                    _this.statusUpdated.emit(null);
+                                }
+                                subscription.unsubscribe();
+                            },
+                            error => {
+                                _this._toastService.showErrorToast(error);
+                                _this.statusUpdated.emit(null);
+                                subscription.unsubscribe();
+                            }
+                        );
                     }
-                    else{
-                        _this.statusUpdated.emit(null);
-                    }
-                    subscription.unsubscribe();
+                    isTrDayCompleteSubscription.unsubscribe();
                 },
                 error => {
-                    _this._toastService.showErrorToast(error);
-                    _this.statusUpdated.emit(null);
-                    subscription.unsubscribe();
+                    console.error(error);
+                    isTrDayCompleteSubscription.unsubscribe();
                 }
-            );
+            )
         }
     }
 
@@ -110,7 +129,7 @@ export class TimeTrackerService {
                     }
                     if (status) {
                         _this._toastService.showSuccessToast('Task started!');
-                        _this.checkTimerStatus();
+                        _this.checkStatus();
                     }
                     else {
                         _this._toastService.showErrorToast('Task startng failed!');
@@ -148,7 +167,7 @@ export class TimeTrackerService {
                     }
                     if (status) {
                         _this._toastService.showSuccessToast('Task stopped!');
-                        _this.checkTimerStatus();
+                        _this.checkStatus();
                     }
                     else {
                         _this._toastService.showErrorToast('Task stopping failed!');
@@ -196,7 +215,7 @@ export class TimeTrackerService {
             }
         }
         else {
-            _this.checkTimerStatus();
+            _this.checkStatus();
         }
 
     }
