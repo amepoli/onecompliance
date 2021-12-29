@@ -4,10 +4,10 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
-    host: 'HOST_NAME',
-    database: 'DB_NAME',
-    user: 'USER_NAME',
-    password: 'PASSWORD',
+    host: 'onecompliance-aurora-proxy.proxy-caxbbckt9xen.eu-central-1.rds.amazonaws.com',
+    database: 'Gorico',
+    user: 'postgres',
+    password: 'et2themax',
     port: 5432,
     max: 1,
     min: 0,
@@ -35,7 +35,7 @@ async function overrideTable(son) {
     }
 
     const DynamoParams = {
-        TableName: 'VIEWS_NAME',
+        TableName: 'views',
         Key: {
             entryKey: son.inheritsFrom
         }
@@ -67,7 +67,7 @@ async function tableName2BusinessObject(table_name) {
     }
 
     const DynamoParams = {
-        TableName: 'VIEWS_NAME',
+        TableName: 'views',
         Key: {
             entryKey: table_name
         }
@@ -167,12 +167,12 @@ exports.handler = async (event, context) => {
     }
 
     const s3ParamsInsert = {
-        Bucket: 'BUCKET_NAME',
+        Bucket: 'gorico2.core',
         Key: company + '/' + filename
     };
 
     const s3ParamsGetList = {
-        Bucket: 'BUCKET_NAME',
+        Bucket: 'gorico2.core',
         Key: company + '/' + filename
     };
 
@@ -201,6 +201,8 @@ exports.handler = async (event, context) => {
 
             let chiave = '';
 
+            let idrisorsa;
+
             keys = Object.assign({ 'codice_azienda': company }, keys);
 
             // Let's run query to get keys arrangement
@@ -212,6 +214,7 @@ exports.handler = async (event, context) => {
                 let queryKeys = response.rows[0].grc_listacampiditabella_pk.split(' ').join('').split(',');
                 if (queryKeys != null) {
                     chiave = keys[queryKeys[0]];
+                    idrisorsa = (bus_object == 'cdms_risorse') ? keys[queryKeys[1]] : -1 ;
                     for (let i = 1; i < queryKeys.length; i++) {
                         chiave = chiave + '^' + keys[queryKeys[i]];
                     }
@@ -225,7 +228,7 @@ exports.handler = async (event, context) => {
                 response = await client.query(query);
                 console.log(query, response);
                 let ids = response['rows'].map(f => f['id_risorsa']);
-                for (let i = 0; i < ids.length; i++) {
+                for (let i = 0; i < ids.length; i++) {      //PER OGNI FILE ALLEGATO A QUEST'OGGETTO
                     query = `select * from entrasp.cdms_risorse as a 
                 inner join entrasp.cdms_risorse_revisioni as b on a.codice_azienda = b.codice_azienda AND a.id_risorsa = b.id_risorsa 
                 where a.codice_azienda='${company}' AND a.id_risorsa=${ids[i]};`;
@@ -307,24 +310,27 @@ exports.handler = async (event, context) => {
                             const codiceAziendaExisting = existingRows[0]['codice_azienda'];
                             const idRisorsaExisting = existingRows[0]['id_risorsa'];
                             const requestBody = JSON.parse(event.body);
+                            idarg = (requestBody.id_argomento_tipo_allegato == undefined) ? null : requestBody.id_argomento_tipo_allegato ;
+                            idcg = (requestBody.id_centro_gest == undefined) ? null : requestBody.id_centro_gest ;
 
                             query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
-                            values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}');`;
+                            values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}') ON CONFLICT DO NOTHING;`;
                             console.log(query);
                             response = await client.query(query);
 
-                            query = `update  entrasp.cdms_risorse set nickname='${replaceAll(requestBody.nickname, "'", "''")}', descrizione='${requestBody.descrizione}', 
-                            data_ultima_revisione='${date}', descrizione_breve='${requestBody.descrizione_breve}', ts_ultima_modifica='${date}',
-                            id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato}, id_centro_gest=${requestBody.id_centro_gest}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
-                            data_rif=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=${requestBody.id_riunione}, id_odg=${requestBody.id_odg}
+                            query = `update  entrasp.cdms_risorse set nickname=coalesce('${replaceAll(requestBody.nickname, "'", "''")}',nickname), descrizione=coalesce('${requestBody.descrizione}',descrizione), 
+                            data_ultima_revisione=coalesce('${date}', data_ultima_revisione), descrizione_breve=coalesce('${requestBody.descrizione_breve}',descrizione_breve), ts_ultima_modifica=coalesce('${date}',ts_ultima_modifica),
+                            id_argomento_tipo_allegato=coalesce(${idarg},3981), id_centro_gest=${idcg}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
+                            data_rif=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
                             where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting};`;
                             console.log(query);
                             response = await client.query(query);
 
-                            query = `select entrasp.after_lambda_attachments('${company}',  ${nextId});`;
+                            idrisorsa = (idrisorsa == -1) ? idRisorsaExisting : idrisorsa;
+                            query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;
                             console.log(query);
                             response = await client.query(query);
-                            console.log(JSON.stringify(response));
+                            console.log(JSON.stringify(response)); 
                         }
 
                     }
@@ -390,8 +396,9 @@ exports.handler = async (event, context) => {
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
-
-                        query = `select entrasp.after_lambda_attachments('${company}',  ${nextId});`;
+                            
+                        idrisorsa = (idrisorsa == -1) ? nextId : idrisorsa;
+                        query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
