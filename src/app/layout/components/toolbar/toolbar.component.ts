@@ -23,7 +23,7 @@ import { ImportExportService } from 'app/oc/services/import_export.service';
 import { NavigationService } from 'app/oc/services/navigation.service';
 import { ConsoleLoggerService } from 'app/oc/services/console_logger.service';
 import { ExportItem, ImportItem, MessageElement, UserInfo } from 'app/oc/interfaces';
-import { HelperService } from 'app/oc/services';
+import { HelperService, TimeTrackerService } from 'app/oc/services';
 
 @Component({
     selector: 'toolbar',
@@ -82,7 +82,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         private _reportService: ReportService,
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
-        private _console: ConsoleLoggerService
+        private _console: ConsoleLoggerService,
+        private _timeTrackerService: TimeTrackerService
     ) {
         // Set the defaults
         this.userStatusOptions = [
@@ -236,6 +237,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         }
 
         this._backendService.runCompanyChangeQuery(company);
+        setTimeout(() => this._timeTrackerService.checkStatus(), 1000);
     }
 
     /**
