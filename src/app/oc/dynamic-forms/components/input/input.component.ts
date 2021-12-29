@@ -38,14 +38,18 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     _this.field.style = _this.field.style == null ? { background_color: 'transparent', font_color: 'black' } : _this.field.style;
     _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'transparent';
     _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
+    
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
       _this.subscription = _this.group.get(_this.field.name).valueChanges.subscribe(value => {
         _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: value, type: 'change' });
       });
     }
-    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
-      setTimeout(() => _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'blur' }), 50);
-    }
+
+    // When we create an input component, we are running it's blur event
+    // Commenting this event for testing
+    // if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
+    //   setTimeout(() => _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'blur' }), 50);
+    // }
 
     // Format the field value if needed
     _this.formatValue();
@@ -61,13 +65,14 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    const _this = this;
+    const _this = this;    
     // publish a change event to start if expected
-    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
-      setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
-        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
-      }, 500);
-    }
+    // Commenting this event for testing
+    // setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
+    //   if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
+    //     _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
+    //   }
+    // }, 500);
   }
 
   ngOnDestroy(): void {
