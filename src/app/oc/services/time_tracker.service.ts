@@ -51,7 +51,7 @@ export class TimeTrackerService {
             }
             let isTrDayCompleteSubscription = _this._backendService.isTrDayComplete(userName, dateTimeNow).subscribe(
                 isTrDayCompleteResponse => {
-                    if(isTrDayCompleteResponse.result === 'OK' && isTrDayCompleteResponse.data && isTrDayCompleteResponse.data.length && isTrDayCompleteResponse.data[0]['is_tr_day_complete']) {
+                    if(isTrDayCompleteResponse.result === 'OK' && isTrDayCompleteResponse.data && isTrDayCompleteResponse.data[0] && isTrDayCompleteResponse.data[0]['is_tr_day_complete']) {
                         let color = isTrDayCompleteResponse.data[0]['is_tr_day_complete'];
                         _this.descriptionColorUpdated.emit(color);
                         let subscription = _this._backendService.checkTimerStatus(company).subscribe(
@@ -209,9 +209,11 @@ export class TimeTrackerService {
                 
                 currentStatus.elapsedTime = HelperService.getTwoDigitText(currentStatus.data.elapsed_time.hours? currentStatus.data.elapsed_time.hours: 0) + ':' +
                                 HelperService.getTwoDigitText(currentStatus.data.elapsed_time.minutes? currentStatus.data.elapsed_time.minutes: 0) + ':' +
-                                HelperService.getTwoDigitText(currentStatus.data.elapsed_time.seconds? currentStatus.data.elapsed_time.seconds: 0)
+                                HelperService.getTwoDigitText(currentStatus.data.elapsed_time.seconds? currentStatus.data.elapsed_time.seconds: 0)                
                 _this.statusUpdated.emit(currentStatus);
-
+            }
+            else {
+                _this.statusUpdated.emit(_this.lastStatus);
             }
         }
         else {
