@@ -36,6 +36,16 @@
       "operation": "update",
       "type": "postProcessing",
       "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0)  where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+    },
+    {
+      "operation": "startEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$')"
+    },
+    {
+      "operation": "stopEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
     }
   ],
   "table_keys": [
