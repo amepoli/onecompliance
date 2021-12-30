@@ -11,6 +11,11 @@ if [ ! -f ../../${1}.json ]; then
     exit 0
 fi
 
+if [ -f ./index.js.ori ]; then
+    echo "Something wrong with your environment, found index.js.ori !"
+    exit 0
+fi
+
 LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.google_api.lambdaName"`
 
 DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`

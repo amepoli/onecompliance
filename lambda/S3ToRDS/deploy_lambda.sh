@@ -6,6 +6,11 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
+if [ -f ./index.js.ori ]; then
+    echo "Something wrong with your environment, found index.js.ori !"
+    exit 0
+fi
+
 LAMBDANAME="S3ToRDS"
 SCHEMA="entrasp"
 
