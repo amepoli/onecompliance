@@ -214,6 +214,8 @@ exports.handler = async (event, context) => {
                 let queryKeys = response.rows[0].grc_listacampiditabella_pk.split(' ').join('').split(',');
                 if (queryKeys != null) {
                     chiave = keys[queryKeys[0]];
+                    //HACK: getting specific ID from specific view (cdms_risorse). 
+                    //To attach a file to specific "idrisorsa"(the one below) of that view 
                     idrisorsa = (bus_object == 'cdms_risorse') ? keys[queryKeys[1]] : -1 ;
                     for (let i = 1; i < queryKeys.length; i++) {
                         chiave = chiave + '^' + keys[queryKeys[i]];
@@ -326,7 +328,8 @@ exports.handler = async (event, context) => {
                             console.log(query);
                             response = await client.query(query);
 
-                            idrisorsa = (idrisorsa == -1) ? idRisorsaExisting : idrisorsa;
+                            //HACK: exception in case of bus_object="cdms_risorse"
+                            idrisorsa = (idrisorsa == -1) ? idRisorsaExisting : idrisorsa; 
                             query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;
                             console.log(query);
                             response = await client.query(query);
@@ -396,7 +399,8 @@ exports.handler = async (event, context) => {
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
-                            
+
+                        //HACK: exception in case of bus_object="cdms_risorse"
                         idrisorsa = (idrisorsa == -1) ? nextId : idrisorsa;
                         query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;
                         console.log(query);
