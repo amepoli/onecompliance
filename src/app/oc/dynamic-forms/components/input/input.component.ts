@@ -47,8 +47,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // When we create an input component, we are running it's blur event
     // Commenting this event for testing
-    // if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
-    //   setTimeout(() => _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'blur' }), 50);
+    //if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
+    //  setTimeout(() => _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'blur' }), 50);
     // }
 
     // Format the field value if needed
@@ -66,13 +66,14 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     const _this = this;    
+    
     // publish a change event to start if expected
-    // Commenting this event for testing
-    // setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
-    //   if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
-    //     _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
-    //   }
-    // }, 500);
+    // This lines are put in order to make possible answers appear. We should find a different solution.
+     setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
+       if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
+         _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
+       }
+     }, 500);
   }
 
   ngOnDestroy(): void {
