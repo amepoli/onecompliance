@@ -4,10 +4,10 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const Pool = require('pg-pool');
 const pool = new Pool({
-    host: 'onecompliance-aurora-proxy.proxy-caxbbckt9xen.eu-central-1.rds.amazonaws.com',
-    database: 'Gorico',
-    user: 'postgres',
-    password: 'et2themax',
+    host: 'HOST_NAME',
+    database: 'DB_NAME',
+    user: 'USER_NAME',
+    password: 'PASSWORD',
     port: 5432,
     max: 1,
     min: 0,
@@ -35,7 +35,7 @@ async function overrideTable(son) {
     }
 
     const DynamoParams = {
-        TableName: 'views',
+        TableName: 'VIEWS_NAME',
         Key: {
             entryKey: son.inheritsFrom
         }
@@ -67,7 +67,7 @@ async function tableName2BusinessObject(table_name) {
     }
 
     const DynamoParams = {
-        TableName: 'views',
+        TableName: 'VIEWS_NAME',
         Key: {
             entryKey: table_name
         }
@@ -167,12 +167,12 @@ exports.handler = async (event, context) => {
     }
 
     const s3ParamsInsert = {
-        Bucket: 'gorico2.core',
+        Bucket: 'BUCKET_NAME',
         Key: company + '/' + filename
     };
 
     const s3ParamsGetList = {
-        Bucket: 'gorico2.core',
+        Bucket: 'BUCKET_NAME',
         Key: company + '/' + filename
     };
 
