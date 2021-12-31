@@ -82,6 +82,19 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
       }, 500);
     }
 
+    let fieldValue: any = _this.group.get(_this.field.name).value;      
+    if(_this.field.readonly && fieldValue !== null) {
+      if (_this.field.inputType === 'date') {
+        _this.field.value = HelperService.getFormattedDate(fieldValue);        
+      }
+      if (_this.field.inputType === 'datetime') {
+        _this.field.value = HelperService.getFormattedDateTime(fieldValue, _this.timezoneService.timezoneInfo.utc_offset);
+      }
+      if (_this.field.inputType === 'time') {
+        _this.field.value = HelperService.getFormattedTime(fieldValue);
+      }
+      _this.field.value = fieldValue;
+    }
   }
 
   ngOnDestroy(): void {
