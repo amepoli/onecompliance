@@ -29,7 +29,7 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select cmp.titolo, cmp.note, cmp.trattamento, cmp.analisi_cause, entrasp.anagrafiche_vr_dati_identificativi((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda),cmp.id_responsabile) as responsabile, cmp.data_chiusura,entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, cmp.codice_compito, cmp.data_segnalazione, cmp.id_progetto, entrasp.progetto_titolo(cmp.codice_azienda, cmp.id_progetto), cmp.foreseen_date, entrasp.anagrafiche_vr_dati_identificativi((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda),cmp.id_cliente) as cliente, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.centri_gestionali_descr((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda), cmp.id_centro_gest) as centro_gest, entrasp.centri_gestionali_descr((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda), cmp.id_centro_gest_monitor) as centro_gest_monitor from entrasp.compiti cmp where cmp.codice_azienda='AUDITFT'"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select cmp.codice_azienda, cmp.titolo, cmp.note, cmp.trattamento, cmp.analisi_cause, entrasp.anagrafiche_vr_dati_identificativi((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda),cmp.id_responsabile) as responsabile, cmp.data_chiusura,entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, cmp.codice_compito, cmp.data_segnalazione, cmp.id_progetto, entrasp.progetto_titolo(cmp.codice_azienda, cmp.id_progetto), cmp.foreseen_date, entrasp.anagrafiche_vr_dati_identificativi((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda),cmp.id_cliente) as cliente, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.centri_gestionali_descr((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda), cmp.id_centro_gest) as centro_gest, entrasp.centri_gestionali_descr((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda), cmp.id_centro_gest_monitor) as centro_gest_monitor from entrasp.compiti cmp where cmp.codice_azienda='FININTSGR' and codice_compito='21'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -110,6 +110,11 @@
 	<field name="centro_gest_monitor" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="centro_gest_monitor"/>
 		<property name="com.jaspersoft.studio.field.label" value="centro_gest_monitor"/>
+	</field>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_compito"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_compito"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="compiti"/>
 	</field>
 	<variable name="statiLeggibili" class="java.util.List"/>
 	<title>
@@ -555,6 +560,12 @@
 			</textField>
 			<subreport isUsingCache="true">
 				<reportElement key="subreport" positionType="Float" x="2" y="359" width="562" height="21" uuid="260a0ad2-29c3-4ca7-9f6b-63e8f61a1595"/>
+				<subreportParameter name="codice_compito">
+					<subreportParameterExpression><![CDATA[$F{codice_compito}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="codice_azienda">
+					<subreportParameterExpression><![CDATA[$F{codice_azienda}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA["consuntivazioni.jasper"]]></subreportExpression>
 			</subreport>
