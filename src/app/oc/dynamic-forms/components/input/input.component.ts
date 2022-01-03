@@ -69,11 +69,32 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     
     // publish a change event to start if expected
     // This lines are put in order to make possible answers appear. We should find a different solution.
-     setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
-       if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
-         _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
-       }
-     }, 500);
+    //  setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
+    //    if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'change') {
+    //      _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
+    //    }
+    //  }, 500);
+
+    if (_this.field.eventName != null && _this.field.eventTrigger === 'load') {
+      setTimeout(() => {  
+        // _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.getFormattedId(_this.field.value.id), type: 'combobox' });
+        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
+      }, 500);
+    }
+
+    let fieldValue: any = _this.group.get(_this.field.name).value;      
+    if(_this.field.readonly && fieldValue !== null) {
+      if (_this.field.inputType === 'date') {
+        _this.field.value = HelperService.getFormattedDate(fieldValue);        
+      }
+      if (_this.field.inputType === 'datetime') {
+        _this.field.value = HelperService.getFormattedDateTime(fieldValue, _this.timezoneService.timezoneInfo.utc_offset);
+      }
+      if (_this.field.inputType === 'time') {
+        _this.field.value = HelperService.getFormattedTime(fieldValue);
+      }
+      _this.field.value = fieldValue;
+    }
   }
 
   ngOnDestroy(): void {

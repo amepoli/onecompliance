@@ -122,6 +122,14 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
     //   }, 500);
     // }
 
+    if (_this.field.eventName != null && _this.field.eventTrigger === 'load') {
+      // this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
+      setTimeout(() => {  // HACK !!! -> take some time to be sure all target elements are rendered 
+        // _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.getFormattedId(_this.field.value.id), type: 'combobox' });
+        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'change' });
+      }, 500);
+    }
+
     if(_this.field.showTextAreaRichFormatter) {
       _this.htmlContent = _this.field.value;
     }
