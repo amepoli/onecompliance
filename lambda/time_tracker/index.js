@@ -33,7 +33,7 @@ const scripts = {
         and csn.date_time_begin = (select max(csn2.date_time_begin) from entrasp.consuntivazioni csn2 where csn2.date_time_begin<now() and csn2.id_risorsa = entrasp.user_current_azienda((€global_id_anagrafiche€):: text, csn2.codice_azienda))`,
     startTime: "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '£codice_compito£', '£codice_azienda£')",
     stopTime: "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
-    isTrDayComplete: `select entrasp.is_tr_day_complete('£user_name£', '£date_time£'::date)` 
+    isTrDayComplete: `select entrasp.is_tr_day_complete('£user_name£', replace('£date_time£', 'null', '')::date)` 
 };
 
 var global_variables = {};
