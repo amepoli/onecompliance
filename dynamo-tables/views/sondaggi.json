@@ -19,7 +19,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select snd.id_sondaggio,entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica) as id_anagrafica_assegnataria, snd.id_sondaggio_parent, snd.id_modello_test,entrasp.id_sondaggio_precedente(snd.codice_azienda, snd.id_sondaggio),entrasp.sondaggio_riprogrammato(snd.codice_azienda, snd.id_sondaggio)as sondaggio_riprogrammato, snd.sondaggio_completato, snd.giudizio, snd.codice_azienda, snd.id_centro_gest, snd.data_prevista, snd.data_comp, snd.data_esecuzione, substring(snd.descrizione, 1, 150) as titolo, substring(entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio), 1, 150) as sondaggio_su, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda='€global_codice_azienda€' and ((data_prevista<=CURRENT_DATE+365 or data_prevista is null) or (data_esecuzione<=CURRENT_DATE+100))"
+            "queryString": "select snd.id_sondaggio,entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica) as id_anagrafica_assegnataria, snd.id_sondaggio_parent, snd.id_modello_test,snd.id_modello_test_vr,entrasp.id_sondaggio_precedente(snd.codice_azienda, snd.id_sondaggio),entrasp.sondaggio_riprogrammato(snd.codice_azienda, snd.id_sondaggio)as sondaggio_riprogrammato, snd.sondaggio_completato, snd.giudizio, snd.codice_azienda, snd.id_centro_gest, snd.data_prevista, snd.data_comp, snd.data_esecuzione, substring(snd.descrizione, 1, 150) as titolo, substring(entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio), 1, 150) as sondaggio_su, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda='€global_codice_azienda€' and ((data_prevista<=CURRENT_DATE+365 or data_prevista is null) or (data_esecuzione<=CURRENT_DATE+100))"
         },
         {
             "operation": "selectForm",
@@ -1527,15 +1527,36 @@
             ]
         },
         {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_modello_test",
-            "label": "Mod. Verif.",
-            "width": "4%"
-        },
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "id_modello_test",
+			"hasLevel": true,
+			"label": "Id Mod.Test",
+			"width": "4%",
+			"isInputButton": true,
+			"buttonAction": {
+				"target": "modelli_test_vr",
+				"viewType": "form",
+				"action": "navigate",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_modello_test",
+						"destination": "id_modello_test"
+					},
+					{
+						"source": "id_modello_test_vr",
+						"destination": "id_modello_test_vr"
+					}
+				]
+			}
+		},
         {
             "format": {
                 "dataType": "number"
