@@ -204,8 +204,9 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
         // this.toolbarElements.toolbar_elements.filter( element => element.viewType === "combobox" && element.selected).forEach( element => {
         //     keys[element.fieldName] = element.selected
         // });
-        
-        this._dataSharingService.setData('homepageSearchKeys', this.searchKeys);
+        let additionalKeys: object = this.tiles[i] && this.tiles[i].content && this.tiles[i].content.navigationAdditionalKeys;
+        let keys = Object.assign({}, this.searchKeys || {}, additionalKeys || {});
+        this._dataSharingService.setData('homepageSearchKeys', keys);
         this.router.navigate([`/oc/main-table/${this.entryKey}`]);   
     }
 
