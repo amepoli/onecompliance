@@ -86,7 +86,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     if(_this.field.readonly && fieldValue !== null) {
       if (_this.field.inputType === 'date') {
         var d = new Date(fieldValue);
-        _this.field.value = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`
+        _this.field.value = d.toLocaleDateString('en-US');
       }
       else if (_this.field.inputType === 'datetime') {
         var d = new Date(HelperService.getFormattedDateTime(fieldValue, _this.timezoneService.timezoneInfo.utc_offset)); /* midnight in China on April 13th */
