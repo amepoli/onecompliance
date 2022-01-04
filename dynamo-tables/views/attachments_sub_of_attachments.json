@@ -6,7 +6,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select af.* from entrasp.views_attachments_fast_no_bo af where codice_azienda=$codice_azienda$ and (id_risorsa=$id_risorsa$ or id_risorsa= (select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))"
+      "queryString": "select *, entrasp.odg_data(codice_azienda, id_odg) as data_riunione, entrasp.riunioni_descr(id_riunione, codice_azienda) as riunione_descr, entrasp.odg_titolo(codice_azienda, id_odg, id_riunione) as titolo from entrasp.views_attachments_fast_no_bo af where codice_azienda=$codice_azienda$ and (id_risorsa=$id_risorsa$ or id_risorsa= (select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))"
     }
   ]
 }

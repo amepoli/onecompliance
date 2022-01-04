@@ -6,7 +6,12 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select * from entrasp.views_attachments_fast_no_bo where codice_azienda=$codice_azienda$"
+      "queryString": "select *, entrasp.odg_data(codice_azienda, id_odg) as data_riunione, entrasp.riunioni_descr(id_riunione, codice_azienda) as riunione_descr, entrasp.odg_titolo(codice_azienda, id_odg, id_riunione) as titolo from entrasp.views_attachments_fast_no_bo where codice_azienda=$codice_azienda$"
+    },
+    {
+      "type": "main",
+      "operation": "update",
+      "queryString": "update entrasp.cdms_risorse_revisioni set id_riunione=$id_riunione$, id_odg=$id_odg$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
     }
   ],
   "businessObjectName": "cdms_risorse",
@@ -58,7 +63,7 @@
         "viewType": "input"
       },
       "isHidden": false,
-      "isPrimary": false,
+      "isPrimary": true,
       "key": "prog_revisione",
       "label": "Revisione",
       "newLine": false,
@@ -157,8 +162,38 @@
       "isPrimary": false,
       "key": "data_ultimo_accesso",
       "label": "Data Ultimo Accesso",
-      "newLine": false,
+      "newLine": true,
       "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "options": [],
+        "viewType": "combobox",
+        "comboQuery": "select id_riunione as id, id_riunione||'-'||oggetto as name from entrasp.riunioni where codice_azienda = $codice_azienda$"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_riunione",
+      "label": "Riunione",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "options": [],
+        "viewType": "combobox",
+        "comboQuery": "select id_odg as id, id_odg||'-'||titolo as name from entrasp.odg_riunioni where codice_azienda = $codice_azienda$ and id_riunione=£id_riunione£"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_odg",
+      "label": "Ordine del giorno",
+      "newLine": true,
+      "readOnly": false
     }
   ],
   "table_keys": [
@@ -188,7 +223,7 @@
       "isPrimary": true,
       "width": "5%",
       "key": "id_risorsa",
-      "label": "ID Documento"
+      "label": "ID Doc."
     },
     {
       "format": {
@@ -198,7 +233,7 @@
       "isPrimary": true,
       "width": "5%",
       "key": "prog_revisione",
-      "label": "ID Revisione"
+      "label": "Rev."
     },
     {
       "format": {
@@ -207,7 +242,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "client_file_name",
-      "width": "28%",
+      "width": "12%",
       "label": "Nome file"
     },
     {
@@ -217,7 +252,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "anagrafica",
-      "width": "25%",
+      "width": "10%",
       "label": "Nome/rag sociale",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)"
     },
@@ -227,9 +262,32 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "data_creazione",
-      "width": "6%",
-      "label": "Data Creazione"
+      "key": "data_riunione",
+      "queryFunct": "entrasp.odg_data(codice_azienda, id_odg)",
+      "label": "Data e ora riunione",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "width": "12%",
+      "queryFunct": "entrasp.odg_titolo(codice_azienda, id_odg, id_riunione)",
+      "label": "Ordine del giorno"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "riunione_descr",
+      "queryFunct": "entrasp.riunioni_descr(id_riunione, codice_azienda)",
+      "label": "Riunione",
+      "width": "12%"
     },
     {
       "format": {
@@ -271,7 +329,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "tipo_allegato",
-      "width": "13%",
+      "width": "11%",
       "label": "Tipo Documento"
     },
     {
@@ -433,10 +491,6 @@
   "hideActions": [
     {
       "formActionType": "add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "save",
       "viewType": "form"
     },
     {
