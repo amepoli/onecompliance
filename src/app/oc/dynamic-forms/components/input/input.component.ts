@@ -85,15 +85,19 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     let fieldValue: any = _this.group.get(_this.field.name).value;      
     if(_this.field.readonly && fieldValue !== null) {
       if (_this.field.inputType === 'date') {
-        _this.field.value = HelperService.getFormattedDate(fieldValue);        
+        var d = new Date(fieldValue);
+        _this.field.value = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`
       }
-      if (_this.field.inputType === 'datetime') {
-        _this.field.value = HelperService.getFormattedDateTime(fieldValue, _this.timezoneService.timezoneInfo.utc_offset);
+      else if (_this.field.inputType === 'datetime') {
+        var d = new Date(HelperService.getFormattedDateTime(fieldValue, _this.timezoneService.timezoneInfo.utc_offset)); /* midnight in China on April 13th */
+        _this.field.value = d.toLocaleString('en-US', { timeZone: _this.timezoneService.timezoneInfo.timezone });
       }
-      if (_this.field.inputType === 'time') {
+      else if (_this.field.inputType === 'time') {
         _this.field.value = HelperService.getFormattedTime(fieldValue);
       }
-      _this.field.value = fieldValue;
+      else {
+        _this.field.value = fieldValue;
+      }
     }
   }
 
