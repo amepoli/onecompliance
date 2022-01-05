@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import * as appData from '../../../../appdata.json';
 import { ILoggerService } from '../interfaces';
 
 @Injectable({

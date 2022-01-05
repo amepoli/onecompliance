@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { SweetAlertResult } from 'sweetalert2';
-import * as appData from '../../../../appdata.json';
 import { ILoggerService, MessageElement, MessageItem } from '../interfaces';
 import { FormActionType } from '../types';
 import { BackendService } from './backend.service';

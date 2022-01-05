@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
-import * as appData from '../../../../appdata.json';
 import { FormActionType } from '../types';
 import axios from 'axios';
+import { environment } from 'environments/environment';
 
+const appData = (environment.appData as any).default;
 @Injectable({
   providedIn: 'root'
 })

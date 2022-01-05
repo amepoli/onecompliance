@@ -13,10 +13,12 @@ import { ConsoleLoggerService } from './console_logger.service';
 import { UserInfo } from '../interfaces';
 import { BaseLoginProvider, GoogleLoginProvider, SocialAuthService, SocialUser } from 'angularx-social-login';
 
-import * as appData from '../../../../appdata.json';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 declare var gapi: any;
-  
+
+import { environment } from 'environments/environment';
+
+const appData = (environment.appData as any).default;
 @Injectable({
   providedIn: 'root'
 })

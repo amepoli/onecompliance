@@ -2,9 +2,13 @@
 // `ng build ---prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+
+import * as _appData from '../../gorico_dev.json';
+
 export const environment = {
     production: false,
-    hmr       : false
+    hmr       : false,
+    appData   : _appData
 };
 
 /*

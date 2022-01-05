@@ -17,9 +17,6 @@ cp src/aws-exports.js src/aws-exports.ts
 #remove previous buils
 rm -rf dist/*
 
-rm appdata.json
-ln -s $1_prod.json appdata.json
-
 #re-deploy lambdas
 cd lambda 
 ./deploy_lambdas.sh $1_prod
@@ -35,7 +32,3 @@ ng build --prod
 aws s3 rm s3://gorico2.cloud/$1 --recursive
 #upload files
 aws s3 cp ./dist s3://gorico2.cloud/$1 --recursive --acl public-read
-
-#revert back to dev environment
-rm appdata.json
-ln -s $1_dev.json appdata.json
