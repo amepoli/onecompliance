@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormViewToolbarComponent } from './form-view-toolbar.component';
+import { AttachmentsComponent } from './attachments.component';
 import { AttachDialogComponent } from '../../dialogs/attach.dialog/attach.dialog.component';
 import { FileUploadComponent } from '../../file-uploader/file-upload/file-upload.component';
 import { ProgressComponent } from '../../file-uploader/progress/progress.component';
@@ -20,9 +20,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DynamicFormsModule } from '../../dynamic-forms/dynamic-forms.module';
 import { FileManagerModule } from 'app/main/apps/file-manager/file-manager.module';
-import { FormGetterModule } from '../form-getter/form-getter.module';
-import { AttachmentsModule } from 'app/oc/widgets/attachments/attachments.module';
-import { ShareModule } from 'app/oc/widgets/share/share.module';
+import { FormGetterModule } from '../../views/form-getter/form-getter.module';
 
 @NgModule({
   imports: [
@@ -44,10 +42,7 @@ import { ShareModule } from 'app/oc/widgets/share/share.module';
     MatBadgeModule,
     FileManagerModule,
     MatDialogModule,
-    FormGetterModule,
-
-    AttachmentsModule,
-    ShareModule
+    FormGetterModule
   ],
   exports: [
     CommonModule,
@@ -65,12 +60,12 @@ import { ShareModule } from 'app/oc/widgets/share/share.module';
     MatInputModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    FormViewToolbarComponent,
+    AttachmentsComponent,
   ],
-  declarations: [FormViewToolbarComponent],
+  declarations: [AttachmentsComponent],
   entryComponents: [
-    FormViewToolbarComponent
+    AttachmentsComponent
   ]
 })
 
-export class FormViewToolbarModule { }
+export class AttachmentsModule { }
