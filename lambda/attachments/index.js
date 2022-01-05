@@ -314,8 +314,10 @@ exports.handler = async (event, context) => {
                             const codiceAziendaExisting = existingRows[0]['codice_azienda'];
                             const idRisorsaExisting = existingRows[0]['id_risorsa'];
                             const requestBody = JSON.parse(event.body);
-                            idarg = (requestBody.id_argomento_tipo_allegato == undefined) ? null : requestBody.id_argomento_tipo_allegato ;
-                            idcg = (requestBody.id_centro_gest == undefined) ? null : requestBody.id_centro_gest ;
+                            idarg = (requestBody.id_argomento_tipo_allegato == undefined) ? null : requestBody.id_argomento_tipo_allegato;
+                            idcg = (requestBody.id_centro_gest == undefined) ? null : requestBody.id_centro_gest;
+                            dataRif = (requestBody.data_rif == undefined) ? null : requestBody.data_rif;
+                            dataScad = (requestBody.data_scadenza == undefined) ? null : requestBody.data_scadenza;
 
                             query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
                             values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}') ON CONFLICT DO NOTHING;`;
@@ -324,8 +326,8 @@ exports.handler = async (event, context) => {
 
                             query = `update entrasp.cdms_risorse set nickname=coalesce('${replaceAll(requestBody.nickname, "'", "''")}',nickname), descrizione=coalesce('${requestBody.descrizione}',descrizione), 
                             data_ultima_revisione=coalesce('${date}', data_ultima_revisione), descrizione_breve=coalesce('${requestBody.descrizione_breve}',descrizione_breve), ts_ultima_modifica=coalesce('${date}',ts_ultima_modifica),
-                            id_argomento_tipo_allegato=coalesce(${idarg},3981), id_centro_gest=${idcg}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
-                            data_rif=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
+                            id_argomento_tipo_allegato=coalesce(${idarg},3981), id_centro_gest=${idcg}, data_scadenza=nullif('${dataScad}','null')::timestamp without time zone, 
+                            data_rif=nullif('${dataRif}', 'null')::timestamp without time zone, id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
                             where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting};`;
                             console.log(query);
                             response = await client.query(query);
