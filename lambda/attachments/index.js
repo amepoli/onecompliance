@@ -260,7 +260,7 @@ exports.handler = async (event, context) => {
 
             } else if (requestType === 'loadFileDataIfExists') {
                 //console.log('requestType: loadFileDataIfExist');      //When open a file from "Choose File"
-                query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`;
+                query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}';`;
                 response = await client.query(query);
 
                 let filesCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count) : 0;
@@ -270,14 +270,16 @@ exports.handler = async (event, context) => {
                 if (filesCount > 0) {
                     body = { result: 'OK', data: {} };
                     try {
-                        query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`
+                        query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company};'`
                         response = await client.query(query);
                         let existingRows = response.rows;
                         if (existingRows && existingRows.length) {
                             const codiceAziendaExisting = existingRows[0]['codice_azienda'];
-                            const idRisorsaExisting = existingRows[0]['id_risorsa'];
+                            const idRisorsaExisting = existingRows[0]['id_risorsa']; 
 
-                            query = `select * from entrasp.cdms_risorse where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting}`;
+                            query = `select a.id_argomento_tipo_allegato, a.id_centro_gest, a.codice_azienda, /*fileName,*/ b.dimensione, a.url, a.descrizione_breve, a.descrizione, a.codice_part, a.data_scadenza /*,data_rif*/ ,b.id_riunione, b.id_odg from entrasp.cdms_risorse a 
+                            inner join entrasp.cdms_risorse_revisioni b on a.id_risorsa=b.id_risorsa and a.codice_azienda=b.codice_azienda
+                            where a.codice_azienda='${codiceAziendaExisting}' and a.id_risorsa=${idRisorsaExisting} and b.checksum_sha1='${checksum};'`;
 
                             // query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
                             //     values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}');`;
@@ -295,7 +297,7 @@ exports.handler = async (event, context) => {
                 }
             } else if (requestType === 'fileCheck') {
                 //console.log('requestType: fileCheck');        //OnSave, so on INSERT a new file  AND  also on UPDATE an existing file
-                query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`;
+                query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company};'`;
                 response = await client.query(query);
 
                 let filesCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count) : 0;
@@ -305,7 +307,7 @@ exports.handler = async (event, context) => {
                 if (filesCount > 0) {
                     //Here Update existing file
                     try {
-                        query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company}'`
+                        query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company};'`
                         response = await client.query(query);
                         let existingRows = response.rows;
                         if (existingRows && existingRows.length) {
@@ -320,11 +322,16 @@ exports.handler = async (event, context) => {
                             console.log(query);
                             response = await client.query(query);
 
-                            query = `update  entrasp.cdms_risorse set nickname=coalesce('${replaceAll(requestBody.nickname, "'", "''")}',nickname), descrizione=coalesce('${requestBody.descrizione}',descrizione), 
+                            query = `update entrasp.cdms_risorse set nickname=coalesce('${replaceAll(requestBody.nickname, "'", "''")}',nickname), descrizione=coalesce('${requestBody.descrizione}',descrizione), 
                             data_ultima_revisione=coalesce('${date}', data_ultima_revisione), descrizione_breve=coalesce('${requestBody.descrizione_breve}',descrizione_breve), ts_ultima_modifica=coalesce('${date}',ts_ultima_modifica),
                             id_argomento_tipo_allegato=coalesce(${idarg},3981), id_centro_gest=${idcg}, data_scadenza=nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
                             data_rif=nullif('${requestBody.data_rif}', 'null')::timestamp without time zone, id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
                             where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting};`;
+                            console.log(query);
+                            response = await client.query(query);
+
+                            query = `update entrasp.cdms_risorse_revisioni set id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
+                            where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting} and checksum_sha1='${checksum}';`;
                             console.log(query);
                             response = await client.query(query);
 
@@ -376,11 +383,11 @@ exports.handler = async (event, context) => {
                         query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, id_argomento_tipo_allegato, id_centro_gest, nickname, revisione_corrente, 
                             descrizione_breve, descrizione, autore, data_creazione, data_ultima_revisione, url,  ts_ultima_modifica, 
                             content_type, flag_indexed, data_scadenza, 
-                            data_rif, id_riunione, id_odg)
+                            data_rif)
                         values ('${company}', ${nextId}, ${requestBody.id_argomento_tipo_allegato}, ${requestBody.id_centro_gest}, '${replaceAll(requestBody.nickname, "'", "''")}',1, 
                         '${requestBody.descrizione_breve}', '${requestBody.descrizione}', '${requestBody.autore}', '${date}', '${date}', '${requestBody.url}','${date}', 
                         '${requestBody.content_type}', 1, nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
-                        nullif('${requestBody.data_rif}','null')::timestamp without time zone, ${requestBody.id_riunione}, ${requestBody.id_odg}) returning id_risorsa;`;
+                        nullif('${requestBody.data_rif}','null')::timestamp without time zone) returning id_risorsa;`;
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
@@ -392,10 +399,10 @@ exports.handler = async (event, context) => {
                         console.log(JSON.stringify(response));
 
                         query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, 
-                            file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1) 
+                            file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg) 
                         values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
                               '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${requestBody.dimensione}, 
-                              '${checksum}');`;
+                              '${checksum}', ${requestBody.id_riunione}, ${requestBody.id_odg});`;
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
