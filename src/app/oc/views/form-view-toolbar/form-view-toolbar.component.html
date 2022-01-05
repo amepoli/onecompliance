@@ -40,22 +40,15 @@
                 (click)="formView.delElement()">
                 <mat-icon>delete</mat-icon>
             </button>
-            <button mat-button *ngIf="!formView.formGetter.hideActions.includes('attachments')"
-                (click)="formView.showAttachments()">
-                <mat-icon [matBadge]="formView.n_attach">attach_file</mat-icon>
-            </button>
 
-            <button mat-button [matMenuTriggerFor]="companyMenu"
-                *ngIf="!formView.formGetter.hideActions.includes('share')">
-                <mat-icon>share</mat-icon>
-            </button>
-
-            <mat-menu #companyMenu="matMenu">
-                <ng-container *ngFor="let item of userCompanies">
-                    <button mat-menu-item (click)="formView.shareElement(item)">{{item}}</button>
-                </ng-container>
-            </mat-menu>
-
+            <ng-container *ngIf="!formView.formGetter.hideActions.includes('attachments')">
+                <attachments [numAttachments]="formView.n_attach" (onClick)="formView.showAttachments()"></attachments>
+            </ng-container>
+            
+            <ng-container *ngIf="!formView.formGetter.hideActions.includes('share')">
+                <share (onClick)="formView.shareElement($event)"></share>
+            </ng-container>
+            
             <div *ngIf="!formView.formGetter.hideActions.includes('import_export')">
 
                 <button mat-button [matMenuTriggerFor]="downloadUploadMenu">

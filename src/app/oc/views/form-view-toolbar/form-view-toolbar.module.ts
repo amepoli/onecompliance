@@ -21,6 +21,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DynamicFormsModule } from '../../dynamic-forms/dynamic-forms.module';
 import { FileManagerModule } from 'app/main/apps/file-manager/file-manager.module';
 import { FormGetterModule } from '../form-getter/form-getter.module';
+import { AttachmentsModule } from 'app/oc/widgets/attachments/attachments.module';
+import { ShareModule } from 'app/oc/widgets/share/share.module';
 
 @NgModule({
   imports: [
@@ -42,7 +44,10 @@ import { FormGetterModule } from '../form-getter/form-getter.module';
     MatBadgeModule,
     FileManagerModule,
     MatDialogModule,
-    FormGetterModule
+    FormGetterModule,
+
+    AttachmentsModule,
+    ShareModule
   ],
   exports: [
     CommonModule,
