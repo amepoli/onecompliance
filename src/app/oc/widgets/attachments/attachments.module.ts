@@ -1,9 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AttachmentsComponent } from './attachments.component';
-import { AttachDialogComponent } from '../../dialogs/attach.dialog/attach.dialog.component';
-import { FileUploadComponent } from '../../file-uploader/file-upload/file-upload.component';
-import { ProgressComponent } from '../../file-uploader/progress/progress.component';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -18,9 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DynamicFormsModule } from '../../dynamic-forms/dynamic-forms.module';
-import { FileManagerModule } from 'app/main/apps/file-manager/file-manager.module';
-import { FormGetterModule } from '../../views/form-getter/form-getter.module';
+import { AttachmentsComponent } from './attachments.component';
 
 @NgModule({
   imports: [
@@ -32,7 +26,6 @@ import { FormGetterModule } from '../../views/form-getter/form-getter.module';
     MatTabsModule,
     MatIconModule,
     MatButtonModule,
-    DynamicFormsModule,
     MatFormFieldModule,
     MatOptionModule,
     MatSelectModule,
@@ -40,26 +33,9 @@ import { FormGetterModule } from '../../views/form-getter/form-getter.module';
     MatCardModule,
     MatProgressSpinnerModule,
     MatBadgeModule,
-    FileManagerModule,
-    MatDialogModule,
-    FormGetterModule
+    MatDialogModule
   ],
   exports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatIconModule,
-    MatButtonModule,
-    DynamicFormsModule,
-    MatFormFieldModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatInputModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
     AttachmentsComponent,
   ],
   declarations: [AttachmentsComponent],

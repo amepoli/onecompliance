@@ -42,7 +42,10 @@
             </button>
 
             <ng-container *ngIf="!formView.formGetter.hideActions.includes('attachments')">
-                <attachments [numAttachments]="formView.n_attach" (onClick)="formView.showAttachments()"></attachments>
+                <attachments
+                    [keys]="formView && formView.currentKeys? formView.currentKeys: null"
+                    [entryName]="formView && formView.tableData && formView.tableData.entryName? formView.tableData.entryName: null">
+                </attachments>
             </ng-container>
             
             <ng-container *ngIf="!formView.formGetter.hideActions.includes('share')">
