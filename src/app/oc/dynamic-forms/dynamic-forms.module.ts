@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 import { InputComponent } from './components/input/input.component';
 import { ButtonComponent } from './components/button/button.component';
 import { SelectComponent } from './components/select/select.component';
@@ -18,16 +19,20 @@ import { InvisibleComponent } from './components/invisible/invisible.component';
 import { MenuComponent } from "./components/menu/menu.component";
 import { LabelComponent } from './components/label/label.component';
 import { SubformComponent } from './components/subform/subform.component';
+import { WidgetComponent } from './components/widget/widget.component';
 
-import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { OneCompliancePipesModule } from '../pipes/pipes.module';
 import { DynamicFieldDirective } from '../directives';
 import { SubFormDynamicFieldDirective } from '../directives/subform-dynamic-field.directive';
+
+import { AttachmentsModule } from '../widgets/attachments/attachments.module';
+import { ShareModule } from '../widgets/share/share.module';
+
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { AngularEditorModule } from '@kolkov/angular-editor';
-import { WidgetComponent } from './components/widget/widget.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +63,11 @@ import { WidgetComponent } from './components/widget/widget.component';
     MatMenuModule,
     NgxMatSelectSearchModule,
     OneCompliancePipesModule,
-    AngularEditorModule
+    AngularEditorModule,
+
+    // Widgets
+    AttachmentsModule,
+    ShareModule,
   ],
   exports: [
     InputComponent,
