@@ -27,6 +27,7 @@ import { SubFormDynamicFieldDirective } from '../directives/subform-dynamic-fiel
 import { MatMenuModule } from '@angular/material/menu';
 
 import { AngularEditorModule } from '@kolkov/angular-editor';
+import { WidgetComponent } from './components/widget/widget.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { AngularEditorModule } from '@kolkov/angular-editor';
     ComboboxComponent,
     TextAreaComponent,
     InvisibleComponent,
+    WidgetComponent,
     LabelComponent,
     SubformComponent
   ],
@@ -71,6 +73,7 @@ import { AngularEditorModule } from '@kolkov/angular-editor';
     ComboboxComponent,
     TextAreaComponent,
     InvisibleComponent,
+    WidgetComponent,
     LabelComponent,
     SubformComponent
   ],
@@ -86,6 +89,7 @@ import { AngularEditorModule } from '@kolkov/angular-editor';
     ComboboxComponent,
     TextAreaComponent,
     InvisibleComponent,
+    WidgetComponent,
     LabelComponent,
     SubformComponent
   ],

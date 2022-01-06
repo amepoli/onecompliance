@@ -1,5 +1,5 @@
 import { MenuOption } from "./menu_option.interface";
-import { EventTriggerType, FormDataType, FormViewType } from "../types";
+import { EventTriggerType, FormDataType, FormViewType, FormWidgetType } from "../types";
 import { FieldInputEvent } from "./field.interface";
 
 export interface FormViewKey { // as per API specification
@@ -38,6 +38,7 @@ export interface FormViewKey { // as per API specification
     format: {
         viewType: FormViewType,
         dataType?: FormDataType,
+        widgetType?: FormWidgetType,
         prefix?: string,
         suffix?: string,
         pipe?: "Date" | "DateTime" | "Time" | "UpperCase" | "LowerCase" | "Currency" | "Decimal" | "Percent",

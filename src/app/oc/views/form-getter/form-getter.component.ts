@@ -667,6 +667,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 label: field.label,
                 name: field.key,
                 type: field.format.viewType,
+                widgetType: field.format.widgetType,
                 index: index,
                 fullValueSet: values[index],
                 value: (element != null) ? ((element.options != null) ? element.value : element) : null,

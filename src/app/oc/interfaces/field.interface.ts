@@ -1,4 +1,5 @@
 import { GoogleAPIParams, MenuOption } from ".";
+import { FormWidgetType } from "../types";
 import { EmailActionParameters } from "./email_action_parameters";
 
 export interface Validator {
@@ -85,4 +86,5 @@ export interface FieldConfig {
   fullValueSet?: any;
   inputEvents?: FieldInputEvent[];
   lazyLoading?: boolean;
+  widgetType?: FormWidgetType;
 }

@@ -21,6 +21,7 @@ import { SubformComponent } from '../dynamic-forms/components/subform/subform.co
 import { LabelComponent } from "../dynamic-forms/components/label/label.component";
 import { MenuComponent } from "../dynamic-forms/components/menu/menu.component";
 import { InvisibleComponent } from "../dynamic-forms/components/invisible/invisible.component";
+import { WidgetComponent } from "../dynamic-forms/components/widget/widget.component";
 
 const componentMapper = {
   input: InputComponent,
@@ -34,6 +35,7 @@ const componentMapper = {
   combobox: ComboboxComponent,
   textarea: TextAreaComponent,
   invisible: InvisibleComponent,
+  widget: WidgetComponent,
   label: LabelComponent,
   subform: SubformComponent
 };
