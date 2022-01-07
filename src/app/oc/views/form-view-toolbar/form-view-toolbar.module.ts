@@ -65,7 +65,7 @@ import { ShareModule } from 'app/oc/widgets/share/share.module';
     MatInputModule,
     MatCardModule,
     MatProgressSpinnerModule,
-    FormViewToolbarComponent,
+    FormViewToolbarComponent
   ],
   declarations: [FormViewToolbarComponent],
   entryComponents: [
