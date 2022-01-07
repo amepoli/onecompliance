@@ -101,8 +101,8 @@ export class AttachmentsComponent implements OnInit, AfterViewInit, OnChanges {
                             files.push(file);
                         });
                     }
-                    _this._fileService.files = files;
-                    _this._fileService.getFiles();
+                    // _this._fileService.files = files;
+                    // _this._fileService.getFiles();
                 }
                 else {
                     // Show error snackbar

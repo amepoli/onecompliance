@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FieldConfig } from 'app/oc/interfaces';
 import { ConsoleLoggerService, DialogService, HelperService, PubSubService, ValidationsService } from 'app/oc/services';
@@ -29,7 +29,8 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   // For future use
   // @HostBinding('style.margin-right') marginRight = '1%';
 
-  constructor(private timezoneService: TimezoneService,
+  constructor(private elRef: ElementRef,
+              private timezoneService: TimezoneService,
               private pubSubService: PubSubService,
               private _console: ConsoleLoggerService,
               private _dialogService: DialogService) { }
@@ -38,7 +39,8 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    
+    // To get parent element using a class
+    // const parentElement = this.elRef.nativeElement.closest('.form-view-component');
   }
 
   ngOnDestroy(): void {
