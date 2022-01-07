@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select * from entrasp.cdms_risorse_oggetti where codice_azienda=$codice_azienda$ and (id_risorsa=$id_risorsa$ or id_risorsa=(select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))",
+      "queryString": "select * from entrasp.cdms_risorse_oggetti where codice_azienda=$codice_azienda$ and prog_revisione=$prog_revisione$ and (id_risorsa=$id_risorsa$ or id_risorsa=(select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))",
       "type": "main"
     }
   ],
@@ -210,6 +210,16 @@
       "isPrimary": true,
       "key": "id_risorsa",
       "label": "ID Documento"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "prog_revisione",
+      "width": "4%",
+      "label": "Rev"
     },
     {
       "format": {

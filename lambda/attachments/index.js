@@ -319,8 +319,8 @@ exports.handler = async (event, context) => {
                             dataRif = (requestBody.data_rif == undefined) ? null : requestBody.data_rif;
                             dataScad = (requestBody.data_scadenza == undefined) ? null : requestBody.data_scadenza;
 
-                            query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
-                            values ('${codiceAziendaExisting}', ${idRisorsaExisting}, '${bus_object}','${chiave}') ON CONFLICT DO NOTHING;`;
+                            query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
+                            values ('${codiceAziendaExisting}', ${idRisorsaExisting}, 1, '${bus_object}','${chiave}') ON CONFLICT DO NOTHING;`;
                             console.log(query);
                             response = await client.query(query);
 
@@ -388,23 +388,23 @@ exports.handler = async (event, context) => {
                             data_rif)
                         values ('${company}', ${nextId}, ${requestBody.id_argomento_tipo_allegato}, ${requestBody.id_centro_gest}, '${replaceAll(requestBody.nickname, "'", "''")}',1, 
                         '${requestBody.descrizione_breve}', '${requestBody.descrizione}', '${requestBody.autore}', '${date}', '${date}', '${requestBody.url}','${date}', 
-                        '${requestBody.content_type}', 1, nullif('${requestBody.data_scadenza}','null')::timestamp without time zone, 
-                        nullif('${requestBody.data_rif}','null')::timestamp without time zone) returning id_risorsa;`;
-                        console.log(query);
-                        response = await client.query(query);
-                        console.log(JSON.stringify(response));
-
-                        query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
-                        values ('${company}', ${nextId}, '${bus_object}','${chiave}');`;
+                        '${requestBody.content_type}', 1, nullif(replace('${requestBody.data_scadenza}','undefined', 'null'), 'null')::timestamp without time zone, 
+                        nullif( replace('${requestBody.data_rif}','undefined', 'null'), 'null')::timestamp without time zone) returning id_risorsa;`;
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
 
                         query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, 
-                            file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg) 
+                            file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato) 
                         values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
                               '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${requestBody.dimensione}, 
-                              '${checksum}', ${requestBody.id_riunione}, ${requestBody.id_odg});`;
+                              '${checksum}', ${requestBody.id_riunione}, ${requestBody.id_odg}, 4035);`;
+                        console.log(query);
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
+
+                        query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
+                        values ('${company}', ${nextId}, 1, '${bus_object}','${chiave}');`;
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
