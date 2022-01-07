@@ -1598,5 +1598,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         this._importExportService.downloadExcel(this.formParams.entryName, this.authService.getCurrentCompany(this.currentKeys), this.formParams.keys, null, true, formValues, item.label);
     }
 
+    trackItems(index: number, item: any) {
+        return index;
+    }
 }
 
