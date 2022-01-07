@@ -9,7 +9,7 @@ import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-
   template: `
     <div class="subform-style" [style.border-radius]="'4px'" [style.background-color]="style.background_color" 
     [style.padding]="style.padding" *ngIf="field.isVisible != false">
-        <ng-container *ngFor='let subfield of field.subform;' subformDynamicField [field]="subfield" [group]="group" [readOnlyPage]="readOnlyPage">
+        <ng-container *ngFor='let subfield of field.subform; trackBy:trackItems' subformDynamicField [field]="subfield" [group]="group" [readOnlyPage]="readOnlyPage">
         </ng-container>
 </div>
 `,
@@ -62,4 +62,7 @@ export class SubformComponent implements OnInit {
     }
   }
 
+  trackItems(index: number, item: any) {
+    return index;
+  }
 }
