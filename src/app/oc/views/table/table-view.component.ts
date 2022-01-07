@@ -857,7 +857,6 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         let _this = this;
         _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
             response => {
-                console.log(response);
                 if(response.result == 'OK') {
                     if(selectedViewKey.buttonAction.onSuccessAction != null) {
                         _this.performOnSuccessAction(selectedViewKey, keys, response.response);

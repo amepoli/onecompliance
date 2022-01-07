@@ -28,7 +28,7 @@ export class GoogleAPIService {
     let _this = this;
     return _this._backendService.getDistance(origin, destination).subscribe(
       response => {
-        console.log(response);
+        // console.log(response);
         if (response.result === 'OK') {
           const distance = response.data.rows[0].elements[0].distance.value;
         }

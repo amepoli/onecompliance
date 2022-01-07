@@ -103,7 +103,6 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.isLoading = true;
             _this.backendService.loadHomePageTab(_this.entry,  _this.authService.getCurrentCompany({}), keys).subscribe(
                 response => {
-                    console.log(response);
                     if(response.result === 'OK') {
                         _this.entryKey = _this.entry;
                         _this.loadTiles(response.response.tiles);
@@ -191,8 +190,6 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
             }
         });
-
-        console.log(this.toolbar_elements);
     }
 
     gotoTile(i: number) {

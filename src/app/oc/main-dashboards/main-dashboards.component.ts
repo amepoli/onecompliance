@@ -41,7 +41,7 @@ export class MainDashboardsComponent implements OnInit {
 
   onCellClick(event: DashboardCellEvent): void{
     const _this = this;
-    console.log(event);
+    // console.log(event);
     // set target table keys
     const keys = {};
     if (event.columnLabel != null) {

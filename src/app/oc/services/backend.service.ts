@@ -336,8 +336,6 @@ export class BackendService {
 
   getEmailThreads(search: string, authToken: any) {
     this.amplifyService.auth();
-    console.log(search, authToken);
-    
     this.myPutPostInit.queryStringParameters = { request_type: 'GetEmailThreads', search: search };
     this.myPutPostInit.body = authToken;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));

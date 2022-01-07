@@ -72,7 +72,6 @@ export class TableMultiselectToolbarComponent implements DoCheck {
                                 _this._toastService.showErrorToast(result);
                             }
                             subscription.unsubscribe();
-                            console.log(result);
                         },
                         error => {
                             _this._toastService.showErrorToast(error);
@@ -80,7 +79,6 @@ export class TableMultiselectToolbarComponent implements DoCheck {
                             console.error(error);
                         }
                     );
-                    console.log(finalCondition);
                 }
             }
         }
@@ -123,14 +121,12 @@ export class TableMultiselectToolbarComponent implements DoCheck {
                                 _this._toastService.showErrorToast(result);
                             }
                             subscription.unsubscribe();
-                            console.log(result);
                         },
                         error => {
                             subscription.unsubscribe();
                             console.error(error);
                         }
                     );
-                    console.log(finalCondition);
                 }
             }
         }

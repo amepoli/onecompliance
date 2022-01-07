@@ -1409,7 +1409,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         else {
                             _this.backendService.getDistance(origin, destination).subscribe(
                                 response => {
-                                    console.log(response);
+                                    // console.log(response);
                                     if (response.result === 'OK') {
                                         let distance = 0;
                                         if(response.data.rows && response.data.rows.length && response.data.rows[0].elements && response.data.rows[0].elements.length && response.data.rows[0].elements[0].distance && response.data.rows[0].elements[0].distance.value) {

@@ -70,7 +70,6 @@ export class ReportService // implements Resolve<any>
                     const url = response.url; 
                     _this._httpClient.get(url, { responseType: 'blob' }).subscribe(
                         fileData => {
-                            console.log(keys);
                             const keysString = Object.keys(keys).map(key => keys[key]).join("_");
                             const entryNameLength = Math.min(entryName.length, 4);
                             const entryNameShort = entryName.substring(0, entryNameLength);

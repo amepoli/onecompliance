@@ -47,7 +47,6 @@ export class TimezoneService {
         _this._http.get(_this.apiInfoUrl, { observe: 'response' })
         .subscribe(
             result => {
-                console.log(result);
                 _this.timezoneInfo = result.body;
                 localStorage.setItem('timezoneInfo', JSON.stringify(result.body));
             },
