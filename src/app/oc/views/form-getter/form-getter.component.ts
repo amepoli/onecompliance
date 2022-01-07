@@ -1409,7 +1409,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         else {
                             _this.backendService.getDistance(origin, destination).subscribe(
                                 response => {
-                                    console.log(response);
+                                    // console.log(response);
                                     if (response.result === 'OK') {
                                         let distance = 0;
                                         if(response.data.rows && response.data.rows.length && response.data.rows[0].elements && response.data.rows[0].elements.length && response.data.rows[0].elements[0].distance && response.data.rows[0].elements[0].distance.value) {
@@ -1598,5 +1598,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         this._importExportService.downloadExcel(this.formParams.entryName, this.authService.getCurrentCompany(this.currentKeys), this.formParams.keys, null, true, formValues, item.label);
     }
 
+    trackItems(index: number, item: any) {
+        return index;
+    }
 }
 

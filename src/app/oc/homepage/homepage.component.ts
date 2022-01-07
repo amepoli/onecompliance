@@ -52,10 +52,9 @@ export class HomepageComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.backendService.loadHomePage('default', _this.authService.getCurrentCompany({})).subscribe(
             result => {
                 _this.tabs = result.response.tabs;
-                console.log(result)
             },
             error => {
-                console.error(error)
+                console.error(error);
             }
         );
     }

@@ -305,7 +305,6 @@ export class AuthService {
   /** Check if local storage contains company */
   public getLastCompany(): string {
     let lastCompany: string = localStorage.getItem('lastCompany');
-    console.log('lastCompany', lastCompany);
     return lastCompany;
   }
 
@@ -375,7 +374,7 @@ export class AuthService {
     _this.socialAuthService.authState.subscribe((user) => {
       _this.googleUser = user;
       _this.googleUserLoggedIn = (user != null);
-      console.log('user: ', user);
+      // console.log('user: ', user);
       // _this.refreshGoogleToken();
     });
     this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
@@ -451,7 +450,7 @@ export class AuthService {
     else {
       const gAuth = await _this.initGoogleOAuth();                
       const oAuthUser = await gAuth.signIn();
-      console.log(oAuthUser);
+      // console.log(oAuthUser);
       
       // var auth_code = await gAuth.grantOfflineAccess();
       // console.log(auth_code);
@@ -464,7 +463,7 @@ export class AuthService {
       // console.log(optionsResult);
                       
       const authResponse = gAuth.currentUser.get().getAuthResponse();
-      console.log(authResponse);
+      // console.log(authResponse);
       _this.saveGoogleAuth(authResponse);
       
       _this.loadEmailThreads(null);

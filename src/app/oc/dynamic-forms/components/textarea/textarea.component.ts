@@ -110,7 +110,6 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
     else {
       this.textAreaComponentHeight = "256px";
     }
-    console.log('height set to:', this.textAreaComponentHeight);
   }
 
   ngAfterViewInit(): void {
