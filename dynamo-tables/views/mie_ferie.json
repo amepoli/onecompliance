@@ -11,16 +11,6 @@
 			"operation": "selectTable",
 			"type": "main",
 			"queryString": "select * from entrasp.festivita where dynamo_user='€global_username€'"
-		},
-		{
-			"operation": "isInsert",
-			"queryString": "select $codice$ is null as label;",
-			"type": "main"
-		},
-		{
-			"operation": "insert",
-			"type": "main",
-			"queryString": "select entrasp.inserisci_ferie($data$, $codice_azienda$, '€global_username€')"
 		}
 	],
 	"form_keys": [
@@ -28,17 +18,31 @@
 			"autoGenerate": true,
 			"format": {
 				"viewType": "input",
-				"dataType": "text"
+				"dataType": "number"
 			},
-			"label": "Codice",
-			"key": "codice",
-			"readOnly": false,
+			"label": "id_festivita",
+			"key": "id_festivita",
+			"readOnly": true,
 			"isHidden": true,
 			"isPrimary": true,
 			"newLine": false
 		},
 		{
-			"autoGenerate": true,
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Codice",
+			"key": "codice",
+			"insertUpdateFunct": "select $data$::varchar||coalesce('-'||$codice_azienda$, '')||coalesce('-'||'€global_username€', '')||coalesce('-'||$date_time_begin$::varchar, '')||coalesce('-'||$date_time_end$::varchar, '')",
+			"readOnly": false,
+			"isHidden": true,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
 				"dataType": "text"
@@ -319,28 +323,6 @@
 			"size": 2,
 			"label": "Ora inizio permesso",
 			"readOnly": false,
-			"outputEvent": {
-				"eventName": "date_time_begin_edit",
-				"eventTrigger": "change"
-			},
-			"inputEvents": [
-				{
-					"eventName": "date_time_begin_edit",
-					"actionType": "query",
-					"queryFunct": "select entrasp.permesso_calcola_durata($codice$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
-					"outputEventWhenComplete": "reload_durata",
-					"condition": "none",
-					"values": []
-				},
-				{
-					"eventName": "date_time_end_edit",
-					"actionType": "query",
-					"queryFunct": "select entrasp.permesso_calcola_durata($codice$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone);",
-					"outputEventWhenComplete": "reload_durata",
-					"condition": "none",
-					"values": []
-				}
-			],
 			"newLine": false
 		},
 		{
@@ -355,11 +337,7 @@
 			"size": 2,
 			"label": "Ora fine permesso",
 			"readOnly": false,
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "date_time_end_edit",
-				"eventTrigger": "change"
-			}
+			"newLine": false
 		},
 		{
 			"autoGenerate": false,
@@ -370,28 +348,11 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "durata",
+			"insertUpdateFunct": "round((EXTRACT(EPOCH FROM ((($date_time_end$)::timestamp with time zone - ($date_time_begin$)::timestamp with time zone))::interval)/60)::numeric)",
 			"size": 2,
 			"label": "Durata permesso",
 			"readOnly": true,
-			"newLine": false,
-			"inputEvents": [
-				{
-					"eventName": "date_time_begin_edit",
-					"actionType": "query",
-					"queryFunct": "select entrasp.permesso_calcola_durata($codice$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone) as durata_interval;",
-					"outputEventWhenComplete": "reload_durata",
-					"condition": "none",
-					"values": []
-				},
-				{
-					"eventName": "date_time_end_edit",
-					"actionType": "query",
-					"queryFunct": "select entrasp.permesso_calcola_durata($codice$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone) as durata_interval;",
-					"outputEventWhenComplete": "reload_durata",
-					"condition": "none",
-					"values": []
-				}
-			]
+			"newLine": false
 		},
 		{
 			"format": {

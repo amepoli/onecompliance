@@ -80,6 +80,9 @@ async function tableName2BusinessObject(table_name) {
 
     console.log('entry_params: ', entry_params);
     let business_object = entry_params.businessObjectName;
+    //POSSO?
+    //let id_centro_gest_form = entry_params.form_keys.id_centro_gest;
+    //let id_anagrafica_form = entry_params.form_keys.id_anagrafica;
 
     if (business_object != null) {
         return business_object;
