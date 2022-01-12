@@ -44,7 +44,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select case when crs.id_argomento_stato!=4035 then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1))",
+      "queryString": "select case when crs.id_argomento_stato not in(4035, 5327) then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1))",
       "type": "main"
     },
     {
@@ -631,7 +631,7 @@
       },
       "label": "Scaduto",
       "newLine": false,
-      "queryCond": "data_scadenza<=current_date and id_argomento_stato!=4035"
+      "queryCond": "data_scadenza<=current_date and id_argomento_stato not in(4035, 5327)"
     },
     {
       "fieldName": "scaduto_s_togg",
@@ -641,7 +641,7 @@
       },
       "label": "Scaduto",
       "newLine": false,
-      "queryCond": "data_scadenza<=current_date and id_argomento_stato!=4035"
+      "queryCond": "data_scadenza<=current_date and id_argomento_stato not in(4035, 5327)"
     },
     {
       "fieldName": "non_allegato",
@@ -671,7 +671,7 @@
       },
       "label": "Non allegato",
       "newLine": false,
-      "queryCond": "id_argomento_stato!=4035"
+      "queryCond": "id_argomento_stato not in(4035, 5327)"
     },
     {
       "fieldName": "my_offices_t",
