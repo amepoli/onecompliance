@@ -80,9 +80,46 @@ async function tableName2BusinessObject(table_name) {
 
     console.log('entry_params: ', entry_params);
     let business_object = entry_params.businessObjectName;
+
+    /*
+    console.log('busobject ' +business_object); 
+    
+    if(business_object == 'sondaggiSomministrati'){
+
+        let codAz = entry_params.form_keys.filter(x => x.key == 'codice_azienda')[0];
+        codAz.key
+
+        keys['codice_azienda'] = torna il valore del cod azienda
+
+        let objectName=entry_params.form_keys.object_name;
+        let idAnagrafica = await client.query(`select entrasp.field_value_from_key(${objectKey}, ${objectName}, 'id_anagrafica','|')::numeric`);
+
+    }else if(business_object == 'riepilogoRisposte'){
+
+        let idSnd=entry_params.form_keys.id_sondaggio;
+        let idSom=entry_params.form_keys.id_somministrazione;
+        let id_anagrafica = await client.query(`select entrasp.field_value_from_key(object_key, object_name, 'id_anagrafica','|')::numeric from entrasp.sondaggi_somministrati 
+        where codice_azienda=${company} and id_somministrazione=${idSom} and id_sondaggio=${idSnd}`);
+
+    }else if(business_object == 'modelliTest'){
+        //
+    }else if(business_object == 'progetti'){
+        //
+    }else if(business_object == 'anagraficheId'){
+        //
+    }else if(business_object == 'centriGestionali'){
+        //
+    }else if(business_object == 'compiti'){
+        //
+    }    //... e tutti gli altri
+
+    function getIdAnagrafica ()
     //POSSO?
-    //let id_centro_gest_form = entry_params.form_keys.id_centro_gest;
-    //let id_anagrafica_form = entry_params.form_keys.id_anagrafica;
+    /* let id_centro_gest_form = entry_params.form_keys('id_centro_gest');
+    console.log('cege ' +id_centro_gest_form);
+    let id_anagrafica_form = entry_params.form_keys.id_anagrafica;
+    console.log('anag ' +id_anagrafica_form); 
+    */
 
     if (business_object != null) {
         return business_object;
@@ -116,7 +153,7 @@ exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
 
-    console.log(queryParams);
+    console.log('QUERY PARAMS:'+queryParams);
 
     // const queryParams = event; / test
 
@@ -186,7 +223,7 @@ exports.handler = async (event, context) => {
 
     try {
 
-        if (requestType === 'getFileURL') {                                         
+        if (requestType === 'getFileURL') {
             //console.log('IN: getFileURL');
             var url = s3.getSignedUrl('getObject', s3ParamsGetList);
             if (url == null) {
@@ -219,14 +256,14 @@ exports.handler = async (event, context) => {
                     chiave = keys[queryKeys[0]];
                     //HACK: getting specific ID from specific view (cdms_risorse). 
                     //To attach a file to specific "idrisorsa"(the one below) of that view 
-                    idrisorsa = (bus_object == 'cdms_risorse') ? keys[queryKeys[1]] : -1 ;
+                    idrisorsa = (bus_object == 'cdms_risorse') ? keys[queryKeys[1]] : -1;
                     for (let i = 1; i < queryKeys.length; i++) {
                         chiave = chiave + '^' + keys[queryKeys[i]];
                     }
                 }
             }
 
-            if (requestType === 'getFileList') {    
+            if (requestType === 'getFileList') {
                 //console.log('requestType: getFileList');      //When load some page with attach icon OR "click" on attach icon
                 query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' AND nome_business_object='${bus_object}'
                  AND chiave='${chiave}';`;
@@ -278,7 +315,7 @@ exports.handler = async (event, context) => {
                         let existingRows = response.rows;
                         if (existingRows && existingRows.length) {
                             const codiceAziendaExisting = existingRows[0]['codice_azienda'];
-                            const idRisorsaExisting = existingRows[0]['id_risorsa']; 
+                            const idRisorsaExisting = existingRows[0]['id_risorsa'];
 
                             query = `select a.id_argomento_tipo_allegato, a.id_centro_gest, a.codice_azienda, /*fileName,*/ b.dimensione, a.url, a.descrizione_breve, a.descrizione, a.codice_part, a.data_scadenza /*,data_rif*/ ,b.id_riunione, b.id_odg from entrasp.cdms_risorse a 
                             inner join entrasp.cdms_risorse_revisioni b on a.id_risorsa=b.id_risorsa and a.codice_azienda=b.codice_azienda
@@ -300,122 +337,165 @@ exports.handler = async (event, context) => {
                 }
             } else if (requestType === 'fileCheck') {
                 //console.log('requestType: fileCheck');        //OnSave, so on INSERT a new file  AND  also on UPDATE an existing file
-                query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company};'`;
+                //CONTROLLO SE ESISTE FLUSSO INFORMATIVO
+                //vedere come prendere id_anagrafica e id_centro_gest, vedi righe sopra, 84 e 85
+                const requestBody = JSON.parse(event.body);
+                console.log('ID_ANAGRAFICA: '+requestBody.id_anagrafica+ 'ID_RIUNIONE: '+requestBody.id_riunione+', ID_ARG_ALLEGATO: '+requestBody.id_argomento_tipo_allegato);
+                query = `select id_risorsa from entrasp.cdms_risorse where id_argomento_tipo_allegato=${requestBody.id_argomento_tipo_allegato} AND codice_azienda='${company}' and id_anagrafica=${requestBody.id_anagrafica};`; //and id_centro_gest=${requestBody.id_centro_gest};`;
                 response = await client.query(query);
 
-                let filesCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count) : 0;
-                console.log('response of file exists by checksum_sha1:', response);
+                const idFlowInfo = response['rows'][0]['id_risorsa'];
+                console.log('response of flow exists:', response);
                 console.log('row: ' + response.rows[0]);
                 console.log('count: ' + response.rows[0].count);
-                if (filesCount > 0) {
-                    //Here Update existing file
-                    try {
-                        query = `select codice_azienda, id_risorsa from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company};'`
-                        response = await client.query(query);
-                        let existingRows = response.rows;
-                        if (existingRows && existingRows.length) {
-                            const codiceAziendaExisting = existingRows[0]['codice_azienda'];
-                            const idRisorsaExisting = existingRows[0]['id_risorsa'];
-                            const requestBody = JSON.parse(event.body);
+
+                if (idFlowInfo) {
+                    //CONTROLLO SE ESISTE REVISIONE
+                    query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' AND codice_azienda='${company};'`;
+                    response = await client.query(query);
+
+                    let filesCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count) : 0;
+                    console.log('response of file exists by checksum_sha1:', response);
+                    console.log('row: ' + response.rows[0]);
+                    console.log('count: ' + response.rows[0].count);
+
+                    if (filesCount > 0) {
+                        //ESISTE FLUSSO ED ESISTE REVISIONE, UPDATE
+                        try {
+                            console.log('Esiste flusso ed esiste revisione');
+                            query = `select prog_revisione from entrasp.cdms_risorse_revisioni where id_risorsa = ${idFlowInfo} and codice_azienda='${company}' and checksum_sha1=${checksum};`;
+                            console.log(query);
+                            response = await client.query(query);
+                            const progRevisione = response['rows'][0]['prog_revisione'];
+                            console.log(JSON.stringify(response));
+                            //const requestBody = JSON.parse(event.body);
                             idarg = (requestBody.id_argomento_tipo_allegato == undefined) ? null : requestBody.id_argomento_tipo_allegato;
                             idcg = (requestBody.id_centro_gest == undefined) ? null : requestBody.id_centro_gest;
                             dataRif = (requestBody.data_rif == undefined) ? null : requestBody.data_rif;
                             dataScad = (requestBody.data_scadenza == undefined) ? null : requestBody.data_scadenza;
 
+                            //CHE SENSO HA? ESISTE FLUSSO INFORMATIVO ED ANCHE DOCUMENTO, QUINDI NON SONO SU UN ALTRO OGGETTO 
+
+                            //------IMPOSSIBILE CHE PER UN FLUSSO INFORMATIVO ESISTANO 2 DOCUMENTI IDENTICI(STESSO CHECKSUM)------
+
                             query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
-                            values ('${codiceAziendaExisting}', ${idRisorsaExisting}, 1, '${bus_object}','${chiave}') ON CONFLICT DO NOTHING;`;
+                            values ('${company}', ${idFlowInfo}, ${progRevisione}, '${bus_object}','${chiave}');`;
                             console.log(query);
                             response = await client.query(query);
+                            console.log(JSON.stringify(response));
 
-                            query = `update entrasp.cdms_risorse set nickname=coalesce('${replaceAll(requestBody.nickname, "'", "''")}',nickname), descrizione=coalesce('${requestBody.descrizione}',descrizione), 
-                            data_ultima_revisione=coalesce('${date}', data_ultima_revisione), descrizione_breve=coalesce('${requestBody.descrizione_breve}',descrizione_breve), ts_ultima_modifica=coalesce('${date}',ts_ultima_modifica),
-                            id_argomento_tipo_allegato=coalesce(${idarg},3981), id_centro_gest=${idcg}, data_scadenza=nullif('${dataScad}','null')::timestamp without time zone, 
-                            data_rif=nullif('${dataRif}', 'null')::timestamp without time zone, id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
-                            where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting};`;
-                            console.log(query);
-                            response = await client.query(query);
+                            /*PER RIFERIMENTO, CAMPI DA AGGIUNGERE A REVISIONI.
+            
+                                INSERT ON REVISIONI: data_ultima_revisione ts_ultima_modifica e quali altri?
+                            
+                            */
 
-                            query = `update entrasp.cdms_risorse_revisioni set id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
-                            where codice_azienda='${codiceAziendaExisting}' and id_risorsa=${idRisorsaExisting} and checksum_sha1='${checksum}';`;
+                            query = `update entrasp.cdms_risorse_revisioni set id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg),
+                            descrizione=coalesce('${requestBody.descrizione}',descrizione), data_ultima_revisione=current_date, ts_ultima_modifica=coalesce('${date}',ts_ultima_modifica),
+                            where codice_azienda='${company}' and id_risorsa=${idRisorsaExisting} and prog_revisione=${progRevisioneExisting};`;
                             console.log(query);
                             response = await client.query(query);
 
                             //HACK: exception in case of bus_object="cdms_risorse"
-                            idrisorsa = (idrisorsa == -1) ? idRisorsaExisting : idrisorsa; 
+                            idrisorsa = (idrisorsa == -1) ? idRisorsaExisting : idrisorsa;
                             query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;
                             console.log(query);
                             response = await client.query(query);
-                            console.log(JSON.stringify(response)); 
+                            console.log(JSON.stringify(response));
+
+
                         }
-
+                        catch (e) {
+                            console.log(e);
+                        }
                     }
-                    catch (e) {
-                        console.log(e);
+                    else {
+                        //ESISTE FLUSSO, NON ESISTE DOCUMENTO, INSERT
+                        console.log('Esiste flusso e non esiste revisione');
+                        //Here Insert new file
+                        const object = await s3.getObject(s3ParamsGetList).promise();
+                        const actualChecksum = shasum.update(object.Body).digest('hex');
+                        //const requestBody = JSON.parse(event.body);
+                        console.log(checksum, actualChecksum);
+                        if (checksum === actualChecksum) { // file correctly uploaded
+                            //Prendo il massimo prog_revisione
+                            query = `select max(prog_revisione) as prog_revisione from entrasp.cdms_risorse_revisioni where id_risorsa = ${idFlowInfo} and codice_azienda='${company}';`;
+                            console.log(query);
+                            response = await client.query(query);
+                            const nextProgRevisione = response['rows'][0]['prog_revisione'];
+                            console.log(JSON.stringify(response));
 
+                            //current_date o ${date} ????? vedi ultimi 2 values..
+                            query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
+                            revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, data_ultima_revisione, ts_ultima_modifica) 
+                            values ('${company}', ${idFlowInfo}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
+                            '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${requestBody.dimensione}, 
+                            '${checksum}', ${requestBody.id_riunione}, ${requestBody.id_odg}, 4035, current_date, current_date);`;
+                            console.log(query);
+                            response = await client.query(query);
+                            console.log(JSON.stringify(response));
 
+                            query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
+                             values ('${company}', ${idFlowInfo}, coalesce(${nextProgRevisione},0) + 1, '${bus_object}','${chiave}');`;
+                            console.log(query);
+                            response = await client.query(query);
+                            console.log(JSON.stringify(response));
+
+                            //HACK: exception in case of bus_object="cdms_risorse"
+                            idrisorsa = (idrisorsa == -1) ? idFlowInfo : idrisorsa;
+                            query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;    //Da mandare in background... pesante
+                            console.log(query);
+                            //??? tolgo await
+                            response = await client.query(query);
+                            console.log(JSON.stringify(response));
+
+                            body = { result: 'OK' };
+                        } else { // wrong checksum 
+                            body = { result: 'KO', reason: 'Error with file checksum' };
+                        }
                     }
-
-                    body = { result: 'KO', reason: 'File already loaded!' };
-
-                    // query = `SELECT coalesce(max(id_risorsa),0) + 1 as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
-                    // // query = `SELECT (MAX(id_risorsa)+1) as         id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
-                    // response = await client.query(query);
-                    // const nextId = response['rows'][0]['id_risorsa'];
-                    // const requestBody = JSON.parse(event.body);
-
-                    // query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, nome_business_object, chiave) 
-                    //     values ('${company}', ${nextId}, '${bus_object}','${chiave}');`;
-                    // response = await client.query(query);
-                    // console.log(query);
-
-
                 }
                 else {
-                    //Here Insert new file
+                    //NON ESISTE FLUSSO INFORMATIVO, CREO FLUSSO INFORMATIVO
+                    console.log('Non esiste flusso, creo flusso e revisione');
+                    query = `SELECT coalesce(max(id_risorsa),0) + 1 as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
+                    console.log(query);
+                    response = await client.query(query);
+                    const nextId = response['rows'][0]['id_risorsa'];
+                    console.log(JSON.stringify(response));
+                    query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, id_argomento_tipo_allegato, id_centro_gest, id_anagrafica)
+                    values ('${company}', ${nextId}, ${requestBody.id_argomento_tipo_allegato}, 1, ${requestBody.id_anagrafica});`;  //metti centro gest ****************************************************************************************************************************
+                    console.log(query);
+                    response = await client.query(query);
+                    console.log(JSON.stringify(response));
+
+                    //INSERT revisione
                     const object = await s3.getObject(s3ParamsGetList).promise();
                     const actualChecksum = shasum.update(object.Body).digest('hex');
-                    const requestBody = JSON.parse(event.body);
+                    //const requestBody = JSON.parse(event.body);
                     console.log(checksum, actualChecksum);
                     if (checksum === actualChecksum) { // file correctly uploaded
-
-                        query = `SELECT coalesce(max(id_risorsa),0) + 1 as id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
-                        // query = `SELECT (MAX(id_risorsa)+1) as         id_risorsa from entrasp.cdms_risorse WHERE codice_azienda='${company}';`;
-                        console.log(query);
-                        response = await client.query(query);
-                        const nextId = response['rows'][0]['id_risorsa'];
-                        console.log(JSON.stringify(response));
-
-                        query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, id_argomento_tipo_allegato, id_centro_gest, nickname, revisione_corrente, 
-                            descrizione_breve, descrizione, autore, data_creazione, data_ultima_revisione, url,  ts_ultima_modifica, 
-                            content_type, flag_indexed, data_scadenza, 
-                            data_rif)
-                        values ('${company}', ${nextId}, ${requestBody.id_argomento_tipo_allegato}, ${requestBody.id_centro_gest}, '${replaceAll(requestBody.nickname, "'", "''")}',1, 
-                        '${requestBody.descrizione_breve}', '${requestBody.descrizione}', '${requestBody.autore}', '${date}', '${date}', '${requestBody.url}','${date}', 
-                        '${requestBody.content_type}', 1, nullif(replace('${requestBody.data_scadenza}','undefined', 'null'), 'null')::timestamp without time zone, 
-                        nullif( replace('${requestBody.data_rif}','undefined', 'null'), 'null')::timestamp without time zone) returning id_risorsa;`;
-                        console.log(query);
-                        response = await client.query(query);
-                        console.log(JSON.stringify(response));
-
-                        query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, 
-                            file_id, revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato) 
+                        //current_date o ${date} ????? vedi ultimi 2 values..
+                        query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
+                        revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, data_ultima_revisione, ts_ultima_modifica) 
                         values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
-                              '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${requestBody.dimensione}, 
-                              '${checksum}', ${requestBody.id_riunione}, ${requestBody.id_odg}, 4035);`;
+                        '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${requestBody.dimensione}, 
+                        '${checksum}', ${requestBody.id_riunione}, ${requestBody.id_odg}, 4035, current_date, current_date);`;
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
 
                         query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
-                        values ('${company}', ${nextId}, 1, '${bus_object}','${chiave}');`;
+                         values ('${company}', ${nextId}, 1, '${bus_object}','${chiave}');`;
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
 
                         //HACK: exception in case of bus_object="cdms_risorse"
                         idrisorsa = (idrisorsa == -1) ? nextId : idrisorsa;
-                        query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;
+                        query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;    //Da mandare in background...
                         console.log(query);
+                        //??? tolgo await
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
 

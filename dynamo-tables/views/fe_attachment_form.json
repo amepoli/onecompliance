@@ -1,6 +1,7 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "fe_attachment_form",
+  "predefinedQueries": [],
   "form_keys": [
     {
       "format": {
@@ -57,7 +58,7 @@
     {
       "key": "id_anagrafica",
       "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part=$codice_part$;",
+        "comboQuery": "SELECT a.id_anagrafica AS id, concat(a.codice, ' - ', a.nome, ' ', a.cognome) as name from entrasp.anagrafiche_id a inner join entrasp.aziende b on a.codice_part=b.codice_part WHERE b.codice_azienda=$codice_azienda$;",
         "options": [],
         "viewType": "combobox"
       },
@@ -65,8 +66,8 @@
       "newLine": false,
       "readOnly": false,
       "isPrimary": false,
-      "queryFunct": "entrasp.id_anagrafica_per_fe_attachments('€global_codice_azienda€', '$id_progetto$', '$id_somministrazione$', '$id_sondaggio$')",
-      "isHidden": false
+      "isHidden": false,
+      "queryFunct": "entrasp.id_anagrafica_per_fe_attachments('ITAGO', '$id_progetto$', '$id_somministrazione$', '$id_sondaggio$', '$id_anagrafica$')"
     },
     {
       "format": {

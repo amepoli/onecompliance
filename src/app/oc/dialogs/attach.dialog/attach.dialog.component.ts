@@ -286,6 +286,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                         id_centro_gest:  _this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
                                         id_argomento_tipo_allegato: _this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,                                        
                                         dimensione: _this.form.value.dimensione,
+                                        id_anagrafica: _this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
                                         autore: _this.authService.getUsername()
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
@@ -352,6 +353,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                 id_centro_gest: data.id_centro_gest,
                                 id_argomento_tipo_allegato: data.id_argomento_tipo_allegato,
                                 data_rif: data.data_rif,
+                                id_anagrafica: data.id_anagrafica
                                 //type: 
                                 //key:  
                                 //codice_azienda:
