@@ -53,11 +53,11 @@ function parseFile(dbfBuffer) {
     return dbfData;
 }
 
-function createCSV(dbfData) {
+function createCSV(dbfData, columns) {
     const rows = dbfData && dbfData.rows ? dbfData.rows.length : 0;
     if (rows > 0) {
         console.log('Creating CSV...');
-        const keys = dbfData.columns.map(x => x.name); //Object.keys(dbfData.columns);
+        const keys = columns && columns.length? columns: dbfData.columns.map(x => x.name); //Object.keys(dbfData.columns);
         let csvData = '';
         csvData += `${keys.join(separator)}\n`;
         csvData += dbfData.rows.map(row => keys.map(key => row[key]).join(separator)).join('\n');
@@ -149,7 +149,12 @@ async function processFiles(files, bucket) {
             let dbfData = parseFile(dbfBuffer);
             if (dbfData) {
                 console.log('DBF rows count: ', dbfData.rows.length);
-                let csvData = createCSV(dbfData);
+
+                /// TODO:
+                // Create logic to get columns for the current file
+                let columns = null;
+
+                let csvData = createCSV(dbfData, columns);
                 await writeCSVToS3(srcFile.replace('.dbf', '.csv'), csvData, bucket);
                 // console.log(csvData);
             }
@@ -178,6 +183,9 @@ async function processEvent(event) {
     console.log('Running custom event.');
     let bucket = event.bucket;
     let folders = [event.folder];
+    if(event.separator) {
+        separator = event.separator;
+    }
 
     await folders.reduce(async (promise, folder) => {
         // This line will wait for the last async function to finish.
