@@ -287,6 +287,9 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                         id_argomento_tipo_allegato: _this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,                                        
                                         dimensione: _this.form.value.dimensione,
                                         id_anagrafica: _this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
+                                        id_somministrazione: _this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
+                                        id_sondaggio: _this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
+                                        id_progetto: _this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
                                         autore: _this.authService.getUsername()
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
@@ -353,7 +356,10 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                 id_centro_gest: data.id_centro_gest,
                                 id_argomento_tipo_allegato: data.id_argomento_tipo_allegato,
                                 data_rif: data.data_rif,
-                                id_anagrafica: data.id_anagrafica
+                                id_anagrafica: data.id_anagrafica,
+                                id_somministrazione: data.id_somministrazione,
+                                id_sondaggio: data.id_sondaggio,
+                                id_progetto: data.id_progetto
                                 //type: 
                                 //key:  
                                 //codice_azienda:
