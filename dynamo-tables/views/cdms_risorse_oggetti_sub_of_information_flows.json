@@ -1,0 +1,12 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "cdms_risorse_oggetti_sub_of_information_flows",
+  "inheritsFrom": "cdms_risorse_oggetti",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select * from entrasp.cdms_risorse_oggetti where codice_azienda=$codice_azienda$ and (id_risorsa=$id_risorsa$ or id_risorsa=(select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))",
+      "type": "main"
+    }
+  ]
+}
