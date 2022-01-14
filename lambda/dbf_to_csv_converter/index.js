@@ -4,8 +4,13 @@ AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 var dbfReader = require('./dbf-reader');
 
-const separator = ',';
-const folders = ['batch/finafarm'];
+const separator = '~'; //',';
+const folders = ['batch/finafarm/upload']; //['batch/finafarm'];
+const columnsList = {
+    "analeas.dbf": ['IDANACLI', 'NUMCONTR', 'DATA_CON', 'DT_SOSP', 'DESCRIZ'],
+    "anacont.dbf": ['IDANACLI', 'PKTBTIPCOIN', 'DESCRI', 'NUMCONT', 'DESCOGE', 'DATA_INI', 'DT_SOSP'],
+    "ANACLI. DBF": ['CODCLI', 'RAGSOC', 'COGNOME', 'NAME', 'IND_SL', 'CAP_SL', 'STATO_SL', 'CODFISC', 'PIVA', 'DAT_NASC', 'SESSO', 'TELEF', 'FAX', 'CLIFOR', 'EMAIL']
+};
 
 async function getFilesList(folder, bucket) {
     if (!bucket) {
@@ -131,7 +136,7 @@ async function deleteFiles(files, bucket) {
 }
 
 
-async function processFiles(files, bucket) {
+async function processFiles(files, bucket, columnsList) {
     if (!bucket) {
         bucket = 'BUCKET_NAME'
     }
@@ -149,10 +154,10 @@ async function processFiles(files, bucket) {
             let dbfData = parseFile(dbfBuffer);
             if (dbfData) {
                 console.log('DBF rows count: ', dbfData.rows.length);
+                let srcFileName = srcFile.split('/')[0];
 
-                /// TODO:
-                // Create logic to get columns for the current file
-                let columns = null;
+                // Get columns for the current file
+                let columns = columnsList.includes(srcFileName)? columnsList[srcFileName]: null;
 
                 let csvData = createCSV(dbfData, columns);
                 await writeCSVToS3(srcFile.replace('.dbf', '.csv'), csvData, bucket);
@@ -174,7 +179,7 @@ async function process() {
         let files = await getFilesList(folder);
         if (files && files.length) {
             await deleteFiles(files.filter(x => x.includes('.csv')));
-            await processFiles(files.filter(x => x.includes('.dbf')));
+            await processFiles(files.filter(x => x.includes('.dbf')), 'BUCKET_NAME', columnsList);
         }
     }, Promise.resolve());
 }
@@ -182,7 +187,8 @@ async function process() {
 async function processEvent(event) {
     console.log('Running custom event.');
     let bucket = event.bucket;
-    let folders = [event.folder];
+    let folders = event.folder? [event.folder]: folders;
+    
     if(event.separator) {
         separator = event.separator;
     }
@@ -195,8 +201,8 @@ async function processEvent(event) {
 
         let files = await getFilesList(folder);
         if (files && files.length) {
-            await deleteFiles(files.filter(x => x.includes('.csv'), bucket));
-            await processFiles(files.filter(x => x.includes('.dbf'), bucket));
+            await deleteFiles(files.filter(x => x.includes('.csv')), bucket);
+            await processFiles(files.filter(x => x.includes('.dbf')), bucket, event.columns | columnsList);
         }
     }, Promise.resolve());
 }
