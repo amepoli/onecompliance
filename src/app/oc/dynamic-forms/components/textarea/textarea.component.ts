@@ -133,6 +133,10 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
       _this.htmlContent = _this.field.value;
     }
 
+    if(_this.field.readonly || _this.readOnlyPage) {
+      setTimeout(() => _this.group.get(_this.field.name).disable(), 500);
+    }
+      
     _this.setHeights();
     _this.loadStyles();
 

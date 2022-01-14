@@ -7,16 +7,16 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'combobox',
   template: `
-<mat-form-field [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" appearance="outline">
+<mat-form-field [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" appearance="outline" [formGroup]="group">
 <mat-label>{{field.label}}</mat-label>
-<mat-select [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)" (openedChange)="openedChange($event)"
+<mat-select [formControlName]="field.name" [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)" (openedChange)="openedChange($event)"
 [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'">
 <mat-icon ngxMatSelectSearchClear>clear</mat-icon>
 </ngx-mat-select-search>
 <mat-option *ngIf="isLazyLoading" value="" [style.color]="'grey'"><span ><mat-icon>cached</mat-icon></span>Loading...</mat-option>
 <mat-option *ngIf="!isLazyLoading" value="" [style.color]="'grey'">Seleziona</mat-option>
-<mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly || readOnlyPage">{{item.name}}</mat-option>
+<mat-option *ngFor="let item of filteredItems | async" [value]="item">{{item.name}}</mat-option>
 </mat-select>
 
 <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
@@ -117,8 +117,13 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
         _this.sendEvent();
       }, 500);
     }
+  
+    if(_this.field.readonly || _this.readOnlyPage) {
+      setTimeout(() => _this.group.get(_this.field.name).disable(), 500);
+    }
   }
 
+  
   ngOnDestroy() {
     if(this.subscription != null) {
       this.subscription.unsubscribe();

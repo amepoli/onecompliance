@@ -35,6 +35,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
               private _dialogService: DialogService) { }
   ngOnInit(): void {
     const _this = this;
+    
     _this.field.style = _this.field.style == null ? { background_color: 'transparent', font_color: 'black' } : _this.field.style;
     _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'transparent';
     _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
@@ -98,6 +99,9 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
       else {
         _this.field.value = fieldValue;
       }
+    }
+    if(_this.field.readonly || _this.readOnlyPage) {
+      setTimeout(() => _this.group.get(_this.field.name).disable(), 500);
     }
   }
 
@@ -183,7 +187,6 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
         // Replace the field and form control value
         _this.field.value = newString;
         _this.group.get(_this.field.name).setValue(_this.field.value);
-
         // If Event publish is required on startup
         // _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'change' });
       }
