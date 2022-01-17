@@ -4,8 +4,13 @@ AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 var dbfReader = require('./dbf-reader');
 
-const separator = ',';
-const folders = ['batch/finafarm'];
+const separator = '~'; //',';
+const folders = ['batch/finafarm/upload']; //['batch/finafarm'];
+const columnsList = {
+    "analeas.dbf": ['IDANACLI', 'NUMCONTR', 'DATA_CON', 'DT_SOSP', 'DESCRIZ'],
+    "anacont.dbf": ['IDANACLI', 'PKTBTIPCOIN', 'DESCRI', 'NUMCONT', 'DESCOGE', 'DATA_INI', 'DT_SOSP'],
+    "anacli.dbf": ['CODCLI', 'RAGSOC', 'COGNOME', 'NAME', 'IND_SL', 'CAP_SL', 'STATO_SL', 'CODFISC', 'PIVA', 'DAT_NASC', 'SESSO', 'TELEF', 'FAX', 'CLIFOR', 'EMAIL']
+};
 
 async function getFilesList(folder, bucket) {
     if (!bucket) {
@@ -36,6 +41,7 @@ async function readDBFFile(file, bucket) {
 
     const dbfFile = await s3.getObject(s3ParamsGetList).promise();
     if (dbfFile && dbfFile.Body) {
+        console.log('File length: ', dbfFile.Body.length);
         return dbfFile.Body;
         // var dbfData = parseDBF(dbfFile.Body);
         // if (dbfData && dbfData.length) {
@@ -75,7 +81,6 @@ async function writeCSVToS3(key, data, bucket) {
         bucket = 'BUCKET_NAME'
     }
 
-    console.log('Writing CSV...');
     var params = {
         Bucket: bucket,
         Key: key,
@@ -136,6 +141,8 @@ async function processFiles(files, bucket) {
         bucket = 'BUCKET_NAME'
     }
 
+    console.log('columnsList: ', columnsList);
+
     await files.reduce(async (promise, srcFile) => {
         // This line will wait for the last async function to finish.
         // The first iteration uses an already resolved Promise
@@ -149,13 +156,17 @@ async function processFiles(files, bucket) {
             let dbfData = parseFile(dbfBuffer);
             if (dbfData) {
                 console.log('DBF rows count: ', dbfData.rows.length);
-
-                /// TODO:
-                // Create logic to get columns for the current file
-                let columns = null;
-
+                let srcFileName = srcFile.split('/');
+                srcFileName = srcFileName[srcFileName.length - 1];
+                
+                console.log('srcFileName: ', srcFileName.toLowerCase());
+                
+                // Get columns for the current file
+                let columns = columnsList[srcFileName.toLowerCase()]? columnsList[srcFileName.toLowerCase()]: null;
+                console.log('columns: ', columns);
+                
                 let csvData = createCSV(dbfData, columns);
-                await writeCSVToS3(srcFile.replace('.dbf', '.csv'), csvData, bucket);
+                await writeCSVToS3(srcFile.replace('.dbf', '.csv').replace('.DBF', '.csv'), csvData, bucket);
                 // console.log(csvData);
             }
         }
@@ -174,7 +185,7 @@ async function process() {
         let files = await getFilesList(folder);
         if (files && files.length) {
             await deleteFiles(files.filter(x => x.includes('.csv')));
-            await processFiles(files.filter(x => x.includes('.dbf')));
+            await processFiles(files.filter(x => x.toLowerCase().includes('.dbf')), 'BUCKET_NAME');
         }
     }, Promise.resolve());
 }
@@ -182,7 +193,11 @@ async function process() {
 async function processEvent(event) {
     console.log('Running custom event.');
     let bucket = event.bucket;
-    let folders = [event.folder];
+    let folders = event.folder? [event.folder]: folders;
+    if(event.columns) {
+        columnsList = event.columns;
+    }
+
     if(event.separator) {
         separator = event.separator;
     }
@@ -195,8 +210,8 @@ async function processEvent(event) {
 
         let files = await getFilesList(folder);
         if (files && files.length) {
-            await deleteFiles(files.filter(x => x.includes('.csv'), bucket));
-            await processFiles(files.filter(x => x.includes('.dbf'), bucket));
+            await deleteFiles(files.filter(x => x.includes('.csv')), bucket);
+            await processFiles(files.filter(x => x.toLowerCase().includes('.dbf')), bucket);
         }
     }, Promise.resolve());
 }

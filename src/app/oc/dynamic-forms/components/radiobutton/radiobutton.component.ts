@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { AfterViewInit, Component, OnInit } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { FieldConfig } from 'app/oc/interfaces';
 import { ConsoleLoggerService, PubSubService } from "app/oc/services";
@@ -9,7 +9,7 @@ import { ConsoleLoggerService, PubSubService } from "app/oc/services";
 <div [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" [formGroup]="group">
 <label class="radio-label-padding">{{field.label}}:</label>
 <mat-radio-group [formControlName]="field.name" [ngStyle]="{'display': 'flex', 'flex-direction': 'column'}" [(ngModel)]="chosenItem">
-<mat-radio-button color="primary" *ngFor="let item of field.options" [value]="item" [disabled]="field.readonly || readOnlyPage" (change)="onCheck($event)" >{{item.name}}</mat-radio-button>
+<mat-radio-button [formControlName]="field.name" color="primary" *ngFor="let item of field.options" [value]="item" (change)="onCheck($event)" >{{item.name}}</mat-radio-button>
 </mat-radio-group>
 </div>
 `,
@@ -20,7 +20,7 @@ import { ConsoleLoggerService, PubSubService } from "app/oc/services";
     '[style.width]': 'field.isVisible? field.width + "%": "0"'
   }
 })
-export class RadiobuttonComponent implements OnInit {
+export class RadiobuttonComponent implements OnInit, AfterViewInit {
   field: FieldConfig;
   group: FormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
@@ -35,6 +35,13 @@ export class RadiobuttonComponent implements OnInit {
     _this.chosenItem = _this.field.options.find(o => JSON.stringify(o.id) === JSON.stringify(_this.field.value));
     // trigger an event the first time 
     setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'radiobutton' }); }, 50);
+  }
+
+  ngAfterViewInit() {
+    let _this = this;    
+    if(_this.field.readonly || _this.readOnlyPage) {
+      setTimeout(() => _this.group.get(_this.field.name).disable(), 500);
+    }
   }
 
   onCheck(event: any): void {
