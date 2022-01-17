@@ -168,7 +168,7 @@
           "queryFunct": "select entrasp.aggiorna_cdms_bo_cdms_risorse($codice_azienda$, $id_risorsa$, true)"
         }
       ],
-      "size": 6,
+      "size": 7,
       "readOnly": false
     },
     {
@@ -182,24 +182,9 @@
       "isPrimary": false,
       "key": "id_centro_gest",
       "label": "Centro Gestionale",
-      "newLine": false,
-      "size": 2,
+      "newLine": true,
+      "size": 3,
       "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento_stato",
-      "size": 2,
-      "label": "Stato",
-      "readOnly": false,
-      "newLine": true
     },
     {
       "autoGenerate": false,
@@ -213,12 +198,12 @@
       "label": "Descrizione",
       "newLine": false,
       "readOnly": false,
-      "size": 8
+      "size": 7
     },
     {
       "key": "id_anagrafica",
       "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as name from entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
         "options": [],
         "viewType": "combobox"
       },
@@ -227,7 +212,7 @@
       "readOnly": false,
       "isPrimary": false,
       "isHidden": false,
-      "size": 2
+      "size": 3
     },
     {
       "format": {
@@ -322,16 +307,6 @@
     },
     {
       "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_rif",
-      "width": "6%",
-      "label": "Data Riferimento"
-    },
-    {
-      "format": {
         "dataType": "text"
       },
       "isHidden": false,
@@ -348,40 +323,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "descrizione_breve",
-      "width": "20%",
+      "width": "25%",
       "label": "Descrizione documento"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_stato",
-      "width": "6%",
-      "label": "Stato",
-      "style": [
-        {
-          "value": "Non Richiesto",
-          "font_color": "grey",
-          "font_weight": "500"
-        },
-        {
-          "value": "Da Definire",
-          "font_color": "#FF8100",
-          "font_weight": "500"
-        },
-        {
-          "value": "Da Allegare",
-          "font_color": "#FF8100",
-          "font_weight": "500"
-        },
-        {
-          "value": "Allegato",
-          "font_color": "green",
-          "font_weight": "500"
-        }
-      ]
     },
     {
       "format": {
@@ -391,7 +334,7 @@
       "isPrimary": false,
       "key": "centro_gest",
       "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
-      "width": "10%",
+      "width": "15%",
       "label": "Centro gestionale"
     },
     {
@@ -404,6 +347,16 @@
       "width": "15%",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica)",
       "label": "Cliente/Fornitore/Dipendente"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_rif",
+      "width": "6%",
+      "label": "Data Riferimento"
     },
     {
       "format": {
@@ -605,18 +558,6 @@
       "queryCond": "(upper(crs.descrizione) like '%'||upper('€parola_search_s€')||'%' or upper(entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato)) like '%'||upper('€parola_search_s€')||'%' or upper(entrasp.argomenti_descr(crs.id_argomento_tipo_allegato)) like '%'||upper('€parola_search_s€')||'%')"
     },
     {
-      "fieldName": "stato_search",
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "comboQuery": "select distinct id_argomento_stato as id, entrasp.argomenti_descr_stato(id_argomento_stato) as name from entrasp.cdms_risorse where codice_azienda=$codice_azienda$;",
-        "options": []
-      },
-      "label": "Stato",
-      "newLine": false,
-      "queryCond": "crs.id_argomento_stato=$stato_search$"
-    },
-    {
       "fieldName": "tipo_oggetto_collegato_s",
       "format": {
         "dataType": "text",
@@ -627,56 +568,6 @@
       "label": "Nome business object",
       "newLine": true,
       "queryCond": "crs.id_risorsa in(select bos.id_risorsa from entrasp.cdms_risorse_oggetti bos where bos.nome_business_object=$tipo_oggetto_collegato_s$ and bos.codice_azienda=crs.codice_azienda)"
-    },
-    {
-      "fieldName": "scaduto_s",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Scaduto",
-      "newLine": false,
-      "queryCond": "data_scadenza<=current_date and id_argomento_stato not in(4035, 5327)"
-    },
-    {
-      "fieldName": "scaduto_s_togg",
-      "format": {
-        "value": "0",
-        "viewType": "toggle"
-      },
-      "label": "Scaduto",
-      "newLine": false,
-      "queryCond": "data_scadenza<=current_date and id_argomento_stato not in(4035, 5327)"
-    },
-    {
-      "fieldName": "non_allegato",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Da allegare",
-      "newLine": false,
-      "queryCond": "id_argomento_stato=4034"
-    },
-    {
-      "fieldName": "non_richiesto",
-      "format": {
-        "value": "0",
-        "viewType": "toggle"
-      },
-      "label": "Non Richiesto",
-      "newLine": false,
-      "queryCond": "id_argomento_stato=5327"
-    },
-    {
-      "fieldName": "non_allegato_toggle",
-      "format": {
-        "value": "0",
-        "viewType": "toggle"
-      },
-      "label": "Non allegato",
-      "newLine": false,
-      "queryCond": "id_argomento_stato not in(4035, 5327)"
     },
     {
       "fieldName": "my_offices_t",

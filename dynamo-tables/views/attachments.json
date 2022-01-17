@@ -239,10 +239,19 @@
           "key": "unifica",
           "icon": "merge_type",
           "label": "Unifica documenti",
-          "query": "select entrasp.unifica_risorse_revisioni_selezionate(array[$selected_rows_data$])",
+          "query": "select entrasp.unifica_risorse_revisioni_array(array[$selected_rows_data$])",
           "confirmAction": true,
           "reloadOnSuccess": true,
           "confirmActionMessage": "Unificare i documenti selezionati?"
+        },
+        {
+          "key": "separa",
+          "icon": "call_split",
+          "label": "Crea flusso informativo",
+          "query": "select entrasp.separa_risorse_revisioni_array(array[$selected_rows_data$])",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Assegnare le risorse selzionate a separati flussi informativi?"
         }
       ]
     }
@@ -533,8 +542,20 @@
         "dataType": "text"
       },
       "label": "Utente",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "autore=$autore_s$"
+    },
+    {
+      "format": {
+        "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "fieldName": "id_argomento_stato_s",
+      "size": 2,
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "crs.id_argomento_stato=$id_argomento_stato_s$"
     },
     {
       "fieldName": "data_da_s",
