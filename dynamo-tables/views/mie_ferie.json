@@ -11,6 +11,16 @@
 			"operation": "selectTable",
 			"type": "main",
 			"queryString": "select * from entrasp.festivita where dynamo_user='€global_username€'"
+		},
+		{
+			"operation": "insert",
+			"type": "postProcessing",
+			"queryString": "update entrasp.festivita set dynamo_user='€global_username€' where id_festivita=$id_festivita$ and dynamo_user is null"
+		},
+		{
+			"operation": "update",
+			"type": "postProcessing",
+			"queryString": "update entrasp.festivita set dynamo_user='€global_username€' where id_festivita=$id_festivita$ and dynamo_user is null"
 		}
 	],
 	"form_keys": [
