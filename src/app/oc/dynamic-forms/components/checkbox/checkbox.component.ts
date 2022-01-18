@@ -31,7 +31,7 @@ export class CheckboxComponent implements OnInit {
     if (typeof _this.field.value === 'string') {
       _this.field.value = parseInt(_this.field.value, 10);
     }
-    if (_this.field.eventName !== null && _this.field.eventTrigger === 'change') {
+    if (_this.field.eventName !== null && _this.field.eventTrigger === 'load') {
       if (!_this.field.conditionalQuery) {
         // No condition required, wait a while before triggering the event
         setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'change' }); }, 50);
