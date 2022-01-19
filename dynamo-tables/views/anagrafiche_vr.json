@@ -4,7 +4,9 @@
     "entryKey": "anagrafiche_vr",
     "origin": "entrasp.anagrafiche_vr",
     "define": {
-        "is_hidden_codice_part": "true"
+        "is_hidden_codice_part": "true",
+        "is_hidden_ruolo": "false",
+        "is_hidden_ruolo2": "false"
     },
     "outputEvents": [
         {
@@ -619,11 +621,11 @@
             "attributeFuncts": [
                 {
                     "attributeType": "isHidden",
-                    "queryString": "select case when £id_anagrafica£ is null then true else false end as label"
+                    "queryString": "select case when £id_anagrafica£ is null or $P{is_hidden_ruolo2} then true else false end as label"
                 }
             ],
             "sameOrigin": false,
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false
         },
         {
@@ -640,12 +642,12 @@
             "attributeFuncts": [
                 {
                     "attributeType": "isHidden",
-                    "queryString": "select case when €id_anagrafica€ is null or €id_anagrafica€::varchar ='' then true else false end as label"
+                    "queryString": "select case when (€id_anagrafica€ is null or €id_anagrafica€::varchar ='') or $P{is_hidden_ruolo2} then true else false end as label"
                 }
             ],
             "sameOrigin": false,
             "isPrimary": false,
-            "isHidden": false
+            "isHidden": "$Q{is_hidden_ruolo}"
         },
         {
             "autoGenerate": false,
@@ -662,10 +664,10 @@
             "attributeFuncts": [
                 {
                     "attributeType": "isHidden",
-                    "queryString": "select case when $id_anagrafica$ is null or $id_anagrafica$::varchar ='' then true else false end as label"
+                    "queryString": "select case when ($id_anagrafica$ is null or $id_anagrafica$::varchar ='') or $P{is_hidden_ruolo2} then true else false end as label"
                 }
             ],
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false
         },
         {
@@ -682,10 +684,10 @@
             "attributeFuncts": [
                 {
                     "attributeType": "isHidden",
-                    "queryString": "select case when $id_anagrafica$ is null or $id_anagrafica$::varchar ='' then true else false end as label"
+                    "queryString": "select case when ($id_anagrafica$ is null or $id_anagrafica$::varchar ='') or $P{is_hidden_ruolo2} then true else false end as label"
                 }
             ],
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false
         }
     ],
