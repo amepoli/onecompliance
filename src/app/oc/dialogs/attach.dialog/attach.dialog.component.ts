@@ -274,22 +274,24 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     // check that the file has been correctly uploaded and pass file params to the backend
                                     var mime = require('mime-types');
                                     const fileParams = {
-                                        nickname: _this.form.value.fileName,
-                                        descrizione: _this.form.value.descrizione,
-                                        data_scadenza: _this.form.value.data_scadenza,
-                                        data_rif: _this.form.value.data_rif,
-                                        url: _this.form.value.url,
-                                        descrizione_breve: _this.form.value.descrizione_breve,
+                                        nickname: _this.form.value.fileName != null ? _this.form.value.fileName : null,
+                                        descrizione: _this.form.value.descrizione != null ? _this.form.value.descrizione : null,
+                                        data_scadenza: _this.form.value.data_scadenza != null ? _this.form.value.data_scadenza : null,
+                                        data_rif: _this.form.value.data_rif != null ? _this.form.value.data_rif : null,
+                                        url: _this.form.value.url != null ? _this.form.value.url : null,
+                                        descrizione_breve: _this.form.value.descrizione_breve != null ? _this.form.value.descrizione_breve : null,
                                         content_type: mime.lookup(_this.form.value.fileName),
                                         id_odg: _this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
                                         id_riunione: _this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
                                         id_centro_gest:  _this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
                                         id_argomento_tipo_allegato: _this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,                                        
-                                        dimensione: _this.form.value.dimensione,
+                                        dimensione: _this.form.value.dimensione != null ? _this.form.value.dimensione : null,
                                         id_anagrafica: _this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
                                         id_somministrazione: _this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
                                         id_sondaggio: _this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
                                         id_progetto: _this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
+                                        prog_revisione: _this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
+                                        id_risorsa: _this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
                                         autore: _this.authService.getUsername()
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
@@ -359,7 +361,9 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                 id_anagrafica: data.id_anagrafica,
                                 id_somministrazione: data.id_somministrazione,
                                 id_sondaggio: data.id_sondaggio,
-                                id_progetto: data.id_progetto
+                                id_progetto: data.id_progetto,
+                                prog_revisione: data.prog_revisione,
+                                id_risorsa: data.id_risorsa
                                 //type: 
                                 //key:  
                                 //codice_azienda:
