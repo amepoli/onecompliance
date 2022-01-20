@@ -4,17 +4,17 @@
   "tabs": [
     {
       "entry": "progetti_consultant_hp",
-      "badgeQuery": "select count(id_progetto) as conta_sondaggi_chiusi from entrasp.progetti WHERE stato!='C'",
+      "badgeQuery": "select count(id_progetto) as conta_progetti_mio_ufficio_aperti from entrasp.progetti prg inner join entrasp.centri_gestionali cg on prg.codice_part=cg.codice_part and prg.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where an.dynamo_user='€global_username€' and prg.stato='A'",
       "title": "Progetti"
     },
     {
       "entry": "sondaggi_consultant_hp",
-      "badgeQuery": "select count(id_sondaggio) as conta_sondaggi_aperti from entrasp.sondaggi WHERE stato!='C'",
+      "badgeQuery": "select count(snd.id_sondaggio) from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where dynamo_user='€global_username€' and snd.stato !='C'",
       "title": "Sondaggi"
     },
     {
       "entry": "compiti_consultant_hp",
-      "badgeQuery": "select count(codice_compito) as conta_compiti_aperti from entrasp.compiti WHERE stato!='C'",
+      "badgeQuery": "select count(codice_compito) as compiti_aperti FROM entrasp.compiti cmp WHERE (cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) and cmp.stato='A'",
       "title": "Compiti"
     }
   ]
