@@ -1,0 +1,48 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "domande_da_copiare",
+  "inheritsFrom": "domande",
+  "origin": "entrasp.domande",
+  "predefinedQueries": [
+    {
+      "operation": "insert",
+      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, £id_domanda£, $ordinamento$, $id_sezione$, $id_template_rp$)",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$, $id_template_rp$)",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.risposte rp set punteggio = dm.punteggio from entrasp.domande dm where rp.codice_azienda= dm.codice_azienda and rp.id_domanda = dm.id_domanda and rp.id_modello_test = dm.id_modello_test and rp.id_modello_test_vr = dm.id_modello_test_vr and rp.punteggio!=dm.punteggio and rp.codice_azienda = $codice_azienda$ and rp.id_modello_test =$id_modello_test$ and rp.id_domanda =$id_domanda$ and rp.id_modello_test_vr = $id_modello_test_vr$;",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select * from entrasp.domande where codice_azienda=$codice_azienda$"
+    }
+  ],
+  "table_multiselection_actions": [
+    {
+      "viewType": "menu",
+      "key": "menutest",
+      "label": "Actions",
+      "icon": "more_vert",
+      "menuOptions": [
+        {
+          "key": "insert_questions",
+          "icon": "delete",
+          "label": "Inserisci domande nel modello test corrente",
+          "query": "select entrasp.domande_insert_array(array[$selected_rows_data$], $codice_azienda$, $id_modello_test$, $id_modello_test_vr$)",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire le domande selezionate nel presente modello di test?"
+        }
+      ]
+    }
+  ]
+ 
+}
