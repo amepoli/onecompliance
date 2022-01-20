@@ -569,7 +569,9 @@ function getHomepageTabQuery(entry_params) {
     return queryString;
 }
 
-function getLazyComboQuery(entry_keys, table_keys, keyTypes, lazy_key) {
+function getLazyComboQuery(entry_keys, table_keys, keyTypes, lazy_key, event_keys) {
+
+    let keys = event_keys != null && event_keys.length? JSON.parse(event_keys): {};
 
     let comboQueries = [];
 
@@ -577,7 +579,9 @@ function getLazyComboQuery(entry_keys, table_keys, keyTypes, lazy_key) {
 
     let comboQuery = comboQueries.find(q => (q.key === lazy_key));
 
-    comboQuery = comboQuery.comboQuery;
+    comboQuery = replaceGlobalkeys(comboQuery.comboQuery);
+    comboQuery = replaceKeys(comboQuery, keys, keyTypes);
+    comboQuery = replaceLocalKeys(comboQuery, keys);
 
     console.log('ComboQuery: ', comboQuery);
 
@@ -629,7 +633,7 @@ function getEventQuery(entry_params, body, eventInfo, queryParams) {
     let keyTypes = getKeyTypes(entry_keys);
 
     if (eventInfo.type === 'combo_lazy_loading') {
-        return getLazyComboQuery(entry_keys, table_keys, keyTypes, eventInfo.field);
+        return getLazyComboQuery(entry_keys, table_keys, keyTypes, eventInfo.field, queryParams['keys']);
     }
 
     const findKey = (dataset, param) => {
