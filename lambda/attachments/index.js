@@ -237,21 +237,17 @@ exports.handler = async (event, context) => {
                     }
                     body = { result: 'OK', list: decnames };
                 } else{
-                    query = `select * from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' AND nome_business_object='${bus_object}'
-                    AND chiave='${chiave}';`;
+                    query = `select client_file_name,dimensione,ts_ultima_modifica from entrasp.cdms_risorse_oggetti a inner join entrasp.cdms_risorse_revisioni b on a.codice_azienda=b.codice_azienda
+                    and a.id_risorsa=b.id_risorsa and a.prog_revisione=b.prog_revisione where a.codice_azienda='${company}' AND a.nome_business_object='${bus_object}'
+                    AND a.chiave='${chiave}';`;
                     response = await client.query(query);
                     console.log(query, response);
-                    let ids = response['rows'].map(f => f['id_risorsa']);
-                    for (let i = 0; i < ids.length; i++) {      //PER OGNI REVISIONE ALLEGATA A QUEST'OGGETTO
-                        query = `select * from entrasp.cdms_risorse as a 
-                    inner join entrasp.cdms_risorse_revisioni as b on a.codice_azienda = b.codice_azienda AND a.id_risorsa = b.id_risorsa 
-                    where a.codice_azienda='${company}' AND a.id_risorsa=${ids[i]};`;
-                        response = await client.query(query);
-                        console.log(query, response);
-                        decnames.push(response['rows'][0]);
+                    let rows = response['rows'];
+                    for (let i = 0; i < rows.length; i++) {      
+                                decnames.push(response['rows'][i]);
+                        }
                     }
                     body = { result: 'OK', list: decnames };
-                }
             } else if (requestType === 'updateFile') {
                 //console.log('requestType: updateFile');       //NO more in this requestType from OneCompliance
                 // fill postgresql tables
@@ -339,21 +335,24 @@ exports.handler = async (event, context) => {
                     idsom = (keys['id_somministrazione'] == undefined) ? null : keys['id_somministrazione'];
                     idana = (keys['id_anagrafica'] == undefined) ? null : keys['id_anagrafica'];
                     idceg = (keys['id_centro_gest'] == undefined) ? null : keys['id_centro_gest'];
-                    idata = (keys['id_argomento_tipo_allegato'] == undefined) ? null : keys['id_argomento_tipo_allegato'];
+                    iddom = (keys['id_domanda'] == undefined) ? null : keys['id_domanda'];
+                    idmte = (keys['id_modello_test'] == undefined) ? null : keys['id_modello_test'];
+                    idmtv = (keys['id_modello_test_vr'] == undefined) ? null : keys['id_modello_test_vr'];                
+                    idata = (requestBody.id_argomento_tipo_allegato == undefined) ? null : requestBody.id_argomento_tipo_allegato;
 
-                    query = `select entrasp.id_anagrafica_flow('${company}',${idpro},${idsom},${idsnd},${idana}), entrasp.id_centro_gest_flow('${company}',${idpro},${idsom},${idsnd},${idceg}), entrasp.id_tipo_doc_flow('${company}',${idpro},${idsom},${idsnd},${idata});`;
+                    query = `select entrasp.id_anagrafica_flow('${company}',${idpro},${idsom},${idsnd},${idana}), entrasp.id_centro_gest_flow('${company}',${idpro},${idsom},${idsnd},${idceg}), entrasp.id_tipo_doc_flow('${company}',${iddom},${idmte},${idmtv},${idsnd},${idata});`;
                     response = await client.query(query);
                     const idAnagrafica = (response['rows'][0]['id_anagrafica_flow'] == undefined) ? null : response['rows'][0]['id_anagrafica_flow'];
                     const idCentroGest = (response['rows'][0]['id_centro_gest_flow'] == undefined) ? null : response['rows'][0]['id_centro_gest_flow'];
                     const idArgAll = (response['rows'][0]['id_tipo_doc_flow'] == undefined) ? null : response['rows'][0]['id_tipo_doc_flow'];
-                    console.log('response of functions flow:', response);
+                    console.log('Query keys: ', query, ' response ', response, ' keys ', keys);//console.log('response of functions flow:', response);
 
                     query = `select id_risorsa from entrasp.cdms_risorse where id_argomento_tipo_allegato=${idArgAll} and codice_azienda='${company}' 
                     and id_anagrafica=${idAnagrafica} and id_centro_gest=${idCentroGest} limit 1;`; //AA: togliere limit 1
                     response = await client.query(query);
                     console.log('response of query for idFlowInfo:', response);
 
-                    const idFlowInfo = response.rows[0]; //(response.rows && response.rows[0]) ? parseInt('' + response.rows[0]) : null;
+                    const idFlowInfo = response.rows[0];
 
                     if (idFlowInfo != null) {
                         //CONTROLLO SE ESISTE REVISIONE

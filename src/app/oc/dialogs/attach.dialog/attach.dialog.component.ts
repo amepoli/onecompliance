@@ -292,6 +292,9 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                         id_progetto: _this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
                                         prog_revisione: _this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
                                         id_risorsa: _this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
+                                        id_domanda: _this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
+                                        id_modello_test: _this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
+                                        id_modello_test_vr: _this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
                                         autore: _this.authService.getUsername()
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
@@ -363,7 +366,10 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                 id_sondaggio: data.id_sondaggio,
                                 id_progetto: data.id_progetto,
                                 prog_revisione: data.prog_revisione,
-                                id_risorsa: data.id_risorsa
+                                id_risorsa: data.id_risorsa,
+                                id_domanda: data.id_domanda,
+                                id_modello_test: data.id_modello_test,
+                                id_modello_test_vr :data.id_modello_test_vr
                                 //type: 
                                 //key:  
                                 //codice_azienda:
