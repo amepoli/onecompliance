@@ -17,9 +17,31 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select distinct codice_azienda, entrasp.consuntivazioni_time_consumed_new(codiceazienda=> codice_azienda, dynamouser=>$dynamo_user$, datainizio=>$dt_inizio_rif$::date, datafine=>$dt_fine_rif$::date) as dd_periodo_rif, entrasp.consuntivazioni_time_consumed_new(codiceazienda=> codice_azienda, dynamouser=>$dynamo_user$, datainizio=>(current_date - interval '12 months')::date, datafine=>current_date::date) as dd_12_months, entrasp.consuntivazioni_time_consumed_new(codiceazienda=> codice_azienda,  dynamouser=>$dynamo_user$, datainizio=>(current_date - interval '1 months')::date, datafine=>current_date::date) as dd_1_months, entrasp.consuntivazioni_time_consumed_new(codiceazienda=> codice_azienda, dynamouser=>$dynamo_user$, datainizio=>(current_date - interval '3 months')::date, datafine=>current_date::date) as dd_3_months from entrasp.aziende WHERE codice_azienda in(€global_user_companies€) and codice_azienda in(select distinct codice_azienda from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where an.dynamo_user=$dynamo_user$)"
+      "queryString": "select distinct codice_azienda, entrasp.consuntivazioni_time_consumed_new(codiceazienda=> codice_azienda, dynamouser=>$dynamo_user$, datainizio=>€date_rif_begin€::date, datafine=>€date_rif_begin€::date) as dd_periodo_rif, entrasp.consuntivazioni_time_consumed_new(codiceazienda=> codice_azienda, dynamouser=>$dynamo_user$, datainizio=>(current_date - interval '12 months')::date, datafine=>current_date::date) as dd_12_months, entrasp.consuntivazioni_time_consumed_new(codiceazienda=> codice_azienda,  dynamouser=>$dynamo_user$, datainizio=>(current_date - interval '1 months')::date, datafine=>current_date::date) as dd_1_months, entrasp.consuntivazioni_time_consumed_new(codiceazienda=> codice_azienda, dynamouser=>$dynamo_user$, datainizio=>(current_date - interval '3 months')::date, datafine=>current_date::date) as dd_3_months from entrasp.aziende WHERE codice_azienda in(€global_user_companies€) and codice_azienda in(select distinct codice_azienda from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where an.dynamo_user=$dynamo_user$)"
     }
   ],
+  "search_keys": [
+    {
+        "fieldName": "date_begin_rif",
+        "format": {
+            "dataType": "date",
+            "viewType": "input"
+        },
+        "label": "Data Inzio Periodo Rif",
+        "newLine": true,
+        "queryCond": "(current_date> '€date_begin_rif€' or true)"
+    },
+    {
+        "fieldName": "date_end_rif",
+        "format": {
+            "dataType": "date",
+            "viewType": "input"
+        },
+        "label": "Data Fine Periodo Rif",
+        "newLine": false,
+        "queryCond": "(current_date >'€date_end_rif€' or true)"
+    }
+],
   "table_keys": [
     {
       "format": {
