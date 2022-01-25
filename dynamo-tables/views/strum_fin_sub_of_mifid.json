@@ -1,0 +1,163 @@
+{
+    "$schema": "../views.schema.json",
+    "inheritsFrom": "fondi_gestiti",
+    "entryKey": "strum_fin_sub_of_mifid",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "preProcessing",
+            "queryString": "update entrasp.anagrafiche_vr avr set liv_min_toll_rischio_per_sottoscrizione= entrasp.giudizio_mifid_strum_fin('€global_codice_azienda€', avr.id_anagrafica)from entrasp.ruoli_anagrafiche ra where avr.codice_part=ra.codice_part and avr.id_anagrafica=ra.id_anagrafica and avr.codice_part = '€global_codice_part€' and ra.codice_ruolo='FONDO'"
+        },
+        {
+            "operation": "selectTable",
+            "queryString": "SELECT an.codice_part, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID'::text, entrasp.giudizio_teorico_mifid_appropriatezza('€global_codice_azienda€', $id_sondaggio$, $id_somministrazione$, an.id_anagrafica)::text) as giudizio_appropriatezza, an.id_anagrafica,avr.data_upd, avr.liv_min_toll_rischio_per_sottoscrizione, avr.ragione_sociale, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and codice_ruolo = 'FONDO';",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceruolo=>'FONDO', codiceanagrafica=>$codice$, ragionesociale=>$ragione_sociale$::varchar, flagfondo=>'€flag_fondo€', annotazioniinterne=>$annotazioni_interne$);",
+            "type": "main"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_anagrafica$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "update",
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, ragionesociale=>$ragione_sociale$, flagfondo=>'€flag_fondo€', annotazioniinterne=>$annotazioni_interne$, livmintoll=>$liv_min_toll_rischio_per_sottoscrizione$);",
+            "type": "main"
+        },
+        {
+            "operation": "delete",
+            "queryString": "SELECT entrasp.anagrafica_id_delete($codice_part$, '€global_codice_azienda€', $id_anagrafica$);",
+            "type": "main"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_anagrafica",
+            "label": "ID",
+            "width": "5%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "width": "12%",
+            "label": "Codice"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ragione_sociale",
+            "width": "30%",
+            "label": "Denominazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio_appropriatezza",
+            "width": "20%",
+            "label": "Appropriatezza",
+            "style": [
+				{
+					"value": "Appropriato",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Adeguato",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Non Appropriato",
+					"font_color": "red",
+					"font_weight": "500"
+				},
+				{
+					"value": "Non Adeguato",
+					"font_color": "red",
+					"font_weight": "500"
+				},
+				{
+					"value": "Non Giudicabile",
+					"font_color": "grey",
+					"font_weight": "500"
+				}
+			]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "prog_vr",
+            "label": "Versione",
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "liv_min_toll_rischio_per_sottoscrizione",
+            "label": "Liv. Minimo",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ruolo_s",
+            "width": "10%",
+            "label": "Ruolo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione"
+        }
+    ]
+}

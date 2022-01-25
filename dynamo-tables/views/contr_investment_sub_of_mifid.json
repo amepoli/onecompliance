@@ -1,0 +1,208 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "contr_investment_sub_of_mifid",
+	"inheritsFrom": "contracts_investment",
+	"predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select id_contratto, data_stipulazione, data_cessazione, entrasp.anagrafica_key(id_cliente, codice_azienda, '|') as object_key, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)) as giudizio, codice_azienda, numero_contratto, id_cliente, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente, entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as tipo_contratto, id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', stato) as descr_stato, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario), id_argomento_contratto from entrasp.contratti where codice_azienda=$codice_azienda$ and entrasp.anagrafica_key(id_cliente, codice_azienda, '|')=$object_key$;"
+		},
+		{
+			"operation": "update",
+			"type": "postProcessing",
+			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+		},
+		{
+			"operation": "update",
+			"type": "postProcessing",
+			"queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+		},
+		{
+			"operation": "insert",
+			"type": "postProcessing",
+			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"width": "5%",
+			"key": "id_contratto",
+			"label": "ID"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "codice_azienda"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "8%",
+			"isPrimary": false,
+			"key": "numero_contratto",
+			"label": "N. Contratto"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_cliente",
+			"label": "Cliente",
+			"width": "20%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "cliente",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
+			"label": "Cliente",
+			"width": "20%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "10%",
+			"key": "id_argomento_contratto",
+			"queryFunct": "entrasp.argomenti_descr(id_argomento_contratto)",
+			"label": "Tipo Contratto"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_stipulazione",
+			"width": "10%",
+			"label": "Data Stipula"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_strumento_finanziario",
+			"label": "id_strumento_finanziario"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "fondo_gestito",
+			"width": "20%",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario)",
+			"label": "Strum.fin.sottoscritto/acquistato"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_cessazione",
+			"width": "10%",
+			"label": "Data Cessazione"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "descr_stato",
+			"label": "Stato",
+			"style": [
+				{
+					"value": "Cessato",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Attivo",
+					"font_color": "#FF0000",
+					"font_weight": "500"
+				},
+				{
+					"value": "In Scadenza",
+					"font_color": "#FFE118",
+					"font_weight": "500"
+				}
+			],
+			"sameOrigin": false
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"label": "Giudizio Appropriatezza",
+			"width": "10%",
+			"key": "giudizio",
+			"queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto))",
+			"isHidden": false,
+			"style": [
+				{
+					"value": "Appropriato",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Adeguato",
+					"font_color": "green",
+					"font_weight": "500"
+				},
+				{
+					"value": "Non Appropriato",
+					"font_color": "red",
+					"font_weight": "500"
+				},
+				{
+					"value": "Non Adeguato",
+					"font_color": "red",
+					"font_weight": "500"
+				},
+				{
+					"value": "Non Giudicabile",
+					"font_color": "grey",
+					"font_weight": "500"
+				}
+			],
+			"isPrimary": false
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"queryFunct": "entrasp.anagrafica_key(id_cliente, codice_azienda, '|')",
+			"key": "object_key",
+			"label": "object_key"
+		}
+	],
+	"querySuffixes": {
+		"tableViewSuffix": "order by id_contratto desc limit 100"
+	}
+}
