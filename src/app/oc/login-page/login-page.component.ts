@@ -17,9 +17,16 @@ import { TimezoneService } from '../services/timezone.service';
 })
 export class LoginPageComponent implements OnInit {
     loginForm: FormGroup;
+    confirmSignInForm: FormGroup;
+
     user: any;
-    signedIn = false;
+
+    confirmSignIn: boolean = false;
+    confirmingSignIn: boolean = false;
+
+    signedIn: boolean = false;
     signingIn: boolean = false;
+    
     loadingSession: boolean = false;
 
     // Text to show on Login button
@@ -68,6 +75,11 @@ export class LoginPageComponent implements OnInit {
             password: ['', Validators.required]
         });
 
+        this.confirmSignInForm = this._formBuilder.group({
+            challenge: ['', Validators.required]
+        });
+        
+
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -87,6 +99,12 @@ export class LoginPageComponent implements OnInit {
 
         this.authService.authStateChange$
             .subscribe(authState => {
+                this.confirmSignIn = authState.state === 'confirmSignIn';
+                if(this.confirmSignIn) {
+                    this._dialogService.closeDialog();
+                    this.signingIn = false;
+                    this.loginButtonText = 'VERIFY OTP';
+                }
                 this.signedIn = authState.state === 'signedIn';
                 if (!authState.user) {
                     this.user = null;
@@ -97,6 +115,7 @@ export class LoginPageComponent implements OnInit {
                 // Error occured!
                 this._dialogService.closeDialog();
                 this.signingIn = false;
+                this.confirmingSignIn = false;
                 this.loginButtonText = 'LOGIN';
             });
 
@@ -109,6 +128,11 @@ export class LoginPageComponent implements OnInit {
                     this.signingIn = false;
                     this.loginButtonText = 'LOGIN';
                 }
+                else if (this.confirmingSignIn) {
+                    this._dialogService.showErrorDialog("Error", err.message ? err.message : "Incorrect OTP");
+                    this.confirmingSignIn = false;
+                    this.loginButtonText = 'VERIFY';
+                }
                 else {
                     // We failed to load previous session
                     this._dialogService.closeDialog();
@@ -119,6 +143,7 @@ export class LoginPageComponent implements OnInit {
             }, error => {
                 // Error occured!
                 this._dialogService.closeDialog();
+                this.confirmSignIn = false;
                 this.signingIn = false;
                 this.loginButtonText = 'LOGIN';
             });
@@ -141,6 +166,7 @@ export class LoginPageComponent implements OnInit {
             // Error occured!
             this._dialogService.closeDialog();
             this.signingIn = false;
+            this.confirmSignIn = false;
             this.loginButtonText = 'LOGIN';
         });
 
@@ -170,6 +196,25 @@ export class LoginPageComponent implements OnInit {
         // Sign in
         this.signingIn = true;
         this.authService.signIn();
+
+        // this.authService.fetchGoogleUser();
+    }
+
+    onConfirmSignInSubmit(e): void {
+        // Cognito fix
+        e.preventDefault();
+        
+        var challenge = this.confirmSignInForm.value.challenge;
+        
+        this.loginButtonText = 'PLEASE WAIT';
+
+        // Show loading Alert
+        this._dialogService.showLoadingDialog("Verifying", "Please wait...");
+
+        // Sign in
+        this.confirmSignIn = true;
+        this.confirmingSignIn = true;
+        this.authService.confirmSignIn(challenge);
 
         // this.authService.fetchGoogleUser();
     }

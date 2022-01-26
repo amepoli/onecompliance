@@ -1,0 +1,55 @@
+
+<div mat-dialog-content>
+
+
+    <ng-container *ngIf="isLoading"
+            style="display: flex; justify-content: center; align-items: center; background-color: #fafafa;">
+        
+        <mat-progress-spinner color="primary" mode="indeterminate" class="mfa-spinner">
+        </mat-progress-spinner>
+    </ng-container>
+
+    <ng-container *ngIf="!isLoading && token"
+            style="display: flex; justify-content: center; align-items: center; background-color: #fafafa;">
+        <div align="center">
+            <h2>Enable Multi-Factor Authentication</h2>
+        </div>
+        <ng-container *ngIf="curStep === 1">
+            <h3>Step 1</h3>
+            <p>Install a Time based One Time Password (TOTP) application on your smartphone like <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" rel="noopener noreferrer">Google Authenticator</a></p>
+            <div align="center" style="margin-top: 368px;">
+                <p>If you have installed this app, click Next</p>
+                <button mat-raised-button color="primary" (click)="gotoStep(2)">Next</button>
+            </div>
+        </ng-container>
+        
+        <ng-container *ngIf="curStep === 2">
+            <h3>Step 2</h3>
+            <p>Scan this QR code in your TOTP application on your smartphone, if the code scanning was successful, you will see a new entry with the name of OneCompliance</p>
+            <div align=center>
+                <qr-code [value]="token" [size]="256"></qr-code>
+                <p>{{token}}</p>
+                <p style="margin-top: 64px;">If you have scanned this code, click Next</p>
+                <button mat-raised-button color="primary" (click)="gotoStep(3)">Next</button>
+            </div>
+
+        </ng-container>
+        
+        <ng-container *ngIf="curStep === 3">
+            <h3>Step 3</h3>
+            <p>Enter the 6 digit code you see for OneCompiance entry on your TOTP app</p>
+            
+            <div align=center style="margin-top: 128px;">            
+                <mat-form-field appearance="outline">
+                    <mat-label>Verification Code</mat-label>
+                    <input matInput placeholder="Verification Code" [(ngModel)]="verificationCode">
+                    <mat-icon matSuffix>vpn_key</mat-icon>
+                    <mat-hint>Verfication Code from TOTP App like Google Authenticator</mat-hint>
+                </mat-form-field>
+
+                <p style="margin-top: 151px;">Click Verify to activate the Multi-Factor Authentication</p>
+                <button mat-raised-button color="primary" (click)="verifyCode()">Verify</button>
+            </div>
+        </ng-container>
+    </ng-container>
+</div>

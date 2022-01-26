@@ -41,6 +41,7 @@ export class AuthService {
   public errorInfo$ = new EventEmitter<any>();
 
   private currentCompany: string;
+  private confirmUser: any;
 
   // Google 
   googleUser: SocialUser;
@@ -116,6 +117,7 @@ export class AuthService {
       .then(user => {
         this.isSignedIn = false;
         if (user['challengeName'] === 'SMS_MFA' || user['challengeName'] === 'SOFTWARE_TOKEN_MFA') {
+          this.confirmUser = user;
           this.amplifyService.setAuthState({ state: 'confirmSignIn', user: user });
         } else if (user['challengeName'] === 'NEW_PASSWORD_REQUIRED') {
           this.amplifyService.setAuthState({ state: 'requireNewPassword', user: user });
@@ -369,6 +371,58 @@ export class AuthService {
 
   }
 
+  public async getMFAStatus() {
+    let _this = this;    
+    let user = await _this.amplifyService.auth().currentAuthenticatedUser();
+    return user.preferredMFA;
+  }
+
+  public async generateTOTPToken() {
+    let _this = this;    
+    let user = await _this.amplifyService.auth().currentAuthenticatedUser();    
+    _this.code = await _this.amplifyService.auth().setupTOTP(user);
+    return _this.code;
+  }
+
+  public async VerifyTOTP(challengeAnswer) {
+    let _this = this;
+    let user = await _this.amplifyService.auth().currentAuthenticatedUser();
+    
+    console.log(challengeAnswer);
+    let result = await _this.amplifyService.auth().verifyTotpToken(user, challengeAnswer);
+    if(result.Status === 'SUCCESS') {
+      _this.amplifyService.auth().setPreferredMFA(user, 'TOTP');
+    }
+    return result.Status;
+
+  }
+
+  public async disableTOTP() {
+    let _this = this;
+    let user = await _this.amplifyService.auth().currentAuthenticatedUser();    
+    _this.amplifyService.auth().setPreferredMFA(user, 'NOMFA');
+  }
+
+  public async confirmSignIn(challenge: string) {
+    let _this = this;
+    
+    _this.amplifyService.auth().confirmSignIn(_this.confirmUser, challenge, 'SOFTWARE_TOKEN_MFA')
+      .then(user => {
+        _this.isSignedIn = false;
+        if (user['challengeName'] === 'NEW_PASSWORD_REQUIRED') {
+          _this.amplifyService.setAuthState({ state: 'requireNewPassword', user: user });
+        } else {
+          _this.amplifyService.setAuthState({ state: 'signedIn', user: user });
+          _this.isSignedIn = true;
+          // now get user and related menu info from backend
+          _this.retrieveUserInfo();
+        }
+      })
+      .catch((err) => {
+        _this.errorInfo$.emit(err);
+        _this._setError(err);
+      });
+  }
   signInWithGoogle(): void {
     let _this = this;
     _this.socialAuthService.authState.subscribe((user) => {
