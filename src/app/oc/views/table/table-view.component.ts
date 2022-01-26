@@ -2,7 +2,7 @@ import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleCha
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatRow } from '@angular/material/table';
-import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, SearchToggle, SearchViewKey, SelectionAction, TableViewKey, TableViewParams } from 'app/oc/interfaces';
+import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, Restrictions, SearchToggle, SearchViewKey, SelectionAction, TableViewKey, TableViewParams } from 'app/oc/interfaces';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -103,6 +103,11 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     initialSelection: any = [];
     allowMultiSelect = true;
     selection = new SelectionModel<any>(true, []);
+
+    // Restrictions
+    restrictions: Restrictions = {
+        preventNavigationToForm: false
+    };
 
     /** Whether the number of selected elements matches the total number of rows. */
     isAllSelected() {
@@ -236,6 +241,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.importDataSource = result.externalUpdate;
                     const params = result.data;
                     _this._console.table(params);
+                    _this.loadRestrictions(params.restrictions);
                     _this.loadSelectionActions(params.table_multiselection_actions);
                     _this.loadViewKeys(params.table_keys);
                     _this.completeSearchKeys = params.search_keys;
@@ -517,6 +523,17 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         return styles;
     }
 
+    private loadRestrictions(restrictions: Restrictions) {
+        if(restrictions && Object.keys(restrictions).length > 0) {
+            this.restrictions = restrictions;            
+        }
+        else {
+            this.restrictions = {
+                preventNavigationToForm: false
+            };
+        }
+    }
+
     private loadSelectionActions(actions: SelectionAction[]) {
         if(actions && actions.length) {
             this.selectionActions = actions.map( x => {
@@ -721,13 +738,15 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     skipGetRecord = false;
     getRecord(index: number, row: MatRow) {
-        if(!this.skipGetRecord){
-            this.selectedRow = row;
-            const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: this.keysArray, index: index + 1, total: this.keysArray.length };
-            this.navigate(mergedParams);
-        }
-        else {
-            this.skipGetRecord = false;
+        if(!this.restrictions || !this.restrictions.preventNavigationToForm) {
+            if(!this.skipGetRecord){
+                this.selectedRow = row;
+                const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: this.keysArray, index: index + 1, total: this.keysArray.length };
+                this.navigate(mergedParams);
+            }
+            else {
+                this.skipGetRecord = false;
+            }
         }
     }
 
