@@ -8,6 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { QRCodeModule } from 'angular2-qrcode';
+
 import { FuseModule } from '@fuse/fuse.module';
 import { FuseSharedModule } from '@fuse/shared.module';
 import { FuseProgressBarModule, FuseSidebarModule, FuseThemeOptionsModule } from '@fuse/components';
@@ -52,6 +54,8 @@ const appRoutes: Routes = [];
 
         TranslateModule.forRoot(),
 
+        // QR Code library
+        QRCodeModule,
 
         // Material moment date module
         MatMomentDateModule,
