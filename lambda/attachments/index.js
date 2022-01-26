@@ -497,7 +497,7 @@ exports.handler = async (event, context) => {
                             console.log(JSON.stringify(response));
 
                             query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
-                         values ('${company}', ${nextId}, 1, '${bus_object}','${chiave}');`;
+                            values ('${company}', ${nextId}, 1, '${bus_object}','${chiave}');`;
                             console.log(query);
                             response = await client.query(query);
                             console.log(JSON.stringify(response));
