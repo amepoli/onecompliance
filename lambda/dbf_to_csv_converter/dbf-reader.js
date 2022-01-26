@@ -195,7 +195,7 @@ class DbfReader {
             // let day: string = Buffer.from(dbaseFile.buffer, byteRead, 1).toString('ascii');
             byteRead = byteRead + 1;
             // let lastUpdDate: string = year + month + day;
-            let recordCount = dbaseFile.readInt8(byteRead);
+            let recordCount = dbaseFile.readInt32LE(byteRead);
             if (recordCount < 0) {
                 recordCount *= -1;
             }
