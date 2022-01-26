@@ -10,6 +10,7 @@ import { FuseSharedModule } from '@fuse/shared.module';
 
 import { ToolbarComponent } from 'app/layout/components/toolbar/toolbar.component';
 import { TimeTrackerModule } from 'app/oc/views/time_tracker/time-tracker.module';
+import { MFAModule } from 'app/oc/widgets/mfa/mfa.module';
 
 @NgModule({
     declarations: [
@@ -25,7 +26,9 @@ import { TimeTrackerModule } from 'app/oc/views/time_tracker/time-tracker.module
         FuseSharedModule,
         FuseSearchBarModule,
         FuseShortcutsModule,
-        TimeTrackerModule
+        TimeTrackerModule,
+
+        MFAModule,
     ],
     exports     : [
         ToolbarComponent

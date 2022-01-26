@@ -8,48 +8,69 @@
                 <img src="assets/images/gorico/one-compliance-extended.png">
             </div>
 
-            <div class="title">LOGIN TO YOUR ACCOUNT</div>
-
-            <form name="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" novalidate>
-
-                <mat-form-field>
-                    <input matInput placeholder="Username" formControlName="username">
-                    <mat-error *ngIf="loginForm.get('username').hasError('required')">
-                        Username is required
-                    </mat-error>
-                </mat-form-field>
-
-                <mat-form-field>
-                    <input matInput type="password" placeholder="Password" formControlName="password">
-                    <mat-error>
-                        Password is required
-                    </mat-error>
-                </mat-form-field>
-
-                <div class="remember-forgot-password" fxLayout="row" fxLayout.xs="column"
-                    fxLayoutAlign="space-between center">
-                    <mat-checkbox class="remember-me" aria-label="Remember Me">
-                        Remember Me
-                    </mat-checkbox>
-
-                    <a class="forgot-password" [routerLink]="'/forgot-password'">
-                        Forgot Password?
-                    </a>
+            <ng-container *ngIf="!confirmSignIn">
+                <div class="title">LOGIN TO YOUR ACCOUNT</div>
+    
+    
+                <form name="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" novalidate>
+    
+                    <mat-form-field>
+                        <input matInput placeholder="Username" formControlName="username">
+                        <mat-error *ngIf="loginForm.get('username').hasError('required')">
+                            Username is required
+                        </mat-error>
+                    </mat-form-field>
+    
+                    <mat-form-field>
+                        <input matInput type="password" placeholder="Password" formControlName="password">
+                        <mat-error>
+                            Password is required
+                        </mat-error>
+                    </mat-form-field>
+    
+                    <div class="remember-forgot-password" fxLayout="row" fxLayout.xs="column"
+                        fxLayoutAlign="space-between center">
+                        <mat-checkbox class="remember-me" aria-label="Remember Me" color="primary">
+                            Remember Me
+                        </mat-checkbox>
+    
+                        <a class="forgot-password" [routerLink]="'/forgot-password'">
+                            Forgot Password?
+                        </a>
+                    </div>
+    
+                    <button mat-raised-button color="primary" class="submit-button" aria-label="LOG IN"
+                        [disabled]="loginForm.invalid || signingIn || loadingSession">
+                        {{loginButtonText}}
+                    </button>
+    
+                </form>
+    
+                
+                <div class="register" fxLayout="column" fxLayoutAlign="center center">
+                    <span class="text">Don't have an account?</span>
+                    <a class="link" [routerLink]="'/register'">Create an account</a>
                 </div>
+            </ng-container>
 
-                <button mat-raised-button color="accent" class="submit-button" aria-label="LOG IN"
-                    [disabled]="loginForm.invalid || signingIn || loadingSession">
-                    {{loginButtonText}}
-                </button>
-
-            </form>
-
-            <div class="register" fxLayout="column" fxLayoutAlign="center center">
-                <span class="text">Don't have an account?</span>
-                <a class="link" [routerLink]="'/register'">Create an account</a>
-            </div>
-
-
+            <ng-container *ngIf="confirmSignIn">
+                <div class="title">Verify OTP</div>
+                <form name="confirmSignInForm" [formGroup]="confirmSignInForm" (ngSubmit)="onConfirmSignInSubmit($event)" novalidate>
+    
+                    <mat-form-field>
+                        <input matInput placeholder="OTP" formControlName="challenge">
+                        <mat-error *ngIf="confirmSignInForm.get('challenge').hasError('required')">
+                            OTP is required
+                        </mat-error>
+                    </mat-form-field>
+    
+                    <button mat-raised-button color="primary" class="submit-button" aria-label="Verify"
+                        [disabled]="confirmSignInForm.invalid || signingIn || loadingSession">
+                        {{loginButtonText}}
+                    </button>
+    
+                </form>
+            </ng-container>
         </div>
 
     </div>
