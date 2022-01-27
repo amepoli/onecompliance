@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select distinct codice_azienda,id_risorsa,$id_risorsa_sopra$ as id_risorsa_sopra,codice_part,client_file_name,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as denominazione, entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, data_creazione, autore, stringa, tipo_allegato, true as unifica_risorse from entrasp.views_attachments_fast_no_bo where id_argomento_tipo_allegato = $id_argomento_tipo_allegato$ and codice_azienda=$codice_azienda$ and id_risorsa != $id_risorsa_sopra$",
+      "queryString": "select distinct codice_azienda,id_risorsa,$id_risorsa_sopra$ as id_risorsa_sopra,codice_part,client_file_name,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as denominazione, entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, data_creazione, revisore, stringa, tipo_allegato, true as unifica_risorse from entrasp.views_attachments_fast_no_bo where id_argomento_tipo_allegato = $id_argomento_tipo_allegato$ and codice_azienda=$codice_azienda$ and id_risorsa != $id_risorsa_sopra$",
       "type": "main"
     }
   ],
@@ -114,7 +114,7 @@
       "isHidden": false,
       "isPrimary": false,
       "width": "7%",
-      "key": "autore",
+      "key": "revisore",
       "label": "Utente"
     },
     {
@@ -313,16 +313,16 @@
       "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
     },
     {
-      "fieldName": "autore_s",
+      "fieldName": "revisore_s",
       "format": {
-        "comboQuery": "select distinct autore as id, autore as name from entrasp.cdms_risorse where codice_azienda=$codice_azienda$;",
+        "comboQuery": "select distinct revisore as id, revisore as name from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$;",
         "options": [],
         "viewType": "combobox",
         "dataType": "text"
       },
       "label": "Utente",
       "newLine": true,
-      "queryCond": "autore=$autore_s$"
+      "queryCond": "revisore=$revisore_s$"
     },
     {
       "fieldName": "data_da_s",
