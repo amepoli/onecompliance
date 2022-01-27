@@ -224,30 +224,42 @@ exports.handler = async (event, context) => {
 
             if (requestType === 'getFileList') {
                 //console.log('requestType: getFileList');      //When load some page with attach icon OR "click" on attach icon
+                idris = (keys['id_risorsa'] == undefined) ? null : keys['id_risorsa'];
+                provr = (keys['prog_revisione'] == undefined) ? null : keys['prog_revisione'];
                 if (bus_object == 'cdms_risorse_revisioni') {
-                    idris = (keys['id_risorsa'] == undefined) ? null : keys['id_risorsa'];
-                    provr = (keys['prog_revisione'] == undefined) ? null : keys['prog_revisione'];
-                    query = `select * from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris}
-                    and prog_revisione=${provr} and id_argomento_stato=4035;`;
+                    query = `select * from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${provr} and id_argomento_stato=4035;`;
                     response = await client.query(query);
                     console.log(query, response);
-                    let rows = response['rows'];
-                    if (rows.length > 0) {
+                    let ids = response['rows'].map(f => f['prog_revisione']);
+                    for (let i = 0; i < ids.length; i++) {      //PER OGNI REVISIONE ALLEGATA A QUEST'OGGETTO
+                        query = `select * from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${ids[i]} and id_argomento_stato=4035;`;
+                        response = await client.query(query);
+                        console.log(query, response);
                         decnames.push(response['rows'][0]);
                     }
-                    body = { result: 'OK', list: decnames };
-                } else{
-                    query = `select client_file_name,dimensione,ts_ultima_modifica from entrasp.cdms_risorse_oggetti a inner join entrasp.cdms_risorse_revisioni b on a.codice_azienda=b.codice_azienda
+                } else if (bus_object == 'cdms_risorse') {
+                    query = `select * from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and id_argomento_stato=4035;`;
+                    response = await client.query(query);
+                    console.log(query, response);
+                    let ids = response['rows'].map(f => f['prog_revisione']);
+                    for (let i = 0; i < ids.length; i++) {      //PER OGNI REVISIONE ALLEGATA A QUEST'OGGETTO
+                        query = `select * from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${ids[i]} and id_argomento_stato=4035;`;
+                        response = await client.query(query);
+                        console.log(query, response);
+                        decnames.push(response['rows'][0]);
+                    }
+                } else {
+                    query = `select * from entrasp.cdms_risorse_oggetti a inner join entrasp.cdms_risorse_revisioni b on a.codice_azienda=b.codice_azienda
                     and a.id_risorsa=b.id_risorsa and a.prog_revisione=b.prog_revisione where a.codice_azienda='${company}' AND a.nome_business_object='${bus_object}'
-                    AND a.chiave='${chiave}';`;
+                    AND a.chiave='${chiave}' and b.id_argomento_stato=4035;;`;
                     response = await client.query(query);
                     console.log(query, response);
                     let rows = response['rows'];
-                    for (let i = 0; i < rows.length; i++) {      
-                                decnames.push(response['rows'][i]);
-                        }
+                    for (let i = 0; i < rows.length; i++) {
+                        decnames.push(response['rows'][i]);
                     }
-                    body = { result: 'OK', list: decnames };
+                }
+                body = { result: 'OK', list: decnames };
             } else if (requestType === 'updateFile') {
                 //console.log('requestType: updateFile');       //NO more in this requestType from OneCompliance
                 // fill postgresql tables
@@ -310,7 +322,7 @@ exports.handler = async (event, context) => {
                     //ESISTE FLUSSO, ESISTE REVISIONE, SONO SU DOCUMENTS QUINDI UPDATE REVISIONE ESISTENTE
                     idris = (keys['id_risorsa'] == undefined) ? null : keys['id_risorsa'];
                     provr = (keys['prog_revisione'] == undefined) ? null : keys['prog_revisione'];
-                    query = `update entrasp.cdms_risorse_revisioni set  data_creazione='${date}',  file_id='${filename}', revisore='${requestBody.autore}',
+                    query = `update entrasp.cdms_risorse_revisioni set data_creazione='${date}',  file_id='${filename}', revisore='${requestBody.autore}',
                     client_file_name='${replaceAll(requestBody.nickname, "'", "''")}', content_type='${requestBody.content_type}', dimensione=${requestBody.dimensione},
                     checksum_sha1='${checksum}', id_argomento_stato=4035, descrizione=coalesce('${requestBody.descrizione}',descrizione), data_ultima_revisione=current_date, 
                     ts_ultima_modifica=coalesce('${date}',ts_ultima_modifica), id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
@@ -325,8 +337,53 @@ exports.handler = async (event, context) => {
                     //??? tolgo await
                     response = await client.query(query);
                     console.log(JSON.stringify(response));
-                    
+
                     body = { result: 'OK' };
+                } else if (bus_object == 'cdms_risorse') {
+                    idris = (keys['id_risorsa'] == undefined) ? null : keys['id_risorsa'];
+                    console.log('Esiste flusso e non esiste revisione');
+                    const object = await s3.getObject(s3ParamsGetList).promise();
+                    const actualChecksum = shasum.update(object.Body).digest('hex');
+                    console.log(checksum, actualChecksum);
+                    if (checksum === actualChecksum) { // file correctly uploaded
+                        dimensione = (requestBody.dimensione == undefined) ? null : requestBody.dimensione;
+                        descrizione = (requestBody.descrizione == undefined) ? null : requestBody.descrizione;
+                        idodg = (requestBody.id_odg == undefined) ? null : requestBody.id_odg;
+                        idriu = (requestBody.id_riunione == undefined) ? null : requestBody.id_riunione;
+                        //Prendo il massimo prog_revisione
+                        query = `select max(prog_revisione) as prog_revisione from entrasp.cdms_risorse_revisioni where id_risorsa=${idris} and codice_azienda='${company}';`;
+                        console.log(query);
+                        response = await client.query(query);
+                        const nextProgRevisione = (response.rows && response.rows[0]) ? response['rows'][0]['prog_revisione'] : 0;
+                        query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
+                                    revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica) 
+                                    values ('${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
+                                    '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
+                                    '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${date}', '${date}', '${date}');`;
+                        console.log(query);
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
+
+                        query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
+                                    values ('${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1, '${bus_object}','${chiave}');`;
+                        console.log(query);
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
+
+
+                        //HACK: exception in case of bus_object="cdms_risorse"
+                        idrisorsa = (idrisorsa == -1) ? idFlowInfo1 : idrisorsa;
+                        query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;    //Da mandare in background... pesante
+                        console.log(query);
+                        //??? tolgo await
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
+
+
+                        body = { result: 'OK' };
+                    } else { // wrong checksum 
+                        body = { result: 'KO', reason: 'Error with file checksum' };
+                    }
                 } else {
                     //console.log('requestType: fileCheck');        //OnSave, so on INSERT a new file  AND  also on UPDATE an existing file
                     //CONTROLLO SE ESISTE FLUSSO INFORMATIVO
@@ -337,7 +394,7 @@ exports.handler = async (event, context) => {
                     idceg = (keys['id_centro_gest'] == undefined) ? null : keys['id_centro_gest'];
                     iddom = (keys['id_domanda'] == undefined) ? null : keys['id_domanda'];
                     idmte = (keys['id_modello_test'] == undefined) ? null : keys['id_modello_test'];
-                    idmtv = (keys['id_modello_test_vr'] == undefined) ? null : keys['id_modello_test_vr'];                
+                    idmtv = (keys['id_modello_test_vr'] == undefined) ? null : keys['id_modello_test_vr'];
                     idata = (requestBody.id_argomento_tipo_allegato == undefined) ? null : requestBody.id_argomento_tipo_allegato;
 
                     query = `select entrasp.id_anagrafica_flow('${company}',${idpro},${idsom},${idsnd},${idana}), entrasp.id_centro_gest_flow('${company}',${idpro},${idsom},${idsnd},${idceg}), entrasp.id_tipo_doc_flow('${company}',${iddom},${idmte},${idmtv},${idsnd},${idata});`;
@@ -379,7 +436,7 @@ exports.handler = async (event, context) => {
                                 const progRevisione = response['rows'][0]['prog_revisione'];
                                 const idFlowInfo2 = response['rows'][0]['id_risorsa'];
                                 console.log(JSON.stringify(response));
-    
+
                                 query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
                             values ('${company}', ${idFlowInfo2}, ${progRevisione}, '${bus_object}','${chiave}') ON CONFLICT DO NOTHING;`;
                                 console.log(query);
@@ -431,10 +488,10 @@ exports.handler = async (event, context) => {
                                 console.log(JSON.stringify(response));
 
                                 query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
-                                revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_ultima_revisione, ts_ultima_modifica) 
+                                revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica) 
                                 values ('${company}', ${idFlowInfo1}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
                                 '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
-                                '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${date}', '${date}');`;
+                                '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${date}', '${date}', '${date}');`;
                                 console.log(query);
                                 response = await client.query(query);
                                 console.log(JSON.stringify(response));
@@ -488,10 +545,10 @@ exports.handler = async (event, context) => {
                             idriu = (requestBody.id_riunione == undefined) ? null : requestBody.id_riunione;
 
                             query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
-                        revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_ultima_revisione, ts_ultima_modifica) 
+                        revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica) 
                         values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
                         '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
-                        '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}' , '${date}', '${date}');`;
+                        '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}' , '${date}', '${date}', '${date}');`;
                             console.log(query);
                             response = await client.query(query);
                             console.log(JSON.stringify(response));
