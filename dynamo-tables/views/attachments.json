@@ -6,7 +6,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select *, entrasp.argomenti_descr_stato(rev_id_argomento_stato) as descr_stato, entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione) as titolo from entrasp.views_attachments_fast_no_bo where codice_azienda=$codice_azienda$"
+      "queryString": "select *, entrasp.argomenti_descr_stato(rev_id_argomento_stato) as descr_stato, entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest from entrasp.views_attachments_fast_no_bo where codice_azienda=$codice_azienda$"
     },
     {
       "type": "main",
@@ -335,17 +335,6 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "titolo",
-      "width": "25%",
-      "queryFunct": "entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione)",
-      "label": "Ordine del giorno e riunione"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
       "width": "8%",
       "key": "revisore",
       "label": "Utente"
@@ -412,18 +401,39 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "tipo_allegato",
-      "width": "12%",
+      "width": "6%",
       "label": "Tipo Documento"
     },
     {
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "key": "nome_business_object",
-      "width": "0%",
+      "width": "6%",
       "label": "Oggetto coll."
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "chiave",
+      "width": "10%",
+      "label": "Chiave"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "width": "15%",
+      "queryFunct": "entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione)",
+      "label": "Ordine del giorno e riunione"
     },
     {
       "format": {
@@ -481,6 +491,17 @@
       "isPrimary": false,
       "key": "id_riunione",
       "label": "id_riunione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "centro_gest",
+      "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
+      "width": "15%",
+      "label": "Centro gestionale"
     }
   ],
   "search_keys": [
