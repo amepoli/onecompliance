@@ -120,29 +120,30 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "input"
+        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg where arg.id_argomento in(select entrasp.descendants_of_argomento(3576, 1)) order by arg.descrizione;",
+        "options": [],
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "tipo_allegato",
-      "label": "Tipo Documento",
-      "newLine": false,
-      "size": 2,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
       "key": "id_argomento_tipo_allegato",
-      "label": "id_argomento_tipo_allegato",
-      "newLine": false,
-      "readOnly": true
+      "label": "Tipo flusso info",
+      "outputEvent": {
+        "eventName": "aggiorna_id_tipo_allegato_documents",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "eventName": "aggiorna_id_tipo_allegato_documents",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.aggiorna_tipo_allegato_domanda($codice_azienda$, $id_risorsa$, £id_argomento_tipo_allegato£)"
+        }
+      ],
+      "newLine": true,
+      "size": 4.5,
+      "readOnly": false
     },
     {
       "autoGenerate": false,
