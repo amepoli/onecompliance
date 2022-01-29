@@ -26,6 +26,16 @@
       "operation": "insert",
       "type": "postProcessing",
       "queryString": "select entrasp.rischi_net_value_update($codice_azienda$, $codice_rischio$);"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "update entrasp.rischi set intensita_singola_pre = $intensita_singola_pre$ ,probabilita_pre = $probabilita_pre$ where codice_azienda=$codice_azienda$ and codice_rischio = $codice_rischio$"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "update entrasp.rischi set intensita_singola_pre = $intensita_singola_pre$ ,probabilita_pre = $probabilita_pre$ where codice_azienda=$codice_azienda$ and codice_rischio = $codice_rischio$"
     }
   ],
   "messages": [
@@ -403,7 +413,7 @@
             "newLine": false,
             "outputEvent": {
               "eventName": "probabilita_pre_change",
-              "eventTrigger": "blur"
+              "eventTrigger": "load"
             },
             "readOnly": false
           },
@@ -450,7 +460,7 @@
             "newLine": false,
             "outputEvent": {
               "eventName": "change_intensita_singola_pre",
-              "eventTrigger": "blur"
+              "eventTrigger": "load"
             },
             "readOnly": false
           },
@@ -516,7 +526,7 @@
               "eventName": "change_intensita_totale_pre",
               "eventTrigger": "change"
             },
-            "readOnly": true
+            "readOnly": false
           },
           {
             "format": {
@@ -566,7 +576,7 @@
               "font_weight": "400"
             },
             "newLine": true,
-            "readOnly": true,
+            "readOnly": false,
             "sameOrigin": false
           },
           {
@@ -582,9 +592,9 @@
             "newLine": false,
             "outputEvent": {
               "eventName": "change_probabilita_post",
-              "eventTrigger": "blur"
+              "eventTrigger": "load"
             },
-            "readOnly": true
+            "readOnly": false
           },
           {
             "format": {
@@ -629,9 +639,9 @@
             "newLine": false,
             "outputEvent": {
               "eventName": "change_intensita_post",
-              "eventTrigger": "blur"
+              "eventTrigger": "load"
             },
-            "readOnly": true
+            "readOnly": false
           },
           {
             "format": {
@@ -695,7 +705,7 @@
             "key": "intensita_totale_post",
             "label": "Totale Post Presidi (€)",
             "newLine": false,
-            "readOnly": true
+            "readOnly": false
           },
           {
             "format": {
@@ -759,9 +769,9 @@
             "newLine": false,
             "outputEvent": {
               "eventName": "change_probabilita_rett",
-              "eventTrigger": "change"
+              "eventTrigger": "load"
             },
-            "readOnly": true
+            "readOnly": false
           },
           {
             "format": {
@@ -814,9 +824,9 @@
             "newLine": false,
             "outputEvent": {
               "eventName": "input_intensita_singola_post_rett",
-              "eventTrigger": "blur"
+              "eventTrigger": "load"
             },
-            "readOnly": true
+            "readOnly": false
           },
           {
             "format": {
@@ -879,7 +889,7 @@
               "eventName": "change_intensita_totale_post_rett",
               "eventTrigger": "change"
             },
-            "readOnly": true
+            "readOnly": false
           },
           {
             "format": {
@@ -933,7 +943,7 @@
       "label": "Valutazione Rischi",
       "newLine": true,
       "readOnly": false,
-      "sameOrigin": false,
+      "sameOrigin": true,
       "saveWhenHidden": true
     }
   ],
@@ -1396,7 +1406,7 @@
   "outputEvents": [
     {
       "eventTrigger": "onSave",
-      "eventName": "rischiReload"
+      "eventName": "rischiFormReload"
     }
   ],
   "inputEvents": [
@@ -1421,6 +1431,12 @@
     {
       "actionType": "reload",
       "eventName": "rischiFormReload"
+    }
+  ],
+  "hideActions": [
+    {
+      "tableActionType": "quick-add",
+      "viewType": "table"
     }
   ],
   "exportQueries": {
