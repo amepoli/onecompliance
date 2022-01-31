@@ -174,9 +174,9 @@
         {
             "autoGenerate": false,
             "format": {
-              "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-              "options": [],
-              "viewType": "combobox"
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -185,7 +185,7 @@
             "newLine": false,
             "size": 2,
             "readOnly": false
-          },
+        },
         {
             "autoGenerate": false,
             "format": {
@@ -200,7 +200,7 @@
             "outputEvent": {
                 "eventName": "ObjectKeyChange",
                 "eventTrigger": "select"
-              },
+            },
             "label": "Verifica su/di",
             "newLine": false,
             "readOnly": false,
@@ -218,13 +218,13 @@
             "label": "object_description",
             "inputEvents": [
                 {
-                  "eventName": "ObjectKeyChange",
-                  "actionType": "query",
-                  "condition": "none",
-                  "values": [],
-                  "queryFunct": "select objectdescription as object_description from entrasp.survey_population($codice_azienda$, $id_sondaggio$, '|') where objectkey='£object_key£';"
+                    "eventName": "ObjectKeyChange",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select objectdescription as object_description from entrasp.survey_population($codice_azienda$, $id_sondaggio$, '|') where objectkey='£object_key£';"
                 }
-              ],
+            ],
             "newLine": false,
             "readOnly": false,
             "size": 2
@@ -270,6 +270,50 @@
         }
     ],
     "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_somministrazioni",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "delete_icon"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "seleziona_campione",
+                "viewType": "form",
+                "query": "delete from entrasp.sondaggi_somministrati where codice_azienda='£codice_azienda£' and id_sondaggio=£id_sondaggio£ and id_somministrazione=£id_somministrazione£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "id_somministrazione",
+                        "destination": "id_somministrazione"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "text": "Sei sicuro di voler cancellare la verifica sull'elemento selezionato?",
+                    "title": "Cancellazione verifica"
+                },
+                "onSuccessAction": "reload"
+            }
+        },
         {
             "format": {
                 "dataType": "text"
@@ -328,50 +372,50 @@
             "key": "somministrazione_completata",
             "label": "Completo sì/no",
             "style": [
-				{
-					"value": "Completo",
-					"font_color": "green",
-					"font_weight": "500"
-				},
-				{
-					"value": "Incompleto",
-					"font_color": "red",
-					"font_weight": "500"
-				}
-			]
+                {
+                    "value": "Completo",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Incompleto",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
+            ]
         },
         {
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"width": "10%",
-			"key": "visible_button_somministrazione",
-			"label": "Risposte",
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "visible_button_somministrazione",
+            "label": "Risposte",
             "sameOrigin": false,
             "isButton": true,
             "queryFunct": "select true",
-			"buttonAction": {
-				"target": "sondaggi_somministrati",
-				"viewType": "form",
-				"action": "navigate",
-				"keymap": [
-					{
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
-					{
-						"source": "id_sondaggio",
-						"destination": "id_sondaggio"
-					},
-					{
-						"source": "id_somministrazione",
-						"destination": "id_somministrazione"
-					}
-				]
-			}
-		}
+            "buttonAction": {
+                "target": "sondaggi_somministrati",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "id_somministrazione",
+                        "destination": "id_somministrazione"
+                    }
+                ]
+            }
+        }
     ],
     "hideActions": [
         {
