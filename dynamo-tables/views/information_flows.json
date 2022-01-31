@@ -46,7 +46,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select case when crs.id_argomento_stato not in(4035, 5327) then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1))",
+      "queryString": "select entrasp.stato_information_flow(crs.codice_azienda, crs.id_risorsa) as stato, case when crs.id_argomento_stato not in(4035, 5327) then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1))",
       "type": "main"
     },
     {
@@ -324,23 +324,35 @@
     },
     {
       "format": {
-        "dataType": "date"
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "data_rif",
+      "key": "stato",
       "width": "6%",
-      "label": "Data Riferimento"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_scadenza",
-      "width": "10%",
-      "label": "Data Scadenza"
+      "label": "Stato",
+      "style": [
+        {
+          "value": "Non Richiesto",
+          "font_color": "grey",
+          "font_weight": "500"
+        },
+        {
+          "value": "Da Definire",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Da Allegare",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Allegato",
+          "font_color": "green",
+          "font_weight": "500"
+        }
+      ]
     },
     {
       "format": {

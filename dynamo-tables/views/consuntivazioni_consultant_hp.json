@@ -1,0 +1,137 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "consuntivazioni_consultant_hp",
+	"inheritsFrom": "consuntivazioni_consultant_list",
+	"toolbar_elements": [
+        {
+            "fieldName": "codice_azienda_s",
+            "viewType": "combobox",
+            "position": "left",
+            "label": "Azienda",
+            "options": [],
+            "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name  FROM entrasp.aziende WHERE codice_azienda in(€global_user_companies€) order by codice_azienda;",
+            "queryCond": "snd.codice_azienda = '$codice_azienda_s$'"
+        }
+    ],
+    "tiles": [
+        {
+            "title": "Aggiornamenti chiusi",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(cns.id_cons) from entrasp.consuntivazioni cns left join entrasp.compiti cmp on cns.codice_compito=cmp.codice_compito and cns.codice_azienda=cmp.codice_azienda left join entrasp.anagrafiche_id an on cns.id_risorsa=an.id_anagrafica and cns.codice_part=an.codice_part where dynamo_user='€global_username€' and  cns.stato='C'",
+                "queryCond": "",
+                "fieldName": "aggiornamenti_chiusi",
+                "value_color": "green",
+				"title_color": "black",
+				"background_color": "white",
+                "navigationAdditionalKeys": {
+                    "stato": "C"
+                }
+            },
+			"new_line": false
+        },
+		{
+            "title": "Aggiornamenti aperti",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(cns.id_cons) from entrasp.consuntivazioni cns left join entrasp.compiti cmp on cns.codice_compito=cmp.codice_compito and cns.codice_azienda=cmp.codice_azienda left join entrasp.anagrafiche_id an on cns.id_risorsa=an.id_anagrafica and cns.codice_part=an.codice_part where dynamo_user='€global_username€' and  cns.stato='A'",
+                "queryCond": "",
+                "fieldName": "aggiornamenti_aperti",
+                "value_color": "red",
+				"title_color": "black",
+				"background_color": "white",
+                "navigationAdditionalKeys": {
+                    "stato": "A"
+                }	
+            },
+			"new_line": true
+        },
+        {
+            "title": "Aggiornamenti Provvisori",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(cns.id_cons) from entrasp.consuntivazioni cns left join entrasp.compiti cmp on cns.codice_compito=cmp.codice_compito and cns.codice_azienda=cmp.codice_azienda left join entrasp.anagrafiche_id an on cns.id_risorsa=an.id_anagrafica and cns.codice_part=an.codice_part where dynamo_user='€global_username€' and  cns.stato='P'",
+                "queryCond": "",
+                "fieldName": "aggiornamenti_provvisori",
+                "value_color": "#BA68C8",
+				"title_color": "black",
+				"background_color": "white",
+                "navigationAdditionalKeys": {
+                    "stato": "P"
+                }		
+            },
+			"new_line": false
+        },
+        {
+            "title": "Aggiornamenti Pianificati",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(cns.id_cons) from entrasp.consuntivazioni cns left join entrasp.compiti cmp on cns.codice_compito=cmp.codice_compito and cns.codice_azienda=cmp.codice_azienda left join entrasp.anagrafiche_id an on cns.id_risorsa=an.id_anagrafica and cns.codice_part=an.codice_part where dynamo_user='€global_username€' and  cns.stato='A'",
+                "queryCond": "",
+                "fieldName": "aggiornamenti_pianificati",
+                "value_color": "#FF8100",
+				"title_color": "black",
+				"background_color": "white",
+                "navigationAdditionalKeys": {
+                    "stato": "A"
+                }	
+            },
+			"new_line": false
+        },
+        {
+            "title": "Aggiornamenti in Attesa",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(cns.id_cons) from entrasp.consuntivazioni cns left join entrasp.compiti cmp on cns.codice_compito=cmp.codice_compito and cns.codice_azienda=cmp.codice_azienda left join entrasp.anagrafiche_id an on cns.id_risorsa=an.id_anagrafica and cns.codice_part=an.codice_part where dynamo_user='€global_username€' and  cns.stato='E'",
+                "queryCond": "",
+                "fieldName": "aggiornamenti_attesa",
+                "value_color": "#FF0000",
+				"title_color": "black",
+				"background_color": "white",
+                "navigationAdditionalKeys": {
+                    "stato": "E"
+                }		
+            },
+			"new_line": true
+        },
+        {
+            "title": "Aggiornamenti in Svolgimento",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(cns.id_cons) from entrasp.consuntivazioni cns left join entrasp.compiti cmp on cns.codice_compito=cmp.codice_compito and cns.codice_azienda=cmp.codice_azienda left join entrasp.anagrafiche_id an on cns.id_risorsa=an.id_anagrafica and cns.codice_part=an.codice_part where dynamo_user='€global_username€' and  cns.stato='S'",
+                "queryCond": "",
+                "fieldName": "aggiornamenti_svolgimento",
+                "value_color": "#95d203",
+				"title_color": "black",
+				"background_color": "white",
+                "navigationAdditionalKeys": {
+                    "stato": "S"
+                }		
+            },
+			"new_line": false
+        },
+        {
+            "title": "Aggiornamenti Annullati",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(cns.id_cons) from entrasp.consuntivazioni cns left join entrasp.compiti cmp on cns.codice_compito=cmp.codice_compito and cns.codice_azienda=cmp.codice_azienda left join entrasp.anagrafiche_id an on cns.id_risorsa=an.id_anagrafica and cns.codice_part=an.codice_part where dynamo_user='€global_username€' and  cns.stato='N'",
+                "queryCond": "",
+                "fieldName": "aggiornamenti_annullati",
+                "value_color": "grey",
+				"title_color": "black",
+				"background_color": "white",
+                "navigationAdditionalKeys": {
+                    "stato": "N"
+                }		
+            },
+			"new_line": false
+        }
+    ]
+}
