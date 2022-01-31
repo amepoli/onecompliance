@@ -178,6 +178,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 _this.onFileSelected();
             });
         }
+        
         let ext_subscription = _this.newTypeRef.changes.subscribe(
             (comps: QueryList<FormGetterComponent>) => {
                 if (_this.newTypeSubscription == null) {  // subscribe only first time 
@@ -302,6 +303,9 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                             if(responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!')
                                             {
                                                 _this.fileService.requestReload(_this.data.entryName);
+                                                if(_this.data.onRefresh) {                                                    
+                                                    _this.data.onRefresh();
+                                                }
                                                 _this._console.log(responseCheck);
                                                 // Show success snackbar
                                                 _this._toastService.showSuccessToast("File uploaded successfully!");

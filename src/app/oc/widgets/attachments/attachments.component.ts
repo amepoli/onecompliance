@@ -62,7 +62,7 @@ export class AttachmentsComponent implements OnInit, AfterViewInit, OnChanges {
         // Pop-up example
         const dialogRef = _this.attachDialog.open(AttachDialogComponent, {
             width: '1280px',
-            data: { entryName: _this.entryName, keys: _this.keys }
+            data: { entryName: _this.entryName, keys: _this.keys, onRefresh: _this.getAttachList }
         });
 
         _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
