@@ -303,8 +303,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                             if(responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!')
                                             {
                                                 _this.fileService.requestReload(_this.data.entryName);
-                                                if(_this.data.onRefresh) {                                                    
-                                                    _this.data.onRefresh();
+                                                if(_this.data.onSave) {                                                    
+                                                    _this.data.onSave(true);
                                                 }
                                                 _this._console.log(responseCheck);
                                                 // Show success snackbar
