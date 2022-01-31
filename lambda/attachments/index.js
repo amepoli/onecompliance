@@ -350,6 +350,7 @@ exports.handler = async (event, context) => {
                         descrizione = (requestBody.descrizione == undefined) ? null : requestBody.descrizione;
                         idodg = (requestBody.id_odg == undefined) ? null : requestBody.id_odg;
                         idriu = (requestBody.id_riunione == undefined) ? null : requestBody.id_riunione;
+                        datarif = (requestBody.data_rif == undefined) ? date : requestBody.data_rif;
                         //Prendo il massimo prog_revisione
                         query = `select max(prog_revisione) as prog_revisione from entrasp.cdms_risorse_revisioni where id_risorsa=${idris} and codice_azienda='${company}';`;
                         console.log(query);
@@ -359,7 +360,7 @@ exports.handler = async (event, context) => {
                                     revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica) 
                                     values ('${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
                                     '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
-                                    '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${date}', '${date}', '${date}');`;
+                                    '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}');`;
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
@@ -473,6 +474,7 @@ exports.handler = async (event, context) => {
                                 descrizione = (requestBody.descrizione == undefined) ? null : requestBody.descrizione;
                                 idodg = (requestBody.id_odg == undefined) ? null : requestBody.id_odg;
                                 idriu = (requestBody.id_riunione == undefined) ? null : requestBody.id_riunione;
+                                datarif = (requestBody.data_rif == undefined) ? date : requestBody.data_rif;
                                 //Prendo il massimo prog_revisione
                                 query = `select max(prog_revisione) as prog_revisione, id_risorsa from entrasp.cdms_risorse_revisioni where id_risorsa in(select id_risorsa from entrasp.cdms_risorse 
                                 where id_argomento_tipo_allegato=${idArgAll} AND codice_azienda='${company}' and id_anagrafica=${idAnagrafica} and id_centro_gest=${idCentroGest} limit 1) 
@@ -491,7 +493,7 @@ exports.handler = async (event, context) => {
                                 revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica) 
                                 values ('${company}', ${idFlowInfo1}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
                                 '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
-                                '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${date}', '${date}', '${date}');`;
+                                '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}');`;
                                 console.log(query);
                                 response = await client.query(query);
                                 console.log(JSON.stringify(response));
@@ -543,12 +545,13 @@ exports.handler = async (event, context) => {
                             descrizione = (requestBody.descrizione == undefined) ? null : requestBody.descrizione;
                             idodg = (requestBody.id_odg == undefined) ? null : requestBody.id_odg;
                             idriu = (requestBody.id_riunione == undefined) ? null : requestBody.id_riunione;
+                            datarif = (requestBody.data_rif == undefined) ? date : requestBody.data_rif;
 
                             query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
                         revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica) 
                         values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
                         '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
-                        '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}' , '${date}', '${date}', '${date}');`;
+                        '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}' , '${datarif}', '${date}', '${date}');`;
                             console.log(query);
                             response = await client.query(query);
                             console.log(JSON.stringify(response));
