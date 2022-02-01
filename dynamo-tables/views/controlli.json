@@ -1,7 +1,7 @@
 {
   "$schema": "../views.schema.json",
-  "origin": "entrasp.risposte",
-  "businessObjectName": "riepilogoRisposte",
+  "origin": "entrasp.controlli",
+  "businessObjectName": "controlli",
   "entryKey": "controlli",
   "form_keys": [
     {
@@ -239,8 +239,7 @@
   "table_keys": [
     {
       "format": {
-        "dataType": "text",
-        "value": "DEMO"
+        "dataType": "text"
       },
       "isHidden": true,
       "isPrimary": true,
@@ -249,62 +248,13 @@
     },
     {
       "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_risposta",
-      "label": "id_risposta"
-    },
-    {
-      "format": {
-        "dataType": "number"
+        "dataType": "text"
       },
       "isHidden": false,
-      "isPrimary": true,
-      "key": "id_sondaggio",
-      "label": "ID Sondaggio",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_somministrazione",
-      "label": "Verif.",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_modello_test",
-      "label": "Modello Verifica",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_modello_test_vr",
-      "label": "Vr",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_domanda",
-      "label": "ID Domanda",
-      "width": "5%"
+      "isPrimary": false,
+      "key": "secondo_strato_controllo",
+      "label": "2° Strato",
+      "width": "20%"
     },
     {
       "format": {
@@ -312,10 +262,9 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "descr_domanda",
-      "width": "30%",
-      "label": "Descrizione Domanda",
-      "queryFunct": "substring (entrasp.domande_descrizione(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda),1,200)"
+      "key": "primo_strato_controllo",
+      "label": "1° Strato",
+      "width": "20%"
     },
     {
       "format": {
@@ -323,78 +272,49 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "id_risposta_prev",
-      "label": "ID Risposta Prev",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "risposta_prev_descr",
-      "label": "Risposta Prevista",
-      "width": "15%",
-      "queryFunct": "entrasp.risposte_previste_risposta(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, id_risposta_prev)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "risposta_sint",
-      "label": "Risposta Aperta",
-      "queryFunct": "substring (risposta,1,200)",
+      "key": "n_controlli_effettuati_1",
+      "label": "Controlli 1^ livello",
       "width": "10%"
     },
     {
       "format": {
-        "dataType": "text"
+        "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "note_sint",
-      "width": "20%",
-      "queryFunct": "substring(note,1,100)",
-      "label": "Note"
+      "key": "n_controlli_effettuati_2",
+      "label": "Controlli 2^ livello",
+      "width": "10%"
     },
     {
       "format": {
         "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
-      "key": "id_modello_test_father",
-      "label": "Modello Verifica"
+      "key": "n_controlli_periodici_effettuati",
+      "label": "Controlli periodici",
+      "width": "10%"
     },
     {
       "format": {
         "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
-      "key": "id_domanda_father",
-      "label": "id_domanda_father"
+      "key": "n_controlli_pe_non_def_effettuati",
+      "label": "Contr.perid.indet.",
+      "width": "10%"
     },
     {
       "format": {
         "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
-      "key": "id_modello_test_son",
-      "label": "id_modello_test_son"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_domanda_son",
-      "label": "id_domanda_son"
+      "key": "risultato_medio",
+      "label": "Risult.medio",
+      "width": "10%"
     }
   ],
   "exportQueries": {
@@ -491,63 +411,6 @@
       ],
       "label": "Segnalazioni associate",
       "type": "table"
-    },
-    {
-      "entryKey": "risposte_sub_of_domande",
-      "keys": [
-        {
-          "parent": "id_domanda",
-          "son": "id_domanda"
-        },
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "id_modello_test",
-          "son": "id_modello_test"
-        }
-      ],
-      "label": "Risposte analoghe domande",
-      "type": "table"
-    },
-    {
-      "entryKey": "risposte_liv_inferiore",
-      "keys": [
-        {
-          "parent": "id_domanda",
-          "son": "id_domanda_father"
-        },
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "id_modello_test",
-          "son": "id_modello_test_father"
-        }
-      ],
-      "label": "Risp.liv.inf.altre verifiche",
-      "type": "table"
-    },
-    {
-      "entryKey": "risposte_liv_superiore",
-      "keys": [
-        {
-          "parent": "id_domanda",
-          "son": "id_domanda_son"
-        },
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "id_modello_test",
-          "son": "id_modello_test_son"
-        }
-      ],
-      "label": "Risp.liv.sup.altre verifiche",
-      "type": "table"
     }
   ],
   "inputEvents": [
@@ -619,6 +482,6 @@
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "order by ss.id_sondaggio, ss.id_somministrazione limit 100"
+    "tableViewSuffix": "limit 100"
   }
 }
