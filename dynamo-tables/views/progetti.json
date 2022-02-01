@@ -765,6 +765,18 @@
 			"queryCond": "(UPPER(titolo) like '%'||UPPER('€parola_s€')||'%')"
 		},
 		{
+			"format": {
+			  "comboQuery": "SELECT distinct giudizio AS id, giudizio AS name  FROM entrasp.sondaggi_somministrati WHERE codice_azienda=$codice_azienda$;",
+			  "options": [],
+			  "viewType": "combobox",
+			  "dataType": "text"
+			},
+			"fieldName": "giudizio_s",
+			"label": "Giudizio",
+			"newLine": false,
+			"queryCond": "array[id_progetto]<@any(select entrasp.elenco_progetti_con_giudizio(codice_azienda, '€giudizio_s€'))"
+		},
+		{
 			"fieldName": "flag_progetti_aperti",
 			"format": {
 				"value": "0",
