@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, A
 import { MatDialog } from '@angular/material/dialog';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { AttachDialogComponent } from 'app/oc/dialogs/attach.dialog/attach.dialog.component';
-import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimezoneService, ToastService } from 'app/oc/services';
+import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimezoneService, ToastService } from 'app/oc/services';
 import { Subscription } from 'rxjs';
 
 import 'rxjs/add/operator/filter';
@@ -18,7 +18,9 @@ export class AttachmentsComponent implements OnInit, AfterViewInit, OnChanges {
     @Input("entryName") entryName: string;    
     @Input("keys") keys: any;
     @Output() onClick = new EventEmitter<boolean>();
+    @Output() onSave: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+    
     numAttachments: number = 0;
     subscriptions: Subscription[] = [];
 
@@ -52,8 +54,12 @@ export class AttachmentsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     performClick(){
-        // this.onClick.emit(true);
         this.showAttachments();
+    }
+
+    handleOnSave(_this = this, result: boolean) {
+        _this.onSave.emit(result);
+        // HelperService.refreshApp(result);
     }
 
     showAttachments() {
@@ -62,7 +68,7 @@ export class AttachmentsComponent implements OnInit, AfterViewInit, OnChanges {
         // Pop-up example
         const dialogRef = _this.attachDialog.open(AttachDialogComponent, {
             width: '1280px',
-            data: { entryName: _this.entryName, keys: _this.keys, onRefresh: _this.getAttachList }
+            data: { entryName: _this.entryName, keys: _this.keys, onSave: (result) => _this.handleOnSave(_this, result) }
         });
 
         _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {

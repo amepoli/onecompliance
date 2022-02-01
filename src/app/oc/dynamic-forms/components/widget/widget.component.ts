@@ -49,5 +49,7 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
       }
   }
 
-  
+  attachmentOnSave(result) {
+    this._console.log(result);
+  }
 }

@@ -3,7 +3,7 @@ import { DynamicFormComponent } from 'app/oc/dynamic-forms/components/dynamic-fo
 import { ComboboxComponent } from 'app/oc/dynamic-forms/components/combobox/combobox.component';
 import { Subscription } from 'rxjs';
 import { SubformComponent } from 'app/oc/dynamic-forms/components/subform/subform.component';
-import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, GoogleAPIParams, ImportItem, MessageView, OutputEvent } from 'app/oc/interfaces';
+import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, GoogleAPIParams, ImportItem, MessageView, OutputEvent, WidgetsConfigurations } from 'app/oc/interfaces';
 import { FormDataType } from 'app/oc/types';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/oc/services';
 import { DynamicFieldDirective } from 'app/oc/directives';
@@ -80,6 +80,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     };
 
     private recordsPerPage = 10000;
+
+    widgetsConfiguration: WidgetsConfigurations = {
+        attachments: {
+            onSaveAction: 'reload'
+        }
+    };
+
 
     constructor(
         private cdRef: ChangeDetectorRef,
@@ -354,7 +361,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
 
                     // load the form 
-                    _this.loadTableData();
+                    _this.loadTableData();4
+
+                    // Load widgets configurations
+                    _this.loadWidgetsConfiguration(params.widgetsConfiguration);
                 }
                 else {
                     if(results.reason === 'Not Authorized') {
@@ -486,7 +496,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.results = results.data;
                     _this.attributes = results.attributes;
                     _this.processResults(_this.results);
-
+                    // _this.loadWidgetsConfiguration = _this.results.widgetsConfiguration;
                     // Stop loading
                     _this.isLoading = false;
                 }
@@ -1596,6 +1606,25 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     downloadAdvancedExcel(item: ExportItem): void {
         const formValues = this.getFormValues();
         this._importExportService.downloadExcel(this.formParams.entryName, this.authService.getCurrentCompany(this.currentKeys), this.formParams.keys, null, true, formValues, item.label);
+    }
+
+    loadWidgetsConfiguration(widgetsConfiguration: WidgetsConfigurations) {
+        if(widgetsConfiguration) {
+            this.widgetsConfiguration = widgetsConfiguration;
+        }
+        else {
+            this.widgetsConfiguration = {
+                attachments: {
+                    onSaveAction: 'reload'
+                }
+            };
+        }
+    }
+
+    attachmentsOnSave(result) {
+        if(result && this.widgetsConfiguration.attachments.onSaveAction == 'reload') {
+            this.refreshView();
+        }
     }
 
     trackItems(index: number, item: any) {

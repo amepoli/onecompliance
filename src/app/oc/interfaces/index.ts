@@ -37,3 +37,4 @@ export * from './menu_option.interface';
 export * from './selection_action.interface';
 export * from './selection_action_params.interface';
 export * from './restrictions.interface';
+export * from './widgets_configuration.interface';

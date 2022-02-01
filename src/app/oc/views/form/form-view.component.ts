@@ -482,5 +482,6 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         this.messages = this._messagesService.getFormMessages(messageViews);
         this.onMessagesUpdated.emit(messageViews);
     }
+    
 }
 
