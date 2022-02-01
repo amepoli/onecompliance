@@ -18,7 +18,7 @@
 		{
 			"type": "main",
 			"operation": "selectTable",
-			"queryString": "select arg.*, codice||'-'||id_argomento as cod_plus, (select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento) as num_argomenti_padre from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') $P{id_argomento_bigger_than};"
+			"queryString": "select arg.*, codice||'-'||id_argomento as cod_plus, entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'n_controlli_effettuati_1', 'sum') as n_controlli_effettuati_1, entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'n_controlli_effettuati_2', 'sum') as n_controlli_effettuati_2, entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'n_controlli_periodici_effettuati', 'sum') as n_controlli_periodici_effettuati,entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'n_controlli_per_non_def_1', 'sum') as n_controlli_per_non_def_1, entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'n_controlli_per_non_def_effettuati', 'sum') as n_controlli_per_non_def_effettuati, entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'risultato_medio', 'sum') as risultato_medio from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') $P{id_argomento_bigger_than};"
 		},
 		{
 			"operation": "insert",
@@ -51,6 +51,15 @@
 	"table_keys": [
 		{
 			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": true,
+			"key": "id_argomento",
+			"label": "ID"
+		},
+		{
+			"format": {
 				"dataType": "text"
 			},
 			"isHidden": false,
@@ -58,15 +67,6 @@
 			"key": "cod_plus",
 			"label": "Codice-ID.Argomento",
 			"width": "8%"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": true,
-			"isPrimary": true,
-			"key": "id_argomento",
-			"label": "ID"
 		},
 		{
 			"format": {
@@ -137,6 +137,28 @@
 			"key": "risultato_medio",
 			"label": "Risult.medio",
 			"width": "10%"
+		}
+	],
+	"subTables": [
+		{
+			"entryKey": "argomenti_sub_of_argomenti_father_sterile",
+			"keys": [
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento_son"
+				}
+			],
+			"label": "Argomenti padre"
+		},
+		{
+			"entryKey": "controls_tree_sub_of_controls_tree",
+			"keys": [
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento_father"
+				}
+			],
+			"label": "Argomenti figli"
 		}
 	]
 }

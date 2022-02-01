@@ -1,0 +1,275 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "controls_tree_sub_of_controls_tree",
+  "origin": "entrasp.argomenti_argomenti",
+  "businessObjectName": "argomenti_argomenti",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select arg.codice||'-'||arg.id_argomento as cod_plus, entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'n_controlli_effettuati_1', 'sum') as n_controlli_effettuati_1, entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'n_controlli_effettuati_2', 'sum') as n_controlli_effettuati_2, entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'n_controlli_periodici_effettuati', 'sum') as n_controlli_periodici_effettuati,entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'n_controlli_per_non_def_1', 'sum') as n_controlli_per_non_def_1, entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'n_controlli_per_non_def_effettuati', 'sum') as n_controlli_per_non_def_effettuati, entrasp.indicatore_da_controlli('€global_codice_azienda€', arg.id_argomento, 'risultato_medio', 'sum') as risultato_medio, true as delete_argomenti_son, entrasp.argomenti_descr_breve(id_argomento_son) as titolo, entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento,  true as button_argomento from entrasp.argomenti_argomenti aa inner join entrasp.argomenti arg on aa.id_argomento_son=arg.id_argomento  where id_argomento_father=$id_argomento_father$"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento_father",
+      "label": "id_argomento_father",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_argomento_son",
+      "label": "Argomento Figlio",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
+      "queryFunct": "select codice from entrasp.argomenti where id_argomento=$id_argomento_son$",
+      "label": "Codice",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione_breve",
+      "label": "Descrizione breve",
+      "queryFunct": "select descrizione_breve from entrasp.argomenti where id_argomento=$id_argomento_son$",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "dettaglio",
+      "label": "Dettaglio",
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "argomenti_dettaglio",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "size": 2.5,
+      "sameOrigin": false
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "4%",
+      "queryFunct": "select true",
+      "key": "delete_argomenti_son",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "delete_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "argomenti_sub_of_argomenti_son",
+        "viewType": "form",
+        "query": "delete from entrasp.argomenti_argomenti where id_argomento_son=£id_argomento_son£ and id_argomento_father=£id_argomento_father£",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "id_argomento_son",
+            "destination": "id_argomento_son"
+          },
+          {
+            "source": "id_argomento_father",
+            "destination": "id_argomento_father"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento_father",
+      "label": "Id_argomento_father"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento_son",
+      "label": "Id Argomento_son"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cod_plus",
+      "label": "Codice-ID.Argomento",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "width": "20%",
+      "isPrimary": false,
+      "key": "titolo",
+      "label": "Titolo argomento Figlio"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "10%",
+      "key": "button_argomento",
+      "label": "Dettaglio",
+      "isButton": true,
+      "buttonAction": {
+        "target": "argomenti",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "id_argomento_son",
+            "destination": "id_argomento"
+          }
+        ]
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_controlli_effettuati_1",
+      "label": "Controlli 1^ livello",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_controlli_effettuati_2",
+      "label": "Controlli 2^ livello",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_controlli_periodici_effettuati",
+      "label": "Controlli periodici",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_controlli_per_non_def_1",
+      "label": "Contr.period.indet.1Liv",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_controlli_per_non_def_effettuati",
+      "label": "Contr.period.indet.",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "risultato_medio",
+      "label": "Risult.medio",
+      "width": "10%"
+    }
+  ],
+  "inputEvents": [
+    {
+      "actionTarget": {
+        "name": "argomenti",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "id_argomento_son",
+            "destination": "id_argomento"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "argomenti_dettaglio"
+    }
+  ],
+  "hideActions": [
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    }
+  ]
+}
