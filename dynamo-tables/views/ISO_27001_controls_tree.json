@@ -18,7 +18,7 @@
 		{
 			"type": "main",
 			"operation": "selectTable",
-			"queryString": "select arg.*, codice||'-'||arg.id_argomento as cod_plus, ris.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.calcola_indicatori_da_controlli_new('€global_codice_azienda€', arg.id_argomento) ris on arg.id_argomento=ris.id_argomento where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') $P{id_argomento_bigger_than};"
+			"queryString": "select arg.*, codice||'-'||arg.id_argomento as cod_plus, ris.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.calcola_indicatori_da_controlli_new('€global_codice_azienda€', arg.id_argomento) ris on arg.id_argomento=ris.id_argomento where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
 		},
 		{
 			"operation": "insert",
@@ -160,5 +160,13 @@
 			],
 			"label": "Argomenti figli"
 		}
-	]
+	],
+	"exportQueries": {
+		"tableQueries": [
+		  {
+			"queryString": "select c1.* from entrasp.controlli c1 inner join (select max(data_riferimento) as maxdata from entrasp.controlli where codice_azienda=$codice_azienda$) c2 on c1.data_riferimento=c2.maxdata where c1.codice_azienda=$codice_azienda$ order by primo_strato_controllo",
+			"label": "Conteggio controlli complessivi"
+		  }
+		]
+	  }
 }
