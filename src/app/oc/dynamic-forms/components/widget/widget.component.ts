@@ -11,12 +11,15 @@ import { Subscription } from 'rxjs';
   templateUrl: './widget.component.html',
   styleUrls: ['./widget.component.scss'],
   host: {
-    '[style.padding-top.px]': 'field.isVisible? "24": "0"',
-    '[style.margin-right.px]': 'field.isVisible? "8": "0"',
-    '[style.margin-left.px]': 'field.isVisible? "8": "0"',
-    '[style.width.px]': 'field.isVisible? "32": "0"',
-    '[style.height.px]': 'field.isVisible? "32": "0"',
-  }
+    '[style.padding-top]': 'field.isVisible? field.widgetType == "s3-manager"? "10px": "24px": "0"',
+    '[style.margin-right]': 'field.isVisible? field.widgetType == "s3-manager"? "1%": "8px": "0"',
+    '[style.margin-left]': 'field.isVisible? field.widgetType == "s3-manager"? "1%": "8px": "0"',
+    '[style.width]': 'field.isVisible? field.widgetType == "s3-manager"? "98%": "32px": "0"',
+    '[style.height]': 'field.isVisible? field.widgetType == "s3-manager"? "500px": "32px": "0"',
+    '[style.background-color]': 'field.isVisible? field.widgetType == "s3-manager"? "aliceblue": "transparent": "transparent"',
+    '[style.border]': 'field.isVisible? field.widgetType == "s3-manager"? "1px solid lightgrey": "none": "none"',
+    '[style.border-radius]': 'field.isVisible? field.widgetType == "s3-manager"? "5px": "0": "0"',
+ }
 })
 export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   field: FieldConfig;

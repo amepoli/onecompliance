@@ -164,6 +164,12 @@ export class BackendService {
     return from(this.amplifyService.api().del(this.apiName, '/' + this.attachApiName, this.myGetInit));
   }
 
+  getContents(entryName: string, company: string, keys: any): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), request_type: 'getContents'  };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.attachApiName, this.myGetInit));
+  }
+
   getReportList(entryName: string, company: string, keys: any, isFormView: boolean): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), list: '1', form: isFormView ? 1 : 0 };
