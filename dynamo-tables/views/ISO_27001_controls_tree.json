@@ -4,7 +4,7 @@
 	"entryKey": "ISO_27001_controls_tree",
 	"inheritsFrom": "template_argomenti",
 	"define": {
-		"id_argomento_father": "5347",	
+		"id_argomento_father": "5347",
 		"array_argomenti_father_da_aggiungere": "array[5347]",
 		"label_id": "ID Classificazione ISO 27001",
 		"campo_id_argomento": "id_argomento",
@@ -12,6 +12,161 @@
 		"is_hidden_unifica_all": "true",
 		"id_argomento_bigger_than": "and true",
 		"id_argomento_father_s2": "3368",
-		"label_argomento_s2": "Livello di controllo"	
-	}
+		"label_argomento_s2": "Livello di controllo"
+	},
+	"predefinedQueries": [
+		{
+			"type": "main",
+			"operation": "selectTable",
+			"queryString": "select arg.*, codice||'-'||arg.id_argomento as cod_plus, ris.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.calcola_indicatori_da_controlli_new('€global_codice_azienda€', arg.id_argomento) ris on arg.id_argomento=ris.id_argomento where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
+		},
+		{
+			"operation": "insert",
+			"queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, $P{array_argomenti_father_da_aggiungere}) as id_argomento;",
+			"type": "main"
+		},
+		{
+			"operation": "delete",
+			"queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=$P{id_argomento_father} and id_argomento_son=$id_argomento$;",
+			"type": "preProcessing"
+		},
+		{
+			"operation": "isInsert",
+			"queryString": "select $id_argomento$ is null as label;",
+			"type": "main"
+		},
+		{
+			"operation": "insert",
+			"type": "preCheck",
+			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
+			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+		},
+		{
+			"operation": "update",
+			"type": "preCheck",
+			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
+			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": true,
+			"key": "id_argomento",
+			"label": "ID"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "cod_plus",
+			"label": "Codice-ID.Argomento",
+			"width": "8%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "descrizione_breve",
+			"label": "Titolo",
+			"width": "27%"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "n_controlli_effettuati_1",
+			"label": "Controlli 1^ livello",
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "n_controlli_effettuati_2",
+			"label": "Controlli 2^ livello",
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "n_controlli_periodici_effettuati",
+			"label": "Controlli periodici",
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "n_controlli_per_non_def_1",
+			"label": "Contr.period.indet.1Liv",
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "n_controlli_per_non_def_effettuati",
+			"label": "Contr.period.indet.",
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "risultato_medio",
+			"label": "Risult.medio",
+			"width": "10%"
+		}
+	],
+	"subTables": [
+		{
+			"entryKey": "argomenti_sub_of_argomenti_father_sterile",
+			"keys": [
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento_son"
+				}
+			],
+			"label": "Argomenti padre"
+		},
+		{
+			"entryKey": "controls_tree_sub_of_controls_tree",
+			"keys": [
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento_father"
+				}
+			],
+			"label": "Argomenti figli"
+		}
+	],
+	"exportQueries": {
+		"tableQueries": [
+		  {
+			"queryString": "select c1.* from entrasp.controlli c1 inner join (select max(data_riferimento) as maxdata from entrasp.controlli where codice_azienda=$codice_azienda$) c2 on c1.data_riferimento=c2.maxdata where c1.codice_azienda=$codice_azienda$ order by primo_strato_controllo",
+			"label": "Conteggio controlli complessivi"
+		  }
+		]
+	  }
 }
