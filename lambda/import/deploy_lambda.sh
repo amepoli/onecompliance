@@ -29,6 +29,7 @@ PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
 SCHEMA=`cat ../../${1}.json | jq -r ".postgres.schema"`
 
 BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.import.s3.bucket"`
+FUNCTIONNAME=`cat ../../${1}.json | jq -r ".lambdas.utf_encoder.functionName"`
 REGION="eu-central-1"
 
 CSVDELIMITER="~"
@@ -49,6 +50,8 @@ sed -i -e "s/REGION/${REGION}/g" index.js
 sed -i -e "s/SCHEMA/${SCHEMA}/g" index.js
 
 sed -i -e "s/CSV_DELIMITER/${CSVDELIMITER}/g" index.js
+
+sed -i -e "s/FUNCTION_NAME/${FUNCTIONNAME}/g" index.js
 
 
 rm index.js-e
