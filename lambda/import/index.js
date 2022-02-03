@@ -4,6 +4,10 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'REGION' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const helperFuncts = require('./helperFuncts');
+const lambda = new AWS.Lambda({
+    region: 'eu-central-1' //change to your region
+});
+let processedFile = [];
 
 const bucket = 'BUCKET_NAME';
 const region = 'REGION';
@@ -986,6 +990,23 @@ exports.handler = async (event, context) => {
                 // create a temporary signed URL for the object 
                 const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
                 console.log(`Creating new import file: ${fileName} Url: ${signedUrl}`);
+
+                //TO TEST
+                processedFile.push({"bucket": bucket, "file_in" : fileName, "file_out" : fileName, "folder" : 'CSV'});
+                console.log(JSON.stringify({ processedFile }));
+                //call utf_encoder lambda
+                response = await lambda.invoke({
+                    FunctionName: 'FUNCTION_NAME',
+                    Payload: JSON.stringify({ processedFile })  
+                },function(error, data) {
+                    if (error) {
+                      context.done('error', error);
+                    }
+                    if(data.Payload){
+                     context.succeed(data.Payload)
+                    }}).promise();
+            
+                console.log(response);
 
                 // Response Body
                 body = { result: 'OK', url: signedUrl, fileName: fileName };

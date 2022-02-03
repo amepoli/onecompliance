@@ -95,9 +95,9 @@ function processCSV(csvData) {
                         columnContainsQuote = true;
                     }
                     else if (curChar === ';') {
-                        // curColumn = "";
-                        // columnStarted = true;
-                        // columnContainsQuote = false;
+                        curColumn = "";
+                        columnStarted = true;
+                        columnContainsQuote = false;
                     }
                     else {
                         curColumn = curChar !== ' ' ? curChar : '';
