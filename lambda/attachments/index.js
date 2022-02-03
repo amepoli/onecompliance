@@ -601,9 +601,24 @@ exports.handler = async (event, context) => {
                     response = await client.query(query);
                 }
                 body = { result: 'OK', url: signedUrl };
+            } else if (requestType === 'getContents') {
+                // const s3ParamsGetFilesList = {
+                //     Bucket: bucket,
+                //     Prefix: folder
+                // };
+            
+                const s3ParamsGetFilesList = {
+                    Bucket: 'BUCKET_NAME',
+                    Delimiter: '/',
+                };
+            
+                let contents = await s3.listObjects(s3ParamsGetFilesList).promise();
+                
+                body = { result: 'OK', contents: contents };
             }
         }
-
+        
+                    
     } catch (e) {
         console.log(e);
         body = { result: 'KO', reason: 'Server error' };
