@@ -991,23 +991,6 @@ exports.handler = async (event, context) => {
                 const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
                 console.log(`Creating new import file: ${fileName} Url: ${signedUrl}`);
 
-                //TO TEST
-                processedFile.push({"bucket": bucket, "file_in" : fileName, "file_out" : fileName, "folder" : 'CSV'});
-                console.log(JSON.stringify({ processedFile }));
-                //call utf_encoder lambda
-                response = await lambda.invoke({
-                    FunctionName: 'FUNCTION_NAME',
-                    Payload: JSON.stringify({ processedFile })  
-                },function(error, data) {
-                    if (error) {
-                      context.done('error', error);
-                    }
-                    if(data.Payload){
-                     context.succeed(data.Payload)
-                    }}).promise();
-            
-                console.log(response);
-
                 // Response Body
                 body = { result: 'OK', url: signedUrl, fileName: fileName };
             }
@@ -1181,6 +1164,19 @@ exports.handler = async (event, context) => {
 
                 console.log('queryString1', queryString);
 
+                
+                //TO TEST
+                processedFile.push({"bucket": bucket, "file_in" : fileName, "file_out" : 'fileout123.csv', "folder" : 'CSV'});
+                let payload = {"bucket": bucket, "file_in" : fileName, "file_out" : 'fileout123.csv', "folder" : 'CSV'};
+                console.log(JSON.stringify(payload));
+                //call utf_encoder lambda
+                let risp = await lambda.invoke({
+                    FunctionName: 'FUNCTIONNAME',
+                    Payload: JSON.stringify(payload)  
+                }).promise();
+            
+                console.log(risp);
+                
                 // Check if mandatory query params provided
                 if (!fileName || !table || !queryString) {
                     // Error Response Body
