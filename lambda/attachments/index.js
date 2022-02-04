@@ -119,6 +119,7 @@ exports.handler = async (event, context) => {
     const entryName = queryParams['entry_name'];
     const checksum = queryParams['checksum'];
     const request_type = queryParams['request_type'];
+    const contentsPrefix = queryParams['contents_prefix'];
     const company = queryParams['company'];
 
     var filename = queryParams['filename'];
@@ -609,6 +610,7 @@ exports.handler = async (event, context) => {
             
                 const s3ParamsGetFilesList = {
                     Bucket: 'BUCKET_NAME',
+                    Prefix: contentsPrefix,
                     Delimiter: '/',
                 };
             
