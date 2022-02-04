@@ -51,4 +51,7 @@ echo "Deploying archiflow trampoline"
 cd ../archiflow_VPC
 echo "Deploying archiflow lambda"
 ./deploy_lambda.sh $1
+cd ../google_api
+echo "Deploying google_api lambda"
+./deploy_lambda.sh $1
 cd ..
