@@ -76,7 +76,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select codice_articolo_normativo as id, codice_articolo_normativo as name from entrasp.articoli_normativi",
+        "comboQuery": "select codice_articolo_normativo as id, codice_articolo_normativo as name from entrasp.articoli_normativi where id_testo_normativo=£id_testo_normativo£",
         "dataType": "text",
         "options": [],
         "viewType": "combobox"
@@ -85,6 +85,19 @@
       "isPrimary": false,
       "key": "codice_articolo_normativo",
       "label": "Articolo Normativo",
+      "outputEvent": {
+        "eventName": "change_cod_art_norm",
+        "eventTrigger": "blur"
+      },
+      "inputEvents": [
+        {
+          "eventName": "change_cod_art_norm",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "update entrasp.cpl_trattamenti_dati_finalita f1 set id_testo_normativo=f2.id_testo_normativo, codice_articolo_normativo=f2.codice_articolo_normativo from entrasp.cpl_trattamenti_dati_finalita f2 where f1.finalita_trattamento=f2.finalita_trattamento and f2.id_testo_normativo is not null and f2.codice_articolo_normativo is not null and f1.id_testo_normativo is null and f1.codice_articolo_normativo is null"
+        }
+      ],
       "readOnly": false,
       "size": 2,
       "newLine": false
@@ -95,12 +108,26 @@
         "comboQuery": "select id_testo_normativo as id, riferimenti as name from entrasp.testi_normativi",
         "dataType": "text",
         "options": [],
-        "viewType": "combobox"
+        "viewType": "combobox",
+        "value": "35"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "id_testo_normativo",
       "label": "Testo normativo",
+      "outputEvent": {
+        "eventName": "change_testo_norm",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "eventName": "change_testo_norm",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "update entrasp.cpl_trattamenti_dati_finalita f1 set id_testo_normativo=f2.id_testo_normativo, codice_articolo_normativo=f2.codice_articolo_normativo from entrasp.cpl_trattamenti_dati_finalita f2 where f1.finalita_trattamento=f2.finalita_trattamento and f2.id_testo_normativo is not null and f2.codice_articolo_normativo is not null and f1.id_testo_normativo is null and f1.codice_articolo_normativo is null"
+        }
+      ],
       "readOnly": false,
       "size": 5,
       "newLine": false
@@ -195,7 +222,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "finalita_trattamento",
-      "width": "40%",
+      "width": "35%",
       "queryFunct": "entrasp.transcodifiche_transcodifica('FINALITA_TRATTAMENTO', finalita_trattamento)",
       "label": "Finalità Trattamento"
     },
@@ -205,7 +232,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "40%",
+      "width": "35%",
       "key": "finalita_ulteriori",
       "label": "Finalità Ulteriori"
     },
@@ -235,7 +262,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "testo_normativo",
-      "width": "8%",
+      "width": "18%",
       "queryFunct": "entrasp.testi_normativi_rif_descr2(id_testo_normativo)",
       "label": "Testo Normativo"
     }
