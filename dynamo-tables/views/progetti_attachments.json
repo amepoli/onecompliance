@@ -7,6 +7,21 @@
       "operation": "selectTable",
       "type": "main",
       "queryString": "select vaf.codice_azienda, vaf.codice_part, vaf.id_risorsa, vaf.client_file_name, pf.titolo as titolo_fase, vaf.stringa, vaf.tipo_allegato, vaf.id_sondaggio, vaf.id_progetto from entrasp.views_attachments_fast vaf left join entrasp.progetti_fasi pf on vaf.codice_azienda=pf.codice_azienda and vaf.id_sondaggio=pf.id_sondaggio where vaf.codice_azienda=$codice_azienda$ and vaf.id_progetto=$id_progetto$"
+    },
+    {
+      "type": "main",
+      "operation": "update",
+      "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$rev_descrizione$, id_argomento_stato=$rev_id_argomento_stato$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+    },
+    {
+      "type": "postProcessing",
+      "operation": "update",
+      "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name= 'n/a', content_type= 'n/a' where id_argomento_stato!=4035 and client_file_name='tbd' and content_type='tbd' and codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+    },
+    {
+      "type": "main",
+      "operation": "delete",
+      "queryString": "delete from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
     }
   ],
   "inheritsFrom": "attachments",
