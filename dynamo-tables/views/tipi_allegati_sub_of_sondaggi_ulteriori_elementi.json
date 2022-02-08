@@ -6,12 +6,17 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select a.id_risorsa,a.codice_azienda,a.codice_part,c.prog_revisione,c.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(a.codice_part,a.id_anagrafica) as anagrafica,entrasp.odg_titolo_esteso(a.codice_azienda,c.id_odg,c.id_riunione) as titolo,c.revisore as autore,entrasp.argomenti_descr_stato(c.id_argomento_stato) as descr_stato,c.file_id||'^'||c.client_file_name as stringa, entrasp.argomenti_descr(a.id_argomento_tipo_allegato) as tipo_allegato, b.nome_business_object,b.id_sondaggio,b.id_somministrazione,b.id_progetto,b.id_anagrafica,c.id_odg,c.id_riunione from entrasp.cdms_risorse a inner join entrasp.cdms_risorse_oggetti b on a.id_risorsa=b.id_risorsa and a.codice_azienda=b.codice_azienda inner join entrasp.cdms_risorse_revisioni c on c.id_risorsa=b.id_risorsa and c.codice_azienda=b.codice_azienda and b.prog_revisione=c.prog_revisione where c.codice_azienda=$codice_azienda$ and b.id_sondaggio=$id_sondaggio$"
+      "queryString": "select a.id_risorsa,a.codice_azienda,a.codice_part,c.prog_revisione, c.data_rif, c.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(a.codice_part,a.id_anagrafica) as anagrafica,entrasp.odg_titolo_esteso(a.codice_azienda,c.id_odg,c.id_riunione) as titolo,c.revisore as autore,entrasp.argomenti_descr_stato(c.id_argomento_stato) as descr_stato,c.file_id||'^'||c.client_file_name as stringa, entrasp.argomenti_descr(a.id_argomento_tipo_allegato) as tipo_allegato, b.nome_business_object,b.id_sondaggio,b.id_somministrazione,b.id_progetto,b.id_anagrafica,c.id_odg,c.id_riunione from entrasp.cdms_risorse a inner join entrasp.cdms_risorse_oggetti b on a.id_risorsa=b.id_risorsa and a.codice_azienda=b.codice_azienda inner join entrasp.cdms_risorse_revisioni c on c.id_risorsa=b.id_risorsa and c.codice_azienda=b.codice_azienda and b.prog_revisione=c.prog_revisione where c.codice_azienda=$codice_azienda$ and b.id_sondaggio=$id_sondaggio$"
     },
     {
       "type": "main",
       "operation": "update",
-      "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$rev_descrizione$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+      "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$rev_descrizione$, id_argomento_stato=$rev_id_argomento_stato$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+    },
+    {
+      "type": "postProcessing",
+      "operation": "update",
+      "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name= 'n/a',   content_type= 'n/a' where id_argomento_stato!=4035 and client_file_name='tbd' and content_type='tbd' codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
     },
     {
       "type": "main",

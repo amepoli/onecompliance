@@ -11,7 +11,12 @@
     {
       "type": "main",
       "operation": "update",
-      "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$rev_descrizione$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+      "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$rev_descrizione$, id_argomento_stato=$rev_id_argomento_stato$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+    },
+    {
+      "type": "postProcessing",
+      "operation": "update",
+      "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name= 'n/a',   content_type= 'n/a' where id_argomento_stato!=4035 and client_file_name='tbd' and content_type='tbd' codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
     },
     {
       "type": "main",
@@ -148,7 +153,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg;",
+        "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
         "options": [],
         "viewType": "combobox"
       },
@@ -157,8 +162,8 @@
       "key": "rev_id_argomento_stato",
       "size": 2,
       "label": "Stato",
-      "readOnly": true,
-      "newLine": true
+      "readOnly": false,
+      "newLine": false
     },
     {
       "autoGenerate": false,
