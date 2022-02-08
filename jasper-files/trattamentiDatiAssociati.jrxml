@@ -22,13 +22,13 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select tdc.*, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, tdr.id_responsabile) as responsabile, entrasp.argomenti_descr_breve(id_argomento_categoria)from entrasp.cpl_trattamenti_dati td inner join entrasp.cpl_trattamenti_dati_responsabili tdr on td.codice_azienda=tdr.codice_azienda and  td.id_trattamento_dati=tdr.id_trattamento_dati inner join entrasp.cpl_trattamenti_dati_categorie tdc on td.codice_azienda=tdc.codice_azienda and td.id_trattamento_dati=tdc.id_trattamento_dati inner join entrasp.aziende az on tdc.codice_azienda=az.codice_azienda where tdr.id_responsabile=18507 and td.codice_azienda='FINAFARM'"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select td.*, tdc.tipo, tdc.id_argomento_categoria, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, tdr.id_responsabile) as responsabile, entrasp.argomenti_descr_breve(id_argomento_categoria)from entrasp.cpl_trattamenti_dati td inner join entrasp.cpl_trattamenti_dati_responsabili tdr on td.codice_azienda=tdr.codice_azienda and  td.id_trattamento_dati=tdr.id_trattamento_dati inner join entrasp.cpl_trattamenti_dati_categorie tdc on td.codice_azienda=tdc.codice_azienda and td.id_trattamento_dati=tdc.id_trattamento_dati inner join entrasp.aziende az on tdc.codice_azienda=az.codice_azienda where tdr.id_responsabile=11 and td.codice_azienda='AVM'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
-		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["AVM"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select td.titolo, td.descrizione, tdc.*, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, tdr.id_responsabile) as responsabile, entrasp.argomenti_descr_breve(id_argomento_categoria)from entrasp.cpl_trattamenti_dati td inner join entrasp.cpl_trattamenti_dati_responsabili tdr on td.codice_azienda=tdr.codice_azienda and  td.id_trattamento_dati=tdr.id_trattamento_dati inner join entrasp.cpl_trattamenti_dati_categorie tdc on td.codice_azienda=tdc.codice_azienda and td.id_trattamento_dati=tdc.id_trattamento_dati inner join entrasp.aziende az on tdc.codice_azienda=az.codice_azienda where tdr.id_responsabile=18507 and td.codice_azienda='FINAFARM' order by tipo, id_argomento_categoria]]>
+		<![CDATA[$P!{mainQuery}]]>
 	</queryString>
 	<field name="titolo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="titolo"/>
@@ -53,11 +53,6 @@
 	<field name="id_argomento_categoria" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="id_argomento_categoria"/>
 		<property name="com.jaspersoft.studio.field.label" value="id_argomento_categoria"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_trattamenti_dati_categorie"/>
-	</field>
-	<field name="note" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="note"/>
-		<property name="com.jaspersoft.studio.field.label" value="note"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_trattamenti_dati_categorie"/>
 	</field>
 	<field name="tipo" class="java.lang.String">
