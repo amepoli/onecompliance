@@ -107,6 +107,25 @@ export class ToastService {
     }
 
     /**
+     * Show Success Snackbar Toast
+     *
+     * @param title
+     * @param text
+     * @param timeOut
+     * @param tapToDismiss
+     */
+     showInfoToast(title: string, text: string = "", timeOut: number = this._toastrTheme.timeOut, tapToDismiss: boolean = this._toastrTheme.tapToDismiss) {
+        this.toastr.info(
+            text,
+            title,
+            {
+                timeOut: timeOut,
+                tapToDismiss: tapToDismiss
+            }
+        );
+    }
+
+    /**
      * Show Error Snackbar Toast
      *
      * @param title
@@ -124,6 +143,7 @@ export class ToastService {
             }
         );
     }
+
 
 }
 

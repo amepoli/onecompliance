@@ -123,8 +123,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                 _this._console.table(urlResponse);
                                 _this.httpClient.delete(urlResponse.url).subscribe(
                                     fileData => {
-                                            _this._toastService.showSuccessToast("File deleted successfully!");
-                                            _this.fileService.requestReload(_this.data.entryName);
+                                        _this._toastService.showSuccessToast("File deleted successfully!");
+                                        _this.fileService.requestReload(_this.data.entryName);
                                     });
                             }
                             else {
@@ -148,10 +148,10 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 // hack, fe_attachment_form needs this field
                 if (key === 'codice_part') {
                     _this.formParams.keys['codice_azienda'] = element;
-                // hack, fe_attachment_form pick up the value of 'descrizione' if we attach from domande(incorrect) [maybe because they have the same name_key ('descrizione' in fe_att and domande) ]
-                } else if(key === 'descrizione'){
+                    // hack, fe_attachment_form pick up the value of 'descrizione' if we attach from domande(incorrect) [maybe because they have the same name_key ('descrizione' in fe_att and domande) ]
+                } else if (key === 'descrizione') {
                     _this.formParams.keys[key] = '';
-                }else {
+                } else {
                     _this.formParams.keys[key] = element;
                 }
             }
@@ -181,7 +181,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 _this.onFileSelected();
             });
         }
-        
+
         let ext_subscription = _this.newTypeRef.changes.subscribe(
             (comps: QueryList<FormGetterComponent>) => {
                 if (_this.newTypeSubscription == null) {  // subscribe only first time 
@@ -248,7 +248,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         const _this = this;
         _this._console.log(event);
         _this.attach = false;
-        if (_this.file != null ) {
+        if (_this.file != null) {
             // get the S3 URL 
             const subscription = _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys).subscribe(
                 responseURL => {
@@ -287,8 +287,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                         content_type: mime.lookup(_this.form.value.fileName),
                                         id_odg: _this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
                                         id_riunione: _this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
-                                        id_centro_gest:  _this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
-                                        id_argomento_tipo_allegato: _this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,                                        
+                                        id_centro_gest: _this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
+                                        id_argomento_tipo_allegato: _this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,
                                         dimensione: _this.form.value.dimensione != null ? _this.form.value.dimensione : null,
                                         id_anagrafica: _this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
                                         id_somministrazione: _this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
@@ -303,21 +303,25 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
                                         responseCheck => {
-                                            if(responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!')
-                                            {
+                                            if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
                                                 _this.fileService.requestReload(_this.data.entryName);
-                                                if(_this.data.onSave) {                                                    
+                                                if (_this.data.onSave) {
                                                     _this.data.onSave(true);
                                                 }
                                                 _this._console.log(responseCheck);
                                                 // Show success snackbar
-                                                _this._toastService.showSuccessToast("File uploaded successfully!");
+                                                if (responseCheck.reason === 'File already loaded!') {
+                                                    _this._toastService.showInfoToast("File already loaded");
+                                                }
+                                                else {
+                                                    _this._toastService.showSuccessToast("File uploaded successfully");
+                                                }
                                             }
                                             else {
                                                 // Show error snackbar
                                                 _this._toastService.showErrorToast(responseCheck.reason);
                                             }
-                                            
+
                                         },
                                         error => {
                                             // Show error snackbar
@@ -343,17 +347,16 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     onFileSelected() {
         let _this = this;
         const blob = new Blob([_this.file]);
-                        
+
         const reader = new FileReader();
         reader.onload = function (e) {
             const content = reader.result;
             const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
             _this._console.log(hash);
-            
+
             _this.backendService.loadFileDataIfExists(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash).subscribe(
                 responseCheck => {
-                    if(responseCheck.result === 'OK')
-                    {
+                    if (responseCheck.result === 'OK') {
                         let data = responseCheck.data;
                         _this.form = _this.formRef.formArray.first.form; // getting the FormGroup
                         _this.form.patchValue(
@@ -376,7 +379,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                 id_risorsa: data.id_risorsa,
                                 id_domanda: data.id_domanda,
                                 id_modello_test: data.id_modello_test,
-                                id_modello_test_vr :data.id_modello_test_vr
+                                id_modello_test_vr: data.id_modello_test_vr
                                 //type: 
                                 //key:  
                                 //codice_azienda:
@@ -438,7 +441,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                         // Show error snackbar
                         _this._toastService.showErrorToast(responseCheck.reason);
                     }
-                    
+
                 },
                 error => {
                     // Show error snackbar
@@ -450,7 +453,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         reader.readAsArrayBuffer(blob);
 
 
-        
+
     }
 
     onNewType(event: any) {

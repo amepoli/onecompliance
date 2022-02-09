@@ -342,49 +342,68 @@ exports.handler = async (event, context) => {
                     body = { result: 'OK' };
                 } else if (bus_object == 'cdms_risorse') {
                     idris = (keys['id_risorsa'] == undefined) ? null : keys['id_risorsa'];
-                    console.log('Esiste flusso e non esiste revisione');
-                    const object = await s3.getObject(s3ParamsGetList).promise();
-                    const actualChecksum = shasum.update(object.Body).digest('hex');
-                    console.log(checksum, actualChecksum);
-                    if (checksum === actualChecksum) { // file correctly uploaded
-                        dimensione = (requestBody.dimensione == undefined) ? null : requestBody.dimensione;
-                        descrizione = (requestBody.descrizione == undefined) ? null : requestBody.descrizione;
-                        idodg = (requestBody.id_odg == undefined) ? null : requestBody.id_odg;
-                        idriu = (requestBody.id_riunione == undefined) ? null : requestBody.id_riunione;
-                        datarif = (requestBody.data_rif == undefined) ? date : requestBody.data_rif;
-                        //Prendo il massimo prog_revisione
-                        query = `select max(prog_revisione) as prog_revisione from entrasp.cdms_risorse_revisioni where id_risorsa=${idris} and codice_azienda='${company}';`;
-                        console.log(query);
-                        response = await client.query(query);
-                        const nextProgRevisione = (response.rows && response.rows[0]) ? response['rows'][0]['prog_revisione'] : 0;
-                        query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
+                    idana = (keys['id_anagrafica'] == undefined) ? null : keys['id_anagrafica'];
+                    idceg = (keys['id_centro_gest'] == undefined) ? null : keys['id_centro_gest'];
+                    idarg = (keys['id_argomento_tipo_allegato'] == undefined) ? null : keys['id_argomento_tipo_allegato'];
+                    console.log('BUS_OBJ = cdms_risorse');
+                    //CONTROLLO SE ESISTE REVISIONE
+                    query = `select count(*) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' and codice_azienda='${company}'
+                    and id_risorsa = ${idris};`;
+                    response = await client.query(query);
+
+                    let filesCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count) : 0;
+                    console.log('response of file exists by checksum_sha1:', response);
+                    console.log('row: ' + response.rows[0]);
+                    console.log('count: ' + response.rows[0].count);
+
+                    if (filesCount > 0) {
+                        //ESISTE FLUSSO ED ESISTE REVISIONE, UPDATE
+                        body = { result: 'OK', reason: 'File already loaded!' };
+                    }
+                    else {
+                        const object = await s3.getObject(s3ParamsGetList).promise();
+                        const actualChecksum = shasum.update(object.Body).digest('hex');
+                        console.log(checksum, actualChecksum);
+                        if (checksum === actualChecksum) { // file correctly uploaded
+                            dimensione = (requestBody.dimensione == undefined) ? null : requestBody.dimensione;
+                            descrizione = (requestBody.descrizione == undefined) ? null : requestBody.descrizione;
+                            idodg = (requestBody.id_odg == undefined) ? null : requestBody.id_odg;
+                            idriu = (requestBody.id_riunione == undefined) ? null : requestBody.id_riunione;
+                            datarif = (requestBody.data_rif == undefined) ? date : requestBody.data_rif;
+                            //Prendo il massimo prog_revisione
+                            query = `select max(prog_revisione) as prog_revisione from entrasp.cdms_risorse_revisioni where id_risorsa=${idris} and codice_azienda='${company}';`;
+                            console.log(query);
+                            response = await client.query(query);
+                            const nextProgRevisione = (response.rows && response.rows[0]) ? response['rows'][0]['prog_revisione'] : 0;
+                            query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
                                     revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica) 
                                     values ('${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
                                     '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
                                     '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}');`;
-                        console.log(query);
-                        response = await client.query(query);
-                        console.log(JSON.stringify(response));
+                            console.log(query);
+                            response = await client.query(query);
+                            console.log(JSON.stringify(response));
 
-                        query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
+                            query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
                                     values ('${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1, '${bus_object}','${chiave}');`;
-                        console.log(query);
-                        response = await client.query(query);
-                        console.log(JSON.stringify(response));
+                            console.log(query);
+                            response = await client.query(query);
+                            console.log(JSON.stringify(response));
 
 
-                        //HACK: exception in case of bus_object="cdms_risorse"
-                        idrisorsa = (idrisorsa == -1) ? idFlowInfo1 : idrisorsa;
-                        query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;    //Da mandare in background... pesante
-                        console.log(query);
-                        //??? tolgo await
-                        response = await client.query(query);
-                        console.log(JSON.stringify(response));
+                            //HACK: exception in case of bus_object="cdms_risorse"
+                            idrisorsa = (idrisorsa == -1) ? idFlowInfo1 : idrisorsa;
+                            query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;    //Da mandare in background... pesante
+                            console.log(query);
+                            //??? tolgo await
+                            response = await client.query(query);
+                            console.log(JSON.stringify(response));
 
 
-                        body = { result: 'OK' };
-                    } else { // wrong checksum 
-                        body = { result: 'KO', reason: 'Error with file checksum' };
+                            body = { result: 'OK' };
+                        } else { // wrong checksum 
+                            body = { result: 'KO', reason: 'Error with file checksum' };
+                        }
                     }
                 } else {
                     //console.log('requestType: fileCheck');        //OnSave, so on INSERT a new file  AND  also on UPDATE an existing file
@@ -607,20 +626,20 @@ exports.handler = async (event, context) => {
                 //     Bucket: bucket,
                 //     Prefix: folder
                 // };
-            
+
                 const s3ParamsGetFilesList = {
                     Bucket: 'BUCKET_NAME',
                     Prefix: contentsPrefix,
                     Delimiter: '/',
                 };
-            
+
                 let contents = await s3.listObjects(s3ParamsGetFilesList).promise();
-                
+
                 body = { result: 'OK', contents: contents };
             }
         }
-        
-                    
+
+
     } catch (e) {
         console.log(e);
         body = { result: 'KO', reason: 'Server error' };
