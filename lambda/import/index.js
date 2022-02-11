@@ -1122,7 +1122,7 @@ exports.handler = async (event, context) => {
                         Key: "CSV/" + fileName
                     };
 
-                    const csvFile = await s3.getObject(s3ParamsGetList).promise();
+                    let csvFile = await s3.getObject(s3ParamsGetList).promise();
 
                     // Check if file exists
                     if (!csvFile.ContentLength) {
@@ -1218,6 +1218,12 @@ exports.handler = async (event, context) => {
                 body = { result: 'OK', reason: 'Done!' };
 
                 // Load mandatory query params
+                const s3ParamsGetList = {
+                    Bucket: bucket,
+                    Key: "CSV/" + fileName
+                };
+
+                let csvFile = await s3.getObject(s3ParamsGetList).promise();
 
                 const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
 
@@ -1290,6 +1296,22 @@ exports.handler = async (event, context) => {
 
                 console.log('queryString1', queryString);
 
+
+                console.log('Processing CSV to UTF-8...');
+                // Convert to UTF-8
+                csvFile = processCSV(csvFile.Body);
+
+                console.log('Saving CSV to temp folder...');
+
+                // Save temporarily
+                var saveResult = await s3.putObject({
+                    Bucket: bucket,
+                    Key: "CSV/_temp/" + fileName,
+                    Body: csvFile,
+                    ContentType: 'text/csv'                           
+                   }
+                );
+                console.log('SaveResult:', saveResult);
                 
                 // //TO TEST
                 // processedFile.push({"bucket": bucket, "file_in" : fileName, "file_out" : 'fileout123.csv', "folder" : 'CSV'});
@@ -1365,12 +1387,12 @@ exports.handler = async (event, context) => {
             else if (requestType === 'deleteFile') {
                 const fileName = queryParams['filename'];
 
-                const s3ParamsDelete = {
+                /*const s3ParamsDelete = {
                     Bucket: bucket,
                     Key: "CSV/" + fileName
-                };
+                };*/
 
-                const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsDelete);
+               // const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsDelete);
 
                 body = { result: 'OK', url: signedUrl };
             }
