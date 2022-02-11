@@ -131,9 +131,10 @@ function processCSV(csvData) {
     // let utf8String = csvData.toString('utf-8');
 
     // Another technique
-    let stringData = csvData.toString();
+    let stringData = csvData;
     try{
-        stringData = unescape(encodeURIComponent(escape(csvData.toString())));
+        stringData = decodeURIComponent(csvData);
+        console.log('stringData after decoding: ', stringData);
     } 
     catch(e) {
         console.log('There is no need to encode this file!');
@@ -141,8 +142,9 @@ function processCSV(csvData) {
     
     // Remove the header
     stringData = stringData.split(' ').filter(x => x != null && x.length).join(' ');
+    /*
     stringData = stringData.split('\n');
-    stringData.splice(0, 1);
+    //stringData.splice(0, 1);
     stringData = stringData.map(line => {
         if (line && line.length > 2) {
             let columns = [];
@@ -158,7 +160,7 @@ function processCSV(csvData) {
                         columnStarted = true;
                         columnContainsQuote = true;
                     }
-                    else if (curChar === ';') {
+                    else if (curChar === separator_in) {
                         curColumn = "";
                         columnStarted = true;
                         columnContainsQuote = false;
@@ -182,7 +184,7 @@ function processCSV(csvData) {
                         }
                     }
                     else {
-                        if (curChar === ';' || i == line.length - 1) {
+                        if (curChar === separator_in || i == line.length - 1) {
                             columns.push(curColumn);
                             curColumn = "";
                             columnStarted = false;
@@ -216,10 +218,11 @@ function processCSV(csvData) {
     //     var re = new RegExp(find, 'g');
     //     stringData = stringData.replace(re, item.out);
     // });
-
+    */
     // Replace any space with the separator
-    var find = ' ' + stuff_to_replace[0].out;
+    var find = stuff_to_replace[0].in;
     var re = new RegExp(find, 'g');
+    console.log('stringData before replacement: ', stringData);
     stringData = stringData.replace(re, stuff_to_replace[0].out);
     return stringData;
 }
@@ -1145,7 +1148,7 @@ exports.handler = async (event, context) => {
                             Body: csvFile,
                             ContentType: 'text/csv'                           
                            }
-                        );
+                        ).promise();
                         console.log('SaveResult:', saveResult);
                         // Try to load columns from query params
                         let columns = queryParams['columns'];
@@ -1192,6 +1195,15 @@ exports.handler = async (event, context) => {
                                 tries++;
                             }
                         }
+
+                        // Delete temporary file
+                        var deleteResult = await s3.deleteObject({
+                            Bucket: bucket,
+                            Key: "CSV/_temp/" + fileName                           
+                           }
+                        ).promise();
+                        console.log('deleteResult:', deleteResult);
+                        
 
                         // Check if success or failure
                         if (queryResponse) {
@@ -1298,10 +1310,15 @@ exports.handler = async (event, context) => {
 
 
                 console.log('Processing CSV to UTF-8...');
-                // Convert to UTF-8
-                csvFile = processCSV(csvFile.Body);
 
-                console.log('Saving CSV to temp folder...');
+                console.log(csvFile.Body.toString());
+
+                // Convert to UTF-8
+                csvFile = processCSV(csvFile.Body.toString());
+                
+                console.log(csvFile);
+
+                console.log(`Saving CSV to temp folder... with address: ${bucket}:/${"CSV/_temp/" + fileName}`);
 
                 // Save temporarily
                 var saveResult = await s3.putObject({
@@ -1310,7 +1327,7 @@ exports.handler = async (event, context) => {
                     Body: csvFile,
                     ContentType: 'text/csv'                           
                    }
-                );
+                ).promise();
                 console.log('SaveResult:', saveResult);
                 
                 // //TO TEST
@@ -1327,12 +1344,20 @@ exports.handler = async (event, context) => {
                 
                 // Check if mandatory query params provided
                 if (!fileName || !table || !queryString) {
+                    // Delete temporary file
+                    var deleteResult = await s3.deleteObject({
+                        Bucket: bucket,
+                        Key: "CSV/_temp/" + fileName                           
+                       }
+                    ).promise();
+                    console.log('deleteResult:', deleteResult);
+                    
                     // Error Response Body
                     body = { result: 'KO', reason: 'Check File, table and queryString are correct!' };
                 }
                 else {
                     // Import CSV from S3 to Postgres
-                    queryString = queryString.replace('$nome_file$', `'${fileName}'`);
+                    queryString = queryString.replace('$nome_file$', `'_temp/${fileName}'`);
 
                     comma = ' WHERE ';
                     if (queryString.includes('$')) {
@@ -1374,6 +1399,14 @@ exports.handler = async (event, context) => {
                         }
                     }
 
+                    // Delete temporary file
+                    var deleteResult = await s3.deleteObject({
+                        Bucket: bucket,
+                        Key: "CSV/_temp/" + fileName                           
+                       }
+                    ).promise();
+                    console.log('deleteResult:', deleteResult);
+                    
                     // Check if success or failure
                     if (queryResponse) {
                         console.table(queryResponse);
