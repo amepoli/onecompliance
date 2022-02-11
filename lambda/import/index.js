@@ -112,6 +112,117 @@ function isReadOnly(entry_name, profileData) {
     return readonly;
 }
 
+// Process CSV buffer
+function processCSV(csvData) {
+    const separator_in = ';';
+    const separator_out = 'CSV_DELIMITER';
+    const stuff_to_replace = [
+        {
+            in: separator_in,
+            out: separator_out
+        },
+        {
+            in: '"',
+            out: ''
+        },
+    ];
+
+    // Using Buffer to UTF-8 string function
+    // let utf8String = csvData.toString('utf-8');
+
+    // Another technique
+    let stringData = csvData.toString();
+    try{
+        stringData = unescape(encodeURIComponent(escape(csvData.toString())));
+    } 
+    catch(e) {
+        console.log('There is no need to encode this file!');
+    }
+    
+    // Remove the header
+    stringData = stringData.split(' ').filter(x => x != null && x.length).join(' ');
+    stringData = stringData.split('\n');
+    stringData.splice(0, 1);
+    stringData = stringData.map(line => {
+        if (line && line.length > 2) {
+            let columns = [];
+            let columnStarted = false;
+            let columnContainsQuote = false;
+            let curColumn = "";
+            for (let i = 0; i < line.length; i++) {
+                // let's go through each character one by one.
+                let curChar = line[i];
+                if (!columnStarted) {
+                    if (curChar === '"') {
+                        curColumn = "";
+                        columnStarted = true;
+                        columnContainsQuote = true;
+                    }
+                    else if (curChar === ';') {
+                        curColumn = "";
+                        columnStarted = true;
+                        columnContainsQuote = false;
+                    }
+                    else {
+                        curColumn = curChar !== ' ' ? curChar : '';
+                        columnStarted = true;
+                        columnContainsQuote = false;
+                    }
+                }
+                else {
+                    if (columnContainsQuote) {
+                        if (curChar === '"') {
+                            columns.push(curColumn);
+                            curColumn = "";
+                            columnStarted = false;
+                            columnContainsQuote = false;
+                        }
+                        else {
+                            curColumn += '' + (curColumn || curChar !== ' ' ? curChar : '');
+                        }
+                    }
+                    else {
+                        if (curChar === ';' || i == line.length - 1) {
+                            columns.push(curColumn);
+                            curColumn = "";
+                            columnStarted = false;
+                            columnContainsQuote = false;
+                        }
+                        else {
+                            curColumn += '' + (curColumn || curChar !== ' ' ? curChar : '');
+                        }
+                    }
+                }
+            }
+            return columns.join(separator_out);
+
+        }
+        else {
+            return null;
+        }
+        // return line.split('"').filter(x => x != null && x.length && x != ';').join(separator_out)
+    });
+    stringData = stringData.filter(x => x != null).join('\n');
+
+    // To add header
+    // let header = stringData.splice(0, 1);
+    // header.replace(/ /g, '');
+    // stringData = header + '\n' + stringData.join(';\n') + ';';
+
+
+    // remove unwanted stuff
+    // stuff_to_replace.forEach(item => {
+    //     var find = item.in;
+    //     var re = new RegExp(find, 'g');
+    //     stringData = stringData.replace(re, item.out);
+    // });
+
+    // Replace any space with the separator
+    var find = ' ' + stuff_to_replace[0].out;
+    var re = new RegExp(find, 'g');
+    stringData = stringData.replace(re, stuff_to_replace[0].out);
+    return stringData;
+}
 
 function getComboFuncts(comboQueries, entry_keys, table_keys, keyTypes) {
     for (let index = 0; index < entry_keys.length; index++) {
@@ -1020,7 +1131,22 @@ exports.handler = async (event, context) => {
                     }
                     else {
                         console.log(`S3 File length: ${csvFile.ContentLength}`);
+                        
+                        console.log('Processing CSV to UTF-8...');
+                        // Convert to UTF-8
+                        csvFile = processCSV(csvFile.Body);
 
+                        console.log('Saving CSV to temp folder...');
+
+                        // Save temporarily
+                        var saveResult = await s3.putObject({
+                            Bucket: bucket,
+                            Key: "CSV/_temp/" + fileName,
+                            Body: csvFile,
+                            ContentType: 'text/csv'                           
+                           }
+                        );
+                        console.log('SaveResult:', saveResult);
                         // Try to load columns from query params
                         let columns = queryParams['columns'];
 
@@ -1028,7 +1154,7 @@ exports.handler = async (event, context) => {
                         if (!columns) {
                             // Let's search CSV header for columns
                             // First line contains headers, replace all extra characters
-                            columns = csvFile.Body.toString().split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/﻿/g, '').replace(/CSV_DELIMITER/g, ',');
+                            columns = processCSV(csvFile).toString().split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/﻿/g, '').replace(/CSV_DELIMITER/g, ',');
                         }
 
                         // Added schema if table does not contain
@@ -1048,7 +1174,7 @@ exports.handler = async (event, context) => {
                             '${table}',
                             '${columns}', 
                             '(FORMAT CSV, DELIMITER E''CSV_DELIMITER'', HEADER true)',
-                            aws_commons.create_s3_uri('${bucket}', 'CSV/${fileName}','${region}')
+                            aws_commons.create_s3_uri('${bucket}', 'CSV/temp/${fileName}','${region}')
                         );`;
                         // ,aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
 
