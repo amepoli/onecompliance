@@ -73,8 +73,14 @@ function processCSV(csvData) {
     // let utf8String = csvData.toString('utf-8');
 
     // Another technique
-    let stringData = unescape(encodeURIComponent(csvData.toString()));
-
+    let stringData = csvData.toString();
+    try{
+        stringData = unescape(encodeURIComponent(escape(csvData.toString())));
+    } 
+    catch(e) {
+        console.log('There is no need to encode this file!');
+    }
+    
     // Remove the header
     stringData = stringData.split(' ').filter(x => x != null && x.length).join(' ');
     stringData = stringData.split('\n');
@@ -264,7 +270,7 @@ async function processQueryParams(queryParams) {
 
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async (event, context, callback) => {
 
     const queryParams = event.queryStringParameters ? event.queryStringParameters : event;
     console.log(queryParams);
@@ -292,10 +298,21 @@ exports.handler = async (event, context) => {
     //     body = { result: 'KO', reason: 'DBF File not found or invalid!', data: null }
     // }
 
-    return {
-        "isBase64Encoded": false,
-        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-        "statusCode": 200,
-        "body": JSON.stringify(body)
-    };
+    if(callback) {
+        let eParams = {
+            "data": {
+                "success": true
+            }
+        }
+        event = eParams;
+        callback(null, eParams);
+    }
+    else {
+        return {
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "statusCode": 200,
+            "body": JSON.stringify(body)
+        };
+    }
 };

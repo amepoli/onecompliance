@@ -1165,17 +1165,17 @@ exports.handler = async (event, context) => {
                 console.log('queryString1', queryString);
 
                 
-                //TO TEST
-                processedFile.push({"bucket": bucket, "file_in" : fileName, "file_out" : 'fileout123.csv', "folder" : 'CSV'});
-                let payload = {"bucket": bucket, "file_in" : fileName, "file_out" : 'fileout123.csv', "folder" : 'CSV'};
-                console.log(JSON.stringify(payload));
-                //call utf_encoder lambda
-                let risp = await lambda.invoke({
-                    FunctionName: 'FUNCTIONNAME',
-                    Payload: JSON.stringify(payload)  
-                }).promise();
+                // //TO TEST
+                // processedFile.push({"bucket": bucket, "file_in" : fileName, "file_out" : 'fileout123.csv', "folder" : 'CSV'});
+                // let payload = {"bucket": bucket, "file_in" : fileName, "file_out" : 'fileout123.csv', "folder" : 'CSV'};
+                // console.log(JSON.stringify(payload));
+                // //call utf_encoder lambda
+                // let risp = await lambda.invoke({
+                //     FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:utf_encoder',
+                //     Payload: JSON.stringify(payload)  
+                // }).promise();
             
-                console.log(risp);
+                // console.log(risp);
                 
                 // Check if mandatory query params provided
                 if (!fileName || !table || !queryString) {
