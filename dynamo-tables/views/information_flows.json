@@ -58,7 +58,19 @@
       "operation": "startEvent",
       "type": "main",
       "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'risorse', $id_risorsa$, '$codice_azienda$'::varchar) as play_time_report"
+    },
+    {
+      "type": "preCheck",
+      "operation": "delete",
+      "queryString": "select prog_revisione from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$;",
+      "messageNotNull": "Esiste almeno un file associato al flusso informativo in oggetto! Cancellare prima i singoli file della cartella"
+    },
+    {
+      "type": "main",
+      "operation": "delete",
+      "queryString": "delete from entrasp.cdms_risorse where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$"
     }
+
   ],
   "form_keys": [
     {
