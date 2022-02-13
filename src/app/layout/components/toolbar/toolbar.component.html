@@ -3,7 +3,7 @@
     <div fxFlex fxFill fxLayout="row" fxLayoutAlign="start center">
 
         <button mat-button (click)="refreshApp()" matTooltip="Refresh application">
-            <mat-icon>sync_problem</mat-icon>
+            <mat-icon>refresh</mat-icon>
         </button>
 
         <div class="toolbar-separator"></div>
@@ -26,25 +26,31 @@
             <!--div class="px-8 px-mat-16">
                 <fuse-shortcuts [navigation]="navigation"></fuse-shortcuts>
             </div-->
-            <div class="toolbar-separator"></div>
+            <div class="toolbar-separator" *ngIf="horizontalNavbar"></div>
 
-            <button mat-button (click)="gotoList()">
+            <button mat-button (click)="gotoTasksList()" matTooltip="Segnalazioni">
                 <mat-icon>format_list_bulleted</mat-icon>
-                <span> List</span>
+                <span> Tasks</span>
             </button>
 
-            <button mat-button (click)="addElement()" *ngIf="!hideActions.includes('add')">
+            <button mat-button (click)="gotoConsultantList()" matTooltip="Time Report">
+                <mat-icon>schedule</mat-icon>
+                <span> Tr</span>
+            </button>
+
+            <button mat-button (click)="addElement()" *ngIf="!hideActions.includes('add')"
+            class="add-button" matTooltip="Add element">
                 <mat-icon>add</mat-icon>
                 <span> Add</span>
             </button>
 
-            <button mat-button (click)="gotoDashboard()" [disabled]="dashboardTables == null">
+            <!-- <button mat-button (click)="gotoDashboard()" [disabled]="dashboardTables == null">
                 <mat-icon>dashboard</mat-icon>
                 <span> Dashboard</span>
-            </button>
+            </button> -->
 
             <button [disabled]="!reportList || !reportList.length" mat-button [matMenuTriggerFor]="report_menu"
-                (click)="getReportList()">
+                (click)="getReportList()" matTooltip="Print">
                 <mat-icon>print</mat-icon>
             </button>
 
@@ -56,7 +62,7 @@
 
             <div *ngIf="!hideActions.includes('import_export')">
 
-                <button mat-button [matMenuTriggerFor]="downloadUploadMenu">
+                <button mat-button [matMenuTriggerFor]="downloadUploadMenu" matTooltip="Import/Export">
                     <mat-icon>import_export</mat-icon>
                 </button>
 
@@ -166,7 +172,9 @@
         <time-tracker></time-tracker>
         <div class="toolbar-separator"></div>
 
-        <button mat-button [matMenuTriggerFor]="companyMenu" class="user-button">"{{currentCompany}}"
+        <button mat-button [matMenuTriggerFor]="companyMenu" class="user-button"
+            matTooltip="Current Company">{{currentCompany}}
+            <mat-icon class="s-16" fxHide.xs>keyboard_arrow_down</mat-icon>
         </button>
 
         <mat-menu #companyMenu="matMenu">
@@ -175,17 +183,17 @@
             </ng-container>
         </mat-menu>
 
-        <div class="toolbar-separator"></div>
+        <!-- <div class="toolbar-separator"></div> -->
 
         <button *ngIf="false" mat-button (click)="getExcel()">
             <mat-icon svgIcon="excel"></mat-icon>
         </button>
 
-        <div class="toolbar-separator"></div>
+        <!-- <div class="toolbar-separator"></div>
 
 
 
-        <div class="toolbar-separator"></div>
+        <div class="toolbar-separator"></div> -->
 
         <div class="" fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="start center">
 
@@ -215,7 +223,7 @@
 
             </mat-menu>
 
-            <div class="toolbar-separator"></div>
+            <!-- <div class="toolbar-separator"></div> -->
 
             <button mat-button fxHide fxShow.gt-xs class="language-button" [matMenuTriggerFor]="languageMenu">
                 <div fxLayout="row" fxLayoutAlign="center center">
