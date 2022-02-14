@@ -92,7 +92,7 @@ export class FileManagerFileListComponent implements OnInit, OnDestroy
      *
      * @param name
      */
-    toggleSidebar(name: any): void
+    toggleSidebar(name): void
     {
         this._fuseSidebarService.getSidebar(name).toggleOpen();
     }
