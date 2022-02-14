@@ -158,9 +158,9 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }
 
-  deleteFile(entryName: string, company: string, id_risorsa: string, filename: string, keys: any): Observable<any> {
+  deleteFile(entryName: string, company: string, id_risorsa: string, filename: string,prog_revisione: string, keys: any): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, id_risorsa: id_risorsa, filename: filename, keys: JSON.stringify(keys) };
+    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, id_risorsa: id_risorsa, filename: filename,prog_revisione: prog_revisione, keys: JSON.stringify(keys) };
     return from(this.amplifyService.api().del(this.apiName, '/' + this.attachApiName, this.myGetInit));
   }
 

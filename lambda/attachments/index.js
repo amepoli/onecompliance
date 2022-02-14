@@ -124,6 +124,7 @@ exports.handler = async (event, context) => {
 
     var filename = queryParams['filename'];
     var id_risorsa = queryParams['id_risorsa'];
+    var prog_revisione = queryParams['prog_revisione'];
     var requestType = '';
 
     if (request_type) {
@@ -603,23 +604,27 @@ exports.handler = async (event, context) => {
 
                 const requestBody = JSON.parse(event.body);
 
-                query = `delete from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${id_risorsa} and nome_business_object='${bus_object}' and chiave='${chiave}';`;
+                console.log('prog_revisione: '+prog_revisione);
+
+                query = `delete from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${id_risorsa} 
+                         and nome_business_object='${bus_object}' and chiave='${chiave}' and prog_revisione='${prog_revisione}';`;
                 response = await client.query(query);
 
-                query = `select count(id_risorsa) from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
-                response = await client.query(query);
+                //Always delete from entrasp.cdms_risorse_revisioni because for the selected flow_info i can have only one document with this sha1
+                /* query = `select count(*) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${id_risorsa} and prog_revisione='${prog_revisione}';`;
+                response = await client.query(query); */
 
-                let objectCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count) : 0;
+                /* let objectCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count) : 0;
                 console.log('response of file exists by checksum_sha1:', response);
                 console.log('row: ' + response.rows[0]);
                 console.log('count: ' + response.rows[0].count);
-                if (objectCount = 0) {
-                    query = `delete from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+                if (objectCount = 0) { */
+                    query = `delete from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${id_risorsa} and prog_revisione='${prog_revisione}';`;
                     response = await client.query(query);
 
-                    query = `delete from entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
-                    response = await client.query(query);
-                }
+                    //query = `delete from entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+                    //response = await client.query(query);
+                //}
                 body = { result: 'OK', url: signedUrl };
             } else if (requestType === 'getContents') {
                 // const s3ParamsGetFilesList = {
