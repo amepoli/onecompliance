@@ -117,7 +117,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             if (_this.listFiles != null) {
                 const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
-                    _this.backendService.deleteFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), selected.id_risorsa, selected.file_id, _this.data.keys).subscribe(
+                    _this.backendService.deleteFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), selected.id_risorsa, selected.file_id, selected.prog_revisione, _this.data.keys).subscribe(
                         urlResponse => {
                             if (urlResponse.result == 'OK') {
                                 _this._console.table(urlResponse);
@@ -217,10 +217,11 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                 'name': element.client_file_name,
                                 'file_id': element.file_id,
                                 'id_risorsa': element.id_risorsa,
+                                'prog_revisione': element.prog_revisione,
                                 'type': 'document',
-                                'owner': element.autore,
+                                'owner': element.revisore,
                                 'size': this.fileService.getFileSize(element.dimensione),
-                                'modified': new Date(element.data_upd || element.data_ultima_revisione).toString(),
+                                'modified': new Date(element.data_ultima_revisione || element.data_creazione).toString(),
                                 'opened': new Date(element.data_ins || element.data_ultima_accesso).toString(),
                                 'created': new Date(element.data_creazione).toString(),
                                 'extention': '',

@@ -9,6 +9,11 @@
 	},
 	"predefinedQueries": [
 		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select codice_azienda,data_inserimento,stato,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',stato) as descr_stato,id_tipo_progetto,codice_attivita,codice_progetto,id_progetto,codice_part,titolo,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) AS descr_cliente,entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest,id_cliente,entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento,true as time_report_play,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) from entrasp.progetti where codice_azienda='€global_codice_azienda€';"
+		},
+		{
 			"operation": "selectForm",
 			"type": "preProcessing",
 			"queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
@@ -978,7 +983,7 @@
 			"isPrimary": false,
 			"key": "centro_gest",
 			"label": "Centro gestionale",
-			"width": "9%",
+			"width": "14%",
 			"queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
 		},
 		{
@@ -994,12 +999,90 @@
 			"format": {
 				"dataType": "text"
 			},
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": false,
 			"key": "avanzamento",
 			"queryFunct": "entrasp.progetto_sal(codice_azienda, id_progetto)",
 			"label": "Prv/Pnf/Ris/Svl/Chs/Ann/Tot",
-			"width": "16%"
+			"width": "0%"
+		},
+		{
+		  "format": {
+			"dataType": "number"
+		  },
+		  "isHidden": false,
+		  "isPrimary": false,
+		  "width": "3%",
+		  "key": "time_report_play",
+		  "label": "",
+		  "style": [
+			{
+			  "button_icon": "play_arrow",
+			  "value": "play_arrow"
+			}
+		  ],
+		  "isButton": true,
+		  "buttonAction": {
+			"target": "progetti",
+			"viewType": "table",
+			"action": "query",
+			"query": "select entrasp.business_object_play(('£user_companies£')::text, 'progetti', £id_progetto£, '£codice_azienda£'::varchar)",
+			"keymap": [
+			  {
+				"source": "codice_azienda",
+				"destination": "codice_azienda"
+			  },
+			  {
+				"source": "id_progetto",
+				"destination": "id_progetto"
+			  },
+			  {
+				"source": "user_companies",
+				"destination": "user_companies"
+			  }
+			],
+			"confirmAction": false,
+			"onSuccessAction": "update_time_tracker_and_reload"
+		  }
+		},
+		{
+		  "format": {
+			"dataType": "number"
+		  },
+		  "isHidden": false,
+		  "isPrimary": false,
+		  "width": "5%",
+		  "key": "time_report_stop_active",
+		  "label": "",
+		  "style": [
+			{
+			  "button_icon": "stop",
+			  "value": "stop"
+			}
+		  ],
+		  "isButton": true,
+		  "buttonAction": {
+			"target": "progetti",
+			"viewType": "table",
+			"action": "query",
+			"query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+			"keymap": [
+			  {
+				"source": "codice_azienda",
+				"destination": "codice_azienda"
+			  },
+			  {
+				"source": "id_progetto",
+				"destination": "id_progetto"
+			  },
+			  {
+				"source": "user_companies",
+				"destination": "user_companies"
+			  }
+			],
+			"confirmAction": false,
+			"onSuccessAction": "update_time_tracker_and_reload"
+		  }
 		}
 	],
 	"querySuffixes": {
