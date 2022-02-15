@@ -12,6 +12,7 @@
   "define": {
     "toggle_miei_uffici": "1",
     "is_hidden_codice_azienda": "true",
+    "is_hidden_id_anagrafica": "false",
     "id_argomento_father": "3576",
     "label_revisioni": "File del flusso informativo"
   },
@@ -34,7 +35,7 @@
         {
           "key": "unifica",
           "icon": "merge_type",
-          "label": "Unifica documenti",
+          "label": "Unifica cartelle",
           "query": "select entrasp.unifica_risorse_selezionate(array[$selected_rows_data$])",
           "confirmAction": true,
           "reloadOnSuccess": true,
@@ -234,7 +235,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "6%",
+      "width": "0%",
       "queryFunct": "select true",
       "key": "delete_documents",
       "label": "",
@@ -289,7 +290,7 @@
       "isPrimary": true,
       "width": "5%",
       "key": "id_risorsa",
-      "label": "ID Doc."
+      "label": "ID Cartella"
     },
     {
       "format": {
@@ -299,8 +300,8 @@
       "isPrimary": false,
       "key": "tipo_allegato",
       "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_allegato)",
-      "width": "15%",
-      "label": "Tipo documento"
+      "width": "20%",
+      "label": "Tipo Cartella" 
     },
     {
       "format": {
@@ -309,8 +310,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "descrizione_breve",
-      "width": "25%",
-      "label": "Descrizione documento"
+      "width": "30%",
+      "label": "Nome Cartella"
     },
     {
       "format": {
@@ -327,7 +328,7 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": "$Q{is_hidden_id_anagrafica}",
       "isPrimary": false,
       "key": "anagrafica_descr",
       "width": "15%",
@@ -341,7 +342,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "stato",
-      "width": "6%",
+      "width": "10%",
       "label": "Stato",
       "style": [
         {
@@ -591,7 +592,7 @@
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "limit 100"
+    "tableViewSuffix": "order by tipo_allegato, centro_gest desc limit 100"
   },
   "exportQueries": {
     "tableQueries": [
