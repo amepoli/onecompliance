@@ -253,7 +253,7 @@ exports.handler = async (event, context) => {
                 } else {
                     query = `select * from entrasp.cdms_risorse_oggetti a inner join entrasp.cdms_risorse_revisioni b on a.codice_azienda=b.codice_azienda
                     and a.id_risorsa=b.id_risorsa and a.prog_revisione=b.prog_revisione where a.codice_azienda='${company}' AND a.nome_business_object='${bus_object}'
-                    AND a.chiave='${chiave}' and b.id_argomento_stato=4035;;`;
+                    AND a.chiave='${chiave}' and b.id_argomento_stato=4035;`;
                     response = await client.query(query);
                     console.log(query, response);
                     let rows = response['rows'];
