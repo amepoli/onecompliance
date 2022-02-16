@@ -26,6 +26,7 @@ import { DynamicFieldDirective } from '../directives';
 import { SubFormDynamicFieldDirective } from '../directives/subform-dynamic-field.directive';
 
 import { AttachmentsModule } from '../widgets/attachments/attachments.module';
+import { MultiAttachmentsModule } from '../widgets/multi-attachments/multi-attachments.module';
 import { ShareModule } from '../widgets/share/share.module';
 
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -68,6 +69,7 @@ import { S3ExplorerModule } from '../widgets/s3-explorer/s3-explorer.module';
 
     // Widgets
     AttachmentsModule,
+    MultiAttachmentsModule,
     ShareModule,
     S3ExplorerModule
   ],
