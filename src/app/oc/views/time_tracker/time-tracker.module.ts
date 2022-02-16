@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TimeTrackerComponent } from './time-tracker.component';
-import { AttachDialogComponent } from '../../dialogs/attach.dialog/attach.dialog.component';
-import { FileUploadComponent } from '../../file-uploader/file-upload/file-upload.component';
-import { ProgressComponent } from '../../file-uploader/progress/progress.component';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
