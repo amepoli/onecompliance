@@ -1,28 +1,30 @@
 <div class="full-width homepage-tab-component">
-    <div style="width: 100%; background-color: #fafafa">
-        <mat-card *ngIf="isLoading"
-            style="display: flex; justify-content: center; align-items: center; background-color: #fafafa;">
-            <mat-progress-spinner color="primary" mode="indeterminate">
-            </mat-progress-spinner>
+  <div style="width: 100%; background-color: #fafafa">
+    <mat-card *ngIf="isLoading"
+      style="display: flex; justify-content: center; align-items: center; background-color: #fafafa;">
+      <mat-progress-spinner color="primary" mode="indeterminate">
+      </mat-progress-spinner>
+    </mat-card>
+
+    <toolbar-elements #toolbarElements *ngIf="!isLoading" [toolbar_elements]="toolbar_elements"
+      (onChange)="loadSearchKeys($event)"></toolbar-elements>
+
+    <div *ngIf="!isLoading && tiles && tiles.length" class="homepage-tiles">
+      <ng-container *ngFor="let tile of tiles; let i = index">
+        <div *ngIf="tile.isNewLineTile" class="homepage-newline-tile"></div>
+        <mat-card *ngIf="!tile.isNewLineTile" class="homepage-tab-card" (click)="gotoTile(i)"
+          [ngStyle]="{'background-color': tile.content.background_color || 'white'}">
+          <mat-card-header>
+            <mat-card-title>{{tile.title}}</mat-card-title>
+            <mat-card-subtitle></mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="homepage-tab-card-value" [ngStyle]="{'color': tile.content.value_color || 'black'}">
+              {{tile.content.value}}
+            </p>
+          </mat-card-content>
         </mat-card>
-
-        <toolbar-elements #toolbarElements *ngIf="!isLoading" [toolbar_elements]="toolbar_elements" (onChange)="loadSearchKeys($event)"></toolbar-elements>
-
-        <div *ngIf="!isLoading && tiles && tiles.length" class="homepage-tiles">
-          <ng-container *ngFor="let tile of tiles; let i = index">
-            <div *ngIf="tile.isNewLineTile" class="homepage-newline-tile"></div>            
-            <mat-card *ngIf="!tile.isNewLineTile" class="homepage-tab-card" (click)="gotoTile(i)" [ngStyle]="{'background-color': tile.content.background_color || 'white'}">
-                <mat-card-header>
-                  <mat-card-title>{{tile.title}}</mat-card-title>
-                  <mat-card-subtitle></mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                  <p class="homepage-tab-card-value" [ngStyle]="{'color': tile.content.value_color || 'black'}">
-                    {{tile.content.value}}
-                  </p>
-                </mat-card-content>               
-              </mat-card>
-          </ng-container>
-      </div>
+      </ng-container>
     </div>
+  </div>
 </div>
