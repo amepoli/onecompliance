@@ -33,7 +33,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { AngularEditorModule } from '@kolkov/angular-editor';
-import { S3ManagerModule } from '../widgets/s3-manager/s3-manager.module';
+import { S3ExplorerModule } from '../widgets/s3-explorer/s3-explorer.module';
 
 @NgModule({
   declarations: [
@@ -69,7 +69,7 @@ import { S3ManagerModule } from '../widgets/s3-manager/s3-manager.module';
     // Widgets
     AttachmentsModule,
     ShareModule,
-    S3ManagerModule
+    S3ExplorerModule
   ],
   exports: [
     InputComponent,

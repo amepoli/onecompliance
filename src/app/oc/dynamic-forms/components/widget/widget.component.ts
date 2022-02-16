@@ -11,14 +11,14 @@ import { Subscription } from 'rxjs';
   templateUrl: './widget.component.html',
   styleUrls: ['./widget.component.scss'],
   host: {
-    '[style.padding-top]': 'field.isVisible? field.widgetType == "s3-manager"? "10px": "24px": "0"',
-    '[style.margin-right]': 'field.isVisible? field.widgetType == "s3-manager"? "1%": "8px": "0"',
-    '[style.margin-left]': 'field.isVisible? field.widgetType == "s3-manager"? "1%": "8px": "0"',
-    '[style.width]': 'field.isVisible? field.widgetType == "s3-manager"? "98%": "32px": "0"',
-    '[style.height]': 'field.isVisible? field.widgetType == "s3-manager"? "500px": "32px": "0"',
-    '[style.background-color]': 'field.isVisible? field.widgetType == "s3-manager"? "aliceblue": "transparent": "transparent"',
-    '[style.border]': 'field.isVisible? field.widgetType == "s3-manager"? "1px solid lightgrey": "none": "none"',
-    '[style.border-radius]': 'field.isVisible? field.widgetType == "s3-manager"? "5px": "0": "0"',
+    '[style.padding-top]': 'field.isVisible? field.widgetType == "s3-explorer"? "10px": "24px": "0"',
+    '[style.margin-right]': 'field.isVisible? field.widgetType == "s3-explorer"? "1%": "8px": "0"',
+    '[style.margin-left]': 'field.isVisible? field.widgetType == "s3-explorer"? "1%": "8px": "0"',
+    '[style.width]': 'field.isVisible? field.widgetType == "s3-explorer"? "98%": "32px": "0"',
+    '[style.height]': 'field.isVisible? field.widgetType == "s3-explorer"? "500px": "32px": "0"',
+    '[style.background-color]': 'field.isVisible? field.widgetType == "s3-explorer"? "aliceblue": "transparent": "transparent"',
+    '[style.border]': 'field.isVisible? field.widgetType == "s3-explorer"? "1px solid lightgrey": "none": "none"',
+    '[style.border-radius]': 'field.isVisible? field.widgetType == "s3-explorer"? "5px": "0": "0"',
  }
 })
 export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
