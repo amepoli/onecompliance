@@ -5,7 +5,9 @@
   "businessObjectName": "consuntivazioni",
   "define": {
     "_and_": "true",
-    "same_origin": "true"
+    "same_origin": "true",
+    "is_hidden_esecutore": "true",
+    "is_hidden_time_report": "false"
   },
   "dashboardTables": [
     "dashboard_consuntivazioni"
@@ -13,7 +15,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select csn.date_time_begin::timestamp with time zone, csn.id_argomento, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',csn.stato) as descr_stato,  csn.thread ,csn.date_time_end::timestamp with time zone, csn.id_cons, csn.codice_compito, substring(entrasp.descrizione_consuntivazione(csn.codice_azienda, csn.id_cons), 1, 200) as titolo_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.anagrafiche_id_codcognnome(csn.codice_part, csn.id_risorsa) as esecutore, substring(csn.note from 1 for 100) as note_restricted, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, csn.codice_compito, csn.codice_azienda), true as time_report_play from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'and $P{_and_};",
+      "queryString": "select csn.date_time_begin, csn.id_argomento, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',csn.stato) as descr_stato,  csn.thread ,csn.date_time_end, csn.id_cons, csn.codice_compito, substring(entrasp.descrizione_consuntivazione(csn.codice_azienda, csn.id_cons), 1, 200) as titolo_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.anagrafiche_cognnome(csn.codice_part, csn.id_risorsa) as esecutore, substring(csn.note from 1 for 100) as note_restricted, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, csn.codice_compito, csn.codice_azienda), true as time_report_play from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'and $P{_and_};",
       "type": "main"
     },
     {
@@ -1114,13 +1116,23 @@
   "table_keys": [
     {
       "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_intervento",
+      "label": "Data Intervento",
+      "width": "8%"
+    },
+    {
+      "format": {
         "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "Codice Azienda",
-      "width": "7%"
+      "width": "8%"
     },
     {
       "format": {
@@ -1129,7 +1141,7 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_cons",
-      "width": "4%",
+      "width": "6%",
       "label": "Codice"
     },
     {
@@ -1139,28 +1151,28 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo_compito",
-      "width": "30%",
+      "width": "42%",
       "label": "Titolo attività"
     },
     {
       "format": {
-        "dataType": "datetime"
+        "dataType": "time"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "date_time_begin",
       "label": "Inizio",
-      "width": "10%"
+      "width": "8%"
     },
     {
       "format": {
-        "dataType": "datetime"
+        "dataType": "time"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "date_time_end",
       "label": "Fine",
-      "width": "10%"
+      "width": "8%"
     },
     {
       "format": {
@@ -1169,29 +1181,29 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "durata",
-      "label": "Durata Intervento (minuti)",
+      "label": "Durata (minuti)",
       "width": "5%"
     },
     {
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "durata_ft",
       "label": "Durata Fatturabile (minuti)",
-      "width": "5%"
+      "width": "0%"
     },
     {
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": "$Q{is_hidden_esecutore}",
       "isPrimary": false,
       "key": "esecutore",
-      "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa)",
+      "queryFunct": "entrasp.anagrafiche_cognnome(codice_part,id_risorsa)",
       "label": "Esecutore",
-      "width": "10%"
+      "width": "9%"
     },
     {
       "format": {
@@ -1239,9 +1251,9 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": "$Q{is_hidden_time_report}",
       "isPrimary": false,
-      "width": "3%",
+      "width": "4%",
       "key": "time_report_play",
       "label": "",
       "style": [
@@ -1278,7 +1290,7 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": "$Q{is_hidden_time_report}",
       "isPrimary": false,
       "width": "5%",
       "key": "time_report_stop_active",
@@ -1612,7 +1624,7 @@
     "tableQueries": [
       {
         "label": "Time report utente",
-        "queryString": "select substring(entrasp.descrizione_consuntivazione(csn.codice_azienda, csn.id_cons), 1, 200), csn.codice_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.anagrafiche_id_codcognnome(csn.codice_part, csn.id_risorsa) as esecutore from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric=csn.id_risorsa;"
+        "queryString": "select substring(entrasp.descrizione_consuntivazione(csn.codice_azienda, csn.id_cons), 1, 200), csn.codice_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.anagrafiche_cognnome(csn.codice_part, csn.id_risorsa) as esecutore from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric=csn.id_risorsa;"
       }
     ]
   }
