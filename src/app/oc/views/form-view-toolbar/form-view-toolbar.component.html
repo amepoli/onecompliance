@@ -41,6 +41,14 @@
                 <mat-icon>delete</mat-icon>
             </button>
 
+            <ng-container *ngIf="!formView.formGetter.hideActions.includes('multi-attachments')">
+                <multi-attachments
+                    [keys]="formView && formView.currentKeys? formView.currentKeys: null"
+                    [entryName]="formView && formView.tableData && formView.tableData.entryName? formView.tableData.entryName: null"
+                    (onSave)="formView.formGetter.attachmentsOnSave($event)">
+                </multi-attachments>
+            </ng-container>
+            
             <ng-container *ngIf="!formView.formGetter.hideActions.includes('attachments')">
                 <attachments
                     [keys]="formView && formView.currentKeys? formView.currentKeys: null"

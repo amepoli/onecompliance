@@ -1,0 +1,42 @@
+
+<div mat-dialog-content>
+
+    <file-manager *ngIf="!attach"></file-manager>
+
+    <div id="forms" class="page-layout simple fullwidth" fxLayout="column">
+
+        <!-- CONTENT -->
+        <div class="center" fxFlex>
+
+            <!-- HEADER -->
+            <div *ngIf="attach" class="header mat-accent-bg p-24" fxLayout="column" fxLayoutAlign="space-between start">
+            
+                <div class="breadcrumb text-truncate h1 pl-64 w-100-p" fxLayout="row" fxLayoutAlign="space-between center">
+                        <span>Allega Multi Nuovo File</span>
+                </div>
+            </div>
+
+            <div class="mb-24" fxLayout="column" fxLayoutAlign="center" fxLayout.gt-md="row">
+
+                <br><br>
+
+                <app-multi-file-upload [progress]="progress" [hidden]="!attach" #fileUploader></app-multi-file-upload>
+             
+                <br><br>
+
+                <form-getter *ngIf="attach" [formParams]="formParams" #formRef></form-getter>
+
+                <form-getter *ngIf="attach" [formParams]="newTypeParams" #newTypeRef></form-getter>
+
+                <button *ngIf="newTypeParams.isVisible" [ngStyle]="{'margin-left': '5%'}" mat-raised-button color="primary" (click)="onNewType()">Salva Tipo</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div mat-dialog-actions>
+    <button *ngIf="attach" mat-button (click)="onSave()">Salva</button>
+    <button mat-button [mat-dialog-close]="" cdkFocusInitial>Chiudi</button>
+</div>

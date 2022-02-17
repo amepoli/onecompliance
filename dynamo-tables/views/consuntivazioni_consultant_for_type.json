@@ -7,7 +7,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve , count(cns.id_cons) as num_cons from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.consuntivazioni cns on arg.id_argomento=cns.id_argomento where id_argomento_father=3492 group by arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve"
+			"queryString": "select arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve ,count(cns.id_cons) as num_cons from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.consuntivazioni cns on arg.id_argomento=cns.id_argomento where id_argomento_father=3492 and cns.id_risorsa in (select id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€global_username€') group by arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve"
 		}
 	],
 	"outputEvents": [
@@ -59,7 +59,7 @@
 			"isPrimary": false,
 			"key": "descrizione_breve",
 			"label": "Descrizione breve",
-			"newLine": true,
+			"newLine": false,
 			"readOnly": true,
 			"size": 1.5
 		},
@@ -130,17 +130,6 @@
 			"key": "descrizione_breve",
 			"label": "Descrizione breve",
 			"width": "30%"
-		},
-		{
-			"format": {
-				"dataType": "boolean"
-			},
-			"isHidden": true,
-			"isCheckbox": true,
-			"isPrimary": false,
-			"key": "flag_classificazione",
-			"label": "Argomento di classificazione",
-			"width": "10%"
 		},
 		{
 			"format": {

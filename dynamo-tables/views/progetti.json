@@ -11,7 +11,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select codice_azienda,data_inserimento,stato,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',stato) as descr_stato,id_tipo_progetto,codice_attivita,codice_progetto,id_progetto,codice_part,titolo,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) AS descr_cliente,entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest,id_cliente,entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento,true as time_report_play,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text) from entrasp.progetti where codice_azienda='€global_codice_azienda€';"
+			"queryString": "select (€global_id_anagrafiche€)::text as user_companies,codice_azienda,data_inserimento,stato,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',stato) as descr_stato,id_tipo_progetto,codice_attivita,codice_progetto,id_progetto,codice_part,titolo,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) AS descr_cliente,entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest,id_cliente,entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento,true as time_report_play, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=prg.codice_azienda and cmp.id_progetto=prg.id_progetto limit 1), prg.codice_azienda) from entrasp.progetti prg where codice_azienda='€global_codice_azienda€';"
 		},
 		{
 			"operation": "selectForm",
@@ -1005,6 +1005,15 @@
 			"queryFunct": "entrasp.progetto_sal(codice_azienda, id_progetto)",
 			"label": "Prv/Pnf/Ris/Svl/Chs/Ann/Tot",
 			"width": "0%"
+		},
+		{
+		  "format": {
+			"dataType": "text"
+		  },
+		  "isHidden": true,
+		  "isPrimary": false,
+		  "key": "user_companies",
+		  "label": "user_companies"
 		},
 		{
 		  "format": {

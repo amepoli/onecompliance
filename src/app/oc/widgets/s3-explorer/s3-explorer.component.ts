@@ -6,11 +6,11 @@ import 'rxjs/add/operator/filter';
 import { FormViewComponent } from '../../views/form/form-view.component';
 
 @Component({
-    selector: 's3-manager',
-    templateUrl: './s3-manager.component.html',
-    styleUrls: ['./s3-manager.component.scss']
+    selector: 's3-explorer',
+    templateUrl: './s3-explorer.component.html',
+    styleUrls: ['./s3-explorer.component.scss']
 })
-export class S3ManagerComponent implements AfterViewInit{
+export class S3ExplorerComponent implements AfterViewInit{
 
     @Output() onClick = new EventEmitter<any>();
 
