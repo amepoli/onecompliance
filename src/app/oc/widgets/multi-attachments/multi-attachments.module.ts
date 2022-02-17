@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TimeTrackerComponent } from './time-tracker.component';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -14,11 +13,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import {MatTooltipModule} from '@angular/material/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DynamicFormsModule } from '../../dynamic-forms/dynamic-forms.module';
-import { FileManagerModule } from 'app/main/apps/file-manager/file-manager.module';
-import { FormGetterModule } from '../form-getter/form-getter.module';
+import { MultiAttachmentsComponent } from './multi-attachments.component';
 
 @NgModule({
   imports: [
@@ -30,7 +26,6 @@ import { FormGetterModule } from '../form-getter/form-getter.module';
     MatTabsModule,
     MatIconModule,
     MatButtonModule,
-    DynamicFormsModule,
     MatFormFieldModule,
     MatOptionModule,
     MatSelectModule,
@@ -38,34 +33,15 @@ import { FormGetterModule } from '../form-getter/form-getter.module';
     MatCardModule,
     MatProgressSpinnerModule,
     MatBadgeModule,
-    MatTooltipModule,
-    FileManagerModule,
-    MatDialogModule,
-    FormGetterModule
+    MatDialogModule
   ],
   exports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatIconModule,
-    MatButtonModule,
-    DynamicFormsModule,
-    MatFormFieldModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatInputModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatTooltipModule,
-    TimeTrackerComponent,
+    MultiAttachmentsComponent,
   ],
-  declarations: [TimeTrackerComponent],
+  declarations: [MultiAttachmentsComponent],
   entryComponents: [
-    TimeTrackerComponent
+    MultiAttachmentsComponent
   ]
 })
 
-export class TimeTrackerModule { }
+export class MultiAttachmentsModule { }

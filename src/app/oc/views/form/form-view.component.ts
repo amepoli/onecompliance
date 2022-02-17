@@ -3,6 +3,7 @@ import { Component, ViewChild, Input, Output, EventEmitter, OnChanges, OnInit, O
 import 'rxjs/add/operator/filter';
 import { MatDialog } from '@angular/material/dialog';
 import { AttachDialogComponent } from 'app/oc/dialogs/attach.dialog/attach.dialog.component';
+import { MultiAttachmentsDialogComponent } from 'app/oc/dialogs/multi-attachments.dialog/multi-attachments.dialog.component';
 import { FormGetterComponent } from '../form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
 import { FormGetterParams, FormViewParams, MessageElement, MessageItem, MessageView, TabType, TabViewKey } from 'app/oc/interfaces';
@@ -418,6 +419,20 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     showAttachments() {
         // Pop-up example
         const dialogRef = this.attachDialog.open(AttachDialogComponent, {
+            width: '1280px',
+            data: { entryName: this.tableData.entryName, keys: this.currentKeys }
+        });
+
+        this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+
+            }
+        }));
+    }
+
+    showMultiAttachments() {
+        // Pop-up example
+        const dialogRef = this.attachDialog.open(MultiAttachmentsDialogComponent, {
             width: '1280px',
             data: { entryName: this.tableData.entryName, keys: this.currentKeys }
         });

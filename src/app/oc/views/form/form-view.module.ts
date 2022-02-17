@@ -2,7 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormViewComponent } from './form-view.component';
 import { AttachDialogComponent } from '../../dialogs/attach.dialog/attach.dialog.component';
+import { MultiAttachmentsDialogComponent } from 'app/oc/dialogs/multi-attachments.dialog/multi-attachments.dialog.component';
 import { FileUploadComponent } from '../../file-uploader/file-upload/file-upload.component';
+import { MultiFileUploadComponent } from 'app/oc/file-uploader/multi-file-upload/multi-file-upload.component';
 import { ProgressComponent } from '../../file-uploader/progress/progress.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -60,15 +62,19 @@ import { FormGetterModule } from '../form-getter/form-getter.module';
     MatProgressSpinnerModule,
     FormViewComponent,
     AttachDialogComponent,
+    MultiAttachmentsDialogComponent,
     ProgressComponent,
     FileManagerModule,
-    FileUploadComponent
+    FileUploadComponent,
+    MultiFileUploadComponent
   ],
-  declarations: [FormViewComponent, AttachDialogComponent, FileUploadComponent, ProgressComponent],
+  declarations: [FormViewComponent, AttachDialogComponent, MultiAttachmentsDialogComponent, FileUploadComponent, MultiFileUploadComponent, ProgressComponent],
   entryComponents: [
       FormViewComponent,
       AttachDialogComponent,
+      MultiAttachmentsDialogComponent,
       FileUploadComponent,
+      MultiFileUploadComponent,
       ProgressComponent
   ]
 })

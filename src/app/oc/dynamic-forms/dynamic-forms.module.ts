@@ -26,6 +26,7 @@ import { DynamicFieldDirective } from '../directives';
 import { SubFormDynamicFieldDirective } from '../directives/subform-dynamic-field.directive';
 
 import { AttachmentsModule } from '../widgets/attachments/attachments.module';
+import { MultiAttachmentsModule } from '../widgets/multi-attachments/multi-attachments.module';
 import { ShareModule } from '../widgets/share/share.module';
 
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
@@ -33,7 +34,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { AngularEditorModule } from '@kolkov/angular-editor';
-import { S3ManagerModule } from '../widgets/s3-manager/s3-manager.module';
+import { S3ExplorerModule } from '../widgets/s3-explorer/s3-explorer.module';
 
 @NgModule({
   declarations: [
@@ -68,8 +69,9 @@ import { S3ManagerModule } from '../widgets/s3-manager/s3-manager.module';
 
     // Widgets
     AttachmentsModule,
+    MultiAttachmentsModule,
     ShareModule,
-    S3ManagerModule
+    S3ExplorerModule
   ],
   exports: [
     InputComponent,
