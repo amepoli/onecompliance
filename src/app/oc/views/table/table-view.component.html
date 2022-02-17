@@ -12,6 +12,11 @@
                 Advanced Search
             </button>
 
+            <table-multiselect-toolbar (onReload)="loadData()"
+            [hidden]="isLoading || !selectionActions || !selectionActions.length" [entryKey]="tableData.entryName"
+            [selection]="selection" [actions]="selectionActions" [viewKeys]="viewKeys">
+            </table-multiselect-toolbar>
+
             <!-- <div class="table-view-buttons-separator" *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && !hideActions.includes('quick-add') || (tableData.showHeader || (!tableData.showHeader && isFullScreen)) && isTabMode && !hideActions.includes('add') || tableData.showFullScreenButton || showImportDataButton"></div> -->
             <button
                 *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && !hideActions.includes('quick-add')"
@@ -181,11 +186,6 @@
         <form-view [isQuickAdd]="true" *ngIf="showQuickAdd" class="quick-add" [tableData]="quickAddFormParams"
             (sendEvent)='onEvent($event)'>
         </form-view>
-
-        <table-multiselect-toolbar (onReload)="loadData()"
-            [hidden]="isLoading || !selectionActions || !selectionActions.length" [entryKey]="tableData.entryName"
-            [selection]="selection" [actions]="selectionActions" [viewKeys]="viewKeys">
-        </table-multiselect-toolbar>
 
         <div class="mat-elevation-z2" class="data-table">
 
