@@ -35,7 +35,8 @@
       "key": "id_odg",
       "label": "ID OdG",
       "newLine": false,
-      "readOnly": true
+      "readOnly": true,
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -50,22 +51,8 @@
       "key": "id_riunione",
       "label": "Riunione",
       "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select id_odg as id, titolo as name from entrasp.odg_riunioni where codice_azienda = $codice_azienda$ and id_odg!=£id_odg£"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_odg_parent",
-      "label": "ID OdG Parent",
-      "newLine": true,
-      "readOnly": false
+      "readOnly": false,
+      "size": 3
     },
     {
       "autoGenerate": false,
@@ -80,7 +67,7 @@
       "label": "Tipo Odg",
       "newLine": false,
       "readOnly": false,
-      "size": 2.5
+      "size": 3
     },
     {
       "autoGenerate": false,
@@ -107,7 +94,23 @@
       "autoGenerate": false,
       "format": {
         "dataType": "text",
-        "viewType": "input",
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "select id_odg as id, titolo as name from entrasp.odg_riunioni where codice_azienda = $codice_azienda$ and id_odg!=£id_odg£"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_odg_parent",
+      "label": "ID OdG Parent",
+      "newLine": true,
+      "readOnly": false,
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "textarea",
         "validations": [
           {
             "message": "Breve descrizione necessaria",
@@ -121,8 +124,7 @@
       "key": "titolo",
       "label": "Punto",
       "newLine": true,
-      "readOnly": false,
-      "size": 8.5
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -196,7 +198,8 @@
   ],
   "subTables": [
     {
-      "entryKey": "odg_sub_of_odg",
+      "entryKey": "attachments_sub_of_riunioni",
+      "isHidden": false,
       "keys": [
         {
           "parent": "codice_azienda",
@@ -208,10 +211,10 @@
         },
         {
           "parent": "id_odg",
-          "son": "id_odg_parent"
+          "son": "id_odg"
         }
       ],
-      "label": "Sotto Ordini"
+      "label": "Documenti Allegati"
     },
     {
       "entryKey": "odg_associated_at_odg",
@@ -229,8 +232,7 @@
       "label": "Trattazioni del Medesimo Argomento"
     },
     {
-      "entryKey": "attachments_sub_of_riunioni",
-      "isHidden": false,
+      "entryKey": "odg_sub_of_odg",
       "keys": [
         {
           "parent": "codice_azienda",
@@ -242,10 +244,10 @@
         },
         {
           "parent": "id_odg",
-          "son": "id_odg"
+          "son": "id_odg_parent"
         }
       ],
-      "label": "Documenti approvati"
+      "label": "Sotto Ordini"
     }
   ],
   "table_keys": [
