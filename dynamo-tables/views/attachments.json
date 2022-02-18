@@ -168,16 +168,18 @@
       "key": "id_argomento_tipo_allegato",
       "label": "Tipo flusso info",
       "outputEvent": {
-        "eventName": "aggiorna_id_tipo_allegato_documents",
+        "eventName": "aggiorna_id_tipo_allegato_attachments",
         "eventTrigger": "select"
       },
       "inputEvents": [
         {
-          "eventName": "aggiorna_id_tipo_allegato_documents",
+          "eventName": "aggiorna_id_tipo_allegato_attachments",
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.aggiorna_tipo_allegato_domanda($codice_azienda$, $id_risorsa$, £id_argomento_tipo_allegato£)"
+          "successMessage": "Done!",
+          "queryFunct": "select entrasp.cdms_risorse_revisioni_new_da_tipo_allegato($codice_azienda$, $id_risorsa$, $prog_revisione$, £id_argomento_tipo_allegato£)",
+          "outputEventWhenComplete": "navigate_to_clientela"
         }
       ],
       "newLine": true,
@@ -817,5 +819,15 @@
   ],
   "querySuffixes": {
     "tableViewSuffix": "limit 100"
-  }
+  },
+  "inputEvents": [
+  {
+    "eventName": "navigate_to_clientela",
+    "actionType": "navigate",
+    "actionTarget": {
+      "name": "clientela",
+      "type": "table"
+    }
+  }  
+  ]
 }
