@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormViewToolbarComponent } from './form-view-toolbar.component';
-import { AttachDialogComponent } from '../../dialogs/attach.dialog/attach.dialog.component';
-import { FileUploadComponent } from '../../file-uploader/file-upload/file-upload.component';
-import { ProgressComponent } from '../../file-uploader/progress/progress.component';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -22,6 +19,7 @@ import { DynamicFormsModule } from '../../dynamic-forms/dynamic-forms.module';
 import { FileManagerModule } from 'app/main/apps/file-manager/file-manager.module';
 import { FormGetterModule } from '../form-getter/form-getter.module';
 import { AttachmentsModule } from 'app/oc/widgets/attachments/attachments.module';
+import { MultiAttachmentsModule } from 'app/oc/widgets/multi-attachments/multi-attachments.module';
 import { ShareModule } from 'app/oc/widgets/share/share.module';
 
 @NgModule({
@@ -47,6 +45,7 @@ import { ShareModule } from 'app/oc/widgets/share/share.module';
     FormGetterModule,
 
     AttachmentsModule,
+    MultiAttachmentsModule,
     ShareModule
   ],
   exports: [

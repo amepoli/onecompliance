@@ -14,7 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { S3ManagerComponent } from './s3-manager.component';
+import { S3ExplorerComponent } from './s3-explorer.component';
 
 @NgModule({
   imports: [
@@ -36,12 +36,12 @@ import { S3ManagerComponent } from './s3-manager.component';
     MatDialogModule,
   ],
   exports: [
-    S3ManagerComponent,
+    S3ExplorerComponent,
   ],
-  declarations: [S3ManagerComponent],
+  declarations: [S3ExplorerComponent],
   entryComponents: [
-    S3ManagerComponent
+    S3ExplorerComponent
   ]
 })
 
-export class S3ManagerModule { }
+export class S3ExplorerModule { }

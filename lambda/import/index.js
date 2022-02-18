@@ -1420,12 +1420,12 @@ exports.handler = async (event, context) => {
             else if (requestType === 'deleteFile') {
                 const fileName = queryParams['filename'];
 
-                /*const s3ParamsDelete = {
+                const s3ParamsDelete = {
                     Bucket: bucket,
                     Key: "CSV/" + fileName
-                };*/
+                };
 
-               // const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsDelete);
+               const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsDelete);
 
                 body = { result: 'OK', url: signedUrl };
             }
