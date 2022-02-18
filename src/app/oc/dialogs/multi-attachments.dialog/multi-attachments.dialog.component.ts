@@ -41,7 +41,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
 
     listFiles: any[];
 
-    file: File;
+    files: File[];
 
     subscriptions: Subscription[] = [];
 
@@ -62,6 +62,9 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
         isNew: true,
         isVisible: false
     };
+
+    savingFiles: boolean = false;
+    filesSaved: number = 0;
 
     constructor(private _formBuilder: FormBuilder,
         public dialogRef: MatDialogRef<MultiAttachmentsDialogComponent>,
@@ -174,11 +177,11 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
     ngAfterViewInit() {
         var _this = this;
         if (_this.fileUploader != null) {
-            _this.fileUploader.registerOnChange(function (file: File): void {
-                _this.file = file;
+            _this.fileUploader.registerOnChange(function (files: File[]): void {
+                _this.files = files;
                 _this.form = _this.formRef.formArray.first.form; // getting the FormGroup
-                _this.form.patchValue({ fileName: file.name, dimensione: file.size });
-                _this.onFileSelected();
+                // _this.form.patchValue({ fileName: file.name, dimensione: file.size });
+                // _this.onFileSelected();
             });
         }
 
@@ -245,217 +248,203 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
         this.progress = 0;
     }
 
-    onSave(): void {
+    async onSave() {
         const _this = this;
-        _this._console.log(event);
         _this.attach = false;
-        if (_this.file != null) {
-            // get the S3 URL 
-            const subscription = _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys).subscribe(
-                responseURL => {
-                    _this._console.log(responseURL);
-                    if (responseURL != null && responseURL.result === 'OK') {
-                        const blob = new Blob([_this.file]);
-                        // upload the file using obtained url
-                        _this.httpClient.put(responseURL.url, blob).subscribe(
-                            responsePut => {
-                                _this._console.log('File uploaded with filename: ', responseURL.filename);
-                                // retrieve file content
-                                const reader = new FileReader();
-                                reader.onload = function (e) {
-                                    const content = reader.result;
-                                    /*
-                                    var buffer = Buffer.alloc(content.byteLength);
-                                    for (var i = 0; i < content.byteLength; i++) {
-                                         buffer[i] = content[i];
-                                    };*/
-                                    // create file content hash
-                                    // Old method
-                                    // var buffer = Buffer.from(<string>content);
-                                    // const hash = createHash('sha1').update(buffer).digest("hex");
-                                    // New methd by Zee
-                                    const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
-                                    _this._console.log(hash);
-                                    // check that the file has been correctly uploaded and pass file params to the backend
-                                    var mime = require('mime-types');
-                                    const fileParams = {
-                                        nickname: _this.form.value.fileName != null ? _this.form.value.fileName : null,
-                                        descrizione: _this.form.value.descrizione != null ? _this.form.value.descrizione : null,
-                                        data_scadenza: _this.form.value.data_scadenza != null ? _this.form.value.data_scadenza : null,
-                                        data_rif: _this.form.value.data_rif != null ? _this.form.value.data_rif : null,
-                                        url: _this.form.value.url != null ? _this.form.value.url : null,
-                                        descrizione_breve: _this.form.value.descrizione_breve != null ? _this.form.value.descrizione_breve : null,
-                                        content_type: mime.lookup(_this.form.value.fileName),
-                                        id_odg: _this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
-                                        id_riunione: _this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
-                                        id_centro_gest: _this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
-                                        id_argomento_tipo_allegato: _this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,
-                                        dimensione: _this.form.value.dimensione != null ? _this.form.value.dimensione : null,
-                                        id_anagrafica: _this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
-                                        id_somministrazione: _this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
-                                        id_sondaggio: _this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
-                                        id_progetto: _this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
-                                        prog_revisione: _this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
-                                        id_risorsa: _this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
-                                        id_domanda: _this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
-                                        id_modello_test: _this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
-                                        id_modello_test_vr: _this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
-                                        autore: _this.authService.getUsername()
-                                    };
-                                    _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
-                                        responseCheck => {
-                                            if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
-                                                _this.fileService.requestReload(_this.data.entryName);
-                                                if (_this.data.onSave) {
-                                                    _this.data.onSave(true);
-                                                }
-                                                _this._console.log(responseCheck);
-                                                // Show success snackbar
-                                                if (responseCheck.reason === 'File already loaded!') {
-                                                    _this._toastService.showInfoToast("File already loaded");
-                                                }
-                                                else {
-                                                    _this._toastService.showSuccessToast("File uploaded successfully");
-                                                }
-                                            }
-                                            else {
-                                                // Show error snackbar
-                                                _this._toastService.showErrorToast(responseCheck.reason);
-                                            }
-
-                                        },
-                                        error => {
-                                            // Show error snackbar
-                                            _this._toastService.showErrorToast(error);
-                                        }
-                                    );
-
-                                };
-                                reader.readAsArrayBuffer(blob);
-                            });
-                    }
-                    else {
-                        // Show error snackbar
-                        _this._toastService.showErrorToast(responseURL.reason);
-                    }
-                }
-            );
-
-            this.subscriptions.push(subscription);
+        if (_this.files != null && _this.files.length > 0) {
+            _this.savingFiles = true;
+            _this.filesSaved = 0;
+            let i = 0;
+            await _this.saveFile(i);            
         }
     }
 
-    onFileSelected() {
+    async saveFile(i: number = 0) {
         let _this = this;
-        const blob = new Blob([_this.file]);
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const content = reader.result;
-            const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
-            _this._console.log(hash);
-
-            _this.backendService.loadFileDataIfExists(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash).subscribe(
-                responseCheck => {
-                    if (responseCheck.result === 'OK') {
-                        let data = responseCheck.data;
-                        _this.form = _this.formRef.formArray.first.form; // getting the FormGroup
-                        _this.form.patchValue(
-                            {
-                                descrizione_breve: data.descrizione_breve,
-                                descrizione: data.descrizione,
-                                data_scadenza: data.data_scadenza,
-                                docURL: data.url,
-                                content_type: data.content_type,
-                                id_odg: data.id_odg,
-                                id_riunione: data.id_riunione,
-                                id_centro_gest: data.id_centro_gest,
-                                id_argomento_tipo_allegato: data.id_argomento_tipo_allegato,
-                                data_rif: data.data_rif,
-                                id_anagrafica: data.id_anagrafica,
-                                id_somministrazione: data.id_somministrazione,
-                                id_sondaggio: data.id_sondaggio,
-                                id_progetto: data.id_progetto,
-                                prog_revisione: data.prog_revisione,
-                                id_risorsa: data.id_risorsa,
-                                id_domanda: data.id_domanda,
-                                id_modello_test: data.id_modello_test,
-                                id_modello_test_vr: data.id_modello_test_vr
-                                //type: 
-                                //key:  
-                                //codice_azienda:
-                                //codice_part: 
-                                //fileName: 
-                                //dimension: 
-                                //addType
-
-                            }
-                            // {
-                            //    codice_part: data.codice_part,
-                            //     content_type: data.content_type,
-                            //     data_creazione: data.data_creazione,
-                            //     data_ins: data.data_ins,
-                            //     data_rif: data.data_rif,
-                            //     data_scadenza: data.data_scadenza,
-                            //     data_ultima_revisione: data.data_ultima_revisione,
-                            //     data_ultimo_accesso: data.data_ultimo_accesso,
-                            //     data_upd: data.data_upd,
-                            //     descrizione: data.descrizione,
-                            //     descrizione_breve: data.descrizione_breve,
-                            //     filtro_dati: data.filtro_dati,
-                            //     flag_indexed: data.flag_indexed,
-                            //     flag_link: data.flag_link,
-                            //     flag_verifica: data.flag_verifica,
-                            //     id_argomento: data.id_argomento,
-                            //     id_argomento_tipo_allegato: data.id_argomento_tipo_allegato,
-                            //     id_centro_gest: data.id_centro_gest,
-                            //     id_odg: data.id_odg,
-                            //     id_risorsa: data.id_risorsa,
-                            //     id_riunione: data.id_riunione,
-                            //     id_tipo_allegato: data.id_tipo_allegato,
-                            //     nickname: data.nickname,
-
-                            //     nome_vista: data.nome_vista,
-                            //     ordinamento_dati: data.ordinamento_dati,
-                            //     parole_chiave: data.parole_chiave,
-
-                            //     revisione_corrente: data.revisione_corrente,
-                            //     tag: data.tag,
-                            //     template_name: data.template_name,
-                            //     ts_cestinato: data.ts_cestinato,
-                            //     ts_checkout: data.ts_checkout,
-                            //     ts_ultima_modifica: data.ts_ultima_modifica,
-                            //     url: data.url,
-                            //     ute_ins: data.ute_ins,
-                            //     ute_upd: data.ute_upd,
-                            //     utente_checkout: data.utente_checkout,
-                            //     utente_ultimo_accesso: data.utente_ultimo_accesso,
-                            //     utenti_esclusi: data.utenti_esclusi,
-                            // }
-                        );
-                        // _this.fileService.requestReload(_this.data.entryName);
-                        _this._console.log(responseCheck);
-                        // Show success snackbar
-                        // _this._toastService.showSuccessToast("File already loaded!");
+        try {
+            // get the S3 URL 
+            let responseURL: any = await _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys).toPromise();
+            _this._console.log(responseURL);
+            if (responseURL != null && responseURL.result === 'OK') {
+                const blob = new Blob([_this.files[i]]);
+                // upload the file using obtained url
+                let responsePut: any = await _this.httpClient.put(responseURL.url, blob).toPromise();
+                _this._console.log('File uploaded with filename: ', responseURL.filename);
+                // retrieve file content
+                const content = await _this.files[i]?.arrayBuffer();
+                const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+                _this._console.log(hash);
+                // check that the file has been correctly uploaded and pass file params to the backend
+                var mime = require('mime-types');
+                const fileParams = {
+                    nickname: _this.files[i].name,// _this.form.value.fileName != null ? _this.form.value.fileName : null,
+                    descrizione: _this.form.value.descrizione != null ? _this.form.value.descrizione : null,
+                    data_scadenza: _this.form.value.data_scadenza != null ? _this.form.value.data_scadenza : null,
+                    data_rif: _this.form.value.data_rif != null ? _this.form.value.data_rif : null,
+                    url: _this.form.value.url != null ? _this.form.value.url : null,
+                    descrizione_breve: _this.form.value.descrizione_breve != null ? _this.form.value.descrizione_breve : null,
+                    content_type: mime.lookup(_this.form.value.fileName),
+                    id_odg: _this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
+                    id_riunione: _this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
+                    id_centro_gest: _this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
+                    id_argomento_tipo_allegato: _this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,
+                    dimensione: _this.form.value.dimensione != null ? _this.form.value.dimensione : null,
+                    id_anagrafica: _this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
+                    id_somministrazione: _this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
+                    id_sondaggio: _this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
+                    id_progetto: _this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
+                    prog_revisione: _this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
+                    id_risorsa: _this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
+                    id_domanda: _this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
+                    id_modello_test: _this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
+                    id_modello_test_vr: _this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
+                    autore: _this.authService.getUsername()
+                };
+                let responseCheck: any = await _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).toPromise();
+                if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
+                    _this.fileService.requestReload(_this.data.entryName);
+                    _this._console.log(responseCheck);
+                    // Show success snackbar
+                    if (responseCheck.reason === 'File already loaded!') {
+                        _this._toastService.showInfoToast("File already loaded");
                     }
                     else {
-                        // Show error snackbar
-                        _this._toastService.showErrorToast(responseCheck.reason);
+                        _this._toastService.showSuccessToast("File uploaded successfully");
                     }
-
-                },
-                error => {
-                    // Show error snackbar
-                    _this._toastService.showErrorToast(error);
+                    if(i < _this.files.length - 1) {
+                        _this.saveFile(i+1);
+                    }
+                    else {
+                        if (_this.data.onSave) {
+                            _this.data.onSave(true);
+                        }
+                    }
                 }
-            );
-
-        };
-        reader.readAsArrayBuffer(blob);
-
-
-
+                else {
+                    // Show error snackbar
+                    _this._toastService.showErrorToast(responseCheck.reason);
+                }
+            }
+            else {
+                // Show error snackbar
+                _this._toastService.showErrorToast(responseURL.reason);
+            }
+        }
+        catch(e) {
+            _this._toastService.showErrorToast(e);
+        }
     }
+    // onFileSelected() {
+    //     let _this = this;
+    //     const blob = new Blob([_this.file]);
+
+    //     const reader = new FileReader();
+    //     reader.onload = function (e) {
+    //         const content = reader.result;
+    //         const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+    //         _this._console.log(hash);
+
+    //         _this.backendService.loadFileDataIfExists(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash).subscribe(
+    //             responseCheck => {
+    //                 if (responseCheck.result === 'OK') {
+    //                     let data = responseCheck.data;
+    //                     _this.form = _this.formRef.formArray.first.form; // getting the FormGroup
+    //                     _this.form.patchValue(
+    //                         {
+    //                             descrizione_breve: data.descrizione_breve,
+    //                             descrizione: data.descrizione,
+    //                             data_scadenza: data.data_scadenza,
+    //                             docURL: data.url,
+    //                             content_type: data.content_type,
+    //                             id_odg: data.id_odg,
+    //                             id_riunione: data.id_riunione,
+    //                             id_centro_gest: data.id_centro_gest,
+    //                             id_argomento_tipo_allegato: data.id_argomento_tipo_allegato,
+    //                             data_rif: data.data_rif,
+    //                             id_anagrafica: data.id_anagrafica,
+    //                             id_somministrazione: data.id_somministrazione,
+    //                             id_sondaggio: data.id_sondaggio,
+    //                             id_progetto: data.id_progetto,
+    //                             prog_revisione: data.prog_revisione,
+    //                             id_risorsa: data.id_risorsa,
+    //                             id_domanda: data.id_domanda,
+    //                             id_modello_test: data.id_modello_test,
+    //                             id_modello_test_vr: data.id_modello_test_vr
+    //                             //type: 
+    //                             //key:  
+    //                             //codice_azienda:
+    //                             //codice_part: 
+    //                             //fileName: 
+    //                             //dimension: 
+    //                             //addType
+
+    //                         }
+    //                         // {
+    //                         //    codice_part: data.codice_part,
+    //                         //     content_type: data.content_type,
+    //                         //     data_creazione: data.data_creazione,
+    //                         //     data_ins: data.data_ins,
+    //                         //     data_rif: data.data_rif,
+    //                         //     data_scadenza: data.data_scadenza,
+    //                         //     data_ultima_revisione: data.data_ultima_revisione,
+    //                         //     data_ultimo_accesso: data.data_ultimo_accesso,
+    //                         //     data_upd: data.data_upd,
+    //                         //     descrizione: data.descrizione,
+    //                         //     descrizione_breve: data.descrizione_breve,
+    //                         //     filtro_dati: data.filtro_dati,
+    //                         //     flag_indexed: data.flag_indexed,
+    //                         //     flag_link: data.flag_link,
+    //                         //     flag_verifica: data.flag_verifica,
+    //                         //     id_argomento: data.id_argomento,
+    //                         //     id_argomento_tipo_allegato: data.id_argomento_tipo_allegato,
+    //                         //     id_centro_gest: data.id_centro_gest,
+    //                         //     id_odg: data.id_odg,
+    //                         //     id_risorsa: data.id_risorsa,
+    //                         //     id_riunione: data.id_riunione,
+    //                         //     id_tipo_allegato: data.id_tipo_allegato,
+    //                         //     nickname: data.nickname,
+
+    //                         //     nome_vista: data.nome_vista,
+    //                         //     ordinamento_dati: data.ordinamento_dati,
+    //                         //     parole_chiave: data.parole_chiave,
+
+    //                         //     revisione_corrente: data.revisione_corrente,
+    //                         //     tag: data.tag,
+    //                         //     template_name: data.template_name,
+    //                         //     ts_cestinato: data.ts_cestinato,
+    //                         //     ts_checkout: data.ts_checkout,
+    //                         //     ts_ultima_modifica: data.ts_ultima_modifica,
+    //                         //     url: data.url,
+    //                         //     ute_ins: data.ute_ins,
+    //                         //     ute_upd: data.ute_upd,
+    //                         //     utente_checkout: data.utente_checkout,
+    //                         //     utente_ultimo_accesso: data.utente_ultimo_accesso,
+    //                         //     utenti_esclusi: data.utenti_esclusi,
+    //                         // }
+    //                     );
+    //                     // _this.fileService.requestReload(_this.data.entryName);
+    //                     _this._console.log(responseCheck);
+    //                     // Show success snackbar
+    //                     // _this._toastService.showSuccessToast("File already loaded!");
+    //                 }
+    //                 else {
+    //                     // Show error snackbar
+    //                     _this._toastService.showErrorToast(responseCheck.reason);
+    //                 }
+
+    //             },
+    //             error => {
+    //                 // Show error snackbar
+    //                 _this._toastService.showErrorToast(error);
+    //             }
+    //         );
+
+    //     };
+    //     reader.readAsArrayBuffer(blob);
+
+
+
+    // }
 
     onNewType(event: any) {
         const values = this.newTypeRef.first.formArray.first.form.value; // get the form data
