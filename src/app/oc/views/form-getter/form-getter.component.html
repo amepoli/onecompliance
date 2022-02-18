@@ -1,8 +1,9 @@
 <div class='form-getter-component' *ngIf="formParams">
     <div *ngIf="isAuthorized">
         <mat-progress-bar mode="indeterminate" *ngIf="isAddingNew"></mat-progress-bar>
-        <div *ngFor="let idx of pagination.curRecords; trackBy:trackItems">
+        <div *ngFor="let idx of pagination.curRecords; trackBy:trackItems; let i = index">
             <div *ngIf="formParams.isVisible && !isLoading && (hiddenRows[idx] == null || hiddenRows[idx] === false)">
+                <hr *ngIf="i >= 1">
                 <dynamic-form class="form-container" [isQuickAdd]="quickAddData[idx]" [fields]='filteredFormData[idx]'
                     [readOnlyPage]='readonlyRows[idx]'>
                 </dynamic-form>
