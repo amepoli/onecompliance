@@ -6,7 +6,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select *, entrasp.argomenti_descr_stato(rev_id_argomento_stato) as descr_stato, entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione) as titolo_odg, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest from entrasp.views_attachments_fast_no_bo where codice_azienda=$codice_azienda$"
+      "queryString": "select *, entrasp.argomenti_descr_stato(rev_id_argomento_stato) as descr_stato, left(entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione),100)as titolo_odg, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest from entrasp.views_attachments_fast_no_bo where codice_azienda=$codice_azienda$"
     },
     {
       "type": "main",
@@ -168,16 +168,18 @@
       "key": "id_argomento_tipo_allegato",
       "label": "Tipo flusso info",
       "outputEvent": {
-        "eventName": "aggiorna_id_tipo_allegato_documents",
+        "eventName": "aggiorna_id_tipo_allegato_attachments",
         "eventTrigger": "select"
       },
       "inputEvents": [
         {
-          "eventName": "aggiorna_id_tipo_allegato_documents",
+          "eventName": "aggiorna_id_tipo_allegato_attachments",
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.aggiorna_tipo_allegato_domanda($codice_azienda$, $id_risorsa$, £id_argomento_tipo_allegato£)"
+          "successMessage": "Done!",
+          "queryFunct": "select entrasp.cdms_risorse_revisioni_new_da_tipo_allegato($codice_azienda$, $id_risorsa$, $prog_revisione$, £id_argomento_tipo_allegato£)",
+          "outputEventWhenComplete": "navigate_to_clientela"
         }
       ],
       "newLine": true,
@@ -491,7 +493,7 @@
       "isPrimary": false,
       "key": "titolo_odg",
       "width": "15%",
-      "queryFunct": "entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione)",
+      "queryFunct": "left(entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione),100)",
       "label": "Ordine del giorno e riunione"
     },
     {
@@ -817,5 +819,15 @@
   ],
   "querySuffixes": {
     "tableViewSuffix": "limit 100"
-  }
+  },
+  "inputEvents": [
+  {
+    "eventName": "navigate_to_clientela",
+    "actionType": "navigate",
+    "actionTarget": {
+      "name": "clientela",
+      "type": "table"
+    }
+  }  
+  ]
 }
