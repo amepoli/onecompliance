@@ -27,7 +27,7 @@ export class MultiFileUploadComponent implements ControlValueAccessor {
       for(let i = 0; i < event.length; i++) {
         this.files.push(event.item(i));        
       }
-      // this.onChange(file);
+      this.onChange(this.files);
       this.fileInput.nativeElement.value = "";
     }
   }

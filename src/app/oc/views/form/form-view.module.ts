@@ -22,6 +22,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
 import { FileManagerModule } from 'app/main/apps/file-manager/file-manager.module';
 import { FormGetterModule } from '../form-getter/form-getter.module';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   imports: [
@@ -60,6 +61,7 @@ import { FormGetterModule } from '../form-getter/form-getter.module';
     MatInputModule,
     MatCardModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     FormViewComponent,
     AttachDialogComponent,
     MultiAttachmentsDialogComponent,
