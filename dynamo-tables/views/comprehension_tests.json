@@ -3,97 +3,518 @@
   "inheritsFrom": "sondaggi_somministrati",
   "entryKey": "comprehension_tests",
   "define": {
-		"is_comprehension_test": "true",
+    "is_comprehension_test": "true",
     "read_only_versione": "true",
     "size_titolo": "5"
-	  },
+  },
   "subTables": [
-      {
-        "entryKey": "domande_risposte_ct",
-        "label": "Domande e Risposte",
-        "type": "tableForm",
-        "inputEvents": [
+    {
+      "entryKey": "domande_risposte_ct",
+      "label": "Domande e Risposte",
+      "type": "tableForm",
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "somministrazioni_flags_sezioni",
+          "condition": "equalTo",
+          "values": [
+            "0"
+          ]
+        }
+      ],
+      "isHidden": true,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        },
+        {
+          "parent": "id_modello_test_vr",
+          "son": "id_modello_test_vr"
+        },
+        {
+          "parent": "id_sondaggio",
+          "son": "id_sondaggio"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
+      ]
+    },
+    {
+      "entryKey": "domande_sezioni_sub_of_somministrazioni_ct",
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "somministrazioni_flags_sezioni",
+          "condition": "equalTo",
+          "values": [
+            "1"
+          ]
+        }
+      ],
+      "isHidden": true,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_sondaggio",
+          "son": "id_sondaggio"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
+      ],
+      "label": "Domande e Risposte - Sezioni",
+      "type": "table"
+    },
+    {
+      "entryKey": "sondaggi_somministrati_attachments",
+      "isHidden": false,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_sondaggio",
+          "son": "id_sondaggio"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
+      ],
+      "label": "Documenti Associati"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_sondaggio",
+      "label": "ID Sondaggio",
+      "width": "5%",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center"
+        }
+      ],
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "sondaggi",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
           {
-            "actionType": "show",
-            "eventName": "somministrazioni_flags_sezioni",
-            "condition": "equalTo",
-            "values": [
-              "0"
-            ]
-          }
-        ],
-        "isHidden": true,
-        "keys": [
-          {
-            "parent": "codice_azienda",
-            "son": "codice_azienda"
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
           },
           {
-            "parent": "id_modello_test",
-            "son": "id_modello_test"
-          },
-          {
-            "parent": "id_modello_test_vr",
-            "son": "id_modello_test_vr"
-          },
-          {
-            "parent": "id_sondaggio",
-            "son": "id_sondaggio"
-          },
-          {
-            "parent": "id_somministrazione",
-            "son": "id_somministrazione"
+            "source": "id_sondaggio",
+            "destination": "id_sondaggio"
           }
         ]
-      },
-      {
-        "entryKey": "domande_sezioni_sub_of_somministrazioni_ct",
-        "inputEvents": [
-          {
-            "actionType": "show",
-            "eventName": "somministrazioni_flags_sezioni",
-            "condition": "equalTo",
-            "values": [
-              "1"
-            ]
-          }
-        ],
-        "isHidden": true,
-        "keys": [
-          {
-            "parent": "codice_azienda",
-            "son": "codice_azienda"
-          },
-          {
-            "parent": "id_sondaggio",
-            "son": "id_sondaggio"
-          },
-          {
-            "parent": "id_somministrazione",
-            "son": "id_somministrazione"
-          }
-        ],
-        "label": "Domande e Risposte - Sezioni",
-        "type": "table"
-      },
-      {
-        "entryKey": "sondaggi_somministrati_attachments",
-        "isHidden": false,
-        "keys": [
-          {
-            "parent": "codice_azienda",
-            "son": "codice_azienda"
-          },
-          {
-            "parent": "id_sondaggio",
-            "son": "id_sondaggio"
-          },
-          {
-            "parent": "id_somministrazione",
-            "son": "id_somministrazione"
-          }
-        ],
-        "label": "Documenti Associati"
       }
-    ]
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_somministrazione",
+      "label": "ID Verifica",
+      "width": "5%",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_progetto",
+      "label": "ID Progetto",
+      "width": "5%",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center"
+        }
+      ],
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "progetti",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_progetto",
+            "destination": "id_progetto"
+          }
+        ]
+      }
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_prevista",
+      "label": "Data Prevista",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_esecuzione",
+      "label": "Data Esecuzione",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo_sondaggio",
+      "label": "Titolo",
+      "width": "20%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "object_description",
+      "label": "Oggetto di Verifica",
+      "width": "15%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "label": "object_key",
+      "key": "object_key",
+      "width": "9%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "stato",
+      "width": "6%",
+      "label": "Stato",
+      "style": [
+        {
+          "value": "Chiuso",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Provvisorio",
+          "font_color": "#BA68C8",
+          "font_weight": "500"
+        },
+        {
+          "value": "Pianificato",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Attesa Riscontro",
+          "font_color": "#FF0000",
+          "font_weight": "500"
+        },
+        {
+          "value": "In Svolgimento",
+          "font_color": " #A1A100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Annullato",
+          "font_color": "grey",
+          "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "somministrazione_completata",
+      "label": "Completo Sì/No",
+      "width": "6%",
+      "style": [
+        {
+          "value": "Completo",
+          "font_color": "green",
+          "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "giudizio",
+      "label": "Giudizio automatico",
+      "width": "8%",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center"
+        },
+        {
+          "value": "Basso",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Favorevole",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Irrilevante",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Non significativo",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Poco significativo",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Medio-Basso",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Abbastanza significativo",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Medio",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Medio-basso",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Parzialmente favorevole",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Parzialmente sfavorevole",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Medio-alto",
+          "font_color": "red",
+          "font_weight": "500"
+        },
+        {
+          "value": "Molto significativo",
+          "font_color": "red",
+          "font_weight": "500"
+        },
+        {
+          "value": "Alto",
+          "font_color": "red",
+          "font_weight": "500"
+        },
+        {
+          "value": "Sfavorevole",
+          "font_color": "red",
+          "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "giudizio_manuale",
+      "label": "Giudizio manuale",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "sameOrigin": false,
+      "key": "id_anagrafica",
+      "label": "id_anagrafica"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "sameOrigin": false,
+      "key": "id_centro_gest",
+      "label": "id_centro_gest"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "sameOrigin": false,
+      "key": "id_anagrafica_somministrazione",
+      "label": "id_anagrafica_somministrazione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_part",
+      "label": "codice_part"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_compito",
+      "label": "codice_compito"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test",
+      "label": "id_modello_test"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test_vr",
+      "label": "id_modello_test_vr"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "scaduto",
+      "label": "Scaduto Sì/No",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_sondaggio_parent",
+      "label": "id_sondaggio_parent",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "isCheckbox": true,
+      "key": "sondaggio_riprogrammato",
+      "queryFunct": "entrasp.sondaggio_riprogrammato(ss.codice_azienda, ss.id_sondaggio)",
+      "label": "Riprogrammato",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_somministrazione_precedente",
+      "queryFunct": "entrasp.id_somministrazione_precedente(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)",
+      "label": "Precedente",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "width": "10%",
+      "isPrimary": false,
+      "key": "incaricato_risposta",
+      "queryFunct": "entrasp.anagrafiche_id_codcognnome('€global_codice_part€', id_anagrafica)",
+      "label": "Incaricato a rispondere"
+    }
+  ]
 }
