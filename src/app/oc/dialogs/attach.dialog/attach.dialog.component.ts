@@ -286,20 +286,20 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                         url: _this.form.value.url != null ? _this.form.value.url : null,
                                         descrizione_breve: _this.form.value.descrizione_breve != null ? _this.form.value.descrizione_breve : null,
                                         content_type: mime.lookup(_this.form.value.fileName),
-                                        id_odg: _this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
-                                        id_riunione: _this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
-                                        id_centro_gest: _this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
-                                        id_argomento_tipo_allegato: _this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,
-                                        dimensione: _this.form.value.dimensione != null ? _this.form.value.dimensione : null,
-                                        id_anagrafica: _this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
-                                        id_somministrazione: _this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
-                                        id_sondaggio: _this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
-                                        id_progetto: _this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
-                                        prog_revisione: _this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
-                                        id_risorsa: _this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
-                                        id_domanda: _this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
-                                        id_modello_test: _this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
-                                        id_modello_test_vr: _this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
+                                        id_odg: _this.getValue(_this.form.value.id_odg), //_this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
+                                        id_riunione: _this.getValue(_this.form.value.id_riunione), //_this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
+                                        id_centro_gest: _this.getValue(_this.form.value.id_centro_gest), //_this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
+                                        id_argomento_tipo_allegato: _this.getValue(_this.form.value.id_argomento_tipo_allegato), //_this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,
+                                        dimensione: _this.getValue(_this.form.value.dimensione), //_this.form.value.dimensione != null ? _this.form.value.dimensione : null,
+                                        id_anagrafica: _this.getValue(_this.form.value.id_anagrafica), //_this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
+                                        id_somministrazione: _this.getValue(_this.form.value.id_somministrazione), //_this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
+                                        id_sondaggio: _this.getValue(_this.form.value.id_sondaggio), //_this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
+                                        id_progetto: _this.getValue(_this.form.value.id_progetto), //_this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
+                                        prog_revisione: _this.getValue(_this.form.value.prog_revisione), //_this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
+                                        id_risorsa: _this.getValue(_this.form.value.id_risorsa), //_this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
+                                        id_domanda: _this.getValue(_this.form.value.id_domanda), //_this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
+                                        id_modello_test: _this.getValue(_this.form.value.id_modello_test), //_this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
+                                        id_modello_test_vr: _this.getValue(_this.form.value.id_modello_test_vr), //_this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
                                         autore: _this.authService.getUsername()
                                     };
                                     _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
@@ -343,6 +343,25 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
             this.subscriptions.push(subscription);
         }
+    }
+
+    getValue(val: any) {
+        if(val !== null && val !== undefined) {
+            if(typeof val === 'object' && !Array.isArray(val)) {
+                if(val.id !== null && val.id !== undefined) {
+                    if(typeof val.id === 'object' && !Array.isArray(val.id)) {
+                        return val.id.id;
+                    }
+                    else {
+                        return val.id;
+                    }
+                }
+            }
+            else {
+                return val;
+            }            
+        } 
+        return null;
     }
 
     onFileSelected() {
