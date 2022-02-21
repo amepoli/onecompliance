@@ -1,0 +1,153 @@
+{
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.cdms_risorse_destinatari",
+    "entryKey": "cdms_risorse_destinatari",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "cancella_destinatario",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "membro_cancella",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "destinatario_cancella",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "delete from entrasp.cdms_risorse_destinatari where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and id_centro_gest=$id_centro_gest$",
+                    "outputEventWhenComplete": "destinatari_reload"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "queryFunct": "SELECT id_centro_gest from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "queryFunct": "select true",
+            "key": "delete_gruppi_lavoro_membri",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "delete_icon"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "cdms_risorse_destinatari",
+                "viewType": "form",
+                "query": "delete from entrasp.cdms_risorse_destinatari where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and id_centro_gest=$id_centro_gest$",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_centro_gest",
+                        "destination": "id_centro_gest"
+                    },
+                    {
+                        "source": "id_risorsa",
+                        "destination": "id_risorsa"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_risorsa",
+            "label": "id_risorsa"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_centro_gest",
+            "label": "id_centro_gest"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "label": "Centro Gestionale",
+            "width": "20%",
+            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
+        }
+    ]
+}
