@@ -10,7 +10,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408))"
+			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408))"
 		},
 		{
 			"operation": "update",
@@ -82,7 +82,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in (5402,3526)",
+				"comboQuery": "select distinct id_argomento as id, descrizione as name from entrasp.argomenti where id_argomento in (select id_argomento_descendants from entrasp.descendants_of_argomento(5408)) and id_argomento not in(5408,5402,3526)",
 				"options": [],
 				"viewType": "combobox",
 				"validations": [
@@ -338,7 +338,7 @@
 				"dataType": "text"
 			},
 			"isHidden": false,
-			"width": "8%",
+			"width": "11%",
 			"isPrimary": false,
 			"key": "numero_contratto",
 			"label": "N. Contratto"
@@ -351,7 +351,7 @@
 			"isPrimary": false,
 			"key": "id_cliente",
 			"label": "Cliente",
-			"width": "20%"
+			"width": "0%"
 		},
 		{
 			"format": {
@@ -362,7 +362,7 @@
 			"key": "cliente",
 			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
 			"label": "Cliente",
-			"width": "20%"
+			"width": "25%"
 		},
 		{
 			"format": {
@@ -370,9 +370,9 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"width": "10%",
+			"width": "15%",
 			"key": "id_argomento_contratto",
-			"queryFunct": "entrasp.argomenti_descr(id_argomento_contratto)",
+			"queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_contratto)",
 			"label": "Tipo Contratto"
 		},
 		{
@@ -382,7 +382,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "data_stipulazione",
-			"width": "10%",
+			"width": "7%",
 			"label": "Data Stipula"
 		},
 		{
@@ -401,7 +401,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "fondo_gestito",
-			"width": "20%",
+			"width": "14%",
 			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario)",
 			"label": "Strum.fin.sottoscritto/acquistato"
 		},
@@ -412,7 +412,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "data_cessazione",
-			"width": "10%",
+			"width": "8%",
 			"label": "Data Cessazione"
 		},
 		{
