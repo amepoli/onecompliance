@@ -82,11 +82,11 @@ export class TimeTrackerComponent implements DoCheck, AfterViewInit, OnDestroy {
         HelperService.redirectTo(this._router, `/oc/main-table/aziende_tasks`);
     }
 
-    gotoConsultantList() {
+    /* gotoConsultantList() {
         HelperService.redirectTo(this._router, `/oc/main-table/consuntivazioni_consultant_list`);
     }
 
     gotoTasksList() {
         HelperService.redirectTo(this._router, `/oc/main-table/compiti_consultant_micro_task`);
-    }
+    } */
 }

@@ -1,9 +1,49 @@
 <div class="table-view-component" style="height: 100%;">
-    <div [hidden]="!isAuthorized">
+    <div [hidden]="!isAuthorized" style="background-color: transparent;">
         <div *ngIf="tableData.showHeader" class="table_header">
-            <mat-form-field class="filter">
+
+            <mat-form-field class="table-view-filter-field">
                 <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+                <mat-icon matSuffix>filter_alt</mat-icon>
             </mat-form-field>
+
+            <button *ngIf="tableData.showHeader" mat-button (click)="advSearch()">
+                <mat-icon>manage_search</mat-icon>
+                Advanced Search
+            </button>
+
+            <table-multiselect-toolbar (onReload)="loadData()"
+            [hidden]="isLoading || !selectionActions || !selectionActions.length" [entryKey]="tableData.entryName"
+            [selection]="selection" [actions]="selectionActions" [viewKeys]="viewKeys">
+            </table-multiselect-toolbar>
+
+            <!-- <div class="table-view-buttons-separator" *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && !hideActions.includes('quick-add') || (tableData.showHeader || (!tableData.showHeader && isFullScreen)) && isTabMode && !hideActions.includes('add') || tableData.showFullScreenButton || showImportDataButton"></div> -->
+            <button
+                *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && !hideActions.includes('quick-add')"
+                mat-button (click)="quickAdd()" class="add-button" matTooltip="Add element">
+                <mat-icon>add</mat-icon>
+                Quick Add
+            </button>
+
+            <div class="table-view-buttons-separator"></div>
+
+            <button
+                *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && isTabMode && !hideActions.includes('add')"
+                mat-button (click)="add()" class="add-button" matTooltip="Add element">
+                <mat-icon>add</mat-icon>
+                Add
+            </button>
+
+            <button *ngIf="tableData.showFullScreenButton" mat-button (click)="fullScreen()">
+                <mat-icon *ngIf="!isFullScreen">fullscreen</mat-icon>
+                <mat-icon *ngIf="isFullScreen">fullscreen_exit</mat-icon>
+                FullScreen
+            </button>
+
+            <button *ngIf="showImportDataButton" mat-button (click)="importData()">
+                <mat-icon>update</mat-icon>
+                Update from External Source
+            </button>
 
             <div *ngIf="searchToggles && searchToggles.length">
                 <div style="display: flex; flex-direction: row;">
@@ -12,9 +52,10 @@
                             (change)="updateSearchToggle(i, $event.checked)" style="margin: 6px;">
                             {{toggle.label}}
                         </mat-slide-toggle>
-                    </div>    
+                    </div>
                 </div>
             </div>
+
             <div *ngIf="isTabMode && !hideActions.includes('import_export')">
 
                 <button mat-button [matMenuTriggerFor]="downloadUploadMenu">
@@ -120,43 +161,9 @@
 
                 </mat-menu>
             </div>
-            <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="50"></mat-paginator>
 
-        </div>
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="25"></mat-paginator>
 
-
-        <div class="table-view-buttons">
-            <button *ngIf="tableData.showHeader" mat-button (click)="advSearch()">
-                <mat-icon>search</mat-icon>
-                Advanced Search
-            </button>
-
-            <div class="table-view-buttons-separator"></div>
-            <button
-                *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && !hideActions.includes('quick-add')"
-                mat-button (click)="quickAdd()">
-                <mat-icon>add</mat-icon>
-                Quick Add
-            </button>
-
-
-            <button
-                *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && isTabMode && !hideActions.includes('add')"
-                mat-button (click)="add()">
-                <mat-icon>add</mat-icon>
-                Add
-            </button>
-
-            <button *ngIf="tableData.showFullScreenButton" mat-button (click)="fullScreen()">
-                <mat-icon *ngIf="!isFullScreen">fullscreen</mat-icon>
-                <mat-icon *ngIf="isFullScreen">fullscreen_exit</mat-icon>
-                FullScreen
-            </button>
-
-            <button *ngIf="showImportDataButton" mat-button (click)="importData()">
-                <mat-icon>update</mat-icon>
-                Update from External Source
-            </button>
         </div>
 
         <div *ngIf="showAdvSearch" class="adv-search">
@@ -169,7 +176,7 @@
                     Cancel
                 </button>
                 <button class="but-search" mat-button type="submit" form="search_form">
-                    <mat-icon>keyboard_return</mat-icon>
+                    <mat-icon>search</mat-icon>
                     Search
                 </button>
             </div>
@@ -180,12 +187,9 @@
             (sendEvent)='onEvent($event)'>
         </form-view>
 
-        <table-multiselect-toolbar (onReload)="loadData()" [hidden]="isLoading || !selectionActions || !selectionActions.length" [entryKey]="tableData.entryName" [selection]="selection" [actions]="selectionActions" [viewKeys]="viewKeys">
-        </table-multiselect-toolbar>
-        
         <div class="mat-elevation-z2" class="data-table">
 
-            <table class="table-view-content" mat-table [hidden]="isLoading" [dataSource]="dataSource" matSort>                    
+            <table class="table-view-content" mat-table [hidden]="isLoading" [dataSource]="dataSource" matSort>
                 <ng-container [matColumnDef]="entry.key" *ngFor="let entry of viewKeys">
                     <ng-container>
                         <ng-container *ngIf="!entry.isSelectCheckbox">
@@ -194,21 +198,22 @@
                                 [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matHeaderCellDef mat-sort-header
                                 [hidden]="entry.isHidden">
                                 {{entry.label}}
-                            </mat-header-cell>                        
+                            </mat-header-cell>
                         </ng-container>
                         <ng-container *ngIf="entry.isSelectCheckbox">
                             <mat-header-cell *matHeaderCellDef class="table-column">
                                 <mat-checkbox (change)="$event ? masterToggle() : null"
-                                            [checked]="selection.hasValue() && isAllSelected()"
-                                            [indeterminate]="selection.hasValue() && !isAllSelected()"
-                                            [aria-label]="checkboxLabel()">
+                                    [checked]="selection.hasValue() && isAllSelected()"
+                                    [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                    [aria-label]="checkboxLabel()">
                                 </mat-checkbox>
                             </mat-header-cell>
                         </ng-container>
-                        
+
 
                         <ng-container *ngIf="!entry.isSelectCheckbox">
-                            <mat-cell class="table-column" [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
+                            <mat-cell class="table-column"
+                                [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
                                 [style.flex]="entry.width? '0 0 ' + entry.width: '1'" [style.white-space]="'nowrap'"
                                 [style.text-overflow]="'ellipsis'" *matCellDef="let row; let i = index;"
                                 [style.border-radius.px]="entry.isButton ? '4': '24'" [hidden]="entry.isHidden">
@@ -219,53 +224,53 @@
 
                                 <button
                                     *ngIf="entry.isButton && doesButtonIconExist(entry.key) && !entry.label && row[entry.key]"
-                                    style="color: #25599c;" mat-icon-button (click)="onButtonClick(entry.key, i, row)">
+                                    style="background-color: #25599c; color: white;" mat-icon-button (click)="onButtonClick(entry.key, i, row)">
                                     <mat-icon>{{getButtonIcon(entry.key)}}</mat-icon>
                                 </button>
                                 <button *ngIf="entry.isButton && entry.label && row[entry.key]"
                                     style="background-color: #25599c; color: white;" mat-raised-button
                                     (click)="onButtonClick(entry.key, i, row)">
-                                    <mat-icon *ngIf="doesButtonIconExist(entry.key)">{{getButtonIcon(entry.key)}}</mat-icon>
+                                    <mat-icon *ngIf="doesButtonIconExist(entry.key)">{{getButtonIcon(entry.key)}}
+                                    </mat-icon>
                                     {{entry.label}}
                                 </button>
-                                    
-                                
+
+
                                 <p *ngIf="entry.isInputButton" style="width: 100%; text-align: left;"
                                     [style.padding-left.px]="getLevel(row, entry.key)"
-                                    [ngStyle]="getElementStyle(entry.key, row[entry.key])"
-                                    class="input-clickable"
+                                    [ngStyle]="getElementStyle(entry.key, row[entry.key])" class="input-clickable"
                                     (click)="onButtonClick(entry.key, i, row)">
                                     {{row[entry.key] | onecompliance: format[entry.key]}}
                                 </p>
-                                <p *ngIf="!entry.isInputButton && !entry.isButton && !entry.isCheckbox" style="width: 100%; text-align: left;"
+                                <p *ngIf="!entry.isInputButton && !entry.isButton && !entry.isCheckbox"
+                                    style="width: 100%; text-align: left;"
                                     [style.padding-left.px]="getLevel(row, entry.key)"
                                     [ngStyle]="getElementStyle(entry.key, row[entry.key])">
                                     {{row[entry.key] | onecompliance: format[entry.key]}}
                                 </p>
-                            </mat-cell>                     
+                            </mat-cell>
                         </ng-container>
                         <ng-container *ngIf="entry.isSelectCheckbox">
                             <mat-cell *matCellDef="let row" style="justify-content: start;">
                                 <mat-checkbox (click)="$event.stopPropagation()"
-                                            (change)="$event ? selection.toggle(row) : null"
-                                            [checked]="selection.isSelected(row)"
-                                            [aria-label]="checkboxLabel(row)">
+                                    (change)="$event ? selection.toggle(row) : null"
+                                    [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
                                 </mat-checkbox>
                             </mat-cell>
                         </ng-container>
 
-                        
+
                     </ng-container>
-                    
+
                 </ng-container>
 
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 
-                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index;" (dblclick)="getRecord(i, row)"
+                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index; " (dblclick)="getRecord(i, row)" style="line-height: 2em;"
                     [style.background]="(selectedRow == row) ? 'lightblue' : ''">
                 </mat-row>
+                <tr mat-footer-row *matFooterRowDef="displayedColumns sticky: true" style="border-radius: 0px 10px 10px 10px; background-color: rgb(91, 145, 192);"></tr>
             </table>
-
             <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
                 <mat-progress-spinner color="primary" mode="indeterminate">
                 </mat-progress-spinner>
@@ -276,4 +281,5 @@
     <div *ngIf="!isAuthorized" class="not-authorized">
         <mat-icon>lock</mat-icon>
     </div>
+    
 </div>

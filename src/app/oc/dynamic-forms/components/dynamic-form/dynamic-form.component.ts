@@ -20,12 +20,7 @@ import { DynamicFieldDirective } from 'app/oc/directives';
 @Component({
   exportAs: 'dynamicForm',
   selector: 'dynamic-form',
-  template: `
-  <form style="margin-left: 1%; margin-right: 1%; width: 98%;" [style.background-color]="isQuickAdd? 'lightyellow': 'transparent'" class='dynamic-form' [formGroup]='form' [id]='formName' (submit)='onSubmit($event)'>
-  <ng-container *ngFor='let field of fields;' dynamicField [field]='field' [group]='form' [readOnlyPage]='readOnlyPage'>
-  </ng-container>
-  </form>
-  `,
+  templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss']
 })
 export class DynamicFormComponent implements OnInit, OnChanges {

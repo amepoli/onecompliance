@@ -351,5 +351,13 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     refreshApp() {
         HelperService.refreshApp();
     }
+    
+    gotoConsultantList() {
+        HelperService.redirectTo(this.router, `/oc/main-table/consuntivazioni_consultant_list`);
+    }
+
+    gotoTasksList() {
+        HelperService.redirectTo(this.router, `/oc/main-table/compiti_consultant_micro_task`);
+    }
 
 }

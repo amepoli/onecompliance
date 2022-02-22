@@ -1,27 +1,24 @@
 <div class="time-tracker-container" *ngIf="data">
     <div class="time-tracker-div">
-        <p style="margin-left: 16px; font-weight: bold;">
-            <span (click)="gotoAziendeTasks()" matTooltip="Aziende Tasks">"{{data.codice_azienda}}"</span>
+       <!--  <p style="margin-left: 16px; font-weight: bold;">
+            <span (click)="gotoAziendeTasks()" matTooltip="Azienda Task">"{{data.codice_azienda}}"</span>
+        </p> -->
+        <p style="margin-left: 16px; margin-right: 16px;">
+            <span (click)="gotoAziendeTasks()" matTooltip="Azienda Task" style="font-weight: bold;">{{data.codice_azienda}}: </span>
+            <span (click)="gotoTaskDetails()" matTooltip="Task Details" [style.background-color]="descriptionColor">"{{data.description}}"</span>
         </p>
-        <p style="margin-left: 16px;">Task:
-            <span (click)="gotoTaskDetails()" matTooltip="Task Details" [style.color]="descriptionColor">"{{data.description}}"</span>
-        </p>
-        <button mat-button (click)="gotoConsultantList()" matTooltip="Consuntivazioni Consultant List">
-            <mat-icon>article</mat-icon>
-        </button>
-        <button mat-button *ngIf="data.status === 'paused'" (click)="startTimer()" matTooltip="Start">
+        <button mat-button *ngIf="data.status === 'paused'" (click)="startTimer()" matTooltip="Start"
+        style="background-color: rgb(240, 240, 240); border: 1px solid black;">
             <mat-icon>play_arrow</mat-icon>
         </button>
-        <button mat-button *ngIf="data.status !== 'paused'" (click)="stopTimer()" matTooltip="Stop">
+        <button mat-button *ngIf="data.status !== 'paused'" (click)="stopTimer()" matTooltip="Stop"
+        style="background-color: rgb(240, 240, 240); border: 1px solid black;">
             <mat-icon>pause</mat-icon>
         </button>
-        <p (click)="gotoConsultantDetails()" style="margin-right: 16px;"
+        <p (click)="gotoConsultantDetails()" style="margin-left:16px; margin-right: 16px;"
             [style.color]="data.status === 'paused' ? 'orange': 'green'"
-            [style.cursor]="'pointer'">
+            [style.cursor]="'pointer'" matTooltip="Task Details">
             {{elapsedTime}}
         </p>
-        <button mat-button (click)="gotoTasksList()" matTooltip="Tasks List">
-            <mat-icon>list</mat-icon>
-        </button>
     </div>
 </div>
