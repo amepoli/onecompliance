@@ -11,11 +11,6 @@
     },
     {
       "operation": "selectTable",
-      "type": "preProcessing",
-      "queryString": "update entrasp.cdms_risorse_revisioni b set id_riunione=split_part(a.chiave,'^',2)::numeric from entrasp.cdms_risorse_oggetti a where a.nome_business_object = 'riunioni' and ( b.id_odg is null or b.id_riunione is null ) and a.codice_azienda=b.codice_azienda and a.id_risorsa=b.id_risorsa and a.prog_revisione=b.prog_revisione;"
-    },
-    {
-      "operation": "selectTable",
       "type": "main",
       "queryString": "select id_riunione, codice_protocollo, oggetto, entrasp.argomenti_descr(id_argomento) as descr_riunione, data_riunione, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.riunioni where codice_azienda=$codice_azienda$"
     },
