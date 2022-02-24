@@ -6,12 +6,12 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select *, entrasp.argomenti_descr_stato(rev_id_argomento_stato) as descr_stato, left(entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione),100)as titolo_odg, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest from entrasp.views_attachments_fast_no_bo where codice_azienda=$codice_azienda$"
+      "queryString": "select *, entrasp.argomenti_descr_stato(rev_id_argomento_stato) as descr_stato, entrasp.argomenti_descr_stato(rev_id_argomento_stato_approvazione) as descr_stato_approv, left(entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione),100)as titolo_odg, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest from entrasp.views_attachments_fast_no_bo where codice_azienda=$codice_azienda$"
     },
     {
       "type": "main",
       "operation": "update",
-      "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$rev_descrizione$, id_argomento_stato=$rev_id_argomento_stato$, commento_revisione=$commento_revisione$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+      "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$rev_descrizione$, id_argomento_stato=$rev_id_argomento_stato$, id_argomento_stato_approvazione=$rev_id_argomento_stato_approvazione$, commento_revisione=$commento_revisione$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
     },
     {
       "type": "postProcessing",
@@ -196,8 +196,23 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "rev_id_argomento_stato",
-      "size": 2,
-      "label": "Stato",
+      "size": 1.5,
+      "label": "Stato Caricamento",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6680;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "rev_id_argomento_stato_approvazione",
+      "size": 1.5,
+      "label": "Stato Approvazione",
       "readOnly": false,
       "newLine": false
     },
@@ -211,7 +226,7 @@
       "isPrimary": false,
       "key": "rev_descrizione",
       "label": "Descrizione",
-      "size": 5.5,
+      "size": 4.8,
       "newLine": false,
       "readOnly": false
     },
@@ -226,7 +241,7 @@
       "key": "data_rif",
       "label": "Data Riferimento",
       "newLine": false,
-      "size": 1.5,
+      "size": 1.2,
       "readOnly": false
     },
     {
@@ -296,7 +311,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "stringa",
-      "label": "Download",
+      "label": "",
       "isDownloadButton": true,
       "newLine": false,
       "size": 0.5,
@@ -418,7 +433,7 @@
       "isPrimary": false,
       "key": "descr_stato",
       "width": "5%",
-      "label": "Stato",
+      "label": "Stato car.",
       "style": [
         {
           "value": "Non Richiesto",
@@ -444,13 +459,45 @@
     },
     {
       "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descr_stato_approv",
+      "width": "5%",
+      "label": "Stato appr.",
+      "style": [
+        {
+          "value": "Non definito",
+          "font_color": "grey",
+          "font_weight": "500"
+        },
+        {
+          "value": "Bozza",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Attesa approvazione",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Approvato",
+          "font_color": "green",
+          "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
         "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "6.5%",
+      "width": "3.5%",
       "key": "stringa",
-      "label": "Download",
+      "label": "",
       "isButton": true,
       "style": [
         {

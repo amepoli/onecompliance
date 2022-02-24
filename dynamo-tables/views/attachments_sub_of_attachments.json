@@ -6,7 +6,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select *, entrasp.argomenti_descr_stato(rev_id_argomento_stato) as descr_stato, entrasp.odg_data(codice_azienda, id_odg, id_riunione) as data_riunione, entrasp.riunioni_descr(id_riunione, codice_azienda) as riunione_descr, entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione) as titolo_odg from entrasp.views_attachments_fast_no_bo af where codice_azienda=$codice_azienda$ and (id_risorsa=$id_risorsa$ or id_risorsa= (select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))"
+      "queryString": "select *, entrasp.argomenti_descr_stato(rev_id_argomento_stato) as descr_stato, entrasp.argomenti_descr_stato(rev_id_argomento_stato_approvazione) as descr_stato_approv, entrasp.odg_data(codice_azienda, id_odg, id_riunione) as data_riunione, entrasp.riunioni_descr(id_riunione, codice_azienda) as riunione_descr, entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione) as titolo_odg from entrasp.views_attachments_fast_no_bo af where codice_azienda=$codice_azienda$ and (id_risorsa=$id_risorsa$ or id_risorsa= (select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))"
     },
     {
       "type": "main",
@@ -148,13 +148,45 @@
     },
     {
       "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descr_stato_approv",
+      "width": "5%",
+      "label": "Stato appr.",
+      "style": [
+        {
+          "value": "Non definito",
+          "font_color": "grey",
+          "font_weight": "500"
+        },
+        {
+          "value": "Bozza",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Attesa approvazione",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Approvato",
+          "font_color": "green",
+          "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
         "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "8%",
+      "width": "3%",
       "key": "stringa",
-      "label": "Download",
+      "label": "",
       "isButton": true,
       "style": [
         {
