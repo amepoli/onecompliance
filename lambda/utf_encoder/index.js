@@ -73,14 +73,8 @@ function processCSV(csvData) {
     // let utf8String = csvData.toString('utf-8');
 
     // Another technique
-    let stringData = csvData.toString();
-    try{
-        stringData = unescape(encodeURIComponent(escape(csvData.toString())));
-    } 
-    catch(e) {
-        console.log('There is no need to encode this file!');
-    }
-    
+    let stringData = unescape(encodeURIComponent(csvData.toString()));
+
     // Remove the header
     stringData = stringData.split(' ').filter(x => x != null && x.length).join(' ');
     stringData = stringData.split('\n');
@@ -101,9 +95,9 @@ function processCSV(csvData) {
                         columnContainsQuote = true;
                     }
                     else if (curChar === ';') {
-                        curColumn = "";
-                        columnStarted = true;
-                        columnContainsQuote = false;
+                        // curColumn = "";
+                        // columnStarted = true;
+                        // columnContainsQuote = false;
                     }
                     else {
                         curColumn = curChar !== ' ' ? curChar : '';
@@ -270,7 +264,7 @@ async function processQueryParams(queryParams) {
 
 }
 
-exports.handler = async (event, context, callback) => {
+exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters ? event.queryStringParameters : event;
     console.log(queryParams);
@@ -298,21 +292,10 @@ exports.handler = async (event, context, callback) => {
     //     body = { result: 'KO', reason: 'DBF File not found or invalid!', data: null }
     // }
 
-    if(callback) {
-        let eParams = {
-            "data": {
-                "success": true
-            }
-        }
-        event = eParams;
-        callback(null, eParams);
-    }
-    else {
-        return {
-            "isBase64Encoded": false,
-            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            "statusCode": 200,
-            "body": JSON.stringify(body)
-        };
-    }
+    return {
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "statusCode": 200,
+        "body": JSON.stringify(body)
+    };
 };
