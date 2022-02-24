@@ -19,7 +19,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select snd.id_sondaggio,entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica) as id_anagrafica_assegnataria, snd.id_sondaggio_parent, snd.id_modello_test,snd.id_modello_test_vr,entrasp.id_sondaggio_precedente(snd.codice_azienda, snd.id_sondaggio),entrasp.sondaggio_riprogrammato(snd.codice_azienda, snd.id_sondaggio)as sondaggio_riprogrammato, snd.sondaggio_completato, snd.giudizio, snd.codice_azienda, snd.id_centro_gest, snd.data_prevista, snd.data_comp, snd.data_esecuzione, substring(snd.descrizione, 1, 150) as titolo, substring(entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio), 1, 150) as sondaggio_su, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda='€global_codice_azienda€' and ((data_prevista<=CURRENT_DATE+365 or data_prevista is null) or (data_esecuzione<=CURRENT_DATE+100))"
+            "queryString": "select snd.id_sondaggio,snd.id_contratto,entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica) as id_anagrafica_assegnataria, snd.id_sondaggio_parent, snd.id_modello_test,snd.id_modello_test_vr,entrasp.id_sondaggio_precedente(snd.codice_azienda, snd.id_sondaggio),entrasp.sondaggio_riprogrammato(snd.codice_azienda, snd.id_sondaggio)as sondaggio_riprogrammato, snd.sondaggio_completato, snd.giudizio, snd.codice_azienda, snd.id_centro_gest, snd.data_prevista, snd.data_comp, snd.data_esecuzione, substring(snd.descrizione, 1, 150) as titolo, substring(entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio), 1, 150) as sondaggio_su, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda='€global_codice_azienda€' and ((data_prevista<=CURRENT_DATE+365 or data_prevista is null) or (data_esecuzione<=CURRENT_DATE+100))"
         },
         {
             "operation": "selectForm",
@@ -29,7 +29,7 @@
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select snd.*, mvr.id_risultato, mvr.flag_no_domande, entrasp. id_sondaggio_rif(snd.codice_azienda, snd.id_sondaggio)  as id_sondaggio_rif, entrasp.mdt_codtitolo(snd.codice_azienda, snd.id_modello_test) as descr_modello_test, (select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_fase_orig, (select id_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_progetto, entrasp.sondaggi_flags_sezioni_appsingola(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_activate, entrasp.descrizione_risultato_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as criterio_analisi from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+            "queryString": "select snd.*,entrasp.contratto_descr_id( $codice_azienda$, snd.id_contratto) as descr_contratto, mvr.id_risultato, mvr.flag_no_domande, entrasp. id_sondaggio_rif(snd.codice_azienda, snd.id_sondaggio)  as id_sondaggio_rif, entrasp.mdt_codtitolo(snd.codice_azienda, snd.id_modello_test) as descr_modello_test, (select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_fase_orig, (select id_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_progetto, entrasp.sondaggi_flags_sezioni_appsingola(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_activate, entrasp.descrizione_risultato_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as criterio_analisi from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         },
         {
             "operation": "selectForm",
@@ -712,7 +712,7 @@
                     "queryFunct": "update entrasp.progetti_fasi set titolo=$descrizione$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
                 }
             ],
-            "size": 6,
+            "size": 5,
             "readOnly": false
         },
         {
@@ -726,7 +726,22 @@
             "key": "descr_modello_test",
             "label": "Titolo Modello Verifica",
             "newLine": false,
-            "size": 4,
+            "size": 3,
+            "sameOrigin": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_contratto",
+            "label": "Contratto",
+            "newLine": true,
+            "size": 2,
             "sameOrigin": false,
             "readOnly": true
         },
@@ -773,7 +788,7 @@
             "key": "id_risultato",
             "label": "id_risultato",
             "sameOrigin": false,
-            "newLine": true,
+            "newLine": false,
             "readOnly": true
         },
         {
@@ -1377,6 +1392,15 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_contratto",
+            "label": "id_contratto"
         },
         {
             "format": {
