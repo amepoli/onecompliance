@@ -174,25 +174,6 @@
         },
         {
             "format": {
-                "dataType": "text",
-                "viewType": "input",
-                "value": "E"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "tipo_soggetto_bis",
-            "label": "Tipo soggetto bis",
-            "newLine": true,
-            "outputEvent": {
-                "eventName": "tipo_soggetto_load",
-                "eventTrigger": "load"
-            },
-            "queryFunct": "SELECT tipo_soggetto as tipo_soggetto_bis from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-            "readOnly": false,
-            "sameOrigin": false
-        },
-        {
-            "format": {
                 "comboQuery": "select codice as id, transcodifica as name from entrasp.transcodifiche where tipo_dato='TIPO_SOGGETTO'",
                 "options": [],
                 "value": "E",
@@ -215,9 +196,17 @@
                 "eventName": "combo_tipo_soggetto",
                 "eventTrigger": "select"
             },
+            "inputEvents": [
+                {
+                    "actionType": "query",
+                    "eventName": "combo_tipo_soggetto",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.anagrafiche_id set tipo_soggetto='£tipo_soggetto£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ returning 1"
+                }
+            ],
             "queryFunct": "SELECT tipo_soggetto from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
             "readOnly": false,
-            "sameOrigin": false,
             "size": 5
         },
         {
