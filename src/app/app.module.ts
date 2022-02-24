@@ -34,6 +34,7 @@ import { GoogleLoginProvider } from 'angularx-social-login';
 import { HomepageModule } from './oc/homepage/homepage.module';
 import { HomepageTabModule } from './oc/homepage-tab/homepage-tab.module';
 import { ToolbarElementsModule } from './oc/toolbar-elements/toolbar-elements.module';
+import { ExplorerModule } from './oc/explorer/explorer.module';
 
 const appRoutes: Routes = [];
 
@@ -91,6 +92,7 @@ const appRoutes: Routes = [];
         HomepageModule,
         HomepageTabModule,
         ToolbarElementsModule,
+        ExplorerModule,
         
         // Redirect
         RedirectModule,
