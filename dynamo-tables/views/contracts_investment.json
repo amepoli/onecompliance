@@ -10,7 +10,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408))"
+			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408))"
 		},
 		{
 			"operation": "update",
@@ -402,7 +402,7 @@
 			"isPrimary": false,
 			"key": "fondo_gestito",
 			"width": "14%",
-			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario)",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom1(codice_part, id_strumento_finanziario)",
 			"label": "Strum.fin.sottoscritto/acquistato"
 		},
 		{
@@ -559,7 +559,7 @@
 		{
 			"fieldName": "id_strumento_fin_s",
 			"format": {
-				"comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and codice_ruolo = 'FONDO';",
+				"comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi_nom1(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and codice_ruolo = 'FONDO';",
 				"options": [],
 				"viewType": "combobox"
 			},
@@ -579,6 +579,16 @@
 			"newLine": true,
 			"queryCond": "entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto)=$giudizio_s$"
 
+		},
+		{
+		  "fieldName": "profilazioni_n",
+		  "format": {
+			"viewType": "checkbox",
+			"value": "0"
+		  },
+		  "label": "Senza Profilazioni Aml",
+		  "newLine": false,
+		  "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)"
 		}
 	],
 	"hideActions": [
