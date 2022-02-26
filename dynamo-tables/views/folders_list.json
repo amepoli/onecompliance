@@ -3,17 +3,260 @@
   "entryKey": "folders_list",
   "origin": "entrasp.cdms_risorse",
   "businessObjectName": "cdms_risorse",
-   "predefinedQueries": [
+  "define": {
+    "toggle_miei_uffici": "1",
+    "is_hidden_codice_azienda": "true",
+    "is_hidden_id_anagrafica": "false",
+    "id_argomento_father": "3576",
+    "label_revisioni": "File del flusso informativo"
+  },
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "queryString": "select rs.*, t1.chiave_r, t1.liv, t1.folder_name from (select '€global_codice_azienda€' as codice_azienda, $folder_name$ as folder_name, $id_risorsa$ as id_risorsa, $chiave_r$ as chiave_r, $liv$ as liv, $codice_azienda_ass$ as codice_azienda_ass, $id_progetto$ as id_progetto) t1 left join entrasp.cdms_risorse rs on t1.codice_azienda=rs.codice_azienda and t1.id_risorsa=rs.id_risorsa;",
+      "type": "main"
+    },
     {
       "operation": "selectTable",
       "queryString": "select * from entrasp.folders_list('€global_codice_azienda€', '€global_username€');",
       "type": "main"
     }
   ],
-  "restrictions": {
-    "preventNavigationToForm": true
-  },
- "table_keys": [
+  "form_keys": [
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "key": "liv",
+      "label": "liv"
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "newLine": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "newLine": true,
+      "key": "chiave_r",
+      "label": "chiave_r"
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_risorsa",
+      "label": "Id flusso info",
+      "newLine": false,
+      "readOnly": true,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg where arg.id_argomento in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1)) order by arg.descrizione;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento_tipo_allegato",
+      "label": "Tipo flusso info",
+      "outputEvent": {
+        "eventName": "aggiorna_id_tipo_allegato_documents",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "eventName": "aggiorna_id_tipo_allegato_documents",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.aggiorna_tipo_allegato_domanda($codice_azienda$, $id_risorsa$, £id_argomento_tipo_allegato£)"
+        }
+      ],
+      "newLine": false,
+      "size": 3.5,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_centro_gest",
+      "label": "Centro Gestionale",
+      "newLine": false,
+      "size": 3.5,
+      "readOnly": false
+    },
+    {
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "data_scadenza",
+      "label": "Fine validità doc.",
+      "readOnly": false,
+      "size": 1.5,
+      "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "folder_name",
+      "label": "Cartella/Flusso Informativo",
+      "size": 7,
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "change_descrizione_breve",
+        "eventTrigger": "change"
+      },
+      "inputEvents": [
+        {
+          "eventName": "change_descrizione_breve",
+          "condition": "notEqualTo",
+          "values": [
+            null
+          ],
+          "actionType": "query",
+          "queryFunct": "select entrasp.aggiorna_cdms_bo_cdms_risorse($codice_azienda$, $id_risorsa$, true)"
+        }
+      ],
+      "readOnly": false
+    },
+    {
+      "key": "id_anagrafica",
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as name from entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Anagrafica",
+      "newLine": true,
+      "readOnly": false,
+      "isPrimary": true,
+      "isHidden": false,
+      "size": 3
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "newLine": true,
+      "key": "codice_azienda_ass",
+      "label": "codice_azienda_ass"
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "newLine": true,
+      "key": "id_progetto",
+      "label": "id_progetto"
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "newLine": true,
+      "key": "id_centro_gest",
+      "label": "id_centro_gest"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "folders_list_liv2",
+      "keys": [
+        {
+          "parent": "codice_azienda_ass",
+          "son": "codice_azienda_ass"
+        },
+        {
+          "parent": "chiave_r",
+          "son": "chiave_r"
+        },
+        {
+          "parent": "liv",
+          "son": "liv"
+        }
+      ],
+      "label": "Sotto cartelle"
+    },
+    {
+      "entryKey": "attachments_sub_of_attachments",
+      "keys": [
+        {
+          "parent": "codice_azienda_ass",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_risorsa",
+          "son": "id_risorsa"
+        }
+      ],
+      "label": "Files nella cartella"
+    },
+    {
+      "entryKey": "cdms_risorse_destinatari",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_risorsa",
+          "son": "id_risorsa"
+        }
+      ],
+      "label": "Autorizzati/Destinatari"
+    }
+  ],
+  "table_keys": [
     {
       "format": {
         "dataType": "text"
@@ -28,7 +271,7 @@
         "dataType": "number"
       },
       "isHidden": true,
-      "isPrimary": false,
+      "isPrimary": true,
       "key": "liv",
       "label": "liv"
     },
@@ -46,7 +289,7 @@
         "dataType": "text"
       },
       "isHidden": false,
-      "isPrimary": false,
+      "isPrimary": true,
       "key": "folder_name",
       "label": "Cartella"
     },
@@ -60,38 +303,50 @@
       "label": "id_risorsa"
     },
     {
-        "format": {
-            "dataType": "number"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "width": "15%",
-        "queryFunct": "select true",
-        "key": "sotto_cartelle",
-        "label": "Sotto cartelle",
-        "isButton": true,
-        "buttonAction": {
-            "target": "folders_list_liv2",
-            "viewType": "table",
-            "action": "navigate",
-            "keymap": [
-                {
-                    "source": "codice_azienda",
-                    "destination": "codice_azienda"
-                },
-                {
-                    "source": "chiave_r",
-                    "destination": "chiave_r"
-                }
-            ],
-            "confirmAction": false
-          }
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda_ass",
+      "label": "codice_azienda_ass"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_progetto",
+      "label": "id_progetto"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_centro_gest",
+      "label": "id_centro_gest"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_anagrafica",
+      "label": "id_anagrafica"
     }
   ],
   "hideActions": [
     {
       "formActionType": "share",
       "viewType": "form"
+    },
+    {
+      "tableActionType": "add",
+      "viewType": "table"
     },
     {
       "tableActionType": "quick-add",

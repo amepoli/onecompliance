@@ -254,8 +254,6 @@
       "size": 3,
       "readOnly": false
     }
-
-    
   ],
   "table_keys": [
     {
@@ -295,7 +293,6 @@
       "label": "Descrizione"
     },
     {
-      
       "format": {
         "dataType": "number"
       },
@@ -305,7 +302,6 @@
       "label": "ID_tipo_Asset"
     },
     {
-      
       "format": {
         "dataType": "text"
       },
@@ -316,7 +312,6 @@
       "label": "Tipo Asset"
     },
     {
-     
       "format": {
         "dataType": "text"
       },
@@ -326,7 +321,6 @@
       "label": "Stato"
     },
     {
-      
       "format": {
         "dataType": "text"
       },
@@ -339,90 +333,95 @@
   ],
   "subTables": [
     {
-        "entryKey": "cpl_trattamenti_dati_sub_of_asset",
-        "keys": [
-            {
-                "parent": "codice_azienda",
-                "son": "codice_azienda"
-            },
-            {
-                "parent": "id_asset",
-                "son": "id_asset"
-            }
-        ],
-        "label": "Trattamento Dati"
+      "entryKey": "cpl_trattamenti_dati_sub_of_asset",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_asset",
+          "son": "id_asset"
+        }
+      ],
+      "label": "Trattamento Dati"
     },
     {
       "entryKey": "anagrafiche_sub_of_asset",
       "keys": [
-          {
-              "parent": "codice_azienda",
-              "son": "codice_azienda"
-          },
-          {
-              "parent": "id_asset",
-              "son": "id_asset"
-          }
-      ],
-      "label": "Utenti Abilitati"
-  },
-  {
-    "entryKey": "asset_sub_asset",
-    "keys": [
         {
-            "parent": "codice_azienda",
-            "son": "codice_azienda"
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
         },
         {
-            "parent": "id_asset",
-            "son": "id_asset_parent"
+          "parent": "id_asset",
+          "son": "id_asset"
         }
-    ],
-    "label": "Sotto Asset"
-}
-   
-],
-"search_keys": [
-  {
-    "fieldName": "id_asset",
-    "format": {
+      ],
+      "label": "Utenti Abilitati"
+    },
+    {
+      "entryKey": "asset_sub_asset",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_asset",
+          "son": "id_asset_parent"
+        }
+      ],
+      "label": "Sotto Asset"
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "id_asset",
+      "format": {
         "dataType": "number",
         "viewType": "input"
+      },
+      "label": "ID Asset",
+      "newLine": false,
+      "queryCond": "id_asset=$id_asset$"
     },
-    "label": "ID Asset",
-    "newLine": false,
-    "queryCond": "id_asset=$id_asset$"
-},
-{
-  "fieldName": "id_tipo_asset",
-  "format": {
-      "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_ASSET';",
-      "options": [],
-      "viewType": "combobox"
-  },
-  "label": "Tipo Asset",
-  "newLine": false,
-  "queryCond": "mt.id_tipo_asset=$id_id_tipo_asset$"
-},
-{
-  "fieldName": "parola_search",
-  "format": {
-      "dataType": "text",
-      "viewType": "input"
-  },
-  "label": "Parola chiave",
-  "newLine": true,
-  "queryCond": "upper(descrizione) like '%'||upper('€parola_search€')||'%'"
-},
-{
-  "fieldName": "flag_principali",
-  "format": {
-      "value": "0",
-      "viewType": "checkbox"
-  },
-  "label": "Solo Principali",
-  "newLine": false,
-  "queryCond": "id_asset_parent IS null"
-}
-]
+    {
+      "fieldName": "id_tipo_asset",
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_ASSET';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Tipo Asset",
+      "newLine": false,
+      "queryCond": "mt.id_tipo_asset=$id_id_tipo_asset$"
+    },
+    {
+      "fieldName": "parola_search",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Parola chiave",
+      "newLine": true,
+      "queryCond": "upper(descrizione) like '%'||upper('€parola_search€')||'%'"
+    },
+    {
+      "fieldName": "flag_principali",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Solo Principali",
+      "newLine": false,
+      "queryCond": "id_asset_parent IS null"
+    }
+  ],
+  "hideActions": [
+    {
+      "viewType": "form",
+      "formActionType": "attachments"
+    }
+  ]
 }

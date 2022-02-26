@@ -2,11 +2,15 @@
   "$schema": "../views.schema.json",
   "entryKey": "folders_list_liv2",
   "inheritsFrom": "folders_list",
-  "businessObjectName": "cdms_risorse",
-   "predefinedQueries": [
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "queryString": "select rs.*, t1.chiave_r, t1.liv, t1.folder_name from (select '€global_codice_azienda€' as codice_azienda, $folder_name$ as folder_name, $id_risorsa$ as id_risorsa, $chiave_r$ as chiave_r, $liv$ as liv, $codice_azienda_ass$ as codice_azienda_ass, $id_progetto$ as id_progetto) t1 left join entrasp.cdms_risorse rs on t1.codice_azienda=rs.codice_azienda and t1.id_risorsa=rs.id_risorsa;",
+      "type": "main"
+    },
     {
       "operation": "selectTable",
-      "queryString": "select * from entrasp.folders_list('€global_codice_azienda€', '€global_username€', 1, $chiave$);",
+      "queryString": "select * from entrasp.folders_list('€global_codice_azienda€', '€global_username€', $liv$, $chiave_r$);",
       "type": "main"
     }
   ]
