@@ -2,19 +2,19 @@
     <div [hidden]="!isAuthorized" style="background-color: transparent;">
         <div *ngIf="tableData.showHeader" class="table_header">
 
-            <mat-form-field class="table-view-filter-field">
-                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-                <mat-icon matSuffix>filter_alt</mat-icon>
-            </mat-form-field>
-
             <button *ngIf="tableData.showHeader" mat-button (click)="advSearch()">
                 <mat-icon>manage_search</mat-icon>
                 Advanced Search
             </button>
 
+            <mat-form-field class="table-view-filter-field">
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+                <mat-icon matSuffix>filter_alt</mat-icon>
+            </mat-form-field>
+
             <table-multiselect-toolbar (onReload)="loadData()"
-            [hidden]="isLoading || !selectionActions || !selectionActions.length" [entryKey]="tableData.entryName"
-            [selection]="selection" [actions]="selectionActions" [viewKeys]="viewKeys">
+                [hidden]="isLoading || !selectionActions || !selectionActions.length" [entryKey]="tableData.entryName"
+                [selection]="selection" [actions]="selectionActions" [viewKeys]="viewKeys">
             </table-multiselect-toolbar>
 
             <!-- <div class="table-view-buttons-separator" *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && !hideActions.includes('quick-add') || (tableData.showHeader || (!tableData.showHeader && isFullScreen)) && isTabMode && !hideActions.includes('add') || tableData.showFullScreenButton || showImportDataButton"></div> -->
@@ -224,7 +224,8 @@
 
                                 <button
                                     *ngIf="entry.isButton && doesButtonIconExist(entry.key) && !entry.label && row[entry.key]"
-                                    style="background-color: #25599c; color: white;" mat-icon-button (click)="onButtonClick(entry.key, i, row)">
+                                    style="background-color: #25599c; color: white;" mat-icon-button
+                                    (click)="onButtonClick(entry.key, i, row)">
                                     <mat-icon>{{getButtonIcon(entry.key)}}</mat-icon>
                                 </button>
                                 <button *ngIf="entry.isButton && entry.label && row[entry.key]"
@@ -266,10 +267,11 @@
 
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 
-                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index; " (dblclick)="getRecord(i, row)" style="line-height: 2em;"
-                    [style.background]="(selectedRow == row) ? 'lightblue' : ''">
+                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index; " (dblclick)="getRecord(i, row)"
+                    style="line-height: 2em;" [style.background]="(selectedRow == row) ? 'lightblue' : ''">
                 </mat-row>
-                <tr mat-footer-row *matFooterRowDef="displayedColumns sticky: true" style="border-radius: 0px 10px 10px 10px; background-color: rgb(91, 145, 192);"></tr>
+                <tr mat-footer-row *matFooterRowDef="displayedColumns sticky: true"
+                    style="border-radius: 0px 10px 10px 10px; background-color: rgb(91, 145, 192);"></tr>
             </table>
             <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
                 <mat-progress-spinner color="primary" mode="indeterminate">
@@ -281,5 +283,5 @@
     <div *ngIf="!isAuthorized" class="not-authorized">
         <mat-icon>lock</mat-icon>
     </div>
-    
+
 </div>
