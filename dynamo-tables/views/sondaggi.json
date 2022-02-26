@@ -272,7 +272,7 @@
             "label": "ID Sondaggio",
             "newLine": false,
             "readOnly": true,
-            "size": 1,
+            "size": 0.7,
             "inputEvents": [
                 {
                     "eventName": "aggiorna_id_sondaggio",
@@ -322,8 +322,156 @@
                 "text_decoration": "underline"
             },
             "newLine": false,
-            "size": 1,
+            "size": 0.8,
             "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "ID Modello Verifica",
+            "newLine": false,
+            "readOnly": true,
+            "size": 0.8,
+            "outputEvent": {
+                "eventName": "to_modello_test_from_sondaggi",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "font_style": "italic",
+                "font_color": "blue",
+                "text_decoration": "underline"
+            }
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_modello_test",
+            "label": "Titolo Modello Verifica",
+            "newLine": false,
+            "size": 2.3,
+            "sameOrigin": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_contratto",
+            "label": "Contratto",
+            "newLine": false,
+            "size": 2.3,
+            "sameOrigin": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "criterio_analisi",
+            "label": "Criterio di Analisi",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "link",
+                        "label": "Associa progetto",
+                        "outputEventName": "associa_progetto_show"
+                    },
+                    {
+                        "icon": "add",
+                        "label": "Dati preliminari verifica",
+                        "outputEventName": "sondaggi_ulteriori_elementi"
+                    },
+                    {
+                        "icon": "launch",
+                        "label": "Riepilogo risultati",
+                        "outputEventName": "check_existence_riepilogo_risultati"
+                    },
+                    {
+                        "icon": "report_problem",
+                        "label": "Segnalazione",
+                        "outputEventName": "compito_create"
+                    },
+                    {
+                        "icon": "lock_open",
+                        "label": "Riapri Verifica",
+                        "outputEventName": "sondaggi_reopen"
+                    },
+                    {
+                        "icon": "content_copy",
+                        "label": "Duplica sondaggio",
+                        "outputEventName": "sondaggi_button_duplica"
+                    },
+                    {
+                        "icon": "pending_actions",
+                        "label": "Pianifica serie sondaggi",
+                        "outputEventName": "to_sondaggi_replan"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "sondaggi_reopen",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.sondaggi set stato='A' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "survey_reload"
+                },
+                {
+                    "eventName": "sondaggi_button_duplica",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "outputEventWhenComplete": "aggiorna_id_sondaggio",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler duplicare questo sondaggio? (si verrà automaticamente trasferiti nel nuovo sondaggio)",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"
+                        }
+                    }
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "sondaggi_actions",
+            "label": "",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.4
         },
         {
             "autoGenerate": false,
@@ -409,29 +557,6 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_modello_test",
-            "label": "ID Modello Verifica",
-            "newLine": false,      
-            "readOnly": true,
-            "size": 1,
-            "outputEvent": {
-                "eventName": "to_modello_test_from_sondaggi",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "font_style": "italic",
-                "font_color": "blue",
-                "text_decoration": "underline"
-            }
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "comboQuery": "select mvr.id_modello_test_vr as id, mvr.id_modello_test_vr as name from entrasp.modelli_test_vr mvr inner join entrasp.sondaggi snd on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ order by mvr.id_modello_test_vr;",
                 "options": [],
                 "viewType": "combobox"
@@ -467,7 +592,7 @@
             ],
             "newLine": false,
             "readOnly": false,
-            "size": 1
+            "size": 0.8
         },
         {
             "autoGenerate": false,
@@ -487,7 +612,7 @@
             "key": "data_prevista",
             "label": "Data prevista esec.",
             "newLine": false,
-            "size": 1.5,
+            "size": 1.4,
             "readOnly": false
         },
         {
@@ -518,7 +643,7 @@
                 }
             ],
             "newLine": false,
-            "size": 1.5,
+            "size": 1.4,
             "readOnly": false
         },
         {
@@ -539,88 +664,39 @@
             "key": "data_comp",
             "label": "Data Competenza",
             "newLine": false,
-            "size": 1.5,
+            "size": 1.4,
             "readOnly": false
         },
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "menu",
-                "menuOptions": [
-                    {
-                        "icon": "link",
-                        "label": "Associa progetto",
-                        "outputEventName": "associa_progetto_show"
-                    },
-                    {
-                        "icon": "add",
-                        "label": "Dati preliminari verifica",
-                        "outputEventName": "sondaggi_ulteriori_elementi"
-                    },
-                    {
-                        "icon": "launch",
-                        "label": "Riepilogo risultati",
-                        "outputEventName": "check_existence_riepilogo_risultati"
-                    },
-                    {
-                        "icon": "report_problem",
-                        "label": "Segnalazione",
-                        "outputEventName": "compito_create"
-                    },
-                    {
-                        "icon": "lock_open",
-                        "label": "Riapri Verifica",
-                        "outputEventName": "sondaggi_reopen"
-                    },
-                    {
-                        "icon": "content_copy",
-                        "label": "Duplica sondaggio",
-                        "outputEventName": "sondaggi_button_duplica"
-                    },
-                    {
-                        "icon": "pending_actions",
-                        "label": "Pianifica serie sondaggi",
-                        "outputEventName": "to_sondaggi_replan"
-                    }
-                ]
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text",
+                "comboQuery": "select snd.id_sondaggio as id, concat (id_sondaggio, ' - ', snd.titolo) as name from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda =$codice_azienda$"
             },
-            "inputEvents": [
-                {
-                    "eventName": "sondaggi_reopen",
-                    "actionType": "query",
-                    "queryFunct": "update entrasp.sondaggi set stato='A' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
-                    "condition": "none",
-                    "values": [],
-                    "outputEventWhenComplete": "survey_reload"
-                },
-                {
-                    "eventName": "sondaggi_button_duplica",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "outputEventWhenComplete": "aggiorna_id_sondaggio",
-                    "values": [],
-                    "message": {
-                        "messageText": "Sei sicuro di voler duplicare questo sondaggio? (si verrà automaticamente trasferiti nel nuovo sondaggio)",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select 1"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"
-                        }
-                    }
-                }
-            ],
             "isHidden": false,
             "isPrimary": false,
-            "buttonIcon": "more_vert",
-            "key": "sondaggi_actions",
-            "label": "",
+            "key": "id_sondaggio_parent",
+            "label": "Sondaggio Parent",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_sondaggio_succ",
+            "label": "Id Sondaggio Succ",
             "newLine": true,
             "readOnly": false,
-            "sameOrigin": false,
-            "size": 0.4
+            "sameOrigin": true,
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -716,36 +792,6 @@
             "readOnly": false
         },
         {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descr_modello_test",
-            "label": "Titolo Modello Verifica",
-            "newLine": false,
-            "size": 3,
-            "sameOrigin": false,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descr_contratto",
-            "label": "Contratto",
-            "newLine": true,
-            "size": 2,
-            "sameOrigin": false,
-            "readOnly": true
-        },
-        {
             "format": {
                 "dataType": "text",
                 "viewType": "input"
@@ -790,37 +836,6 @@
             "sameOrigin": false,
             "newLine": false,
             "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "criterio_analisi",
-            "label": "Criterio di Analisi",
-            "sameOrigin": false,
-            "newLine": false,
-            "readOnly": true,
-            "size": 2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "dataType": "text",
-                "comboQuery": "select snd.id_sondaggio as id, concat (id_sondaggio, ' - ', snd.titolo) as name from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda =$codice_azienda$"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_sondaggio_parent",
-            "label": "Sondaggio Parent",
-            "newLine": false,
-            "size": 2,
-            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -951,21 +966,6 @@
                     "queryFunct": "select giudizio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
                 }
             ],
-            "size": 1.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_sondaggio_succ",
-            "label": "Id Sondaggio Succ",
-            "newLine": true,
-            "readOnly": false,
-            "sameOrigin": true,
             "size": 1.5
         },
         {
@@ -1564,36 +1564,36 @@
             ]
         },
         {
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_modello_test",
-			"hasLevel": true,
-			"label": "Id Mod.Test",
-			"width": "4%",
-			"isInputButton": true,
-			"buttonAction": {
-				"target": "modelli_test_vr",
-				"viewType": "form",
-				"action": "navigate",
-				"keymap": [
-					{
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
-					{
-						"source": "id_modello_test",
-						"destination": "id_modello_test"
-					},
-					{
-						"source": "id_modello_test_vr",
-						"destination": "id_modello_test_vr"
-					}
-				]
-			}
-		},
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "hasLevel": true,
+            "label": "Id Mod.Test",
+            "width": "4%",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "modelli_test_vr",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "id_modello_test_vr",
+                        "destination": "id_modello_test_vr"
+                    }
+                ]
+            }
+        },
         {
             "format": {
                 "dataType": "number"
