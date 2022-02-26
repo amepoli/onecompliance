@@ -207,7 +207,7 @@
             ],
             "queryFunct": "SELECT tipo_soggetto from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
             "readOnly": false,
-            "size": 5
+            "size": 2
         },
         {
             "autoGenerate": true,
@@ -241,6 +241,41 @@
         {
             "autoGenerate": false,
             "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Codice fiscale obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_fiscale",
+            "label": "Codice fiscale",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "partita_iva",
+            "label": "Partita IVA",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "dataType": "date",
                 "value": "£CURRENT_DATE£",
                 "viewType": "input"
@@ -251,7 +286,7 @@
             "label": "Data Aggiunta",
             "newLine": true,
             "readOnly": true,
-            "size": 2
+            "size": 1
         },
         {
             "format": {
@@ -268,6 +303,7 @@
                         "key": "nome",
                         "label": "Nome",
                         "newLine": false,
+                        "size": 2,
                         "queryFunct": "SELECT nome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "readOnly": false
                     },
@@ -281,7 +317,8 @@
                         "isPrimary": false,
                         "key": "cognome",
                         "label": "Cognome",
-                        "newLine": true,
+                        "newLine": false,
+                        "size": 2,
                         "queryFunct": "SELECT cognome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "readOnly": false
                     },
@@ -372,18 +409,30 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "nuovo_doc",
+                        "buttonIcon": "note_add",
                         "label": "Nuovo documento",
-                        "newLine": true,
+                        "newLine": false,
                         "outputEvent": {
                             "eventName": "nuova_scadenza_documento",
                             "eventTrigger": "press"
                         },
-                        "style": {
-                            "background_color": "#25599C",
-                            "font_color": "white"
-                        },
                         "readOnly": false,
-                        "sameOrigin": false
+                        "sameOrigin": false,
+                        "size": 1
+                        
+                    },
+                    {
+                        "format": {
+                            "viewType": "invisible"
+                        },
+                        "size": 5,
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "label": "invisible_1",
+                        "key": "invisible_1",
+                        "sameOrigin": false,
+                        "readOnly": true,
+                        "newLine": true
                     }
                 ]
             },
@@ -463,50 +512,15 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
-                "viewType": "input",
-                "validations": [
-                    {
-                        "message": "Codice fiscale obbligatorio",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_fiscale",
-            "label": "Codice fiscale",
-            "newLine": false,
-            "readOnly": false,
-            "size": 5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "partita_iva",
-            "label": "Partita IVA",
-            "newLine": true,
-            "readOnly": false,
-            "size": 5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
                 "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "indirizzo",
             "label": "Indirizzo",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false,
-            "size": 10
+            "size": 3
         },
         {
             "autoGenerate": false,
@@ -534,7 +548,7 @@
             "label": "Località",
             "newLine": false,
             "readOnly": false,
-            "size": 8
+            "size": 3
         },
         {
             "autoGenerate": false,
@@ -546,9 +560,9 @@
             "isPrimary": false,
             "key": "provincia",
             "label": "Provincia",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false,
-            "size": 1
+            "size": 0.7
         },
         {
             "autoGenerate": false,
@@ -580,6 +594,7 @@
             "key": "prog_vr",
             "label": "Versione",
             "newLine": false,
+            "size": 0.7,
             "readOnly": true
         },
         {
@@ -591,6 +606,7 @@
             "isPrimary": false,
             "key": "nuova_versione",
             "label": "Nuova Versione",
+            "buttonIcon": "add_circle",
             "newLine": true,
             "outputEvent": {
                 "eventName": "clienti_button_nuova_versione",
@@ -613,8 +629,22 @@
             "isPrimary": false,
             "key": "annotazioni_interne",
             "label": "Note Interne",
-            "newLine": true,
+            "newLine": false,
+            "size": 7.7,
             "readOnly": false
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 2.3,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_1",
+            "key": "invisible_1",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": true
         },
         {
             "autoGenerate": false,
