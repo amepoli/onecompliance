@@ -39,9 +39,9 @@
         "viewType": "input",
         "validations": [
           {
-              "message": "Tipo soggetto necessario",
-              "name": "required",
-              "validator": "Validators.required"
+            "message": "Tipo soggetto necessario",
+            "name": "required",
+            "validator": "Validators.required"
           },
           {
             "name": "maxlength",
@@ -49,7 +49,7 @@
             "validator": "Validators.maxLength(35)",
             "value": 35
           }
-      ]
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -66,11 +66,11 @@
         "viewType": "input",
         "validations": [
           {
-              "message": "Tipo soggetto necessario",
-              "name": "required",
-              "validator": "Validators.required"
+            "message": "Tipo soggetto necessario",
+            "name": "required",
+            "validator": "Validators.required"
           }
-      ]
+        ]
       },
       "isHidden": false,
       "size": 4.5,
@@ -258,21 +258,21 @@
       "queryString": "UPDATE entrasp.centri_gestionali cge set codice_part=az.codice_part from entrasp.aziende az where cge.codice_part=az.codice_part"
     },
     {
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£'",
-			"messageNotNull": "Inserimento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
-		},
-		{
-			"operation": "update",
-			"type": "preCheck",
-			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£' and id_centro_gest!=$id_centro_gest$",
-			"messageNotNull": "Aggiornamento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
-		},
+      "operation": "insert",
+      "type": "preCheck",
+      "queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£'",
+      "messageNotNull": "Inserimento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+    },
+    {
+      "operation": "update",
+      "type": "preCheck",
+      "queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£' and id_centro_gest!=$id_centro_gest$",
+      "messageNotNull": "Aggiornamento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+    },
     {
       "operation": "insert",
       "type": "postProcessing",
-      "queryString": "select entrasp.update_dynamo_user((€global_id_anagrafiche€)::text, (€global_user_companies€)::text, '€global_username€')"			
+      "queryString": "select entrasp.update_dynamo_user((€global_id_anagrafiche€)::text, (€global_user_companies€)::text, '€global_username€')"
     }
   ],
   "search_keys": [
@@ -414,6 +414,21 @@
       "label": "Rischi associati"
     },
     {
+      "entryKey": "information_flows_sub_of_centri_gestionali",
+      "keys": [
+        {
+          "parent": "codice_part",
+          "son": "codice_part"
+        },
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest"
+        }
+      ],
+      "isHidden": false,
+      "label": "Flussi Informativi"
+    },
+    {
       "entryKey": "centri_gestionali_attachments",
       "isHidden": false,
       "keys": [
@@ -422,7 +437,7 @@
           "son": "id_centro_gest"
         }
       ],
-      "label": "Documenti Associati",
+      "label": "Documenti",
       "type": "tableForm"
     },
     {
@@ -480,7 +495,7 @@
         }
       ],
       "label": "Requisiti professionali"
-    }   
+    }
   ],
   "table_keys": [
     {
