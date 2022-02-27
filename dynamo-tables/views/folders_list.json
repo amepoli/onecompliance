@@ -55,6 +55,30 @@
       "isPrimary": true,
       "readOnly": true,
       "newLine": true,
+      "key": "codice_part",
+      "label": "codice_part"
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "newLine": true,
+      "key": "codice_azienda_ass",
+      "label": "codice_azienda_ass"
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "newLine": true,
       "key": "chiave_r",
       "label": "chiave_r"
     },
@@ -174,18 +198,6 @@
     {
       "format": {
         "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "readOnly": true,
-      "newLine": true,
-      "key": "codice_azienda_ass",
-      "label": "codice_azienda_ass"
-    },
-    {
-      "format": {
-        "viewType": "input",
         "dataType": "number"
       },
       "isHidden": true,
@@ -226,34 +238,6 @@
         }
       ],
       "label": "Sotto cartelle"
-    },
-    {
-      "entryKey": "attachments_sub_of_attachments",
-      "keys": [
-        {
-          "parent": "codice_azienda_ass",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "id_risorsa",
-          "son": "id_risorsa"
-        }
-      ],
-      "label": "Files nella cartella"
-    },
-    {
-      "entryKey": "cdms_risorse_destinatari",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "id_risorsa",
-          "son": "id_risorsa"
-        }
-      ],
-      "label": "Autorizzati/Destinatari"
     }
   ],
   "table_keys": [
@@ -297,9 +281,25 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
       "key": "id_risorsa",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "information_flows",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_risorsa",
+            "destination": "id_risorsa"
+          }
+        ]
+      },
       "label": "id_risorsa"
     },
     {
@@ -334,9 +334,38 @@
         "dataType": "number"
       },
       "isHidden": true,
+      "isPrimary": false,
+      "key": "prog_vr",
+      "label": "prog_vr"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
       "isPrimary": true,
       "key": "id_anagrafica",
-      "label": "id_anagrafica"
+      "label": "ID anagraf.",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "anagrafiche_vr",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_part",
+            "destination": "codice_part"
+          },
+          {
+            "source": "id_anagrafica",
+            "destination": "id_anagrafica"
+          },
+          {
+            "source": "prog_vr",
+            "destination": "prog_vr"
+          }
+        ]
+      }
     }
   ],
   "hideActions": [
@@ -355,6 +384,10 @@
     {
       "viewType": "form",
       "formActionType": "attachments"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "multi-attachments"
     }
   ]
 }
