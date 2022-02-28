@@ -129,35 +129,6 @@
       "readOnly": false
     },
     {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "cancella_consuntivazione",
-      "label": "delete",
-      "buttonIcon": "delete",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "consuntivazione_delete",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "consuntivazione_delete",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "delete from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$ and id_cons=$id_cons$",
-          "outputEventWhenComplete": "reopen_button"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
-    },
-    {
       "autoGenerate": true,
       "format": {
         "dataType": "number",
@@ -165,10 +136,11 @@
       },
       "isHidden": false,
       "isPrimary": true,
+      "size": 1,
       "key": "id_cons",
       "label": "Id Cons",
       "newLine": false,
-      "readOnly": false,
+      "readOnly": true,
       "inputEvents": [
         {
           "eventName": "consuntivazioni_sub_save",
@@ -193,6 +165,20 @@
     {
       "autoGenerate": false,
       "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Azienda",
+      "newLine": false,
+      "readOnly": true,
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
         "options": [],
         "viewType": "combobox",
@@ -203,6 +189,7 @@
       "isPrimary": false,
       "key": "stato",
       "label": "Stato",
+      "size": 1,
       "newLine": false,
       "readOnly": false,
       "outputEvent": {
@@ -255,6 +242,11 @@
       "label": "Data Intervento",
       "insertUpdateFunct": "coalesce('£data_intervento£'::date, CURRENT_DATE)",
       "newLine": false,
+      "style": {
+        "font_weight": "700"
+        
+      },
+      "size": 1,
       "readOnly": false,
       "outputEvent": {
         "eventName": "cambia_data_intervento",
@@ -279,6 +271,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "size": 1,
       "key": "durata",
       "label": "Durata (min.)",
       "outputEvent": {
@@ -302,8 +295,12 @@
           "values": []
         }
       ],
-      "newLine": false,
-      "readOnly": false
+      "newLine": false,  
+      "readOnly": false,
+      "style": {
+        "font_color": "red",
+        "font_weight": "600"
+      }
     },
     {
       "autoGenerate": false,
@@ -314,10 +311,33 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "size": 1,
       "key": "durata_ft",
       "label": "Durata fatt.(min.)",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false
+     
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "sameOrigin": false,
+      "key": "codice_azienda_nuova",
+      "label": "Nuova Azienda",
+      "newLine": true,
+      "readOnly": false,
+      "outputEvent": {
+        "eventTrigger": "select",
+        "eventName": "change_codice_azienda"
+      },
+      "size": 4
     },
     {
       "autoGenerate": false,
@@ -439,41 +459,6 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Azienda",
-      "newLine": false,
-      "readOnly": true,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "sameOrigin": false,
-      "key": "codice_azienda_nuova",
-      "label": "Nuova Azienda",
-      "newLine": true,
-      "readOnly": false,
-      "outputEvent": {
-        "eventTrigger": "select",
-        "eventName": "change_codice_azienda"
-      },
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
         "dataType": "date",
         "viewType": "input"
       },
@@ -495,7 +480,7 @@
       "isPrimary": false,
       "key": "esito",
       "label": "Esito",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false
     },
     {
@@ -505,10 +490,11 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "buttonIcon": "lock",
       "key": "chiudi_compito",
       "label": "Chiudi Segnalazione",
       "newLine": false,
-      "size": 3.3,
+      "size": 1.5,
       "outputEvent": {
         "eventName": "chiudi_segnalazione",
         "eventTrigger": "press"
@@ -583,11 +569,12 @@
         "viewType": "button"
       },
       "isHidden": false,
+      "buttonIcon": "check",
       "isPrimary": false,
       "key": "chiudi_cons_precedenti",
       "label": "Chiudi consuntivazioni precedenti",
       "newLine": false,
-      "size": 3.3,
+      "size": 1.5,
       "outputEvent": {
         "eventName": "chiudi_cons_precedenti",
         "eventTrigger": "press"
@@ -617,9 +604,10 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "riapri_compito",
+      "buttonIcon": "lock_open",
       "label": "Riapri Segnalazione",
       "newLine": true,
-      "size": 3.3,
+      "size": 1.5,
       "outputEvent": {
         "eventName": "riapri_segnalazione",
         "eventTrigger": "press"
@@ -848,6 +836,7 @@
             "key": "dettaglio_compito_k",
             "label": "Compito",
             "newLine": false,
+            "buttonIcon": "checklist",
             "size": 1.5,
             "outputEvent": {
               "eventName": "navigate_to_compito",
