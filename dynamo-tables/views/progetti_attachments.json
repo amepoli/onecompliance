@@ -6,7 +6,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select distinct vaf.prog_revisione, vaf.codice_azienda, vaf.codice_part, vaf.id_risorsa, vaf.client_file_name, pf.ordinamento, pf.titolo as titolo_fase, vaf.stringa, vaf.tipo_allegato, vaf.id_sondaggio, vaf.id_progetto, snd.data_esecuzione, snd.data_riferimento_da, snd.data_riferimento_a from entrasp.views_attachments_fast vaf inner join entrasp.progetti_fasi pf on vaf.codice_azienda=pf.codice_azienda and vaf.id_sondaggio=pf.id_sondaggio inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where vaf.codice_azienda=$codice_azienda$ and vaf.id_progetto=$id_progetto$"
+      "queryString": "select distinct vaf.prog_revisione, vaf.codice_azienda, vaf.codice_part, vaf.id_risorsa, vaf.client_file_name, pf.ordinamento, pf.titolo as titolo_fase, vaf.stringa, vaf.tipo_allegato, vaf.id_sondaggio, vaf.id_progetto, snd.data_esecuzione, snd.data_riferimento_da, snd.data_riferimento_a, entrasp.argomenti_descr_stato(vaf.id_argomento_stato) as descr_stato from entrasp.views_attachments_fast vaf inner join entrasp.progetti_fasi pf on vaf.codice_azienda=pf.codice_azienda and vaf.id_sondaggio=pf.id_sondaggio inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where vaf.codice_azienda=$codice_azienda$ and vaf.id_progetto=$id_progetto$"
     },
     {
       "type": "main",
@@ -48,11 +48,11 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
       "width": "5%",
       "key": "id_risorsa",
-      "label": "ID Documento"
+      "label": "ID Flusso Informativo"
     },
     {
       "format": {
@@ -62,7 +62,7 @@
       "isPrimary": true,
       "width": "3%",
       "key": "prog_revisione",
-      "label": "Rev."
+      "label": "Rev"
     },
     {
       "format": {
@@ -97,12 +97,44 @@
     },
     {
       "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descr_stato",
+      "width": "5%",
+      "label": "Stato",
+      "style": [
+        {
+          "value": "Non Richiesto",
+          "font_color": "grey",
+          "font_weight": "500"
+        },
+        {
+          "value": "Da Definire",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Da Allegare",
+          "font_color": "#FF8100",
+          "font_weight": "500"
+        },
+        {
+          "value": "Allegato",
+          "font_color": "green",
+          "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
         "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "id_sondaggio",
-      "width": "5%",
+      "width": "6%",
       "label": "Sondaggio"
     },
     {
@@ -112,7 +144,7 @@
       "isHidden": true,
       "isPrimary": false,
       "key": "id_progetto",
-      "width": "5%",
+      "width": "0%",
       "label": "Progetto"
     },
     {
@@ -132,7 +164,7 @@
       "isHidden": true,
       "isPrimary": false,
       "key": "data_riferimento_a",
-      "width": "5%",
+      "width": "0%",
       "label": "Data rif. a"
     },
     {
@@ -141,7 +173,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "8%",
+      "width": "5%",
       "key": "stringa",
       "label": "",
       "isButton": true,
