@@ -13,7 +13,7 @@
   "predefinedQueries": [
     {
       "operation": "selectForm",
-      "queryString": "select rs.*, t1.chiave_r, t1.liv, t1.folder_name from (select '€global_codice_azienda€' as codice_azienda, $folder_name$ as folder_name, $id_risorsa$ as id_risorsa, $chiave_r$ as chiave_r, $liv$ as liv, $codice_azienda_ass$ as codice_azienda_ass, $id_progetto$ as id_progetto) t1 left join entrasp.cdms_risorse rs on t1.codice_azienda=rs.codice_azienda and t1.id_risorsa=rs.id_risorsa;",
+      "queryString": "select '€global_codice_azienda€' as codice_azienda, $folder_name$ as folder_name, $id_risorsa$ as id_risorsa, $chiave_r$ as chiave_r, $liv$ as liv, $codice_azienda_ass$ as codice_azienda_ass, $id_progetto$ as id_progetto;",
       "type": "main"
     },
     {
@@ -95,62 +95,6 @@
       "newLine": false,
       "readOnly": true,
       "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg where arg.id_argomento in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1)) order by arg.descrizione;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento_tipo_allegato",
-      "label": "Tipo flusso info",
-      "outputEvent": {
-        "eventName": "aggiorna_id_tipo_allegato_documents",
-        "eventTrigger": "select"
-      },
-      "inputEvents": [
-        {
-          "eventName": "aggiorna_id_tipo_allegato_documents",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.aggiorna_tipo_allegato_domanda($codice_azienda$, $id_risorsa$, £id_argomento_tipo_allegato£)"
-        }
-      ],
-      "newLine": false,
-      "size": 3.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-      "label": "Centro Gestionale",
-      "newLine": false,
-      "size": 3.5,
-      "readOnly": false
-    },
-    {
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_scadenza",
-      "label": "Fine validità doc.",
-      "readOnly": false,
-      "size": 1.5,
-      "newLine": true
     },
     {
       "autoGenerate": false,
