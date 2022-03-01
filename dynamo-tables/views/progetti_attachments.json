@@ -6,7 +6,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select distinct vaf.prog_revisione, vaf.codice_azienda, vaf.codice_part, vaf.id_risorsa, vaf.client_file_name, pf.ordinamento, pf.titolo as titolo_fase, vaf.stringa, vaf.tipo_allegato, vaf.id_sondaggio, vaf.id_progetto, vaf.rev_descrizione, snd.data_esecuzione, snd.data_riferimento_da, snd.data_riferimento_a, entrasp.argomenti_descr_stato(vaf.id_argomento_stato) as descr_stato from entrasp.views_attachments_fast vaf inner join entrasp.progetti_fasi pf on vaf.codice_azienda=pf.codice_azienda and vaf.id_sondaggio=pf.id_sondaggio inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where vaf.codice_azienda=$codice_azienda$ and vaf.id_progetto=$id_progetto$"
+      "queryString": "select distinct vaf.prog_revisione, vaf.codice_azienda, vaf.codice_part, vaf.id_risorsa, vaf.client_file_name, pf.ordinamento, pf.titolo as titolo_fase, vaf.stringa, vaf.tipo_allegato, vaf.id_sondaggio, vaf.id_progetto, left(vaf.rev_descrizione, 120) as rev_descrizione, snd.data_esecuzione, snd.data_riferimento_da, snd.data_riferimento_a, entrasp.argomenti_descr_stato(vaf.id_argomento_stato) as descr_stato from entrasp.views_attachments_fast vaf inner join entrasp.progetti_fasi pf on vaf.codice_azienda=pf.codice_azienda and vaf.id_sondaggio=pf.id_sondaggio inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where vaf.codice_azienda=$codice_azienda$ and vaf.id_progetto=$id_progetto$"
     },
     {
       "type": "main",
@@ -71,7 +71,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "client_file_name",
-      "width": "28%",
+      "width": "20%",
       "label": "Nome file"
     },
     {
@@ -81,18 +81,18 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo_fase",
-      "width": "25%",
+      "width": "20%",
       "label": "Fase",
       "queryFunct": "entrasp.progetti_fasi_titolo(codice_azienda,id_fase)"
     },
-      {
+    {
       "format": {
         "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "tipo_allegato",
-      "width": "20%",
+      "width": "17%",
       "label": "Tipo Documento"
     },
     {
@@ -134,8 +134,25 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "id_sondaggio",
+      "hasLevel": true,
+      "label": "Id Sond.",
       "width": "6%",
-      "label": "Sondaggio"
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "sondaggi",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_sondaggio",
+            "destination": "id_sondaggio"
+          }
+        ]
+      }
     },
     {
       "format": {
@@ -169,39 +186,17 @@
         "action": "downloadAttachment",
         "keymap": []
       }
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_riferimento_da",
-      "width": "0%",
-      "label": "Data rif. da"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_riferimento_a",
-      "width": "0%",
-      "label": "Data rif. a"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "rev_descrizione",
-      "width": "0%",
-      "label": "Descr. Revisione"
     }
   ],
   "querySuffixes": {
     "tableViewSuffix": "order by pf.ordinamento"
+  },
+  "exportQueries": {
+    "tableQueries": [
+      {
+        "queryString": "select distinct vaf.prog_revisione, vaf.codice_azienda, vaf.codice_part, vaf.id_risorsa, vaf.client_file_name, pf.ordinamento, pf.titolo as titolo_fase, vaf.stringa, vaf.tipo_allegato, vaf.id_sondaggio, vaf.id_progetto, left(vaf.rev_descrizione, 120) as rev_descrizione, snd.data_esecuzione, snd.data_riferimento_da, snd.data_riferimento_a, entrasp.argomenti_descr_stato(vaf.id_argomento_stato) as descr_stato from entrasp.views_attachments_fast vaf inner join entrasp.progetti_fasi pf on vaf.codice_azienda=pf.codice_azienda and vaf.id_sondaggio=pf.id_sondaggio inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where vaf.codice_azienda=$codice_azienda$ and vaf.id_progetto=$id_progetto$",
+        "label": "Documenti progetto"
+      }
+    ]
   }
 }
