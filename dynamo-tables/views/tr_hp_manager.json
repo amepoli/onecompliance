@@ -10,7 +10,7 @@
     },
     {
       "operation": "selectForm",
-      "queryString": "select $giorno$ as giorno, $dynamo_user$ as dynamo_user",
+      "queryString": "select $giorno$ as giorno, to_char($giorno$::date, 'Day DD-MM-YYYY') as giorno_descr, $dynamo_user$ as dynamo_user",
       "type": "main"
     }
   ],
@@ -78,9 +78,21 @@
         "viewType": "input",
         "dataType": "date"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "giorno",
+      "readOnly": true,
+      "newLine": false,
+      "label": "Data"
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "giorno_descr",
       "readOnly": true,
       "newLine": false,
       "label": "Data"
@@ -155,7 +167,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "14%",
+      "width": "16%",
       "queryFunct": "select true",
       "key": "insert_missing_mins",
       "label": "Aggiungi minuti mancanti",
@@ -198,7 +210,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "10%",
+      "width": "13%",
       "queryFunct": "select true",
       "key": "segna_ferie",
       "label": "Segna ferie",
@@ -237,7 +249,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "10%",
+      "width": "13%",
       "queryFunct": "select true",
       "key": "segna_permesso",
       "label": "Segna Permesso",
@@ -278,9 +290,9 @@
       "format": {
           "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
-      "width": "10%",
+      "width": "0%",
       "queryFunct": "select true",
       "key": "dettaglio",
       "label": "Dettaglio",
@@ -365,6 +377,42 @@
     },
     {
       "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "delete",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "save",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "share",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "import_export",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "multi-attachments",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "documentation",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "startEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "stopEvent",
       "viewType": "form"
     }
   ]
