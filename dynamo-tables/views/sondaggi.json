@@ -432,6 +432,11 @@
                         "icon": "pending_actions",
                         "label": "Pianifica serie sondaggi",
                         "outputEventName": "to_sondaggi_replan"
+                    },
+                    {
+                        "icon": "delete",
+                        "label": "Cancella risposte del sondaggio",
+                        "outputEventName": "answers_delete"
                     }
                 ]
             },
@@ -451,7 +456,7 @@
                     "outputEventWhenComplete": "aggiorna_id_sondaggio",
                     "values": [],
                     "message": {
-                        "messageText": "Sei sicuro di voler duplicare questo sondaggio? (si verrà automaticamente trasferiti nel nuovo sondaggio)",
+                        "messageText": "Sei sicuro di voler duplicare questo sondaggio?",
                         "actionOnNo": {
                             "actionType": "query",
                             "queryFunct": "select 1"
@@ -459,6 +464,23 @@
                         "actionOnYes": {
                             "actionType": "query",
                             "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"
+                        }
+                    }
+                },
+                {
+                    "eventName": "answers_delete",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler cancellare TUTTE le risposte del sondaggio e somministrazioni?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "delete from entrasp.risposte where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
                         }
                     }
                 }
