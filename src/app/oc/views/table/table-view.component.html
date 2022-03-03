@@ -189,90 +189,105 @@
 
         <div class="mat-elevation-z2" class="data-table">
 
-            <table class="table-view-content" mat-table [hidden]="isLoading" [dataSource]="dataSource" matSort>
-                <ng-container [matColumnDef]="entry.key" *ngFor="let entry of viewKeys">
-                    <ng-container>
-                        <ng-container *ngIf="!entry.isSelectCheckbox">
-                            <mat-header-cell class="table-column"
-                                [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
-                                [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matHeaderCellDef mat-sort-header
-                                [hidden]="entry.isHidden">
-                                {{entry.label}}
-                            </mat-header-cell>
-                        </ng-container>
-                        <ng-container *ngIf="entry.isSelectCheckbox">
-                            <mat-header-cell *matHeaderCellDef class="table-column">
-                                <mat-checkbox (change)="$event ? masterToggle() : null"
-                                    [checked]="selection.hasValue() && isAllSelected()"
-                                    [indeterminate]="selection.hasValue() && !isAllSelected()"
-                                    [aria-label]="checkboxLabel()">
-                                </mat-checkbox>
-                            </mat-header-cell>
-                        </ng-container>
-
-
-                        <ng-container *ngIf="!entry.isSelectCheckbox">
-                            <mat-cell class="table-column"
-                                [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
-                                [style.flex]="entry.width? '0 0 ' + entry.width: '1'" [style.white-space]="'nowrap'"
-                                [style.text-overflow]="'ellipsis'" *matCellDef="let row; let i = index;"
-                                [style.border-radius.px]="entry.isButton ? '4': '24'" [hidden]="entry.isHidden">
-
-                                <mat-checkbox *ngIf="entry.isCheckbox" (click)="$event.stopPropagation()" disabled
-                                    aria-disabled="true" [checked]="row[entry.key] == '1'? true: false">
-                                </mat-checkbox>
-
-                                <button
-                                    *ngIf="entry.isButton && doesButtonIconExist(entry.key) && !entry.label && row[entry.key]"
-                                    style="background-color: #25599c; color: white;" mat-icon-button
-                                    (click)="onButtonClick(entry.key, i, row)">
-                                    <mat-icon>{{getButtonIcon(entry.key)}}</mat-icon>
-                                </button>
-                                <button *ngIf="entry.isButton && entry.label && row[entry.key]"
-                                    style="background-color: #25599c; color: white;" mat-raised-button
-                                    (click)="onButtonClick(entry.key, i, row)">
-                                    <mat-icon *ngIf="doesButtonIconExist(entry.key)">{{getButtonIcon(entry.key)}}
-                                    </mat-icon>
+            <ng-container *ngIf="!showExplorer && !isLoading">
+                <table class="table-view-content" mat-table [dataSource]="dataSource" matSort>
+                    <ng-container [matColumnDef]="entry.key" *ngFor="let entry of viewKeys">
+                        <ng-container>
+                            <ng-container *ngIf="!entry.isSelectCheckbox">
+                                <mat-header-cell class="table-column"
+                                    [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
+                                    [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matHeaderCellDef mat-sort-header
+                                    [hidden]="entry.isHidden">
                                     {{entry.label}}
-                                </button>
-
-
-                                <p *ngIf="entry.isInputButton" style="width: 100%; text-align: left;"
-                                    [style.padding-left.px]="getLevel(row, entry.key)"
-                                    [ngStyle]="getElementStyle(entry.key, row[entry.key])" class="input-clickable"
-                                    (click)="onButtonClick(entry.key, i, row)">
-                                    {{row[entry.key] | onecompliance: format[entry.key]}}
-                                </p>
-                                <p *ngIf="!entry.isInputButton && !entry.isButton && !entry.isCheckbox"
-                                    style="width: 100%; text-align: left;"
-                                    [style.padding-left.px]="getLevel(row, entry.key)"
-                                    [ngStyle]="getElementStyle(entry.key, row[entry.key])">
-                                    {{row[entry.key] | onecompliance: format[entry.key]}}
-                                </p>
-                            </mat-cell>
+                                </mat-header-cell>
+                            </ng-container>
+                            <ng-container *ngIf="entry.isSelectCheckbox">
+                                <mat-header-cell *matHeaderCellDef class="table-column">
+                                    <mat-checkbox (change)="$event ? masterToggle() : null"
+                                        [checked]="selection.hasValue() && isAllSelected()"
+                                        [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                        [aria-label]="checkboxLabel()">
+                                    </mat-checkbox>
+                                </mat-header-cell>
+                            </ng-container>
+    
+    
+                            <ng-container *ngIf="!entry.isSelectCheckbox">
+                                <mat-cell class="table-column"
+                                    [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
+                                    [style.flex]="entry.width? '0 0 ' + entry.width: '1'" [style.white-space]="'nowrap'"
+                                    [style.text-overflow]="'ellipsis'" *matCellDef="let row; let i = index;"
+                                    [style.border-radius.px]="entry.isButton ? '4': '24'" [hidden]="entry.isHidden">
+    
+                                    <mat-checkbox *ngIf="entry.isCheckbox" (click)="$event.stopPropagation()" disabled
+                                        aria-disabled="true" [checked]="row[entry.key] == '1'? true: false">
+                                    </mat-checkbox>
+    
+                                    <button
+                                        *ngIf="entry.isButton && doesButtonIconExist(entry.key) && !entry.label && row[entry.key]"
+                                        style="background-color: #25599c; color: white;" mat-icon-button
+                                        (click)="onButtonClick(entry.key, i, row)">
+                                        <mat-icon>{{getButtonIcon(entry.key)}}</mat-icon>
+                                    </button>
+                                    <button *ngIf="entry.isButton && entry.label && row[entry.key]"
+                                        style="background-color: #25599c; color: white;" mat-raised-button
+                                        (click)="onButtonClick(entry.key, i, row)">
+                                        <mat-icon *ngIf="doesButtonIconExist(entry.key)">{{getButtonIcon(entry.key)}}
+                                        </mat-icon>
+                                        {{entry.label}}
+                                    </button>
+    
+    
+                                    <p *ngIf="entry.isInputButton" style="width: 100%; text-align: left;"
+                                        [style.padding-left.px]="getLevel(row, entry.key)"
+                                        [ngStyle]="getElementStyle(entry.key, row[entry.key])" class="input-clickable"
+                                        (click)="onButtonClick(entry.key, i, row)">
+                                        {{row[entry.key] | onecompliance: format[entry.key]}}
+                                    </p>
+                                    <p *ngIf="!entry.isInputButton && !entry.isButton && !entry.isCheckbox"
+                                        style="width: 100%; text-align: left;"
+                                        [style.padding-left.px]="getLevel(row, entry.key)"
+                                        [ngStyle]="getElementStyle(entry.key, row[entry.key])">
+                                        {{row[entry.key] | onecompliance: format[entry.key]}}
+                                    </p>
+                                </mat-cell>
+                            </ng-container>
+                            <ng-container *ngIf="entry.isSelectCheckbox">
+                                <mat-cell *matCellDef="let row" style="justify-content: start;">
+                                    <mat-checkbox (click)="$event.stopPropagation()"
+                                        (change)="$event ? selection.toggle(row) : null"
+                                        [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
+                                    </mat-checkbox>
+                                </mat-cell>
+                            </ng-container>
+    
+    
                         </ng-container>
-                        <ng-container *ngIf="entry.isSelectCheckbox">
-                            <mat-cell *matCellDef="let row" style="justify-content: start;">
-                                <mat-checkbox (click)="$event.stopPropagation()"
-                                    (change)="$event ? selection.toggle(row) : null"
-                                    [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
-                                </mat-checkbox>
-                            </mat-cell>
-                        </ng-container>
-
-
+    
                     </ng-container>
-
-                </ng-container>
-
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-
-                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index; " (dblclick)="getRecord(i, row)"
-                    style="line-height: 2em;" [style.background]="(selectedRow == row) ? 'lightblue' : ''">
-                </mat-row>
-                <tr mat-footer-row *matFooterRowDef="displayedColumns sticky: true"
-                    style="border-radius: 0px 10px 10px 10px; background-color: rgb(91, 145, 192);"></tr>
-            </table>
+    
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    
+                    <mat-row *matRowDef="let row; columns: displayedColumns; let i = index; " (dblclick)="getRecord(i, row)"
+                        style="line-height: 2em;" [style.background]="(selectedRow == row) ? 'lightblue' : ''">
+                    </mat-row>
+                    <tr mat-footer-row *matFooterRowDef="displayedColumns sticky: true"
+                        style="border-radius: 0px 10px 10px 10px; background-color: rgb(91, 145, 192);"></tr>
+                </table>    
+            </ng-container>
+            <ng-container *ngIf="showExplorer && !isLoading">
+                <mat-card class="explorer-folders-content">
+                    <p></p>
+                    <ng-container *ngFor="let row of foldersSource; let i = index">
+                        <div class="explorer-folder-info" (dblclick)="goInside(i, row)">
+                            <i><mat-icon class="explorer-folder-icon" >folder</mat-icon></i>
+                            <p class="explorer-folder-text">{{folders[i]}}</p>
+                            <i (click)="getRecord(i, row)"><mat-icon class="explorer-info-icon">navigate_next</mat-icon></i>
+                        </div>
+                    </ng-container>
+                    
+                </mat-card>  
+            </ng-container>
             <mat-card *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center">
                 <mat-progress-spinner color="primary" mode="indeterminate">
                 </mat-progress-spinner>
