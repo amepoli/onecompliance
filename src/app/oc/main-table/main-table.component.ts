@@ -349,6 +349,11 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
                 _this.tableType = 'table';
                 _this.currentDescription = 'Tabella ' + _this.tableName;
+            }
+            else if (event.queryParams.entry.type === 'explorer') {
+                _this.tableParams = { entryName: _this.tableName, keys: event.queryParams.keys, showHeader: true, showFullScreenButton: false };
+                _this.tableType = 'table';
+                _this.currentDescription = 'Tabella ' + _this.tableName;
             } else if (event.queryParams.entry.type === 'form') { // handled later on
                 newIndex = event.queryParams.index;
                 newTotal = event.queryParams.total;

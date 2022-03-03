@@ -133,6 +133,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     subscriptions: Subscription[] = [];
 
+    showExplorer = false;
+    foldersSource: object[] = [];
+    folders: string[] = [];
+
     constructor(
         private backendService: BackendService,
         private authService: AuthService,
@@ -252,7 +256,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
                     _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
                     _this.loadTableInfo();
-
+                    if(result.data.explorerOptions && result.data.explorerOptions.showExplorerView) {
+                        _this.showExplorer = true;
+                    }
+                    else {
+                        _this.showExplorer = false;
+                    }
                     _this._console.log(_this.viewKeys);
                     
                     const key_values = {};
@@ -384,6 +393,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         results = results.table_data; // and get the table data
                     }
                     _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
+                    if(_this.showExplorer) {
+                        _this.loadExplorerData(results);
+                    }
+
                     _this.dataSource = new MatTableDataSource(results);
                     _this.dataSource.sort = _this.sort;
                     _this.dataSource.paginator = _this.paginator;
@@ -749,6 +762,43 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             }
         }
     }
+
+    loadExplorerData(results: any) {
+     let _this = this;
+     _this.foldersSource = results;
+     _this.folders = results.map(x => x.folder_name);
+     
+     _this.keysArray = results.map(row => {
+         const key_values = {};
+         const primaryKeys = _this.viewKeys.filter(entry => {
+             return entry.isPrimary;
+         });
+         for (const primaryKey of primaryKeys) {
+             key_values[primaryKey.key] = row[primaryKey.key];
+         }
+         return key_values;
+     });
+
+    }
+
+    goInside(index: number, row: any) {
+        if(!this.restrictions || !this.restrictions.preventNavigationToForm) {
+            if('' + row.id_risorsa == '0'){
+                this.selectedRow = row;
+                this.currentKeys = row;
+                // this.currentKeys.liv++;
+                if(!this.tableData.entryName.endsWith('_liv2')) {
+                    this.tableData.entryName = this.tableData.entryName + "_liv2";
+                }
+                // this.loadTable(null);
+                const mergedParams = { entry: { name: this.tableData.entryName, type: 'explorer' }, keys: row, index: index + 1, total: this.keysArray.length };
+                this.navigate(mergedParams);
+            }
+            else {
+            }
+        }
+    }
+
 
     onButtonClick(key: string, index: number, row: MatRow) {
         let _this = this;

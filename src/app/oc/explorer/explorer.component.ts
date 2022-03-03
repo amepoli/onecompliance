@@ -69,7 +69,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
 
     styles = {};
     dataSource: MatTableDataSource<any> = null;
-    selectedRow: MatRow = null;
+    selectedRow: any = null;
     isLoading = false;
 
     isFullScreen = false;
@@ -230,10 +230,6 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
         this.subscriptions.forEach(element => {
             element.unsubscribe();
         });
-    }
-
-    public gotoFolder(folder) {
-
     }
 
     public resetView() {
@@ -409,23 +405,34 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
                         results = results.table_data; // and get the table data
                     }
                     _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
-                    _this.dataSource = new MatTableDataSource(results);
-                    _this.folders = results.map(x => x.centro_gest);
-                    _this.dataSource.sort = _this.sort;
-                    _this.dataSource.paginator = _this.paginator;
-                    // triggers any change in displayed datasource, setting the array of primary keys
-                    _this.subscriptions.push(_this.dataSource.connect().subscribe(source => {
-                        _this.keysArray = source.map(row => {
-                            const key_values = {};
-                            const primaryKeys = _this.viewKeys.filter(entry => {
-                                return entry.isPrimary;
-                            });
-                            for (const primaryKey of primaryKeys) {
-                                key_values[primaryKey.key] = row[primaryKey.key];
-                            }
-                            return key_values;
+                    _this.dataSource = results;
+                    _this.keysArray = results.map(row => {
+                        const key_values = {};
+                        const primaryKeys = _this.viewKeys.filter(entry => {
+                            return entry.isPrimary;
                         });
-                    }));
+                        for (const primaryKey of primaryKeys) {
+                            key_values[primaryKey.key] = row[primaryKey.key];
+                        }
+                        return key_values;
+                    });
+
+                    _this.folders = results.map(x => x.folder_name);
+                    // _this.dataSource.sort = _this.sort;
+                    // _this.dataSource.paginator = _this.paginator;
+                    // // triggers any change in displayed datasource, setting the array of primary keys
+                    // _this.subscriptions.push(_this.dataSource.connect().subscribe(source => {
+                    //     _this.keysArray = source.map(row => {
+                    //         const key_values = {};
+                    //         const primaryKeys = _this.viewKeys.filter(entry => {
+                    //             return entry.isPrimary;
+                    //         });
+                    //         for (const primaryKey of primaryKeys) {
+                    //             key_values[primaryKey.key] = row[primaryKey.key];
+                    //         }
+                    //         return key_values;
+                    //     });
+                    // }));
                     _this.isLoading = false;
                 }
                 else {
@@ -763,18 +770,42 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     }
 
     skipGetRecord = false;
-    getRecord(index: number, row: MatRow) {
+    goInside(index: number, row: any) {
+        if(!this.restrictions || !this.restrictions.preventNavigationToForm) {
+            if('' + row.id_risorsa == '0'){
+                this.selectedRow = row;
+                this.currentKeys = row;
+                // this.currentKeys.liv++;
+                if(!this.tableData.entryName.endsWith('_liv2')) {
+                    this.tableData.entryName = this.tableData.entryName + "_liv2";
+                }
+                this.loadTable(null);
+                //const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: this.keysArray, index: index + 1, total: this.keysArray.length };
+                //this.navigate(mergedParams);
+            }
+            else {
+            }
+        }
+    }
+
+    gotoFormView(index: number, row: any) {
         if(!this.restrictions || !this.restrictions.preventNavigationToForm) {
             if(!this.skipGetRecord){
                 this.selectedRow = row;
+                this.currentKeys = row;
+                // this.currentKeys.liv++;
+                //this.tableData.entryName = this.tableData.entryName + "_liv" + (this.currentKeys.liv + 1);
+                //this.loadTable(null);
                 const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: this.keysArray, index: index + 1, total: this.keysArray.length };
                 this.navigate(mergedParams);
+                this._toastService.showInfoToast('Not implemented yet!');
             }
             else {
                 this.skipGetRecord = false;
             }
         }
     }
+    
 
     onButtonClick(key: string, index: number, row: MatRow) {
         let _this = this;
