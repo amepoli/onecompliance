@@ -7,7 +7,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select arg.*, codice||'-'||arg.id_argomento as cod_plus, ris.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.calcola_indicatori_da_controlli_new('€global_codice_azienda€', arg.id_argomento) ris on arg.id_argomento=ris.id_argomento where aa.id_argomento_father=$id_argomento_father$ and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
+      "queryString": "select arg.*,true as button_argomento, codice||'-'||arg.id_argomento as cod_plus, ris.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.calcola_indicatori_da_controlli_new('€global_codice_azienda€', arg.id_argomento) ris on arg.id_argomento=ris.id_argomento where aa.id_argomento_father=$id_argomento_father$ and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
     }
   ],
   "form_keys": [
@@ -28,7 +28,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg order by descrizione",
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti arg order by descrizione",
         "options": [],
         "viewType": "combobox",
         "dataType": "text"
@@ -164,7 +164,7 @@
       "isHidden": false,
       "width": "20%",
       "isPrimary": false,
-      "key": "titolo",
+      "key": "descrizione_breve",
       "label": "Titolo argomento Figlio"
     },
     {
