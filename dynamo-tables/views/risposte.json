@@ -459,6 +459,39 @@
       "queryCond": "ss.id_somministrazione=$id_somministrazione$"
     },
     {
+      "format": {
+        "comboQuery": "select id_modello_test as id, id_modello_test||'-'||titolo as name from entrasp.modelli_test where codice_azienda=$codice_azienda$",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "fieldName": "id_modello_test_s",
+      "label": "Modello test",
+      "newLine": false,
+      "queryCond": "rp.id_modello_test=$id_modello_test_s$"
+    },
+    {
+      "format": {
+        "comboQuery": "select id_domanda as id, id_domanda||'-'||descrizione as name from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test= entrasp.evaluate_given_field('id_modello_test_s', '£id_modello_test_s£', '£')",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "fieldName": "id_domanda_s",
+      "label": "Domanda",
+      "newLine": false,
+      "queryCond": "rp.id_domanda=$id_domanda_s$"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT id_risposta_prev AS id, id_domanda||'-'||risposta AS name from entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test=entrasp.evaluate_given_field('id_modello_test_s', '£id_modello_test_s£', '£') and id_domanda=entrasp.evaluate_given_field('id_domanda_s', '£id_domanda£', '£');",
+        "viewType": "combobox",
+        "options": []
+      },
+      "fieldName": "id_risposta_prev_s",
+      "label": "Viene Risposto",
+      "newLine": true,
+      "queryCond": "rp.id_risposta_prevista=$id_risposta_prev_s$"
+    },
+    {
       "fieldName": "id_domanda_s",
       "format": {
         "dataType": "number",
