@@ -3,16 +3,157 @@
   "origin": "entrasp.controlli",
   "businessObjectName": "controlli",
   "entryKey": "controlli",
-  "restrictions": {
-    "preventNavigationToForm": true
-  },
- "predefinedQueries": [
-   {
-     "operation": "selectTable",
-     "queryString": "select c1.*, cc.primo_strato_controllo, cc.secondo_strato_controllo from entrasp.controlli c1 inner join (select max(data_riferimento) as maxdata from entrasp.controlli where codice_azienda=$codice_azienda$) c2 on c1.data_riferimento=c2.maxdata inner join entrasp.controlli_configuration cc on c1.id_argomento_obiettivo=cc.id_argomento_obiettivo and c1.id_argomento_primo_strato=cc.id_argomento_primo_strato where c1.codice_azienda=$codice_azienda$",
-     "type": "main"
-   }
- ],
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select c1.*, cc.primo_strato_controllo, cc.secondo_strato_controllo from entrasp.controlli c1 inner join (select max(data_riferimento) as maxdata from entrasp.controlli where codice_azienda=$codice_azienda$) c2 on c1.data_riferimento=c2.maxdata inner join entrasp.controlli_configuration cc on c1.id_argomento_obiettivo=cc.id_argomento_obiettivo and c1.id_argomento_primo_strato=cc.id_argomento_primo_strato where c1.codice_azienda=$codice_azienda$",
+      "type": "main"
+    }
+  ],
+  "form_keys": [
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "readOnly": true
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento_primo_strato",
+      "label": "id_argomento_primo_strato",
+      "readOnly": true
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento_generale",
+      "label": "id_argomento_generale",
+      "readOnly": true
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "fattore",
+      "label": "Rischio/Fattore",
+      "newLine": false,
+      "readOnly": true,
+      "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_primo_strato)"
+    },
+    {
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "data_da",
+      "label": "Data da",
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "data_riferimento",
+      "label": "Data a",
+      "readOnly": true,
+      "newLine": true
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_controlli_effettuati_1",
+      "label": "Controlli 1^ livello",
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_controlli_effettuati_2",
+      "label": "Controlli 2^ livello",
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_controlli_periodici_effettuati",
+      "label": "Controlli periodici",
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_controlli_per_non_def_1",
+      "label": "Contr.period.indet.1Liv",
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_controlli_per_non_def_effettuati",
+      "label": "Contr.period.indet.",
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "risultato_medio",
+      "label": "Risultato medio",
+      "readOnly": true,
+      "newLine": true
+    }
+  ],
   "table_keys": [
     {
       "format": {
@@ -22,6 +163,24 @@
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento_primo_strato",
+      "label": "id_argomento_primo_strato"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento_generale",
+      "label": "id_argomento_generale"
     },
     {
       "format": {
@@ -50,7 +209,7 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "data_da",
-      "label": "data_da",
+      "label": "Data Da",
       "width": "7%"
     },
     {
@@ -60,10 +219,9 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "data_riferimento",
-      "label": "data_a",
+      "label": "Data A",
       "width": "7%"
     },
-    
     {
       "format": {
         "dataType": "number"
@@ -123,6 +281,44 @@
       "key": "risultato_medio",
       "label": "Risult.medio",
       "width": "10%"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "domande_sub_of_controlli",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_argomento_primo_strato",
+          "son": "id_argomento_primo_strato"
+        },
+        {
+          "parent": "id_argomento_generale",
+          "son": "id_argomento_generale"
+        }
+      ],
+      "label": "Controlli previsti"
+    },
+    {
+      "entryKey": "risposte_sub_of_controlli",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_argomento_primo_strato",
+          "son": "id_argomento_primo_strato"
+        },
+        {
+          "parent": "id_argomento_generale",
+          "son": "id_argomento_generale"
+        }
+      ],
+      "label": "Controlli effettuati"
     }
   ],
   "exportQueries": {

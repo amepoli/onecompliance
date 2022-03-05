@@ -1,0 +1,600 @@
+{
+  "$schema": "../views.schema.json",
+  "origin": "entrasp.risposte",
+  "businessObjectName": "riepilogoRisposte",
+  "entryKey": "risposte_sub_of_controlli",
+  "inheritsFrom": "risposte",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select rp.*, $id_argomento_generale$ as id_argomento_generale, $id_argomento_primo_strato$ as id_argomento_primo_strato, substring (entrasp.domande_descrizione(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda),1,200) as descr_domanda, entrasp.risposte_previste_risposta(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda, rp.id_risposta_prev) as risposta_prev_descr, substring (rp.risposta,1,150) as risposta_sint, substring(rp.note,1,100) as note_sint from entrasp.risposte rp inner join entrasp.domande dmd on rp.codice_azienda=dmd.codice_azienda and rp.id_modello_test=dmd.id_modello_test and rp.id_modello_test_vr=dmd.id_modello_test_vr and rp.id_domanda=dmd.id_domanda where rp.codice_azienda=$codice_azienda$ and dmd.id_argomento in (select unnest(elenco_argomenti_controlli) from entrasp.controlli_configuration where id_argomento_primo_strato=$id_argomento_primo_strato$ and id_argomento_generale=$id_argomento_generale$)",
+      "type": "main"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento_generale",
+      "label": "id_argomento_generale"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento_primo_strato",
+      "label": "id_argomento_primo_strato"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_risposta",
+      "label": "id_risposta"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_sondaggio",
+      "label": "ID Sondaggio",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_somministrazione",
+      "label": "Verif.",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_modello_test",
+      "label": "Modello Verifica",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_modello_test_vr",
+      "label": "Vr",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_domanda",
+      "label": "ID Domanda",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descr_domanda",
+      "width": "30%",
+      "label": "Descrizione Domanda",
+      "queryFunct": "substring (entrasp.domande_descrizione(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda),1,200)"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_risposta_prev",
+      "label": "ID Risposta Prev",
+      "width": "5%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "risposta_prev_descr",
+      "label": "Risposta Prevista",
+      "width": "15%",
+      "queryFunct": "entrasp.risposte_previste_risposta(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, id_risposta_prev)"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "risposta_sint",
+      "label": "Risposta Aperta",
+      "queryFunct": "substring (risposta,1,200)",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note_sint",
+      "width": "20%",
+      "queryFunct": "substring(note,1,100)",
+      "label": "Note"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test_father",
+      "label": "Modello Verifica"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_domanda_father",
+      "label": "id_domanda_father"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test_son",
+      "label": "id_modello_test_son"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_domanda_son",
+      "label": "id_domanda_son"
+    }
+  ],
+  "exportQueries": {
+    "tableQueries": [
+      {
+        "label": "Riepilogo risposte possibili e date",
+        "queryString": "SELECT rp.* FROM entrasp.grc_riepilogo_risposte rp inner join entrasp.sondaggi snd on rp.id_sondaggio=snd.id_sondaggio and rp.codice_azienda=snd.codice_azienda inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where rp.codice_azienda=$codice_azienda$"
+      },
+      {
+        "label": "Riepilogo Risposte Date",
+        "queryString": "SELECT rp.* FROM entrasp.grc_riepilogo_risposte_date rp where rp.codice_azienda=$codice_azienda$"
+      }
+    ]
+  },
+  "search_keys": [
+    {
+      "fieldName": "id_modello_test_s",
+      "format": {
+        "comboQuery": "SELECT id_modello_test AS id, id_modello_test||'-'||titolo  AS name  FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ order by id_modello_test;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Id Modello di Verifica",
+      "newLine": false,
+      "queryCond": "rp.id_modello_test=$id_modello_test_s$"
+    },
+    {
+      "fieldName": "id_sondaggio",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Sondaggio",
+      "newLine": false,
+      "queryCond": "rp.id_sondaggio=$id_sondaggio$"
+    },
+    {
+      "fieldName": "id_risposta_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Risposta",
+      "newLine": false,
+      "queryCond": "rp.id_risposta=$id_risposta_s$"
+    },
+    {
+      "fieldName": "id_somministrazione",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Verifica",
+      "newLine": true,
+      "queryCond": "ss.id_somministrazione=$id_somministrazione$"
+    },
+    {
+      "format": {
+        "comboQuery": "select id_modello_test as id, id_modello_test||'-'||titolo as name from entrasp.modelli_test where codice_azienda=$codice_azienda$",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "fieldName": "id_modello_test_s",
+      "label": "Modello test",
+      "newLine": false,
+      "queryCond": "rp.id_modello_test=$id_modello_test_s$"
+    },
+    {
+      "format": {
+        "comboQuery": "select id_domanda as id, id_domanda||'-'||descrizione as name from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test= entrasp.evaluate_given_field('id_modello_test_s', '£id_modello_test_s£', '£')",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "fieldName": "id_domanda_s",
+      "label": "Domanda",
+      "newLine": false,
+      "queryCond": "rp.id_domanda=$id_domanda_s$"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT id_risposta_prev AS id, id_domanda||'-'||risposta AS name from entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test=entrasp.evaluate_given_field('id_modello_test_s', '£id_modello_test_s£', '£') and id_domanda=entrasp.evaluate_given_field('id_domanda_s', '£id_domanda£', '£');",
+        "viewType": "combobox",
+        "options": []
+      },
+      "fieldName": "id_risposta_prev_s",
+      "label": "Viene Risposto",
+      "newLine": true,
+      "queryCond": "rp.id_risposta_prevista=$id_risposta_prev_s$"
+    },
+    {
+      "fieldName": "id_domanda_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Domanda",
+      "newLine": false,
+      "queryCond": "rp.id_domanda=$id_domanda_s$"
+    },
+    {
+      "fieldName": "id_risposta_prev",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Risposta Prev",
+      "newLine": false,
+      "queryCond": "rp.id_risposta_prev =$id_risposta_prev$"
+    },
+    {
+      "fieldName": "data_comp",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Competenza",
+      "newLine": false,
+      "queryCond": "snd.data_comp='€data_comp€'"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "fieldName": "stato_s",
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "ss.stato='€stato_s€'"
+    },
+    {
+      "fieldName": "object_description",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Oggetto di verifica",
+      "newLine": false,
+      "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+    },
+    {
+      "format": {
+        "comboQuery": "select prg.id_progetto as id, concat (prg.id_progetto, ' - ', prg.titolo) as name from entrasp.progetti prg where prg.codice_azienda=$codice_azienda$",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "fieldName": "progetto_s",
+      "label": "Progetto",
+      "newLine": true,
+      "queryCond": "ss.id_sondaggio in(select id_sondaggio from entrasp.progetti_fasi pf where id_progetto=$progetto_s$ and codice_azienda=$codice_azienda$)"
+    },
+    {
+      "fieldName": "data_esec_prevista_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista>='€data_esec_prevista_min€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista entro il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista<='€data_esec_prevista_max€'"
+    },
+    {
+      "fieldName": "data_esec_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_esecuzione>='€data_esec_min€'"
+    },
+    {
+      "fieldName": "data_esec_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione entro il",
+      "newLine": false,
+      "queryCond": "(snd.data_esecuzione<='€data_esec_max€' and snd.data_esecuzione is not null) or (ss.data_esecuzione<='€data_esec_max€' and ss.data_esecuzione is not null)"
+    },
+    {
+      "fieldName": "incompleto_s",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Incompleto",
+      "newLine": false,
+      "queryCond": "ss.somministrazione_completata!='Completo'"
+    },
+    {
+      "fieldName": "no_giudizio",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Senza giudizio",
+      "newLine": false,
+      "queryCond": "ss.giudizio is null"
+    },
+    {
+      "fieldName": "flag_ultimo_modello_test",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo Modello Verifica",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_modello_test(ss.codice_azienda, ss.id_sondaggio)"
+    },
+    {
+      "fieldName": "flag_ultimo_modello_test_rett",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo Modello Verifica Rett.",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_modello_test_rett(ss.codice_azienda, ss.id_sondaggio)"
+    },
+    {
+      "fieldName": "flag_ultimo_per_cliente",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo per Cliente/Sottostante",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_object_key(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)"
+    },
+    {
+      "fieldName": "flag_ultimo_per_cliente_rett",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo per Cliente/Sottostante Rett.",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_object_key_rett(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "compiti_sub_of_risposte",
+      "isHidden": false,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        },
+        {
+          "parent": "id_sondaggio",
+          "son": "id_sondaggio"
+        }
+      ],
+      "label": "Segnalazioni associate",
+      "type": "table"
+    },
+    {
+      "entryKey": "risposte_sub_of_domande",
+      "keys": [
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        }
+      ],
+      "label": "Risposte analoghe domande",
+      "type": "table"
+    },
+    {
+      "entryKey": "risposte_liv_inferiore",
+      "keys": [
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda_father"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test_father"
+        }
+      ],
+      "label": "Risp.liv.inf.altre verifiche",
+      "type": "table"
+    },
+    {
+      "entryKey": "risposte_liv_superiore",
+      "keys": [
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda_son"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test_son"
+        }
+      ],
+      "label": "Risp.liv.sup.altre verifiche",
+      "type": "table"
+    }
+  ],
+  "inputEvents": [
+    {
+      "actionTarget": {
+        "name": "sondaggi",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_sondaggio",
+            "destination": "id_sondaggio"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_sondaggi_from_risposta"
+    },
+    {
+      "actionTarget": {
+        "name": "modelli_test_vr",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_modello_test",
+            "destination": "id_modello_test"
+          },
+          {
+            "source": "id_modello_test_vr",
+            "destination": "id_modello_test_vr"
+          }
+        ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_modello_test_from_risposta"
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "quick-add",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "startEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "stopEvent",
+      "viewType": "form"
+    },
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "quick-add",
+      "viewType": "table"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "attachments"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by rp.id_sondaggio, rp.id_somministrazione limit 100"
+  }
+}

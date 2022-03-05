@@ -1,0 +1,119 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "domande_sub_of_controlli",
+  "origin": "entrasp.domande",
+  "businessObjectName": "domande",
+ "predefinedQueries": [
+   {
+     "operation": "selectTable",
+     "queryString": "select dmd.*, left(entrasp.modello_test_titolo(dmd.codice_azienda, dmd.id_modello_test), 130) as titolo_mt,substring(entrasp.domande_descrizione(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda), 1, 130) as domanda_transc, $id_argomento_generale$ as id_argomento_generale, $id_argomento_primo_strato$ as id_argomento_primo_strato from entrasp.domande dmd where dmd.codice_azienda=$codice_azienda$ and dmd.id_argomento in (select unnest(elenco_argomenti_controlli) from entrasp.controlli_configuration where id_argomento_primo_strato=$id_argomento_primo_strato$ and id_argomento_generale=$id_argomento_generale$)",
+     "type": "main"
+   }
+ ],
+ "restrictions": {
+   "preventNavigationToForm": true
+ },
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento_generale",
+      "label": "id_argomento_generale"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento_primo_strato",
+      "label": "id_argomento_primo_strato"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_presidio",
+      "label": "id_presidio"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_modello_test",
+      "label": "ID Modello di Verifica",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_modello_test_vr",
+      "label": "id_modello_test_vr",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_domanda",
+      "width": "5%",
+      "label": "ID domanda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo_mt",
+      "label": "Titolo Modello",
+      "width": "35%",
+      "sameOrigin": false
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "domanda_transc",
+      "label": "Domanda",
+      "width": "60%",
+      "sameOrigin": false,
+      "queryFunct": "substring(entrasp.domande_descrizione(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda), 1, 130)"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by dmd.id_modello_test"
+  }
+}
