@@ -6,7 +6,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select c1.*, cc.primo_strato_controllo, cc.secondo_strato_controllo from entrasp.controlli c1 inner join (select max(data_riferimento) as maxdata from entrasp.controlli where codice_azienda=$codice_azienda$) c2 on c1.data_riferimento=c2.maxdata inner join entrasp.controlli_configuration cc on c1.id_argomento_obiettivo=cc.id_argomento_obiettivo and c1.id_argomento_primo_strato=cc.id_argomento_primo_strato where c1.codice_azienda=$codice_azienda$",
+      "queryString": "select c1.*, entrasp.argomenti_descr_breve(c1.id_argomento_generale) as argomento_generale, cc.primo_strato_controllo, cc.secondo_strato_controllo from entrasp.controlli c1 inner join (select id_argomento_generale, max(data_riferimento) as maxdata from entrasp.controlli where codice_azienda=$codice_azienda$ group by id_argomento_generale) c2 on c1.data_riferimento=c2.maxdata and c1.id_argomento_generale=c2.id_argomento_generale inner join entrasp.controlli_configuration cc on c1.id_argomento_obiettivo=cc.id_argomento_obiettivo and c1.id_argomento_primo_strato=cc.id_argomento_primo_strato where c1.codice_azienda=$codice_azienda$",
       "type": "main"
     }
   ],
@@ -188,8 +188,8 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "secondo_strato_controllo",
-      "label": "2° Strato",
+      "key": "argomento_generale",
+      "label": "Contesto",
       "width": "15%"
     },
     {
@@ -402,6 +402,10 @@
     },
     {
       "formActionType": "startEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "attachments",
       "viewType": "form"
     },
     {
