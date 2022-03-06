@@ -11,7 +11,7 @@
     "label_revisioni": "File del flusso informativo"
   },
   "explorerOptions": {
-    "showExplorerView": true
+    "showExplorerView": false
   },
   "predefinedQueries": [
     {
@@ -21,7 +21,7 @@
     },
     {
       "operation": "selectTable",
-      "queryString": "select * from entrasp.folders_list('€global_codice_azienda€', '€global_username€');",
+      "queryString": "select *, entrasp.argomenti_codice_descr_breve(id_argomento_tipo_allegato) as descrizione_documento from entrasp.folders_list('€global_codice_azienda€', '€global_username€');",
       "type": "main"
     }
   ],
@@ -260,6 +260,15 @@
     },
     {
       "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "descrizione_documento",
+      "label": "descrizione_documento"
+    },
+    {
+      "format": {
         "dataType": "number"
       },
       "isHidden": true,
@@ -329,7 +338,65 @@
           }
         ]
       }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "crea_cartella",
+      "isButton": true,
+            "buttonAction": {
+                "target": "information_flows",
+                "viewType": "form",
+                "action": "query",
+                "query": "insert into entrasp.cdms_risorse(codice_azienda, id_risorsa, id_anagrafica, id_argomento_tipo_allegato, id_centro_gest, descrizione, descrizione_breve) select '£codice_azienda£', £id_risorsa£, £id_anagrafica£, £id_argomento_tipo_allegato£, £id_centro_gest£, '£descrizione_documento£', '£descrizione_documento£'",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_risorsa",
+                        "destination": "id_risorsa"
+                    },
+                    {
+                      "source": "id_anagrafica",
+                      "destination": "id_anagrafica"
+                    },          
+                    {
+                        "source": "id_argomento_tipo_allegato",
+                        "destination": "id_argomento_tipo_allegato"
+                    },
+                    {
+                        "source": "id_centro_gest",
+                        "destination": "id_centro_gest"
+                    },
+                    {
+                        "source": "descrizione_documento",
+                        "destination": "descrizione_documento"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Nuova cartella",
+                    "text": "Si vuole creare una nuova cartella?"
+                },
+                "onSuccessAction": "navigate",
+                "onSuccessActionKeymap": [
+                  {
+                    "source": "codice_azienda",
+                    "destination": "codice_azienda"
+                  },
+                  {
+                    "source": "id_risorsa",
+                    "destination": "id_risorsa"
+                  }                ]
+            },
+      "label": "Crea cartella"
     }
+   
   ],
   "hideActions": [
     {
@@ -352,5 +419,8 @@
       "viewType": "form",
       "formActionType": "multi-attachments"
     }
-  ]
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by crea_cartella, id_argomento_tipo_allegato, id_centro_gest, id_anagrafica"
+  }
 }
