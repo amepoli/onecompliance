@@ -412,7 +412,7 @@
       },
       {
         "label": "Riepilogo Risposte Date",
-        "queryString": "SELECT rp.* FROM entrasp.grc_riepilogo_risposte_date rp where rp.codice_azienda=$codice_azienda$"
+        "queryString": "SELECT rp.*, pr.data_inserimento FROM entrasp.grc_riepilogo_risposte_date rp inner join entrasp.sondaggi snd on rp.codice_azienda=snd.codice_azienda and rp.id_sondaggio=snd.id_sondaggio inner join entrasp.progetti_fasi pf on snd.id_sondaggio=pf.id_sondaggio and snd.codice_azienda =pf.codice_azienda inner join entrasp.progetti pr on pf.codice_azienda = pr.codice_azienda and pf.id_progetto = pr.id_progetto where rp.codice_azienda=$codice_azienda$"
       }
     ]
   },
