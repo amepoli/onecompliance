@@ -737,7 +737,7 @@
 			},
 			"label": "Progetti con verifiche incomplete",
 			"newLine": false,
-			"queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi_somministrati ss on pf.id_sondaggio=ss.id_sondaggio and pf.codice_azienda=ss.codice_azienda where pf.codice_azienda=$codice_azienda$ and ss.somministrazione_completata!='Completo' and pf.id_sondaggio is not null)"
+			"queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi_somministrati ss on pf.id_sondaggio=ss.id_sondaggio and pf.codice_azienda=ss.codice_azienda inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where pf.codice_azienda=$codice_azienda$ and (ss.somministrazione_completata!='Completo' or snd.sondaggio_completato!='Completo') and pf.id_sondaggio is not null)"
 		},
 		{
 			"fieldName": "progetti_con_fasi_confermate",
@@ -1115,7 +1115,7 @@
 			},
 			{
 				"label": "Pivot progetti",
-				"queryString": "select extract(year from prg.data_inserimento) as anno, att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) as stato, count(prg.id_progetto) from entrasp.progetti prg inner join entrasp.attivita att on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita where prg.codice_azienda=$codice_azienda$ group by extract(year from prg.data_inserimento), att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) order by extract(year from prg.data_inserimento), att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato)"
+				"queryString": "select extract(year from prg.data_inserimento) as anno, att.codice, att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) as stato, count(prg.id_progetto) from entrasp.progetti prg inner join entrasp.attivita att on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita where prg.codice_azienda=$codice_azienda$ group by extract(year from prg.data_inserimento), att.descrizione,  att.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) order by extract(year from prg.data_inserimento), att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato)"
 			},
 			{
 				"label": "Pivot progetti e sondaggi",
