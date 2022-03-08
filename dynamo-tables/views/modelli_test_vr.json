@@ -1007,14 +1007,15 @@
     ],
     "search_keys": [
         {
-            "fieldName": "id_modello_test_s",
+            "fieldName": "id_modello_test_list",
             "format": {
-                "dataType": "number",
+                "dataType": "text",
+                
                 "viewType": "input"
             },
-            "label": "Id Modello Verifica",
+            "label": "Lista id modelli verifica",
             "newLine": false,
-            "queryCond": "mt.id_modello_test=$id_modello_test_s$"
+            "queryCond": "mt.id_modello_test::varchar=any(string_to_array(replace($id_modello_test_list$, ' ', ''), ','))"
         },
         {
             "fieldName": "id_centro_gest",
@@ -1030,13 +1031,23 @@
         {
             "fieldName": "id_tipo_modello_test",
             "format": {
-                "comboQuery": "SELECT id_tipo_modello_test AS id,descrizione  AS name  FROM entrasp.tipi_modello_test;",
+                "comboQuery": "SELECT id_tipo_modello_test AS id,id_tipo_modello_test||'-'||descrizione  AS name  FROM entrasp.tipi_modello_test;",
                 "options": [],
                 "viewType": "combobox"
             },
             "label": "Tipo modello test",
             "newLine": false,
-            "queryCond": "mt.id_tipo_modello_test= $id_tipo_modello_test$"
+            "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test$"
+        },
+        {
+            "fieldName": "id_tipo_modello_test_list",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Lista ID tipi modello test",
+            "newLine": false,
+            "queryCond": "mt.id_tipo_modello_test::varchar=any(string_to_array(replace($id_tipo_modello_test_list$, ' ', ''), ','))"
         },
         {
             "fieldName": "titolo_search",
