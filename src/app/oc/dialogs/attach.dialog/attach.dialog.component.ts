@@ -34,7 +34,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChildren('newTypeRef') newTypeRef: QueryList<FormGetterComponent>;  // see https://expertcodeblog.wordpress.com/2018/01/12/angular-resolve-error-viewchild-annotation-returns-undefined/
 
     attach: boolean;
-
+    isSaving: boolean;
     progress: number;
 
     form: FormGroup;
@@ -250,6 +250,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         _this._console.log(event);
         _this.attach = false;
         if (_this.file != null) {
+            _this.isSaving = true;
             // get the S3 URL 
             const subscription = _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys).subscribe(
                 responseURL => {
@@ -311,6 +312,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                                 }
                                                 _this._console.log(responseCheck);
                                                 // Show success snackbar
+                                                _this.isSaving = false;
                                                 if (responseCheck.reason === 'File already loaded!') {
                                                     _this._toastService.showInfoToast("File already loaded");
                                                 }
@@ -320,12 +322,14 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                             }
                                             else {
                                                 // Show error snackbar
+                                                _this.isSaving = false;
                                                 _this._toastService.showErrorToast(responseCheck.reason);
                                             }
 
                                         },
                                         error => {
                                             // Show error snackbar
+                                            _this.isSaving = false;
                                             _this._toastService.showErrorToast(error);
                                         }
                                     );
@@ -336,6 +340,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     else {
                         // Show error snackbar
+                        _this.isSaving = false;
                         _this._toastService.showErrorToast(responseURL.reason);
                     }
                 }
