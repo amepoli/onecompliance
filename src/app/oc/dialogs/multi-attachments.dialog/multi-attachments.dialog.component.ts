@@ -34,7 +34,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
     @ViewChildren('newTypeRef') newTypeRef: QueryList<FormGetterComponent>;  // see https://expertcodeblog.wordpress.com/2018/01/12/angular-resolve-error-viewchild-annotation-returns-undefined/
 
     attach: boolean;
-
+    isSaving: boolean;
     progress: number;
 
     form: FormGroup;
@@ -252,10 +252,11 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
         const _this = this;
         _this.attach = false;
         if (_this.files != null && _this.files.length > 0) {
+            _this.isSaving = true;
             _this.savingFiles = true;
             _this.filesSaved = 0;
             let i = 0;
-            await _this.saveFile(i);            
+            await _this.saveFile(i);
         }
     }
 
@@ -318,19 +319,23 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                         if (_this.data.onSave) {
                             _this.data.onSave(true);
                         }
+                        _this.isSaving = false;
                     }
                 }
                 else {
                     // Show error snackbar
+                    _this.isSaving = false;
                     _this._toastService.showErrorToast(responseCheck.reason);
                 }
             }
             else {
                 // Show error snackbar
+                _this.isSaving = false;
                 _this._toastService.showErrorToast(responseURL.reason);
             }
         }
         catch(e) {
+            _this.isSaving = false;
             _this._toastService.showErrorToast(e);
         }
     }

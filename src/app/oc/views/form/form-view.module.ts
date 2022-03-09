@@ -41,6 +41,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatInputModule,
     MatCardModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     FileManagerModule,
     MatDialogModule,
     FormGetterModule

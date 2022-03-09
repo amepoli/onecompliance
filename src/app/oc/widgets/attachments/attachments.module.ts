@@ -15,6 +15,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AttachmentsComponent } from './attachments.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import { AttachmentsComponent } from './attachments.component';
     MatInputModule,
     MatCardModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatBadgeModule,
     MatDialogModule
   ],
