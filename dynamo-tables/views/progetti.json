@@ -1127,7 +1127,7 @@
 			},
 			{
 				"label": "Pivot progetti",
-				"queryString": "select extract(year from prg.data_inserimento) as anno, att.codice as codice_attivita_pk, att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) as stato, count(prg.id_progetto) from entrasp.progetti prg inner join entrasp.attivita att on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita where prg.codice_azienda=$codice_azienda$ group by extract(year from prg.data_inserimento), att.descrizione,  att.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) order by extract(year from prg.data_inserimento), att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato)"
+				"queryString": "select extract(year from prg.data_inserimento) as anno, att.codice, att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) as stato, count(prg.id_progetto) from entrasp.progetti prg left join entrasp.attivita att on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita where prg.codice_azienda=$codice_azienda$ group by extract(year from prg.data_inserimento), att.descrizione,  att.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) order by extract(year from prg.data_inserimento), att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato)"
 			},
 			{
 				"label": "Pivot progetti e sondaggi",
