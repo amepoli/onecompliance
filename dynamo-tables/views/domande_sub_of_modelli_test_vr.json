@@ -15,6 +15,11 @@
   ],
   "predefinedQueries": [
     {
+      "operation": "selectTable",
+      "queryString": "select codice_azienda, id_domanda, ordinamento, id_argomento, id_sezione, id_modello_test, id_modello_test_vr,descrizione, flag_non_applicabile_domanda, note, entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda) as modelli_test_risposte_possibili from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$",
+      "type": "main"
+    },
+    {
       "operation": "insert",
       "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, £id_domanda£, $ordinamento$, $id_sezione$, $id_template_rp$)",
       "type": "postProcessing"
@@ -463,7 +468,7 @@
       "isPrimary": false,
       "key": "descrizione",
       "label": "Domanda",
-      "width": "70%"
+      "width": "55%"
     },
     {
       "format": {
@@ -480,12 +485,22 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "note",
-      "width": "15%",
       "label": "Note"
-    }
+    },
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "modelli_test_risposte_possibili",
+			"queryFunct": "entrasp.risposte_previste_mostra1('€global_codice_part€', id_cliente)",
+			"label": "Risposte Possibili",
+			"width": "20%"
+		}
   ],
   "hideActions": [
     {
