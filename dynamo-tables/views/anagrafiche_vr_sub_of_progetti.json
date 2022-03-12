@@ -1,0 +1,49 @@
+{
+    "$schema": "../views.schema.json",
+    "inheritsFrom": "anagrafiche_vr",
+    "entryKey": "anagrafiche_vr_sub_of_progetti",
+    "define": {
+        "is_hidden_codice_part": "true",
+        "is_hidden_ruolo": "false",
+        "is_hidden_ruolo2": "false",
+        "is_hidden_contratti_sottoscritti": "true"
+    },
+     "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "SELECT pr.id_ruolo, pr.descr_ruolo, an.codice, an.codice_part, an.id_anagrafica, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as nmrs, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva, '€global_codice_azienda€' as codice_azienda FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica inner join entrasp.privacy_ruolo(an.codice_part, an.id_anagrafica) pr on an.codice_part=pr.codicepart and an.id_anagrafica=pr.idanagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and an.id_anagrafica!=(select az.id_anagrafica from entrasp.aziende az where az.codice_azienda=$codice_azienda$ limit 1) and an.id_anagrafica::text in(select replace(object_key,'€global_codice_part€'||'|','')  from entrasp.sondaggi_somministrati ss inner join entrasp.progetti_fasi pf on ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio where ss.codice_azienda=$codice_azienda$ and ss.object_name='anagraficheId' and pf.id_progetto=$id_progetto$)",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', idcentrogestdefault=>$id_centro_gest_default$, tiposoggetto=>$tipo_soggetto$, codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>$ragione_sociale$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$);",
+            "type": "main"
+        },
+        {
+            "operation": "update",
+            "queryString": "update entrasp.anagrafiche_vr avr set codice_fiscale=$codice_fiscale$ from entrasp.anagrafiche_id an where avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica and dynamo_user='€global_userid€' and length(avr.codice_fiscale)<16 and an.tipo_soggetto='P' and length($codice_fiscale$)=16;",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_anagrafica$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select codice from entrasp.anagrafiche_id where codice_part=$codice_part$ and codice=$codice$",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice!"
+        },
+        {
+            "operation": "update",
+            "queryString": "SELECT entrasp.anagrafica_id_update(idcentrogestdefault=> $id_centro_gest_default$, codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, codicetipodoc=>$codice_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date);",
+            "type": "main"
+        },
+        {
+            "operation": "delete",
+            "queryString": "SELECT entrasp.anagrafica_id_delete($codice_part$, '€global_codice_azienda€', $id_anagrafica$);",
+            "type": "main"
+        }
+    ]
+}
