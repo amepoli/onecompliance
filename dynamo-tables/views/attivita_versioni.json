@@ -1,0 +1,94 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "attivita_versioni",
+    "inheritsFrom": "attivita",
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select codice_attivita, codice_azienda, attivita_vr, note_vr from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita::varchar=$codice_attivita$::varchar;"
+        },
+        {
+            "operation": "insert",
+            "queryString": "update entrasp.attivita att set codice_part='€global_codice_part€' where att.codice_azienda=$codice_azienda$ and att.codice_part is null",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "update",
+            "queryString": "update entrasp.attivita att set codice_part='€global_codice_part€' where att.codice_azienda=$codice_azienda$ and att.codice_part is null",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "delete",
+            "queryString": "delete from entrasp.attivita att where entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita)=$codice_attivita$ and att.codice_azienda=$codice_azienda$",
+            "type": "main"
+        },
+        {
+            "type": "main",
+            "operation": "share",
+            "queryString": "select entrasp.grc_accoda_attivita_e_relativi_modelli('$codice_azienda$', '$chosen_azienda$', '$codice_attivita$');"
+        },
+        {
+            "type": "preCheck",
+            "operation": "share",
+            "queryString": "select distinct mt.codice_azienda, mt.id_modello_test from entrasp.attivita att inner join entrasp.modelli_test mt on att.codice_azienda=mt.codice_azienda and att.id_modello_test=mt.id_modello_test where att.codice_azienda='$codice_azienda$' and entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita)='$codice_attivita$' and mt.id_argomento is null;",
+            "messageNotNull": "Attenzione esistono modelli di test associati a questo modello di progetto senza argomento!"
+        },
+        {
+            "operation": "delete",
+            "type": "preCheck",
+            "queryString": "select codice_attivita from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_attivita=$codice_attivita$",
+            "messageNotNull": "Aggiornamento: il modello è referenziato da un progetto. Cancellare i progetti associati prima di cancellare il presente modello!"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'attivita', '$codice_attivita$', '$codice_azienda$'::varchar) as play_time_report"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_attivita",
+            "label": "codice_attivita"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "attivita_vr",
+            "label": "Versione",
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note_vr",
+            "label": "Note",
+            "width": "92%"
+        }
+    ]
+}

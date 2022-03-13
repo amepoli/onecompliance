@@ -6,7 +6,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select att.codice_attivita, att.codice_azienda, att.codice, att.ordinamento, att.descrizione, att.id_centro_gest, att.codice_part,  att.id_modello_test, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest, entrasp.grc_max_id_mdt_vr(att.codice_azienda, att.id_modello_test) as id_modello_test_vr from entrasp.attivita att where codice_azienda=$codice_azienda$ and codice_attivita_parent = $codice_attivita_parent$ and data_fine_validita is null;"
+            "queryString": "select att.codice_attivita, att.codice_azienda, att.codice, att.ordinamento, att.descrizione, att.id_centro_gest, att.codice_part,  att.id_modello_test, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita, attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest, entrasp.grc_max_id_mdt_vr(att.codice_azienda, att.id_modello_test) as id_modello_test_vr from entrasp.attivita att where att.codice_azienda=$codice_azienda$ and att.codice_attivita_parent = $codice_attivita_parent$ and att.attivita_vr = $attivita_vr$ and att.data_fine_validita is null;"
         }
     ],
     "table_keys": [
@@ -37,6 +37,16 @@
             "key": "codice_attivita",
             "label": "Cod. attività (PK)",
             "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "attivita_vr",
+            "label": "Vr",
+            "width": "4%"
         },
         {
             "format": {
