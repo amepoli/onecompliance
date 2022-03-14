@@ -3,10 +3,11 @@
     "entryKey": "anagrafiche_vr_sub_of_anagrafiche_vr",
     "origin": "entrasp.anagrafiche_vr",
     "businessObjectName": "anagraficheId",
+    "inheritsFrom": "anagrafiche_vr",
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "SELECT an.codice_part, an.id_anagrafica, coalesce(an.nome||' '||an.cognome, avr.ragione_sociale) as nmrs, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica WHERE an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$;",
+            "queryString": "SELECT an.codice_part, avr.prog_vr, avr.codice_fiscale, avr.partita_iva, avr.codice_fiscale, avr.partita_iva, entrasp.transcodifiche_transcodifica('TIPO_DOC_IDENT',an.tipo_soggetto)as tipo_doc_ident, avr.data_scadenza_documento, indirizzo, localita FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica WHERE an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$;",
             "type": "main"
         },
         {
@@ -47,8 +48,70 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "prog_vr",
-            "label": "Versione"
+            "label": "Versione",
+            "width": "5%"
         },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_doc_ident",
+            "label": "Documento identificativo",
+            "width": "15%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "data_scadenza_documento",
+            "label": "Scadenza documento",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "partita_iva",
+            "width": "10%",
+            "label": "P.IVA"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_fiscale",
+            "width": "10%",
+            "label": "Cod. Fiscale"
+        }, 
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "indirizzo",
+            "width": "20%",
+            "label": "Indirizzo"
+        }, 
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "localita",
+            "width": "15%",
+            "label": "Località"
+        }, 
+        
         {
             "format": {
                 "dataType": "number"
@@ -56,7 +119,6 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "id_anagrafica",
-            "width": "5%",
             "label": "ID"
         }
     ]

@@ -1068,15 +1068,15 @@
     ],
     "search_keys": [
         {
-            "fieldName": "id_modello_test",
+            "fieldName": "id_modello_test_list",
             "format": {
-                "comboQuery": "SELECT id_modello_test AS id, id_modello_test||' - '||titolo AS name  FROM entrasp.modelli_test WHERE codice_azienda='€global_codice_azienda€';",
-                "options": [],
-                "viewType": "combobox"
+                "dataType": "text",
+                "viewType": "input"
             },
-            "label": "Id Modello di Verifica",
+            "label": "Lista id modelli verifica",
             "newLine": false,
-            "queryCond": "snd.id_modello_test=$id_modello_test$"
+            "size": 2.5,
+            "queryCond": "snd.id_modello_test::varchar=any(string_to_array(replace($id_modello_test_list$, ' ', ''), ','))"
         },
         {
             "fieldName": "id_tipo_modello_test",
@@ -1085,8 +1085,9 @@
                 "options": [],
                 "viewType": "combobox"
             },
-            "label": "Tipo modello test",
+            "label": "Tipo modello verifica",
             "newLine": false,
+            "size": 3.5,
             "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test$"
         },
         {
@@ -1097,6 +1098,7 @@
             },
             "label": "ID Sondaggio",
             "newLine": false,
+            "size": 1.5,
             "queryCond": "snd.id_sondaggio=$id_sondaggio$"
         },
         {
@@ -1107,6 +1109,7 @@
             },
             "label": "Data Competenza",
             "newLine": true,
+            "size": 2.5,
             "queryCond": "snd.data_comp='€data_comp€'"
         },
         {
@@ -1979,7 +1982,6 @@
             {
                 "label": "Relazioni Annuali",
                 "queryString": "select snd.id_sondaggio, snd.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_automatico, cp.risultati_emersi, cp.proposte_formulate, cp.follow_up from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$"
-
             }
         ],
         "formQueries": [

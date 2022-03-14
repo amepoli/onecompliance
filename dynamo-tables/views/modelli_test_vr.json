@@ -1176,6 +1176,36 @@
     ],
     "subTables": [
         {
+            "entryKey": "domande_sub_of_modelli_test_vr",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "flag_sezioni",
+                    "condition": "equalTo",
+                    "values": [
+                        "false"
+                    ]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                },
+                {
+                    "parent": "id_modello_test_vr",
+                    "son": "id_modello_test_vr"
+                }
+            ],
+            "label": "Domande New",
+            "type": "table"
+        },
+        {
             "entryKey": "domande",
             "inputEvents": [
                 {
@@ -1378,7 +1408,7 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "width": "45%",
+            "width": "43%",
             "queryFunct": "select titolo from entrasp.modello_test_fields(codice_azienda, id_modello_test)"
         },
         {
@@ -1389,7 +1419,7 @@
             "isPrimary": false,
             "key": "centro_gest",
             "label": "Centro Gestionale",
-            "width": "15%"
+            "width": "14%"
         },
         {
             "format": {
@@ -1398,7 +1428,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_tipo_modello_test",
-            "width": "9%",
+            "width": "8%",
             "label": "Tipo"
         },
         {
@@ -1425,7 +1455,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "6%",
+            "width": "10%",
             "queryFunct": "select true",
             "key": "create_somministrazione",
             "label": "Crea Verifica",
@@ -1691,11 +1721,15 @@
             },
             {
                 "label": "Risposte previste modelli test",
-                "queryString": "select mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda, dm.descrizione, rp.id_risposta_prev, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where mt.id_modello_test in(44, 23, 45, 52, 46, 53, 50, 54, 42,55) and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda"
+                "queryString": "select mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda, dm.descrizione, rp.id_risposta_prev, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where mt.id_modello_test = $id_modello_test$ and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda"
             },
             {
                 "label": "Conta risposta nelle verifiche con modello e anno",
-                "queryString": "select extract(year from snd.data_esecuzione) as anno, rs.id_modello_test, rs.id_modello_test_vr, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda) as sezione, entrasp.domande_descrizione(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda) as domanda,  rs.punteggio, entrasp.risposte_previste_risposta(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev) as risposta, rs.peso, count(rs.id_risposta) from entrasp.risposte rs inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test=$id_modello_test$ group by extract(year from snd.data_esecuzione), rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev, rs.punteggio,rs.peso, rs.id_risposta_prev order by extract(year from snd.data_esecuzione), entrasp.domande_sezioni_ord_da_dm(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda), id_modello_test, id_modello_test_vr, id_domanda, id_risposta_prev"
+                "queryString": "select extract(year from snd.data_esecuzione) as anno, rs.id_modello_test, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione1(rs.codice_azienda, rs.id_modello_test,  rs.id_domanda) as sezione, id_domanda, entrasp.domande_descrizione1(rs.codice_azienda, rs.id_modello_test,  rs.id_domanda) as domanda,  rs.punteggio, entrasp.risposte_previste_risposta1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda, rs.id_risposta_prev) as risposta, max(rs.peso), count(rs.id_risposta) from entrasp.risposte rs inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test = $id_modello_test$ group by extract(year from snd.data_esecuzione), rs.codice_azienda, rs.id_modello_test, rs.id_domanda, rs.id_risposta_prev, rs.punteggio order by extract(year from snd.data_esecuzione), entrasp.domande_sezioni_ord_da_dm1(rs.codice_azienda, rs.id_modello_test,  rs.id_domanda), id_modello_test, id_domanda, id_risposta_prev"
+            },
+            {
+                "label": "Conta risposta (con versioni) nelle verifiche con modello e anno",
+                "queryString": "select extract(year from snd.data_esecuzione) as anno, rs.id_modello_test, rs.id_modello_test_vr, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda) as sezione, id_domanda, entrasp.domande_descrizione(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda) as domanda,  rs.punteggio, entrasp.risposte_previste_risposta(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev) as risposta, rs.peso, count(rs.id_risposta) from entrasp.risposte rs inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test=$id_modello_test$ group by extract(year from snd.data_esecuzione), rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev order by extract(year from snd.data_esecuzione), entrasp.domande_sezioni_ord_da_dm(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda), id_modello_test, id_modello_test_vr, id_domanda, id_risposta_prev"
             }
         ],
         "tableQueries": [

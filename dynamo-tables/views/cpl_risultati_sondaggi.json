@@ -88,12 +88,57 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "size": 9,
       "key": "proposte_formulate",
       "label": "Proposte Formulate",
-      "newLine": true,
+      "newLine": false,
       "textareaHeight": "L",
       "readOnly": false
     },
+    {
+      "autoGenerate": false,
+      "format": {
+          "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "report_problem",
+      "key": "create_segnalazione",
+      "label": "Segnalazione",
+      "newLine": true,
+      "outputEvent": {
+          "eventName": "compito_create_riepilogo",
+          "eventTrigger": "press"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+  },
+  {
+    "autoGenerate": false,
+    "format": {
+        "dataType": "text",
+        "viewType": "input"
+    },
+    "isHidden": true,
+    "isPrimary": false,
+    "inputEvents": [
+        {
+            "eventName": "compito_create_riepilogo",
+            "actionType": "query",
+            "queryFunct": "select entrasp.compiti_rif_bo_insert('sondaggi', $proposte_formulate$, $codice_azienda$, $id_sondaggio$) as codice_compito_created_riepilogo",
+            "condition": "none",
+            "values": [],
+            "outputEventWhenComplete": "to_compito_created_riepilogo"
+        }
+    ],
+    "key": "codice_compito_created_riepilogo",
+    "label": "codice_compito_created_riepilogo",
+    "sameOrigin": false,
+    "newLine": false,
+    "readOnly": true
+},
+
     {
       "autoGenerate": false,
       "format": {
@@ -212,5 +257,26 @@
       "formActionType": "import_export",
       "viewType": "form"
     }
+  ],
+  "inputEvents": [
+    {
+      "actionTarget": {
+          "name": "compiti",
+          "type": "form",
+          "keymap": [
+              {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+              },
+              {
+                  "source": "codice_compito_created_riepilogo",
+                  "destination": "codice_compito"
+              }
+          ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_compito_created_riepilogo"
+  }
   ]
+
 }
