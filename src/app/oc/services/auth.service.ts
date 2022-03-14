@@ -447,7 +447,7 @@ export class AuthService {
   }
 
   loadGoogleAuth() {
-    const timeNow = (new Date()).getTime()/1000;
+    const timeNow = (new Date()).getTime();
     // sessionStorage.removeItem('googleAuth');
     let sessionAuthResponse = sessionStorage.getItem('googleAuth');
     if(sessionAuthResponse) {
@@ -478,9 +478,10 @@ export class AuthService {
               client_id: appData.GAPI_CLIENT_ID,
               fetch_basic_profile: true,
               offline_access: true,
-              prompt: 'none',
-              scope: 'profile email https://mail.google.com/'
+              immediate: false,
+              scope: 'profile email https://mail.google.com https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.file'
           });
+          // https://www.googleapis.com/auth/drive.file 
           _this.gAuth = gAuth;
           resolve(gAuth);
       }, reject);
@@ -496,15 +497,19 @@ export class AuthService {
       // await _this.initGoogleOAuth(true);
       // const oAuthUser = _this.gAuth.signIn();
                   
-      _this.loadEmailThreads(null);
+      //_this.loadEmailThreads(null);
       // _this.loadMessages(['INBOX'], 0, 'fanatical');
       console.log('already logged in!');
+      console.log(sessionGoogleAuth);
+      //console.log((new Date()).getTime() - sessionGoogleAuth.expires_at);
+      _this.loadDriveContents(null);
+      
       return null;
     }
     else {
       const gAuth = await _this.initGoogleOAuth();                
       const oAuthUser = await gAuth.signIn();
-      // console.log(oAuthUser);
+      console.log(oAuthUser);
       
       // var auth_code = await gAuth.grantOfflineAccess();
       // console.log(auth_code);
@@ -520,7 +525,7 @@ export class AuthService {
       // console.log(authResponse);
       _this.saveGoogleAuth(authResponse);
       
-      _this.loadEmailThreads(null);
+      _this.loadDriveContents(null);
       // _this.loadLabels();
       // _this.loadMessages(['INBOX'], 0, 'fanatical');
 
@@ -560,6 +565,17 @@ export class AuthService {
 
   loadEmailThreads(search: string = null) {
     this.backendService.getEmailThreads(search, this.loadGoogleAuth()).subscribe(
+      result => {
+        console.log(result);
+      },
+      error => {
+        console.error(error);
+      }
+    )
+  }
+
+  loadDriveContents(search: string = null) {
+    this.backendService.getDriveContents(search, this.loadGoogleAuth()).subscribe(
       result => {
         console.log(result);
       },

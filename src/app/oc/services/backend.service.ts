@@ -351,6 +351,17 @@ export class BackendService {
   
   }
 
+  getDriveContents(search: string, authToken: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'getDriveContents', search: search };
+    this.myPutPostInit.body = authToken;
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
+  
+    // this.myGetInit.queryStringParameters = { request_type: 'GetEmailThreads' };
+    // return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
+  
+  }
+
   loadHomePage(entryName: string, company: string): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, homepage: 1};
