@@ -66,3 +66,6 @@ dynamo_files=(dynamo-input/*.json)
 for d in "${dynamo_files[@]}"; do
     aws dynamodb batch-write-item --request-items file://$d  
 done
+
+echo "Backing up the user pool (requires cbr command --> 'npm i -g cognito-backup-restore' )"
+cbr backup --pool eu-central-1_pg3Vcup3R --profile default --region eu-central-1 --dir ../../backup
