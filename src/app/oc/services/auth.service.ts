@@ -503,7 +503,8 @@ export class AuthService {
       console.log(sessionGoogleAuth);
       //console.log((new Date()).getTime() - sessionGoogleAuth.expires_at);
       _this.loadDriveContents(null);
-      
+      // _this.createDriveFolder('OneCompliance');
+
       return null;
     }
     else {
@@ -526,6 +527,8 @@ export class AuthService {
       _this.saveGoogleAuth(authResponse);
       
       _this.loadDriveContents(null);
+      // _this.createDriveFolder('OneCompliance');
+
       // _this.loadLabels();
       // _this.loadMessages(['INBOX'], 0, 'fanatical');
 
@@ -575,15 +578,14 @@ export class AuthService {
   }
 
   loadDriveContents(search: string = null) {
-    this.backendService.getDriveContents(search, this.loadGoogleAuth()).subscribe(
-      result => {
-        console.log(result);
-      },
-      error => {
-        console.error(error);
-      }
-    )
+    return this.backendService.getDriveContents(search, this.loadGoogleAuth());
   }
+
+  createDriveFolder(folder: string) {
+    return this.backendService.createDriveFolder(folder, this.loadGoogleAuth());
+  }
+
+  
 
   loadMessages(labelIds: string[], pageNumber: number = 0, searchText: string = ''): Promise<any> {
     return new Promise((resolve, reject) => {
