@@ -48,12 +48,12 @@
         {
             "type": "main",
             "operation": "insert",
-            "queryString": "select id_modello_test, id_modello_test_vr from entrasp.modello_test_insert(codiceazienda=>$codice_azienda$::varchar, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar) , id_filtro_selezione=>coalesce($id_filtro_selezione$,0), documentazione_necessaria=>coalesce($documentazione_necessaria$,(select string_agg(distinct entrasp.argomenti_descr_breve(id_argomento_documento),'; ') from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$)),flag_sezioni=>coalesce($flag_sezioni$::bpchar,0::bpchar), giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$, codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, idmodellotestvr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::boolean, stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean);"
+            "queryString": "select id_modello_test, id_modello_test_vr from entrasp.modello_test_insert(codiceazienda=>$codice_azienda$::varchar, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar) , id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>coalesce($flag_sezioni$::bpchar,0::bpchar), giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$, codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, idmodellotestvr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::boolean, stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean);"
         },
         {
             "type": "main",
             "operation": "update",
-            "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar), id_filtro_selezione=>coalesce($id_filtro_selezione$,0), documentazione_necessaria=>coalesce($documentazione_necessaria$,(select string_agg(distinct entrasp.argomenti_descr_breve(id_argomento_documento),'; ') from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test= $id_modello_test$)), flag_sezioni=>coalesce($flag_sezioni$::bpchar,0::bpchar), giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$,codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::boolean, stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean );"
+            "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar), id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>coalesce($flag_sezioni$::bpchar,0::bpchar), giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$,codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::boolean, stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean );"
         },
         {
             "operation": "insert",
@@ -240,7 +240,7 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "select entrasp.sondaggio_insert_from_list($codice_azienda$, $id_modello_test$) as new_id_sondaggio;",
+                    "queryFunct": "select sondaggio_insert_from_list as new_id_sondaggio from entrasp.sondaggio_insert_from_list($codice_azienda$, $id_modello_test$);",
                     "outputEventWhenComplete": "navigate_to_sondaggio"
                 },
                 {
@@ -248,7 +248,7 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "select sondaggio_insert as new_id_sondaggio from entrasp.sondaggio_insert(codiceazienda=>$codice_azienda$, titolo=>$titolo$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, documentazione=>$documentazione_necessaria$, descrizione=>$descrizione$, idcentrogest=>$id_centro_gest$, username => '€global_username€');",
+                    "queryFunct": "select sondaggio_insert as new_id_sondaggio from entrasp.sondaggio_insert(codiceazienda=>$codice_azienda$, titolo=>$titolo$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, descrizione=>$descrizione$, idcentrogest=>$id_centro_gest$, username => '€global_username€');",
                     "outputEventWhenComplete": "calculate_new_id_somministrazione"
                 },
                 {
@@ -502,6 +502,11 @@
                         "icon": "delete",
                         "label": "Elimina versione corrente",
                         "outputEventName": "elimina_ver_corrente_mdt"
+                    },
+                    {
+                        "icon": "label",
+                        "label": "Tagga tutte le domande",
+                        "outputEventName": "tagga_domande"
                     }
                 ]
             },
@@ -537,6 +542,14 @@
                     "successMessage": "Versione eliminata",
                     "values": [],
                     "queryFunct": "select entrasp.modelli_test_elimina_versione_corrente($codice_azienda$,$id_modello_test$, $id_modello_test_vr$);"
+                },
+                {
+                    "eventName": "tagga_domande",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Domande taggate correttamente",
+                    "values": [],
+                    "queryFunct": "select entrasp.argomenti_create_and_update_domande(codice_azienda, id_domanda, id_modello_test, id_modello_test_vr, descrizione, descrizione, 574) from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_argomento is null;"
                 }
             ],
             "isHidden": false,
@@ -578,20 +591,18 @@
             "readOnly": false
         },
         {
-            "autoGenerate": false,
             "format": {
-                "dataType": "text",
-                "viewType": "textarea"
+                "viewType": "input",
+                "dataType": "text"
             },
-            "queryFunct": "SELECT documentazione_necessaria from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "size": 5,
             "isHidden": false,
             "isPrimary": false,
-            "key": "documentazione_necessaria",
-            "label": "Documentazione Necessaria",
-            "newLine": false,
-            "size": 5,
-            "textareaHeight": "M",
-            "readOnly": false
+            "label": "Note revisione",
+            "key": "note_revisione",
+            "sameOrigin": false,
+            "readOnly": false,
+            "newLine": true
         },
         {
             "autoGenerate": false,
