@@ -134,6 +134,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     subscriptions: Subscription[] = [];
 
     showExplorer = false;
+    explorerSource: "table-view" | "google-drive" = "table-view";
+    
     foldersSource: object[] = [];
     folders: string[] = [];
 
@@ -255,13 +257,25 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
                     _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
-                    _this.loadTableInfo();
                     if(result.data.explorerOptions && result.data.explorerOptions.showExplorerView) {
                         _this.showExplorer = true;
                     }
                     else {
                         _this.showExplorer = false;
                     }
+                    if(result.data.explorerOptions && result.data.explorerOptions.explorerSource) {
+                        _this.explorerSource = result.data.explorerOptions.explorerSource;
+                    }
+                    else {
+                        _this.explorerSource = 'table-view';
+                    }
+                    if(_this.explorerSource != 'google-drive') {
+                        _this.loadTableInfo();
+                    }
+                    else {
+                        _this.loadDriveContents();
+                    }
+                    
                     _this._console.log(_this.viewKeys);
                     
                     const key_values = {};
@@ -783,19 +797,29 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     goInside(index: number, row: any) {
         if(!this.restrictions || !this.restrictions.preventNavigationToForm) {
-            if('' + row.id_risorsa == '0'){
-                this.selectedRow = row;
-                this.currentKeys = row;
-                // this.currentKeys.liv++;
-                if(!this.tableData.entryName.endsWith('_liv2')) {
-                    this.tableData.entryName = this.tableData.entryName + "_liv2";
+            if(this.explorerSource == 'table-view') {
+                // table-view
+                if('' + row.id_risorsa == '0'){
+                    this.selectedRow = row;
+                    this.currentKeys = row;
+                    // this.currentKeys.liv++;
+                    if(!this.tableData.entryName.endsWith('_liv2')) {
+                        this.tableData.entryName = this.tableData.entryName + "_liv2";
+                    }
+                    // this.loadTable(null);
+                    const mergedParams = { entry: { name: this.tableData.entryName, type: 'explorer' }, keys: row, index: index + 1, total: this.keysArray.length };
+                    this.navigate(mergedParams);
                 }
-                // this.loadTable(null);
-                const mergedParams = { entry: { name: this.tableData.entryName, type: 'explorer' }, keys: row, index: index + 1, total: this.keysArray.length };
-                this.navigate(mergedParams);
+                else {
+                    // Do nothing, cannot go inside further
+                }
             }
             else {
+                // google drive mode
+
             }
+
+            
         }
     }
 
@@ -1177,5 +1201,24 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     downloadAdvancedExcel(item: ExportItem): void {
         this._importExportService.downloadExcel(this.tableData.entryName, this.authService.getCurrentCompany(this.currentKeys), this.tableData.keys, null, false, {}, item.label);
+    }
+
+    loadDriveContents() {
+        let _this = this;
+        _this.isLoading = true;
+        _this.authService.loadDriveContents(null).subscribe(
+            result => {
+                if(result['result'] === 'OK') {
+                    _this.foldersSource = result['data'].filter(x => x['mimeType'] === 'application/vnd.google-apps.folder');
+                    _this.folders = _this.foldersSource.map( x => x['name']);
+                }
+                console.log(result);
+                _this.isLoading = false;
+            },
+            error => {
+              console.error(error);
+              _this.isLoading = false;
+            }
+        );
     }
 }
