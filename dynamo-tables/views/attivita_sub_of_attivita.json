@@ -6,7 +6,49 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select att.codice_attivita, att.codice_azienda, att.codice, att.ordinamento, att.descrizione, att.id_centro_gest, att.codice_part,  att.id_modello_test, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita, attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest, entrasp.grc_max_id_mdt_vr(att.codice_azienda, att.id_modello_test) as id_modello_test_vr from entrasp.attivita att where att.codice_azienda=$codice_azienda$ and att.codice_attivita_parent = $codice_attivita_parent$ and att.attivita_vr = $attivita_vr$ and att.data_fine_validita is null;"
+            "queryString": "select att.codice_attivita, att.attivita_vr, att.codice_attivita_parent, att.codice_azienda, att.codice, att.ordinamento, att.descrizione, att.id_centro_gest, att.codice_part,  att.id_modello_test, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita, attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest, entrasp.grc_max_id_mdt_vr(att.codice_azienda, att.id_modello_test) as id_modello_test_vr from entrasp.attivita att where att.codice_azienda=$codice_azienda$ and att.codice_attivita_parent = $codice_attivita_parent$ and att.attivita_vr = $attivita_vr$;"
+        },
+        {
+            "operation": "insert",
+            "queryString": "select entrasp.attivita_order_and_settle($codice_azienda$, $codice_attivita$, $attivita_vr$);",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "update",
+            "queryString": "select entrasp.attivita_order_and_settle($codice_azienda$, $codice_attivita$, $attivita_vr$)",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "delete",
+            "queryString": "delete from entrasp.attivita att where entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr)=$codice_attivita$ and att.codice_azienda=$codice_azienda$",
+            "type": "main"
+        },
+        {
+            "type": "main",
+            "operation": "share",
+            "queryString": "select entrasp.grc_accoda_attivita_e_relativi_modelli('$codice_azienda$', '$chosen_azienda$', '$codice_attivita$');"
+        },
+        {
+            "type": "preCheck",
+            "operation": "share",
+            "queryString": "select distinct mt.codice_azienda, mt.id_modello_test from entrasp.attivita att inner join entrasp.modelli_test mt on att.codice_azienda=mt.codice_azienda and att.id_modello_test=mt.id_modello_test where att.codice_azienda='$codice_azienda$' and entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr)='$codice_attivita$' and mt.id_argomento is null;",
+            "messageNotNull": "Attenzione esistono modelli di test associati a questo modello di progetto senza argomento!"
+        },
+        {
+            "operation": "delete",
+            "type": "preCheck",
+            "queryString": "select codice_attivita from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_attivita=$codice_attivita$",
+            "messageNotNull": "Aggiornamento: il modello è referenziato da un progetto. Cancellare i progetti associati prima di cancellare il presente modello!"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'attivita', '$codice_attivita$', '$codice_azienda$'::varchar) as play_time_report"
         }
     ],
     "table_keys": [
@@ -23,7 +65,7 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": false,
             "key": "codice_attivita_parent",
             "label": "codice_attivita_parent"
