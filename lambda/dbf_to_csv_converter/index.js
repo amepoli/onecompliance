@@ -9,7 +9,7 @@ const folders = ['batch/finafarm/upload']; //['batch/finafarm'];
 const columnsList = {
     "analeas.dbf": ['IDANACLI', 'NUMCONTR', 'DATA_CON', 'DT_SOSP', 'DESCRIZ', 'DTSTIPULA'],
     "anacont.dbf": ['IDANACLI', 'PKTBTIPCON', 'DESCRI', 'NUMCONT',  'DATA_INI', 'DT_SOSP'], //tolto 'DESCOGE',
-    "anacli.dbf": ['IDBASE','CODCLI', 'RAGSOC', 'COGNOME', 'NAME', 'IND_SL', 'CAP_SL', 'STATO_SL', 'CODFISC', 'PIVA', 'DAT_NASC', 'SESSO', 'CLIFOR'] //tolto 'TELEF', 'FAX', 'EMAIL'
+    "anacli.dbf": ['IDBASE','CODCLI', 'RAGSOC', 'COGNOME', 'NAME', 'IND_SL', 'CAP_SL', 'STATO_SL', 'CODFISC', 'PIVA', 'DAT_NASC', 'SESSO', 'CLIFOR', 'PKTBSPECIE'] //tolto 'TELEF', 'FAX', 'EMAIL'
 };
 
 async function getFilesList(folder, bucket) {

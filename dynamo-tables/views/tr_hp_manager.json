@@ -222,7 +222,6 @@
       ],
       "isButton": true,
       "buttonAction": {
-        "target": "tr_hp_manager",
         "viewType": "form",
         "query": "select entrasp.inserisci_ferie('£giorno£', '£employer£', '£dynamo_user£')",
         "action": "query",
@@ -240,7 +239,22 @@
             "destination": "dynamo_user"
           }
         ],
-        "onSuccessAction": "reload"
+        "onSuccessAction": "navigate",
+        "target": "mie_ferie",
+        "onSuccessActionKeymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "giorno",
+            "destination": "data"
+          },
+          {
+            "source": "dynamo_user",
+            "destination": "dynamo_user"
+          }
+        ]
       }
     },
     {
@@ -261,7 +275,6 @@
       ],
       "isButton": true,
       "buttonAction": {
-        "target": "tr_hp_manager",
         "viewType": "form",
         "query": "select entrasp.inserisci_ferie('£giorno£'::date, '£employer£', '£dynamo_user£', '£giorno£'::date +interval '1080 minutes', '£giorno£'::date + interval '1080 minutes' + £minuti_mancanti£*interval '1 minute')",
         "action": "query",
@@ -283,12 +296,27 @@
             "destination": "minuti_mancanti"
           }
         ],
-        "onSuccessAction": "reload"
+        "onSuccessAction": "navigate",
+        "target": "mie_ferie",
+        "onSuccessActionKeymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "giorno",
+            "destination": "data"
+          },
+          {
+            "source": "dynamo_user",
+            "destination": "dynamo_user"
+          }
+        ]
       }
     },
     {
       "format": {
-          "dataType": "number"
+        "dataType": "number"
       },
       "isHidden": true,
       "isPrimary": false,
@@ -298,35 +326,34 @@
       "label": "Dettaglio",
       "isButton": true,
       "buttonAction": {
-          "target": "consuntivazioni_consultant_list_per_giorno",
-          "viewType": "table",
-          "action": "query",
-          "query": "select 1",
-          "keymap": [
-              {
-                  "source": "codice_azienda",
-                  "destination": "codice_azienda"
-              },
-              {
-                  "source": "giorno",
-                  "destination": "date_time_begin"
-              }
-          ],
-          "confirmAction": false,
-          "onSuccessAction": "navigate",
-          "onSuccessActionKeymap": [
-              {
-                  "source": "codice_azienda",
-                  "destination": "codice_azienda"
-              },
-              {
-                  "source": "giorno",
-                  "destination": "date_time_begin"
-              }
-          ]
+        "target": "consuntivazioni_consultant_list_per_giorno",
+        "viewType": "table",
+        "action": "query",
+        "query": "select 1",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "giorno",
+            "destination": "date_time_begin"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "navigate",
+        "onSuccessActionKeymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "giorno",
+            "destination": "date_time_begin"
+          }
+        ]
       }
-  }
-
+    }
   ],
   "search_keys": [
     {
