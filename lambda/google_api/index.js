@@ -235,7 +235,7 @@ async function getEmailThreads(queryParams, authParams) {
 
 // Get getDriveContents
 async function getDriveContents(queryParams, authParams) {
-    const search = queryParams['search'];
+    const folder = queryParams['folder'];
     
     await performGoogleAuth(authParams);
 
@@ -247,6 +247,7 @@ async function getDriveContents(queryParams, authParams) {
     try {
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.files.list({
+            q: `'${folder?folder : "root"}' in parents`,
             pageSize: 250,
             fields: 'nextPageToken, files(id, name, mimeType)',
           });

@@ -351,9 +351,9 @@ export class BackendService {
   
   }
 
-  getDriveContents(search: string, authToken: any) {
+  getDriveContents(folder: string, authToken: any) {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { request_type: 'getDriveContents', search: search };
+    this.myPutPostInit.queryStringParameters = { request_type: 'getDriveContents', folder: folder };
     this.myPutPostInit.body = authToken;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   

@@ -138,6 +138,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     
     foldersSource: object[] = [];
     folders: string[] = [];
+    filesSource: object[] = [];
+    files: string[] = [];
 
     constructor(
         private backendService: BackendService,
@@ -816,7 +818,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             }
             else {
                 // google drive mode
-
+                this.loadDriveContents(this.foldersSource[index]['id']);
             }
 
             
@@ -1203,14 +1205,16 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this._importExportService.downloadExcel(this.tableData.entryName, this.authService.getCurrentCompany(this.currentKeys), this.tableData.keys, null, false, {}, item.label);
     }
 
-    loadDriveContents() {
+    loadDriveContents(folder: string = null) {
         let _this = this;
         _this.isLoading = true;
-        _this.authService.loadDriveContents(null).subscribe(
+        _this.authService.loadDriveContents(folder).subscribe(
             result => {
                 if(result['result'] === 'OK') {
                     _this.foldersSource = result['data'].filter(x => x['mimeType'] === 'application/vnd.google-apps.folder');
                     _this.folders = _this.foldersSource.map( x => x['name']);
+                    _this.filesSource = result['data'].filter(x => x['mimeType'] !== 'application/vnd.google-apps.folder');
+                    _this.files = _this.filesSource.map( x => x['name']);
                 }
                 console.log(result);
                 _this.isLoading = false;

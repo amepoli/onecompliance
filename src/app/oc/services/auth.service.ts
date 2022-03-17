@@ -488,7 +488,7 @@ export class AuthService {
     });
   }
 
-  async loginGoogle(): Promise<any> {
+  async loginGoogle(): Promise<string> {
     let _this = this;
     
     let sessionGoogleAuth = _this.loadGoogleAuth();
@@ -502,10 +502,10 @@ export class AuthService {
       console.log('already logged in!');
       console.log(sessionGoogleAuth);
       //console.log((new Date()).getTime() - sessionGoogleAuth.expires_at);
-      _this.loadDriveContents(null);
+      //_this.loadDriveContents(null);
       // _this.createDriveFolder('OneCompliance');
 
-      return null;
+      return this.loadGoogleAuth();
     }
     else {
       const gAuth = await _this.initGoogleOAuth();                
@@ -526,7 +526,8 @@ export class AuthService {
       // console.log(authResponse);
       _this.saveGoogleAuth(authResponse);
       
-      _this.loadDriveContents(null);
+      return this.loadGoogleAuth();
+      // _this.loadDriveContents(null);
       // _this.createDriveFolder('OneCompliance');
 
       // _this.loadLabels();
@@ -577,15 +578,13 @@ export class AuthService {
     )
   }
 
-  loadDriveContents(search: string = null) {
-    return this.backendService.getDriveContents(search, this.loadGoogleAuth());
+  loadDriveContents(folder: string = null) {
+    return this.backendService.getDriveContents(folder, this.loadGoogleAuth());
   }
 
   createDriveFolder(folder: string) {
     return this.backendService.createDriveFolder(folder, this.loadGoogleAuth());
   }
-
-  
 
   loadMessages(labelIds: string[], pageNumber: number = 0, searchText: string = ''): Promise<any> {
     return new Promise((resolve, reject) => {
