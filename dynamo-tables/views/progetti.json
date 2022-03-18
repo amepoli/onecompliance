@@ -434,6 +434,11 @@
 						"icon": "copy_all",
 						"label": "Duplica (CON risposte)",
 						"outputEventName": "progetto_duplica_con_risposte"
+					},
+					{
+						"icon": "sync_alt",
+						"label": "All. date e centri gest",
+						"outputEventName": "allinea_date"
 					}
 				]
 			},
@@ -514,6 +519,14 @@
 						}
 					},
 					"outputEventWhenComplete": "navigate_to_new_progetto"
+				},
+				{
+					"eventName": "allinea_date",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "update entrasp.sondaggi snd set data_comp=pr.data_competenza, id_centro_gest=pr.id_centro_gest from entrasp.progetti_fasi pf, entrasp.progetti pr where pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=pr.codice_azienda and pf.id_progetto=pr.id_progetto and snd.codice_azienda=$codice_azienda$ and pr.id_progetto=$id_progetto$;",
+					"outputEventWhenComplete": "formReload"
 				}
 			]
 		},
