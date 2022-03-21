@@ -60,47 +60,53 @@
                 </ng-container>
             </mat-menu>
 
-            <div *ngIf="!hideActions.includes('import_export')">
+            <!-- <div *ngIf="!hideActions.includes('import_export')"> -->
 
-                <button mat-button [matMenuTriggerFor]="downloadUploadMenu" matTooltip="Import/Export">
+                <!-- <button mat-button [matMenuTriggerFor]="downloadUploadMenu" matTooltip="Import/Export">
                     <mat-icon>import_export</mat-icon>
-                </button>
+                </button> -->
 
-                <mat-menu #downloadUploadMenu="matMenu" [overlapTrigger]="false">
+                <!-- <mat-menu #downloadUploadMenu="matMenu" [overlapTrigger]="false"> -->
 
-                    <button mat-menu-item [matMenuTriggerFor]="uploadMenu">
-                        <mat-icon>cloud_upload</mat-icon>
-                        <span>Upload</span>
-                    </button>
-
-                    <button mat-menu-item [matMenuTriggerFor]="downloadMenu">
+                    <button mat-button [matMenuTriggerFor]="downloadMenu" *ngIf="!hideActions.includes('import_export')" matTooltip="Download">
                         <mat-icon>cloud_download</mat-icon>
-                        <span>Download</span>
+                        <!-- <span>Download</span> -->
                     </button>
-                </mat-menu>
+
+                    <button mat-button [matMenuTriggerFor]="uploadMenu" *ngIf="!hideActions.includes('import_export')" matTooltip="Upload">
+                        <mat-icon>file_upload</mat-icon>
+                        <!-- <span>Upload</span> -->
+                    </button>
+               <!--  </mat-menu> -->
 
                 <mat-menu #uploadMenu="matMenu" [overlapTrigger]="false">
 
                     <button mat-menu-item (click)="import()">
-                        <mat-icon>note_add</mat-icon>
+                        <mat-icon>upload</mat-icon>
                         <span>Upload CSV</span>
                     </button>
 
-                    <button *ngIf="importList && importList.length" mat-menu-item
+                    <!-- <button *ngIf="importList && importList.length" mat-menu-item
                         [matMenuTriggerFor]="advancedImportMenu">
                         <mat-icon>miscellaneous_services</mat-icon>
                         <span>Advanced</span>
+                    </button> -->
+
+                    <button *ngFor="let item of importList" mat-menu-item (click)="importAdvanced(item)">
+                        <mat-icon>upload</mat-icon>
+                        <span>{{item.label}}</span>
                     </button>
+
                 </mat-menu>
 
-                <mat-menu #advancedImportMenu="matMenu" [overlapTrigger]="false">
+                <!-- <mat-menu #advancedImportMenu="matMenu" [overlapTrigger]="false">
 
                     <button *ngFor="let item of importList" mat-menu-item (click)="importAdvanced(item)">
                         <mat-icon>format_align_justify</mat-icon>
                         <span>{{item.label}}</span>
                     </button>
 
-                </mat-menu>
+                </mat-menu> -->
 
                 <mat-menu #downloadMenu="matMenu" [overlapTrigger]="false">
 
@@ -124,31 +130,41 @@
                     </button>
 
                     <button mat-menu-item (click)="downloadCSV()">
-                        <mat-icon>format_align_justify</mat-icon>
-                        <span>Download</span>
+                        <mat-icon>file_download</mat-icon>
+                        <span>Download Visualized Element</span>
                     </button>
 
-                    <button *ngIf="exportList && exportList.length" mat-menu-item [matMenuTriggerFor]="advancedCsvMenu">
+                    <!--<button *ngIf="exportList && exportList.length" mat-menu-item [matMenuTriggerFor]="advancedCsvMenu">
                         <mat-icon>miscellaneous_services</mat-icon>
                         <span>Advanced</span>
+                    </button> -->
+
+                    <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedCSV(item)">
+                        <mat-icon>file_download</mat-icon>
+                        <span>{{item.label}}</span>
                     </button>
                 </mat-menu>
 
                 <mat-menu #downloadExcelMenu="matMenu" [overlapTrigger]="false">
 
                     <button mat-menu-item (click)="downloadExcel()">
-                        <mat-icon>format_align_justify</mat-icon>
-                        <span>Download</span>
+                        <mat-icon>file_download</mat-icon>
+                        <span>Download Visualized Element</span>
                     </button>
 
-                    <button *ngIf="exportList && exportList.length" mat-menu-item
+                    <!-- <button *ngIf="exportList && exportList.length" mat-menu-item
                         [matMenuTriggerFor]="advancedExcelMenu">
                         <mat-icon>miscellaneous_services</mat-icon>
                         <span>Advanced</span>
+                    </button> -->
+
+                    <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedExcel(item)">
+                        <mat-icon>file_download</mat-icon>
+                        <span>{{item.label}}</span>
                     </button>
                 </mat-menu>
 
-                <mat-menu #advancedCsvMenu="matMenu" [overlapTrigger]="false">
+                <!-- <mat-menu #advancedCsvMenu="matMenu" [overlapTrigger]="false">
 
                     <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedCSV(item)">
                         <mat-icon>format_align_justify</mat-icon>
@@ -163,8 +179,8 @@
                         <span>{{item.label}}</span>
                     </button>
 
-                </mat-menu>
-            </div>
+                </mat-menu> -->
+            <!-- </div> -->
         </div>
 
         <div class="toolbar-separator"></div>
