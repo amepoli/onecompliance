@@ -40,49 +40,8 @@ function getServerResponse(body) {
     };
 }
 
-// Get Directions
-async function getDirections(queryParams) {
-    const params = {
-        params: {
-            origin: queryParams['origin'],
-            destination: queryParams['destination'],
-            travel_mode: 'DRIVING',
-            key: 'GOOGLE_API_KEY'
-        }
-    };
-    const response = await googleMapsClient.directions(params);
-    console.log(JSON.stringify(response.data));
-    if (response.data.status == 'OK') {
-        return { result: 'OK', data: response.data };
-    }
-    else {
-        return { result: 'KO', reason: response.data };
-    }
-}
-
-// Get Distance
-async function getDistance(queryParams) {
-    const params = {
-        params: {
-            origins: [queryParams['origin']],
-            destinations: [queryParams['destination']],
-            travel_mode: 'DRIVING',
-            key: 'GOOGLE_API_KEY'
-        }
-    };
-    const response = await googleMapsClient.distancematrix(params);
-    console.log(JSON.stringify(response.data));
-    if (response.data.status == 'OK') {
-        return { result: 'OK', data: response.data };
-    }
-    else {
-        return { result: 'KO', reason: response.data };
-    }
-}
-
-// Get Email Threads
-async function getEmailThreads(queryParams, authParams) {
-    const search = queryParams['search'];
+// Perform Google Auth
+async function performGoogleAuth(authParams) {
     authParams["refresh_token"] = authParams["access_token"];
     //authParams["code"] = "4/0AX4XfWiIpDqZDo_3UgFm6sTL5AuWRRxNd0jcxMc8p9rZOhxQuNZUijREH5HrI4yxLF7G3Q",
     authParams["client_secret"] = 'CLIENT_SECRET';
@@ -134,6 +93,54 @@ async function getEmailThreads(queryParams, authParams) {
     catch (e) {
         console.log(e);
     }
+
+}
+
+// Get Directions
+async function getDirections(queryParams) {
+    const params = {
+        params: {
+            origin: queryParams['origin'],
+            destination: queryParams['destination'],
+            travel_mode: 'DRIVING',
+            key: 'GOOGLE_API_KEY'
+        }
+    };
+    const response = await googleMapsClient.directions(params);
+    console.log(JSON.stringify(response.data));
+    if (response.data.status == 'OK') {
+        return { result: 'OK', data: response.data };
+    }
+    else {
+        return { result: 'KO', reason: response.data };
+    }
+}
+
+// Get Distance
+async function getDistance(queryParams) {
+    const params = {
+        params: {
+            origins: [queryParams['origin']],
+            destinations: [queryParams['destination']],
+            travel_mode: 'DRIVING',
+            key: 'GOOGLE_API_KEY'
+        }
+    };
+    const response = await googleMapsClient.distancematrix(params);
+    console.log(JSON.stringify(response.data));
+    if (response.data.status == 'OK') {
+        return { result: 'OK', data: response.data };
+    }
+    else {
+        return { result: 'KO', reason: response.data };
+    }
+}
+
+// Get Email Threads
+async function getEmailThreads(queryParams, authParams) {
+    const search = queryParams['search'];
+    
+    await performGoogleAuth(authParams);
 
     const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
 
@@ -226,6 +233,218 @@ async function getEmailThreads(queryParams, authParams) {
     return { result: 'OK', result: response };
 }
 
+// Get getDriveContents
+async function getDriveContents(queryParams, authParams) {
+    const folder = queryParams['folder'];
+    
+    await performGoogleAuth(authParams);
+
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+
+    let response;
+    let pageToken = null;
+
+    try {
+        // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+        response = await drive.files.list({
+            q: `'${folder?folder : "root"}' in parents`,
+            pageSize: 250,
+            fields: 'nextPageToken, files(id, name, mimeType)',
+          });
+        try {
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+        console.log(JSON.stringify(response));
+    }
+    catch (e) {
+        console.log(e);
+    }
+
+
+    // (function (err, tokens) {
+    //     // your access_token is now refreshed and stored in oauth2Client
+    //     // store these new tokens in a safe place (e.g. database)
+    // });
+
+
+    // const payload = ticket.getPayload();
+    // const userid = payload['sub'];
+    // let response = '';
+
+    // let response = await gmail.users.labels.list({
+    //     userId: 'me',
+    // });
+    // console.log(response);
+
+    // const response = await promisify(gmail.users.labels.list({
+    //     userId: 'me',
+    // }), { context: gmail.users.labels} );
+    // console.log(response);
+
+    // const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    // const labelsPromise = new Promise(function (resolve, reject) {
+    //     gmail.users.labels.list({
+    //         userId: 'me',
+    //     }, (err, res) => {
+    //         if (err) reject(Error(err));
+    //         resolve(res.data.labels);
+    //     })
+
+    // });
+
+    // let response = await labelsPromise;
+
+    // try {
+    //     response = await gmail.users.labels.list({
+    //         userId: 'me',
+    //     });
+    //     console.log(response);
+    // }
+    // catch (e) {
+    //     console.log(e);
+    // }
+
+
+
+    // gmail.users.labels.list({
+    //     userId: 'me',
+    // }, (err, res) => {
+    //     if (err) return console.log('The API returned an error: ' + err);
+    //     const labels = res.data.labels;
+    //     if (labels.length) {
+    //         console.log('Labels:');
+    //         labels.forEach((label) => {
+    //             console.log(`- ${label.name}`);
+    //         });
+    //     } else {
+    //         console.log('No labels found.');
+    //     }
+    // });
+    // snooze(5000);
+
+    // If request specified a G Suite domain:
+    // const domain = payload['hd'];
+
+    // // Get directions
+    // const url = `https://gmail.googleapis.com/gmail/v1/users/${queryParams['email']}/threads`;
+    // console.log('url: ', url);
+    // // const req = await requestPromise({ url, method: 'GET' })
+    // const response = await axios.get(url);
+    // console.log(response.data);
+
+    return { result: 'OK', data: response.data.files };
+}
+
+// Create Drive Folder
+async function createDriveFolder(queryParams, authParams) {
+    const folder = queryParams['folder'];
+    
+    await performGoogleAuth(authParams);
+
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+
+    var fileMetadata = {
+        'name': folder,
+        'mimeType': 'application/vnd.google-apps.folder'
+    };
+
+    let response;
+    let pageToken = null;
+
+    try {
+        // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+        response = await drive.files.create({
+            resource: fileMetadata,
+            fields: 'id'
+        });
+        try {
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+        console.log(JSON.stringify(response));
+    }
+    catch (e) {
+        console.log(e);
+    }
+
+
+    // (function (err, tokens) {
+    //     // your access_token is now refreshed and stored in oauth2Client
+    //     // store these new tokens in a safe place (e.g. database)
+    // });
+
+
+    // const payload = ticket.getPayload();
+    // const userid = payload['sub'];
+    // let response = '';
+
+    // let response = await gmail.users.labels.list({
+    //     userId: 'me',
+    // });
+    // console.log(response);
+
+    // const response = await promisify(gmail.users.labels.list({
+    //     userId: 'me',
+    // }), { context: gmail.users.labels} );
+    // console.log(response);
+
+    // const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    // const labelsPromise = new Promise(function (resolve, reject) {
+    //     gmail.users.labels.list({
+    //         userId: 'me',
+    //     }, (err, res) => {
+    //         if (err) reject(Error(err));
+    //         resolve(res.data.labels);
+    //     })
+
+    // });
+
+    // let response = await labelsPromise;
+
+    // try {
+    //     response = await gmail.users.labels.list({
+    //         userId: 'me',
+    //     });
+    //     console.log(response);
+    // }
+    // catch (e) {
+    //     console.log(e);
+    // }
+
+
+
+    // gmail.users.labels.list({
+    //     userId: 'me',
+    // }, (err, res) => {
+    //     if (err) return console.log('The API returned an error: ' + err);
+    //     const labels = res.data.labels;
+    //     if (labels.length) {
+    //         console.log('Labels:');
+    //         labels.forEach((label) => {
+    //             console.log(`- ${label.name}`);
+    //         });
+    //     } else {
+    //         console.log('No labels found.');
+    //     }
+    // });
+    // snooze(5000);
+
+    // If request specified a G Suite domain:
+    // const domain = payload['hd'];
+
+    // // Get directions
+    // const url = `https://gmail.googleapis.com/gmail/v1/users/${queryParams['email']}/threads`;
+    // console.log('url: ', url);
+    // // const req = await requestPromise({ url, method: 'GET' })
+    // const response = await axios.get(url);
+    // console.log(response.data);
+
+    return { result: 'OK', data: response };
+}
+
 exports.handler = async (event, context) => {
 
     // console.log(event);
@@ -256,6 +475,12 @@ exports.handler = async (event, context) => {
             }
             else if (requestType === 'GetEmailThreads') {
                 body = await getEmailThreads(queryParams, event.body? JSON.parse(event.body): {});
+            }
+            else if (requestType === 'getDriveContents') {
+                body = await getDriveContents(queryParams, event.body? JSON.parse(event.body): {});
+            }
+            else if (requestType === 'createDriveFolder') {
+                body = await createDriveFolder(queryParams, event.body? JSON.parse(event.body): {});
             }
             else {
                 return getBadUrlResponse();

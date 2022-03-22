@@ -1,5 +1,5 @@
 export interface GoogleAPIParams {
-    actionType: 'get_distance' | 'get_directions' | 'get_email_thread',
+    actionType: 'get_distance' | 'get_directions' | 'get_email_thread' | 'create_drive_folder',
     directionsParams?: {
         originKey: string,
         destinationKey: string
@@ -12,4 +12,7 @@ export interface GoogleAPIParams {
         emailIdKey: string,
         threadIdKey: string
     },
+    driveFolderParams? : {
+        driveFolderKey: string;
+    }
 };

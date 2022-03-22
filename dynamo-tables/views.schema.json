@@ -1303,7 +1303,12 @@
                 "showExplorerView": {
                     "type": "boolean",
                     "description": "M: show explorer view for table view"
-                }                
+                },
+                "explorerSource": {
+                    "type": "string",
+                    "enum": ["table-view", "google-drive"],
+                    "description": "?: explorer data source, default value is table-view"
+                }
             }
         },
         "formKeysFormat": {
@@ -1959,6 +1964,18 @@
                                             "required": [
                                                 "emailThreadParams"
                                             ]
+                                        },
+                                        {
+                                            "properties": {
+                                                "actionType": {
+                                                    "enum": [
+                                                        "create_drive_folder"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "driveFolderParams"
+                                            ]
                                         }
                                     ],
                                     "properties": {
@@ -1968,7 +1985,8 @@
                                             "enum": [
                                                 "get_distance",
                                                 "get_directions",
-                                                "get_email_thread"
+                                                "get_email_thread",
+                                                "create_drive_folder"
                                             ]
                                         },
                                         "directionsParams": {
@@ -2024,6 +2042,20 @@
                                                 },
                                                 "threadId": {
                                                     "description": "M: Thread Id key",
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "driveFolderParams": {
+                                            "type": "object",
+                                            "description": "?: Drive Folder parameters",
+                                            "required": [
+                                                "driveFolderKey"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "driveFolderKey": {
+                                                    "description": "M: Drive folder key",
                                                     "type": "string"
                                                 }
                                             }
