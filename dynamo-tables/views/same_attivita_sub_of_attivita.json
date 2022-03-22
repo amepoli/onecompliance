@@ -1,105 +1,12 @@
 {
     "$schema": "../views.schema.json",
-    "entryKey": "attivita",
-    "origin": "entrasp.attivita",
-    "businessObjectName": "attivita",
-    "outputEvents": [
-        {
-            "eventName": "attivita_load",
-            "eventTrigger": "onReload"
-        },
-        {
-            "eventName": "attivita_save",
-            "eventTrigger": "onSave"
-        }
-    ],
-    "inputEvents": [
-        {
-            "eventName": "formReload",
-            "actionType": "reload"
-        },
-        {
-            "actionTarget": {
-                "name": "modelli_test_vr",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_modello_test",
-                        "destination": "id_modello_test"
-                    },
-                    {
-                        "source": "id_modello_test_vr",
-                        "destination": "id_modello_test_vr"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "to_modello_test_from_attivita"
-        },
-        {
-            "actionTarget": {
-                "name": "attivita",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "codice_attivita",
-                        "destination": "codice_attivita"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "navigate_to_new_attivita"
-        },
-        {
-            "actionTarget": {
-                "name": "attivita",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "codice_attivita",
-                        "destination": "codice_attivita"
-                    },
-                    {
-                        "source": "attivita_vr",
-                        "destination": "attivita_vr"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "navigate_to_new_attivita_vr"
-        },
-        {
-            "actionTarget": {
-                "name": "attivita",
-                "type": "table",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "go_to_list"
-        }
-    ],
+    "entryKey": "same_attivita_sub_of_attivita",
+    "inheritsFrom": "attivita",
     "predefinedQueries": [
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select att.*, (select case when att.id_modello_test is null then false else true end) as visible_button_modello_test, entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest from entrasp.attivita att inner join (select codice_azienda, codice_attivita, max(attivita_vr) maxvr from entrasp.attivita where codice_azienda=$codice_azienda$ group by codice_azienda, codice_attivita) attmax on att.codice_azienda=attmax.codice_azienda and att.codice_attivita=attmax.codice_attivita and att.attivita_vr=attmax.maxvr where att.codice_azienda=$codice_azienda$ and att.codice_attivita_parent is null and att.data_fine_validita is null;"
+            "queryString": "select att.*,(select case when att.id_modello_test is null then false else true end) as visible_button_modello_test, entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest from entrasp.attivita att inner join (select codice_azienda, codice_attivita, max(attivita_vr) maxvr from entrasp.attivita group by codice_azienda, codice_attivita) attmax on att.codice_azienda=attmax.codice_azienda and att.codice_attivita=attmax.codice_attivita and att.attivita_vr=attmax.maxvr where att.id_argomento in (select id_argomento from entrasp.attivita where codice_attivita=$codice_attivita$ and codice_azienda=$codice_azienda$) and att.codice_azienda != $codice_azienda$"
         },
         {
             "operation": "insert",
@@ -164,7 +71,7 @@
                 "dataType": "text",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": true,
             "size": 2,
             "key": "codice_attivita",
@@ -198,7 +105,7 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": true,
             "key": "attivita_vr",
             "label": "Versione",
@@ -230,13 +137,27 @@
                     }
                 ]
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "codice",
             "label": "Codice",
             "newLine": false,
             "readOnly": false,
             "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "newLine": false,
+            "readOnly": false,
+            "size": 5
         },
         {
             "autoGenerate": false,
@@ -260,61 +181,25 @@
                 "menuOptions": [
                     {
                         "icon": "content_copy",
-                        "label": "Duplica attività",
-                        "outputEventName": "attivita_duplica"
-                    },
-                    {
-                        "icon": "sync_alt",
-                        "outputEventName": "codici_aggiorna",
-                        "label": "Aggiorna Codici"
-                    },
-                    {
-                        "outputEventName": "create_associate_argomento",
-                        "icon": "class",
-                        "label": "Crea e associa argomento"
-                    },
-                    {
-                        "icon": "add_circle_",
-                        "label": "Nuova versione",
-                        "outputEventName": "attivita_button_nuova_versione"
-                    },
-                    {
-                        "icon": "delete",
-                        "label": "Elimina versione corrente",
-                        "outputEventName": "elimina_ver_corrente_attivita"
+                        "label": "importa come nuova versione",
+                        "outputEventName": "importa"
                     }
                 ]
             },
             "inputEvents": [
                 {
-                    "eventName": "codici_aggiorna",
+                    "eventName": "importa",
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "select entrasp.attivita_codice_update(codice_azienda, codice_attivita, null) from entrasp.attivita where codice_azienda=$codice_azienda$ and entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita, attivita_vr)=$codice_attivita$ and codice_attivita_parent is not null;",
+                    "queryFunct": "select 1;",
                     "outputEventWhenComplete": "formReload"
-                },
-                {
-                    "eventName": "create_associate_argomento",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "outputEventWhenComplete": "formReload",
-                    "queryFunct": "select entrasp.argomenti_attivita_create_and_update($codice_azienda$, $codice_attivita$, $descrizione$, $descrizione$ , $codice$, 3417)"
-                },
-                {
-                    "eventName": "elimina_ver_corrente_attivita",
-                    "actionType": "query",
-                    "condition": "none",
-                    "outputEventWhenComplete": "go_to_list",
-                    "values": [],
-                    "queryFunct": "delete from entrasp.attivita where entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita, attivita_vr)=$codice_attivita$ and attivita_vr=£attivita_vr£ and codice_azienda=$codice_azienda$"
                 }
             ],
             "isHidden": false,
             "isPrimary": false,
             "buttonIcon": "more_vert",
-            "key": "modelli_test_vr_actions",
+            "key": "attivita_actions",
             "label": "",
             "newLine": true,
             "readOnly": false,
@@ -327,7 +212,7 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "ordinamento",
             "label": "Ordinamento",
@@ -341,21 +226,7 @@
                 "dataType": "text",
                 "viewType": "input"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descrizione",
-            "label": "Descrizione",
-            "newLine": true,
-            "readOnly": false,
-            "size": 9
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "note_vr",
             "label": "Note",
@@ -371,7 +242,7 @@
                 "viewType": "combobox",
                 "dataType": "text"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "codice_attivita_parent",
             "label": "Attività Livello Superiore",
@@ -386,7 +257,7 @@
                 "options": [],
                 "viewType": "combobox"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "id_centro_gest",
             "label": "Centro Gestionale",
@@ -405,7 +276,7 @@
                 "eventName": "id_modello_test_change",
                 "eventTrigger": "select"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "id_modello_test",
             "label": "Id Modello Verifica",
@@ -464,7 +335,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 1.5
+            "size": 1.75
         },
         {
             "autoGenerate": false,
@@ -477,107 +348,21 @@
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
-            "newLine": true,
-            "size": 1.5
+            "newLine": false,
+            "size": 1.75
         },
         {
-            "autoGenerate": false,
             "format": {
-                "viewType": "button"
+                "viewType": "invisible"
             },
+            "size": 5,
             "isHidden": false,
             "isPrimary": false,
-            "key": "modello_test_from_sondaggi",
-            "label": "Modello Verifica Associato",
-            "newLine": true,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when £id_modello_test_vr£ is null then true else false end as label"
-                }
-            ],
-            "outputEvent": {
-                "eventName": "to_modello_test_from_attivita",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "id_modello_test_change",
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
-                },
-                {
-                    "eventName": "id_modello_test_change",
-                    "actionType": "query_style",
-                    "styleAttribute": "font_color",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
-                },
-                {
-                    "eventName": "id_modello_test_change",
-                    "actionType": "readOnly",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
-                },
-                {
-                    "eventName": "attivita_load",
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
-                },
-                {
-                    "eventName": "attivita_load",
-                    "actionType": "query_style",
-                    "styleAttribute": "font_color",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
-                },
-                {
-                    "eventName": "attivita_load",
-                    "actionType": "readOnly",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
-                },
-                {
-                    "eventName": "attivita_save",
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
-                },
-                {
-                    "eventName": "attivita_save",
-                    "actionType": "query_style",
-                    "styleAttribute": "font_color",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
-                },
-                {
-                    "eventName": "attivita_save",
-                    "actionType": "readOnly",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
-                }
-            ],
-            "readOnly": false,
+            "label": "invisible_1",
+            "key": "invisible_1",
             "sameOrigin": false,
-            "size": 2
+            "readOnly": true,
+            "newLine": false
         }
     ],
     "search_keys": [
@@ -614,6 +399,152 @@
             "queryCond": "entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita, attivita_vr)= $cod_att_princ_s$"
         }
     ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "id_modello_test"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "attivita_vr",
+            "label": "Versione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_attivita",
+            "label": "Cod. attività (PK)"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "width": "30%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest)",
+            "label": "Centro Gestionale"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_attivita_principale",
+            "label": "Cod att. principale"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_attivita_parent",
+            "label": "codice_attivita_parent"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "label": "Data Inizio Validità",
+            "key": "data_inizio_validita",
+            "isHidden": false,
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "12%",
+            "sameOrigin": false,
+            "key": "create_progetto",
+            "label": "Importa Versione",
+            "isButton": true,
+            "buttonAction": {
+                "target": "attivita",
+                "viewType": "form",
+                "action": "query",
+                "query": "select $codice_azienda$ as codice_azienda, $codice_attivita$ as codice_attivita,vrnew as attivita_vr from entrasp.attivita_import('£codice_azienda£', '£codice_attivita£', £attivita_vr£, '£a_codiceazienda£', '£a_codiceattivita£', £a_attivitavr£)",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_attivita",
+                        "destination": "codice_attivita"
+                    },
+                    {
+                        "source": "attivita_vr",
+                        "destination": "attivita_vr"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Importa come nuova versione",
+                    "text": "Importare come nuova versione?"
+                },
+                "onSuccessAction": "navigate",
+                "onSuccessActionKeymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_attivita",
+                        "destination": "codice_attivita"
+                    },
+                    {
+                        "source": "attivita_vr",
+                        "destination": "attivita_vr"
+                    }
+                ]
+            }
+        }
+    ],
     "subTables": [
         {
             "entryKey": "attivita_sub_of_attivita",
@@ -632,248 +563,48 @@
                 }
             ],
             "label": "Fasi Modello Prog."
-        },
-        {
-            "entryKey": "consuntivazioni_sub_of_attivita",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "codice_attivita",
-                    "son": "codice_attivita"
-                }
-            ],
-            "label": "Aggiornamenti e Time Report"
-        },
-        {
-            "entryKey": "progetti",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "codice_attivita",
-                    "son": "codice_attivita"
-                }
-            ],
-            "label": "Progetti Associati"
-        },
-        {
-            "entryKey": "attivita_versioni",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "codice_attivita",
-                    "son": "codice_attivita"
-                }
-            ],
-            "label": "Versioni"
-        },
-        {
-            "entryKey": "same_attivita_sub_of_attivita",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "codice_attivita",
-                    "son": "codice_attivita"
-                }
-            ],
-            "label": "Versioni da Importare"
         }
     ],
-    "querySuffixes": {
-        "tableViewSuffix": "order by codice"
-    },
-    "table_keys": [
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_modello_test",
-            "label": "id_modello_test"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "label": "codice_azienda"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "codice_attivita",
-            "label": "Cod. attività (PK)",
-            "width": "7%"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "attivita_vr",
-            "label": "Versione",
-            "width": "5%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice",
-            "label": "Codice",
-            "width": "8%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descrizione",
-            "label": "Descrizione",
-            "width": "30%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "centro_gest",
-            "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest)",
-            "label": "Centro Gestionale",
-            "width": "13%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_attivita_principale",
-            "label": "Cod att. principale",
-            "width": "8%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_attivita_parent",
-            "label": "codice_attivita_parent",
-            "width": "8%"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "12%",
-            "sameOrigin": false,
-            "key": "create_progetto",
-            "label": "Nuovo Progetto",
-            "isButton": true,
-            "buttonAction": {
-                "target": "progetti",
-                "viewType": "form",
-                "action": "query",
-                "query": "select id_progetto, codice_azienda from entrasp.progetti_insert_da_attivita('£codice_azienda£', '£codice_attivita£', £attivita_vr£)",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "codice_attivita",
-                        "destination": "codice_attivita"
-                    },
-                    {
-                        "source": "attivita_vr",
-                        "destination": "attivita_vr"
-                    }
-                ],
-                "confirmAction": true,
-                "confirmMessage": {
-                    "title": "Nuovo Progetto",
-                    "text": "Si vuole creare un nuovo progetto?"
-                },
-                "onSuccessAction": "navigate",
-                "onSuccessActionKeymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_progetto",
-                        "destination": "id_progetto"
-                    }
-                ]
-            }
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "8%",
-            "key": "visible_button_modello_test",
-            "label": "Mod.Verifica",
-            "isButton": true,
-            "buttonAction": {
-                "target": "modelli_test_vr",
-                "viewType": "form",
-                "action": "navigate",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_modello_test",
-                        "destination": "id_modello_test"
-                    },
-                    {
-                        "source": "id_modello_test_vr",
-                        "destination": "id_modello_test_vr"
-                    }
-                ]
-            }
-        }
-    ],
-    "exportQueries": {
-        "tableQueries": [
-            {
-                "label": "Estrazione fasi senza mdt",
-                "queryString": "select * from entrasp.attivita where codice_azienda = $codice_azienda$ and codice_attivita_parent is not null and id_modello_test is null"
-            }
-        ]
-    },
     "hideActions": [
         {
             "viewType": "form",
             "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "multi-attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "save"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "delete"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "share"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "import_export"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "documentation"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "quick-add"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "add"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "import_export"
         }
     ]
 }
