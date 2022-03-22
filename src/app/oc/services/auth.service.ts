@@ -503,8 +503,15 @@ export class AuthService {
       console.log(sessionGoogleAuth);
       //console.log((new Date()).getTime() - sessionGoogleAuth.expires_at);
       //_this.loadDriveContents(null);
-      // _this.createDriveFolder('OneCompliance');
-
+      //_this.createDriveFolder('OneCompliance');
+      _this.copyFromS3ToDrive('2PAY/07pZlZGrzJ9dNc9hbVrVPBEZekGakszl', 'Apparrell Assets/test_file.txt').subscribe(
+        response => {
+          console.log("S3 data", response['data']);
+        },
+        error => {
+          console.error("S3 data", error);
+        }
+      )
       return this.loadGoogleAuth();
     }
     else {
@@ -584,6 +591,14 @@ export class AuthService {
 
   createDriveFolder(folder: string) {
     return this.backendService.createDriveFolder(folder, this.loadGoogleAuth());
+  }
+
+  copyFromS3ToDrive(s3FilePath: string, driveFilePath: string) {
+    return this.backendService.copyFromS3ToDrive(s3FilePath, driveFilePath, this.loadGoogleAuth());
+  }
+
+  copyFromDriveToS3(driveFilePath: string, s3FilePath: string) {
+    return this.backendService.copyFromDriveToS3(driveFilePath, s3FilePath, this.loadGoogleAuth());
   }
 
   loadMessages(labelIds: string[], pageNumber: number = 0, searchText: string = ''): Promise<any> {
