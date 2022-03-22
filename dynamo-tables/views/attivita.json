@@ -85,6 +85,11 @@
             "type": "postProcessing"
         },
         {
+            "operation": "delete",
+            "queryString": "delete from entrasp.attivita att where entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr)=$codice_attivita$ and att.codice_azienda=$codice_azienda$",
+            "type": "main"
+        },
+        {
             "operation": "update",
             "queryString": "select entrasp.attivita_order_and_settle($codice_azienda$, $codice_attivita$, $attivita_vr$)",
             "type": "postProcessing"
@@ -103,7 +108,7 @@
         {
             "operation": "delete",
             "type": "preCheck",
-            "queryString": "select codice_attivita from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_attivita=$codice_attivita$ and attivita_vr=$attivita_vr$",
+            "queryString": "select codice_attivita from entrasp.progetti where codice_azienda='£codice_azienda£' and codice_attivita='£codice_attivita£' and attivita_vr=£attivita_vr£",
             "messageNotNull": "Aggiornamento: il modello è referenziato da un progetto. Cancellare i progetti associati prima di cancellare il presente modello!"
         },
         {
