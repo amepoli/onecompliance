@@ -28,7 +28,7 @@ USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
 PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
 SCHEMA=`cat ../../${1}.json | jq -r ".postgres.schema"`
 
-BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.import.s3.bucket"`
+BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.attachments.s3.bucket"`
 REGION="eu-central-1"
 
 GOOGLE_API_KEY="AIzaSyBoKjc4V546sCOf41JI7Rhe-h0nR4TJh9E"
