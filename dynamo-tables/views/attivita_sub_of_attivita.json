@@ -6,7 +6,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select att.codice_attivita, att.attivita_vr, att.codice_attivita_parent, att.codice_azienda, att.codice, att.ordinamento, att.descrizione, att.id_centro_gest, att.codice_part,  att.id_modello_test, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita, attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest, entrasp.grc_max_id_mdt_vr(att.codice_azienda, att.id_modello_test) as id_modello_test_vr from entrasp.attivita att where att.codice_azienda=$codice_azienda$ and att.codice_attivita_parent = $codice_attivita_parent$ and att.attivita_vr = $attivita_vr$;"
+            "queryString": "select true as delete_attivita, att.codice_attivita, att.attivita_vr, att.codice_attivita_parent, att.codice_azienda, att.codice, att.ordinamento, att.descrizione, att.id_centro_gest, att.codice_part,  att.id_modello_test, entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita, attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest, entrasp.grc_max_id_mdt_vr(att.codice_azienda, att.id_modello_test) as id_modello_test_vr from entrasp.attivita att where att.codice_azienda=$codice_azienda$ and att.codice_attivita_parent = $codice_attivita_parent$ and att.attivita_vr = $attivita_vr$;"
         },
         {
             "operation": "insert",
@@ -17,11 +17,6 @@
             "operation": "update",
             "queryString": "select entrasp.attivita_order_and_settle($codice_azienda$, $codice_attivita$, $attivita_vr$)",
             "type": "postProcessing"
-        },
-        {
-            "operation": "delete",
-            "queryString": "delete from entrasp.attivita att where entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr)=$codice_attivita$ and att.codice_azienda=$codice_azienda$",
-            "type": "main"
         },
         {
             "type": "main",
@@ -36,9 +31,8 @@
         },
         {
             "operation": "delete",
-            "type": "preCheck",
-            "queryString": "select codice_attivita from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_attivita=$codice_attivita$",
-            "messageNotNull": "Aggiornamento: il modello è referenziato da un progetto. Cancellare i progetti associati prima di cancellare il presente modello!"
+            "queryString": "delete from entrasp.attivita att where codice_attivita=$codice_attivita$ and att.codice_azienda=$codice_azienda$ and attivita_vr=$attivita_vr$",
+            "type": "main"
         },
         {
             "operation": "stopEvent",
@@ -52,6 +46,50 @@
         }
     ],
     "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_attivita",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "delete_icon"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "attivita_sub_of_attivita",
+                "viewType": "form",
+                "query": "delete from entrasp.attivita att where codice_attivita='£codice_attivita£' and att.codice_azienda='£codice_azienda£' and attivita_vr=£attivita_vr£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_attivita",
+                        "destination": "codice_attivita"
+                    },
+                    {
+                        "source": "attivita_vr",
+                        "destination": "attivita_vr"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "text": "Sei sicuro di voler cancellare la fase?",
+                    "title": "Cancellazione fase"
+                },
+                "onSuccessAction": "reload"
+            }
+        },
         {
             "format": {
                 "dataType": "text"
@@ -138,7 +176,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_modello_test",
-            "label": "Id Mod. Test",
+            "label": "Id Mod.Ver",
             "isInputButton": true,
             "buttonAction": {
 				"target": "modelli_test_vr",
