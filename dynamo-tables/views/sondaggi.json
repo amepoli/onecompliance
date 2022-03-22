@@ -1246,6 +1246,7 @@
             },
             "label": "Ultimo Modello Verifica",
             "newLine": false,
+            "size": 1.5,
             "queryCond": "entrasp.is_max_modello_test(snd.codice_azienda, snd.id_sondaggio)"
         },
         {
@@ -1256,6 +1257,7 @@
             },
             "label": "Ultimo Modello Verifica Rett.",
             "newLine": false,
+            "size": 1.5,
             "queryCond": "entrasp.is_max_modello_test_rett(snd.codice_azienda, snd.id_sondaggio)"
         },
         {
@@ -1266,6 +1268,7 @@
             },
             "label": "Sondaggio riprogrammato",
             "newLine": false,
+            "size": 1.5,
             "queryCond": "entrasp.sondaggio_riprogrammato(snd.codice_azienda, snd.id_sondaggio)"
         },
         {
@@ -1276,7 +1279,19 @@
             },
             "label": "Sondaggi scaduti",
             "newLine": false,
+            "size": 1.5,
             "queryCond": "snd.data_prevista<CURRENT_DATE"
+        },
+        {
+            "fieldName": "flag_no_data_esec",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza data esecuz.",
+            "newLine": false,
+            "size": 1.5,
+            "queryCond": "snd.data_esecuzione is null"
         },
         {
             "fieldName": "flag_sondaggi_aperti",
@@ -1286,6 +1301,7 @@
             },
             "label": "Sondaggi aperti",
             "newLine": false,
+            "size": 1.5,
             "queryCond": "snd.stato not in ('C', 'N')"
         },
         {
@@ -1296,6 +1312,7 @@
             },
             "label": "Miei/Mio Ufficio",
             "newLine": false,
+            "size": 1.5,
             "queryCond": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€')"
         },
         {
