@@ -16,7 +16,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select codice_azienda, id_domanda, ordinamento, id_argomento, id_sezione, id_modello_test, id_modello_test_vr,descrizione, flag_non_applicabile_domanda, note, entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda) as modelli_test_risposte_possibili from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$",
+      "queryString": "select true as delete_domanda, codice_azienda, id_domanda, ordinamento, id_argomento, id_sezione, id_modello_test, id_modello_test_vr,descrizione, flag_non_applicabile_domanda, note, entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda) as modelli_test_risposte_possibili from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$",
       "type": "main"
     },
     {
@@ -408,12 +408,60 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "id_domanda",
       "label": "ID",
       "width": "5%"
     },
+    {
+      "format": {
+          "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "4%",
+      "queryFunct": "select true",
+      "key": "delete_domanda",
+      "label": "",
+      "style": [
+          {
+              "button_icon": "delete",
+              "value": "delete_icon"
+          }
+      ],
+      "isButton": true,
+      "buttonAction": {
+          "target": "domande_sub_of_modelli_test_vr",
+          "viewType": "form",
+          "query": "delete from entrasp.domande dmd where dmd.codice_azienda='£codice_azienda£' and id_modello_test_vr=£id_modello_test_vr£ and id_modello_test=£id_modello_test£ and id_domanda=£id_domanda£",
+          "action": "query",
+          "keymap": [
+              {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+              },
+              {
+                  "source": "id_modello_test",
+                  "destination": "id_modello_test"
+              },
+              {
+                  "source": "id_modello_test_vr",
+                  "destination": "id_modello_test_vr"
+              },
+              {
+                  "source": "id_domanda",
+                  "destination": "id_domanda"
+              }
+          ],
+          "confirmAction": true,
+          "confirmMessage": {
+              "text": "Sei sicuro di voler cancellare la domanda?",
+              "title": "Cancellazione domanda"
+          },
+          "onSuccessAction": "reload"
+      }
+  },
     {
       "format": {
         "dataType": "number"
