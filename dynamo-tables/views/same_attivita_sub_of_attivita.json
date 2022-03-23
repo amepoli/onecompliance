@@ -6,7 +6,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select att.*,(select case when att.id_modello_test is null then false else true end) as visible_button_modello_test, entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest from entrasp.attivita att inner join (select codice_azienda, codice_attivita, max(attivita_vr) maxvr from entrasp.attivita group by codice_azienda, codice_attivita) attmax on att.codice_azienda=attmax.codice_azienda and att.codice_attivita=attmax.codice_attivita and att.attivita_vr=attmax.maxvr where att.id_argomento in (select id_argomento from entrasp.attivita where codice_attivita=$codice_attivita$ and codice_azienda=$codice_azienda$) and att.codice_azienda != $codice_azienda$"
+            "queryString": "select att.*,$codice_azienda$ as a_codiceazienda, $codice_attivita$ as a_codiceattivita, (select case when att.id_modello_test is null then false else true end) as visible_button_modello_test, entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest from entrasp.attivita att inner join (select codice_azienda, codice_attivita, max(attivita_vr) maxvr from entrasp.attivita group by codice_azienda, codice_attivita) attmax on att.codice_azienda=attmax.codice_azienda and att.codice_attivita=attmax.codice_attivita and att.attivita_vr=attmax.maxvr where att.id_argomento in (select id_argomento from entrasp.attivita where codice_attivita=$codice_attivita$ and codice_azienda=$codice_azienda$) and att.codice_azienda != $codice_azienda$ and att.codice_azienda in (€global_user_companies€)"
         },
         {
             "operation": "insert",
@@ -442,6 +442,26 @@
             },
             "isHidden": true,
             "isPrimary": false,
+            "key": "a_codiceazienda",
+            "label": "a_codiceazienda",
+            "queryFunct": "$codice_azienda$"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "a_codiceattivita",
+            "label": "a_codiceattivita",
+            "queryFunct": "$codice_attivita$"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
             "key": "codice",
             "label": "Codice"
         },
@@ -453,6 +473,16 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
+            "width": "30%"
+        },
+        {
+            "format":{
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
             "width": "30%"
         },
         {
@@ -507,7 +537,7 @@
                 "target": "attivita",
                 "viewType": "form",
                 "action": "query",
-                "query": "select $codice_azienda$ as codice_azienda, $codice_attivita$ as codice_attivita,vrnew as attivita_vr from entrasp.attivita_import('£codice_azienda£', '£codice_attivita£', £attivita_vr£, '£a_codiceazienda£', '£a_codiceattivita£', £a_attivitavr£)",
+                "query": "select attivita_import as vrnew from entrasp.attivita_import('£codice_azienda£', '£codice_attivita£', £attivita_vr£, '£a_codiceazienda£', '£a_codiceattivita£')",
                 "keymap": [
                     {
                         "source": "codice_azienda",
@@ -520,6 +550,14 @@
                     {
                         "source": "attivita_vr",
                         "destination": "attivita_vr"
+                    },
+                    {
+                        "source": "a_codiceazienda",
+                        "destination": "a_codiceazienda"
+                    },
+                    {
+                        "source": "a_codiceattivita",
+                        "destination": "a_codiceattivita"
                     }
                 ],
                 "confirmAction": true,
@@ -530,15 +568,15 @@
                 "onSuccessAction": "navigate",
                 "onSuccessActionKeymap": [
                     {
-                        "source": "codice_azienda",
+                        "source": "a_codiceazienda",
                         "destination": "codice_azienda"
                     },
                     {
-                        "source": "codice_attivita",
+                        "source": "a_codiceattivita",
                         "destination": "codice_attivita"
                     },
                     {
-                        "source": "attivita_vr",
+                        "source": "vrnew",
                         "destination": "attivita_vr"
                     }
                 ]
@@ -547,7 +585,7 @@
     ],
     "subTables": [
         {
-            "entryKey": "attivita_sub_of_attivita",
+            "entryKey": "fasi_sub_of_attivita_import",
             "keys": [
                 {
                     "parent": "codice_azienda",
