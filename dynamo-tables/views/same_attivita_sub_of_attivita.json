@@ -6,7 +6,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select att.*,$codice_azienda$ as a_codiceazienda, $codice_attivita$ as a_codiceattivita, (select case when att.id_modello_test is null then false else true end) as visible_button_modello_test, entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest from entrasp.attivita att inner join (select codice_azienda, codice_attivita, max(attivita_vr) maxvr from entrasp.attivita group by codice_azienda, codice_attivita) attmax on att.codice_azienda=attmax.codice_azienda and att.codice_attivita=attmax.codice_attivita and att.attivita_vr=attmax.maxvr where att.id_argomento in (select id_argomento from entrasp.attivita where codice_attivita=$codice_attivita$ and codice_azienda=$codice_azienda$) and att.codice_azienda != $codice_azienda$ and att.codice_azienda in (€global_user_companies€)"
+            "queryString": "select att.*,INITCAP(att.codice_azienda) as codice_azienda_import,$codice_azienda$ as a_codiceazienda, $codice_attivita$ as a_codiceattivita, (select case when att.id_modello_test is null then false else true end) as visible_button_modello_test, entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest from entrasp.attivita att inner join (select codice_azienda, codice_attivita, max(attivita_vr) maxvr from entrasp.attivita group by codice_azienda, codice_attivita) attmax on att.codice_azienda=attmax.codice_azienda and att.codice_attivita=attmax.codice_attivita and att.attivita_vr=attmax.maxvr where att.id_argomento in (select id_argomento from entrasp.attivita where codice_attivita=$codice_attivita$ and codice_azienda=$codice_azienda$) and att.codice_azienda != $codice_azienda$ and att.codice_azienda in (€global_user_companies€)"
         },
         {
             "operation": "insert",
@@ -142,38 +142,30 @@
             "key": "codice",
             "label": "Codice",
             "newLine": false,
-            "readOnly": false,
+            "readOnly": true,
             "size": 2
         },
         {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descrizione",
-            "label": "Descrizione",
-            "newLine": false,
-            "readOnly": false,
-            "size": 5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_argomento",
-            "label": "Argomento",
-            "readOnly": false,
-            "newLine": false,
-            "size": 3
-        },
+			"format": {
+				"dataType": "text",
+				"viewType": "label"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "detail_version",
+			"label": "Dettaglio Versione",
+			"style": {
+				"background_color": "#03a9f4",
+				"font_color": "white",
+				"font_size": "1.5em",
+				"font_style": "normal",
+				"font_weight": "600"
+			},
+			"newLine": false,
+			"readOnly": true,
+			"sameOrigin": false,
+			"size": 8
+		},
         {
             "autoGenerate": false,
             "format": {
@@ -192,7 +184,7 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "select 1;",
+                    "queryFunct": "select attivita_import as vrnew from entrasp.attivita_import($codice_azienda$, $codice_attivita$, $attivita_vr$, $a_codiceazienda$, $a_codiceattivita$);",
                     "outputEventWhenComplete": "formReload"
                 }
             ],
@@ -200,11 +192,40 @@
             "isPrimary": false,
             "buttonIcon": "more_vert",
             "key": "attivita_actions",
-            "label": "",
+            "label": "Actions",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
             "size": 0.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "newLine": false,
+            "readOnly": true,
+            "size": 3
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Argomento",
+            "readOnly": true,
+            "newLine": false,
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -226,12 +247,12 @@
                 "dataType": "text",
                 "viewType": "input"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": false,
             "key": "note_vr",
             "label": "Note",
             "newLine": false,
-            "readOnly": false,
+            "readOnly": true,
             "size": 2.5
         },
         {
@@ -247,7 +268,7 @@
             "key": "codice_attivita_parent",
             "label": "Attività Livello Superiore",
             "newLine": false,
-            "readOnly": false,
+            "readOnly": true,
             "size": 5
         },
         {
@@ -261,9 +282,9 @@
             "isPrimary": false,
             "key": "id_centro_gest",
             "label": "Centro Gestionale",
-            "newLine": true,
+            "newLine": false,
             "size": 2.5,
-            "readOnly": false
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -281,7 +302,7 @@
             "key": "id_modello_test",
             "label": "Id Modello Verifica",
             "newLine": false,
-            "readOnly": false,
+            "readOnly": true,
             "size": 4.5
         },
         {
@@ -290,12 +311,12 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "gg_scadenza_da_avvio_progetto",
             "label": "Gg.scad.da avvio prog.",
             "newLine": false,
-            "readOnly": false,
+            "readOnly": true,
             "size": 2.5
         },
         {
@@ -319,7 +340,7 @@
             "queryFunct": "entrasp.grc_max_id_mdt_vr(codice_azienda, id_modello_test)",
             "label": "Ver.",
             "newLine": false,
-            "readOnly": false,
+            "readOnly": true,
             "sameOrigin": false,
             "size": 1
         },
@@ -331,11 +352,11 @@
             },
             "label": "Data Inizio Validità",
             "key": "data_inizio_validita",
-            "readOnly": false,
+            "readOnly": true,
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false,
-            "size": 1.75
+            "newLine": true,
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -345,24 +366,11 @@
             },
             "label": "Data Fine Validità",
             "key": "data_fine_validita",
-            "readOnly": false,
-            "isHidden": false,
+            "readOnly": true,
+            "isHidden": true,
             "isPrimary": false,
             "newLine": false,
             "size": 1.75
-        },
-        {
-            "format": {
-                "viewType": "invisible"
-            },
-            "size": 5,
-            "isHidden": false,
-            "isPrimary": false,
-            "label": "invisible_1",
-            "key": "invisible_1",
-            "sameOrigin": false,
-            "readOnly": true,
-            "newLine": false
         }
     ],
     "search_keys": [
@@ -417,6 +425,15 @@
             "isPrimary": true,
             "key": "attivita_vr",
             "label": "Versione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_azienda_import",
+            "label": "Azienda"
         },
         {
             "format": {
