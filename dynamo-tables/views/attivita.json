@@ -166,9 +166,9 @@
             },
             "isHidden": false,
             "isPrimary": true,
-            "size": 2,
+            "size": 1.5,
             "key": "codice_attivita",
-            "label": "Codice Attività (PK)",
+            "label": "Codice Attività",
             "newLine": false,
             "readOnly": true,
             "inputEvents": [
@@ -251,7 +251,7 @@
             "label": "Argomento",
             "readOnly": false,
             "newLine": false,
-            "size": 3
+            "size": 4
         },
         {
             "autoGenerate": false,
@@ -345,140 +345,9 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "newLine": true,
-            "readOnly": false,
-            "size": 9
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "note_vr",
-            "label": "Note",
             "newLine": false,
             "readOnly": false,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT codice_attivita AS id, descrizione AS name  FROM entrasp.attivita WHERE codice_azienda=$codice_azienda$;",
-                "options": [],
-                "viewType": "combobox",
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_attivita_parent",
-            "label": "Attività Livello Superiore",
-            "newLine": false,
-            "readOnly": false,
-            "size": 5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_centro_gest",
-            "label": "Centro Gestionale",
-            "newLine": true,
-            "size": 2.5,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_modello_test AS id, codice||'-'||titolo AS name FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$;",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "outputEvent": {
-                "eventName": "id_modello_test_change",
-                "eventTrigger": "select"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_modello_test",
-            "label": "Id Modello Verifica",
-            "newLine": false,
-            "readOnly": false,
-            "size": 4.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "gg_scadenza_da_avvio_progetto",
-            "label": "Gg.scad.da avvio prog.",
-            "newLine": false,
-            "readOnly": false,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "id_modello_test_change",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select max(id_modello_test_vr) from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
-                }
-            ],
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_modello_test_vr",
-            "queryFunct": "entrasp.grc_max_id_mdt_vr(codice_azienda, id_modello_test)",
-            "label": "Ver.",
-            "newLine": false,
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "date"
-            },
-            "label": "Data Inizio Validità",
-            "key": "data_inizio_validita",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "size": 1.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "date"
-            },
-            "label": "Data Fine Validità",
-            "key": "data_fine_validita",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": true,
-            "size": 1.5
+            "size": 7
         },
         {
             "autoGenerate": false,
@@ -487,97 +356,331 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "modello_test_from_sondaggi",
-            "label": "Modello Verifica Associato",
+            "key": "activate_detail_k",
+            "label": "Maggiori Dettagli",
+            "buttonIcon": "expand_more",
             "newLine": true,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when £id_modello_test_vr£ is null then true else false end as label"
-                }
-            ],
+            "size": 1,
             "outputEvent": {
-                "eventName": "to_modello_test_from_attivita",
+                "eventName": "activate_detail",
                 "eventTrigger": "press"
             },
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "activate_detail",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "actionType": "show",
+                    "eventName": "hide_detail",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
             "style": {
                 "background_color": "#25599C",
                 "font_color": "white"
             },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "hide_detail_k",
+            "label": "Nascondi Dettagli",
+            "buttonIcon": "expand_less",
+            "newLine": true,
+            "size": 1,
+            "outputEvent": {
+                "eventName": "hide_detail",
+                "eventTrigger": "press"
+            },
             "inputEvents": [
                 {
-                    "eventName": "id_modello_test_change",
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
+                    "actionType": "show",
+                    "eventName": "activate_detail",
                     "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
+                    "values": []
                 },
                 {
-                    "eventName": "id_modello_test_change",
-                    "actionType": "query_style",
-                    "styleAttribute": "font_color",
+                    "actionType": "hide",
+                    "eventName": "hide_detail",
                     "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
-                },
-                {
-                    "eventName": "id_modello_test_change",
-                    "actionType": "readOnly",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
-                },
-                {
-                    "eventName": "attivita_load",
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
-                },
-                {
-                    "eventName": "attivita_load",
-                    "actionType": "query_style",
-                    "styleAttribute": "font_color",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
-                },
-                {
-                    "eventName": "attivita_load",
-                    "actionType": "readOnly",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
-                },
-                {
-                    "eventName": "attivita_save",
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
-                },
-                {
-                    "eventName": "attivita_save",
-                    "actionType": "query_style",
-                    "styleAttribute": "font_color",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
-                },
-                {
-                    "eventName": "attivita_save",
-                    "actionType": "readOnly",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
+                    "values": []
                 }
             ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
             "readOnly": false,
-            "sameOrigin": false,
-            "size": 2
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "note_vr",
+                        "label": "Note",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 2.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "comboQuery": "SELECT codice_attivita AS id, descrizione AS name  FROM entrasp.attivita WHERE codice_azienda=$codice_azienda$;",
+                            "options": [],
+                            "viewType": "combobox",
+                            "dataType": "text"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "codice_attivita_parent",
+                        "label": "Attività Livello Superiore",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                            "options": [],
+                            "viewType": "combobox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "id_centro_gest",
+                        "label": "Centro Gestionale",
+                        "newLine": true,
+                        "size": 2.5,
+                        "readOnly": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "comboQuery": "SELECT id_modello_test AS id, codice||'-'||titolo AS name FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$;",
+                            "options": [],
+                            "viewType": "combobox"
+                        },
+                        "outputEvent": {
+                            "eventName": "id_modello_test_change",
+                            "eventTrigger": "select"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "id_modello_test",
+                        "label": "Id Modello Verifica",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 4.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "gg_scadenza_da_avvio_progetto",
+                        "label": "Gg.scad.da avvio prog.",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 2.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "id_modello_test_change",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select max(id_modello_test_vr) from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+                            }
+                        ],
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "id_modello_test_vr",
+                        "queryFunct": "entrasp.grc_max_id_mdt_vr(codice_azienda, id_modello_test)",
+                        "label": "Ver.",
+                        "newLine": false,
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 1
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "date"
+                        },
+                        "label": "Data Inizio Validità",
+                        "key": "data_inizio_validita",
+                        "readOnly": false,
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": false,
+                        "size": 1.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "date"
+                        },
+                        "label": "Data Fine Validità",
+                        "key": "data_fine_validita",
+                        "readOnly": false,
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": true,
+                        "size": 1.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "modello_test_from_sondaggi",
+                        "label": "Modello Verifica Associato",
+                        "newLine": true,
+                        "attributeFuncts": [
+                            {
+                                "attributeType": "isHidden",
+                                "queryString": "select case when £id_modello_test_vr£ is null then true else false end as label"
+                            }
+                        ],
+                        "outputEvent": {
+                            "eventName": "to_modello_test_from_attivita",
+                            "eventTrigger": "press"
+                        },
+                        "style": {
+                            "background_color": "#25599C",
+                            "font_color": "white"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "id_modello_test_change",
+                                "actionType": "query_style",
+                                "styleAttribute": "background_color",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
+                            },
+                            {
+                                "eventName": "id_modello_test_change",
+                                "actionType": "query_style",
+                                "styleAttribute": "font_color",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
+                            },
+                            {
+                                "eventName": "id_modello_test_change",
+                                "actionType": "readOnly",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
+                            },
+                            {
+                                "eventName": "attivita_load",
+                                "actionType": "query_style",
+                                "styleAttribute": "background_color",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
+                            },
+                            {
+                                "eventName": "attivita_load",
+                                "actionType": "query_style",
+                                "styleAttribute": "font_color",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
+                            },
+                            {
+                                "eventName": "attivita_load",
+                                "actionType": "readOnly",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
+                            },
+                            {
+                                "eventName": "attivita_save",
+                                "actionType": "query_style",
+                                "styleAttribute": "background_color",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else '#25599C' end as modello_test_from_sondaggi_background_color;"
+                            },
+                            {
+                                "eventName": "attivita_save",
+                                "actionType": "query_style",
+                                "styleAttribute": "font_color",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when $id_modello_test$::varchar='' then '#698EC2' else 'white' end as modello_test_from_sondaggi_font_color;"
+                            },
+                            {
+                                "eventName": "attivita_save",
+                                "actionType": "readOnly",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when $id_modello_test$::varchar='' then true else false end as label;"
+                            }
+                        ],
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 2
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "condition": "none",
+                    "eventName": "activate_detail",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "hide_detail",
+                    "values": []
+                }
+            ],
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "sezione_detail",
+            "label": "Maggiori Dettagli",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": true,
+            "saveWhenHidden": true
         }
     ],
     "search_keys": [
