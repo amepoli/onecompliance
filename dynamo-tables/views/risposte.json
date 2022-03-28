@@ -6,7 +6,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select rp.*, substring (entrasp.domande_descrizione(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda),1,200) as descr_domanda, entrasp.risposte_previste_risposta(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda, rp.id_risposta_prev) as risposta_prev_descr, substring (rp.risposta,1,150) as risposta_sint, substring(rp.note,1,100) as note_sint from entrasp.risposte rp inner join entrasp.sondaggi snd on rp.codice_azienda=snd.codice_azienda and rp.id_sondaggio=snd.id_sondaggio inner join entrasp.sondaggi_somministrati ss on ss.codice_azienda=snd.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where rp.codice_azienda=$codice_azienda$",
+      "queryString": "select rp.*, pf.id_progetto, substring (entrasp.domande_descrizione(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda),1,200) as descr_domanda, entrasp.risposte_previste_risposta(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, rp.id_domanda, rp.id_risposta_prev) as risposta_prev_descr, substring (rp.risposta,1,150) as risposta_sint, substring(rp.note,1,100) as note_sint from entrasp.risposte rp inner join entrasp.sondaggi snd on rp.codice_azienda=snd.codice_azienda and rp.id_sondaggio=snd.id_sondaggio inner join entrasp.sondaggi_somministrati ss on ss.codice_azienda=snd.codice_azienda and snd.id_sondaggio=ss.id_sondaggio left join entrasp.progetti_fasi pf on snd.codice_azienda=pf.codice_azienda and snd.id_sondaggio=pf.id_sondaggio where rp.codice_azienda=$codice_azienda$",
       "type": "main"
     }
   ],
@@ -268,10 +268,52 @@
         "dataType": "number"
       },
       "isHidden": false,
+      "isPrimary": false,
+      "key": "id_progetto",
+      "label": "ID progetto",
+      "width": "5%",
+      "isInputButton": true,
+      "buttonAction": {
+          "target": "progetti",
+          "viewType": "form",
+          "action": "navigate",
+          "keymap": [
+              {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+              },
+              {
+                  "source": "id_progetto",
+                  "destination": "id_progetto"
+              }
+          ]
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
       "isPrimary": true,
       "key": "id_sondaggio",
       "label": "ID Sondaggio",
-      "width": "5%"
+      "width": "5%",
+      "isInputButton": true,
+      "buttonAction": {
+          "target": "sondaggi",
+          "viewType": "form",
+          "action": "navigate",
+          "keymap": [
+              {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+              },
+              {
+                  "source": "id_sondaggio",
+                  "destination": "id_sondaggio"
+              }
+          ]
+      }
     },
     {
       "format": {
@@ -291,7 +333,27 @@
       "isPrimary": true,
       "key": "id_modello_test",
       "label": "Modello Verifica",
-      "width": "5%"
+      "width": "4%",
+      "isInputButton": true,
+      "buttonAction": {
+          "target": "modelli_test_vr",
+          "viewType": "form",
+          "action": "navigate",
+          "keymap": [
+              {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+              },
+              {
+                  "source": "id_modello_test",
+                  "destination": "id_modello_test"
+              },
+              {
+                  "source": "id_modello_test_vr",
+                  "destination": "id_modello_test_vr"
+              }
+          ]
+      }
     },
     {
       "format": {
@@ -301,7 +363,7 @@
       "isPrimary": true,
       "key": "id_modello_test_vr",
       "label": "Vr",
-      "width": "5%"
+      "width": "3%"
     },
     {
       "format": {
