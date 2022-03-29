@@ -26,7 +26,7 @@
       },
       "isHidden": false,
       "isPrimary": true,
-      "size": 2,
+      "size": 1,
       "key": "id_centro_gest",
       "label": "ID",
       "newLine": false,
@@ -73,7 +73,7 @@
         ]
       },
       "isHidden": false,
-      "size": 4.5,
+      "size": 7,
       "isPrimary": false,
       "key": "descrizione",
       "label": "Titolo Centro gestionale",
@@ -86,7 +86,7 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "size": 1.5,
       "key": "email_cc",
@@ -103,51 +103,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "descrizione_estesa",
-      "label": "Descrizione",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_argomento AS id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=6655 order by descrizione",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento_titolo_resp",
-      "label": "Titolo Richiesto per il Responsabile",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_argomento AS id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=6659 order by descrizione",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento_esperienza_resp",
-      "label": "Esperienza Richiesta",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part=$codice_part$ and id_centro_gest!=£id_centro_gest£;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest_parent",
-      "label": "Centro Gestionale Superiore",
+      "label": "Descrizione dettagliata",
       "newLine": true,
       "readOnly": false
     },
@@ -178,7 +134,8 @@
       "newLine": false,
       "readOnly": false,
       "isPrimary": false,
-      "isHidden": false
+      "isHidden": false,
+      "size": 3
     },
     {
       "autoGenerate": false,
@@ -192,35 +149,24 @@
       "isPrimary": false,
       "key": "codice_azienda_erogante",
       "label": "Azienda Erogante",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false,
-      "size": 2.5
+      "size": 2
     },
     {
       "autoGenerate": false,
       "format": {
-        "value": "0",
-        "viewType": "checkbox"
+        "comboQuery": "SELECT id_centro_gest AS id,descrizione AS name from entrasp.centri_gestionali WHERE codice_part=$codice_part$ and id_centro_gest!=£id_centro_gest£;",
+        "options": [],
+        "viewType": "combobox"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
-      "key": "flag_grc_controller",
-      "label": "Controller",
+      "key": "id_centro_gest_parent",
+      "label": "Centro Gestionale Superiore",
+      "newLine": false,
       "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "flag_grc_gestore",
-      "label": "Gestore",
-      "readOnly": false,
-      "newLine": false
+      "size": 3
     },
     {
       "autoGenerate": false,
@@ -232,7 +178,167 @@
       "isPrimary": false,
       "key": "id_gruppo_lavoro",
       "label": "Gruppo lavoro",
-      "readOnly": true
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "activate_detail_k",
+      "label": "Maggiori Dettagli",
+      "buttonIcon": "expand_more",
+      "newLine": true,
+      "size": 2,
+      "outputEvent": {
+        "eventName": "activate_detail",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "hide",
+          "eventName": "activate_detail",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "show",
+          "eventName": "hide_detail",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "hide_detail_k",
+      "label": "Nascondi Dettagli",
+      "buttonIcon": "expand_less",
+      "newLine": true,
+      "size": 1,
+      "outputEvent": {
+        "eventName": "hide_detail",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "activate_detail",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "eventName": "hide_detail",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "format": {
+        "viewType": "subform",
+        "subform_keys": [
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT id_argomento AS id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=6655 order by descrizione",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_titolo_resp",
+            "label": "Titolo Richiesto per il Responsabile",
+            "readOnly": false,
+            "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT id_argomento AS id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=6659 order by descrizione",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_esperienza_resp",
+            "label": "Esperienza Richiesta",
+            "readOnly": false,
+            "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "value": "0",
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_grc_controller",
+            "label": "Controller",
+            "readOnly": false,
+            "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "value": "0",
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_grc_gestore",
+            "label": "Gestore",
+            "readOnly": false,
+            "newLine": false
+          }
+        ]
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "condition": "none",
+          "eventName": "activate_detail",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "hide_detail",
+          "values": []
+        }
+      ],
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "sezione_detail",
+      "label": "Maggiori Dettagli",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": true,
+      "saveWhenHidden": true
     }
   ],
   "origin": "entrasp.centri_gestionali",
@@ -330,20 +436,6 @@
   ],
   "subTables": [
     {
-      "entryKey": "centri_gestionali_sub",
-      "keys": [
-        {
-          "parent": "id_centro_gest",
-          "son": "id_centro_gest_parent"
-        },
-        {
-          "parent": "codice_part",
-          "son": "codice_part"
-        }
-      ],
-      "label": "Centri Gestionali Subordinati"
-    },
-    {
       "entryKey": "gruppi_lavoro_membri",
       "keys": [
         {
@@ -356,6 +448,20 @@
         }
       ],
       "label": "Elenco Personale"
+    },
+    {
+      "entryKey": "centri_gestionali_sub",
+      "keys": [
+        {
+          "parent": "id_centro_gest",
+          "son": "id_centro_gest_parent"
+        },
+        {
+          "parent": "codice_part",
+          "son": "codice_part"
+        }
+      ],
+      "label": "Centri Gestionali Subordinati"
     },
     {
       "entryKey": "procedure_aziendali_sub_centri_gest",
@@ -515,7 +621,7 @@
       "isPrimary": true,
       "key": "id_centro_gest",
       "label": "ID",
-      "width": "6%"
+      "width": "3%"
     },
     {
       "format": {
@@ -536,7 +642,39 @@
       "isPrimary": false,
       "key": "codice",
       "label": "Codice",
-      "width": "6%"
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Descrizione",
+      "width": "30%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "responsabile",
+      "label": "Responsabile",
+      "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_responsabile)",
+      "width": "20%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "parente",
+      "label": "Centro Superiore",
+      "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest_parent)",
+      "width": "25%"
     },
     {
       "format": {
@@ -550,38 +688,9 @@
     },
     {
       "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "responsabile",
-      "label": "Responsabile",
-      "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_responsabile)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "parente",
-      "label": "Centro Superiore",
-      "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest_parent)"
-    },
-    {
-      "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "id_argomento",
       "label": "id_argomento"
@@ -596,5 +705,8 @@
       "viewType": "form",
       "formActionType": "attachments"
     }
-  ]
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by id_centro_gest"
+  }
 }
