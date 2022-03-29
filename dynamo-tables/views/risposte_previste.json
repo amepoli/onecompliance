@@ -12,14 +12,14 @@
       "queryString": "select entrasp.risposte_previste_ordinamento_update($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $id_risposta_prev$, $ordinamento$)"
     },
     {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "update entrasp.risposte rp set peso= rpr.peso from entrasp.risposte_previste rpr where rp.codice_azienda= rpr.codice_azienda and rp.id_domanda = rpr.id_domanda and rp.id_risposta_prev = rpr.id_risposta_prev and rp.id_modello_test = rpr.id_modello_test and rp.id_modello_test_vr = rpr.id_modello_test_vr and rp.peso!=rpr.peso and rp.id_risposta_prev=$id_risposta_prev$ and rp.id_domanda=$id_domanda$ and rp.codice_azienda=$codice_azienda$"
-    },
-    {
       "operation": "insert",
       "type": "postProcessing",
       "queryString": "select entrasp.risposte_previste_ordinamento_update($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $id_risposta_prev$, $ordinamento$)"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "update entrasp.risposte rp set peso= rpr.peso from entrasp.risposte_previste rpr where rp.codice_azienda= rpr.codice_azienda and rp.id_domanda = rpr.id_domanda and rp.id_risposta_prev = rpr.id_risposta_prev and rp.id_modello_test = rpr.id_modello_test and rp.id_modello_test_vr = rpr.id_modello_test_vr and rp.peso!=rpr.peso and rp.id_risposta_prev=$id_risposta_prev$ and rp.id_domanda=$id_domanda$ and rp.codice_azienda=$codice_azienda$"
     }
   ],
   "orderBy": {
@@ -412,8 +412,9 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": true,
+      "width": "5%",
       "key": "id_risposta_prev",
       "label": "id_risposta_prev"
     },
@@ -477,6 +478,30 @@
       "queryFunct": "entrasp.argomenti_descr_breve(id_argomento)",
       "width": "20%"
     }
+  ],
+  "subTables": [
+    {
+      "entryKey": "risposte_sub_of_risposte_previste",
+      "keys": [
+          {
+              "parent": "codice_azienda",
+              "son": "codice_azienda"
+          },
+          {
+              "parent": "id_modello_test",
+              "son": "id_modello_test"
+          },
+          {
+              "parent": "id_domanda",
+              "son": "id_domanda"
+          },
+          {
+              "parent": "id_risposta_prev",
+              "son": "id_risposta_prev"
+          }
+      ],
+      "label": "Risposte date"
+  }
   ],
   "outputEvents": [
     {
