@@ -92,30 +92,52 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "button"
+                "viewType": "input",
+                "dataType": "number"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "navigate_to_presidio_parent_k",
-            "label": "Presidio parent",
-            "newLine": true,
+            "key": "id_presidio_parent",
+            "label": "Id Pres.Sup.",
+            "newLine": false,
             "outputEvent": {
-                "eventName": "navigate_to_presidio_parent",
+                "eventName": "to_modello_test_from_sondaggi",
                 "eventTrigger": "press"
             },
-            "attributeFuncts": [
+            "size": 1.5,
+            "readOnly": true
+        }, 
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "tag",
+                        "label": "Tagga presidi",
+                        "outputEventName": "presidi_tag"
+                    }
+                ]
+            },
+            "inputEvents": [
                 {
-                    "attributeType": "readOnly",
-                    "queryString": "select case when id_presidio_parent is null then 1 else 0 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
+                    "eventName": "presidi_tag",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Presidi taggati correttamente",
+                    "values": [],
+                    "queryFunct": "select entrasp.argomenti_create_and_update_presidi(codice_azienda, id_presidio, descrizione, descrizione, 574) from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$ and id_argomento is null;"
                 }
             ],
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "presidi_actions",
+            "label": "",
+            "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
-            "size": 2.5
+            "size": 0.5
         },
         {
             "autoGenerate": false,
