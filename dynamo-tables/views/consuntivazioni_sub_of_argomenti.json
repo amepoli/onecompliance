@@ -2,27 +2,120 @@
   "$schema": "../views.schema.json",
   "entryKey": "consuntivazioni_sub_of_argomenti",
   "origin": "entrasp.consuntivazioni",
-  "inheritsFrom": "consuntivazioni_sub",
-  "predefinedQueries": [
+  "inheritsFrom": "consuntivazioni_consultant_list",
+  "define": {
+    "_and_": "csn.id_argomento=$id_argomento$",
+    "same_origin": "true",
+    "is_hidden_esecutore": "true",
+    "is_hidden_time_report": "false"
+  },
+  "search_keys": [
     {
-      "operation": "selectTable",
-      "queryString": "select entrasp.anagrafiche_id_codcognnome(csn.codice_part,id_risorsa) as esecutore,csn.id_cons, csn.codice_compito, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',csn.stato) as descr_stato, csn.thread, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, csn.stato, csn.note, csn.id_argomento from entrasp.consuntivazioni csn WHERE csn.id_argomento=$id_argomento$",
-      "type": "main"
+      "fieldName": "id_cons",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Consuntivazione",
+      "newLine": false,
+      "queryCond": "id_cons=$id_cons$"
     },
     {
-      "operation": "selectForm",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
+      "format": {
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "queryCond": "csn.codice_azienda='€codice_azienda_s€'",
+      "fieldName": "codice_azienda_s",
+      "label": "Codice Azienda",
+      "newLine": false,
+      "size": 2
     },
     {
-      "operation": "insert",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part,id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
+      "fieldName": "data_esec_prevista_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione dopo il",
+      "newLine": false,
+      "queryCond": "csn.data_intervento>='€data_esec_prevista_min€'"
     },
     {
-      "operation": "update",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part,id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
+      "fieldName": "data_esec_prevista_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione prima del",
+      "newLine": false,
+      "queryCond": "csn.data_intervento<='€data_esec_prevista_max€'"
+    },
+    {
+      "fieldName": "parola_search",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Parola chiave",
+      "newLine": true,
+      "queryCond": "(upper(csn.note) like '%'||upper('€parola_search€')||'%' or upper(csn.titolo) like '%'||upper('€parola_search€')||'%'"
+    },
+    {
+      "fieldName": "durata_ft_min",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Durata fatturazione maggiore di",
+      "newLine": false,
+      "queryCond": "csn.durata_ft>=$durata_ft_min$"
+    },
+    {
+      "fieldName": "durata_min",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Durata maggiore di",
+      "newLine": false,
+      "queryCond": "csn.durata>=$durata_min$"
+    },
+    {
+      "fieldName": "dynamo_user_s",
+      "format": {
+        "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.anagrafiche_id order by dynamo_user;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "User",
+      "newLine": false,
+      "queryCond": "csn.codice_part||'-'||csn.id_risorsa in(select codice_part||'-'||id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€dynamo_user_s€')"
+    },
+    {
+      "fieldName": "stato",
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "csn.stato='€stato€'"
+    },
+    {
+      "fieldName": "open",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Aperti",
+      "newLine": true,
+      "size": 2,
+      "queryCond": "csn.stato!='C'"
     }
   ],
   "hideActions": [
