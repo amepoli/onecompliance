@@ -52,7 +52,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select codice_compito, codice, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as descr_stato from entrasp.compiti where codice_azienda=$codice_azienda$"
+      "queryString": "select codice_compito, codice, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,codice_compito,codice_azienda), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as descr_stato, (€global_id_anagrafiche€)::text as user_companies from entrasp.compiti where codice_azienda=$codice_azienda$"
     },
     {
       "operation": "update",
@@ -1019,7 +1019,7 @@
       "key": "tipo_segnalazione",
       "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
       "label": "Tipo",
-      "width": "10%"
+      "width": "15%"
     },
     {
       "format": {
@@ -1029,16 +1029,15 @@
       "isPrimary": true,
       "key": "codice_compito",
       "width": "5%",
-      "label": "ID Comp.(PK)"
+      "label": "Codice Compito"
     },
     {
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "codice",
-      "width": "5%",
       "label": "Codice Segn."
     },
     {
@@ -1145,7 +1144,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo",
-      "width": "30%",
+      "width": "31%",
       "label": "Titolo"
     },
     {
@@ -1163,7 +1162,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "3%",
+      "width": "5%",
       "key": "time_report_play",
       "label": "",
       "style": [
@@ -1174,7 +1173,7 @@
       ],
       "isButton": true,
       "buttonAction": {
-        "target": "compiti_consultant_to_do_open",
+        "target": "compiti",
         "viewType": "form",
         "action": "query",
         "query": "select entrasp.time_report_play(('£user_companies£')::text, '£codice_compito£', '£codice_azienda£')",
@@ -1193,7 +1192,7 @@
           }
         ],
         "confirmAction": false,
-        "onSuccessAction": "reload"
+        "onSuccessAction": "update_time_tracker_and_reload"
       }
     },
     {
@@ -1213,7 +1212,7 @@
       ],
       "isButton": true,
       "buttonAction": {
-        "target": "compiti_consultant_to_do_open",
+        "target": "compiti",
         "viewType": "form",
         "action": "query",
         "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
@@ -1232,7 +1231,7 @@
           }
         ],
         "confirmAction": false,
-        "onSuccessAction": "reload"
+        "onSuccessAction": "update_time_tracker_and_reload"
       }
     }
   ],
