@@ -1976,6 +1976,30 @@
                                             "required": [
                                                 "driveFolderParams"
                                             ]
+                                        },
+                                        {
+                                            "properties": {
+                                                "actionType": {
+                                                    "enum": [
+                                                        "copy_s3_to_drive"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "S3ToDriveParams"
+                                            ]
+                                        },
+                                        {
+                                            "properties": {
+                                                "actionType": {
+                                                    "enum": [
+                                                        "copy_drive_to_s3"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "DriveToS3Params"
+                                            ]
                                         }
                                     ],
                                     "properties": {
@@ -1986,7 +2010,9 @@
                                                 "get_distance",
                                                 "get_directions",
                                                 "get_email_thread",
-                                                "create_drive_folder"
+                                                "create_drive_folder",
+                                                "copy_s3_to_drive",
+                                                "copy_drive_to_s3"
                                             ]
                                         },
                                         "directionsParams": {
@@ -2056,6 +2082,42 @@
                                             "properties": {
                                                 "driveFolderKey": {
                                                     "description": "M: Drive folder key",
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "S3ToDriveParams": {
+                                            "type": "object",
+                                            "description": "?: S3 to Drive file copy parameters",
+                                            "required": [
+                                                "s3PathKey", "drivePathKey"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "s3PathKey": {
+                                                    "description": "M: S3 path key",
+                                                    "type": "string"
+                                                },
+                                                "drivePathKey": {
+                                                    "description": "M: Drive path key",
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "DriveToS3Params": {
+                                            "type": "object",
+                                            "description": "?: Drive to S3 file copy parameters",
+                                            "required": [
+                                                "drivePathKey", "s3PathKey"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "drivePathKey": {
+                                                    "description": "M: Drive path key",
+                                                    "type": "string"
+                                                },
+                                                "s3PathKey": {
+                                                    "description": "M: S3 path key",
                                                     "type": "string"
                                                 }
                                             }

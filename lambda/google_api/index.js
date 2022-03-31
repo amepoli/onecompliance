@@ -59,6 +59,67 @@ async function downloadS3Object(path, file) {
     return data;
 }
 
+async function uploadS3Object(path, file, data) {
+    var params = { 
+        Bucket: 'BUCKET_NAME',
+        Key: `${path}/${file}`,
+        Body: data
+    };
+
+    const result = await s3.upload(params).promise();
+    return result;
+}
+
+async function downloadDriveObject(drivePath, file) {
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    
+    let driveFileId = null;
+    let driveFolderId = 'root';
+
+    let response = null;
+    if(drivePath.length > 0) {        
+        response = await drive.files.list({
+            q: `mimeType='application/vnd.google-apps.folder' and name='${drivePath}'`,
+            pageSize: 5,
+            fields: 'nextPageToken, files(id, name, mimeType)',
+        });
+        try {
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+        if(response.data && response.data.files && response.data.files.length > 0) {
+            driveFolderId = response.data.files[0].id;
+        }
+        console.log('find folder result: ', JSON.stringify(response));
+    }
+
+
+    response = await drive.files.list({
+        q: `'${driveFolderId}' in parents and name='${file}'`,
+        pageSize: 250,
+        fields: 'nextPageToken, files(id, name, mimeType)',
+    });
+    try {
+        response = JSON.parse(response);    
+    }
+    catch(e) {}
+    if(response.data && response.data.files && response.data.files.length > 0) {
+        driveFileId = response.data.files[0].id;
+    }
+    console.log('find file result: ', JSON.stringify(response));
+
+    if(driveFileId) {
+        response = await drive.files.get({
+            fileId: driveFileId,
+            alt: 'media'
+        });
+    }
+    
+    console.log('download file result: ', JSON.stringify(response));
+
+    const data = response.data;
+    return data;
+}
 
 // Perform Google Auth
 async function performGoogleAuth(authParams) {
@@ -560,78 +621,95 @@ async function copyFromS3ToDrive(queryParams, authParams) {
         console.log(e);
     }
 
+    return { result: 'OK', data: response };
+}
 
-    // (function (err, tokens) {
-    //     // your access_token is now refreshed and stored in oauth2Client
-    //     // store these new tokens in a safe place (e.g. database)
-    // });
+async function copyFromDriveToS3(queryParams, authParams) {
+    let s3FilePath = queryParams['s3FilePath'];
+    if(s3FilePath.startsWith('/')) {
+        s3FilePath = s3FilePath.substring(1);
+    }
+    let s3Path = '';
+    let s3File = s3FilePath;
+    if(s3FilePath.includes('/')) {
+        let s3FilePathParts = s3FilePath.split('/');
+        s3File = s3FilePathParts.pop();
+        s3Path = s3FilePathParts.join('/');
+    }
+    console.log('s3File: ', s3File);
+    console.log('s3Path: ', s3Path);
+    
+    
+    let driveFilePath = queryParams['driveFilePath'];
+    if(driveFilePath.startsWith('/')) {
+        driveFilePath = driveFilePath.substring(1);
+    }
+    let drivePath = '';
+    let driveFile = driveFilePath;
+    if(driveFilePath.includes('/')) {
+        let driveFilePathParts = driveFilePath.split('/');
+        driveFile = driveFilePathParts.pop();
+        drivePath = driveFilePathParts.join('/');
+    }
+    console.log('driveFile: ', driveFile);
+    console.log('drivePath: ', drivePath);
+    
+    await performGoogleAuth(authParams);
+    
+    let response;
+    
+    const driveFileData = await downloadDriveObject(drivePath, driveFile);
+    console.log('data: ' + driveFileData);
+    response = await uploadS3Object(s3Path, s3File, driveFileData);
 
+    // console.log('data: ' + JSON.stringify(bufferStream));
 
-    // const payload = ticket.getPayload();
-    // const userid = payload['sub'];
-    // let response = '';
+    
+    // const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    
+    // let driveFolderId = 'root';
 
-    // let response = await gmail.users.labels.list({
-    //     userId: 'me',
-    // });
-    // console.log(response);
-
-    // const response = await promisify(gmail.users.labels.list({
-    //     userId: 'me',
-    // }), { context: gmail.users.labels} );
-    // console.log(response);
-
-    // const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-    // const labelsPromise = new Promise(function (resolve, reject) {
-    //     gmail.users.labels.list({
-    //         userId: 'me',
-    //     }, (err, res) => {
-    //         if (err) reject(Error(err));
-    //         resolve(res.data.labels);
-    //     })
-
-    // });
-
-    // let response = await labelsPromise;
+    // if(drivePath.length > 0) {        
+    //     response = await drive.files.list({
+    //         q: `mimeType='application/vnd.google-apps.folder' and name='${drivePath}'`,
+    //         pageSize: 5,
+    //         fields: 'nextPageToken, files(id, name, mimeType)',
+    //     });
+    //     try {
+    //         response = JSON.parse(response);    
+    //     }
+    //     catch(e) {}
+    //     if(response.data && response.data.files && response.data.files.length > 0) {
+    //         driveFolderId = response.data.files[0].id;
+    //     }
+    //     console.log('find folder result: ', JSON.stringify(response));
+    // }
+    
+    // const fileMetadata = {
+    //     'name': driveFile,
+    //     parents: [driveFolderId]
+    // };
+    // const media = {
+    //     mimeType: 'text/plain',
+    //     body: bufferStream
+    // };
 
     // try {
-    //     response = await gmail.users.labels.list({
-    //         userId: 'me',
+    //     // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+    //     response = await drive.files.create({
+    //         resource: fileMetadata,
+    //         media: media,
+    //         fields: 'id'
     //     });
-    //     console.log(response);
+    //     try {
+    //         response = JSON.parse(response);    
+    //     }
+    //     catch(e) {}
+    //     console.log(JSON.stringify(response));
     // }
     // catch (e) {
     //     console.log(e);
     // }
-
-
-
-    // gmail.users.labels.list({
-    //     userId: 'me',
-    // }, (err, res) => {
-    //     if (err) return console.log('The API returned an error: ' + err);
-    //     const labels = res.data.labels;
-    //     if (labels.length) {
-    //         console.log('Labels:');
-    //         labels.forEach((label) => {
-    //             console.log(`- ${label.name}`);
-    //         });
-    //     } else {
-    //         console.log('No labels found.');
-    //     }
-    // });
-    // snooze(5000);
-
-    // If request specified a G Suite domain:
-    // const domain = payload['hd'];
-
-    // // Get directions
-    // const url = `https://gmail.googleapis.com/gmail/v1/users/${queryParams['email']}/threads`;
-    // console.log('url: ', url);
-    // // const req = await requestPromise({ url, method: 'GET' })
-    // const response = await axios.get(url);
-    // console.log(response.data);
 
     return { result: 'OK', data: response };
 }
@@ -675,6 +753,9 @@ exports.handler = async (event, context) => {
             }
             else if (requestType === 'copyFromS3ToDrive') {
                 body = await copyFromS3ToDrive(queryParams, event.body? JSON.parse(event.body): {});
+            }            
+            else if (requestType === 'copyFromDriveToS3') {
+                body = await copyFromDriveToS3(queryParams, event.body? JSON.parse(event.body): {});
             }            
             else {
                 return getBadUrlResponse();
