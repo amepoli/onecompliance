@@ -1507,6 +1507,72 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     
                 }
             }
+            else if(googleAPIParams.actionType == 'copy_s3_to_drive') {
+                if(!googleAPIParams.S3ToDriveParams) {
+                    _this._toastService.showErrorToast("Missing Google API Path Params");
+                }
+                else {
+                    const s3Path = formValues[googleAPIParams.S3ToDriveParams.s3PathKey];
+                    const drivePath = formValues[googleAPIParams.S3ToDriveParams.drivePathKey];
+                    if(!s3Path || !drivePath) {
+                        _this._toastService.showErrorToast("Missing Google API Path Params");
+                    }
+                    else {
+                        let auth = _this.authService.loginGoogle();
+                        _this.backendService.copyFromS3ToDrive(s3Path, drivePath, auth).subscribe(                        
+                            response => {
+                                // console.log(response);
+                                if (response['result'] === 'OK') {
+                                    if (event.outputEventWhenComplete != null) {
+                                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
+                                    }
+                                }
+                                else {
+                                    _this._toastService.showErrorToast(response['reason']);
+                                }
+                            },
+                            error => {
+                                console.log(error);
+                                _this._toastService.showErrorToast(error);        
+                            }
+                        );
+                    }
+                    
+                }
+            }
+            else if(googleAPIParams.actionType == 'copy_drive_to_s3') {
+                if(!googleAPIParams.DriveToS3Params) {
+                    _this._toastService.showErrorToast("Missing Google API Path Params");
+                }
+                else {
+                    const drivePath = formValues[googleAPIParams.DriveToS3Params.drivePathKey];
+                    const s3Path = formValues[googleAPIParams.S3ToDriveParams.s3PathKey];
+                    if(!drivePath || !s3Path) {
+                        _this._toastService.showErrorToast("Missing Google API Path Params");
+                    }
+                    else {
+                        let auth = _this.authService.loginGoogle();
+                        _this.backendService.copyFromDriveToS3(drivePath, s3Path, auth).subscribe(                        
+                            response => {
+                                // console.log(response);
+                                if (response['result'] === 'OK') {
+                                    if (event.outputEventWhenComplete != null) {
+                                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
+                                    }
+                                }
+                                else {
+                                    _this._toastService.showErrorToast(response['reason']);
+                                }
+                            },
+                            error => {
+                                console.log(error);
+                                _this._toastService.showErrorToast(error);        
+                            }
+                        );
+                    }
+                    
+                }
+            }
             else {
                 _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");                    
             }

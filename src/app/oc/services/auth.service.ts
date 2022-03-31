@@ -504,14 +504,16 @@ export class AuthService {
       //console.log((new Date()).getTime() - sessionGoogleAuth.expires_at);
       //_this.loadDriveContents(null);
       //_this.createDriveFolder('OneCompliance');
-      _this.copyFromS3ToDrive('2PAY/07pZlZGrzJ9dNc9hbVrVPBEZekGakszl', 'Apparrell Assets/test_file.txt').subscribe(
-        response => {
-          console.log("S3 data", response['data']);
-        },
-        error => {
-          console.error("S3 data", error);
-        }
-      )
+      
+      // _this.copyFromDriveToS3('Apparrell Assets/zee_test_file_in.txt', 'zee/zee_test_file_out.txt').subscribe(
+      // // _this.copyFromS3ToDrive('zee/zee_test_file_in.txt', 'Apparrell Assets/zee_test_file_in.txt', ).subscribe(
+      //   response => {
+      //     console.log("Drive data", response['data']);
+      //   },
+      //   error => {
+      //     console.error("Drive data", error);
+      //   }
+      // )
       return this.loadGoogleAuth();
     }
     else {
