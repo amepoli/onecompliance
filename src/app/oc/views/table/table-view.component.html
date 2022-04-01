@@ -188,9 +188,8 @@
         </form-view>
 
         <div class="mat-elevation-z2" class="data-table">
-
-            <ng-container *ngIf="!showExplorer && !isLoading">
-                <table class="table-view-content" mat-table [dataSource]="dataSource" matSort>
+            
+            <table class="table-view-content" [hidden]="showExplorer || isLoading" mat-table [dataSource]="dataSource" matSort>
                     <ng-container [matColumnDef]="entry.key" *ngFor="let entry of viewKeys">
                         <ng-container>
                             <ng-container *ngIf="!entry.isSelectCheckbox">
@@ -271,10 +270,11 @@
                     <mat-row *matRowDef="let row; columns: displayedColumns; let i = index; " (dblclick)="getRecord(i, row)"
                         style="line-height: 2em;" [style.background]="(selectedRow == row) ? 'lightblue' : ''">
                     </mat-row>
-                    <tr mat-footer-row *matFooterRowDef="tableColumns"
+                    <tr mat-footer-row *matFooterRowDef="displayedColumns"
                         style="border-radius: 0px 10px 10px 10px; background-color: rgb(91, 145, 192);"></tr>
+                    <!-- <tr mat-footer-row *matFooterRowDef="tableColumns"
+                        style="border-radius: 0px 10px 10px 10px; background-color: rgb(91, 145, 192);"></tr> -->
                 </table>    
-            </ng-container>
             <ng-container *ngIf="showExplorer && !isLoading">
                 <mat-card class="explorer-folders-content">
                     <p></p>
