@@ -1,0 +1,72 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "modelli_test_vr_consultant_hp",
+    "inheritsFrom": "modelli_test_vr_consultant",
+    "define": {
+        "is_hidden_codice_azienda": "false"
+    },
+    "toolbar_elements": [
+        {
+            "fieldName": "codice_azienda_s",
+            "viewType": "combobox",
+            "position": "left",
+            "label": "Azienda",
+            "options": [],
+            "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name  FROM entrasp.aziende WHERE codice_azienda in(€global_user_companies€) order by codice_azienda;",
+            "queryCond": "mt.codice_azienda = '$codice_azienda_s$'"
+        }
+    ],
+    "tiles": [
+        {
+            "title": "Senza argomento",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(mt.id_modello_test) as no_argomento FROM entrasp.modelli_test mt where mt.id_argomento is null and mt.codice_azienda in (€global_user_companies€)",
+                "queryCond": "",
+                "fieldName": "no_argomento",
+                "value_color": "red",
+                "title_color": "red",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+					"id_argomento": null
+				}
+            },
+            "new_line": false
+        },
+        {
+            "title": "Senza Centro Gestionale",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(mt.id_modello_test) as no_centro_gest FROM entrasp.modelli_test mt where mt.id_centro_gest is null and mt.codice_azienda in (€global_user_companies€)",
+                "queryCond": "",
+                "fieldName": "no_centro_gest",
+                "value_color": "red",
+                "title_color": "red",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+					"id_argomento": null
+				}
+            },
+            "new_line": true
+        },
+        {
+            "title": "No def.liv.controllo",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(id_modello_test) as no_liv_cont FROM entrasp.modelli_test mt where id_argomento not in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=6871 and id_argomento_son is not null) and mt.codice_azienda in (€global_user_companies€)",
+                "queryCond": "",
+                "fieldName": "no_liv_cont",
+                "value_color": "red",
+                "title_color": "red",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+					"id_argomento": null
+				}
+            },
+            "new_line": false
+        }
+    ] 
+}
