@@ -1,0 +1,69 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "domande_consultant_hp",
+    "inheritsFrom": "domande",
+    "toolbar_elements": [
+        {
+            "fieldName": "codice_azienda_s",
+            "viewType": "combobox",
+            "position": "left",
+            "label": "Azienda",
+            "options": [],
+            "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name  FROM entrasp.aziende WHERE codice_azienda in(€global_user_companies€) order by codice_azienda;",
+            "queryCond": "dm.codice_azienda = '$codice_azienda_s$'"
+        }
+    ],
+    "tiles": [
+        {
+            "title": "Senza argomento",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(dm.id_modello_test) as no_argomento FROM entrasp.domande dm where dm.id_argomento is null and dm.codice_azienda in (€global_user_companies€)",
+                "queryCond": "",
+                "fieldName": "no_argomento",
+                "value_color": "red",
+                "title_color": "red",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+					"id_argomento": null
+				}
+            },
+            "new_line": false
+        },
+        {
+            "title": "No def.liv.controllo",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(id_domanda) as no_tipo_ver FROM entrasp.domande dm where id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6871 and ason.id_argomento_son is not null) and dm.codice_azienda in (€global_user_companies€)",
+                "queryCond": "",
+                "fieldName": "no_liv_cont",
+                "value_color": "red",
+                "title_color": "red",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+					"id_argomento": null
+				}
+            },
+            "new_line": false
+        },
+        {
+            "title": "No tipo verifica",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(id_domanda) as no_tipo_dm FROM entrasp.domande dm where id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=159 and ason.id_argomento_son is not null) and dm.codice_azienda in (€global_user_companies€)",
+                "queryCond": "",
+                "fieldName": "no_tipo_ver",
+                "value_color": "red",
+                "title_color": "red",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+					"id_argomento": null
+				}
+            },
+            "new_line": false
+        }
+    ] 
+}
