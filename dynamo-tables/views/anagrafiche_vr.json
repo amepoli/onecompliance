@@ -605,6 +605,22 @@
                     "queryFunct": "select entrasp.anagrafica_id_new_version('€global_codice_azienda€', $id_anagrafica$, $prog_vr$, $codice_tipo_documento$, ($data_scadenza_documento$)::date) as prog_vr",
                     "condition": "none",
                     "values": [],
+                    "outputEventWhenComplete": "cancella_tipo_documento"
+                },
+                {
+                    "eventName": "cancella_tipo_documento",
+                    "actionType": "query",
+                    "queryFunct": "select 'ND'::varchar as codice_tipo_documento",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "cancella_data_scadenza_documento"
+                },
+                {
+                    "eventName": "cancella_data_scadenza_documento",
+                    "actionType": "query",
+                    "queryFunct": "select null::date as data_scadenza_documento",
+                    "condition": "none",
+                    "values": [],
                     "successMessage": "Done!"
                 }
             ],
