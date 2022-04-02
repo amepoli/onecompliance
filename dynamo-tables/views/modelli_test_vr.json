@@ -1134,14 +1134,14 @@
             "queryCond": "mt.id_modello_test in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$)"
         },
         {
-            "fieldName": "no_argomento",
+            "fieldName": "with_closed_sondaggi",
             "format": {
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Senza Argomento",
+            "label": "Con Verifiche Chiuse",
             "newLine": false,
-            "queryCond": "mt.id_argomento is null"
+            "queryCond": "mt.id_modello_test in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$ and snd.stato='C')"
         },
         {
             "fieldName": "no_procedure",
@@ -1160,7 +1160,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con Processi",
-            "newLine": false,
+            "newLine": true,
             "queryCond": "mt.id_modello_test in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=$codice_azienda$)"
         },
         {
@@ -1212,6 +1212,16 @@
             "label": "Senza tipo controllo",
             "newLine": false,
             "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=159 and ason.id_argomento_son is not null)"
+        },
+        {
+            "fieldName": "no_argomento",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza Argomento",
+            "newLine": false,
+            "queryCond": "mt.id_argomento is null"
         }
     ],
     "subTables": [
