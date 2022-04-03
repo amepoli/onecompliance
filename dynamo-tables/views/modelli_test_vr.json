@@ -32,7 +32,18 @@
             "operation": "insert",
             "type": "preCheck",
             "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and codice='£codice£'",
-            "messageNotNull": "Inserimento: il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+            "messageNotNull": "Inserimento: il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzare un codice diverso"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and (titolo='£titolo£' or descrizione='£descrizione£')",
+            "messageNotNull": "Inserimento: il titolo o la descrizione sono già stati utilizzati per un altro modello di test: si prega di controllare o fornire una descrizione più precisa"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "select entrasp.argomenti_create_and_update($codice_azienda$, $id_modello_test$, $titolo$, $descrizione$ , $codice$, 45)"
         },
         {
             "operation": "update",
@@ -410,22 +421,6 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_argomento",
-            "queryFunct": "SELECT id_argomento from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "label": "Argomento",
-            "readOnly": false,
-            "newLine": false,
-            "size": 1.8
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "dataType": "text",
                 "viewType": "input"
             },
@@ -436,6 +431,29 @@
             "label": "Giorni anticipo documentaz",
             "size": 1,
             "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_risultato AS id, id_risultato||'-'||descrizione AS name  FROM entrasp.modelli_test_risultati WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Selezionare criterio di analisi",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "queryFunct": "SELECT id_risultato from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_risultato",
+            "label": "Criterio di analisi",
+            "newLine": false,
+            "size": 2.0,
             "readOnly": false
         },
         {
@@ -615,39 +633,23 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
-                "viewType": "textarea"
+                "viewType": "textarea",
+                "validations": [
+                    {
+                        "message": "Necessaria descrizione del modello di test",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "queryFunct": "SELECT descrizione from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
             "isHidden": false,
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "size": 4,
+            "size": 5.0,
             "textareaHeight": "L",
             "newLine": false,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_risultato AS id, id_risultato||'-'||descrizione AS name  FROM entrasp.modelli_test_risultati WHERE codice_azienda=$codice_azienda$;",
-                "options": [],
-                "viewType": "combobox",
-                "validations": [
-                    {
-                        "message": "Selezionare criterio di analisi",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
-            },
-            "queryFunct": "SELECT id_risultato from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_risultato",
-            "label": "Criterio di analisi",
-            "newLine": false,
-            "size": 2.7,
             "readOnly": false
         },
         {
@@ -664,7 +666,7 @@
             "key": "id_filtro_selezione",
             "label": "Seleziona Popolazione",
             "newLine": true,
-            "size": 2.5,
+            "size": 1.5,
             "readOnly": false
         },
         {
@@ -678,6 +680,21 @@
             "key": "invisible_1",
             "sameOrigin": false,
             "readOnly": true,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "queryFunct": "SELECT id_argomento from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "label": "Argomento",
+            "readOnly": false,
             "newLine": true
         },
         {
