@@ -173,7 +173,7 @@
                 "viewType": "checkbox"
             },
             "label": "Senza profilazioni",
-            "newLine": false,
+            "newLine": true,
             "size": 1,
             "queryCond": "an.id_anagrafica not in(select distinct entrasp.field_value_from_key(ss_prof.object_key, ss_prof.object_name, 'id_anagrafica','|')::numeric from entrasp.sondaggi_somministrati ss_prof where ss_prof.codice_azienda='€global_codice_azienda€' and entrasp.field_value_from_key(ss_prof.object_key, ss_prof.object_name, 'id_anagrafica','|')::numeric is not null)"
         },
@@ -187,6 +187,17 @@
             "newLine": false,
             "size": 1,
             "queryCond": "an.id_anagrafica not in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato != 'C' and c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null) and an.id_anagrafica not in(select distinct an2.id_anagrafica from entrasp.anagrafiche_id an2 left join entrasp.contratti c3 on an2.codice_part=c3.codice_part and an2.id_anagrafica=c3.id_cliente where c3.id_cliente is null and an2.id_anagrafica is not null and an2.codice_part='€global_codice_part€')"
+        },
+        {
+            "fieldName": "con_contratti_aperti",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con contratti aperti",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "an.id_anagrafica in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato != 'C' and c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)"
         },
         {
             "fieldName": "con_contratti",
