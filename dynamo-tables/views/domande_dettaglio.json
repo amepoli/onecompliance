@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select * from entrasp.domande where codice_azienda=$codice_azienda$",
+      "queryString": "select * from entrasp.domande dm inner join entrasp.modelli_test mt on dm.codice_azienda=mt.codice_azienda and dm.id_modello_test=mt.id_modello_test and dm.id_modello_test_vr=mt.id_modello_test_vr where mt.codice_azienda=$codice_azienda$",
       "type": "main"
     },
     {
@@ -31,6 +31,29 @@
   ],
   "search_keys": [
     {
+      "fieldName": "id_modello_test_list",
+      "format": {
+          "dataType": "text",
+          "viewType": "input"
+      },
+      "label": "Lista id modelli verifica",
+      "newLine": false,
+      "size": 2.5,
+      "queryCond": "dm.id_modello_test::varchar=any(string_to_array(replace($id_modello_test_list$, ' ', ''), ','))"
+  },
+  {
+      "fieldName": "id_tipo_modello_test_s",
+      "format": {
+          "comboQuery": "SELECT id_tipo_modello_test AS id,descrizione  AS name  FROM entrasp.tipi_modello_test;",
+          "options": [],
+          "viewType": "combobox"
+      },
+      "label": "Tipo modello verifica",
+      "newLine": false,
+      "size": 3.5,
+      "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test_s$"
+  },
+    {
       "fieldName": "domanda_search",
       "format": {
         "dataType": "text",
@@ -38,7 +61,7 @@
       },
       "label": "Domanda",
       "newLine": false,
-      "queryCond": "(upper(descrizione) like '%'||upper('€domanda_search€')||'%' or upper(note) like '%'||upper('€domanda_search€')||'%')"
+      "queryCond": "(upper(dm.descrizione) like '%'||upper('€domanda_search€')||'%' or upper(dm.note) like '%'||upper('€domanda_search€')||'%')"
     },
     {
       "fieldName": "no_liv_controllo",
@@ -48,7 +71,7 @@
       },
       "label": "Senza liv.controllo",
       "newLine": false,
-      "queryCond": "id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6871 and ason.id_argomento_son is not null)"
+      "queryCond": "dm.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6871 and ason.id_argomento_son is not null)"
     },
     {
       "fieldName": "no_tipo_controllo",
@@ -58,7 +81,7 @@
       },
       "label": "Senza tipo.controllo",
       "newLine": false,
-      "queryCond": "id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=43448 and ason.id_argomento_son is not null)"
+      "queryCond": "dm.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=43448 and ason.id_argomento_son is not null)"
     }
   ]
 }
