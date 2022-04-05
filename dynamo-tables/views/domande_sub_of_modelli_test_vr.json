@@ -129,7 +129,7 @@
       "key": "ordinamento",
       "label": "Ordinamento",
       "newLine": false,
-      "size": 0.8,
+      "size": 0.6,
       "readOnly": false
     },
     {
@@ -143,8 +143,26 @@
       "key": "id_domanda",
       "label": "ID",
       "newLine": false,
-      "size": 0.8,
+      "size": 0.6,
       "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "size": 0.6,
+      "label": "id_argomento",
+      "outputEvent": {
+        "eventName": "to_argomento_from_domande",
+        "eventTrigger": "press"
+    },
+      "readOnly": true,
+      "newLine": false
     },
     {
       "autoGenerate": false,
@@ -164,7 +182,7 @@
       "key": "descrizione",
       "label": "Domanda",
       "textareaHeight": "S",
-      "size": 4.2,
+      "size": 4.0,
       "newLine": false,
       "readOnly": false
     },
@@ -181,7 +199,7 @@
       "key": "note",
       "label": "Note",
       "textareaHeight": "S",
-      "size": 3.2,
+      "size": 2.6,
       "newLine": false,
       "readOnly": false
     },
@@ -392,24 +410,8 @@
             "isPrimary": false,
             "key": "id_sezione",
             "label": "Sezione",
-            "size": 4,
-            "newLine": false,
+            "newLine": true,
             "readOnly": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=574 order by descrizione",
-              "options": [],
-              "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_argomento",
-            "size": 3.5,
-            "label": "Argomento",
-            "readOnly": false,
-            "newLine": false
           },
           {
             "autoGenerate": false,
@@ -1009,7 +1011,21 @@
       },
       "actionType": "navigate",
       "eventName": "domande_button_dettaglio"
-    }
+    },
+    {
+      "actionTarget": {
+          "name": "argomenti",
+          "type": "form",
+          "keymap": [
+              {
+                  "source": "id_argomento",
+                  "destination": "id_argomento"
+              }
+          ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_argomento_from_domande"
+  }
   ],
   "table_keys": [
     {
