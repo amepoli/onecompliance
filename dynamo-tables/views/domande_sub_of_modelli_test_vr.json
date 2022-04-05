@@ -67,17 +67,6 @@
       ]
     },
     {
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento",
-      "label": "id_argomento",
-      "readOnly": false
-    },
-    {
       "autoGenerate": false,
       "format": {
         "dataType": "text",
@@ -140,8 +129,22 @@
       "key": "ordinamento",
       "label": "Ordinamento",
       "newLine": false,
-      "size": 1,
+      "size": 0.8,
       "readOnly": false
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_domanda",
+      "label": "ID",
+      "newLine": false,
+      "size": 0.8,
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -161,7 +164,7 @@
       "key": "descrizione",
       "label": "Domanda",
       "textareaHeight": "S",
-      "size": 4.5,
+      "size": 4.2,
       "newLine": false,
       "readOnly": false
     },
@@ -178,7 +181,7 @@
       "key": "note",
       "label": "Note",
       "textareaHeight": "S",
-      "size": 3.5,
+      "size": 3.2,
       "newLine": false,
       "readOnly": false
     },
@@ -274,20 +277,6 @@
             "newLine": false
           },
           {
-            "autoGenerate": true,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "id_domanda",
-            "label": "ID",
-            "newLine": false,
-            "readOnly": true,
-            "size": 2.5
-          },
-          {
             "autoGenerate": false,
             "format": {
               "dataType": "date",
@@ -299,7 +288,7 @@
             "label": "Inizio Validità",
             "newLine": false,
             "readOnly": false,
-            "size": 2.5
+            "size": 1.5
           },
           {
             "autoGenerate": false,
@@ -311,9 +300,86 @@
             "isPrimary": false,
             "key": "data_fine_validita",
             "label": "Fine Validità",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false,
-            "size": 2.5
+            "size": 1.5
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tag",
+            "label": "#",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "navigate_to_tagging",
+              "eventTrigger": "press"
+            },
+            "style": {
+              "background_color": "#25599C",
+              "font_color": "white"
+            },
+            "readOnly": false,
+            "size": 0.5,
+            "sameOrigin": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "create_associate_argomento_k",
+            "buttonIcon": "class",
+            "label": "Crea e associa argomento",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "create_associate_argomento",
+              "eventTrigger": "press"
+            },
+            "inputEvents": [
+              {
+                "eventName": "create_associate_argomento",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "outputEventWhenComplete": "domande_reload",
+                "queryFunct": "select entrasp.argomenti_create_and_update_domande($codice_azienda$, $id_domanda$, $id_modello_test$, $id_modello_test_vr$, left($descrizione$,120), $descrizione$, 574)"
+              }
+            ],
+            "style": {
+              "background_color": "#25599C",
+              "font_color": "white"
+            },
+            "readOnly": false,
+            "size": 2,
+            "sameOrigin": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dettaglio",
+            "label": "Dettaglio",
+            "newLine": true,
+            "outputEvent": {
+              "eventName": "domande_button_dettaglio",
+              "eventTrigger": "press"
+            },
+            "style": {
+              "background_color": "#25599C",
+              "font_color": "white"
+            },
+            "readOnly": false,
+            "size": 1,
+            "sameOrigin": false
           },
           {
             "autoGenerate": false,
@@ -348,90 +414,6 @@
           {
             "autoGenerate": false,
             "format": {
-              "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "tag",
-            "label": "#",
-            "newLine": false,
-            "outputEvent": {
-              "eventName": "navigate_to_tagging",
-              "eventTrigger": "press"
-            },
-            "style": {
-              "background_color": "#25599C",
-              "font_color": "white"
-            },
-            "readOnly": false,
-            "size": 0.5,
-            "sameOrigin": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "create_associate_argomento_k",
-            "buttonIcon": "class",
-            "label": "Crea e associa argomento",
-            "newLine": true,
-            "outputEvent": {
-              "eventName": "create_associate_argomento",
-              "eventTrigger": "press"
-            },
-            "inputEvents": [
-              {
-                "eventName": "create_associate_argomento",
-                "actionType": "query",
-                "condition": "none",
-                "values": [],
-                "outputEventWhenComplete": "domande_reload",
-                "queryFunct": "select entrasp.argomenti_create_and_update_domande($codice_azienda$, $id_domanda$, $id_modello_test$, $id_modello_test_vr$, left($descrizione$,120), $descrizione$, 574)"
-              }
-            ],
-            "style": {
-              "background_color": "#25599C",
-              "font_color": "white"
-            },
-            "readOnly": false,
-            "size": 2,
-            "sameOrigin": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "comboQuery": "SELECT id_modello_test AS id, titolo AS name  FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$;",
-              "options": [],
-              "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "id_modello_test",
-            "label": "Modello di Verifica",
-            "newLine": false,
-            "readOnly": true,
-            "size": 8
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "viewType": "input",
-              "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "punteggio",
-            "label": "Punteggio",
-            "newLine": true,
-            "readOnly": false,
-            "size": 2
-          },
-          {
-            "autoGenerate": false,
-            "format": {
               "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
               "options": [],
               "viewType": "combobox"
@@ -456,20 +438,6 @@
             ],
             "size": 4,
             "readOnly": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "peso_risposte_default",
-            "label": "Peso Attribuito con Risposta Assente (%)",
-            "newLine": true,
-            "readOnly": false,
-            "size": 2
           },
           {
             "autoGenerate": false,
@@ -514,7 +482,7 @@
             "key": "id_argomento_stato",
             "sameOrigin": true,
             "label": "Stato",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false
           },
           {
@@ -526,7 +494,7 @@
             "isPrimary": false,
             "key": "modello_test_from_domanda",
             "label": "Modello Verifica Associato",
-            "newLine": false,
+            "newLine": true,
             "outputEvent": {
               "eventName": "to_modello_test_from_domanda",
               "eventTrigger": "press"
@@ -536,29 +504,6 @@
               "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false,
-            "size": 2
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "dettaglio",
-            "label": "Dettaglio",
-            "newLine": true,
-            "outputEvent": {
-              "eventName": "domande_button_dettaglio",
-              "eventTrigger": "press"
-            },
-            "style": {
-              "background_color": "#25599C",
-              "font_color": "white"
-            },
-            "readOnly": false,
-            "size": 1,
             "sameOrigin": false
           }
         ]
@@ -626,6 +571,20 @@
           "values": []
         }
       ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "peso_risposte_default",
+      "label": "Peso Attribuito con Risposta Assente (%)",
+      "newLine": true,
+      "readOnly": false,
+      "size": 1
     },
     {
       "autoGenerate": false,
