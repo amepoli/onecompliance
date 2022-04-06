@@ -1179,7 +1179,7 @@
                 "viewType": "checkbox"
             },
             "label": "Senza Processi",
-            "newLine": false,
+            "newLine": true,
             "queryCond": "mt.id_modello_test not in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=$codice_azienda$)"
         },
         {
@@ -1189,7 +1189,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con Processi",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "mt.id_modello_test in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=$codice_azienda$)"
         },
         {
@@ -1223,6 +1223,16 @@
             "queryCond": "mt.id_filtro_selezione is null"
         },
         {
+            "fieldName": "no_argomento",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza Argomento",
+            "newLine": true,
+            "queryCond": "mt.id_argomento is null"
+        },
+        {
             "fieldName": "no_liv_controllo",
             "format": {
                 "value": "0",
@@ -1253,15 +1263,25 @@
             "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=3425 and ason.id_argomento_son is not null)"
         },
         {
-            "fieldName": "no_argomento",
+            "fieldName": "no_rischio_TUB",
             "format": {
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Senza Argomento",
+            "label": "No rischio TUB (6154)",
             "newLine": false,
-            "queryCond": "mt.id_argomento is null"
-        }
+            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6154 and ason.id_argomento_son is not null)"
+        },
+        {
+            "fieldName": "no_rischio_OICR",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "No rischio TUF/OICR(6155)",
+            "newLine": false,
+            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6155 and ason.id_argomento_son is not null)"
+        }      
     ],
     "subTables": [
         {
