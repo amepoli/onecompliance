@@ -40,9 +40,9 @@
         "viewType": "input",
         "validations": [
           {
-              "message": "Tipo soggetto necessario",
-              "name": "required",
-              "validator": "Validators.required"
+            "message": "Tipo soggetto necessario",
+            "name": "required",
+            "validator": "Validators.required"
           },
           {
             "name": "maxlength",
@@ -50,7 +50,7 @@
             "validator": "Validators.maxLength(35)",
             "value": 35
           }
-      ]
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -67,11 +67,11 @@
         "viewType": "input",
         "validations": [
           {
-              "message": "Tipo soggetto necessario",
-              "name": "required",
-              "validator": "Validators.required"
+            "message": "Tipo soggetto necessario",
+            "name": "required",
+            "validator": "Validators.required"
           }
-      ]
+        ]
       },
       "isHidden": false,
       "size": 4.5,
@@ -234,35 +234,35 @@
       "queryString": "UPDATE entrasp.centri_gestionali cge set codice_part=az.codice_part from entrasp.aziende az where cge.codice_part=az.codice_part"
     },
     {
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£'",
-			"messageNotNull": "Inserimento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
-		},
-		{
-			"operation": "update",
-			"type": "preCheck",
-			"queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£' and id_centro_gest!=$id_centro_gest$",
-			"messageNotNull": "Aggiornamento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
-		},
+      "operation": "insert",
+      "type": "preCheck",
+      "queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£'",
+      "messageNotNull": "Inserimento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+    },
+    {
+      "operation": "update",
+      "type": "preCheck",
+      "queryString": "select codice from entrasp.centri_gestionali where codice_part=$codice_part$ and codice='£codice£' and id_centro_gest!=$id_centro_gest$",
+      "messageNotNull": "Aggiornamento: il codice inserito è già stato utilizzato per un altrocentro gestionale: prego utilizzarne un codice diverso"
+    },
     {
       "operation": "insert",
       "type": "postProcessing",
-      "queryString": "select entrasp.update_dynamo_user((€global_id_anagrafiche€)::text, (€global_user_companies€)::text, '€global_username€')"			
+      "queryString": "select entrasp.update_dynamo_user((€global_id_anagrafiche€)::text, (€global_user_companies€)::text, '€global_username€')"
     }
   ],
   "search_keys": [
     {
       "fieldName": "codice_part_s",
       "format": {
-          "comboQuery": "SELECT codice_part AS id, codice_part AS name FROM entrasp.partizioni order by codice_part;",
-          "options": [],
-          "viewType": "combobox"
+        "comboQuery": "SELECT codice_part AS id, codice_part AS name FROM entrasp.partizioni order by codice_part;",
+        "options": [],
+        "viewType": "combobox"
       },
       "label": "Partizione",
       "newLine": false,
       "queryCond": "codice_part='$codice_part_s$'"
-  },
+    },
     {
       "fieldName": "id_centro_gest",
       "format": {
@@ -280,7 +280,7 @@
         "viewType": "input"
       },
       "label": "Codice",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "codice=$codice$"
     },
     {
@@ -293,6 +293,17 @@
       "newLine": true,
       "queryCond": "descrizione Like '%€descrizione€%'"
     },
+    {
+      "fieldName": "argomento_s",
+      "format": {
+          "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg where arg.id_argomento in(select id_argomento from entrasp.centri_gestionali) order by descrizione",
+          "options": [],
+          "viewType": "combobox"
+      },
+      "label": "Argomento",
+      "newLine": false,
+      "queryCond": "array[mt.id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
+  },
     {
       "fieldName": "id_responsabile_s",
       "format": {
@@ -332,7 +343,17 @@
       },
       "label": "Senza TAG",
       "newLine": false,
-      "queryCond": "argomento IS null"
+      "queryCond": "cg.id_argomento IS null"
+    },
+    {
+      "fieldName": "no_liv_controllo",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Senza liv.controllo",
+      "newLine": false,
+      "queryCond": "cg.id_argomento not in (select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6871 and ason.id_argomento_son is not null)"
     }
   ],
   "subTables": [
