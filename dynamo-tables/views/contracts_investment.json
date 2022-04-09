@@ -487,7 +487,7 @@
 		}
 	],
 	"subTables": [
-		{	
+		{
 			"label": "Profilazioni Associate",
 			"entryKey": "sondaggi_sub_of_contracts_investment",
 			"keys": [
@@ -506,14 +506,14 @@
 		{
 			"fieldName": "id_anagrafica_s",
 			"format": {
-			  "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
-			  "options": [],
-			  "viewType": "combobox"
+				"comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+				"options": [],
+				"viewType": "combobox"
 			},
 			"label": "Cliente",
 			"newLine": false,
 			"queryCond": "id_cliente=$id_anagrafica_s$"
-		  },
+		},
 		{
 			"fieldName": "nome_rs",
 			"format": {
@@ -578,17 +578,16 @@
 			"fieldName": "giudizio_s",
 			"newLine": true,
 			"queryCond": "entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto)=$giudizio_s$"
-
 		},
 		{
-		  "fieldName": "profilazioni_n",
-		  "format": {
-			"viewType": "checkbox",
-			"value": "0"
-		  },
-		  "label": "Senza Profilazioni Aml",
-		  "newLine": false,
-		  "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)"
+			"fieldName": "profilazioni_n",
+			"format": {
+				"viewType": "checkbox",
+				"value": "0"
+			},
+			"label": "Senza Profilazioni Aml",
+			"newLine": false,
+			"queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)"
 		}
 	],
 	"hideActions": [
@@ -596,18 +595,18 @@
 			"tableActionType": "quick-add",
 			"viewType": "table"
 		},
-        {
-            "viewType": "form",
-            "formActionType": "attachments"
-        }
+		{
+			"viewType": "form",
+			"formActionType": "attachments"
+		}
 	],
 	"querySuffixes": {
 		"tableViewSuffix": "order by id_contratto desc limit 100"
 	},
 	"inputEvents": [
 		{
-            "actionType": "reload",
-            "eventName": "survey_reload"
-        }
+			"actionType": "reload",
+			"eventName": "survey_reload"
+		}
 	]
 }

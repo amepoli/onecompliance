@@ -65,9 +65,20 @@
                 "viewType": "input"
             },
             "label": "Nome/Cognome/Ragione Sociale",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "(replace(UPPER(an.nome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(an.cognome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(avr.ragione_sociale), '.', '') like '%'||UPPER('€nome_rs€')||'%')"
         },
+        {
+			"fieldName": "id_strumento_fin",
+			"format": {
+				"comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an inner join entrasp.contratti cnt on an.id_anagrafica=cnt.id_strumento_finanziario and an.codice_part=cnt.codice_part WHERE an.codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica);",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Fondo/Strumento/Finanziario",
+			"newLine": true,
+			"queryCond": "an.id_anagrafica in(select id_cliente from entrasp.contratti where id_strumento_finanziario=$id_strumento_fin$)"
+		},
         {
             "fieldName": "codice_s",
             "format": {
