@@ -60,6 +60,12 @@
 			"queryString": "select entrasp.progetto_delete($codice_azienda$, $id_progetto$);"
 		},
 		{
+			"operation": "delete",
+			"type": "preCheck",
+			"messageNotNull": "Attenzione ci sono compiti associati alle fasi del progetto o al progetto in oggetto",
+			"queryString": "select codice_compito from entrasp.compiti where (id_fase in(select id_fase from entrasp.progetti_fasi where id_progetto=$id_progetto and codice_azienda=$codice_azienda$) or id_progetto=$id_progetto$) and codice_azienda=$codice_azienda$;"
+		},
+		{
 			"operation": "insert",
 			"type": "preCheck",
 			"queryString": "select codice_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£'",
