@@ -470,6 +470,18 @@
 			"queryCond": "pf.id_fase_sup IS null"
 		},
 		{
+			"label": "Data competenza",
+			"format": {
+				"comboQuery": "SELECT distinct data_comp AS id, data_comp::date AS name FROM entrasp.sondaggi WHERE codice_azienda=$codice_azienda$ and id_sondaggio in(select pf.id_sondaggio from entrasp.progetti_fasi pf where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$);",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"fieldName": "dt_comp_s",
+			"newLine": false,
+			"queryCond": "pf.id_fase in(select pf2.id_fase from entrasp.progetti_fasi pf2 inner join entrasp.sondaggi snd on pf2.codice_azienda=snd.codice_azienda and pf2.id_sondaggio=snd.id_sondaggio where snd.data_comp=$dt_comp_s$ and snd.codice_azienda=$codice_azienda$)"
+		},
+		{
 			"fieldName": "dt_competenza_da",
 			"format": {
 				"viewType": "input",
@@ -1139,5 +1151,13 @@
 			"formActionType": "import_export",
 			"viewType": "form"
 		}
-	]
+	],
+	"exportQueries": {
+		"tableQueries": [
+			{
+				"label": "Sondaggi per anno di competenza",
+				"queryString": "select extract(year from snd.data_comp) as anno_competenza, count(id_sondaggio) from entrasp.sondaggi snd where snd.codice_azienda=$codice_azienda$ and id_sondaggio in (select pf.id_sondaggio from entrasp.progetti_fasi pf where pf.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$) group by extract(year from snd.data_comp)"
+			}
+		]
+	}
 }
