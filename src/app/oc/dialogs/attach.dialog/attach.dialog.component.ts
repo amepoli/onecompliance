@@ -311,14 +311,38 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                                     _this.data.onSave(true);
                                                 }
                                                 _this._console.log(responseCheck);
-                                                // Show success snackbar
-                                                _this.isSaving = false;
-                                                if (responseCheck.reason === 'File already loaded!') {
-                                                    _this._toastService.showInfoToast("File already loaded");
-                                                }
-                                                else {
-                                                    _this._toastService.showSuccessToast("File uploaded successfully");
-                                                }
+                                                                        
+                                                _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), hash).subscribe(
+                                                    googleDriveFileCopyParamsResponse => {
+                                                        if(googleDriveFileCopyParamsResponse.result === 'OK') {
+                                                            if(googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
+                                                                let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
+                                                                let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
+                                                                _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, _this.authService.loadGoogleAuth()).subscribe(
+                                                                    copyFromS3ToDriveResponse => {
+                                                                        // Show success snackbar
+                                                                        _this.isSaving = false;
+                                                                        if (responseCheck.reason === 'File already loaded!') {
+                                                                            _this._toastService.showInfoToast("File already loaded");
+                                                                        }
+                                                                        else {
+                                                                            _this._toastService.showSuccessToast("File uploaded successfully");
+                                                                        }
+                                                                    },
+                                                                    error => {
+                                                                        _this._toastService.showErrorToast(error);
+                                                                    }
+                                                                );
+                                                                //console.log(googledrivepath, s3path);
+                                                            }
+                                                            
+                                                        }
+                                                        console.log(googleDriveFileCopyParamsResponse);
+                                                    },
+                                                    error => {
+                                                        console.log(error);
+                                                    }
+                                                );
                                             }
                                             else {
                                                 // Show error snackbar

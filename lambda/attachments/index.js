@@ -115,7 +115,7 @@ exports.handler = async (event, context) => {
 
     // const queryParams = event; / test
 
-    let keys = JSON.parse(queryParams['keys']);
+    let keys = queryParams['keys'] ? JSON.parse(queryParams['keys']) : null;
     const entryName = queryParams['entry_name'];
     const checksum = queryParams['checksum'];
     const request_type = queryParams['request_type'];
@@ -151,8 +151,10 @@ exports.handler = async (event, context) => {
         }
     }
 
-    if (entryName == null || keys == null || company == null) {
-        requestType = 'badRequest';
+    if (requestType !== 'getGoogleDriveFileCopyParams') {
+        if (entryName == null || keys == null || company == null) {
+            requestType = 'badRequest';
+        }
     }
 
 
@@ -192,6 +194,26 @@ exports.handler = async (event, context) => {
             } else {
                 body = { result: 'OK', url: url };
             }
+        } else if (requestType === 'getGoogleDriveFileCopyParams') {
+            client = await pool.connect();
+
+            let query = `select * from entrasp.getGoogleDriveFileCopyParams('${company}', '${checksum}');`;
+            console.log('running query: ', query);
+            let response = await client.query(query);
+            //Always delete from entrasp.cdms_risorse_revisioni because for the selected flow_info i can have only one document with this sha1
+            /* query = `select count(*) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${id_risorsa} and prog_revisione='${prog_revisione}';`;
+            response = await client.query(query); */
+
+            /* let objectCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count) : 0;
+            console.log('response of file exists by checksum_sha1:', response);
+            console.log('row: ' + response.rows[0]);
+            console.log('count: ' + response.rows[0].count);
+            if (objectCount = 0) { */
+
+            //query = `delete from entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+            //response = await client.query(query);
+            //}
+            body = { result: 'OK', response: response };
         } else {
             //console.log('IN: else of getFileURL');    //often here
             const bus_object = await tableName2BusinessObject(entryName);
@@ -604,7 +626,7 @@ exports.handler = async (event, context) => {
 
                 const requestBody = JSON.parse(event.body);
 
-                console.log('prog_revisione: '+prog_revisione);
+                console.log('prog_revisione: ' + prog_revisione);
 
                 query = `delete from entrasp.cdms_risorse_oggetti where codice_azienda='${company}' and id_risorsa=${id_risorsa} 
                          and nome_business_object='${bus_object}' and chiave='${chiave}' and prog_revisione='${prog_revisione}';`;
@@ -619,11 +641,11 @@ exports.handler = async (event, context) => {
                 console.log('row: ' + response.rows[0]);
                 console.log('count: ' + response.rows[0].count);
                 if (objectCount = 0) { */
-                    query = `delete from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${id_risorsa} and prog_revisione='${prog_revisione}';`;
-                    response = await client.query(query);
+                query = `delete from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${id_risorsa} and prog_revisione='${prog_revisione}';`;
+                response = await client.query(query);
 
-                    //query = `delete from entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
-                    //response = await client.query(query);
+                //query = `delete from entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+                //response = await client.query(query);
                 //}
                 body = { result: 'OK', url: signedUrl };
             } else if (requestType === 'getContents') {

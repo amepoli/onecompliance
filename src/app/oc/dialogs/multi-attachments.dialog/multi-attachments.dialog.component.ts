@@ -305,21 +305,28 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                 if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
                     _this.fileService.requestReload(_this.data.entryName);
                     _this._console.log(responseCheck);
-                    // Show success snackbar
-                    if (responseCheck.reason === 'File already loaded!') {
-                        _this._toastService.showInfoToast("File already loaded");
-                    }
-                    else {
-                        _this._toastService.showSuccessToast("File uploaded successfully");
-                    }
-                    if(i < _this.files.length - 1) {
-                        _this.saveFile(i+1);
-                    }
-                    else {
-                        if (_this.data.onSave) {
-                            _this.data.onSave(true);
+                    let googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), hash);
+                    if(googleDriveFileCopyParamsResponse && googleDriveFileCopyParamsResponse.result === 'OK' && googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
+                        let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
+                        let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
+                        let copyFromS3ToDriveResponse = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, _this.authService.loadGoogleAuth());
+                        console.log(copyFromS3ToDriveResponse);
+                        // Show success snackbar
+                        if (responseCheck.reason === 'File already loaded!') {
+                            _this._toastService.showInfoToast("File already loaded");
                         }
-                        _this.isSaving = false;
+                        else {
+                            _this._toastService.showSuccessToast("File uploaded successfully");
+                        }
+                        if(i < _this.files.length - 1) {
+                            _this.saveFile(i+1);
+                        }
+                        else {
+                            if (_this.data.onSave) {
+                                _this.data.onSave(true);
+                            }
+                            _this.isSaving = false;
+                        }
                     }
                 }
                 else {
