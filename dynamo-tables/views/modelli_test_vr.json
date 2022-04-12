@@ -542,6 +542,16 @@
                         "icon": "label",
                         "label": "Tagga tutte le domande",
                         "outputEventName": "tagga_domande"
+                    },
+                    {
+                        "icon": "label",
+                        "label": "Tagga tutte le risposte",
+                        "outputEventName": "tagga_risposte"
+                    },
+                    {
+                        "icon": "label",
+                        "label": "Tagga le risposte di ogni versione del mt",
+                        "outputEventName": "tagga_tutte_risposte"
                     }
                 ]
             },
@@ -585,6 +595,22 @@
                     "successMessage": "Domande taggate correttamente",
                     "values": [],
                     "queryFunct": "select entrasp.argomenti_create_and_update_domande(codice_azienda, id_domanda, id_modello_test, id_modello_test_vr, descrizione, descrizione, 574) from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_argomento is null;"
+                },
+                {
+                    "eventName": "tagga_risposte",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Risposte taggate correttamente",
+                    "values": [],
+                    "queryFunct": "select entrasp.argomenti_create_and_update_risposte_previste(codice_azienda, id_risposta_prev, id_domanda, id_modello_test, id_modello_test_vr, risposta, risposta, 725) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ AND id_domanda in (select id_domanda from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$) and id_argomento is null;"
+                },
+                {
+                    "eventName": "tagga_tutte_risposte",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Risposte taggate correttamente",
+                    "values": [],
+                    "queryFunct": "select entrasp.argomenti_create_and_update_risposte_previste(codice_azienda, id_risposta_prev, id_domanda, id_modello_test, id_modello_test_vr, risposta, risposta, 725) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr in (select id_modello_test_vr from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$) AND id_domanda in (select id_domanda from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$) and id_argomento is null;"
                 }
             ],
             "isHidden": false,
