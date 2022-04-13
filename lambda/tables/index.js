@@ -1040,7 +1040,7 @@ function getDeleteQuery(entry_params, table_keys) {
                 } else if (query.type === "postProcessingAllRows") {
                     postProcessQueriesAllRows.push(replaceKeys(query.queryString, table_keys, keyTypes));
                 } else if (query.type === "preCheck") {
-                    preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes), operation: query.operation });
+                    preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, table_keys, keyTypes), operation: query.operation });
                 }
             }
         });
@@ -1073,7 +1073,7 @@ function getDeleteQuery(entry_params, table_keys) {
             comma = ' AND '; // needed only the first time
         }
     }
-
+    
     return {
         mainQuery: queryString,
         comboQueries: [],
