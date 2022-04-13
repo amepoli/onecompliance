@@ -41,6 +41,5 @@ export class GoogleAPIService {
         console.log(error);
         _this._toastService.showErrorToast(error);        
       });
-    return 0;
   }
 }
