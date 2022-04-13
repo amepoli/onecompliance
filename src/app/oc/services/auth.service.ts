@@ -42,6 +42,7 @@ export class AuthService {
 
   private currentCompany: string;
   private confirmUser: any;
+  private sync: any;
 
   // Google 
   googleUser: SocialUser;
@@ -227,6 +228,7 @@ export class AuthService {
               _this.setLastCompany(_this.currentCompany);
             }
           }
+          _this.sync = ud.userdata.sync || null;
           _this._console.log(ud.userdata);
 
           //load default language for user
@@ -308,6 +310,10 @@ export class AuthService {
   public getLastCompany(): string {
     let lastCompany: string = localStorage.getItem('lastCompany');
     return lastCompany;
+  }
+
+  public getSyncMode(): string {
+    return this.sync;
   }
 
   /** Set last Company in local storage */
