@@ -245,132 +245,97 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         this.progress = 0;
     }
 
-    onSave(): void {
+    async onSave() {
         const _this = this;
         _this._console.log(event);
         _this.attach = false;
         if (_this.file != null) {
             _this.isSaving = true;
-            // get the S3 URL 
-            const subscription = _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys).subscribe(
-                responseURL => {
-                    _this._console.log(responseURL);
-                    if (responseURL != null && responseURL.result === 'OK') {
-                        const blob = new Blob([_this.file]);
-                        // upload the file using obtained url
-                        _this.httpClient.put(responseURL.url, blob).subscribe(
-                            responsePut => {
-                                _this._console.log('File uploaded with filename: ', responseURL.filename);
-                                // retrieve file content
-                                const reader = new FileReader();
-                                reader.onload = function (e) {
-                                    const content = reader.result;
-                                    /*
-                                    var buffer = Buffer.alloc(content.byteLength);
-                                    for (var i = 0; i < content.byteLength; i++) {
-                                         buffer[i] = content[i];
-                                    };*/
-                                    // create file content hash
-                                    // Old method
-                                    // var buffer = Buffer.from(<string>content);
-                                    // const hash = createHash('sha1').update(buffer).digest("hex");
-                                    // New methd by Zee
-                                    const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
-                                    _this._console.log(hash);
-                                    // check that the file has been correctly uploaded and pass file params to the backend
-                                    var mime = require('mime-types');
-                                    const fileParams = {
-                                        nickname: _this.form.value.fileName != null ? _this.form.value.fileName : null,
-                                        descrizione: _this.form.value.descrizione != null ? _this.form.value.descrizione : null,
-                                        data_scadenza: _this.form.value.data_scadenza != null ? _this.form.value.data_scadenza : null,
-                                        data_rif: _this.form.value.data_rif != null ? _this.form.value.data_rif : null,
-                                        url: _this.form.value.url != null ? _this.form.value.url : null,
-                                        descrizione_breve: _this.form.value.descrizione_breve != null ? _this.form.value.descrizione_breve : null,
-                                        content_type: mime.lookup(_this.form.value.fileName),
-                                        id_odg: _this.getValue(_this.form.value.id_odg), //_this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
-                                        id_riunione: _this.getValue(_this.form.value.id_riunione), //_this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
-                                        id_centro_gest: _this.getValue(_this.form.value.id_centro_gest), //_this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
-                                        id_argomento_tipo_allegato: _this.getValue(_this.form.value.id_argomento_tipo_allegato), //_this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,
-                                        dimensione: _this.getValue(_this.form.value.dimensione), //_this.form.value.dimensione != null ? _this.form.value.dimensione : null,
-                                        id_anagrafica: _this.getValue(_this.form.value.id_anagrafica), //_this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
-                                        id_somministrazione: _this.getValue(_this.form.value.id_somministrazione), //_this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
-                                        id_sondaggio: _this.getValue(_this.form.value.id_sondaggio), //_this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
-                                        id_progetto: _this.getValue(_this.form.value.id_progetto), //_this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
-                                        prog_revisione: _this.getValue(_this.form.value.prog_revisione), //_this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
-                                        id_risorsa: _this.getValue(_this.form.value.id_risorsa), //_this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
-                                        id_domanda: _this.getValue(_this.form.value.id_domanda), //_this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
-                                        id_modello_test: _this.getValue(_this.form.value.id_modello_test), //_this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
-                                        id_modello_test_vr: _this.getValue(_this.form.value.id_modello_test_vr), //_this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
-                                        autore: _this.authService.getUsername()
-                                    };
-                                    _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).subscribe(
-                                        responseCheck => {
-                                            if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
-                                                _this.fileService.requestReload(_this.data.entryName);
-                                                if (_this.data.onSave) {
-                                                    _this.data.onSave(true);
-                                                }
-                                                _this._console.log(responseCheck);
-                                                                        
-                                                _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), hash).subscribe(
-                                                    googleDriveFileCopyParamsResponse => {
-                                                        if(googleDriveFileCopyParamsResponse.result === 'OK') {
-                                                            if(googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
-                                                                let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
-                                                                let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
-                                                                _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, _this.authService.loadGoogleAuth()).subscribe(
-                                                                    copyFromS3ToDriveResponse => {
-                                                                        // Show success snackbar
-                                                                        _this.isSaving = false;
-                                                                        if (responseCheck.reason === 'File already loaded!') {
-                                                                            _this._toastService.showInfoToast("File already loaded");
-                                                                        }
-                                                                        else {
-                                                                            _this._toastService.showSuccessToast("File uploaded successfully");
-                                                                        }
-                                                                    },
-                                                                    error => {
-                                                                        _this._toastService.showErrorToast(error);
-                                                                    }
-                                                                );
-                                                                //console.log(googledrivepath, s3path);
-                                                            }
-                                                            
-                                                        }
-                                                        console.log(googleDriveFileCopyParamsResponse);
-                                                    },
-                                                    error => {
-                                                        console.log(error);
-                                                    }
-                                                );
-                                            }
-                                            else {
-                                                // Show error snackbar
-                                                _this.isSaving = false;
-                                                _this._toastService.showErrorToast(responseCheck.reason);
-                                            }
-
-                                        },
-                                        error => {
-                                            // Show error snackbar
-                                            _this.isSaving = false;
-                                            _this._toastService.showErrorToast(error);
-                                        }
-                                    );
-
-                                };
-                                reader.readAsArrayBuffer(blob);
-                            });
+            try {
+                // get the S3 URL 
+                const responseURL: any = await _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys).toPromise();
+                _this._console.log(responseURL);
+                if (responseURL != null && responseURL.result === 'OK') {
+                    const blob = new Blob([_this.file]);
+                    // upload the file using obtained url
+                    const responsePut: any = await _this.httpClient.put(responseURL.url, blob).toPromise();
+                    _this._console.log('File uploaded with filename: ', responseURL.filename);
+                    // retrieve file content
+                    const content = await _this.file?.arrayBuffer();
+                    const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+                    _this._console.log(hash);
+                    // check that the file has been correctly uploaded and pass file params to the backend
+                    var mime = require('mime-types');
+                    const fileParams = {
+                        nickname: _this.form.value.fileName != null ? _this.form.value.fileName : null,
+                        descrizione: _this.form.value.descrizione != null ? _this.form.value.descrizione : null,
+                        data_scadenza: _this.form.value.data_scadenza != null ? _this.form.value.data_scadenza : null,
+                        data_rif: _this.form.value.data_rif != null ? _this.form.value.data_rif : null,
+                        url: _this.form.value.url != null ? _this.form.value.url : null,
+                        descrizione_breve: _this.form.value.descrizione_breve != null ? _this.form.value.descrizione_breve : null,
+                        content_type: mime.lookup(_this.form.value.fileName),
+                        id_odg: _this.getValue(_this.form.value.id_odg), //_this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
+                        id_riunione: _this.getValue(_this.form.value.id_riunione), //_this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
+                        id_centro_gest: _this.getValue(_this.form.value.id_centro_gest), //_this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
+                        id_argomento_tipo_allegato: _this.getValue(_this.form.value.id_argomento_tipo_allegato), //_this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,
+                        dimensione: _this.getValue(_this.form.value.dimensione), //_this.form.value.dimensione != null ? _this.form.value.dimensione : null,
+                        id_anagrafica: _this.getValue(_this.form.value.id_anagrafica), //_this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
+                        id_somministrazione: _this.getValue(_this.form.value.id_somministrazione), //_this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
+                        id_sondaggio: _this.getValue(_this.form.value.id_sondaggio), //_this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
+                        id_progetto: _this.getValue(_this.form.value.id_progetto), //_this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
+                        prog_revisione: _this.getValue(_this.form.value.prog_revisione), //_this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
+                        id_risorsa: _this.getValue(_this.form.value.id_risorsa), //_this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
+                        id_domanda: _this.getValue(_this.form.value.id_domanda), //_this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
+                        id_modello_test: _this.getValue(_this.form.value.id_modello_test), //_this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
+                        id_modello_test_vr: _this.getValue(_this.form.value.id_modello_test_vr), //_this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
+                        autore: _this.authService.getUsername()
+                    };
+                    const responseCheck: any = await _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).toPromise();
+                    if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
+                        _this.fileService.requestReload(_this.data.entryName);
+                        if (_this.data.onSave) {
+                            _this.data.onSave(true);
+                        }
+                        _this._console.log(responseCheck);
+                        if(_this.authService.getSyncMode() === 'google') {
+                            const googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), hash).toPromise();
+                            if(googleDriveFileCopyParamsResponse.result === 'OK') {
+                                if(googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
+                                    let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
+                                    let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
+                                    const copyFromS3ToDriveResponse: any = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, _this.authService.loadGoogleAuth()).toPromise();
+                                    _this._console.log(googledrivepath, s3path);
+                                    _this._console.log(copyFromS3ToDriveResponse);
+                                }
+                            }
+                            _this._console.log(googleDriveFileCopyParamsResponse);
+                        }
+                        // Show success snackbar
+                        _this.isSaving = false;
+                        if (responseCheck.reason === 'File already loaded!') {
+                            _this._toastService.showInfoToast("File already loaded");
+                        }
+                        else {
+                            _this._toastService.showSuccessToast("File uploaded successfully");
+                        }
                     }
                     else {
                         // Show error snackbar
                         _this.isSaving = false;
-                        _this._toastService.showErrorToast(responseURL.reason);
+                        _this._toastService.showErrorToast(responseCheck.reason);
                     }
                 }
-            );
-
-            this.subscriptions.push(subscription);
+                else {
+                    // Show error snackbar
+                    _this.isSaving = false;
+                    _this._toastService.showErrorToast(responseURL.reason);
+                }
+            }
+            catch (e) {
+                // Show error snackbar
+                _this.isSaving = false;
+                _this._toastService.showErrorToast(e);
+            }
         }
     }
 

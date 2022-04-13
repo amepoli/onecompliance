@@ -369,6 +369,9 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                             // Show error snackbar
                             _this._toastService.showErrorToast(result.reason);
                         }
+                    },
+                    error => {
+                        _this._toastService.showErrorToast(error);
                     }
                 );
 
