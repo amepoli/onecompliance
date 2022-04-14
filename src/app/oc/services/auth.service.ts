@@ -229,6 +229,12 @@ export class AuthService {
             }
           }
           _this.sync = ud.userdata.sync || null;
+          
+          // If sync mode is google then signin
+          if(_this.sync === 'google') {
+            _this.loginGoogle();
+          }
+
           _this._console.log(ud.userdata);
 
           //load default language for user
