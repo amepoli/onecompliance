@@ -580,17 +580,53 @@ async function copyFromS3ToDrive(queryParams, authParams) {
     let response;
 
     if(drivePath.length > 0) {        
-        response = await drive.files.list({
-            q: `mimeType='application/vnd.google-apps.folder' and name='${drivePath}'`,
-            pageSize: 5,
-            fields: 'nextPageToken, files(id, name, mimeType)',
-        });
-        try {
-            response = JSON.parse(response);    
-        }
-        catch(e) {}
-        if(response.data && response.data.files && response.data.files.length > 0) {
-            driveFolderId = response.data.files[0].id;
+        let drivePathFolders = drivePath.split('/');
+        for await (drivePathFolder of drivePathFolders) {
+            console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
+            response = await drive.files.list({
+                q: `'${driveFolderId}' in parents and mimeType='application/vnd.google-apps.folder' and name='${drivePathFolder}'`,
+                pageSize: 5,
+                fields: 'nextPageToken, files(id, name, mimeType)',
+            });
+            try {
+                response = JSON.parse(response);    
+            }
+            catch(e) {}
+            if(response.data && response.data.files && response.data.files.length > 0) {
+                // Folder exists
+                driveFolderId = response.data.files[0].id;
+            }
+            else {
+                // Create folder
+                var folderCreateMetadata = {
+                    'parents': [driveFolderId],
+                    'name': drivePathFolder,
+                    'mimeType': 'application/vnd.google-apps.folder'
+                };
+            
+                let response;
+                let pageToken = null;
+            
+                try {
+                    // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+                    response = await drive.files.create({
+                        resource: folderCreateMetadata,
+                        fields: 'id'
+                    });
+                    try {
+                        response = JSON.parse(response);    
+                    }
+                    catch(e) {}
+                    console.log('create folder result: ', JSON.stringify(response));
+                    if(response && response.data && response.data.id) {
+                        driveFolderId = response.data.id;
+                        console.log('Folder created with new id: ', driveFolderId);
+                    }
+                }
+                catch (e) {
+                    console.log(e);
+                }
+            }
         }
         console.log('find folder result: ', JSON.stringify(response));
     }

@@ -177,8 +177,7 @@ export class LoginPageComponent implements OnInit {
             this.loginButtonText = 'PLEASE WAIT';
             this._dialogService.showLoadingDialog("Loading", "Please wait...");
             this.authService.loadSession();
-        }
-        this.authService.loginGoogle();
+        }        
     }
 
     onSubmit(e): void {
