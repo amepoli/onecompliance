@@ -82,7 +82,7 @@ export class MenuComponent implements OnInit {
 
   onClick(item: MenuOption) {
     const _this = this;
-    setTimeout(() => { _this.pubSubService.publishEvent(item.outputEventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: item.label, type: 'menu' }); }, 50);
+    setTimeout(() => { _this.pubSubService.publishEvent(item.outputEventName, { showEventProcessing: true, origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: item.label, type: 'menu' }); }, 50);
     
   }
 }
