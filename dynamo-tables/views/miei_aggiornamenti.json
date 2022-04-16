@@ -1,5 +1,513 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "miei_aggiornamenti",
-  "inheritsFrom": "consuntivazioni_consultant_list"
+  "inheritsFrom": "consuntivazioni_consultant_list",
+  "define": {
+    "_and_": "true",
+    "same_origin": "true",
+    "is_hidden_esecutore": "true",
+    "is_hidden_time_report": "true"
+  },
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select INITCAP(csn.codice_azienda) as codice_azienda_s, csn.date_time_begin, csn.id_argomento, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',csn.stato) as descr_stato,  csn.thread ,csn.date_time_end, csn.id_cons, csn.codice_compito, substring(entrasp.descrizione_consuntivazione(csn.codice_azienda, csn.id_cons), 1, 200) as titolo_compito, csn.codice_azienda, csn.data_intervento, csn.durata||' min.'::varchar as durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.anagrafiche_cognnome(csn.codice_part, csn.id_risorsa) as esecutore, substring(csn.note from 1 for 100) as note_restricted, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active_cons((€global_id_anagrafiche€)::text, csn.codice_azienda, csn.id_cons), true as time_report_play from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€' and $P{_and_};",
+      "type": "main"
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "insert",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part, id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part, id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "insert",
+      "type": "preCheck",
+      "queryString": "select 1 where '£date_time_begin£'>now()",
+      "messageNotNull": "La data inizio non può essere nel futuro. Correggere e poi salvare."
+    },
+    {
+      "operation": "insert",
+      "type": "preCheck",
+      "queryString": "select 1 where '£date_time_begin£'>'£date_time_end£'",
+      "messageNotNull": "La data fine non può essere precedente alla data inizio. Correggere e poi salvare."
+    },
+    {
+      "operation": "update",
+      "type": "preCheck",
+      "queryString": "select 1 where '£date_time_begin£'>now()",
+      "messageNotNull": "La data inizio non può essere nel futuro. Correggere e poi salvare."
+    },
+    {
+      "operation": "update",
+      "type": "preCheck",
+      "queryString": "select 1 where '$date_time_begin$'>'£date_time_end£'",
+      "messageNotNull": "La data fine non può essere precedente alla data inizio. Correggere e poi salvare."
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "select km_percorsi as kmpercorsi from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and id_cons=$id_cons$",
+      "type": "postProcessing"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "giorno",
+      "label": "giorno",
+      "width": "0%"
+    },{
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_intervento",
+      "label": "Data Intervento",
+      "width": "8%"
+    },
+    {
+        "format": {
+            "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "codice_azienda_s",
+        "label": "Azienda",
+        "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_cons",
+      "width": "6%",
+      "label": "Codice"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo_compito",
+      "width": "50%",
+      "label": "Titolo attività"
+    },
+    {
+      "format": {
+        "dataType": "time"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "date_time_begin",
+      "label": "Inizio",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "time"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "date_time_end",
+      "label": "Fine",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "durata",
+      "label": "Durata",
+      "width": "12%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "durata_ft",
+      "label": "Durata Fatturabile (minuti)",
+      "width": "0%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": "$Q{is_hidden_esecutore}",
+      "isPrimary": false,
+      "key": "esecutore",
+      "queryFunct": "entrasp.anagrafiche_cognnome(codice_part,id_risorsa)",
+      "label": "Esecutore",
+      "width": "9%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "descr_stato",
+      "label": "Stato",
+      "width": "6%",
+      "style": [
+        {
+            "value": "Chiuso",
+            "font_color": "green",
+            "font_weight": "500"
+        },
+        {
+            "value": "Provvisorio",
+            "font_color": "#BA68C8",
+            "font_weight": "500"
+        },
+        {
+            "value": "Pianificato",
+            "font_color": "#FF8100",
+            "font_weight": "500"
+        },
+        {
+            "value": "Attesa Riscontro",
+            "font_color": "#FF0000",
+            "font_weight": "500"
+        },
+        {
+            "value": "In Svolgimento",
+            "font_color": " #A1A100",
+            "font_weight": "500"
+        },
+        {
+            "value": "Annullato",
+            "font_color": "grey",
+            "font_weight": "500"
+        }
+    ]
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": "$Q{is_hidden_time_report}",
+      "isPrimary": false,
+      "width": "4%",
+      "key": "time_report_play",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "play_arrow",
+          "value": "play_arrow"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "consuntivazioni_consultant_list",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.time_report_play(('£user_companies£')::text, '£codice_compito£', '£codice_azienda£')",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          },
+          {
+            "source": "user_companies",
+            "destination": "user_companies"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "update_time_tracker_and_reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": "$Q{is_hidden_time_report}",
+      "isPrimary": false,
+      "width": "5%",
+      "key": "time_report_stop_active_cons",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "stop",
+          "value": "stop"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "consuntivazioni_consultant_list",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          },
+          {
+            "source": "user_companies",
+            "destination": "user_companies"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "update_time_tracker_and_reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "user_companies",
+      "label": "user_companies"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "thread",
+      "label": "Thread",
+      "width": "30%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_attivita",
+      "label": "codice_attivita"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_progetto",
+      "label": "id_progetto"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test",
+      "label": "id_modello_test"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_fase",
+      "label": "id_fase"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_sondaggio",
+      "label": "id_sondaggio"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_compito",
+      "label": "codice_compito"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "dynamo_user",
+      "label": "dynamo_user",
+      "sameOrigin": "$P{same_origin}"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_azienda_erogante",
+      "label": "codice_azienda_erogante"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "id_argomento"
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "id_cons",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Consuntivazione",
+      "newLine": false,
+      "queryCond": "id_cons=$id_cons$"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "queryCond": "csn.codice_azienda='€codice_azienda_s€'",
+      "fieldName": "codice_azienda_s",
+      "label": "Codice Azienda",
+      "newLine": false,
+      "size": 2
+    },
+    {
+      "fieldName": "data_esec_prevista_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione dopo il",
+      "newLine": false,
+      "queryCond": "csn.data_intervento>='€data_esec_prevista_min€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione prima del",
+      "newLine": false,
+      "queryCond": "csn.data_intervento<='€data_esec_prevista_max€'"
+    },
+    {
+      "fieldName": "parola_search",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Parola chiave",
+      "newLine": true,
+      "queryCond": "(upper(csn.note) like '%'||upper('€parola_search€')||'%' or upper(csn.titolo) like '%'||upper('€parola_search€')||'%'"
+    },
+    {
+      "fieldName": "durata_ft_min",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Durata fatturazione maggiore di",
+      "newLine": false,
+      "queryCond": "csn.durata_ft>=$durata_ft_min$"
+    },
+    {
+      "fieldName": "durata_min",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Durata maggiore di",
+      "newLine": false,
+      "queryCond": "csn.durata>=$durata_min$"
+    },
+    {
+      "fieldName": "dynamo_user_s",
+      "format": {
+        "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.anagrafiche_id order by dynamo_user;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "User",
+      "newLine": false,
+      "queryCond": "csn.codice_part||'-'||csn.id_risorsa in(select codice_part||'-'||id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€dynamo_user_s€')"
+    },
+    {
+      "fieldName": "stato",
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "csn.stato='€stato€'"
+    },
+    {
+      "fieldName": "open",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Aperti",
+      "newLine": true,
+      "size": 2,
+      "queryCond": "csn.stato!='C'"
+    },
+    {
+      "fieldName": "azienda_corrente",
+      "format": {
+        "value": "0",
+        "viewType": "toggle"
+      },
+      "label": "Azienda corrente",
+      "newLine": false,
+      "queryCond": "csn.codice_azienda='€global_codice_azienda€'"
+    }
+  ]
 }

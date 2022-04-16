@@ -1,0 +1,196 @@
+{
+  "$schema": "../views.schema.json",
+  "origin": "entrasp.compiti",
+  "entryKey": "miei_compiti",
+  "define": {
+    "is_hidden_compiti": "false",
+    "is_hidden_compiti_consultant": "true",
+    "label_data": "Data Segnalazione",
+    "label_codice": "Codice Segnalazione",
+    "label_codice_parent": "Codice Segnalazione Parent"
+  },
+  "hideActions": [
+    {
+      "formActionType": "share",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
+    },
+    {
+      "tableActionType": "quick-add",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    }
+  ],
+  "predefinedQueries": [
+    
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,a.codice_compito,a.codice_azienda), true as time_report_play,(€global_id_anagrafiche€)::text as user_companies,a.codice_azienda,a.codice_compito,a.titolo,entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito,'€global_username€'::text) as minuti_mensili,entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text) minuti_totali,entrasp.tipo_segnalazione_descr_new(a.id_tipo_segnalazione) as tipo_segnalazione from entrasp.compiti a inner join entrasp.consuntivazioni b on a.codice_azienda=b.codice_azienda and a.codice_compito=b.codice_compito where a.codice_azienda in (€global_user_companies€) and entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text) is not null group by a.codice_azienda, a.codice_compito, a.titolo, b.codice_part, b.id_risorsa having  entrasp.dynamo_user_from_id_an(b.codice_part, b.id_risorsa)='€global_username€'::text order by a.data_ins desc"
+    },
+    {
+      "operation": "startEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
+    },
+    {
+      "operation": "stopEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "width": "5%",
+      "label": "Codice Compito"
+    },{
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_segnalazione",
+      "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
+      "label": "Tipo",
+      "width": "25%"
+    },{
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "width": "40%",
+      "label": "Titolo"
+    },{
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "user_companies",
+      "label": "user_companies"
+    },
+  
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "minuti_mensili",
+      "width": "5%",
+      "label": "Minuti Ultimo Mese"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "minuti_totali",
+      "width": "5%",
+      "label": "Minuti Totali"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "time_report_play",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "play_arrow",
+          "value": "play_arrow"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "compiti",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.time_report_play(('£user_companies£')::text, '£codice_compito£', '£codice_azienda£')",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          },
+          {
+            "source": "user_companies",
+            "destination": "user_companies"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "update_time_tracker_and_reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "time_report_stop_active",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "stop",
+          "value": "stop"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "compiti",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          },
+          {
+            "source": "user_companies",
+            "destination": "user_companies"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "update_time_tracker_and_reload"
+      }
+    }
+  ]
+}

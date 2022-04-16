@@ -1,0 +1,435 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "giornate_anomale",
+  "businessObjectName": "consuntivazioni",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select distinct true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, coll.giorno::date, coll.dynamo_user, entrasp.dynamo_employer(coll.dynamo_user) as employer,  coalesce(csn.minuti_rendicontati,0) as minuti_rendicontati, entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date) as minuti_richiesti, greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- coalesce(csn.minuti_rendicontati,0))) as minuti_mancanti from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg, entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.dynamo_user='€global_username€'",
+      "type": "main"
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "select $giorno$ as giorno, to_char($giorno$::date, 'Day DD-MM-YYYY') as giorno_descr, $dynamo_user$ as dynamo_user",
+      "type": "main"
+    }
+  ],
+  "table_multiselection_actions": [
+    {
+      "viewType": "menu",
+      "key": "menutest",
+      "label": "Azioni",
+      "icon": "more_vert",
+      "menuOptions": [
+        {
+          "key": "aggiungi_ferie_per_utente",
+          "icon": "merge_type",
+          "label": "Aggiungi ferie",
+          "reloadOnSuccess": true,
+          "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z-'||coll.dynamo_user||'-' in( $selected_rows_data$);"
+        },
+        {
+          "key": "aggiungi_minuti_mancanti_per_utente",
+          "icon": "merge_type",
+          "label": "Aggiungi minuti mancanti",
+          "reloadOnSuccess": true,
+          "query": "select entrasp.inserisci_consuntivazione(entrasp.dynamo_employer(coll.dynamo_user),coll.giorno::date, 5440, greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- coalesce(csn.minuti_rendicontati,0))), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z-'||coll.dynamo_user||'-' in( $selected_rows_data$);"
+        },
+        {
+          "key": "aggiungi_ferie_per_utente",
+          "icon": "merge_type",
+          "label": "Segna permesso",
+          "reloadOnSuccess": true,
+          "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user, '£giorno£'::date +interval '1080 minutes', '£giorno£'::date + interval '1080 minutes' + greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- coalesce(csn.minuti_rendicontati,0)))*interval '1 minute') from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z-'||coll.dynamo_user||'-' in( $selected_rows_data$);"
+        }
+      ]
+    }
+  ],
+  "form_keys": [
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "date"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "giorno",
+      "readOnly": true,
+      "newLine": false,
+      "label": "Data"
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "giorno_descr",
+      "readOnly": true,
+      "newLine": false,
+      "label": "Data"
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "newLine": false,
+      "key": "dynamo_user",
+      "readOnly": true,
+      "label": "Utente"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "giorno",
+      "label": "Data",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "dynamo_user",
+      "width": "10%",
+      "label": "Utente"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "minuti_rendicontati",
+      "label": "Minuti rendicontati",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "minuti_richiesti",
+      "label": "Minuti richiesti",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "minuti_mancanti",
+      "label": "Minuti mancanti",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "16%",
+      "queryFunct": "select true",
+      "key": "insert_missing_mins",
+      "label": "Aggiungi minuti mancanti",
+      "style": [
+        {
+          "button_icon": "update",
+          "value": "update_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "tr_hp_manager",
+        "viewType": "form",
+        "query": "select entrasp.inserisci_consuntivazione('£employer£','£giorno£', 5440, £minuti_mancanti£, '£dynamo_user£')",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "employer",
+            "destination": "employer"
+          },
+          {
+            "source": "giorno",
+            "destination": "giorno"
+          },
+          {
+            "source": "dynamo_user",
+            "destination": "dynamo_user"
+          },
+          {
+            "source": "minuti_mancanti",
+            "destination": "minuti_mancanti"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "13%",
+      "queryFunct": "select true",
+      "key": "segna_ferie",
+      "label": "Segna ferie",
+      "style": [
+        {
+          "button_icon": "update",
+          "value": "update_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "viewType": "form",
+        "query": "select entrasp.inserisci_ferie('£giorno£', '£employer£', '£dynamo_user£')",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "employer",
+            "destination": "employer"
+          },
+          {
+            "source": "giorno",
+            "destination": "giorno"
+          },
+          {
+            "source": "dynamo_user",
+            "destination": "dynamo_user"
+          }
+        ],
+        "onSuccessAction": "navigate",
+        "target": "mie_ferie",
+        "onSuccessActionKeymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "giorno",
+            "destination": "data"
+          },
+          {
+            "source": "dynamo_user",
+            "destination": "dynamo_user"
+          }
+        ]
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "13%",
+      "queryFunct": "select true",
+      "key": "segna_permesso",
+      "label": "Segna Permesso",
+      "style": [
+        {
+          "button_icon": "update",
+          "value": "update_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "viewType": "form",
+        "query": "select entrasp.inserisci_ferie('£giorno£'::date, '£employer£', '£dynamo_user£', '£giorno£'::date +interval '1080 minutes', '£giorno£'::date + interval '1080 minutes' + £minuti_mancanti£*interval '1 minute')",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "employer",
+            "destination": "employer"
+          },
+          {
+            "source": "giorno",
+            "destination": "giorno"
+          },
+          {
+            "source": "dynamo_user",
+            "destination": "dynamo_user"
+          },
+          {
+            "source": "minuti_mancanti",
+            "destination": "minuti_mancanti"
+          }
+        ],
+        "onSuccessAction": "navigate",
+        "target": "mie_ferie",
+        "onSuccessActionKeymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "giorno",
+            "destination": "data"
+          },
+          {
+            "source": "dynamo_user",
+            "destination": "dynamo_user"
+          }
+        ]
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "width": "0%",
+      "queryFunct": "select true",
+      "key": "dettaglio",
+      "label": "Dettaglio",
+      "isButton": true,
+      "buttonAction": {
+        "target": "consuntivazioni_consultant_list_per_giorno",
+        "viewType": "table",
+        "action": "query",
+        "query": "select 1",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "giorno",
+            "destination": "date_time_begin"
+          }
+        ],
+        "confirmAction": false,
+        "onSuccessAction": "navigate",
+        "onSuccessActionKeymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "giorno",
+            "destination": "date_time_begin"
+          }
+        ]
+      }
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "consuntivazioni_sub_of_tr_hp_manager",
+      "label": "Aggioramenti e consuntivazioni",
+      "keys": [
+        {
+          "parent": "giorno",
+          "son": "giorno"
+        },
+        {
+          "parent": "dynamo_user",
+          "son": "dynamo_user"
+        }
+      ]
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "date_from",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "A partire dal",
+      "newLine": false,
+      "queryCond": "dd.giorno::date>$date_from$"
+    },
+    {
+      "format": {
+        "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.employers where dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'));",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "queryCond": "coll.dynamo_user=$dynamo_s$",
+      "fieldName": "dynamo_s",
+      "label": "Utente",
+      "newLine": false,
+      "size": 2
+    },
+    {
+      "fieldName": "miei_aggiornamenti",
+      "format": {
+        "value": "0",
+        "viewType": "toggle"
+      },
+      "label": "Miei aggiornamenti",
+      "newLine": false,
+      "queryCond": "coll.dynamo_user='€global_username€'"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "group by coll.giorno::date, coll.dynamo_user, entrasp.dynamo_employer(coll.dynamo_user),  csn.minuti_rendicontati, entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date) having greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- coalesce(csn.minuti_rendicontati,0)))>0 order by coll.giorno::date desc limit 200"
+  },
+  "hideActions": [
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "quick-add",
+      "viewType": "table"
+    },
+    {
+      "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "delete",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "save",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "share",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "import_export",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "multi-attachments",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "documentation",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "startEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "stopEvent",
+      "viewType": "form"
+    }
+  ]
+}
