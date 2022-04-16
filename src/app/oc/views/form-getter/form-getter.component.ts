@@ -1043,6 +1043,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
                 }
+                if(value.showEventProcessing === true) {
+                    _this._dialogService.showLoadingDialog("Processing", "Please wait...");
+                }
                 const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
                     result => {
                         if (result.result === 'OK') {
@@ -1132,11 +1135,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     }
                                 }
                             }
+                            // Close processing dialog
+                            _this._dialogService.closeDialog();
                             if (event.outputEventWhenComplete != null) {
                                 _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
                             }
                         }
                         else {
+                            // Close processing dialog
+                            _this._dialogService.closeDialog();
+                            
                             // Show error snackbar
                             _this._console.log(`keyListener: ${keyListener}`);
                             //console.table(result);

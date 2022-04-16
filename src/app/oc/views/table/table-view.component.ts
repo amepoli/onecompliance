@@ -135,7 +135,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     showExplorer = false;
     explorerSource: "table-view" | "google-drive" = "table-view";
-    
+    explorerLevelTwoMask: string = null;
+
     foldersSource: object[] = [];
     folders: string[] = [];
     filesSource: object[] = [];
@@ -265,6 +266,14 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     else {
                         _this.showExplorer = false;
                     }
+
+                    if(result.data.explorerOptions && result.data.explorerOptions.levelTwoMask) {
+                        _this.explorerLevelTwoMask = result.data.explorerOptions.levelTwoMask;
+                    }
+                    else {
+                        _this.explorerLevelTwoMask = 'folders_list_liv2';
+                    }
+                    
                     if(result.data.explorerOptions && result.data.explorerOptions.explorerSource) {
                         _this.explorerSource = result.data.explorerOptions.explorerSource;
                     }
@@ -805,9 +814,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     this.selectedRow = row;
                     this.currentKeys = row;
                     // this.currentKeys.liv++;
-                    if(!this.tableData.entryName.endsWith('_liv2')) {
-                        this.tableData.entryName = this.tableData.entryName + "_liv2";
-                    }
+                    this.tableData.entryName = this.explorerLevelTwoMask;
                     // this.loadTable(null);
                     const mergedParams = { entry: { name: this.tableData.entryName, type: 'explorer' }, keys: row, index: index + 1, total: this.keysArray.length };
                     this.navigate(mergedParams);
