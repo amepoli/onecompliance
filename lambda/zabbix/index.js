@@ -12,8 +12,17 @@ const pool = new Pool({
 });
 
 exports.handler = async (event) => {
-    
-    console.log(event);
+
+    const prefix = 'zabbix/'; // topic prefis
+    const company = event.topic.slice(prefix.length);
+
+    console.log('Company is: ', company);
+
+    const timestamp = Math.round(new Date().getTime()/1000);
+
+    const client = await pool.connect();
+
+    await client.release();
     
     const response = {
         statusCode: 200,
