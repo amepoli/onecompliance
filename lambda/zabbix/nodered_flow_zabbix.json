@@ -1,0 +1,197 @@
+[
+    {
+        "id": "37563b27871a7546",
+        "type": "tab",
+        "label": "ZabbixToMQTT",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5192ab84956a1d6b",
+        "type": "inject",
+        "z": "37563b27871a7546",
+        "name": "Zabbix get authentication",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 00 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"jsonrpc\":\"2.0\",\"method\":\"user.login\",\"params\":{\"user\":\"Admin\",\"password\":\"zabbix\"},\"id\":1,\"auth\":null}",
+        "payloadType": "json",
+        "x": 200,
+        "y": 360,
+        "wires": [
+            [
+                "411aba47a8d9c7da"
+            ]
+        ]
+    },
+    {
+        "id": "411aba47a8d9c7da",
+        "type": "http request",
+        "z": "37563b27871a7546",
+        "name": "ZabbixPost",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "body",
+        "url": "http://172.16.252.68/zabbix/api_jsonrpc.php",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 530,
+        "y": 360,
+        "wires": [
+            [
+                "69531b52b2b0f9f9"
+            ]
+        ]
+    },
+    {
+        "id": "5d28919db765e551",
+        "type": "debug",
+        "z": "37563b27871a7546",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "69531b52b2b0f9f9",
+        "type": "function",
+        "z": "37563b27871a7546",
+        "name": "GetAllProblems",
+        "func": "const startTime = Math.round(Date.now()/1000) - 3600 * 24; \n\nconst ret = { payload: { \n    \"jsonrpc\": \"2.0\",\n    \"method\": \"problem.get\",\n    \"params\": {\n        \"output\": \"extend\",\n        \"selectAcknowledges\": \"extend\",\n        \"selectTags\": \"extend\",\n        \"selectSuppressionData\": \"extend\",\n        \"recent\": \"true\",\n        \"sortfield\": [\"eventid\"],\n        \"sortorder\": \"DESC\",\n        \"acknowledged\": \"0\",\n        \"time_from\": startTime.toString() \n    },\n    \"auth\": msg.payload.result,\n    \"id\": 2\n}\n};\nreturn ret;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 360,
+        "wires": [
+            [
+                "ba2031ea64c74c19"
+            ]
+        ]
+    },
+    {
+        "id": "ba2031ea64c74c19",
+        "type": "http request",
+        "z": "37563b27871a7546",
+        "name": "ZabbixPost",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "body",
+        "url": "http://172.16.252.68/zabbix/api_jsonrpc.php",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 530,
+        "y": 520,
+        "wires": [
+            [
+                "c06f42c0142ac33f"
+            ]
+        ]
+    },
+    {
+        "id": "f935d3b8b7acd587",
+        "type": "mqtt out",
+        "z": "37563b27871a7546",
+        "name": "AWS",
+        "topic": "zabbix/VIVA",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "fe3d207338999293",
+        "x": 1030,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "c06f42c0142ac33f",
+        "type": "function",
+        "z": "37563b27871a7546",
+        "name": "TakeResult",
+        "func": "\nconst ret = { \"payload\": { \"problems\": msg.payload.result } };\nreturn ret;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 520,
+        "wires": [
+            [
+                "f935d3b8b7acd587",
+                "5d28919db765e551"
+            ]
+        ]
+    },
+    {
+        "id": "fe3d207338999293",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "a2yiksudz8utkt-ats.iot.eu-central-1.amazonaws.com",
+        "port": "8883",
+        "tls": "9fe128d0d88912ad",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "9fe128d0d88912ad",
+        "type": "tls-config",
+        "name": "AWS Alacritas",
+        "cert": "",
+        "key": "",
+        "ca": "",
+        "certname": "bb5d5971d17b1b4dec0c83d6e277194934eeb4eb6438c2797b97a2e743d0a28d-certificate.pem.crt",
+        "keyname": "bb5d5971d17b1b4dec0c83d6e277194934eeb4eb6438c2797b97a2e743d0a28d-private.pem.key",
+        "caname": "AmazonRootCA1.pem",
+        "servername": "",
+        "verifyservercert": true,
+        "alpnprotocol": ""
+    }
+]

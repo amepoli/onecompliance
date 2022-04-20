@@ -11,22 +11,39 @@ const pool = new Pool({
     connectionTimeoutMillis: 1000
 });
 
+
 exports.handler = async (event) => {
 
-    const prefix = 'zabbix/'; // topic prefis
-    const company = event.topic.slice(prefix.length);
+    const prefix = "zabbix/"; // topic prefix
+    const codice_azienda = event.topic.slice(prefix.length);
 
-    console.log('Company is: ', company);
+    delete event.topic;
 
-    const timestamp = Math.round(new Date().getTime()/1000);
+    console.log("Company is: ", codice_azienda);
 
-    const client = await pool.connect();
+    const timestamp = new Date().toISOString();
 
-    await client.release();
-    
+    try {
+        let client = await pool.connect();
+
+        let JSON_object = JSON.stringify(event);
+
+        const query = `insert into imports.imported_objects (codice_azienda, data_import, object) values ('${codice_azienda}', '${timestamp}', '${JSON_object}');`;
+
+        console.log(query);
+
+        let reply = await client.query(query);
+
+        console.log(JSON.stringify(reply));
+
+        await client.end();
+    } catch (e) {
+        console.log(e);
+    }
+
     const response = {
         statusCode: 200,
-        body: JSON.stringify('Hello from Lambda!'),
+        body: JSON.stringify("Hello from Lambda!"),
     };
     return response;
 };
