@@ -1119,6 +1119,19 @@ exports.handler = async (event, context) => {
                     body = { result: 'KO', reason: 'File and/or table not provided!' };
                 }
                 else {
+                    const DynamoParams = {
+                        TableName: 'VIEWS_NAME',
+                        Key: {
+                            entryKey: table
+                        }
+                    };
+    
+                    let entry_params = await dynamo.get(DynamoParams).promise();
+    
+                    // complete table if inherited
+                    entry_params = await overrideTable(entry_params.Item);
+                    console.log('entry_params: ', JSON.stringify(entry_params));
+
                     // Load file from S3
                     const s3ParamsGetList = {
                         Bucket: bucket,
@@ -1160,13 +1173,14 @@ exports.handler = async (event, context) => {
                             columns = processCSV(csvFile).toString().split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/﻿/g, '').replace(/CSV_DELIMITER/g, ',');
                         }
 
+                        let tableToImport = entry_params.origin || table;
                         // Added schema if table does not contain
-                        if (!table.includes('.')) {
-                            table = `${schema}.${table}`;
+                        if (!tableToImport.includes('.')) {
+                            tableToImport = `${schema}.${tableToImport}`;
                         }
 
                         // Data prepared:
-                        console.table({ "fileName": fileName, "table": table, "columns": columns });
+                        console.table({ "fileName": fileName, "table": tableToImport, "columns": columns });
 
                         // Create extensions
                         // query = `CREATE EXTENSION aws_s3 CASCADE;`
@@ -1174,7 +1188,7 @@ exports.handler = async (event, context) => {
 
                         // Import CSV from S3 to Postgres
                         const query = `SELECT aws_s3.table_import_from_s3(
-                            '${table}',
+                            '${tableToImport}',
                             '${columns}', 
                             '(FORMAT CSV, DELIMITER E''CSV_DELIMITER'', HEADER true)',
                             aws_commons.create_s3_uri('${bucket}', 'CSV/_temp/${fileName}','${region}')
