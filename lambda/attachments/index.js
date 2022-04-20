@@ -209,7 +209,8 @@ exports.handler = async (event, context) => {
         }
         else if (requestType === 'getS3GoogleSyncFilesList') {
             client = await pool.connect();
-            let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
+            //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
+            let query = `select file_id,'/'||codice_azienda||'/'||file_id as s3Path, entrasp.getgoogledrivepath(codice_azienda, checksum_sha1) as googleDrivePath from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
             console.log('running query: ', query);
             let response = await client.query(query);
             body = { result: 'OK', response: response };
