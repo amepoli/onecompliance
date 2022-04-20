@@ -151,7 +151,7 @@ exports.handler = async (event, context) => {
         }
     }
 
-    if (requestType !== 'getGoogleDriveFileCopyParams') {
+    if (requestType !== 'getGoogleDriveFileCopyParams' && requestType !== 'getS3GoogleSyncFilesList') {
         if (entryName == null || keys == null || company == null) {
             requestType = 'badRequest';
         }
@@ -186,15 +186,7 @@ exports.handler = async (event, context) => {
 
     try {
 
-        if (requestType === 'getFileURL') {
-            //console.log('IN: getFileURL');
-            var url = s3.getSignedUrl('getObject', s3ParamsGetList);
-            if (url == null) {
-                body = { result: 'KO', reason: 'Something wrong with cloud storage' };
-            } else {
-                body = { result: 'OK', url: url };
-            }
-        } else if (requestType === 'getGoogleDriveFileCopyParams') {
+        if (requestType === 'getGoogleDriveFileCopyParams') {
             client = await pool.connect();
 
             let query = `select * from entrasp.getGoogleDriveFileCopyParams('${company}', '${checksum}');`;
@@ -214,7 +206,24 @@ exports.handler = async (event, context) => {
             //response = await client.query(query);
             //}
             body = { result: 'OK', response: response };
-        } else {
+        }
+        else if (requestType === 'getS3GoogleSyncFilesList') {
+            client = await pool.connect();
+            let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
+            console.log('running query: ', query);
+            let response = await client.query(query);
+            body = { result: 'OK', response: response };
+        }
+        else if (requestType === 'getFileURL') {
+            //console.log('IN: getFileURL');
+            var url = s3.getSignedUrl('getObject', s3ParamsGetList);
+            if (url == null) {
+                body = { result: 'KO', reason: 'Something wrong with cloud storage' };
+            } else {
+                body = { result: 'OK', url: url };
+            }
+        }
+        else {
             //console.log('IN: else of getFileURL');    //often here
             const bus_object = await tableName2BusinessObject(entryName);
 

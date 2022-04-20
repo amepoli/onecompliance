@@ -170,6 +170,12 @@ export class BackendService {
     return from(this.amplifyService.api().get(this.apiName, '/' + this.attachApiName, this.myGetInit));
   }
 
+  getS3GoogleSyncFilesList(company: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { request_type: 'getS3GoogleSyncFilesList', company: company };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.attachApiName, this.myGetInit));
+  }
+
   getContents(entryName: string, company: string, keys: any, contentsPrefix: string): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), request_type: 'getContents', contents_prefix: contentsPrefix  };
