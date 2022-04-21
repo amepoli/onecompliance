@@ -261,7 +261,7 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "select sondaggio_insert_from_list as new_id_sondaggio from entrasp.sondaggio_insert_from_list($codice_azienda$, $id_modello_test$);",
+                    "queryFunct": "select crea_sondaggio_multiplo as new_id_sondaggio from entrasp.crea_sondaggio_multiplo($codice_azienda$, $id_modello_test$);",
                     "outputEventWhenComplete": "navigate_to_sondaggio"
                 },
                 {
@@ -495,12 +495,12 @@
                 "menuOptions": [
                     {
                         "icon": "question_answer",
-                        "label": "Crea Verifica",
+                        "label": "Crea Singola Verifica",
                         "outputEventName": "somministrazione_new"
                     },
                     {
                         "icon": "question_answer",
-                        "label": "Crea Sondaggio",
+                        "label": "Crea Sondaggio Multiplo",
                         "outputEventName": "sondaggio_new"
                     },
                     {
@@ -1877,7 +1877,7 @@
             },
             {
                 "label": "Template domande per import",
-                "queryString": "select dm.ordinamento ord_dom, dm.punteggio as punt_dom, dm.descrizione as domanda, ds.ordinamento as ord_sez, ds.descrizione as descriz_sez, null as risp_ord, null as risp_peso, null as risposta from entrasp.domande dm left join entrasp.domande_sezioni ds on dm.codice_azienda=ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where dm.codice_azienda=$codice_azienda$ and dm.id_modello_test=$id_modello_test$ and dm.id_modello_test_vr=$id_modello_test_vr$"
+                "queryString": "select '1' as ordinamento_domanda, '10' as punteggio_domanda, 'domanda' as domanda, '1' as ordinamento_sezione, 'sezione' as descrizione_sezione"
             },
             {
                 "label": "Risposte previste modelli test",
