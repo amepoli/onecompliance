@@ -717,11 +717,53 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "Codice Azienda",
       "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "queryFunct": "select true",
+      "width": "5%",
+      "key": "cancella_consuntivazione",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "",
+          "font_color": "red",
+          "background_color": "red"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "consuntivazioni_sub",
+        "viewType": "table",
+        "action": "query",
+        "query": "delete from entrasp.consuntivazioni where codice_azienda='£codice_azienda£' and id_cons=£id_cons£",
+        "keymap": [
+          {
+            "source": "id_cons",
+            "destination": "id_cons"
+          },
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          }
+        ],
+        "confirmAction": true,
+        "confirmMessage": {
+          "title": "Elimina",
+          "text": "Si vuole cancellare l'aggiornamento?"
+        },
+        "onSuccessAction": "reload"
+      }
     },
     {
       "format": {
@@ -731,7 +773,7 @@
       "isPrimary": false,
       "key": "data_intervento",
       "label": "Data Intervento",
-      "width": "7%"
+      "width": "6%"
     },
     {
       "format": {
@@ -741,7 +783,7 @@
       "isPrimary": false,
       "key": "durata",
       "label": "Durata Intervento (minuti)",
-      "width": "8%"
+      "width": "6%"
     },
     {
       "format": {
@@ -751,7 +793,7 @@
       "isPrimary": false,
       "key": "durata_ft",
       "label": "Durata Fatturabile (minuti)",
-      "width": "8%"
+      "width": "6%"
     },
     {
       "format": {
@@ -816,7 +858,7 @@
       "isPrimary": false,
       "key": "thread",
       "label": "Thread",
-      "width": "30%"
+      "width": "20%"
     },
     {
       "format": {
@@ -827,7 +869,7 @@
       "key": "note_restricted",
       "queryFunct": "substring(note from 1 for 100)",
       "label": "Note",
-      "width": "50%"
+      "width": "30%"
     },
     {
       "format": {
@@ -897,6 +939,10 @@
     {
       "tableActionType": "quick-add",
       "viewType": "table"
+    },
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
     }
   ]
 }

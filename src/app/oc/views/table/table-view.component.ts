@@ -92,7 +92,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     isLevel: string = null;
     hasLevel: string[] = null;
     levelIndentationMarker: string = '.';
-    levelIndentationValue: number = 13;
+    levelIndentationValue: number = 0;
 
     // toolbar pub/sub topics
     subMsgCmdTopic = '/toolbar/out/cmd';

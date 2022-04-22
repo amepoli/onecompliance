@@ -1,0 +1,98 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "ateco",
+    "origin": "entrasp.ateco",
+    "businessObjectName": "ateco",
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "queryString": "select id_ateco,cod_ateco,descrizione, CASE WHEN cod_rischio = 1 THEN 'Alto' ELSE 'Basso' END as descr_rischio from entrasp.ateco",
+            "operation": "selectTable"
+        }
+    ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuAteco",
+            "label": "Azioni",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "update_rischio",
+                    "icon": "swap_vert",
+                    "label": "Modifica il livello di rischio",
+                    "confirmAction": true,
+                    "confirmActionMessage": "Modificare il livello di rischio? Alto -> Basso | Basso -> Alto",
+                    "query": "select entrasp.modifica_rischio_ateco(array[$selected_rows_data$])",
+                    "reloadOnSuccess": true
+                }
+            ]
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_ateco",
+            "label": "# Ateco"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cod_ateco",
+            "label": "Codice Ateco",
+            "width": "7%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "width": "80%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_rischio",
+            "label": "Rischio",
+            "width": "10%",
+            "style": [
+                {
+                    "value": "Basso",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "ForestGreen",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "darkOrange",
+                    "font_size": "medium",
+                    "text_align": "center",
+                    "border-radius": "10 px"
+                }
+            ]
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_ateco ASC"
+    },
+    "restrictions": {
+        "preventNavigationToForm": true
+    }
+}

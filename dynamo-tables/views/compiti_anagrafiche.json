@@ -1,0 +1,211 @@
+{
+  "$schema": "../views.schema.json",
+  "businessObjectName": "compiti",
+  "origin": "entrasp.compiti_anagrafiche",
+  "entryKey": "compiti_anagrafiche",
+  "inputEvents": [
+    {
+      "eventName": "update_compiti_anagrafiche",
+      "actionType": "reload"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_part",
+      "label": "codice_part",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cancella_membro",
+      "label": "delete",
+      "buttonIcon": "delete",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "membro_cancella",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "membro_cancella",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "delete from entrasp.compiti_anagrafiche where codice_azienda=$codice_azienda$ and codice_part=$codice_part$ and codice_compito=$codice_compito$ and id_anagrafica=$id_anagrafica$",
+          "outputEventWhenComplete": "update_compiti_anagrafiche"
+        }
+      ],
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part=$codice_part$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_anagrafica",
+      "label": "Risorsa",
+      "readOnly": false,
+      "size": 9.5,
+      "newLine": true
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "label": "codice_compito(PK)",
+      "newLine": false,
+      "readOnly": true,
+      "size": 1.5
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "6%",
+      "queryFunct": "select true",
+      "key": "delete_gruppi_lavoro_membri",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "delete_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "compiti_anagrafiche",
+        "viewType": "form",
+        "query": "delete from entrasp.compiti_anagrafiche where codice_part='£codice_part£' AND codice_compito=£codice_compito£ AND id_anagrafica=£id_anagrafica£ AND codice_azienda=£codice_azienda£",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "codice_part",
+            "destination": "codice_part"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          },
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_anagrafica",
+            "destination": "id_anagrafica"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_part",
+      "label": "codice_part"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "label": "codice_compito"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "width": "10%",
+      "key": "id_anagrafica",
+      "label": "ID",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "anagrafiche_vr",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_part",
+            "destination": "codice_part"
+          },
+          {
+            "source": "id_anagrafica",
+            "destination": "id_anagrafica"
+          },
+          {
+            "source": "prog_vr",
+            "destination": "prog_vr"
+          }
+        ]
+      }
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "denominazione",
+      "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica)",
+      "width": "40%",
+      "label": "Denominazione"
+    }
+  ]
+}

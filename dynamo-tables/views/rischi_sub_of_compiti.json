@@ -8,6 +8,11 @@
       "type": "main",
       "queryString": "select cmr.codice_azienda, cmr.codice_compito, cmr.codice_rischio, rsc.titolo, rsc.descrizione, true as cancella_rischio_compito from entrasp.compiti_rischi cmr inner join entrasp.rischi rsc on cmr.codice_rischio=rsc.codice_rischio and cmr.codice_azienda=rsc.codice_azienda where cmr.codice_azienda=$codice_azienda$ and cmr.codice_compito=$codice_compito$",
       "operation": "selectTable"
+    },
+    {
+      "type": "postProcessing",
+      "queryString": "INSERT INTO entrasp.consuntivazioni(codice_azienda, codice_compito, id_cons,  stato, note, data_intervento, flag_principale, flag_verifica_ft, esito, id_presidio) select rp.codice_azienda, $codice_compito$, (select max(cns.id_cons) from entrasp.consuntivazioni cns where cns.codice_azienda=$codice_azienda$) + row_number() over (order by rp.id_presidio), 'P', pr.descrizione, current_date, '0', '0', '0', rp.id_presidio from entrasp.rischi_presidi rp inner join entrasp.presidi pr on rp.id_presidio=pr.id_presidio and rp.codice_azienda=pr.codice_azienda where rp.codice_azienda=$codice_azienda$ and rp.codice_rischio=$codice_rischio$;",
+      "operation": "insert"
     }
   ],
   "inputEvents": [
@@ -150,7 +155,7 @@
       "style": [
         {
           "button_icon": "delete",
-          "value": "", 
+          "value": "",
           "font_color": "red",
           "background_color": "red"
         }
@@ -176,10 +181,10 @@
           }
         ],
         "confirmAction": true,
-                "confirmMessage": {
-                    "title": "Elimina",
-                    "text": "Si vuole cancellare il rischio associato?"
-                },
+        "confirmMessage": {
+          "title": "Elimina",
+          "text": "Si vuole cancellare il rischio associato?"
+        },
         "onSuccessAction": "reload"
       }
     }
