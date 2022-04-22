@@ -3,6 +3,32 @@
     "entryKey": "sae",
     "origin": "entrasp.sae",
     "businessObjectName": "sae",
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "queryString": "select cod_sae,descrizione, CASE WHEN cod_rischio = 1 THEN 'Alto' ELSE 'Basso' END as descr_rischio from entrasp.sae",
+            "operation": "selectTable"
+        }
+    ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuSae",
+            "label": "Azioni",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "update_rischio",
+                    "icon": "swap_vert",
+                    "label": "Modifica il livello di rischio",
+                    "confirmAction": true,
+                    "confirmActionMessage": "Modificare il livello di rischio? Alto -> Basso | Basso -> Alto",
+                    "query": "select entrasp.modifica_rischio_sae(array[$selected_rows_data$])",
+                    "reloadOnSuccess": true
+                }
+            ]
+        }
+    ],
     "table_keys": [
         {
             "format": {
@@ -12,7 +38,7 @@
             "isPrimary": true,
             "key": "cod_sae",
             "label": "Codice SAE",
-            "width": "20%"
+            "width": "7%"
         },
         {
             "format": {
@@ -22,7 +48,7 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "width": "60%"
+            "width": "80%"
         },
         {
             "format": {
@@ -30,9 +56,33 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "cod_rischio",
+            "key": "descr_rischio",
             "label": "Rischio",
-            "width": "20%"
+            "width": "10%",
+            "style": [
+                {
+                    "value": "Basso",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "ForestGreen",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "darkOrange",
+                    "font_size": "medium",
+                    "text_align": "center"
+                }
+            ]
         }
-    ]
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by cod_sae ASC"
+    },
+    "restrictions": {
+        "preventNavigationToForm": true
+    }
 }
