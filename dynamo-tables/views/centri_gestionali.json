@@ -314,6 +314,19 @@
             "label": "Gestore",
             "readOnly": false,
             "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "value": "0",
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_soggetto_rilevante",
+            "label": "Soggetti rilevanti",
+            "readOnly": false,
+            "newLine": false
           }
         ]
       },
@@ -361,8 +374,13 @@
     {
       "operation": "insert",
       "type": "postProcessing",
-      "queryString": "UPDATE entrasp.centri_gestionali cge set codice_part=az.codice_part from entrasp.aziende az where cge.codice_part=az.codice_part"
-    },
+      "queryString": "select entrasp.centri_gest_post_processing('€global_codice_azienda€', $codice_part$, $id_centro_gest$)"
+    },    
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "select entrasp.centri_gest_post_processing('€global_codice_azienda€', $codice_part$, $id_centro_gest$)"
+    },   
     {
       "operation": "insert",
       "type": "preCheck",
@@ -503,7 +521,7 @@
           "son": "codice_part"
         }
       ],
-      "label": "Modelli Di Verifiche"
+      "label": "Modelli Verifica"
     },
     {
       "entryKey": "rischi",
@@ -707,6 +725,6 @@
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "and id_centro_gest!=10000 order by id_centro_gest"
+    "tableViewSuffix": "and id_centro_gest>0 order by id_centro_gest"
   }
 }
