@@ -28,11 +28,10 @@
     }
   ],
   "predefinedQueries": [
-    
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,a.codice_compito,a.codice_azienda), true as time_report_play,(€global_id_anagrafiche€)::text as user_companies,a.codice_azienda,a.codice_compito,a.titolo,entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito,'€global_username€'::text) as minuti_mensili,entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text) minuti_totali,entrasp.tipo_segnalazione_descr_new(a.id_tipo_segnalazione) as tipo_segnalazione from entrasp.compiti a inner join entrasp.consuntivazioni b on a.codice_azienda=b.codice_azienda and a.codice_compito=b.codice_compito where a.codice_azienda in (€global_user_companies€) and entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text) is not null group by a.codice_azienda, a.codice_compito, a.titolo, b.codice_part, b.id_risorsa having  entrasp.dynamo_user_from_id_an(b.codice_part, b.id_risorsa)='€global_username€'::text order by a.data_ins desc"
+      "queryString": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,a.codice_compito,a.codice_azienda), true as time_report_play,(€global_id_anagrafiche€)::text as user_companies,a.codice_azienda,a.codice_compito,a.titolo,entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito,'€global_username€'::text)::numeric(8,0)||' min.' as minuti_mensili,entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0)||' min.' as minuti_totali,entrasp.tipo_segnalazione_descr_new(a.id_tipo_segnalazione) as tipo_segnalazione from entrasp.compiti a inner join entrasp.consuntivazioni b on a.codice_azienda=b.codice_azienda and a.codice_compito=b.codice_compito where a.codice_azienda in (€global_user_companies€)  group by a.codice_azienda, a.codice_compito, a.titolo, b.codice_part, b.id_risorsa having  entrasp.dynamo_user_from_id_an(b.codice_part, b.id_risorsa)='€global_username€'::text"
     },
     {
       "operation": "startEvent",
@@ -53,9 +52,27 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "codice_compito",
-      "width": "5%",
-      "label": "Codice Compito"
-    },{
+      "width": "7%",
+      "label": "# Compito"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "width": "53%",
+      "label": "Titolo",
+      "style": [
+        {
+          "value": "*",
+          "font_size": "large",
+          "font_color": "DarkBlue"
+        }
+      ]
+    },
+    {
       "format": {
         "dataType": "text"
       },
@@ -64,17 +81,9 @@
       "key": "tipo_segnalazione",
       "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
       "label": "Tipo",
-      "width": "25%"
-    },{
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-      "width": "40%",
-      "label": "Titolo"
-    },{
+      "width": "15%"
+    },
+    {
       "format": {
         "dataType": "text"
       },
@@ -82,7 +91,7 @@
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "Codice Azienda",
-      "width": "10%"
+      "width": "9%"
     },
     {
       "format": {
@@ -93,32 +102,50 @@
       "key": "user_companies",
       "label": "user_companies"
     },
-  
     {
       "format": {
-        "dataType": "number"
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "minuti_mensili",
-      "width": "5%",
-      "label": "Minuti Ultimo Mese"
+      "width": "8%",
+      "label": "Mese Corrente",
+      "style": [
+        {
+          "value": "*",
+          "background_color": "LightBlue",
+          "text_align": "center",
+          "font_weight": "bold",
+          "font_size": "medium"
+        }
+      ]
     },
     {
       "format": {
-        "dataType": "number"
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "minuti_totali",
-      "width": "5%",
-      "label": "Minuti Totali"
+      "width": "8%",
+      "label": "Totali",
+      "style": [
+        {
+          "value": "*",
+          "background_color": "RoyalBlue",
+          "font_color": "whitesmoke",
+          "text_align": "center",
+          "font_weight": "bold",
+          "font_size": "medium"
+        }
+      ]
     },
     {
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "width": "5%",
       "key": "time_report_play",
@@ -157,7 +184,7 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "width": "5%",
       "key": "time_report_stop_active",
@@ -192,5 +219,8 @@
         "onSuccessAction": "update_time_tracker_and_reload"
       }
     }
-  ]
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito,'davide.tonicello'::text)::numeric(8,0) desc, entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => 'davide.tonicello'::text)::numeric(8,0) desc"
+  }
 }
