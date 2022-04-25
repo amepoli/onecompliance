@@ -31,7 +31,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,a.codice_compito,a.codice_azienda), true as time_report_play,(€global_id_anagrafiche€)::text as user_companies,a.codice_azienda,a.codice_compito,a.titolo,entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito,'€global_username€'::text)::numeric(8,0)||' min.' as minuti_mensili,entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0)||' min.' as minuti_totali,entrasp.tipo_segnalazione_descr_new(a.id_tipo_segnalazione) as tipo_segnalazione from entrasp.compiti a inner join entrasp.consuntivazioni b on a.codice_azienda=b.codice_azienda and a.codice_compito=b.codice_compito where a.codice_azienda in (€global_user_companies€)  group by a.codice_azienda, a.codice_compito, a.titolo, b.codice_part, b.id_risorsa having  entrasp.dynamo_user_from_id_an(b.codice_part, b.id_risorsa)='€global_username€'::text"
+      "queryString": "select INITCAP(a.codice_azienda) as codice_azienda_s,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,a.codice_compito,a.codice_azienda), true as time_report_play,(€global_id_anagrafiche€)::text as user_companies,a.codice_azienda,a.codice_compito,a.titolo,entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito,'€global_username€'::text)::numeric(8,0)||' min.' as minuti_mensili,entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0)||' min.' as minuti_totali,entrasp.tipo_segnalazione_descr_new(a.id_tipo_segnalazione) as tipo_segnalazione from entrasp.compiti a inner join entrasp.consuntivazioni b on a.codice_azienda=b.codice_azienda and a.codice_compito=b.codice_compito where a.codice_azienda in (€global_user_companies€)  group by a.codice_azienda, a.codice_compito, a.titolo, b.codice_part, b.id_risorsa having  entrasp.dynamo_user_from_id_an(b.codice_part, b.id_risorsa)='€global_username€'::text"
     },
     {
       "operation": "startEvent",
@@ -62,13 +62,13 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo",
-      "width": "53%",
+      "width": "52%",
       "label": "Titolo",
       "style": [
         {
           "value": "*",
           "font_size": "large",
-          "font_color": "DarkBlue"
+          "font_color": "navy"
         }
       ]
     },
@@ -88,10 +88,20 @@
         "dataType": "text"
       },
       "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_azienda_s",
+      "label": "Azienda",
+      "width": "9%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "Codice Azienda",
-      "width": "9%"
+      "width": "0%"
     },
     {
       "format": {
@@ -140,6 +150,16 @@
           "font_size": "medium"
         }
       ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "label": "",
+      "width": "1%",
+      "key": "false_field"
     },
     {
       "format": {
@@ -222,5 +242,8 @@
   ],
   "querySuffixes": {
     "tableViewSuffix": "order by entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito,'davide.tonicello'::text)::numeric(8,0) desc, entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => 'davide.tonicello'::text)::numeric(8,0) desc"
+  },
+  "restrictions": {
+    "preventNavigationToForm": true
   }
 }

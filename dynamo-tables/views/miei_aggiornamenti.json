@@ -69,7 +69,18 @@
       "key": "giorno",
       "label": "giorno",
       "width": "0%"
-    },{
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_cons",
+      "width": "5%",
+      "label": "#"
+    },
+    {
       "format": {
         "dataType": "date"
       },
@@ -77,17 +88,40 @@
       "isPrimary": false,
       "key": "data_intervento",
       "label": "Data Intervento",
-      "width": "8%"
+      "width": "8%",
+      "style": [
+        {
+          "value": "*",
+          "font_size": "medium"
+        }
+      ]
     },
     {
-        "format": {
-            "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "codice_azienda_s",
-        "label": "Azienda",
-        "width": "8%"
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo_compito",
+      "width": "53%",
+      "label": "Titolo Consuntivazione",
+      "style": [
+        {
+          "value": "*",
+          "font_size": "large",
+          "font_color": "navy"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_azienda_s",
+      "label": "Azienda",
+      "width": "8%"
     },
     {
       "format": {
@@ -97,26 +131,6 @@
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "Codice Azienda"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_cons",
-      "width": "6%",
-      "label": "Codice"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo_compito",
-      "width": "50%",
-      "label": "Titolo attività"
     },
     {
       "format": {
@@ -146,7 +160,27 @@
       "isPrimary": false,
       "key": "durata",
       "label": "Durata",
-      "width": "12%"
+      "width": "9%",
+      "style": [
+        {
+          "value": "*",
+          "background_color": "RoyalBlue",
+          "font_color": "whitesmoke",
+          "text_align": "center",
+          "font_weight": "bold",
+          "font_size": "medium"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "label": "",
+      "width": "1%",
+      "key": "false_field"
     },
     {
       "format": {
@@ -180,36 +214,36 @@
       "width": "6%",
       "style": [
         {
-            "value": "Chiuso",
-            "font_color": "green",
-            "font_weight": "500"
+          "value": "Chiuso",
+          "font_color": "green",
+          "font_weight": "500"
         },
         {
-            "value": "Provvisorio",
-            "font_color": "#BA68C8",
-            "font_weight": "500"
+          "value": "Provvisorio",
+          "font_color": "#BA68C8",
+          "font_weight": "500"
         },
         {
-            "value": "Pianificato",
-            "font_color": "#FF8100",
-            "font_weight": "500"
+          "value": "Pianificato",
+          "font_color": "#FF8100",
+          "font_weight": "500"
         },
         {
-            "value": "Attesa Riscontro",
-            "font_color": "#FF0000",
-            "font_weight": "500"
+          "value": "Attesa Riscontro",
+          "font_color": "#FF0000",
+          "font_weight": "500"
         },
         {
-            "value": "In Svolgimento",
-            "font_color": " #A1A100",
-            "font_weight": "500"
+          "value": "In Svolgimento",
+          "font_color": " #A1A100",
+          "font_weight": "500"
         },
         {
-            "value": "Annullato",
-            "font_color": "grey",
-            "font_weight": "500"
+          "value": "Annullato",
+          "font_color": "grey",
+          "font_weight": "500"
         }
-    ]
+      ]
     },
     {
       "format": {
@@ -509,5 +543,24 @@
       "newLine": false,
       "queryCond": "csn.codice_azienda='€global_codice_azienda€'"
     }
-  ]
+  ],
+  "exportQueries": {
+    "tableQueries": [
+      {
+        "label": "Attività ultimo mese",
+        "queryString": "select csn.id_cons, csn.codice_compito, substring(entrasp.descrizione_consuntivazione(csn.codice_azienda, csn.id_cons), 1, 200) as titolo_compito,csn.data_intervento, csn.date_time_begin::timestamp with time zone,csn.date_time_end::timestamp with time zone,  csn.durata, csn.durata_ft, entrasp.anagrafiche_id_codcognnome(csn.codice_part, csn.id_risorsa) as esecutore, substring(csn.note from 1 for 100) as note_restricted, csn.codice_azienda from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€' AND ( SELECT DATE_PART('year', data_intervento) ) = (select extract(year from current_date)) and ( SELECT DATE_PART('month', data_intervento) ) = (select extract(month from current_date))order by date_time_begin asc;"
+      },
+      {
+        "label": "Tot giornalieri ultimo mese",
+        "queryString": "select csn.data_intervento, sum(csn.durata) as minuti, round(sum(csn.durata)/60 ,2) as ore,round(case when ( SELECT EXTRACT(DOW FROM csn.data_intervento) ) not in(6,7) then sum(csn.durata)/60*12 else sum(csn.durata)/60*14.4 end, 2) as importo_fatturato,( SELECT EXTRACT(DOW FROM csn.data_intervento) ) as giorno_settimana from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text AND ( SELECT DATE_PART('year', data_intervento) ) = (select extract(year from current_date)) and ( SELECT DATE_PART('month', data_intervento) ) =  (select extract(month from current_date)) GROUP BY data_intervento order by data_intervento asc;"
+      },
+      {
+        "label": "Resoconto ultimo mese",
+        "queryString": "select sum(csn.durata) as minuti_totali_mensili, ROUND(sum(csn.durata)/60.00, 2) as ore_totali_mensili, round(sum(case when ( SELECT EXTRACT(DOW FROM csn.data_intervento) ) not in(6,7) then (csn.durata)/60*12 else (csn.durata)/60*14.4 end),2) as importo_totale from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€' AND ( SELECT DATE_PART('year', data_intervento) ) = (select extract(year from current_date)) and ( SELECT DATE_PART('month', data_intervento) ) = (select extract(month from current_date));"
+      }
+    ]
+  },
+  "restrictions": {
+    "preventNavigationToForm": true
+  }
 }
