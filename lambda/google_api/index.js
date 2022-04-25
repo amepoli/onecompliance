@@ -121,6 +121,104 @@ async function downloadDriveObject(drivePath, file) {
     return data;
 }
 
+async function GetDriveFileInfo(driveFilePath) {
+    if(driveFilePath.startsWith('/')) {
+        driveFilePath = driveFilePath.substring(1);
+    }
+    let drivePath = '';
+    let driveFile = driveFilePath;
+    if(driveFilePath.includes('/')) {
+        let driveFilePathParts = driveFilePath.split('/');
+        driveFile = driveFilePathParts.pop();
+        drivePath = driveFilePathParts.join('/');
+    }
+    console.log('driveFile: ', driveFile);
+    console.log('drivePath: ', drivePath);
+    
+    
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    
+    let driveFolderId = 'root';
+
+    let response;
+
+    if(drivePath.length > 0) {        
+        let drivePathFolders = drivePath.split('/');
+        for await (drivePathFolder of drivePathFolders) {
+            console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
+            response = await drive.files.list({
+                q: `'${driveFolderId}' in parents and mimeType='application/vnd.google-apps.folder' and name='${drivePathFolder}'`,
+                pageSize: 5,
+                fields: 'nextPageToken, files(id, name, mimeType)',
+            });
+            try {
+                response = JSON.parse(response);    
+            }
+            catch(e) {}
+            console.log('response', response);
+            if(response.data && response.data.files && response.data.files.length > 0) {
+                // Folder exists
+                driveFolderId = response.data.files[0].id;
+            }
+            else {
+                // Create folder
+                var folderCreateMetadata = {
+                    'parents': [driveFolderId],
+                    'name': drivePathFolder,
+                    'mimeType': 'application/vnd.google-apps.folder'
+                };
+            
+                let response;
+                let pageToken = null;
+            
+                try {
+                    // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+                    response = await drive.files.create({
+                        resource: folderCreateMetadata,
+                        fields: 'id'
+                    });
+                    try {
+                        response = JSON.parse(response);    
+                    }
+                    catch(e) {}
+                    console.log('create folder result: ', JSON.stringify(response));
+                    if(response && response.data && response.data.id) {
+                        driveFolderId = response.data.id;
+                        console.log('Folder created with new id: ', driveFolderId);
+                    }
+                }
+                catch (e) {
+                    console.log(e);
+                }
+            }
+        }
+        console.log('find folder result: ', JSON.stringify(response));
+    }
+    
+    try {
+        // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+        response = await drive.files.list({
+            q: `'${driveFolderId}' in parents and name='${driveFile}'`,
+            pageSize: 250,
+            fields: 'nextPageToken, files(id, name, mimeType, trashed, createdTime, modifiedTime)',
+        });
+        try {
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+        
+        console.log(JSON.stringify(response));
+        if(response.data && response.data.files && response.data.files.length > 0) {
+            return { result: 'OK', data: response.data.files[0] };
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+
+    return { result: 'KO', data: 'File not found!' };
+}
+
 // Perform Google Auth
 async function performGoogleAuth(authParams) {
     authParams["refresh_token"] = authParams["access_token"];
@@ -592,6 +690,7 @@ async function copyFromS3ToDrive(queryParams, authParams) {
                 response = JSON.parse(response);    
             }
             catch(e) {}
+            console.log('response', response);
             if(response.data && response.data.files && response.data.files.length > 0) {
                 // Folder exists
                 driveFolderId = response.data.files[0].id;
@@ -750,6 +849,38 @@ async function copyFromDriveToS3(queryParams, authParams) {
     return { result: 'OK', data: response };
 }
 
+async function syncDriveS3File(queryParams, authParams) {
+    let s3FilePath = queryParams['s3FilePath'];
+    if(s3FilePath.startsWith('/')) {
+        s3FilePath = s3FilePath.substring(1);
+    }
+    let s3Path = '';
+    let s3File = s3FilePath;
+    if(s3FilePath.includes('/')) {
+        let s3FilePathParts = s3FilePath.split('/');
+        s3File = s3FilePathParts.pop();
+        s3Path = s3FilePathParts.join('/');
+    }
+    console.log('s3File: ', s3File);
+    console.log('s3Path: ', s3Path);
+    
+    
+    let driveFilePath = queryParams['driveFilePath'];
+    console.log('driveFile: ', driveFilePath);
+    
+    await performGoogleAuth(authParams);
+    
+    let response;
+    
+
+    response = await GetDriveFileInfo(driveFilePath);
+    console.log('GetDriveFileInfo: ' + response);
+    
+    //response = await uploadS3Object(s3Path, s3File, driveFileData);
+
+    return response;
+}
+
 exports.handler = async (event, context) => {
 
     // console.log(event);
@@ -792,7 +923,10 @@ exports.handler = async (event, context) => {
             }            
             else if (requestType === 'copyFromDriveToS3') {
                 body = await copyFromDriveToS3(queryParams, event.body? JSON.parse(event.body): {});
-            }            
+            }
+            else if (requestType === 'syncDriveS3File') {
+                body = await syncDriveS3File(queryParams, event.body? JSON.parse(event.body): {});
+            }
             else {
                 return getBadUrlResponse();
             }

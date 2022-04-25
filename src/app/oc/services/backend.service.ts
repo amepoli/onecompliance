@@ -379,10 +379,6 @@ export class BackendService {
     this.myPutPostInit.queryStringParameters = { request_type: 'createDriveFolder', folder: folder };
     this.myPutPostInit.body = authToken;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
-  
-    // this.myGetInit.queryStringParameters = { request_type: 'GetEmailThreads' };
-    // return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
-  
   }
 
   copyFromS3ToDrive(s3FilePath: string, driveFilePath: string, authToken: any) {
@@ -391,9 +387,6 @@ export class BackendService {
     this.myPutPostInit.body = authToken;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   
-    // this.myGetInit.queryStringParameters = { request_type: 'GetEmailThreads' };
-    // return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
-  
   }
 
   copyFromDriveToS3(driveFilePath: string, s3FilePath: string, authToken: any) {
@@ -401,10 +394,13 @@ export class BackendService {
     this.myPutPostInit.queryStringParameters = { request_type: 'copyFromDriveToS3', driveFilePath: driveFilePath, s3FilePath: s3FilePath };
     this.myPutPostInit.body = authToken;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
-  
-    // this.myGetInit.queryStringParameters = { request_type: 'GetEmailThreads' };
-    // return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
-  
+  }
+
+  syncDriveS3File(driveFilePath: string, s3FilePath: string, authToken: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'syncDriveS3File', driveFilePath: driveFilePath, s3FilePath: s3FilePath };
+    this.myPutPostInit.body = authToken;
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   }
 
   loadHomePage(entryName: string, company: string): Observable<any> {
