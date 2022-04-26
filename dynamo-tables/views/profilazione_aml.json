@@ -9,7 +9,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select case when snd.data_prevista<now() and ss.stato!='C' then 'Scaduto' else 'Non scaduto' end as scaduto, cnt.numero_contratto, ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, snd.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test left join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto where ((ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and (snd.data_prevista<=CURRENT_DATE+ INTERVAL '60 days'  or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and snd.data_prevista is null and ss.data_esecuzione is null))"
+      "queryString": "select case when snd.data_prevista<now() and ss.stato!='C' then 'Scaduto' else 'Non scaduto' end as scaduto, cnt.numero_contratto, ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, ss.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test left join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto where ((ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and (snd.data_prevista<=CURRENT_DATE+ INTERVAL '60 days'  or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and snd.data_prevista is null and ss.data_esecuzione is null))"
     },
     
     {
@@ -1332,8 +1332,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_sondaggio",
-      "label": "ID Sondaggio",
-      "width": "5%",
+      "label": "# Sondaggio",
+      "width": "7%",
       "style": [
         {
           "value": "*",
@@ -1348,8 +1348,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_somministrazione",
-      "label": "ID Verifica",
-      "width": "5%",
+      "label": "# Verifica",
+      "width": "6%",
       "style": [
         {
           "value": "*",
@@ -1364,11 +1364,12 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "numero_contratto",
-      "label": "numero_contratto",
-      "width": "5%",
+      "label": "# Contratto",
+      "width": "12%",
       "style": [
         {
           "value": "*",
+          "background_color": "lightblue",
           "text_align": "center"
         }
       ]
@@ -1381,7 +1382,7 @@
       "isPrimary": false,
       "key": "data_prevista",
       "label": "Data Prevista",
-      "width": "6%"
+      "width": "7%"
     },
     {
       "format": {
@@ -1391,7 +1392,7 @@
       "isPrimary": false,
       "key": "data_esecuzione",
       "label": "Data Esecuzione",
-      "width": "6%"
+      "width": "7%"
     },
     {
       "format": {
@@ -1401,7 +1402,13 @@
       "isPrimary": false,
       "key": "titolo_sondaggio",
       "label": "Titolo",
-      "width": "20%"
+      "width": "30%",
+      "style": [
+        {
+          "value": "*",
+          "font_color": "navy"
+        }
+      ]
     },
     {
       "format": {
@@ -1430,18 +1437,22 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "stato",
-      "width": "6%",
+      "width": "7%",
       "label": "Stato",
       "style": [
         {
             "value": "Chiuso",
-            "font_color": "green",
-            "font_weight": "500"
+            "font_color": "SpringGreen",
+            "font_weight": "500",
+            "background_color": "Green",
+            "text_align": "center"
         },
         {
             "value": "Provvisorio",
-            "font_color": "#BA68C8",
-            "font_weight": "500"
+            "font_color": "MistyRose",
+            "font_weight": "500",
+            "background_color": "MediumPurple",
+            "text_align": "center"
         },
         {
             "value": "Pianificato",
@@ -1490,7 +1501,7 @@
       "isPrimary": false,
       "key": "giudizio",
       "label": "Giudizio automatico",
-      "width": "8%",
+      "width": "10%",
       "style": [
         {
           "value": "*",
