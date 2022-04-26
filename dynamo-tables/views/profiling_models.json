@@ -113,7 +113,7 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "width": "45%",
+            "width": "40%",
             "queryFunct": "select titolo from entrasp.modello_test_fields(codice_azienda, id_modello_test)"
         },
         {
@@ -160,7 +160,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "8%",
+            "width": "10%",
             "queryFunct": "select true",
             "key": "create_somministrazione",
             "label": "Crea Profilazione",
@@ -169,7 +169,7 @@
                 "target": "sondaggi_somministrati",
                 "viewType": "form",
                 "action": "query",
-                "query": "select codice_azienda, id_sondaggio, id_somministrazione from entrasp.somministrazione_insert_from_list('£codice_azienda£', £id_modello_test£)",
+                "query": "select codaz as codice_azienda, idsnd as new_id_sondaggio, idss as new_id_somministrazione from entrasp.crea_singola_verifica('£codice_azienda£', £id_modello_test£)",
                 "keymap": [
                     {
                         "source": "codice_azienda",
@@ -183,7 +183,7 @@
                 "confirmAction": true,
                 "confirmMessage": {
                     "title": "Nuova verifica",
-                    "text": "Si vuole creare una nuova profilazione?"
+                    "text": "Si vuole creare una nuova verifica/ profilazione?"
                 },
                 "onSuccessAction": "navigate",
                 "onSuccessActionKeymap": [
@@ -192,11 +192,11 @@
                         "destination": "codice_azienda"
                     },
                     {
-                        "source": "id_sondaggio",
+                        "source": "new_id_sondaggio",
                         "destination": "id_sondaggio"
                     },
                     {
-                        "source": "id_somministrazione",
+                        "source": "new_id_somministrazione",
                         "destination": "id_somministrazione"
                     }
                 ]

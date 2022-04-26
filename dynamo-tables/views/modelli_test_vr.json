@@ -269,8 +269,8 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "select sondaggio_insert as new_id_sondaggio from entrasp.sondaggio_insert(codiceazienda=>$codice_azienda$, titolo=>$titolo$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, descrizione=>$descrizione$, idcentrogest=>$id_centro_gest$, username => '€global_username€');",
-                    "outputEventWhenComplete": "calculate_new_id_somministrazione"
+                    "queryFunct": "select codaz as codice_azienda, idsnd as new_id_sondaggio, idss as new_id_somministrazione from entrasp.crea_singola_verifica($codice_azienda$,$id_modello_test$);",
+                    "outputEventWhenComplete": "navigate_to_somministrazione"
                 },
                 {
                     "actionType": "show",
@@ -1624,7 +1624,7 @@
                 "target": "sondaggi_somministrati",
                 "viewType": "form",
                 "action": "query",
-                "query": "select codice_azienda, id_sondaggio, id_somministrazione from entrasp.sondaggio_insert_from_list1('£codice_azienda£', £id_modello_test£)",
+                "query": "select codaz as codice_azienda, idsnd as new_id_sondaggio, idss as new_id_somministrazione from entrasp.crea_singola_verifica('£codice_azienda£', £id_modello_test£)",
                 "keymap": [
                     {
                         "source": "codice_azienda",
@@ -1647,11 +1647,11 @@
                         "destination": "codice_azienda"
                     },
                     {
-                        "source": "id_sondaggio",
+                        "source": "new_id_sondaggio",
                         "destination": "id_sondaggio"
                     },
                     {
-                        "source": "id_somministrazione",
+                        "source": "new_id_somministrazione",
                         "destination": "id_somministrazione"
                     }
                 ]
