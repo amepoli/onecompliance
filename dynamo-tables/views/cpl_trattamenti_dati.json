@@ -25,9 +25,9 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_trattamento_dati",
-      "label": "ID",
+      "label": "#",
       "newLine": false,
-      "size": 2,
+      "size": 0.5,
       "readOnly": true
     },
     {
@@ -78,22 +78,8 @@
       "isPrimary": false,
       "key": "id_argomento_tipo_trattamento_dato",
       "label": "Tipo Trattamento",
-      "newLine": true,
-      "size": 3,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-      "label": "Titolo",
       "newLine": false,
-      "size": 9.0,
+      "size": 3,
       "readOnly": false
     },
     {
@@ -106,8 +92,22 @@
       "key": "flag_trattamento_conto_terzi",
       "label": "Trattamento conto Terzi",
       "readOnly": false,
-      "size": 1.0,
+      "size": 1,
       "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "label": "Titolo",
+      "newLine": true,
+      "size": 10.0,
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -197,7 +197,7 @@
       "readOnly": false,
       "sameOrigin": false
     },
-      {
+    {
       "format": {
         "viewType": "subform",
         "subform_keys": [
@@ -531,8 +531,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_trattamento_dati",
-      "width": "5%",
-      "label": "ID"
+      "width": "4%",
+      "label": "#"
     },
     {
       "format": {
@@ -551,20 +551,16 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo",
-      "width": "20%",
-      "label": "Titolo"
-    },
-    {
-      "format": {
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isCheckbox": true,
-      "isPrimary": false,
-      "key": "boolean_conto_terzi",
-      "queryFunct": "flag_trattamento_conto_terzi::boolean",
-      "width": "7%",
-      "label": "Conto terzi"
+      "width": "30%",
+      "label": "Titolo",
+      "style": [
+        {
+          "value": "*",
+          "background_color": "lightblue",
+          "font_color": "black",
+          "text_align": "center"
+        }
+      ]
     },
     {
       "format": {
@@ -573,7 +569,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "descrizione",
-      "width": "40%",
+      "width": "44%",
       "label": "Descrizione"
     },
     {
@@ -585,7 +581,7 @@
       "key": "id_argomento_tipo_trattamento_dato",
       "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_trattamento_dato)",
       "width": "8%",
-      "label": "ID"
+      "label": "# Arg."
     },
     {
       "format": {
@@ -593,10 +589,22 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "15%",
+      "width": "12%",
       "key": "centro_gest",
       "label": "Centro Gestionale",
       "queryFunct": "entrasp.centri_gestionali_descr($codice_azienda$,id_centro_gest)"
+    },
+    {
+      "format": {
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isCheckbox": true,
+      "isPrimary": false,
+      "key": "boolean_conto_terzi",
+      "queryFunct": "flag_trattamento_conto_terzi::boolean",
+      "width": "5%",
+      "label": "Conto terzi"
     },
     {
       "format": {
@@ -622,5 +630,8 @@
       "viewType": "form",
       "formActionType": "attachments"
     }
-  ]
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by id_trattamento_dati desc"
+  }
 }
