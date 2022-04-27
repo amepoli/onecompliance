@@ -92,7 +92,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     isLevel: string = null;
     hasLevel: string[] = null;
     levelIndentationMarker: string = '.';
-    levelIndentationValue: number = 0;
+    levelIndentationValue: number = 13;
 
     // toolbar pub/sub topics
     subMsgCmdTopic = '/toolbar/out/cmd';
@@ -500,12 +500,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     getLevel(row, key) {
-        if (this.isLevel == key || (this.hasLevel && this.hasLevel.includes(key))) {
+        if (this.isLevel == key || (this.hasLevel && this.hasLevel.includes(key)) ) {
             let text = row[this.isLevel] ? row[this.isLevel].split(this.levelIndentationMarker) : null;
-            return text ? (text.length) * this.levelIndentationValue : this.levelIndentationValue;
+            return text ? (text.length -1) * this.levelIndentationValue : this.levelIndentationValue;
         }
         else {
-            return this.levelIndentationValue;
+            return 0;
         }
     }
 
