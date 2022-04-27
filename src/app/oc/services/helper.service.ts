@@ -168,6 +168,8 @@ export class HelperService {
                 return 'font-style';
             case 'font_weight':
                 return 'font-weight';
+            case 'border-radius':
+                return 'border-radius';
         }
     }
 
