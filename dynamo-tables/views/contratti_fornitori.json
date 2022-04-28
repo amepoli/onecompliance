@@ -22,7 +22,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select *, codice_azienda||'|'||id_contratto as object_key, (select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_tipo_modello_test=54 limit 1), true as create_somministrazione, entrasp.argomenti_descr(id_argomento_contratto) as tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as id_cliente, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore) as id_fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_strumento_finanziario) as id_strumento_finanziario from entrasp.contratti where array[id_argomento_contratto] <@ any(select entrasp.sotto_argomenti(3428)) and id_argomento_contratto is not null and codice_azienda=$codice_azienda$"
+			"queryString": "select *, codice_azienda||'|'||id_contratto as object_key, (select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_tipo_modello_test=54 limit 1), true as create_somministrazione, entrasp.argomenti_descr(id_argomento_contratto) as tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore) as id_fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_strumento_finanziario) as id_strumento_finanziario from entrasp.contratti where array[id_argomento_contratto] <@ any(select entrasp.sotto_argomenti(3428)) and id_argomento_contratto is not null and codice_azienda=$codice_azienda$"
 		}
 	],
 	"outputEvents": [
@@ -235,7 +235,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "id_fornitore",
+			"key": "fornitore",
 			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore)",
 			"label": "Fornitore",
 			"width": "15%"
