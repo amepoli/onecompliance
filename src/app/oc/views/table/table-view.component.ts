@@ -380,7 +380,11 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     loadTableInfo(): void {
         const _this = this;
         
-        _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
+        _this.loadTable(null);
+
+        /*                                       Don't use it fro now, see and find the problem. 
+        
+       _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
@@ -391,13 +395,15 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     }
                     _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
                     _this.loadTable(null);
-                }
+                  }
             },
             error => {
                 _this.isLoading = false;
                 _this._toastService.showErrorToast(error);
-            }));
-    }
+            })); 
+        */
+       }
+     
 
     loadTable(search_keys: any): void {
         const _this = this;
