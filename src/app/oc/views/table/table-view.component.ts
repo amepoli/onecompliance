@@ -380,10 +380,14 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     loadTableInfo(): void {
         const _this = this;
         
-        _this.loadTable(null);
+       // _this.loadTable(null);
 
         /*                                       Don't use it fro now, see and find the problem. 
-        
+
+        The problem is in the define of searchKeys, for example in Progetti -> advSearch, if we try to select a "Modelli di Progetto" nothing appears.
+
+        */
+
        _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
@@ -401,7 +405,6 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 _this.isLoading = false;
                 _this._toastService.showErrorToast(error);
             })); 
-        */
        }
      
 
