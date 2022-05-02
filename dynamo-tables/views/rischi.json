@@ -996,8 +996,19 @@
         "viewType": "combobox"
       },
       "label": "Tipo Rischio",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "codice_rischio in(select codice_rischio from entrasp.rischi_tipi where codice_azienda=$codice_azienda$ and id_tipo_rischio= $id_tipo_rischio_s$)"
+    },
+    {
+      "fieldName": "id_tipo_rischio_tag_s",
+      "format": {
+        "comboQuery": "SELECT distinct id_argomento as id, id_argomento||'-'||descrizione_breve as name from entrasp.argomenti arg where id_argomento in(select id_argomento_descendants from entrasp.descendants_of_argomento(6149, 2));",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Tipo Rischio (tag)",
+      "newLine": true,
+      "queryCond": "codice_rischio in(select rsk.codice_rischio from entrasp.rischi rsk inner join entrasp.argomenti_argomenti aa on rsk.id_argomento=aa.id_argomento_son where rsk.codice_azienda=$codice_azienda$ and aa.id_argomento_father=$id_tipo_rischio_tag_s$ and rsk.codice_rischio is not null)"
     },
     {
       "fieldName": "data_comp_prevista_min",
