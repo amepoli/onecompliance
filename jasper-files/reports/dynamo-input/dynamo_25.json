@@ -1,0 +1,319 @@
+{
+  "reports_prod": [
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "progetto"
+          },
+          "queryString": {
+            "S": "select pr.codice_azienda, pr.id_progetto,pr.codice_progetto, pr.titolo , pr.id_tipo_progetto, pr.id_cliente, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pr.stato) as stato,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_cliente), prf.titolo as prf_titolo, prf.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prf_idfase, coalesce(prf.id_fase_sup,0) as prf_idfase_sup, prf.id_sondaggio as prf_idsond, prf.ordinamento as prf_ordinamento, s1.titolo as s_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s1.stato) as stato_sondaggio, s1.data_prevista, prf2.titolo as prf_titolo2, prf2.codice as prf_codice2, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf2.stato) as prf2_stato,prf2.id_fase as prf2_idfase, coalesce(prf2.id_fase_sup,0) as prf2_idfase_sup, prf2.id_sondaggio as prf2_idson, prf2.ordinamento as prf2_ordinamento, s2.titolo as s2_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s2.stato) as stato_sondaggio2, s2.data_prevista as s2_data_prevista, prf3.titolo as prf_titolo3, prf3.codice as prf_codice3, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf3.stato) as prf3_stato,prf3.id_fase as prf3_idfase, coalesce(prf3.id_fase_sup,0) as prf3_idfase_sup, prf3.id_sondaggio as prf3_idson, prf3.ordinamento as prf3_ordinamento, s3.titolo as s3_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s3.stato) as stato_sondaggio3, s3.data_prevista as s3_data_prevista from entrasp.progetti pr left join entrasp.progetti_fasi prf on pr.codice_azienda=prf.codice_azienda and pr.id_progetto=prf.id_progetto left join entrasp.sondaggi s1 on prf.codice_azienda=s1.codice_azienda and prf.id_sondaggio=s1.id_sondaggio left join entrasp.progetti_fasi prf2 on prf.codice_azienda=prf2.codice_azienda and prf.id_fase=prf2.id_fase_sup left join entrasp.sondaggi s2 on prf2.codice_azienda=s2.codice_azienda and prf2.id_sondaggio=s2.id_sondaggio left join entrasp.progetti_fasi prf3 on prf2.codice_azienda=prf3.codice_azienda and prf2.id_fase=prf3.id_fase_sup left join entrasp.sondaggi s3 on prf3.codice_azienda=s3.codice_azienda and prf3.id_sondaggio=s3.id_sondaggio where prf.id_fase_sup is null"
+          },
+          "tableNickname": {
+            "S": "pr"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "progettocompleto"
+          },
+          "queryString": {
+            "S": "select prf.id_sondaggio, prf.codice, entrasp.codice_progetti_fase_se_livello(prf.codice_azienda, prf.id_fase, 0) as codice_liv0, entrasp.codice_progetti_fase_se_livello(prf.codice_azienda, prf.id_fase, 1) as codice_liv2,  entrasp.codice_progetti_fase_se_livello(prf.codice_azienda, prf.id_fase, 2) as codice_liv3, pr.codice_azienda, pr.id_progetto,pr.codice_progetto, pr.titolo , pr.id_tipo_progetto, pr.id_cliente, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pr.stato) as stato, entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_cliente), prf.codice|| '-' ||prf.titolo as prf_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prf_idfase, s1.titolo as s1_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s1.stato) as stato_sondaggio1, prf.ordinamento as prf_ordinamento, funct1.giudizio as giudizio_trans1, s1.data_prevista, s1.data_esecuzione, s1.data_comp, s1.sondaggio_completato from entrasp.progetti_fasi prf left join entrasp.progetti pr on prf.codice_azienda=pr.codice_azienda and prf.id_progetto=pr.id_progetto left join entrasp.sondaggi s1 on prf.codice_azienda=s1.codice_azienda and prf.id_sondaggio=s1.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(s1.codice_azienda, s1.id_sondaggio) funct1 on s1.id_sondaggio=funct1.idsondaggio and s1.codice_azienda=funct1.codiceazienda"
+          },
+          "tableNickname": {
+            "S": "pr"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "progettocompleto_sondaggio"
+          },
+          "queryString": {
+            "S": "select funct1.giudizio as giudizio_trans1,funct2.giudizio as giudizio_trans2, prf.codice, prf2.codice,pr.codice_azienda, pr.id_progetto,pr.codice_progetto, pr.titolo , pr.id_tipo_progetto, pr.id_cliente, entrasp.argomenti_descr(mt1.id_argomento) as arg1, entrasp.argomenti_descr(mt2.id_argomento) as arg2,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pr.stato) as stato,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_cliente),prf.codice || ' - ' ||prf.titolo as prf_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prd_idfase,prf.id_sondaggio as prf_idsond,prf2.codice || ' - ' ||prf2.titolo as prf_titolo2, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf2.stato) as prf2_stato,prf2.id_fase as prf2_idfase,prf2.id_sondaggio as prf2_idson,s1.titolo as s1_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s1.stato) as stato_sondaggio1,s2.titolo as s2_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s2.stato) as stato_sondaggio2 from entrasp.progetti pr left join entrasp.progetti_fasi prf on pr.codice_azienda=prf.codice_azienda and pr.id_progetto=prf.id_progetto left join entrasp.sondaggi s1 on prf.codice_azienda=s1.codice_azienda and prf.id_sondaggio=s1.id_sondaggio  left join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(s1.codice_azienda, s1.id_sondaggio) funct1 on s1.id_sondaggio=funct1.idsondaggio and s1.codice_azienda=funct1.codiceazienda left join entrasp.progetti_fasi prf2 on prf.codice_azienda=prf2.codice_azienda and prf.id_fase=prf2.id_fase_sup left join entrasp.sondaggi s2 on prf2.codice_azienda=s2.codice_azienda and prf2.id_sondaggio=s2.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(s2.codice_azienda, s2.id_sondaggio) funct2 on s2.id_sondaggio=funct2.idsondaggio and s2.codice_azienda=funct2.codiceazienda left join entrasp.modelli_test mt1 on s1.codice_azienda=mt1.codice_azienda and s1.id_modello_test =mt1.id_modello_test left join entrasp.modelli_test mt2 on s2.codice_azienda=mt2.codice_azienda and s2.id_modello_test =mt2.id_modello_test"
+          },
+          "tableNickname": {
+            "S": "pr"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "qa_ar"
+          },
+          "queryString": {
+            "S": "select object_description,descrizione_risposta, id_domanda ,entrasp.domande_ordinamento(s.codice_azienda, s.id_modello_test, s.id_modello_test_vr, r.id_domanda) as d_ordinamento , entrasp.domande_sezioni_ordinamento(s.codice_azienda, s.id_modello_test, s.id_modello_test_vr, r.id_domanda)as ds_ordinamento,entrasp.domande_sezione(s.codice_azienda, s.id_modello_test, s.id_modello_test_vr, r.id_domanda) as id_sezione, gf.giudizio, descrizione_sezione, descrizione_domanda from entrasp.sondaggi_somministrati s, entrasp.riepilogo_risposte r    join entrasp.grc_punteggi_giudizi_finali(r.codice_azienda, s.id_somministrazione) gf on s.id_somministrazione=gf.id_somministrazione and s.codice_azienda=gf.codiceazienda where r.id_somministrazione = s.id_somministrazione and r.codice_azienda = s.codice_azienda order by object_description, ds_ordinamento, d_ordinamento"
+          },
+          "tableNickname": {
+            "S": "qaar"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "resocontoSondaggi"
+          },
+          "queryString": {
+            "S": "select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up  from entrasp.sondaggi snd left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test  left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(snd.codice_azienda, snd.id_sondaggio) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda"
+          },
+          "tableNickname": {
+            "S": "snd"
+          },
+          "ignorePrefixInSearchKey": {
+            "S": "true"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "resoconto_sondaggi_no_risposte"
+          },
+          "queryString": {
+            "S": "select risultati_emersi, proposte_formulate , decisioni_assunte, s.descrizione, data_esecuzione, entrasp.mdt_codtitolo(s.codice_azienda, id_modello_test) as titolo from entrasp.cpl_risultati r, entrasp.sondaggi s where r.id_sondaggio = s.id_sondaggio and r.codice_azienda = s.codice_azienda"
+          },
+          "tableNickname": {
+            "S": "rsnr"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "rischi"
+          },
+          "queryString": {
+            "S": "select r.codice_part, coalesce(r.intensita_totale_post_rilevata,0) as intensita_totale_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'T', coalesce(intensita_totale_post_rilevata,0)) as intensita_totale_post_rett_descrizione,coalesce(r.intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,  entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata,0)) as intensita_rett_descrizione, coalesce(r.probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) as probabilita_rett_descrizione, r.codice_azienda, r.codice_rischio, r.descrizione, entrasp.centri_gestionali_descr(r.codice_part, r.id_centro_gest), r.probabilita_pre, r.intensita_singola_pre, r.intensita_totale_pre, r.probabilita_post, r.intensita_singola_post, r.intensita_totale_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'T',r.intensita_totale_pre) as soglia_intensita_totale_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'P',r.probabilita_pre) as soglia_probabilita_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'I',r.intensita_singola_pre)as soglia_intensita_singola_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'T',r.intensita_totale_post) as soglia_intensita_totale_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'P',r.probabilita_post) as soglia_probabilita_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'I',r.intensita_singola_post) as soglia_intensita_singola_post, r.titolo from entrasp.rischi r"
+          },
+          "tableNickname": {
+            "S": "r"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "rischiArticoliNormativiRList"
+          },
+          "queryString": {
+            "S": "select r.codice_rischio, r.codice_part, r.descrizione, entrasp.centri_gestionali_descr(r.codice_part, r.id_centro_gest), r.probabilita_pre, r.intensita_singola_pre, r.intensita_totale_pre, r.probabilita_post, r.intensita_singola_post, r.intensita_totale_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'T',r.intensita_totale_pre) as soglia_intensita_totale_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'P',r.probabilita_pre) as soglia_probabilita_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'I',r.intensita_singola_pre)as soglia_intensita_singola_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'T',r.intensita_totale_post) as soglia_intensita_totale_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'P',r.probabilita_post) as soglia_probabilita_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'I',r.intensita_singola_post) as soglia_intensita_singola_post from entrasp.rischi r"
+          },
+          "tableNickname": {
+            "S": "r"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "rischi_extended"
+          },
+          "queryString": {
+            "S": "select r.codice_part, coalesce(r.intensita_totale_post_rilevata,0) as intensita_totale_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'T', coalesce(intensita_totale_post_rilevata,0)) as intensita_totale_post_rett_descrizione,coalesce(r.intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,  entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata,0)) as intensita_rett_descrizione, coalesce(r.probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) as probabilita_rett_descrizione, r.codice_azienda, r.codice_rischio, r.descrizione, entrasp.centri_gestionali_descr(r.codice_part, r.id_centro_gest), r.probabilita_pre, r.intensita_singola_pre, r.intensita_totale_pre, r.probabilita_post, r.intensita_singola_post, r.intensita_totale_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'T',r.intensita_totale_pre) as soglia_intensita_totale_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'P',r.probabilita_pre) as soglia_probabilita_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'I',r.intensita_singola_pre)as soglia_intensita_singola_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'T',r.intensita_totale_post) as soglia_intensita_totale_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'P',r.probabilita_post) as soglia_probabilita_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'I',r.intensita_singola_post) as soglia_intensita_singola_post, r.titolo from entrasp.rischi r"
+          },
+          "tableNickname": {
+            "S": "r"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "rischi_extended_no_val"
+          },
+          "queryString": {
+            "S": "select r.codice_part, coalesce(r.intensita_totale_post_rilevata,0) as intensita_totale_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'T', coalesce(intensita_totale_post_rilevata,0)) as intensita_totale_post_rett_descrizione,coalesce(r.intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,  entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata,0)) as intensita_rett_descrizione, coalesce(r.probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) as probabilita_rett_descrizione, r.codice_azienda, r.codice_rischio, r.descrizione, entrasp.centri_gestionali_descr(r.codice_part, r.id_centro_gest), entrasp.centri_gestionali_descr(r.codice_part, r.id_centro_gest_liv2) as centri_gestionali_descr_liv2, r.probabilita_pre, r.intensita_singola_pre, r.intensita_totale_pre, r.probabilita_post, r.intensita_singola_post, r.intensita_totale_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'T',r.intensita_totale_pre) as soglia_intensita_totale_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'P',r.probabilita_pre) as soglia_probabilita_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'I',r.intensita_singola_pre)as soglia_intensita_singola_pre, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'T',r.intensita_totale_post) as soglia_intensita_totale_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'P',r.probabilita_post) as soglia_probabilita_post, entrasp.cpl_soglie_descrizione(r.codice_azienda, 'I',r.intensita_singola_post) as soglia_intensita_singola_post, r.titolo from entrasp.rischi r"
+          },
+          "tableNickname": {
+            "S": "r"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "riunioni"
+          },
+          "queryString": {
+            "S": "select codice_azienda, id_riunione, convocazione, codice_part, entrasp.anagrafiche_id_codcognnome(codice_part,id_presidente)as id_presidente, entrasp.anagrafiche_id_codcognnome(codice_part,id_segretario)as id_segretario, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) as id_centro_gest, data_riunione, codice_protocollo, oggetto, note  from entrasp.riunioni"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "somm_resocontoSondaggi"
+          },
+          "queryString": {
+            "S": "select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up ,ss.id_somministrazione as ss_id_somm from entrasp.sondaggi_somministrati ss join entrasp.sondaggi snd on ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=snd.codice_azienda left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on ss.codice_azienda = cr.codice_azienda  and ss.id_sondaggio =cr.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali(ss.codice_azienda, ss.id_sondaggio) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda"
+          },
+          "tableNickname": {
+            "S": "ss"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "somm_resocontoSondaggi_punt"
+          },
+          "queryString": {
+            "S": "select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', ss.stato) as stato_transcodificato, funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up ,ss.id_somministrazione as ss_id_somm from entrasp.sondaggi_somministrati ss join entrasp.sondaggi snd on ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=snd.codice_azienda left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on ss.codice_azienda = cr.codice_azienda  and ss.id_sondaggio =cr.id_sondaggio and ss.id_somministrazione=cr.id_somministrazione left join entrasp.grc_punteggi_giudizi_finali(ss.codice_azienda, ss.id_somministrazione) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda"
+          },
+          "tableNickname": {
+            "S": "ss"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "sondaggiosomministrato"
+          },
+          "queryString": {
+            "S": "select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato,funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up,ss.id_somministrazione as ss_id_somm from entrasp.sondaggi_somministrati ss join entrasp.sondaggi snd on ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=snd.codice_azienda left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on ss.codice_azienda = cr.codice_azienda  and ss.id_sondaggio =cr.id_sondaggio and ss.id_somministrazione=cr.id_somministrazione left join entrasp.grc_punteggi_giudizi_finali(ss.codice_azienda, ss.id_somministrazione) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda"
+          },
+          "tableNickname": {
+            "S": "ss"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "sondaggiosomministrato_totale"
+          },
+          "queryString": {
+            "S": "select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up ,ss.id_somministrazione as ss_id_somm from entrasp.sondaggi_somministrati ss join entrasp.sondaggi snd on ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=snd.codice_azienda left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on ss.codice_azienda = cr.codice_azienda  and ss.id_sondaggio =cr.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali(ss.codice_azienda, ss.id_sondaggio) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda"
+          },
+          "tableNickname": {
+            "S": "ss"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "ss_totale_punt"
+          },
+          "queryString": {
+            "S": "select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,snd.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, snd.ris_percentuale as percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up ,ss.id_somministrazione as ss_id_somm from entrasp.sondaggi_somministrati ss join entrasp.sondaggi snd on ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=snd.codice_azienda left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on ss.codice_azienda = cr.codice_azienda  and ss.id_sondaggio =cr.id_sondaggio"
+          },
+          "tableNickname": {
+            "S": "ss"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "testoNormativo"
+          },
+          "queryString": {
+            "S": "select an2.id_testo_normativo as an2_idtn, tn2.descrizione as tn2_descr, an2.codice_articolo_normativo as an2_codartnorm, an2.rubrica as an2_rub,tn.id_testo_normativo as tn_idtn,tn2.id_testo_normativo as tn2_idtn,tn2.id_testo_normativo as tn2_idtn, tn.descrizione as tn_descr, an.codice_articolo_normativo as an_codartnorm,an.rubrica as an_rub , r.codice_rischio as r_cod,ran.codice_azienda,r.codice_azienda, r.titolo as r_tit, r.descrizione as r_descr, entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_pre) as int_tot_ante,entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_post) as int_tot_post from entrasp.testi_normativi tn join entrasp.articoli_normativi an on  tn.id_testo_normativo = an.id_testo_normativo join entrasp.articoli_normativi_rif  anr on an.codice_articolo_normativo = anr.codice_articolo_normativo join entrasp.articoli_normativi an2 on anr.codice_articolo_normativo_rif = an2.codice_articolo_normativo join entrasp.testi_normativi tn2 on an2.id_testo_normativo=tn2.id_testo_normativo join entrasp.rischi_articoli_normativi ran on an2.id_testo_normativo = ran.id_testo_normativo and an2.codice_articolo_normativo = ran.codice_articolo_normativo join entrasp.rischi r on ran.codice_azienda=r.codice_azienda and ran.codice_rischio=r.codice_rischio and r.codice_azienda=$P{codice_azienda}"
+          },
+          "tableNickname": {
+            "S": "tn"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "testoNormativo_norischi"
+          },
+          "queryString": {
+            "S": "select an2.id_testo_normativo as an2_idtn, tn2.descrizione as tn2_descr, an2.ordinamento as an2_ordinamento, an2.codice_articolo_normativo as an2_codartnorm, an2.rubrica as an2_rub, tn.id_testo_normativo as tn_idtn,tn2.id_testo_normativo as tn2_idtn, tn.descrizione as tn_descr, an.ordinamento as an_ordinamento, an.codice_articolo_normativo as an_codartnorm,an.rubrica as an_rub from entrasp.testi_normativi tn join entrasp.articoli_normativi an on  tn.id_testo_normativo = an.id_testo_normativo join entrasp.articoli_normativi_rif  anr on an.codice_articolo_normativo = anr.codice_articolo_normativo join entrasp.articoli_normativi an2 on anr.codice_articolo_normativo_rif = an2.codice_articolo_normativo join entrasp.testi_normativi tn2 on an2.id_testo_normativo=tn2.id_testo_normativo"
+          },
+          "tableNickname": {
+            "S": "tn"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "testoNormativo_solo_ramo"
+          },
+          "queryString": {
+            "S": "select tn.id_testo_normativo,tn.descrizione as tn_descr , an.codice_articolo_normativo as an_codartnorm, an.descrizione as an_descr,an.rubrica as an_rub, r.codice_rischio as r_cod, r.titolo as r_tit, r.descrizione as r_descr, entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_pre) as int_tot_ante,entrasp.cpl_soglie_descrizione(r.codice_azienda,'T',r.intensita_totale_post) as int_tot_post from entrasp.testi_normativi tn join entrasp.articoli_normativi an on  tn.id_testo_normativo = an.id_testo_normativo left join entrasp.rischi_articoli_normativi ran on an.id_testo_normativo = ran.id_testo_normativo and an.codice_articolo_normativo = ran.codice_articolo_normativo left join entrasp.rischi r on ran.codice_azienda=r.codice_azienda and ran.codice_rischio=r.codice_rischio"
+          },
+          "tableNickname": {
+            "S": "tn"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "trattamentiDatiAssociati"
+          },
+          "queryString": {
+            "S": "select td.*, tdc.id_argomento_categoria, tdc.tipo, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, tdr.id_responsabile) as responsabile, entrasp.argomenti_descr_breve(id_argomento_categoria)from entrasp.cpl_trattamenti_dati td inner join entrasp.cpl_trattamenti_dati_responsabili tdr on td.codice_azienda=tdr.codice_azienda and  td.id_trattamento_dati=tdr.id_trattamento_dati inner join entrasp.cpl_trattamenti_dati_categorie tdc on td.codice_azienda=tdc.codice_azienda and td.id_trattamento_dati=tdc.id_trattamento_dati inner join entrasp.aziende az on tdc.codice_azienda=az.codice_azienda inner join entrasp.anagrafiche_vr an on tdr.id_responsabile=an.id_anagrafica and az.codice_part=tdr.codice_part where 1=1"
+          },
+          "tableNickname": {
+            "S": "an"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "valutazione_crediti"
+          },
+          "queryString": {
+            "S": "select vc.*, sc.codice_azienda as sc_codice_azienda, sc.codice_part as sc_codice_part, sc.cod_stato_clienti as stato_clienti,  sc.id_anagrafica as sc_id_anagrafica, sc.data_cambio as sc_data_cambio, sc.valore_nominale_credito as sc_valore_nominale_credito, sc.perdita_registrata as sc_perdita_registrata, sc.note as sc_note, con.codice_azienda as con_codice_azienda, con.id_contratto as con_id_contratto, con.descrizione as con_descrizione, con.numero_contratto as con_numero_contratto, gar.id_garanzia, gar.id_tipo_garanzia, gar.data_inizio as gar_data_inizio, gar.data_fine as gar_data_fine, gar.descrizione as gar_descrizione, gar.stato as gar_stato, ipe.data_attesa_pagamento,ipe.importo_pagamento_atteso, ipe.tasso,ipe.perdita_att_data_riferimento_bil, ipe.valore_att_data_riferimento_bil from entrasp.valutazione_contratti vc left join entrasp.contratti con on vc.codice_azienda=con.codice_azienda and vc.id_contratto=con.id_contratto left join entrasp.stato_clienti sc on con.codice_azienda=sc.codice_azienda and con.id_cliente=sc.id_anagrafica left join entrasp.garanzie gar on con.codice_azienda=gar.codice_azienda and con.id_contratto=gar.id_contratto left join entrasp.incassi_previsti_effettivi ipe on gar.codice_azienda=ipe.codice_azienda and gar.id_garanzia = ipe.id_garanzia left join entrasp.contratti_garanzie cg on ipe.id_garanzia= cg.id_garanzia"
+          },
+          "tableNickname": {
+            "S": "vc"
+          }
+        }
+      }
+    }
+  ]
+}

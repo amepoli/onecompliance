@@ -1,0 +1,17 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "tag_sub_of_rischi",
+  "inheritsFrom": "tag_sub_of_modelli_test_vr",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select *, true as delete_argomenti_father, entrasp.argomenti_codice(id_argomento_father) as codice, entrasp.argomenti_descr_breve(id_argomento_father) as argomento,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento_son$ and id_argomento_father!=4016"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "select entrasp.rischi_post_processing($codice_azienda$, $id_modello_test$, $id_domanda$)"
+    }
+  ]
+}
