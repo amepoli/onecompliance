@@ -6,7 +6,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT true as create_somministrazione, mt.codice_azienda, mt.id_modello_test, mt.id_argomento, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$ and (mt.id_filtro_selezione=9 or id_argomento in (363, 548, 3408, 3407,3409,3411,3412));"
+            "queryString": "SELECT true as create_somministrazione, mt.codice_azienda, mt.id_modello_test, mt.id_argomento, mtvr.id_risultato, mt.titolo, mt.id_tipo_modello_test,entrasp.tipo_modello_test_descr(id_tipo_modello_test) as descr_tipo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$ and (mt.id_filtro_selezione=9 or id_argomento in (363, 548, 3408, 3407,3409,3411,3412));"
         },
         {
             "type": "main",
@@ -107,8 +107,8 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "select sondaggio_insert as new_id_sondaggio from entrasp.sondaggio_insert(codiceazienda=>$codice_azienda$, titolo=>$titolo$, idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, documentazione=>$documentazione_necessaria$, descrizione=>$descrizione$, idcentrogest=>$id_centro_gest$);",
-                    "outputEventWhenComplete": "calculate_new_id_somministrazione"
+                    "queryFunct": "select codaz as codice_azienda, idsnd as new_id_sondaggio, idss as new_id_somministrazione from entrasp.crea_singola_verifica('£codice_azienda£', £id_modello_test£);",
+                    "outputEventWhenComplete": "navigate_to_somministrazione"
                 }
             ],
             "readOnly": false,
@@ -719,7 +719,7 @@
             "isPrimary": true,
             "key": "id_modello_test",
             "width": "5%",
-            "label": "ID"
+            "label": "#"
         },
         {
             "format": {
@@ -728,7 +728,7 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "id_modello_test_vr",
-            "width": "5%",
+            "width": "6%",
             "label": "Versione"
         },
         {
@@ -740,7 +740,15 @@
             "key": "codice",
             "label": "Codice",
             "width": "10%",
-            "queryFunct": "select codice from entrasp.modello_test_fields(codice_azienda, id_modello_test)"
+            "queryFunct": "select codice from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_weight": "599"
+                }
+            ]
         },
         {
             "format": {
@@ -750,8 +758,15 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "width": "45%",
-            "queryFunct": "select titolo from entrasp.modello_test_fields(codice_azienda, id_modello_test)"
+            "width": "40%",
+            "queryFunct": "select titolo from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "599"
+                }
+            ]
         },
         {
             "format": {
@@ -767,9 +782,18 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "id_tipo_modello_test",
+            "label": ""
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_tipo",
             "width": "10%",
             "label": "Tipo"
         },
@@ -792,53 +816,63 @@
             "label": "id_somministrazione"
         },
         {
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"width": "8%",
-			"queryFunct": "select true",
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "10%",
+            "queryFunct": "select true",
             "key": "create_somministrazione",
-		    "label": "Crea Profilazione",
-			"isButton": true,
+            "label": "Crea Valutazione",
+            "isButton": true,
             "buttonAction": {
-				"target": "sondaggi_somministrati",
-				"viewType": "form",
-				"action": "query",
-				"query": "select codice_azienda, id_sondaggio, id_somministrazione from entrasp.somministrazione_insert_from_list('£codice_azienda£', £id_modello_test£)",
-				"keymap": [
-					{
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
+                "target": "sondaggi_somministrati",
+                "viewType": "form",
+                "action": "query",
+                "query": "select codaz as codice_azienda, idsnd as new_id_sondaggio, idss as new_id_somministrazione from entrasp.crea_singola_verifica('£codice_azienda£', £id_modello_test£)",
+                "keymap": [
                     {
-						"source": "id_modello_test",
-						"destination": "id_modello_test"
-					}
-				],
-				"confirmAction": true,
-				"confirmMessage": {
-					"title": "Nuova verifica",
-					"text": "Si vuole creare una nuova profilazione?"
-				},
-				"onSuccessAction": "navigate",
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Nuova Valutazione",
+                    "text": "Si vuole creare una nuova valutazione?"
+                },
+                "onSuccessAction": "navigate",
                 "onSuccessActionKeymap": [
                     {
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
-					{
-						"source": "id_sondaggio",
-						"destination": "id_sondaggio"
-					},
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
                     {
-						"source": "id_somministrazione",
-						"destination": "id_somministrazione"
-					}
+                        "source": "new_id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "new_id_somministrazione",
+                        "destination": "id_somministrazione"
+                    }
                 ]
-			}
-		},
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fake",
+            "label": "",
+            "width": "1%"
+        },
         {
             "format": {
                 "dataType": "number"

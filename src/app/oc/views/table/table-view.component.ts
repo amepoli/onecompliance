@@ -92,7 +92,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     isLevel: string = null;
     hasLevel: string[] = null;
     levelIndentationMarker: string = '.';
-    levelIndentationValue: number = 0;
+    levelIndentationValue: number = 13;
 
     // toolbar pub/sub topics
     subMsgCmdTopic = '/toolbar/out/cmd';
@@ -380,7 +380,15 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     loadTableInfo(): void {
         const _this = this;
         
-        _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
+       // _this.loadTable(null);
+
+        /*                                       Don't use it fro now, see and find the problem. 
+
+        The problem is in the define of searchKeys, for example in Progetti -> advSearch, if we try to select a "Modelli di Progetto" nothing appears.
+
+        */
+
+       _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
@@ -391,13 +399,14 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     }
                     _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
                     _this.loadTable(null);
-                }
+                  }
             },
             error => {
                 _this.isLoading = false;
                 _this._toastService.showErrorToast(error);
-            }));
-    }
+            })); 
+       }
+     
 
     loadTable(search_keys: any): void {
         const _this = this;
@@ -500,12 +509,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     getLevel(row, key) {
-        if (this.isLevel == key || (this.hasLevel && this.hasLevel.includes(key))) {
+        if (this.isLevel == key || (this.hasLevel && this.hasLevel.includes(key)) ) {
             let text = row[this.isLevel] ? row[this.isLevel].split(this.levelIndentationMarker) : null;
-            return text ? (text.length) * this.levelIndentationValue : this.levelIndentationValue;
+            return text ? (text.length -1) * this.levelIndentationValue : this.levelIndentationValue;
         }
         else {
-            return this.levelIndentationValue;
+            return 0;
         }
     }
 

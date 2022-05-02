@@ -10,7 +10,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT true as create_somministrazione, mt.codice_azienda, mt.id_modello_test, mt.id_argomento, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$;"
+            "queryString": "SELECT true as create_somministrazione, mt.codice_azienda, mt.id_modello_test, mt.id_tipo_modello_test,entrasp.tipo_modello_test_descr(id_tipo_modello_test) as descr_tipo, mt.id_argomento, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$;"
         },
         {
             "operation": "selectForm",
@@ -1526,7 +1526,7 @@
             "isPrimary": true,
             "key": "id_modello_test",
             "width": "5%",
-            "label": "ID"
+            "label": "#"
         },
         {
             "format": {
@@ -1535,7 +1535,7 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "id_modello_test_vr",
-            "width": "5%",
+            "width": "6%",
             "label": "Versione"
         },
         {
@@ -1558,7 +1558,15 @@
             "key": "codice",
             "label": "Codice",
             "width": "10%",
-            "queryFunct": "select codice from entrasp.modello_test_fields(codice_azienda, id_modello_test)"
+            "queryFunct": "select codice from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_weight": "599"
+                }
+            ]
         },
         {
             "format": {
@@ -1568,8 +1576,15 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "width": "38%",
-            "queryFunct": "select titolo from entrasp.modello_test_fields(codice_azienda, id_modello_test)"
+            "width": "40%",
+            "queryFunct": "select titolo from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "599"
+                }
+            ]
         },
         {
             "format": {
@@ -1579,16 +1594,25 @@
             "isPrimary": false,
             "key": "centro_gest",
             "label": "Centro Gestionale",
-            "width": "14%"
+            "width": "13%"
         },
         {
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "id_tipo_modello_test",
-            "width": "8%",
+            "label": ""
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_tipo",
+            "width": "12%",
             "label": "Tipo"
         },
         {
@@ -1656,6 +1680,16 @@
                     }
                 ]
             }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fake",
+            "label": "",
+            "width": "1%"
         },
         {
             "format": {
