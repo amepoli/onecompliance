@@ -270,12 +270,6 @@
       "key": "id_template_rp",
       "label": "Template Risposte",
       "newLine": false,
-      "attributeFuncts": [
-        {
-          "attributeType": "isHidden",
-          "queryString": "select case when £id_domanda£ is null or £id_domanda£::varchar ='' then true else false end as label"
-        }
-      ],
       "size": 2.5,
       "outputEvent": {
         "eventName": "combobox_risposte",
@@ -317,12 +311,6 @@
       "isPrimary": false,
       "key": "mostra_risposte",
       "textareaHeight": "M",
-      "attributeFuncts": [
-        {
-          "attributeType": "isHidden",
-          "queryString": "select case when £id_domanda£ is null or £id_domanda£::varchar ='' then true else false end as label"
-        }
-      ],
       "label": "Risposte Possibili",
       "newLine": false,
       "size": 4,
@@ -364,6 +352,82 @@
       "size": 1,
       "sameOrigin": false
     }  
+  ],
+  "subTables": [
+    {
+      "entryKey": "risposte_previste",
+      "type": "table",
+      "keys": [
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        },
+        {
+          "parent": "id_modello_test_vr",
+          "son": "id_modello_test_vr"
+        }
+      ],
+      "label": "Risposte Previste"
+    },
+    {
+      "entryKey": "presidi_sub_of_domande",
+      "keys": [
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        },
+        {
+          "parent": "id_modello_test_vr",
+          "son": "id_modello_test_vr"
+        }
+      ],
+      "label": "Presidi Associabili"
+    },
+    {
+      "entryKey": "risposte_sub_of_domande",
+      "keys": [
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        }
+      ],
+      "label": "Risposte nelle verifiche",
+      "type": "table"
+    },
+    {
+      "entryKey": "tag_sub_of_domande",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento_son"
+        }
+      ],
+      "label": "TAG"
+    }
   ],
   "inputEvents": [
     {
@@ -486,6 +550,12 @@
       "key": "note",
       "width": "20%",
       "label": "Note"
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "multi-attachments",
+      "viewType": "form"
     }
   ]
 }
