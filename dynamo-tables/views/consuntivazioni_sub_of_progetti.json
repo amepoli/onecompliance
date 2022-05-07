@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select entrasp.anagrafiche_id_codcognnome(csn.codice_part,id_risorsa) as esecutore,csn.id_cons, csn.codice_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', csn.stato) as descr_stato from entrasp.consuntivazioni csn WHERE csn.codice_azienda=$codice_azienda$ and csn.id_cons in(select entrasp.lista_consuntivazioni_progetto($codice_azienda$, $id_progetto$))",
+      "queryString": "select entrasp.anagrafiche_id_codcognnome(csn.codice_part,id_risorsa) as esecutore,csn.id_cons, csn.codice_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', csn.stato) as descr_stato from entrasp.consuntivazioni csn WHERE csn.codice_azienda=$codice_azienda$ and csn.codice_compito in(select codici_compito from entrasp.compiti_del_progetto($id_progetto$, $codice_azienda$))",
       "type": "main"
     },
     {
