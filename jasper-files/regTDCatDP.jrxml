@@ -35,9 +35,11 @@
 		<defaultValueExpression><![CDATA["DEMO"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select categorie_dati_personali from entrasp.cpl_trattamenti_dati_categorie_dati_personali
-where id_trattamento_dati = $P{id_trattamento_dati}
-and codice_azienda = $P{codice_azienda}]]>
+		<![CDATA[select entrasp.argomenti_descr_breve_no_num(cd.id_argomento_categoria) as categorie_dati_personali
+from entrasp.cpl_trattamenti_dati_categorie cd 
+inner join entrasp.argomenti_argomenti aa on cd.id_argomento_categoria=id_argomento_son 
+where cd.id_trattamento_dati=$P{id_trattamento_dati} and cd.codice_azienda=$P{codice_azienda} 
+and aa.id_argomento_father=3596 and tipo='categorie_dati_personali']]>
 	</queryString>
 	<field name="categorie_dati_personali" class="java.lang.String">
 		<fieldDescription><![CDATA[Categoria dati personali]]></fieldDescription>

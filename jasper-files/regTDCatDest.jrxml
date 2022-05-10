@@ -24,6 +24,8 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="299"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="690"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
@@ -34,13 +36,25 @@
 		<defaultValueExpression><![CDATA["DEMO"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select categorie_destinatari,id_trattamento_dati,codice_azienda from entrasp.cpl_trattamenti_dati_categorie_destinatari
-where id_trattamento_dati = $P{id_trattamento_dati}
-and codice_azienda = $P{codice_azienda}]]>
+		<![CDATA[select cd.codice_azienda AS codice_azienda, cd.id_trattamento_dati as id_trattamento_dati, entrasp.argomenti_descr_breve_no_num(cd.id_argomento_categoria) as categorie_destinatari 
+ from entrasp.cpl_trattamenti_dati_categorie cd 
+ inner join entrasp.argomenti_argomenti aa on cd.id_argomento_categoria=id_argomento_son 
+ where cd.id_trattamento_dati=$P{id_trattamento_dati} and cd.codice_azienda=$P{codice_azienda} and aa.id_argomento_father=3844 and tipo='categorie_destinatari']]>
 	</queryString>
-	<field name="categorie_destinatari" class="java.lang.String"/>
-	<field name="id_trattamento_dati" class="java.math.BigDecimal"/>
-	<field name="codice_azienda" class="java.lang.String"/>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_trattamenti_dati_categorie"/>
+	</field>
+	<field name="id_trattamento_dati" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_trattamento_dati"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_trattamento_dati"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_trattamenti_dati_categorie"/>
+	</field>
+	<field name="categorie_destinatari" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="categorie_destinatari"/>
+		<property name="com.jaspersoft.studio.field.label" value="categorie_destinatari"/>
+	</field>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
