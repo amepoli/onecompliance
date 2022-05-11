@@ -1,0 +1,376 @@
+{
+  "reports_prod": [
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "MT_Q&A_nosez_nopunt"
+          },
+          "queryString": {
+            "S": "select m.*, m_vr.*, entrasp.centri_gestionali_descr(m.codice_part,m.id_centro_gest) as cg_descr, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='0'"
+          },
+          "tableNickname": {
+            "S": "m"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "MT_Q&A_nosez_punt"
+          },
+          "queryString": {
+            "S": "select m.*, m_vr.*, entrasp.centri_gestionali_descr(m.codice_part,m.id_centro_gest) as cg_descr, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='0'"
+          },
+          "tableNickname": {
+            "S": "m"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "MT_Q&A_sez_nopunt"
+          },
+          "queryString": {
+            "S": "select m.*, m_vr.*, entrasp.centri_gestionali_descr(m.codice_part,m.id_centro_gest) as cg_descr, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='1'"
+          },
+          "tableNickname": {
+            "S": "m"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "MT_Q&A_sez_punt"
+          },
+          "queryString": {
+            "S": "select m.*, m_vr.*, entrasp.centri_gestionali_descr(m.codice_part,m.id_centro_gest) as cg_descr, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='1'"
+          },
+          "tableNickname": {
+            "S": "m"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "Registro_trattamenti"
+          },
+          "queryString": {
+            "S": "select codice, descrizione, codice_azienda, titolo, id_trattamento_dati, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as cg_descr, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_titolare_trattamento) as a_vr_di_tit, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_contitolare_trattamento) as a_vr_di_contit, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_rappresentante_titolare) as a_vr_di_raptit,  trasferimenti, termini_ultimi_cancellazione, flag_trattamento_conto_terzi, misure_tecniche, annotazioni, val_prop_trat from entrasp.cpl_trattamenti_dati"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "ResocontoSondaggiQ&Amultiple"
+          },
+          "queryString": {
+            "S": "select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up from entrasp.sondaggi snd left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio ,entrasp.grc_punteggi_giudizi_finali_per_sondaggio(snd.codice_azienda, snd.id_sondaggio) funct"
+          },
+          "tableNickname": {
+            "S": "snd"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "ResocontoSondaggiQ&Amultipli"
+          },
+          "queryString": {
+            "S": "select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up  from entrasp.sondaggi snd left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio left join entrasp.grc_punteggi_giudizi_finali_per_sondaggio(snd.codice_azienda, snd.id_sondaggio) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda"
+          },
+          "tableNickname": {
+            "S": "snd"
+          },
+          "ignorePrefixInSearchKey": {
+            "S": "true"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "ResocontoSondaggiQ&Apunteggi"
+          },
+          "queryString": {
+            "S": "select snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,snd.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, snd.ris_percentuale as percentuale, replace(entrasp.modelli_test_risultati_righe_codice_colore(snd.codice_azienda, mtv.id_risultato, snd.ris_percentuale),'grey','#C0C0C0') as colore_giudizio_trans,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio),'grey','#C0C0C0') as colore_giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_1),'grey','#C0C0C0') as colore_giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_2),'grey','#C0C0C0') as colore_giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_follow_up),'grey','#C0C0C0') as colore_giudizio_follow_up from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mtv on snd.codice_azienda=mtv.codice_azienda and snd.id_modello_test=mtv.id_modello_test and snd.id_modello_test_vr=mtv.id_modello_test_vr inner join entrasp.modelli_test mt on mtv.codice_azienda = mt.codice_azienda  and mtv.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio where cr.id_somministrazione is null"
+          },
+          "tableNickname": {
+            "S": "snd"
+          },
+          "ignorePrefixInSearchKey": {
+            "S": "true"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "articoliNormativi"
+          },
+          "queryString": {
+            "S": "select descrizione, rubrica, codice_articolo_normativo,rif_esterno_url, note, id_testo_normativo from entrasp.articoli_normativi"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "centriGestionali"
+          },
+          "queryString": {
+            "S": "select *, entrasp.anagrafiche_id_codcognnome(codice_part,id_responsabile) as responsabile_descr, entrasp.centri_gestionali_descr(codice_part,id_centro_gest_parent) as cg_parent_descr from entrasp.centri_gestionali cg"
+          },
+          "tableNickname": {
+            "S": "cg"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "compiti"
+          },
+          "queryString": {
+            "S": "select cmp.codice_azienda, cmp.codice, cmp.titolo, cmp.note, cmp.trattamento, cmp.analisi_cause, entrasp.anagrafiche_vr_dati_identificativi((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda),cmp.id_responsabile) as responsabile, cmp.data_chiusura,entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, cmp.codice_compito, cmp.data_segnalazione, cmp.id_progetto, entrasp.progetto_titolo(cmp.codice_azienda, cmp.id_progetto), cmp.foreseen_date, entrasp.anagrafiche_vr_dati_identificativi((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda),cmp.id_cliente) as cliente, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.centri_gestionali_descr((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda), cmp.id_centro_gest) as centro_gest, entrasp.centri_gestionali_descr((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda), cmp.id_centro_gest_monitor) as centro_gest_monitor from entrasp.compiti cmp where true"
+          },
+          "tableNickname": {
+            "S": "cmp"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "compiti_con_perdita"
+          },
+          "queryString": {
+            "S": "select cmp.codice_azienda, cmp.perdita_diretta_potenziale, cmp.perdita_diretta_effettiva, cmp.perdita_indiretta_potenziale, cmp.perdita_indiretta_effettiva, cmp.codice, cmp.titolo, cmp.note, cmp.trattamento, cmp.analisi_cause, entrasp.anagrafiche_vr_dati_identificativi((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda),cmp.id_responsabile) as responsabile, cmp.data_chiusura,entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, cmp.codice_compito, cmp.data_segnalazione, cmp.id_progetto, entrasp.progetto_titolo(cmp.codice_azienda, cmp.id_progetto), cmp.foreseen_date, entrasp.anagrafiche_vr_dati_identificativi((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda),cmp.id_cliente) as cliente, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.centri_gestionali_descr((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda), cmp.id_centro_gest) as centro_gest, entrasp.centri_gestionali_descr((select az.codice_part from entrasp.aziende az where az.codice_azienda=cmp.codice_azienda), cmp.id_centro_gest_monitor) as centro_gest_monitor from entrasp.compiti cmp where true"
+          },
+          "tableNickname": {
+            "S": "cmp"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "conf_lesson_partecipation"
+          },
+          "queryString": {
+            "S": "select  snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato,funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up,ss.id_somministrazione as ss_id_somm from entrasp.sondaggi_somministrati ss join entrasp.sondaggi snd on ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=snd.codice_azienda left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on ss.codice_azienda = cr.codice_azienda  and ss.id_sondaggio =cr.id_sondaggio and ss.id_somministrazione=cr.id_somministrazione left join entrasp.grc_punteggi_giudizi_finali(ss.codice_azienda, ss.id_somministrazione) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda"
+          },
+          "tableNickname": {
+            "S": "ss"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "modelliProgetto"
+          },
+          "queryString": {
+            "S": "select cg.descrizione as centro_gestionale, at1.codice_attivita_parent as uno_codAttParent,at1.codice_attivita as uno_codAtt,at2.codice_attivita_parent as due_codAttParent ,at2.codice_attivita as due_codAtt,at3.codice_attivita_parent as tre_codAttParent, at3.codice_attivita as tre_codAtt,at1.codice_azienda as uno_codAz,at1.descrizione as uno_descr, at1.data_inizio_validita as uno_DateStart,at1.data_fine_validita as uno_DateEnd, at2.codice_azienda as due_codAz,at2.descrizione as due_descr, at3.codice_azienda as tre_codAz,at3.descrizione as tre_descr from entrasp.attivita at1 left join entrasp.attivita at2 on at1.codice_attivita=at2.codice_attivita_parent and at1.codice_azienda=at2.codice_azienda left join entrasp.attivita at3 on at2.codice_attivita=at3.codice_attivita_parent and at2.codice_azienda=at3.codice_azienda left join entrasp.centri_gestionali cg on at1.codice_part=cg.codice_part and at1.id_centro_gest=cg.id_centro_gest where at1.codice_attivita_parent is null"
+          },
+          "tableNickname": {
+            "S": "at1"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "modelliTest"
+          },
+          "queryString": {
+            "S": "select distinct m.id_modello_test, m_vr.id_modello_test_vr, m.descrizione, m.titolo, m.codice_azienda, entrasp.tipo_modello_test_descr(m.id_tipo_modello_test) as tipoModelloTest_descrizione  from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.flag_sezioni='1'"
+          },
+          "tableNickname": {
+            "S": "m"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "modelliTestPunti"
+          },
+          "queryString": {
+            "S": "select descrizione, titolo, entrasp.tipo_modello_test_descr(id_tipo_modello_test) as tipoModelloTest_descrizione from entrasp.modelli_test;"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "modelliTest_noSez"
+          },
+          "queryString": {
+            "S": "select m.id_modello_test, m_vr.id_modello_test_vr, m.descrizione, m.titolo, m.codice_azienda,  entrasp.tipo_modello_test_descr(m.id_tipo_modello_test) as tipoModelloTest_descrizione from entrasp.modelli_test m, entrasp.modelli_test_vr m_vr  where m.id_modello_test=m_vr.id_modello_test and m.codice_azienda=m_vr.codice_azienda and m.codice_azienda='DEMO' and m.id_modello_test not in (select id_modello_test from entrasp.domande_sezioni)  order by m.id_modello_test;"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "piano_verifiche"
+          },
+          "queryString": {
+            "S": "select pr.codice_azienda, pr.id_progetto,pr.codice_progetto, pr.titolo , pr.id_tipo_progetto, pr.id_cliente, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pr.stato) as stato,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_cliente), prf.titolo ||coalesce(' (ID ' || s1.id_sondaggio ||')','')||coalesce((' - Competenza: '||extract (year from s1.data_comp))::varchar,'') as prf_titolo, prf.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prf_idfase, coalesce(prf.id_fase_sup,0) as prf_idfase_sup, prf.id_sondaggio as prf_idsond, prf.ordinamento as prf_ordinamento, s1.titolo ||' (ID ' || s1.id_sondaggio ||')' as s_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s1.stato) as stato_sondaggio, coalesce(to_char(s1.data_esecuzione::date, 'Month YYYY'), 'Prevista: '||to_char(s1.data_prevista::date, 'Month YYYY')) as data_prevista, prf2.titolo ||' (ID ' || s2.id_sondaggio ||')'||coalesce(('- Competenza: '||extract ('year' from s2.data_comp))::varchar, '') as prf_titolo2, prf2.codice as prf_codice2, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf2.stato) as prf2_stato,prf2.id_fase as prf2_idfase, coalesce(prf2.id_fase_sup,0) as prf2_idfase_sup, prf2.id_sondaggio as prf2_idson, prf2.ordinamento as prf2_ordinamento, s2.titolo ||coalesce(' (ID ' || s2.id_sondaggio ||')', '') as s2_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s2.stato) as stato_sondaggio2, coalesce(to_char(s2.data_esecuzione::date, 'Month YYYY'), 'Prevista: '||to_char(s2.data_prevista::date, 'Month YYYY')) as s2_data_prevista, prf3.titolo as prf_titolo3, prf3.codice as prf_codice3, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf3.stato) as prf3_stato,prf3.id_fase as prf3_idfase, coalesce(prf3.id_fase_sup,0) as prf3_idfase_sup, prf3.id_sondaggio as prf3_idson, prf3.ordinamento as prf3_ordinamento, s3.titolo as s3_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s3.stato) as stato_sondaggio3, coalesce(to_char(s3.data_esecuzione::date, 'Month YYYY'), 'Prevista: '||to_char(s3.data_prevista::date, 'Month YYYY')) as s3_data_prevista from entrasp.progetti pr left join entrasp.progetti_fasi prf on pr.codice_azienda=prf.codice_azienda and pr.id_progetto=prf.id_progetto left join entrasp.sondaggi s1 on prf.codice_azienda=s1.codice_azienda and prf.id_sondaggio=s1.id_sondaggio left join entrasp.progetti_fasi prf2 on prf.codice_azienda=prf2.codice_azienda and prf.id_fase=prf2.id_fase_sup left join entrasp.sondaggi s2 on prf2.codice_azienda=s2.codice_azienda and prf2.id_sondaggio=s2.id_sondaggio left join entrasp.progetti_fasi prf3 on prf2.codice_azienda=prf3.codice_azienda and prf2.id_fase=prf3.id_fase_sup left join entrasp.sondaggi s3 on prf3.codice_azienda=s3.codice_azienda and prf3.id_sondaggio=s3.id_sondaggio where prf.id_fase_sup is null"
+          },
+          "tableNickname": {
+            "S": "pr"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "presidi"
+          },
+          "queryString": {
+            "S": "select pr.codice_azienda, pr.id_presidio, pr.descrizione_breve, pr.note, pr.id_procedura,pr.livello,pr.tipo,pr.fase,pr.stato_attuazione,pr.codice_part,pr.id_centro_gest, entrasp.centri_gestionali_descr(pr.codice_part, pr.id_centro_gest) as centro_gest, pr.descrizione, pr.codice, pr.id_presidio_parent, pr.id_tipo_presidio,pr2.codice_azienda as codice_azienda2, pr2.id_presidio as id_presidio2, pr2.descrizione_breve as descrizione_breve2, pr2.note as note2, pr2.id_procedura as id_procedura2,pr2.livello as livello2,pr2.tipo as tipo2,pr2.fase as fase2,pr2.stato_attuazione as stato_attuazione2,pr2.codice_part as codice_part2,pr2.id_centro_gest as id_centro_gest2, pr2.descrizione as descrizione2, pr2.codice as codice2,pr2.id_presidio_parent as id_presidio_parent2, pr2.id_tipo_presidio as id_tipo_presidio2 ,pr3.codice_azienda as codice_azienda3, pr3.id_presidio as id_presidio3,pr3.descrizione_breve as descrizione_breve3 ,pr3.codice_part as codice_part3,pr3.descrizione as descrizione3,pr3.codice as codice3,pr3.id_presidio_parent as id_presidio_parent3, pr3.id_tipo_presidio as id_tipo_presidio3, tp.descrizione as tipo_presidio1,tp2.descrizione as tipo_presidio2,tp3.descrizione as tipo_presidio3 from entrasp.presidi pr left join entrasp.tipi_processi tp on pr.codice_azienda= tp.codice_azienda and pr.id_tipo_presidio=tp.id_tipo_processo left join entrasp.presidi pr2 on pr.id_presidio=pr2.id_presidio_parent and pr.codice_azienda=pr2.codice_azienda left join entrasp.tipi_processi tp2 on pr2.codice_azienda= tp2.codice_azienda and pr2.id_tipo_presidio=tp2.id_tipo_processo left join entrasp.presidi pr3 on pr2.id_presidio=pr3.id_presidio_parent and pr2.codice_azienda=pr3.codice_azienda left join entrasp.tipi_processi tp3 on pr3.codice_azienda= tp3.codice_azienda and pr3.id_tipo_presidio=tp3.id_tipo_processo where pr.id_presidio_parent is null"
+          },
+          "tableNickname": {
+            "S": "pr"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "presidi_e_rischi"
+          },
+          "queryString": {
+            "S": "select pr.codice_azienda, pr.id_presidio, pr.descrizione_breve, pr.note, pr.id_procedura,pr.livello,pr.tipo,pr.fase,pr.stato_attuazione,pr.codice_part,pr.id_centro_gest, pr.descrizione, pr.codice, pr.id_presidio_parent, pr.id_tipo_presidio,pr2.codice_azienda as codice_azienda2, pr2.id_presidio as id_presidio2, pr2.descrizione_breve as descrizione_breve2, pr2.note as note2, pr2.id_procedura as id_procedura2,pr2.livello as livello2,pr2.tipo as tipo2,pr2.fase as fase2,pr2.stato_attuazione as stato_attuazione2,pr2.codice_part as codice_part2,pr2.id_centro_gest as id_centro_gest2, pr2.descrizione as descrizione2, pr2.codice as codice2,pr2.id_presidio_parent as id_presidio_parent2, pr2.id_tipo_presidio as id_tipo_presidio2 ,pr3.codice_azienda as codice_azienda3, pr3.id_presidio as id_presidio3,pr3.descrizione_breve as descrizione_breve3 ,pr3.codice_part as codice_part3,pr3.descrizione as descrizione3,pr3.codice as codice3,pr3.id_presidio_parent as id_presidio_parent3, pr3.id_tipo_presidio as id_tipo_presidio3,r.codice_rischio, tp.descrizione as tipo_presidio1,tp2.descrizione as tipo_presidio2,tp3.descrizione as tipo_presidio3 from entrasp.presidi pr join entrasp.rischi_presidi rp on pr.codice_azienda=rp.codice_azienda and pr.id_presidio=rp.id_presidio join entrasp.rischi r on rp.codice_azienda = r.codice_azienda and rp.codice_rischio = r.codice_rischio left join entrasp.tipi_processi tp on pr.codice_azienda= tp.codice_azienda and pr.id_tipo_presidio=tp.id_tipo_processo left join entrasp.presidi pr2 on pr.id_presidio=pr2.id_presidio_parent and pr.codice_azienda=pr2.codice_azienda left join entrasp.tipi_processi tp2 on pr2.codice_azienda= tp2.codice_azienda and pr2.id_tipo_presidio=tp2.id_tipo_processo left join entrasp.presidi pr3 on pr2.id_presidio=pr3.id_presidio_parent and pr2.codice_azienda=pr3.codice_azienda left join entrasp.tipi_processi tp3 on pr3.codice_azienda= tp3.codice_azienda and pr3.id_tipo_presidio=tp3.id_tipo_processo"
+          },
+          "tableNickname": {
+            "S": "pr"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "presidi_e_rischi_no_val"
+          },
+          "queryString": {
+            "S": "select pr.codice_azienda, pr.id_presidio, pr.descrizione_breve, pr.note, pr.id_procedura,pr.livello,pr.tipo,pr.fase,pr.stato_attuazione,pr.codice_part,pr.id_centro_gest, entrasp.centri_gestionali_descr(pr.codice_part, pr.id_centro_gest) as centro_gest, pr.descrizione, pr.codice, pr.id_presidio_parent, pr.id_tipo_presidio,pr2.codice_azienda as codice_azienda2, pr2.id_presidio as id_presidio2, pr2.descrizione_breve as descrizione_breve2, pr2.note as note2, pr2.id_procedura as id_procedura2,pr2.livello as livello2,pr2.tipo as tipo2,pr2.fase as fase2,pr2.stato_attuazione as stato_attuazione2,pr2.codice_part as codice_part2,pr2.id_centro_gest as id_centro_gest2, pr2.descrizione as descrizione2, pr2.codice as codice2,pr2.id_presidio_parent as id_presidio_parent2, pr2.id_tipo_presidio as id_tipo_presidio2 ,pr3.codice_azienda as codice_azienda3, pr3.id_presidio as id_presidio3,pr3.descrizione_breve as descrizione_breve3 ,pr3.codice_part as codice_part3,pr3.descrizione as descrizione3,pr3.codice as codice3,pr3.id_presidio_parent as id_presidio_parent3, pr3.id_tipo_presidio as id_tipo_presidio3,r.codice_rischio, tp.descrizione as tipo_presidio1,tp2.descrizione as tipo_presidio2,tp3.descrizione as tipo_presidio3 from entrasp.presidi pr join entrasp.rischi_presidi rp on pr.codice_azienda=rp.codice_azienda and pr.id_presidio=rp.id_presidio join entrasp.rischi r on rp.codice_azienda = r.codice_azienda and rp.codice_rischio = r.codice_rischio left join entrasp.tipi_processi tp on pr.codice_azienda= tp.codice_azienda and pr.id_tipo_presidio=tp.id_tipo_processo left join entrasp.presidi pr2 on pr.id_presidio=pr2.id_presidio_parent and pr.codice_azienda=pr2.codice_azienda left join entrasp.tipi_processi tp2 on pr2.codice_azienda= tp2.codice_azienda and pr2.id_tipo_presidio=tp2.id_tipo_processo left join entrasp.presidi pr3 on pr2.id_presidio=pr3.id_presidio_parent and pr2.codice_azienda=pr3.codice_azienda left join entrasp.tipi_processi tp3 on pr3.codice_azienda= tp3.codice_azienda and pr3.id_tipo_presidio=tp3.id_tipo_processo"
+          },
+          "tableNickname": {
+            "S": "pr"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "procedureAziendali"
+          },
+          "queryString": {
+            "S": "select pa1.descrizione_breve as uno_db, entrasp.centri_gestionali_descr(pa1.codice_part, pa1.id_centro_gest), pa2.descrizione_breve as due_db, pa3.descrizione_breve as tre_db, pa1.codice as uno_c, pa2.codice as due_c, pa3.codice as tre_c, pa1.id_procedura as uno_id_proc, pa2.id_procedura as due_id_proc, pa3.id_procedura as tre_id_proc, pa1.descrizione as uno_d, pa2.descrizione as due_d, pa3.descrizione as tre_d, pa1.codice_azienda as uno_ca,pa2.codice_azienda as due_ca, pa3.codice_azienda as tre_ca, pa1.id_procedura_parent as uno_id_pp, pa2.id_procedura_parent as due_id_pp,pa3.id_procedura_parent as tre_id_pp, pa4.id_procedura as quattro_id_proc from entrasp.procedure_aziendali pa1 left join entrasp.procedure_aziendali pa2 on pa1.id_procedura=pa2.id_procedura_parent and pa1.codice_azienda=pa2.codice_azienda left join entrasp.procedure_aziendali pa3 on pa2.id_procedura=pa3.id_procedura_parent and pa2.codice_azienda=pa3.codice_azienda left join entrasp.procedure_aziendali pa4 on pa3.id_procedura=pa4.id_procedura and pa3.codice_azienda=pa4.codice_azienda where pa1.id_procedura_parent is null"
+          },
+          "tableNickname": {
+            "S": "pa1"
+          },
+          "ignorePrefixInSearchKey": {
+            "S": "true"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "procedureAziendali_presidi"
+          },
+          "queryString": {
+            "S": "select pa1.descrizione_breve as uno_db, entrasp.centri_gestionali_descr(pa1.codice_part, pa1.id_centro_gest) as centro_gest, pa2.descrizione_breve as due_db, pa3.descrizione_breve as tre_db, pa1.codice as uno_c, pa2.codice as due_c, pa3.codice as tre_c, pa1.id_procedura as uno_id_proc, pa2.id_procedura as due_id_proc, pa3.id_procedura as tre_id_proc, pa1.descrizione as uno_d, pa2.descrizione as due_d, pa3.descrizione as tre_d, pa1.codice_azienda as uno_ca, pa2.codice_azienda as due_ca, pa3.codice_azienda as tre_ca, pa1.id_procedura_parent as uno_id_pp, pa2.id_procedura_parent as due_id_pp,pa3.id_procedura_parent as tre_id_pp,fr1.codice_azienda as fr1_ca, fr1.codice_rischio as fr1_cr,fr2.codice_azienda as fr2_ca, fr2.codice_rischio as fr2_cr,fr3.codice_azienda as fr3_ca, fr3.codice_rischio as fr3_cr from entrasp.procedure_aziendali pa1 left join entrasp.procedure_aziendali pa2 on pa1.id_procedura=pa2.id_procedura_parent and pa1.codice_azienda=pa2.codice_azienda left join entrasp.procedure_aziendali pa3 on pa2.id_procedura=pa3.id_procedura_parent and pa2.codice_azienda=pa3.codice_azienda left join entrasp.fonti_rischio fr1 on fr1.codice_azienda= pa1.codice_azienda and fr1.id_procedura=pa1.id_procedura left join entrasp.fonti_rischio fr2 on fr2.codice_azienda= pa2.codice_azienda and fr2.id_procedura=pa2.id_procedura left join entrasp.fonti_rischio fr3 on fr3.codice_azienda= pa3.codice_azienda and fr3.id_procedura=pa3.id_procedura where pa1.id_procedura_parent is null"
+          },
+          "tableNickname": {
+            "S": "pa1"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "procedureAziendali_ris_no_val"
+          },
+          "queryString": {
+            "S": "select pa1.descrizione_breve as uno_db, entrasp.centri_gestionali_descr(pa1.codice_part, pa1.id_centro_gest) as centro_gest, pa2.descrizione_breve as due_db, pa3.descrizione_breve as tre_db, pa1.codice as uno_c, pa2.codice as due_c, pa3.codice as tre_c, pa1.id_procedura as uno_id_proc, pa2.id_procedura as due_id_proc, pa3.id_procedura as tre_id_proc, pa1.descrizione as uno_d, pa2.descrizione as due_d, pa3.descrizione as tre_d, pa1.codice_azienda as uno_ca, pa2.codice_azienda as due_ca, pa3.codice_azienda as tre_ca, pa1.id_procedura_parent as uno_id_pp, pa2.id_procedura_parent as due_id_pp,pa3.id_procedura_parent as tre_id_pp,fr1.codice_azienda as fr1_ca, fr1.codice_rischio as fr1_cr,fr2.codice_azienda as fr2_ca, fr2.codice_rischio as fr2_cr,fr3.codice_azienda as fr3_ca, fr3.codice_rischio as fr3_cr from entrasp.procedure_aziendali pa1 left join entrasp.procedure_aziendali pa2 on pa1.id_procedura=pa2.id_procedura_parent and pa1.codice_azienda=pa2.codice_azienda left join entrasp.procedure_aziendali pa3 on pa2.id_procedura=pa3.id_procedura_parent and pa2.codice_azienda=pa3.codice_azienda left join entrasp.fonti_rischio fr1 on fr1.codice_azienda= pa1.codice_azienda and fr1.id_procedura=pa1.id_procedura left join entrasp.fonti_rischio fr2 on fr2.codice_azienda= pa2.codice_azienda and fr2.id_procedura=pa2.id_procedura left join entrasp.fonti_rischio fr3 on fr3.codice_azienda= pa3.codice_azienda and fr3.id_procedura=pa3.id_procedura where pa1.id_procedura_parent is null"
+          },
+          "tableNickname": {
+            "S": "pa1"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "name": {
+            "S": "procedureAziendali_rischi_e_pr"
+          },
+          "queryString": {
+            "S": "select pa1.descrizione_breve as uno_db, pa2.descrizione_breve as due_db, pa3.descrizione_breve as tre_db, pa1.codice as uno_c, pa2.codice as due_c, pa3.codice as tre_c, pa1.id_procedura as uno_id_proc, pa2.id_procedura as due_id_proc, pa3.id_procedura as tre_id_proc, pa1.descrizione as uno_d, pa2.descrizione as due_d, pa3.descrizione as tre_d, pa1.codice_azienda as uno_ca, pa2.codice_azienda as due_ca, pa3.codice_azienda as tre_ca, pa1.id_procedura_parent as uno_id_pp, pa2.id_procedura_parent as due_id_pp,pa3.id_procedura_parent as tre_id_pp,fr1.codice_azienda as fr1_ca, fr1.codice_rischio as fr1_cr,fr2.codice_azienda as fr2_ca, fr2.codice_rischio as fr2_cr,fr3.codice_azienda as fr3_ca, fr3.codice_rischio as fr3_cr from entrasp.procedure_aziendali pa1 left join entrasp.procedure_aziendali pa2 on pa1.id_procedura=pa2.id_procedura_parent and pa1.codice_azienda=pa2.codice_azienda left join entrasp.procedure_aziendali pa3 on pa2.id_procedura=pa3.id_procedura_parent and pa2.codice_azienda=pa3.codice_azienda left join entrasp.fonti_rischio fr1 on fr1.codice_azienda= pa1.codice_azienda and fr1.id_procedura=pa1.id_procedura left join entrasp.fonti_rischio fr2 on fr2.codice_azienda= pa2.codice_azienda and fr2.id_procedura=pa2.id_procedura left join entrasp.fonti_rischio fr3 on fr3.codice_azienda= pa3.codice_azienda and fr3.id_procedura=pa3.id_procedura"
+          },
+          "tableNickname": {
+            "S": "pa1"
+          }
+        }
+      }
+    }
+  ]
+}

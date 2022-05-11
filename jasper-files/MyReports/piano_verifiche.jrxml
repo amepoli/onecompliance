@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="piano_verifiche" pageWidth="565" pageHeight="842" columnWidth="537" columnSpacing="27" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="376ede0d-23cd-4d7b-a1bf-664463cad42c">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="progetti"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter1.xml"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="246"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="750"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="mainQuery" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select pr.codice_azienda, pr.id_progetto,pr.codice_progetto, pr.titolo , pr.id_tipo_progetto, pr.id_cliente, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pr.stato) as stato,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_cliente), prf.titolo ||coalesce(' (ID ' || s1.id_sondaggio ||')','') as prf_titolo, prf.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf.stato) as prf_stato, prf.id_fase as prf_idfase, coalesce(prf.id_fase_sup,0) as prf_idfase_sup, prf.id_sondaggio as prf_idsond, prf.ordinamento as prf_ordinamento, s1.titolo ||' (ID ' || s1.id_sondaggio ||')' as s_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s1.stato) as stato_sondaggio, coalesce(to_char(s1.data_esecuzione::date, 'Month YYYY'), 'Prevista: '||to_char(s1.data_prevista::date, 'Month YYYY')) as data_prevista, prf2.titolo ||' (ID ' || s2.id_sondaggio ||')' as prf_titolo2, prf2.codice as prf_codice2, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf2.stato) as prf2_stato,prf2.id_fase as prf2_idfase, coalesce(prf2.id_fase_sup,0) as prf2_idfase_sup, prf2.id_sondaggio as prf2_idson, prf2.ordinamento as prf2_ordinamento, s2.titolo ||coalesce(' (ID ' || s2.id_sondaggio ||')', '') as s2_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s2.stato) as stato_sondaggio2, coalesce(to_char(s2.data_esecuzione::date, 'Month YYYY'), 'Prevista: '||to_char(s2.data_prevista::date, 'Month YYYY')) as s2_data_prevista, prf3.titolo as prf_titolo3, prf3.codice as prf_codice3, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prf3.stato) as prf3_stato,prf3.id_fase as prf3_idfase, coalesce(prf3.id_fase_sup,0) as prf3_idfase_sup, prf3.id_sondaggio as prf3_idson, prf3.ordinamento as prf3_ordinamento, s3.titolo as s3_titolo, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', s3.stato) as stato_sondaggio3, coalesce(to_char(s3.data_esecuzione::date, 'Month YYYY'), 'Prevista: '||to_char(s3.data_prevista::date, 'Month YYYY')) as s3_data_prevista from entrasp.progetti pr left join entrasp.progetti_fasi prf on pr.codice_azienda=prf.codice_azienda and pr.id_progetto=prf.id_progetto left join entrasp.sondaggi s1 on prf.codice_azienda=s1.codice_azienda and prf.id_sondaggio=s1.id_sondaggio left join entrasp.progetti_fasi prf2 on prf.codice_azienda=prf2.codice_azienda and prf.id_fase=prf2.id_fase_sup left join entrasp.sondaggi s2 on prf2.codice_azienda=s2.codice_azienda and prf2.id_sondaggio=s2.id_sondaggio left join entrasp.progetti_fasi prf3 on prf2.codice_azienda=prf3.codice_azienda and prf2.id_fase=prf3.id_fase_sup left join entrasp.sondaggi s3 on prf3.codice_azienda=s3.codice_azienda and prf3.id_sondaggio=s3.id_sondaggio where prf.id_fase_sup is null and pr.codice_azienda='ADMIRALPAY' and prf.id_fase_sup is null"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["admiralpay"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{mainQuery}]]>
+	</queryString>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
+	</field>
+	<field name="id_progetto" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_progetto"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_progetto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
+	</field>
+	<field name="codice_progetto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_progetto"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_progetto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
+	</field>
+	<field name="titolo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="titolo"/>
+		<property name="com.jaspersoft.studio.field.label" value="titolo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
+	</field>
+	<field name="id_tipo_progetto" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_tipo_progetto"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_tipo_progetto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
+	</field>
+	<field name="id_cliente" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_cliente"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
+	</field>
+	<field name="stato" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stato"/>
+		<property name="com.jaspersoft.studio.field.label" value="stato"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti"/>
+	</field>
+	<field name="anagrafiche_vr_dati_identificativi" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="anagrafiche_vr_dati_identificativi"/>
+		<property name="com.jaspersoft.studio.field.label" value="anagrafiche_vr_dati_identificativi"/>
+	</field>
+	<field name="prf_titolo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="prf_titolo"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf_titolo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="codice" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf_stato" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="prf_stato"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf_stato"/>
+	</field>
+	<field name="prf_idfase" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf_idfase"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf_idfase"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf_idfase_sup" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf_idfase_sup"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf_idfase_sup"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf_idsond" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf_idsond"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf_idsond"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf_ordinamento" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf_ordinamento"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf_ordinamento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="s_titolo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="s_titolo"/>
+		<property name="com.jaspersoft.studio.field.label" value="s_titolo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="stato_sondaggio" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stato_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.label" value="stato_sondaggio"/>
+	</field>
+	<field name="data_prevista" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="data_prevista"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_prevista"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="prf_titolo2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="prf_titolo2"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf_titolo2"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf_codice2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="prf_codice2"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf_codice2"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf2_stato" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="prf2_stato"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf2_stato"/>
+	</field>
+	<field name="prf2_idfase" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf2_idfase"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf2_idfase"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf2_idfase_sup" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf2_idfase_sup"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf2_idfase_sup"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf2_idson" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf2_idson"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf2_idson"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf2_ordinamento" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf2_ordinamento"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf2_ordinamento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="s2_titolo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="s2_titolo"/>
+		<property name="com.jaspersoft.studio.field.label" value="s2_titolo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="stato_sondaggio2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stato_sondaggio2"/>
+		<property name="com.jaspersoft.studio.field.label" value="stato_sondaggio2"/>
+	</field>
+	<field name="s2_data_prevista" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="s2_data_prevista"/>
+		<property name="com.jaspersoft.studio.field.label" value="s2_data_prevista"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="prf_titolo3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="prf_titolo3"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf_titolo3"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf_codice3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="prf_codice3"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf_codice3"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf3_stato" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="prf3_stato"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf3_stato"/>
+	</field>
+	<field name="prf3_idfase" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf3_idfase"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf3_idfase"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf3_idfase_sup" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf3_idfase_sup"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf3_idfase_sup"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf3_idson" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf3_idson"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf3_idson"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="prf3_ordinamento" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prf3_ordinamento"/>
+		<property name="com.jaspersoft.studio.field.label" value="prf3_ordinamento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="progetti_fasi"/>
+	</field>
+	<field name="s3_titolo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="s3_titolo"/>
+		<property name="com.jaspersoft.studio.field.label" value="s3_titolo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="stato_sondaggio3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="stato_sondaggio3"/>
+		<property name="com.jaspersoft.studio.field.label" value="stato_sondaggio3"/>
+	</field>
+	<field name="s3_data_prevista" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="s3_data_prevista"/>
+		<property name="com.jaspersoft.studio.field.label" value="s3_data_prevista"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<sortField name="prf_ordinamento"/>
+	<sortField name="prf2_ordinamento"/>
+	<sortField name="prf3_ordinamento"/>
+	<group name="Id_progetto" keepTogether="true">
+		<groupExpression><![CDATA[$F{id_progetto}]]></groupExpression>
+	</group>
+	<group name="codice">
+		<groupExpression><![CDATA[$F{codice}]]></groupExpression>
+		<groupHeader>
+			<band height="58">
+				<printWhenExpression><![CDATA[$F{prf_idfase} != null]]></printWhenExpression>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="15" y="6" width="522" height="20" backcolor="#A3C9D1" uuid="faf73bb6-639e-41b4-ad67-309bedbd58e9">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{prf_titolo}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="125" y="30" width="412" height="20" isRemoveLineWhenBlank="true" uuid="1384ae52-80b6-4eb4-8fd6-7b9e30414855">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{s_titolo}]]></textFieldExpression>
+				</textField>
+				<textField pattern="MMMM, yyyy" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="15" y="31" width="100" height="20" isRemoveLineWhenBlank="true" uuid="d332846f-3ad2-4642-bb1d-2bdb24d1d9e0">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="html"/>
+					<textFieldExpression><![CDATA[$F{data_prevista}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="prf_codice2">
+		<groupExpression><![CDATA[$F{prf_codice2}]]></groupExpression>
+		<groupHeader>
+			<band height="51">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<printWhenExpression><![CDATA[$F{prf2_idfase} != null]]></printWhenExpression>
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement positionType="Float" mode="Opaque" x="30" y="0" width="507" height="20" backcolor="#FAF5F5" uuid="3ba2cdc3-5485-4268-9d75-6eda6881ec70">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Bold_arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{prf_titolo2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="MMMM, yyyy">
+					<reportElement positionType="Float" x="30" y="24" width="117" height="20" uuid="00bca6c2-cb0f-450c-9f25-ea98493ce489">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{s2_data_prevista}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight">
+					<reportElement positionType="Float" x="160" y="24" width="377" height="20" uuid="4cbbf5d3-7715-43aa-aee4-3cf58aa3acc1">
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{s2_titolo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="126" splitType="Stretch">
+			<image onErrorType="Blank">
+				<reportElement key="image" positionType="Float" stretchType="RelativeToBandHeight" x="147" y="10" width="245" height="50" uuid="1ee677eb-7a53-46ab-b3e7-40e557500c98">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA["./logos/"+ $P{codice_azienda} + ".png"]]></imageExpression>
+			</image>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" x="1" y="80" width="526" height="40" isRemoveLineWhenBlank="true" backcolor="#A2F5DC" uuid="d006af0d-46a2-44a8-a50b-507bc2ece27a">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.25" lineStyle="Solid"/>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Bold_arial" size="16" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{titolo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="70" y="3" width="397" height="66" uuid="1de0741b-b861-4451-b825-0c849c22c7f3">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageFooter>
+		<band height="41" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="16" width="100" height="20" uuid="60ac1a9f-1ff5-420c-bbb2-3076fe4f7f41">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="10" width="537" height="1" uuid="54a13e49-05fd-451c-a3b5-f06dbc30cdea">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

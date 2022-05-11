@@ -46,11 +46,12 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 530,
+        "x": 430,
         "y": 360,
         "wires": [
             [
-                "69531b52b2b0f9f9"
+                "69531b52b2b0f9f9",
+                "8aa0af17e9470ade"
             ]
         ]
     },
@@ -67,7 +68,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1050,
+        "x": 1410,
         "y": 600,
         "wires": []
     },
@@ -76,14 +77,14 @@
         "type": "function",
         "z": "37563b27871a7546",
         "name": "GetAllProblems",
-        "func": "const startTime = Math.round(Date.now()/1000) - 3600 * 24; \n\nconst ret = { payload: { \n    \"jsonrpc\": \"2.0\",\n    \"method\": \"problem.get\",\n    \"params\": {\n        \"output\": \"extend\",\n        \"selectAcknowledges\": \"extend\",\n        \"selectTags\": \"extend\",\n        \"selectSuppressionData\": \"extend\",\n        \"recent\": \"true\",\n        \"sortfield\": [\"eventid\"],\n        \"sortorder\": \"DESC\",\n        \"acknowledged\": \"0\",\n        \"time_from\": startTime.toString() \n    },\n    \"auth\": msg.payload.result,\n    \"id\": 2\n}\n};\nreturn ret;",
+        "func": "const startTime = Math.round(Date.now()/1000) - 3600 * 24; \n\nconst ret = { payload: { \n    \"jsonrpc\": \"2.0\",\n    \"method\": \"problem.get\",\n    \"params\": {\n        \"output\": \"extend\",\n        \"selectAcknowledges\": \"extend\",\n        \"selectTags\": \"extend\",\n        \"selectSuppressionData\": \"extend\",\n        \"recent\": \"false\",\n        \"sortfield\": [\"eventid\"],\n        \"sortorder\": \"DESC\",\n        \"acknowledged\": \"0\"\n    },\n    \"auth\": msg.payload.result,\n    \"id\": 2\n}\n};\nreturn ret;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 780,
-        "y": 360,
+        "x": 660,
+        "y": 580,
         "wires": [
             [
                 "ba2031ea64c74c19"
@@ -104,8 +105,8 @@
         "proxy": "",
         "authType": "",
         "senderr": false,
-        "x": 530,
-        "y": 520,
+        "x": 870,
+        "y": 580,
         "wires": [
             [
                 "c06f42c0142ac33f"
@@ -126,7 +127,7 @@
         "correl": "",
         "expiry": "",
         "broker": "fe3d207338999293",
-        "x": 1030,
+        "x": 1390,
         "y": 520,
         "wires": []
     },
@@ -141,12 +142,100 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 770,
-        "y": 520,
+        "x": 1050,
+        "y": 580,
         "wires": [
             [
-                "f935d3b8b7acd587",
-                "5d28919db765e551"
+                "8b2a798d76bf36df"
+            ]
+        ]
+    },
+    {
+        "id": "8b2a798d76bf36df",
+        "type": "join",
+        "z": "37563b27871a7546",
+        "name": "",
+        "mode": "custom",
+        "build": "merged",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": true,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "num",
+        "reduceFixup": "",
+        "x": 1230,
+        "y": 600,
+        "wires": [
+            [
+                "5d28919db765e551",
+                "f935d3b8b7acd587"
+            ]
+        ]
+    },
+    {
+        "id": "8aa0af17e9470ade",
+        "type": "function",
+        "z": "37563b27871a7546",
+        "name": "GetAllHosts",
+        "func": "\nconst ret = { payload: { \n    \"jsonrpc\": \"2.0\",\n    \"method\": \"dhost.get\",\n    \"params\": {\n        \"output\": \"extend\",\n        \"selectDServices\": \"extend\",\n    },\n    \"auth\": msg.payload.result,\n    \"id\": 1\n}\n};\nreturn ret;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 800,
+        "wires": [
+            [
+                "aac1de3204c4904b"
+            ]
+        ]
+    },
+    {
+        "id": "aac1de3204c4904b",
+        "type": "http request",
+        "z": "37563b27871a7546",
+        "name": "ZabbixPost",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "body",
+        "url": "http://172.16.252.68/zabbix/api_jsonrpc.php",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 870,
+        "y": 800,
+        "wires": [
+            [
+                "bb32e218b8904995"
+            ]
+        ]
+    },
+    {
+        "id": "bb32e218b8904995",
+        "type": "function",
+        "z": "37563b27871a7546",
+        "name": "TakeResult",
+        "func": "\nconst ret = { \"payload\": { \"hosts\": msg.payload.result } };\nreturn ret;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1050,
+        "y": 800,
+        "wires": [
+            [
+                "8b2a798d76bf36df"
             ]
         ]
     },

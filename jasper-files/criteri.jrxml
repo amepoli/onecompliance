@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="criteri" pageWidth="537" pageHeight="800" columnWidth="537" leftMargin="0" rightMargin="0" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="criteri" pageWidth="537" pageHeight="800" columnWidth="535" leftMargin="2" rightMargin="0" topMargin="0" bottomMargin="2" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
 	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
@@ -13,7 +13,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_Aws_remoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="goricoprod.xml"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
@@ -31,9 +31,11 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="codice_azienda" class="java.lang.String">
-		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["FINAFARM"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="id_sondaggio" class="java.math.BigDecimal"/>
+	<parameter name="id_sondaggio" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[new BigDecimal(423)]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[select snd.id_sondaggio,  tmtrr.codice_azienda, tmtrr.prog_riga, tmtrr.descrizione, tmtrr.pct_da, 
 case when tmtrr.codice_colore='darkviolet' then '#800080' 
@@ -84,11 +86,13 @@ where snd.codice_azienda=$P{codice_azienda} and snd.id_sondaggio=$P{id_sondaggio
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="31">
+		<band height="28">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="-6" width="537" height="25" forecolor="#FFFFFF" backcolor="#25599C" uuid="9be0d96c-6d5f-4554-b6ba-4ae0411b4a70">
+				<reportElement mode="Opaque" x="0" y="0" width="537" height="25" forecolor="#FFFFFF" backcolor="#25599C" uuid="9be0d96c-6d5f-4554-b6ba-4ae0411b4a70">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<box>
 					<pen lineColor="#000000"/>
@@ -132,11 +136,12 @@ where snd.codice_azienda=$P{codice_azienda} and snd.id_sondaggio=$P{id_sondaggio
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
 				<text><![CDATA[Punteggio]]></text>
 			</staticText>
 		</band>
-		<band height="19">
+		<band height="17">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="142" y="0" width="86" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="11cfa718-6dd4-497f-bc10-b1d9777e2801">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -148,10 +153,10 @@ where snd.codice_azienda=$P{codice_azienda} and snd.id_sondaggio=$P{id_sondaggio
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{pct_da}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pct_da}+"%"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="232" y="0" width="176" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="f961c1c3-516b-4d69-b250-eafb73f98467">

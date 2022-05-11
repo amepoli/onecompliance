@@ -26,9 +26,11 @@
 		<defaultValueExpression><![CDATA[new BigDecimal(71.000)]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select categorie_interessati, id_trattamento_dati,codice_azienda from entrasp.cpl_trattamenti_dati_categorie_interessati
- where id_trattamento_dati = $P{id_trattamento_dati}
-and codice_azienda = $P{codice_azienda}]]>
+		<![CDATA[select cd.codice_azienda AS codice_azienda, cd.id_trattamento_dati as id_trattamento_dati, entrasp.argomenti_descr_breve_no_num(cd.id_argomento_categoria) as categorie_interessati
+from entrasp.cpl_trattamenti_dati_categorie cd 
+inner join entrasp.argomenti_argomenti aa on cd.id_argomento_categoria=id_argomento_son 
+where cd.id_trattamento_dati=$P{id_trattamento_dati} and cd.codice_azienda=$P{codice_azienda} 
+and aa.id_argomento_father=3844 and tipo='categorie_interessati']]>
 	</queryString>
 	<field name="categorie_interessati" class="java.lang.String"/>
 	<field name="id_trattamento_dati" class="java.math.BigDecimal"/>

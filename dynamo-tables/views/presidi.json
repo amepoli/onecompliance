@@ -412,7 +412,7 @@
                 "dataType": "text"
             },
             "isHidden": false,
-            "width": "30%",
+            "width": "35%",
             "isPrimary": false,
             "key": "descrizione_breve",
             "label": "Titolo"
@@ -469,6 +469,16 @@
             "isPrimary": false,
             "key": "id_tipo_presidio",
             "label": "id_tipo_presidio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "livello",
+            "label": "Livello"
         }
     ],
     "search_keys": [
@@ -576,9 +586,20 @@
                 "viewType": "input"
             },
             "label": "Sondaggi con data competenza fino al",
-            "newLine": true,
+            "newLine": false,
             "size": 2,
             "queryCond":"id_presidio in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp<='€data_comp_prevista_max€')"
+        },
+        {
+            "fieldName": "livello_s",
+            "format": {
+                "comboQuery": "SELECT distinct livello AS id, livello AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$ order by livello asc;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Livello",
+            "newLine": true,
+            "queryCond": "livello=$livello_s$"
         },
         {
             "fieldName": "flag_principali",
@@ -680,7 +701,6 @@
             "newLine": false,
             "queryCond": "id_presidio in(select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
         }
-
     ],
     "inputEvents": [
         {
