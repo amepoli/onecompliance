@@ -139,9 +139,9 @@ export class BackendService {
     return from(this.amplifyService.api().get(this.apiName, '/' + this.attachApiName, this.myGetInit));
   }
 
-  loadFileDataIfExists(entryName: string, company: string, keys: any, checksum: string): Observable<any> {
+  loadFileDataIfExists(entryName: string, company: string, keys: any, checksum: string, md5Checksum: string): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, request_type: 'loadFileDataIfExists', keys: JSON.stringify(keys), checksum: checksum };
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, request_type: 'loadFileDataIfExists', keys: JSON.stringify(keys), checksum: checksum, md5_checksum: md5Checksum };
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }
 
@@ -151,9 +151,9 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }
 
-  checkFile(entryName: string, company: string, keys: any, checksum: string, filename: string, data: any): Observable<any> {
+  checkFile(entryName: string, company: string, keys: any, checksum: string, md5Checksum: string, filename: string, data: any): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), filename: filename, checksum: checksum };
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), filename: filename, checksum: checksum, md5_checksum: md5Checksum};
     this.myPutPostInit.body = data;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }

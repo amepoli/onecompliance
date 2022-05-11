@@ -263,6 +263,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                     // retrieve file content
                     const content = await _this.file?.arrayBuffer();
                     const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+                    const md5hash = CryptoJS.MD5(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
                     _this._console.log(hash);
                     // check that the file has been correctly uploaded and pass file params to the backend
                     var mime = require('mime-types');
@@ -290,7 +291,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                         id_modello_test_vr: _this.getValue(_this.form.value.id_modello_test_vr), //_this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
                         autore: _this.authService.getUsername()
                     };
-                    const responseCheck: any = await _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, responseURL.filename, fileParams).toPromise();
+                    const responseCheck: any = await _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, md5hash, responseURL.filename, fileParams).toPromise();
                     if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
                         _this.fileService.requestReload(_this.data.entryName);
                         if (_this.data.onSave) {
@@ -366,9 +367,11 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         reader.onload = function (e) {
             const content = reader.result;
             const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+            const md5hash = CryptoJS.MD5(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
             _this._console.log(hash);
+            _this._console.log(md5hash);
 
-            _this.backendService.loadFileDataIfExists(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash).subscribe(
+            _this.backendService.loadFileDataIfExists(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, md5hash).subscribe(
                 responseCheck => {
                     if (responseCheck.result === 'OK') {
                         let data = responseCheck.data;

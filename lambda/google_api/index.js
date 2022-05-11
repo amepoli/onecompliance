@@ -48,10 +48,10 @@ function getServerResponse(body) {
     };
 }
 
-async function downloadS3Object(path, file) {
+async function downloadS3Object(s3FilePath, file) {
     var params = { 
         Bucket: 'BUCKET_NAME',
-        Key: `${path}/${file}`
+        Key: s3FilePath
     };
 
     const data = await s3.getObject(params).promise();
@@ -59,10 +59,10 @@ async function downloadS3Object(path, file) {
     return data;
 }
 
-async function uploadS3Object(path, file, data) {
+async function uploadS3Object(s3FilePath, data) {
     var params = { 
         Bucket: 'BUCKET_NAME',
-        Key: `${path}/${file}`,
+        Key: s3FilePath,
         Body: data
     };
 
@@ -121,7 +121,7 @@ async function downloadDriveObject(drivePath, file) {
     return data;
 }
 
-async function GetDriveFileInfo(driveFilePath) {
+async function getDriveFileInfo(driveFilePath) {
     if(driveFilePath.startsWith('/')) {
         driveFilePath = driveFilePath.substring(1);
     }
@@ -217,6 +217,50 @@ async function GetDriveFileInfo(driveFilePath) {
     }
 
     return { result: 'KO', data: 'File not found!' };
+}
+
+async function getS3FileInfo(s3FilePath) {
+    var params = { 
+        Bucket: 'BUCKET_NAME',
+        Key: s3FilePath.startsWith('/')? s3FilePath.substring(1): s3FilePath
+    };
+    console.log('params', params);
+    const data = await s3.headObject(params).promise();   
+    return { result: 'OK', data: data };
+}
+
+async function deleteDriveFile(driveFileId) {
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    
+    let response;
+    
+    try {
+        // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+        response = await drive.files.delete({ 'fileId': driveFileId });
+        try {
+            response = JSON.parse(response);    
+        }
+        catch(e) {
+            return {result: 'KO', data: e};
+        }
+        return { result: 'OK', data: response };        
+    }
+    catch (e) {
+        console.log(e);
+        return {result: 'KO', data: e};
+    }
+
+    return { result: 'KO', data: 'File not found!' };
+}
+
+async function deleteS3File(s3FilePath) {
+    var params = { 
+        Bucket: 'BUCKET_NAME',
+        Key: s3FilePath
+    };
+
+    const data = await s3.deleteObject(params).promise();   
+    return { result: 'OK', data: data };
 }
 
 // Perform Google Auth
@@ -656,7 +700,7 @@ async function copyFromS3ToDrive(queryParams, authParams) {
     console.log('drivePath: ', drivePath);
     
     
-    const s3FileData = await downloadS3Object(s3Path, s3File);
+    const s3FileData = await downloadS3Object(s3FilePath, s3File);
     const s3Data = s3FileData.Body.toString('utf-8');
     
     var bufferStream = new stream.PassThrough();
@@ -666,7 +710,7 @@ async function copyFromS3ToDrive(queryParams, authParams) {
     // bufferStream.end(s3FileData.Body);
 
     // const stream = Readable.from(s3FileData);
-    console.log('data: ' + s3Data);
+    console.log('data: ', s3Data);
     // console.log('data: ' + JSON.stringify(bufferStream));
 
     await performGoogleAuth(authParams);
@@ -794,8 +838,8 @@ async function copyFromDriveToS3(queryParams, authParams) {
     let response;
     
     const driveFileData = await downloadDriveObject(drivePath, driveFile);
-    console.log('data: ' + driveFileData);
-    response = await uploadS3Object(s3Path, s3File, driveFileData);
+    console.log('data: ', driveFileData);
+    response = await uploadS3Object(s3FilePath, driveFileData);
 
     // console.log('data: ' + JSON.stringify(bufferStream));
 
@@ -873,9 +917,43 @@ async function syncDriveS3File(queryParams, authParams) {
     let response;
     
 
-    response = await GetDriveFileInfo(driveFilePath);
-    console.log('GetDriveFileInfo: ' + response);
+    response = await getDriveFileInfo(driveFilePath);
+    const driveFileInfo = response.data;
+    console.log('getDriveFileInfo: ', response);
     
+    response = await getS3FileInfo(s3FilePath);
+    const s3FileInfo = response.data;
+    console.log('getS3FileInfo: ', response);
+    
+    if(driveFileInfo && driveFileInfo.modifiedTime != null && s3FileInfo && s3FileInfo.LastModified != null) {
+        const driveFileModifiedDateTime = new Date(driveFileInfo.modifiedTime);
+        const s3FileModifiedDateTime = new Date(s3FileInfo.LastModified);
+        console.log('driveFileModifiedDateTime', driveFileModifiedDateTime);
+        console.log('s3FileModifiedDateTime', s3FileModifiedDateTime);
+        
+        if(driveFileModifiedDateTime > s3FileModifiedDateTime) {
+            console.log('deleteS3File...');
+            await deleteS3File(s3FilePath);
+            console.log('copyFromDriveToS3...');
+            await copyFromDriveToS3(queryParams, authParams);
+        }
+        else if(driveFileModifiedDateTime < s3FileModifiedDateTime) {
+            console.log('deleteDriveFile...');
+            await deleteDriveFile(driveFileInfo.id);
+            console.log('copyFromS3ToDrive...');
+            await copyFromS3ToDrive(queryParams, authParams);
+        }
+    }
+    else if(driveFileInfo && driveFileInfo.modifiedTime != null) {
+        console.log('copyFromDriveToS3...');
+        await copyFromDriveToS3(queryParams, authParams);        
+    }
+    else if(s3FileInfo && s3FileInfo.LastModified != null) {        
+        console.log('copyFromS3ToDrive...');
+        await copyFromS3ToDrive(queryParams, authParams);
+    }
+
+    response = { result: 'OK' };
     //response = await uploadS3Object(s3Path, s3File, driveFileData);
 
     return response;
@@ -898,7 +976,7 @@ exports.handler = async (event, context) => {
         return getBadUrlResponse();
     }
     else {
-        console.log('Lets start ' + requestType);
+        console.log('Lets start ', requestType);
 
         try {
             let body = null;
