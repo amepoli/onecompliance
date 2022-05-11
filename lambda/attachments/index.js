@@ -411,10 +411,10 @@ exports.handler = async (event, context) => {
                             response = await client.query(query);
                             const nextProgRevisione = (response.rows && response.rows[0]) ? response['rows'][0]['prog_revisione'] : 0;
                             query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
-                                    revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica) 
+                                    revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
                                     values ('${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
                                     '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
-                                    '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}');`;
+                                    '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}', '${md5Checksum}');`;
                             console.log(query);
                             response = await client.query(query);
                             console.log(JSON.stringify(response));
@@ -545,10 +545,10 @@ exports.handler = async (event, context) => {
                                 console.log(JSON.stringify(response));
 
                                 query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
-                                revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica) 
+                                revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
                                 values ('${company}', ${idFlowInfo1}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
                                 '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
-                                '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}');`;
+                                '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}', '${md5Checksum}');`;
                                 console.log(query);
                                 response = await client.query(query);
                                 console.log(JSON.stringify(response));
@@ -603,10 +603,10 @@ exports.handler = async (event, context) => {
                             datarif = (requestBody.data_rif == undefined) ? date : requestBody.data_rif;
 
                             query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
-                        revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica) 
+                        revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
                         values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
                         '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
-                        '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}' , '${datarif}', '${date}', '${date}');`;
+                        '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}' , '${datarif}', '${date}', '${date}','${md5Checksum}');`;
                             console.log(query);
                             response = await client.query(query);
                             console.log(JSON.stringify(response));
