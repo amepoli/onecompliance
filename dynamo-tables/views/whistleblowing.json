@@ -24,12 +24,12 @@
     {
       "operation": "update",
       "type": "postProcessing",
-      "queryString": "UPDATE entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda"
+      "queryString": "select entrasp.whistle_blowing_after_insertupdate($codice_azienda$, '€global_username€'::varchar, $codice_compito$);"
     },
     {
       "operation": "insert",
       "type": "postProcessing",
-      "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda"
+      "queryString": "select entrasp.whistle_blowing_after_insertupdate($codice_azienda$, '€global_username€'::varchar, $codice_compito$);"
     }
   ],
   "form_keys": [
@@ -38,7 +38,7 @@
       "format": {
         "viewType": "input",
         "dataType": "number",
-        "value": 2
+        "value": 700
       },
       "isHidden": true,
       "isPrimary": false,
@@ -108,10 +108,10 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "Segnalante",
-      "label": "ID Responsabile",
+      "key": "id_responsabile",
+      "label": "Segnalante",
       "newLine": true,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -131,7 +131,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€' and id_centro_gest>0;",
         "options": [],
         "viewType": "combobox"
       },
@@ -146,15 +146,15 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€' and id_centro_gest>0;",
         "options": [],
-        "value": -1,
-        "viewType": "combobox"
+        "viewType": "combobox",
+        "value": "(-1)"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "id_centro_gest_monitor",
-      "label": "Centro Gestionale Monitoraggio/Segnalante",
+      "label": "Ufficio responsabile",
       "newLine": true,
       "readOnly": true,
       "size": 2.5
@@ -248,8 +248,8 @@
       "autoGenerate": false,
       "format": {
         "dataType": "text",
-        "value": "£global_userid£",
-        "viewType": "input"
+        "viewType": "input",
+        "value": "£global_username£"
       },
       "isHidden": true,
       "isPrimary": false,
