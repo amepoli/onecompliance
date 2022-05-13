@@ -19,7 +19,7 @@ const stuff_to_replace = [
 
 const output_file = '_out';
 
-const default_files_in = ['rapporti.csv'];
+const default_files_in = ['MOVIMENTI_kyc_coll.CSV'];
 const default_files_out = default_files_in.map(file => file.replace('.CSV', output_file + '.CSV').replace('.csv', output_file + '.csv'));
 const default_folders = ['batch/finint/upload'];
 const default_bucket = 'BUCKET_NAME';
@@ -98,6 +98,9 @@ function processCSV(csvData) {
                         // curColumn = "";
                         // columnStarted = true;
                         // columnContainsQuote = false;
+                        if (line[i + 1] === ';' || i  == line.length - 1 ) {
+                            columns.push('');
+                        }
                     }
                     else {
                         curColumn = curChar !== ' ' ? curChar : '';
