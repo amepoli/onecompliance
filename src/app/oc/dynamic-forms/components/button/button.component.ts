@@ -77,7 +77,7 @@ export class ButtonComponent implements OnInit, OnDestroy {
                 if (result.value === true) {
                     // User clicked yes
                     if (_this.field.eventName !== null) {
-                        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: '', type: 'button_click' }); // provide index in case of multiple instances of the button
+                        _this.pubSubService.publishEvent(_this.field.eventName, { showEventProcessing: true, origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: '', type: 'button_click' }); // provide index in case of multiple instances of the button
                     }
                 }
             });
@@ -85,7 +85,7 @@ export class ButtonComponent implements OnInit, OnDestroy {
         else {
             // Perform action without confirmation
             if (_this.field.eventName !== null) {
-                _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: '', type: 'button_click' }); // provide index in case of multiple instances of the button
+                _this.pubSubService.publishEvent(_this.field.eventName, { showEventProcessing: true, origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: '', type: 'button_click' }); // provide index in case of multiple instances of the button
             }
         }
 
