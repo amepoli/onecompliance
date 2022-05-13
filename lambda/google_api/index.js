@@ -2,6 +2,7 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
+const crypto = require('crypto');
 
 //const { Readable } = require('stream');
 let stream = require('stream');
@@ -48,94 +49,7 @@ function getServerResponse(body) {
     };
 }
 
-async function downloadS3Object(s3FilePath, file) {
-    var params = { 
-        Bucket: 'BUCKET_NAME',
-        Key: s3FilePath
-    };
-
-    const data = await s3.getObject(params).promise();
-
-    return data;
-}
-
-async function uploadS3Object(s3FilePath, data) {
-    var params = { 
-        Bucket: 'BUCKET_NAME',
-        Key: s3FilePath,
-        Body: data
-    };
-
-    const result = await s3.upload(params).promise();
-    return result;
-}
-
-async function downloadDriveObject(drivePath, file) {
-    const drive = google.drive({version: 'v3', auth: oAuth2Client});
-    
-    let driveFileId = null;
-    let driveFolderId = 'root';
-
-    let response = null;
-    if(drivePath.length > 0) {        
-        response = await drive.files.list({
-            q: `mimeType='application/vnd.google-apps.folder' and name='${drivePath}'`,
-            pageSize: 5,
-            fields: 'nextPageToken, files(id, name, mimeType)',
-        });
-        try {
-            response = JSON.parse(response);    
-        }
-        catch(e) {}
-        if(response.data && response.data.files && response.data.files.length > 0) {
-            driveFolderId = response.data.files[0].id;
-        }
-        console.log('find folder result: ', JSON.stringify(response));
-    }
-
-
-    response = await drive.files.list({
-        q: `'${driveFolderId}' in parents and name='${file}'`,
-        pageSize: 250,
-        fields: 'nextPageToken, files(id, name, mimeType)',
-    });
-    try {
-        response = JSON.parse(response);    
-    }
-    catch(e) {}
-    if(response.data && response.data.files && response.data.files.length > 0) {
-        driveFileId = response.data.files[0].id;
-    }
-    console.log('find file result: ', JSON.stringify(response));
-
-    if(driveFileId) {
-        response = await drive.files.get({
-            fileId: driveFileId,
-            alt: 'media'
-        });
-    }
-    
-    console.log('download file result: ', JSON.stringify(response));
-
-    const data = response.data;
-    return data;
-}
-
-async function getDriveFileInfo(driveFilePath) {
-    if(driveFilePath.startsWith('/')) {
-        driveFilePath = driveFilePath.substring(1);
-    }
-    let drivePath = '';
-    let driveFile = driveFilePath;
-    if(driveFilePath.includes('/')) {
-        let driveFilePathParts = driveFilePath.split('/');
-        driveFile = driveFilePathParts.pop();
-        drivePath = driveFilePathParts.join('/');
-    }
-    console.log('driveFile: ', driveFile);
-    console.log('drivePath: ', drivePath);
-    
-    
+async function getDriveFileId(drivePath) {
     const drive = google.drive({version: 'v3', auth: oAuth2Client});
     
     let driveFolderId = 'root';
@@ -194,13 +108,75 @@ async function getDriveFileInfo(driveFilePath) {
         }
         console.log('find folder result: ', JSON.stringify(response));
     }
+    return driveFolderId;
+}
+
+async function downloadS3Object(s3FilePath, file) {
+    var params = { 
+        Bucket: 'BUCKET_NAME',
+        Key: s3FilePath
+    };
+
+    const data = await s3.getObject(params).promise();
+
+    return data;
+}
+
+async function uploadS3Object(s3FilePath, data) {
+    var params = { 
+        Bucket: 'BUCKET_NAME',
+        Key: s3FilePath,
+        Body: data
+    };
+
+    const result = await s3.upload(params).promise();
+    return result;
+}
+
+async function downloadDriveObject(driveFolderId, driveFile) {
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
     
+    let response = null;
+
+    response = await drive.files.list({
+        q: `'${driveFolderId}' in parents and name='${driveFile}'`,
+        pageSize: 250,
+        fields: 'nextPageToken, files(id, name, mimeType)',
+    });
     try {
+        response = JSON.parse(response);    
+    }
+    catch(e) {}
+    if(response.data && response.data.files && response.data.files.length > 0) {
+        driveFileId = response.data.files[0].id;
+    }
+    console.log('find file result: ', JSON.stringify(response));
+
+    if(driveFileId) {
+        response = await drive.files.get({
+            fileId: driveFileId,
+            alt: 'media'
+        });
+    }
+    
+    console.log('download file result: ', JSON.stringify(response));
+
+    const data = response.data;
+    return data;
+}
+
+async function getDriveFileInfo(driveFolderId, driveFile) {    
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    let response;
+
+    try {
+        console.log('Trying to find file with folder id: ', driveFolderId, ' and file name: ', driveFile);
+        
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.files.list({
             q: `'${driveFolderId}' in parents and name='${driveFile}'`,
             pageSize: 250,
-            fields: 'nextPageToken, files(id, name, mimeType, trashed, createdTime, modifiedTime)',
+            fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum, createdTime, modifiedTime)',
         });
         try {
             response = JSON.parse(response);    
@@ -704,7 +680,7 @@ async function copyFromS3ToDrive(queryParams, authParams) {
     const s3Data = s3FileData.Body.toString('utf-8');
     
     var bufferStream = new stream.PassThrough();
-    bufferStream.end(Uint8Array.from(Buffer.from(s3Data, "binary")));
+    bufferStream.end(Uint8Array.from(Buffer.from(s3Data, "utf-8")));
 
     // let bufferStream = new stream.PassThrough();
     // bufferStream.end(s3FileData.Body);
@@ -803,41 +779,10 @@ async function copyFromS3ToDrive(queryParams, authParams) {
     return { result: 'OK', data: response };
 }
 
-async function copyFromDriveToS3(queryParams, authParams) {
-    let s3FilePath = queryParams['s3FilePath'];
-    if(s3FilePath.startsWith('/')) {
-        s3FilePath = s3FilePath.substring(1);
-    }
-    let s3Path = '';
-    let s3File = s3FilePath;
-    if(s3FilePath.includes('/')) {
-        let s3FilePathParts = s3FilePath.split('/');
-        s3File = s3FilePathParts.pop();
-        s3Path = s3FilePathParts.join('/');
-    }
-    console.log('s3File: ', s3File);
-    console.log('s3Path: ', s3Path);
-    
-    
-    let driveFilePath = queryParams['driveFilePath'];
-    if(driveFilePath.startsWith('/')) {
-        driveFilePath = driveFilePath.substring(1);
-    }
-    let drivePath = '';
-    let driveFile = driveFilePath;
-    if(driveFilePath.includes('/')) {
-        let driveFilePathParts = driveFilePath.split('/');
-        driveFile = driveFilePathParts.pop();
-        drivePath = driveFilePathParts.join('/');
-    }
-    console.log('driveFile: ', driveFile);
-    console.log('drivePath: ', drivePath);
-    
-    await performGoogleAuth(authParams);
-    
+async function copyFromDriveToS3(s3FilePath, driveFolderId, driveFile) {
     let response;
     
-    const driveFileData = await downloadDriveObject(drivePath, driveFile);
+    const driveFileData = await downloadDriveObject(driveFolderId, driveFile);
     console.log('data: ', driveFileData);
     response = await uploadS3Object(s3FilePath, driveFileData);
 
@@ -894,7 +839,25 @@ async function copyFromDriveToS3(queryParams, authParams) {
 }
 
 async function syncDriveS3File(queryParams, authParams) {
+    let driveFilePath = queryParams['driveFilePath'];
+    console.log('driveFile: ', driveFilePath);
+    
+    if(driveFilePath.startsWith('/')) {
+        driveFilePath = driveFilePath.substring(1);
+    }
+    let drivePath = '';
+    let driveFile = driveFilePath;
+    if(driveFilePath.includes('/')) {
+        let driveFilePathParts = driveFilePath.split('/');
+        driveFile = driveFilePathParts.pop();
+        drivePath = driveFilePathParts.join('/');
+    }
+    console.log('driveFile: ', driveFile);
+    console.log('drivePath: ', drivePath);
+
+
     let s3FilePath = queryParams['s3FilePath'];
+    let s3md5 = queryParams['s3md5'];
     if(s3FilePath.startsWith('/')) {
         s3FilePath = s3FilePath.substring(1);
     }
@@ -909,51 +872,77 @@ async function syncDriveS3File(queryParams, authParams) {
     console.log('s3Path: ', s3Path);
     
     
-    let driveFilePath = queryParams['driveFilePath'];
-    console.log('driveFile: ', driveFilePath);
-    
     await performGoogleAuth(authParams);
     
     let response;
-    
+    let driveFileInfo = null;
+    let driveFolderId = null;
+    let s3FileInfo = null;
 
-    response = await getDriveFileInfo(driveFilePath);
-    const driveFileInfo = response.data;
-    console.log('getDriveFileInfo: ', response);
+    try {
+        driveFolderId = await getDriveFileId(drivePath);
+    }
+    catch(e) {
+        console.error(e);
+    }
     
-    response = await getS3FileInfo(s3FilePath);
-    const s3FileInfo = response.data;
-    console.log('getS3FileInfo: ', response);
+    try {
+        response = await getDriveFileInfo(driveFolderId, driveFile);
+        driveFileInfo = response.data;
+        console.log('getDriveFileInfo: ', JSON.stringify(response));    
+    }
+    catch(e) {
+        console.error(e);
+    }
+    
+    try{
+        response = await getS3FileInfo(s3FilePath);
+        s3FileInfo = response.data;
+        console.log('getS3FileInfo: ', JSON.stringify(response));
+    }
+    catch(e) {
+        console.error(e);
+    }
     
     if(driveFileInfo && driveFileInfo.modifiedTime != null && s3FileInfo && s3FileInfo.LastModified != null) {
-        const driveFileModifiedDateTime = new Date(driveFileInfo.modifiedTime);
-        const s3FileModifiedDateTime = new Date(s3FileInfo.LastModified);
-        console.log('driveFileModifiedDateTime', driveFileModifiedDateTime);
-        console.log('s3FileModifiedDateTime', s3FileModifiedDateTime);
-        
-        if(driveFileModifiedDateTime > s3FileModifiedDateTime) {
-            console.log('deleteS3File...');
-            await deleteS3File(s3FilePath);
-            console.log('copyFromDriveToS3...');
-            await copyFromDriveToS3(queryParams, authParams);
+        if(driveFileInfo.md5Checksum == s3md5) {
+            response = { result: 'OK', message: 'Did not copy. Both files are same.' };
         }
-        else if(driveFileModifiedDateTime < s3FileModifiedDateTime) {
-            console.log('deleteDriveFile...');
-            await deleteDriveFile(driveFileInfo.id);
-            console.log('copyFromS3ToDrive...');
-            await copyFromS3ToDrive(queryParams, authParams);
+        else {
+            const driveFileModifiedDateTime = new Date(driveFileInfo.modifiedTime);
+            const s3FileModifiedDateTime = new Date(s3FileInfo.LastModified);
+            console.log('driveFileModifiedDateTime', driveFileModifiedDateTime);
+            console.log('s3FileModifiedDateTime', s3FileModifiedDateTime);
+            
+            if(driveFileModifiedDateTime > s3FileModifiedDateTime) {
+                console.log('deleteS3File...');
+                await deleteS3File(s3FilePath);
+                console.log('copyFromDriveToS3...');
+                await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile);
+                response = { result: 'OK', message: 'Copied from Drive to S3' };
+            }
+            else if(driveFileModifiedDateTime < s3FileModifiedDateTime) {
+                console.log('deleteDriveFile...');
+                await deleteDriveFile(driveFileInfo.id);
+                console.log('copyFromS3ToDrive...');
+                await copyFromS3ToDrive(queryParams, authParams);
+                response = { result: 'OK', message: 'Copied from S3 to Drive' };
+            }
         }
     }
     else if(driveFileInfo && driveFileInfo.modifiedTime != null) {
         console.log('copyFromDriveToS3...');
-        await copyFromDriveToS3(queryParams, authParams);        
+        await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile);
+        response = { result: 'OK', message: 'Copied from Drive to S3' };
     }
     else if(s3FileInfo && s3FileInfo.LastModified != null) {        
         console.log('copyFromS3ToDrive...');
         await copyFromS3ToDrive(queryParams, authParams);
+        response = { result: 'OK', message: 'Copied from S3 to Drive' };
     }
-
-    response = { result: 'OK' };
+    else {
+        response = { result: 'OK', message: 'Both files do not exist!' };
+    }
     //response = await uploadS3Object(s3Path, s3File, driveFileData);
 
     return response;

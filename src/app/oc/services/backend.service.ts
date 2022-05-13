@@ -396,9 +396,9 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   }
 
-  syncDriveS3File(driveFilePath: string, s3FilePath: string, authToken: any) {
+  syncDriveS3File(driveFilePath: string, s3FilePath: string, s3md5: string, authToken: any) {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { request_type: 'syncDriveS3File', driveFilePath: driveFilePath, s3FilePath: s3FilePath };
+    this.myPutPostInit.queryStringParameters = { request_type: 'syncDriveS3File', driveFilePath: driveFilePath, s3FilePath: s3FilePath, s3md5: s3md5 };
     this.myPutPostInit.body = authToken;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   }
