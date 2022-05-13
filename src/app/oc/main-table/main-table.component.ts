@@ -123,7 +123,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.onEvent(data);
         }));
         
-        _this.google_test();
+        // _this.google_test();
 
         // Report related subscriptions
         _this.subscriptions.push(_this._reportService.reloadRequested.subscribe((entryName) => {
@@ -483,13 +483,16 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 console.table(getS3GoogleSyncFilesListResponse);
                 if(getS3GoogleSyncFilesListResponse.result === 'OK' && getS3GoogleSyncFilesListResponse.response && getS3GoogleSyncFilesListResponse.response.rows && getS3GoogleSyncFilesListResponse.response.rows.length > 0) {
                     const googleAuth = await _this.authService.loginGoogle();
-                    for await( let row of getS3GoogleSyncFilesListResponse.response.rows.filter(x => (x.s3path && x.googledrivepath))) {
-                        const { file_id, s3path, googledrivepath } = row;
-                        console.log(file_id, s3path, googledrivepath);
-                        if(s3path && googledrivepath) {
+                    console.table(getS3GoogleSyncFilesListResponse.response.rows);
+                    
+                    for await( let row of getS3GoogleSyncFilesListResponse.response.rows.filter(x => (x.s3path && x.s3md5 && x.googledrivepath))) {
+                        const { file_id, s3md5, s3path, googledrivepath } = row;
+                        console.log(row);
+                        console.log('md5', s3md5);
+                        if(s3path && s3md5 && googledrivepath) {
                             // let copyFromS3ToDriveResponse = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, googleAuth).toPromise();
                             // console.table(copyFromS3ToDriveResponse);
-                            _this.backendService.syncDriveS3File(googledrivepath, s3path, googleAuth).subscribe(
+                            _this.backendService.syncDriveS3File(googledrivepath, s3path, s3md5, googleAuth).subscribe(
                                 syncDriveS3FileResponse => {
                                     console.table(syncDriveS3FileResponse);
                                     // _this.backendService.syncDriveS3File
@@ -500,6 +503,23 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                             );
                         }
                     }
+                    // let row = getS3GoogleSyncFilesListResponse.response.rows.filter(x => (x.s3path && x.s3md5 && x.googledrivepath))[1];
+                    // const { file_id, s3md5, s3path, googledrivepath } = row;
+                    // console.log(row);
+                    // console.log('md5', s3md5);
+                    // if(s3path && s3md5 && googledrivepath) {
+                    //     // let copyFromS3ToDriveResponse = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, googleAuth).toPromise();
+                    //     // console.table(copyFromS3ToDriveResponse);
+                    //     _this.backendService.syncDriveS3File(googledrivepath, s3path, s3md5, googleAuth).subscribe(
+                    //         syncDriveS3FileResponse => {
+                    //             console.table(syncDriveS3FileResponse);
+                    //             // _this.backendService.syncDriveS3File
+                    //         },
+                    //         error => {
+                    //             console.log('syncDriveS3FileResponse', error);
+                    //         }
+                    //     );
+                    // }
                 }
                 // _this.backendService.syncDriveS3File
             },
