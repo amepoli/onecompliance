@@ -118,7 +118,7 @@ exports.handler = async (event, context) => {
     let keys = queryParams['keys'] ? JSON.parse(queryParams['keys']) : null;
     const entryName = queryParams['entry_name'];
     const checksum = queryParams['checksum'];
-    const md5Checksum = queryParams['md5_checksum'];
+    const md5Checksum =  (queryParams['md5_checksum'] == undefined) ? null : queryParams['md5_checksum'];
     const request_type = queryParams['request_type'];
     const contentsPrefix = queryParams['contents_prefix'];
     const company = queryParams['company'];
