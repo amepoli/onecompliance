@@ -2062,6 +2062,10 @@ exports.handler = async (event, context) => {
                 queryString = getFormActionQuery(formActionType, table_keys, entry_params);
             } else if (isSearchRequest) {
                 queryString = getTableQuery(entry_params, table_keys, false, search_keys, additionalQueryCond);
+                // Zee: Since now the first call can be a search request (not having to call GET first) so if we don't calculate search combox here, the advanced search doesn't work.
+                // I know it adds more work but is still better to having to call lambda twice
+                // add the search combos if any
+               getSearchCombos(entry_params, table_keys, false, queryString.comboQueries); 
             } else if (isNewRecord) {
                 queryString = getNewQuery(entry_params, table_keys);
             } else if (isFormRecord) {
@@ -2136,7 +2140,7 @@ exports.handler = async (event, context) => {
         } else {
             // process query string(s) 
             queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'), (method === 'GET'));
-        }
+        }   
 
         // process comboboxes 
         if (method === 'GET' && dashboardIndex == null && !isEventUpdate && !isCustomQuery && !isFormAction) {

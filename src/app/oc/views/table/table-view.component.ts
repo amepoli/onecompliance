@@ -281,7 +281,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         _this.explorerSource = 'table-view';
                     }
                     if(_this.explorerSource != 'google-drive') {
-                        _this.loadTableInfo();
+                        _this.loadTable(null);
                     }
                     else {
                         _this.loadDriveContents();
@@ -388,7 +388,11 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
         */
 
-       _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
+        /*
+            No need to use this function anymore since I (Zee) fixed the search keys stuff in SearchRequest. 
+        */
+       
+        _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
