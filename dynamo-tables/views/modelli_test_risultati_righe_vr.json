@@ -12,8 +12,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "codice_azienda",
-      "label": "codice_azienda",
-      "readOnly": false,
+      "label": "Azienda",
+      "readOnly": true,
       "newLine": false
     },
     {
@@ -25,7 +25,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_modello_test",
-      "readOnly": false,
+      "label": "ID mod. test",
+      "readOnly": true,
       "newLine": false
     },
     {
@@ -37,16 +38,30 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_modello_test_vr",
-      "readOnly": false,
+      "label": "Versione mod. test",
+      "readOnly": true,
       "newLine": false
     },
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT distinct pct_da AS id, pct_da AS name FROM entrasp.modelli_test_risultati_righe WHERE id_risultato=£id_risultato£ and codice_azienda=$codice_azienda$ order by pct_da;",
-          "options": [],
-          "viewType": "combobox",
-          "dataType": "number"
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_risultato",
+      "label": "Criterio di analisi",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT distinct pct_da AS id, pct_da AS name FROM entrasp.modelli_test_risultati_righe WHERE id_risultato=£id_risultato£ and codice_azienda=$codice_azienda$ and pct_da not in (SELECT distinct pct_da FROM entrasp.modelli_test_risultati_righe_vr WHERE id_risultato=£id_risultato£ and codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$) order by pct_da;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": true,
@@ -58,24 +73,11 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "number",
-          "viewType":"input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_risultato",
-      "label": "Criterio di analisi",
-      "newLine": false,
-      "readOnly": false
-  },
-    {
-      "autoGenerate": false,
-      "format": {
         "viewType": "input",
         "dataType": "number"
       },
       "isHidden": false,
-      "isPrimary": true,
+      "isPrimary": false,
       "key": "num_criticita",
       "label": "Numero Criticità",
       "readOnly": false,
@@ -93,11 +95,23 @@
       "label": "Percentuale target",
       "readOnly": false,
       "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "base",
+      "label": "Moltiplicatore",
+      "readOnly": true,
+      "newLine": false
     }
   ],
   "table_keys": [
     {
-      
       "format": {
         "dataType": "text"
       },
@@ -107,7 +121,6 @@
       "label": "codice_azienda"
     },
     {
-      
       "format": {
         "dataType": "number"
       },
@@ -125,8 +138,7 @@
     },
     {
       "format": {
-
-          "dataType": "number"
+        "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": true,
@@ -137,7 +149,7 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "id_risultato",
       "label": "id risultato"
@@ -147,7 +159,7 @@
         "dataType": "number"
       },
       "isHidden": false,
-      "isPrimary": true,
+      "isPrimary": false,
       "key": "num_criticita",
       "label": "Numero Criticità"
     },
@@ -159,6 +171,94 @@
       "isPrimary": false,
       "key": "pct_target",
       "label": "Percentuale target"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "base",
+      "label": "Moltiplicatore"
+    }
+  ],
+  "hideActions": [
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "import_export",
+      "viewType": "table"
+    },
+    {
+      "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "documentation",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "import_export",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "multi-attachments",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "quick-add",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "share",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "startEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "stopEvent",
+      "viewType": "form"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "ORDER BY pct_da"
+  },
+  "inputEvents": [
+    {
+      "actionType": "navigate",
+      "eventName": "onSave",
+      "actionTarget": {
+        "keymap": [
+          {
+            "destination": "codice_azienda",
+            "source": "codice_azienda"
+          },
+          {
+            "destination": "id_modello_test",
+            "source": "id_modello_test"
+          },
+          {
+            "destination": "id_modello_test_vr",
+            "source": "id_modello_test_vr"
+          }
+        ],
+        "type": "form",
+        "name": "modelli_test_vr"
+      }
+    }
+  ],
+  "outputEvents": [
+    {
+      "eventName": "onSave",
+      "eventTrigger": "onSave"
     }
   ]
 }
