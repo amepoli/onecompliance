@@ -10,9 +10,18 @@
     {
       "operation": "update",
       "type": "postProcessing",
+      "queryString": "UPDATE entrasp.modelli_test_vr SET flag_penalizzazioni= (SELECT CASE WHEN £flag_penalizzazioni£ = 1 THEN TRUE ELSE FALSE END) WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$ AND id_modello_test_vr=$id_modello_test_vr$"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
       "queryString": "select entrasp.modelli_test_risultati_righe_insert($codice_azienda$, $id_tipo_risultato$, $id_risultato$);"
+    },
+    {
+      "operation": "selectForm",
+      "type": "main",
+      "queryString": "SELECT a.codice_azienda,b.id_modello_test,b.id_modello_test_vr,b.flag_penalizzazioni,a.id_risultato,a.descrizione,a.pct_pesatura,a.id_tipo_risultato,a.flag_valore_significativo,a.flag_pct_risultato_inverso,a.tipo_calcolo FROM entrasp.modelli_test_risultati a INNER JOIN entrasp.modelli_test_vr b ON a.codice_azienda=b.codice_azienda AND a.id_risultato=b.id_risultato WHERE a.codice_azienda=$codice_azienda$ AND a.id_risultato=$id_risultato$ AND b.id_modello_test=$id_modello_test$ AND b.id_modello_test_vr=$id_modello_test_vr$;"
     }
-
   ],
   "form_keys": [
     {
@@ -27,6 +36,34 @@
       "label": "codice_azienda",
       "newLine": false,
       "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test",
+      "label": "mt",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_modello_test_vr",
+      "label": "vr",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false
     },
     {
       "autoGenerate": true,
@@ -53,7 +90,7 @@
       "key": "descrizione",
       "label": "Descrizione",
       "newLine": false,
-      "readOnly": false,
+      "readOnly": true,
       "size": 4.5
     },
     {
@@ -118,7 +155,7 @@
       "key": "id_tipo_risultato",
       "label": "Criterio di analisi",
       "newLine": true,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -142,13 +179,75 @@
       "isPrimary": false,
       "key": "flag_pct_risultato_inverso",
       "label": "Inverti soglie",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false
     },
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT cast(codice as numeric) as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CALCOLO_RISULTATO_SINTETICO'",
+        "viewType": "checkbox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "size": 1.5,
+      "key": "flag_penalizzazioni",
+      "label": "Penalizzazioni",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": false,
+      "outputEvent": {
+        "eventName": "mtvr_flag_penalizzazioni",
+        "eventTrigger": "change"
+      },
+      "inputEvents": [
+        {
+          "eventName": "mtvr_flag_penalizzazioni",
+          "actionType": "query",
+          "values": [],
+          "queryFunct": "UPDATE entrasp.modelli_test_vr SET flag_penalizzazioni = (SELECT CASE WHEN £flag_penalizzazioni£ = 1 THEN TRUE ELSE FALSE END), tipo_pt_pen = coalesce(tipo_pt_pen, 'Medio') WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$ AND id_modello_test_vr=$id_modello_test_vr$;"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT * FROM (VALUES (1, 'Minimo'),(2, 'Medio'),(3, 'Massimo')) t1 (id, name)",
+        "dataType": "text",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_pt_pen",
+      "label": "Tipo punteggio domanda per penalizzazione",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false,
+      "outputEvent": {
+        "eventName": "calcola_flag_soglia",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "mtvr_flag_penalizzazioni",
+          "condition": "equalTo",
+          "values": [
+            "1"
+          ]
+        },
+        {
+          "actionType": "query",
+          "eventName": "calcola_flag_soglia",
+          "values": [],
+          "queryFunct": "UPDATE entrasp.modelli_test_vr SET tipo_pt_pen = £tipo_pt_pen£ WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$ AND id_modello_test_vr=$id_modello_test_vr$;"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT distinct cast(codice as numeric) as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CALCOLO_RISULTATO_SINTETICO'",
         "dataType": "number",
         "options": [],
         "viewType": "combobox"
@@ -250,6 +349,38 @@
       ],
       "label": "Sondaggi Associati",
       "type": "table"
+    },
+    {
+      "entryKey": "modelli_test_risultati_righe_vr",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        },
+        {
+          "parent": "id_modello_test_vr",
+          "son": "id_modello_test_vr"
+        },
+        {
+          "parent": "id_risultato",
+          "son": "id_risultato"
+        }
+      ],
+      "label": "Penalizzazioni",
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "mtvr_flag_penalizzazioni",
+          "condition": "equalTo",
+          "values": [
+            "1"
+          ]
+        }
+      ]
     }
   ],
   "table_keys": [
