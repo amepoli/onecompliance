@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select * from entrasp.domande dm inner join entrasp.modelli_test mt on dm.codice_azienda=mt.codice_azienda and dm.id_modello_test=mt.id_modello_test and dm.id_modello_test_vr=mt.id_modello_test_vr where mt.codice_azienda=$codice_azienda$",
+      "queryString": "select codice_azienda, ordinamento, id_modello_test, id_modello_test_vr, id_domanda, descrizione, entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda) as risposte_prev, note from entrasp.domande dm where dm.codice_azienda=$codice_azienda$",
       "type": "main"
     },
     {
@@ -394,8 +394,20 @@
         "eventName": "id_domanda_rif_change",
         "eventTrigger": "select"
       },
-      "newLine": true,
+      "newLine": false,
       "size": 10,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "checkbox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "flag_non_viene_risposto",
+      "label": "NON",
+      "newLine": true,
       "readOnly": false
     },
     {
@@ -638,6 +650,105 @@
       "readOnly": false,
       "sameOrigin": false,
       "newLine": false
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "width": "3%",
+      "isPrimary": false,
+      "key": "ordinamento",
+      "label": "Ord."
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "width": "10%",
+      "isPrimary": true,
+      "key": "id_domanda",
+      "label": "ID domanda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "width": "10%",
+      "key": "id_domanda_rif",
+      "label": "ID.dom.condiz."
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "10%",
+      "key": "id_argomento",
+      "label": "argomento"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_modello_test",
+      "label": "ID modello di test"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_modello_test_vr",
+      "label": "Versione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Domanda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "width": "20%",
+      "label": "Note"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "queryFunct": "entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda)",
+      "key": "risposte_prev",
+      "width": "20%",
+      "label": "Risposte Previste"
     }
   ],
   "search_keys": [
