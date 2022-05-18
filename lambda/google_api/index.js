@@ -118,7 +118,6 @@ async function downloadS3Object(s3FilePath, file) {
     };
 
     const data = await s3.getObject(params).promise();
-
     return data;
 }
 
@@ -156,12 +155,12 @@ async function downloadDriveObject(driveFolderId, driveFile) {
         response = await drive.files.get({
             fileId: driveFileId,
             alt: 'media'
-        });
+        },
+        { responseType: "arraybuffer" });
     }
     
-    console.log('download file result: ', JSON.stringify(response));
-
-    const data = response.data;
+    const data = Buffer.from(response.data);    
+    console.log('google file data: ', data);
     return data;
 }
 
@@ -677,16 +676,25 @@ async function copyFromS3ToDrive(queryParams, authParams) {
     
     
     const s3FileData = await downloadS3Object(s3FilePath, s3File);
-    const s3Data = s3FileData.Body.toString('utf-8');
+    console.log('s3FileData: ', s3FileData);
+    
+    const s3Data = s3FileData.Body;
+    const s3DataStr = s3Data.toString('hex');
+    console.log('data: ', s3DataStr);
+    
+    // var bufferStream = new stream.PassThrough();
+    // bufferStream.end(Uint8Array.from(s3Data));
     
     var bufferStream = new stream.PassThrough();
-    bufferStream.end(Uint8Array.from(Buffer.from(s3Data, "utf-8")));
+    // bufferStream.end(Uint8Array.from(Buffer.from(s3DataStr, "hex")));
+    bufferStream.end(s3Data);
+    
+    //var bufferStream = Buffer.from(s3DataStr, 'hex');
 
     // let bufferStream = new stream.PassThrough();
     // bufferStream.end(s3FileData.Body);
 
     // const stream = Readable.from(s3FileData);
-    console.log('data: ', s3Data);
     // console.log('data: ' + JSON.stringify(bufferStream));
 
     await performGoogleAuth(authParams);
@@ -755,7 +763,7 @@ async function copyFromS3ToDrive(queryParams, authParams) {
         parents: [driveFolderId]
     };
     const media = {
-        mimeType: 'text/plain',
+        mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         body: bufferStream
     };
 
@@ -783,7 +791,6 @@ async function copyFromDriveToS3(s3FilePath, driveFolderId, driveFile) {
     let response;
     
     const driveFileData = await downloadDriveObject(driveFolderId, driveFile);
-    console.log('data: ', driveFileData);
     response = await uploadS3Object(s3FilePath, driveFileData);
 
     // console.log('data: ' + JSON.stringify(bufferStream));
