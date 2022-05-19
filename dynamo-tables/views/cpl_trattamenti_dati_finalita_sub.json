@@ -3,6 +3,19 @@
   "entryKey": "cpl_trattamenti_dati_finalita_sub",
   "origin": "entrasp.cpl_trattamenti_dati_finalita",
   "businessObjectName": "cpl_trattamenti_dati_finalita",
+  "predefinedQueries": [
+    {
+      "operation": "insert",
+      "queryString": "update entrasp.cpl_trattamenti_dati_finalita fin1 set codice_articolo_normativo=fin2.codice_articolo_normativo, id_testo_normativo=fin2.id_testo_normativo from entrasp.cpl_trattamenti_dati_finalita fin2 where fin1.codice_articolo_normativo is null and fin1.id_argomento_finalita=fin2.id_argomento_finalita and fin2.codice_articolo_normativo is not null and fin2.id_testo_normativo is not null;",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.cpl_trattamenti_dati_finalita fin1 set codice_articolo_normativo=fin2.codice_articolo_normativo, id_testo_normativo=fin2.id_testo_normativo from entrasp.cpl_trattamenti_dati_finalita fin2 where fin1.codice_articolo_normativo is null and fin1.id_argomento_finalita=fin2.id_argomento_finalita and fin2.codice_articolo_normativo is not null and fin2.id_testo_normativo is not null;",
+      "type": "postProcessing"
+    }
+
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -30,48 +43,20 @@
       "readOnly": false,
       "newLine": false
     },
-    {
-      "autoGenerate": true,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_trattamento_dati_finalita",
-      "label": "ID",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
+   {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='FINALITA_TRATTAMENTO'",
-        "dataType": "text",
+        "comboQuery": "SELECT id_argomento as id, id_argomento||'-'||descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=44987",
         "options": [],
         "viewType": "combobox"
       },
       "isHidden": false,
-      "isPrimary": false,
-      "key": "finalita_trattamento",
+      "isPrimary": true,
+      "key": "id_argomento_finalita",
       "label": "Finalità Trattamento",
       "readOnly": false,
       "size": 5,
       "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "finalita_ulteriori",
-      "label": "Finalità Ulteriori",
-      "readOnly": false,
-      "size": 4.5,
-      "newLine": true
     },
     {
       "autoGenerate": false,
@@ -106,7 +91,6 @@
       "autoGenerate": false,
       "format": {
         "comboQuery": "select id_testo_normativo as id, riferimenti as name from entrasp.testi_normativi",
-        "dataType": "text",
         "options": [],
         "viewType": "combobox",
         "value": "35"
@@ -143,7 +127,7 @@
       "key": "annotazioni",
       "label": "Annotazioni",
       "readOnly": false,
-      "size": 3,
+      "size": 5,
       "newLine": false
     }
   ],
@@ -172,7 +156,7 @@
       },
       "isHidden": true,
       "isPrimary": true,
-      "key": "id_trattamento_dati_finalita",
+      "key": "id_argomento_finalita",
       "width": "5%",
       "label": "ID"
     },
@@ -196,7 +180,7 @@
       "buttonAction": {
         "target": "cpl_trattamenti_dati_finalita_sub",
         "viewType": "form",
-        "query": "delete from entrasp.cpl_trattamenti_dati_finalita where codice_azienda='£codice_azienda£' AND id_trattamento_dati_finalita=£id_trattamento_dati_finalita£ AND id_trattamento_dati=£id_trattamento_dati£",
+        "query": "delete from entrasp.cpl_trattamenti_dati_finalita where codice_azienda='£codice_azienda£' AND id_argomento_finalita=£id_argomento_finalita£ AND id_trattamento_dati=£id_trattamento_dati£",
         "action": "query",
         "keymap": [
           {
@@ -204,8 +188,8 @@
             "destination": "codice_azienda"
           },
           {
-            "source": "id_trattamento_dati_finalita",
-            "destination": "id_trattamento_dati_finalita"
+            "source": "id_argomento_finalita",
+            "destination": "id_argomento_finalita"
           },
           {
             "source": "id_trattamento_dati",
@@ -223,7 +207,7 @@
       "isPrimary": false,
       "key": "finalita_trattamento",
       "width": "35%",
-      "queryFunct": "entrasp.transcodifiche_transcodifica('FINALITA_TRATTAMENTO', finalita_trattamento)",
+      "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_finalita)",
       "label": "Finalità Trattamento"
     },
     {
@@ -232,18 +216,8 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "35%",
-      "key": "finalita_ulteriori",
-      "label": "Finalità Ulteriori"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
       "key": "codice_articolo_normativo",
-      "width": "8%",
+      "width": "15%",
       "label": "Articolo Normativo"
     },
     {
