@@ -22,11 +22,6 @@
       "queryString": "SELECT mdt.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
     },
     {
-      "operation": "selectForm",
-      "type": "postProcessing",
-      "queryString": "SELECT mdt.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
-    },
-    {
       "operation": "delete",
       "type": "main",
       "queryString": "select entrasp.somministrazione_delete($codice_azienda$, $id_somministrazione$)"
@@ -946,7 +941,7 @@
           "queryFunct": "select punteggio_description FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
         }
       ],
-      "size": 1
+      "size": 1.2
     },
     {
       "autoGenerate": false,
@@ -1015,7 +1010,7 @@
           "queryFunct": "select giudizio from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
         }
       ],
-      "size": 1.2
+      "size": 1.0
     },
     {
       "autoGenerate": false,
@@ -1312,6 +1307,20 @@
       ],
       "label": "Profilazioni sul cliente",
       "type": "table"
+    },
+    {
+      "entryKey": "penalizzazioni_somministrazione",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
+      ],
+      "label": "Info Aggiuntive"
     }
   ],
   "table_keys": [

@@ -1495,6 +1495,16 @@
       "label": "Mie/Mio Ufficio",
       "newLine": false,
       "queryCond": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€')"
+    },
+    {
+      "fieldName": "flag_profilazione_scaduta",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Profilazione Scaduta",
+      "newLine": false,
+      "queryCond": "entrasp.prof_scaduta($codice_azienda$, ss.id_somministrazione)"
     }
   ],
   "subTables": [
@@ -1664,6 +1674,20 @@
         }
       ],
       "label": "Aggiornamenti e Time Report"
+    },
+    {
+      "entryKey": "penalizzazioni_somministrazione",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
+      ],
+      "label": "Info Aggiuntive"
     }
   ],
   "table_keys": [
