@@ -1516,12 +1516,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             else if(googleAPIParams.actionType == 'copy_s3_to_drive') {
-                if(!googleAPIParams.S3ToDriveParams) {
+                if(!googleAPIParams.s3ToDriveParams) {
                     _this._toastService.showErrorToast("Missing Google API Path Params");
                 }
                 else {
-                    const s3Path = formValues[googleAPIParams.S3ToDriveParams.s3PathKey];
-                    const drivePath = formValues[googleAPIParams.S3ToDriveParams.drivePathKey];
+                    const s3Path = formValues[googleAPIParams.s3ToDriveParams.s3PathKey];
+                    const drivePath = formValues[googleAPIParams.s3ToDriveParams.drivePathKey];
                     if(!s3Path || !drivePath) {
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
@@ -1549,12 +1549,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             else if(googleAPIParams.actionType == 'copy_drive_to_s3') {
-                if(!googleAPIParams.DriveToS3Params) {
+                if(!googleAPIParams.driveToS3Params) {
                     _this._toastService.showErrorToast("Missing Google API Path Params");
                 }
                 else {
-                    const drivePath = formValues[googleAPIParams.DriveToS3Params.drivePathKey];
-                    const s3Path = formValues[googleAPIParams.S3ToDriveParams.s3PathKey];
+                    const drivePath = formValues[googleAPIParams.driveToS3Params.drivePathKey];
+                    const s3Path = formValues[googleAPIParams.s3ToDriveParams.s3PathKey];
                     if(!drivePath || !s3Path) {
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
@@ -1579,6 +1579,26 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         );
                     }
                     
+                }
+            }
+            else if(googleAPIParams.actionType == 'get_folder_expanded_contents') {
+                if(!googleAPIParams.driveExpandedContentsParams) {
+                    _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
+                }
+                else {
+                    const codiceAzienda = formValues[googleAPIParams.driveExpandedContentsParams.codiceAziendaKey];
+                    const idProgetto = formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey];
+                    const idAnagrafica = formValues[googleAPIParams.driveExpandedContentsParams.idAnagraficaKey];
+                    if(!codiceAzienda || !idProgetto || !idAnagrafica) {
+                        _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
+                    }
+                    else {
+                        //let auth = _this.authService.loginGoogle();
+                        let anagrafica_contents =  await _this.backendService.getDriveFolderContentsByAnagrafica(codiceAzienda, idAnagrafica).toPromise();
+                        console.log(anagrafica_contents);
+                        let folderName = anagrafica_contents.response[0]['anagrafica_folder_name'];
+                        console.log(codiceAzienda, idProgetto, idAnagrafica, folderName);
+                    }
                 }
             }
             else {

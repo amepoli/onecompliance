@@ -403,6 +403,12 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   }
 
+  getDriveFolderContentsByAnagrafica(company: string, id_anagrafica: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { request_type: 'getDriveFolderContentsByAnagrafica', company: company, id_anagrafica: id_anagrafica };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.attachApiName, this.myGetInit));
+  }
+
   loadHomePage(entryName: string, company: string): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, homepage: 1};

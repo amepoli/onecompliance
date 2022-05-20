@@ -1,5 +1,5 @@
 export interface GoogleAPIParams {
-    actionType: 'get_distance' | 'get_directions' | 'get_email_thread' | 'create_drive_folder' | 'copy_s3_to_drive' | 'copy_drive_to_s3',
+    actionType: 'get_distance' | 'get_directions' | 'get_email_thread' | 'create_drive_folder' | 'copy_s3_to_drive' | 'copy_drive_to_s3' | 'get_folder_expanded_contents',
     directionsParams?: {
         originKey: string,
         destinationKey: string
@@ -15,12 +15,17 @@ export interface GoogleAPIParams {
     driveFolderParams? : {
         driveFolderKey: string
     },
-    S3ToDriveParams? : {
+    s3ToDriveParams? : {
         s3PathKey: string,
         drivePathKey: string
     },
-    DriveToS3Params? : {
+    driveToS3Params? : {
         drivePathKey: string,
         s3PathKey: string
+    },
+    driveExpandedContentsParams? : {
+        codiceAziendaKey: string;
+        idProgettoKey: string;
+        idAnagraficaKey: string;
     }
 };
