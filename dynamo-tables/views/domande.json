@@ -124,35 +124,6 @@
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "cancella_domande",
-      "buttonIcon": "delete",
-      "newLine": false,
-      "size": 0.5,
-      "label": "",
-      "outputEvent": {
-        "eventName": "domande_cancella",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "domande_cancella",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.domanda_delete($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$)",
-          "outputEventWhenComplete": "update_domande"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
         "dataType": "number",
         "viewType": "input"
       },
@@ -489,6 +460,54 @@
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "4%",
+      "queryFunct": "select true",
+      "key": "delete_domanda",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "delete_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "domande",
+        "viewType": "table",
+        "query": "select entrasp.domanda_delete(£codice_azienda£, £id_modello_test£, £id_modello_test_vr£, £id_domanda£)",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_modello_test",
+            "destination": "id_modello_test"
+          },
+          {
+            "source": "id_modello_test_vr",
+            "destination": "id_modello_test_vr"
+          },
+          {
+            "source": "id_domanda",
+            "destination": "id_domanda"
+          }
+        ],
+        "confirmAction": true,
+        "confirmMessage": {
+          "text": "Sei sicuro di voler cancellare la domanda?",
+          "title": "Cancellazione domanda"
+        },
+        "onSuccessAction": "reload"
+      }
     },
     {
       "format": {
