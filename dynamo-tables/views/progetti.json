@@ -450,6 +450,12 @@
 						"icon": "sync_alt",
 						"label": "All. date e centri gest",
 						"outputEventName": "allinea_date"
+					},
+					{
+						"icon": "sync_alt",
+						"label": "Get Google Folder Contents",
+						"outputEventName": "get_drive_folder_contents"
+						
 					}
 				]
 			},
@@ -538,6 +544,18 @@
 					"values": [],
 					"queryFunct": "update entrasp.sondaggi snd set data_comp=pr.data_competenza, id_centro_gest=pr.id_centro_gest from entrasp.progetti_fasi pf, entrasp.progetti pr where pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=pr.codice_azienda and pf.id_progetto=pr.id_progetto and snd.codice_azienda=$codice_azienda$ and pr.id_progetto=$id_progetto$; update entrasp.modelli_test mt set id_centro_gest=snd.id_centro_gest from entrasp.sondaggi snd where mt.codice_azienda=snd.codice_azienda and mt.id_modello_test=snd.id_modello_test and mt.id_centro_gest is null and mt.codice_azienda=$codice_azienda$",
 					"outputEventWhenComplete": "formReload"
+				},
+				{
+					"eventName": "get_drive_folder_contents",
+					"actionType": "google_api",
+					"googleAPIParams": {
+						"actionType": "get_folder_expanded_contents",
+						"driveExpandedContentsParams": {
+							"codiceAziendaKey": "codice_azienda",
+							"idAnagraficaKey": "id_cliente",
+							"idProgettoKey": "id_progetto"
+						}
+					}
 				}
 			]
 		},

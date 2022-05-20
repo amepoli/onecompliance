@@ -1,3 +1,16 @@
+const Pool = require('pg-pool');
+const pool = new Pool({
+    host: 'HOST_NAME',
+    database: 'DB_NAME',
+    user: 'USER_NAME',
+    password: 'PASSWORD',
+    port: 5432,
+    max: 1,
+    min: 0,
+    idleTimeoutMillis: 300000,
+    connectionTimeoutMillis: 1000
+});
+
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
@@ -966,6 +979,7 @@ async function syncDriveS3File(syncData, authParams) {
     return { result: 'OK', result: result };
 }
 
+
 exports.handler = async (event, context) => {
 
     // console.log(event);
@@ -1060,6 +1074,12 @@ exports.handler = async (event, context) => {
             else if (requestType === 'syncDriveS3File') {
                 const syncData = JSON.parse(queryParams['syncData']);
                 body = await syncDriveS3File(syncData, event.body? JSON.parse(event.body): {});
+            }
+            else if (requestType === 'getDriveFolderContentsByAnagrafica') {
+                const codice_azienda = queryParams['codice_azienda'];
+                const id_progetto = queryParams['id_progetto'];
+                const id_anagrafica = queryParams['id_anagrafica'];
+                body = await getDriveFolderContentsByAnagrafica(codice_azienda, id_progetto, id_anagrafica, event.body? JSON.parse(event.body): {});
             }
             else {
                 return getBadUrlResponse();
