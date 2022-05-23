@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports5.2.0  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="modelliTestQA_sezioni" pageWidth="507" pageHeight="800" columnWidth="507" leftMargin="0" rightMargin="0" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
@@ -13,7 +13,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.xml"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="202"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="793"/>
@@ -22,20 +22,20 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="codice_azienda" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["FININTSGR"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["CANOVASGR"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="id_modello_test" class="java.math.BigDecimal" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new BigDecimal(621.000)]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new BigDecimal(1)]]></defaultValueExpression>
 	</parameter>
 	<parameter name="id_modello_test_vr" class="java.math.BigDecimal" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new BigDecimal(1.000)]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new BigDecimal(2)]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[select d.id_domanda, ds.ordinamento as ds_ord, d.punteggio,ds.id_sezione,d.descrizione,ds.descrizione as descrizione_sezione, d.ordinamento,rp.peso, rp.id_modello_test, rp.risposta, d.note as note_domanda, rp.ordinamento as r_ordinamento from entrasp.domande d
 
 join entrasp.risposte_previste rp on d.codice_azienda=rp.codice_azienda and d.id_domanda=rp.id_domanda and d.id_modello_test_vr=rp.id_modello_test_vr and d.id_modello_test=rp.id_modello_test
 
-join entrasp.domande_sezioni ds on d.codice_azienda=rp.codice_azienda and d.id_modello_test=ds.id_modello_test and d.id_modello_test_vr=ds.id_modello_test_vr and d.id_sezione=ds.id_sezione
+join entrasp.domande_sezioni ds on d.codice_azienda=ds.codice_azienda and d.id_modello_test=ds.id_modello_test and d.id_modello_test_vr=ds.id_modello_test_vr and d.id_sezione=ds.id_sezione
 
 where d.codice_azienda=$P{codice_azienda} and d.id_modello_test=$P{id_modello_test} and d.id_modello_test_vr=$P{id_modello_test_vr}]]>
 	</queryString>
@@ -137,7 +137,7 @@ where d.codice_azienda=$P{codice_azienda} and d.id_modello_test=$P{id_modello_te
 		<groupExpression><![CDATA[$F{id_domanda}]]></groupExpression>
 		<groupHeader>
 			<band height="50">
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement positionType="Float" mode="Opaque" x="30" y="3" width="400" height="20" printWhenGroupChanges="Id_domanda" forecolor="#FFFFFF" backcolor="#25599C" uuid="a554d741-c9f5-4d3b-87d3-67996f969505">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					</reportElement>
@@ -147,7 +147,7 @@ where d.codice_azienda=$P{codice_azienda} and d.id_modello_test=$P{id_modello_te
 					</textElement>
 					<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement positionType="Float" mode="Opaque" x="0" y="3" width="25" height="20" printWhenGroupChanges="Id_domanda" forecolor="#FFFFFF" backcolor="#25599C" uuid="95e803c0-ee2c-4b5c-90e3-7255cc42b3d8">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -184,7 +184,7 @@ where d.codice_azienda=$P{codice_azienda} and d.id_modello_test=$P{id_modello_te
 	<detail>
 		<band height="30" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<textField isStretchWithOverflow="true">
+			<textField textAdjust="StretchHeight">
 				<reportElement positionType="Float" x="0" y="2" width="25" height="20" uuid="5b8fde58-c894-40ed-b6f4-605065b60079">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -192,7 +192,7 @@ where d.codice_azienda=$P{codice_azienda} and d.id_modello_test=$P{id_modello_te
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{r_ordinamento}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField textAdjust="StretchHeight">
 				<reportElement positionType="Float" x="30" y="2" width="400" height="20" uuid="675e343a-9bc0-411f-9958-8f55dedba3c4">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
