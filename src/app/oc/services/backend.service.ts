@@ -403,9 +403,16 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   }
 
-  getDriveFolderContentsByAnagrafica(company: string, id_anagrafica: string): Observable<any> {
+  getDriveFolderDeepContents(driveFolder: string, authToken: any) {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { request_type: 'getDriveFolderContentsByAnagrafica', company: company, id_anagrafica: id_anagrafica };
+    this.myPutPostInit.queryStringParameters = { request_type: 'getDriveFolderDeepContents', driveFolder: driveFolder };
+    this.myPutPostInit.body = authToken;
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
+  }
+
+  getGoogleDriveFolderNameByAnagrafica(company: string, id_anagrafica: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { request_type: 'getGoogleDriveFolderNameByAnagrafica', company: company, id_anagrafica: id_anagrafica };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.attachApiName, this.myGetInit));
   }
 

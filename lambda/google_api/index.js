@@ -1,16 +1,3 @@
-const Pool = require('pg-pool');
-const pool = new Pool({
-    host: 'HOST_NAME',
-    database: 'DB_NAME',
-    user: 'USER_NAME',
-    password: 'PASSWORD',
-    port: 5432,
-    max: 1,
-    min: 0,
-    idleTimeoutMillis: 300000,
-    connectionTimeoutMillis: 1000
-});
-
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
@@ -31,6 +18,10 @@ const oAuth2Client = new OAuth2Client(
 // var promisify = require('promisify');
 // const { promisify } = require('bluebird');
 const { google } = require('googleapis');
+const { file } = require('googleapis/build/src/apis/file');
+
+const folderMime = 'application/vnd.google-apps.folder';
+
 
 // Get Bad URL Response
 function getBadUrlResponse() {
@@ -77,7 +68,7 @@ async function getDriveFileId(drivePath, authParams) {
         for await (drivePathFolder of drivePathFolders) {
             console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
             response = await drive.files.list({
-                q: `'${driveFolderId}' in parents and mimeType='application/vnd.google-apps.folder' and name='${drivePathFolder}'`,
+                q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
                 pageSize: 5,
                 fields: 'nextPageToken, files(id, name, mimeType)',
             });
@@ -95,7 +86,7 @@ async function getDriveFileId(drivePath, authParams) {
                 var folderCreateMetadata = {
                     'parents': [driveFolderId],
                     'name': drivePathFolder,
-                    'mimeType': 'application/vnd.google-apps.folder'
+                    'mimeType': folderMime
                 };
             
                 let response;
@@ -558,7 +549,7 @@ async function createDriveFolder(folder, authParams) {
 
     var fileMetadata = {
         'name': folder,
-        'mimeType': 'application/vnd.google-apps.folder'
+        'mimeType': folderMime
     };
 
     let response;
@@ -722,7 +713,7 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
         for await (drivePathFolder of drivePathFolders) {
             console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
             response = await drive.files.list({
-                q: `'${driveFolderId}' in parents and mimeType='application/vnd.google-apps.folder' and name='${drivePathFolder}'`,
+                q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
                 pageSize: 5,
                 fields: 'nextPageToken, files(id, name, mimeType)',
             });
@@ -740,7 +731,7 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
                 var folderCreateMetadata = {
                     'parents': [driveFolderId],
                     'name': drivePathFolder,
-                    'mimeType': 'application/vnd.google-apps.folder'
+                    'mimeType': folderMime
                 };
             
                 let response;
@@ -817,7 +808,7 @@ async function copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, authParam
 
     // if(drivePath.length > 0) {        
     //     response = await drive.files.list({
-    //         q: `mimeType='application/vnd.google-apps.folder' and name='${drivePath}'`,
+    //         q: `mimeType='${folderMime}' and name='${drivePath}'`,
     //         pageSize: 5,
     //         fields: 'nextPageToken, files(id, name, mimeType)',
     //     });
@@ -979,6 +970,70 @@ async function syncDriveS3File(syncData, authParams) {
     return { result: 'OK', result: result };
 }
 
+// Get getDriveRecursiveContents
+async function getDriveRecursiveContents(drive, driveFolder, driveFileId, results) {
+    let response;
+    try {
+        let query = '';
+        if(driveFolder) {
+            query = `name='${driveFolder}' and mimeType='${folderMime}'`;
+        }
+        else {
+            query = `'${driveFileId}' in parents`;
+        }
+        console.log('query: ', query);
+        
+        // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+        try {
+            response = await drive.files.list({
+                q: query,
+                pageSize: 250,
+                fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum)',
+              });
+            
+        }
+        catch(e) {
+            console.log('error', e);
+        }
+
+        try {
+            response = JSON.parse(response);    
+        }
+        catch(e) { }
+
+
+        console.log('list drive files: ', JSON.stringify(response));
+
+        if(response.data && response.data.files && response.data.files.length > 0) {
+            for await (let curFile of response.data.files) {
+                if(curFile.mimeType == folderMime) {
+                    results = await getDriveRecursiveContents(drive, null, curFile.id, results);
+                }
+                else if(!curFile.trashed) {
+                    results.push({id: curFile.id, name: curFile.name, md5: curFile.md5Checksum});
+                }
+            }
+        }
+
+    }
+    catch (e) {
+        console.log(e);
+    }
+
+    return results;
+}
+
+async function getDriveFolderDeepContents(driveFolder, authParams) {
+    await performGoogleAuth(authParams);
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    console.log('driveFolder', driveFolder);
+    
+    let results = await getDriveRecursiveContents(drive, driveFolder, null, []);
+    console.log('results', JSON.stringify(results));    
+    
+    return { result: 'OK', files: results };
+
+}
 
 exports.handler = async (event, context) => {
 
@@ -1075,11 +1130,9 @@ exports.handler = async (event, context) => {
                 const syncData = JSON.parse(queryParams['syncData']);
                 body = await syncDriveS3File(syncData, event.body? JSON.parse(event.body): {});
             }
-            else if (requestType === 'getDriveFolderContentsByAnagrafica') {
-                const codice_azienda = queryParams['codice_azienda'];
-                const id_progetto = queryParams['id_progetto'];
-                const id_anagrafica = queryParams['id_anagrafica'];
-                body = await getDriveFolderContentsByAnagrafica(codice_azienda, id_progetto, id_anagrafica, event.body? JSON.parse(event.body): {});
+            else if (requestType === 'getDriveFolderDeepContents') {
+                const driveFolder = queryParams['driveFolder'];
+                body = await getDriveFolderDeepContents(driveFolder, event.body? JSON.parse(event.body): {});
             }
             else {
                 return getBadUrlResponse();
