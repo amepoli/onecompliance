@@ -1594,10 +1594,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                     else {
                         //let auth = _this.authService.loginGoogle();
-                        let anagrafica_contents =  await _this.backendService.getDriveFolderContentsByAnagrafica(codiceAzienda, idAnagrafica).toPromise();
+                        let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica).toPromise();
                         console.log(anagrafica_contents);
                         let folderName = anagrafica_contents.response[0]['anagrafica_folder_name'];
                         console.log(codiceAzienda, idProgetto, idAnagrafica, folderName);
+
+                        const googleAuth = await _this.authService.loginGoogle();
+                    
+                        let files = await _this.backendService.getDriveFolderDeepContents(folderName, googleAuth).toPromise();
+                        console.log(files);
                     }
                 }
             }

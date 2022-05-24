@@ -153,7 +153,7 @@ exports.handler = async (event, context) => {
         }
     }
 
-    if (requestType !== 'getGoogleDriveFileCopyParams' && requestType !== 'getS3GoogleSyncFilesList' && requestType !== 'getDriveFolderContentsByAnagrafica') {
+    if (requestType !== 'getGoogleDriveFileCopyParams' && requestType !== 'getS3GoogleSyncFilesList' && requestType !== 'getGoogleDriveFolderNameByAnagrafica') {
         if (entryName == null || keys == null || company == null) {
             requestType = 'badRequest';
         }
@@ -217,7 +217,7 @@ exports.handler = async (event, context) => {
             let response = await client.query(query);
             body = { result: 'OK', response: response };
         }
-        else if (requestType === 'getDriveFolderContentsByAnagrafica') {
+        else if (requestType === 'getGoogleDriveFolderNameByAnagrafica') {
             const id_anagrafica = queryParams['id_anagrafica'];
             client = await pool.connect();
             //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
