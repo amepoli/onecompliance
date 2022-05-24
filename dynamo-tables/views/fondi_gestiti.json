@@ -52,6 +52,7 @@
             "key": "id_anagrafica",
             "label": "ID",
             "newLine": false,
+            "size": 0.8,
             "readOnly": true
         },
         {
@@ -72,14 +73,14 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
-                "value": "CURRENT_DATE",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
+            "insertUpdateFunct": "select current_date",
             "key": "data_upd",
             "label": "Data Aggiunta",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false
         },
         {
@@ -92,7 +93,8 @@
             "isPrimary": false,
             "key": "ragione_sociale",
             "label": "Nome Fondo",
-            "newLine": true,
+            "newLine": false,
+            "size": 4,
             "readOnly": false
         },
         {
@@ -207,6 +209,12 @@
             "operation": "delete",
             "queryString": "SELECT entrasp.anagrafica_id_delete($codice_part$, '€global_codice_azienda€', $id_anagrafica$);",
             "type": "main"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select codice from entrasp.anagrafiche_id where codice_part=$codice_part$ and codice=$codice$",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice!"
         }
     ],
     "subTables": [
