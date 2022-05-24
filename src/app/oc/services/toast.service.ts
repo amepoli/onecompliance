@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ToastrService, IndividualConfig } from 'ngx-toastr';
+import { ToastrService, IndividualConfig, ActiveToast } from 'ngx-toastr';
 
 @Injectable({
     providedIn: 'root'
@@ -11,6 +11,8 @@ export class ToastService {
     // this.ToastService.showErrorToast('Error', 'Yesh! Done.', 2500);
 
     // Private
+    private lastLoadingToast: ActiveToast<any> = null;
+
     private _toastrTheme: Partial<IndividualConfig> = {
         tapToDismiss: true,
         closeButton: false,
@@ -143,6 +145,49 @@ export class ToastService {
             }
         );
     }
+
+    /**
+     * Show Loading Snackbar Toast
+     *
+     * @param title
+     * @param text
+     * @returns toastId
+     */
+     showLoadingToast(title: string, text) {
+        if(this.lastLoadingToast) {
+            this.hideLoadingToast(this.lastLoadingToast);
+        }
+
+        this.lastLoadingToast = this.toastr.info(
+            text,
+            title,
+            {
+                progressBar: true,
+                progressAnimation: 'increasing',
+                timeOut: 100000,
+                tapToDismiss: false
+            }
+        );
+
+        return this.lastLoadingToast;
+    }
+
+    /**
+     * Hide Loading Snackbar Toast
+     *
+     * @param toast
+     */
+     hideLoadingToast(toast: ActiveToast<any>) {
+        if (this.lastLoadingToast == toast) {
+            this.toastr.remove(this.lastLoadingToast.toastId);
+            this.lastLoadingToast = null;
+        }
+        else {
+            this.toastr.remove(toast.toastId);
+        }
+    }
+
+    
 
 
 }

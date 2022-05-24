@@ -994,6 +994,28 @@ async function overrideTable(son) {
     return father;
 }
 
+function replaceJSONParams(JSONString, paramsObject) {
+    if (paramsObject == null) {
+        return JSONString
+    } 
+
+    JSONString = JSON.stringify(JSONString);
+
+    for (const param in paramsObject) {
+        if (Object.hasOwnProperty.call(paramsObject, param)) {
+            const value = paramsObject[param];
+            let toReplace = new RegExp("\\\$P\\\{" + param + "\\\}", "g");
+            JSONString = JSONString.replace(toReplace, value);
+            toReplace = new RegExp("\\\"\\\$Q\\\{" + param + "\\\}\\\"", "g");
+            JSONString = JSONString.replace(toReplace, value);
+        }
+    }
+
+    JSONString = JSON.parse(JSONString);
+
+    return JSONString;
+}
+
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
@@ -1476,6 +1498,10 @@ exports.handler = async (event, context) => {
                         }
                     }
 
+                    // replace constants
+                    entry_params = replaceJSONParams(entry_params, entry_params.define)
+
+
                     console.log("entry_params", entry_params);
                     console.log("table", table);
 
@@ -1534,6 +1560,9 @@ exports.handler = async (event, context) => {
 
                 await addCodiceAzienda(table_keys, company, entry_params, client, isForm);
                 global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
+
+                // replace constants
+                entry_params = replaceJSONParams(entry_params, entry_params.define)
 
                 fullValueSet = Object.assign(fullValueSet, table_keys);
 
