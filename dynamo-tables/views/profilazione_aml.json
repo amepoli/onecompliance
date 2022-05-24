@@ -9,7 +9,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select case when snd.data_prevista<now() and ss.stato!='C' then 'Si' else 'No' end as scaduto, cnt.numero_contratto, ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, ss.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test left join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto where ss.codice_azienda=$codice_azienda$ and ((ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and (snd.data_prevista<=CURRENT_DATE+ INTERVAL '100 days' or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and snd.data_prevista is null and ss.data_esecuzione is null))"
+      "queryString": "select case when snd.data_prevista<now() and ss.stato!='C' then 'Si' else 'No' end as scaduto, cnt.numero_contratto, ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, ss.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test, (SELECT ss.data_esecuzione + (interval ' 1 days' * giorni_rischedulazione) FROM entrasp.modelli_test_risultati_righe WHERE codice_azienda=ss.codice_azienda AND pct_da = ss.pct_da AND id_risultato=mtvr.id_risultato) as data_scadenza from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test left join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto where ss.codice_azienda=$codice_azienda$ and ((ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and (snd.data_prevista<=CURRENT_DATE+ INTERVAL '100 days' or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and snd.data_prevista is null and ss.data_esecuzione is null))"
     },
     {
       "operation": "selectForm",
@@ -852,7 +852,7 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "sameOrigin": false,
       "key": "titolo",
@@ -1406,7 +1406,7 @@
       "isPrimary": false,
       "key": "data_prevista",
       "label": "Data Prevista",
-      "width": "6%"
+      "width": "7%"
     },
     {
       "format": {
@@ -1416,13 +1416,23 @@
       "isPrimary": false,
       "key": "data_esecuzione",
       "label": "Data Esecuzione",
-      "width": "6%"
+      "width": "7%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_scadenza",
+      "label": "Data Scadenza",
+      "width": "7%"
     },
     {
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "titolo_sondaggio",
       "label": "Titolo",
@@ -1436,7 +1446,7 @@
       "isPrimary": false,
       "key": "object_description",
       "label": "Oggetto di Verifica",
-      "width": "18%",
+      "width": "25%",
       "style": [
         {
           "value": "*",
@@ -1644,7 +1654,7 @@
       "isPrimary": false,
       "key": "somministrazione_completata",
       "label": "Completo",
-      "width": "6%",
+      "width": "7%",
       "style": [
         {
           "value": "Completo",
@@ -1817,10 +1827,18 @@
       "format": {
         "dataType": "number"
       },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "fake"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
       "isHidden": true,
       "isPrimary": false,
       "key": "id_sondaggio_parent",
-      "label": "id_sondaggio_parent",
+      "label": "Sondaggio parent",
       "width": "5%"
     },
     {
