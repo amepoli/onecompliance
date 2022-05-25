@@ -1601,8 +1601,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                         const googleAuth = await _this.authService.loginGoogle();
                     
-                        let files = await _this.backendService.getDriveFolderDeepContents(folderName, googleAuth).toPromise();
-                        console.log(files);
+                        let files: any = await _this.backendService.getDriveFolderDeepContents('0020-Amedeo Poli', googleAuth).toPromise();
+                        let contentsJson = {
+                            codice_azienda: codiceAzienda,
+                            id_progetto: idProgetto,
+                            id_anagrafica: idAnagrafica,
+                            files: files.files
+                        }
+                        console.log(contentsJson);
                     }
                 }
             }

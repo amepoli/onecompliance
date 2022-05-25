@@ -971,7 +971,54 @@ async function syncDriveS3File(syncData, authParams) {
 }
 
 // Get getDriveRecursiveContents
-async function getDriveRecursiveContents(drive, driveFolder, driveFileId, results) {
+async function getDriveFolderCompletePath(drive, driveFolder) {
+    let response;
+    let completePath = '';
+    try {
+        let query = `name='${driveFolder}' and mimeType='${folderMime}'`;
+        
+        let parentId = null;
+        let parentName = null;
+
+        while (parentId != 'root') {
+            try {
+                response = await drive.files.list({
+                    q: query,
+                    pageSize: 250,
+                    fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum, parents)',
+                });
+                
+            }
+            catch(e) {
+                console.log('error', e);
+            }
+
+            try {
+                response = JSON.parse(response);    
+            }
+            catch(e) { }
+
+            console.log('list drive files: ', JSON.stringify(response));
+
+            if(response.data && response.data.files && response.data.files.length > 0) {
+                completePath = '/' + response.data.files[0].name + '';
+                parentId = response.data.files[0].parents[0];
+            }
+            console.log('parentId: ', parentId);
+            //parentId = 'root';
+            query = `driveId='${parentId}'`;
+            console.log('query: ', query);
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+    
+    return completePath;
+}
+
+// Get getDriveRecursiveContents
+async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, results) {
     let response;
     try {
         let query = '';
@@ -988,7 +1035,7 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, result
             response = await drive.files.list({
                 q: query,
                 pageSize: 250,
-                fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum)',
+                fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum, parents)',
               });
             
         }
@@ -1007,10 +1054,10 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, result
         if(response.data && response.data.files && response.data.files.length > 0) {
             for await (let curFile of response.data.files) {
                 if(curFile.mimeType == folderMime) {
-                    results = await getDriveRecursiveContents(drive, null, curFile.id, results);
+                    results = await getDriveRecursiveContents(drive, null, curFile.id, path && path.length? path + '/' + curFile.name: curFile.name, results);
                 }
                 else if(!curFile.trashed) {
-                    results.push({id: curFile.id, name: curFile.name, md5: curFile.md5Checksum});
+                    results.push({fileid: curFile.id, filename: curFile.name, md5: curFile.md5Checksum, folder: path});
                 }
             }
         }
@@ -1028,7 +1075,10 @@ async function getDriveFolderDeepContents(driveFolder, authParams) {
     const drive = google.drive({version: 'v3', auth: oAuth2Client});
     console.log('driveFolder', driveFolder);
     
-    let results = await getDriveRecursiveContents(drive, driveFolder, null, []);
+    // let completePath = await getDriveFolderCompletePath(drive, driveFolder); 
+    // console.log('completePath: ', completePath);
+    
+    let results = await getDriveRecursiveContents(drive, driveFolder, null, '', []);
     console.log('results', JSON.stringify(results));    
     
     return { result: 'OK', files: results };
