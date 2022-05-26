@@ -1610,6 +1610,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             files: files.files
                         }
                         console.log(contentsJson);
+
+                        let setProperFileFolderResponse = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
+                        console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
                     }
                 }
             }
