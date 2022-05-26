@@ -1596,12 +1596,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         //let auth = _this.authService.loginGoogle();
                         let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica).toPromise();
                         console.log(anagrafica_contents);
-                        let folderName = anagrafica_contents.response[0]['anagrafica_folder_name'];
-                        console.log(codiceAzienda, idProgetto, idAnagrafica, folderName);
+                        let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
+                        anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
+                        console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
 
                         const googleAuth = await _this.authService.loginGoogle();
                     
-                        let files: any = await _this.backendService.getDriveFolderDeepContents('0020-Amedeo Poli', googleAuth).toPromise();
+                        let files: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
                         let contentsJson = {
                             codice_azienda: codiceAzienda,
                             id_progetto: idProgetto,

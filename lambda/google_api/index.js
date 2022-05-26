@@ -63,7 +63,10 @@ async function getDriveFileId(drivePath, authParams) {
 
     let response;
 
-    if(drivePath.length > 0) {        
+    if(drivePath.length > 0) {
+        if(drivePath.startsWith('/')) {
+            drivePath = drivePath.substring(1);
+        }
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
             console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
@@ -1070,14 +1073,25 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
     return results;
 }
 
-async function getDriveFolderDeepContents(driveFolder, authParams) {
+async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     await performGoogleAuth(authParams);
     const drive = google.drive({version: 'v3', auth: oAuth2Client});
-    console.log('driveFolder', driveFolder);
+    console.log('anagraficaFolders', anagraficaFolders);
     
     // let completePath = await getDriveFolderCompletePath(drive, driveFolder); 
     // console.log('completePath: ', completePath);
     
+    const driveFolder = anagraficaFolders['root_folder'];
+    const subFolders = anagraficaFolders['sub_folders'] || [];
+    let i = 0;
+
+    console.log()
+    while( i < subFolders.length) {
+        let getDriveFileIdResponse = await getDriveFileId(subFolders[i], authParams);
+        console.log('getDriveFileIdResponse', getDriveFileIdResponse);
+        i++;
+    }
+
     let results = await getDriveRecursiveContents(drive, driveFolder, null, '', []);
     console.log('results', JSON.stringify(results));    
     
@@ -1181,8 +1195,10 @@ exports.handler = async (event, context) => {
                 body = await syncDriveS3File(syncData, event.body? JSON.parse(event.body): {});
             }
             else if (requestType === 'getDriveFolderDeepContents') {
-                const driveFolder = queryParams['driveFolder'];
-                body = await getDriveFolderDeepContents(driveFolder, event.body? JSON.parse(event.body): {});
+                let eventBody = event.body? JSON.parse(event.body): {};
+                const anagraficaFolders = eventBody['anagraficaFolders'];
+                const authParams = eventBody['authToken'];
+                body = await getDriveFolderDeepContents(anagraficaFolders, authParams);
             }
             else {
                 return getBadUrlResponse();

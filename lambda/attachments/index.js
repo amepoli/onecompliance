@@ -221,7 +221,7 @@ exports.handler = async (event, context) => {
             const id_anagrafica = queryParams['id_anagrafica'];
             client = await pool.connect();
             //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
-            let query = `select * from entrasp.anagrafica_folder_name('${company}', '${id_anagrafica}');`;
+            let query = `select * from entrasp.anagrafica_folder_name_and_sub_folders('${company}', '${id_anagrafica}');`;
             console.log('running query: ', query);
             let response = await client.query(query);
             let folderNames = null;
