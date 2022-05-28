@@ -918,14 +918,21 @@ async function syncDriveS3File(syncData, authParams) {
         try{
             response = await getS3FileInfo(s3FilePath);
             s3FileInfo = response.data;
-            console.log('getS3FileInfo: ', JSON.stringify(response));
+            if(s3FileInfo && s3FileInfo.ETag) {
+                console.log('getS3FileInfo: ', JSON.stringify(s3FileInfo));
+                s3FileInfo.ETag = s3FileInfo.ETag.replace('\\', "");
+                s3FileInfo.ETag = s3FileInfo.ETag.replace('\\', "");
+                s3FileInfo.ETag = s3FileInfo.ETag.replace('"', "");
+                s3FileInfo.ETag = s3FileInfo.ETag.replace('"', "");
+                console.log('getS3FileInfo md5: ', s3FileInfo.ETag);
+            }
         }
         catch(e) {
             console.error(e);
         }
         
         if(driveFileInfo && driveFileInfo.modifiedTime != null && s3FileInfo && s3FileInfo.LastModified != null) {
-            if(driveFileInfo.md5Checksum == s3md5) {
+            if(driveFileInfo.md5Checksum == s3FileInfo.ETag) {
                 response = { result: 'OK', message: 'Did not copy. Both files are same.' };
             }
             else {
@@ -1083,14 +1090,22 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     
     const driveFolder = anagraficaFolders['root_folder'];
     const subFolders = anagraficaFolders['sub_folders'] || [];
-    let i = 0;
-
-    console.log()
-    while( i < subFolders.length) {
-        let getDriveFileIdResponse = await getDriveFileId(subFolders[i], authParams);
-        console.log('getDriveFileIdResponse', getDriveFileIdResponse);
-        i++;
+    if(subFolders && subFolders.length > 0) {
+        let syncData = subFolders.map( x => {
+            return {
+                s3FilePath: x.fileid, s3md5: x.md5, driveFilePath: x.folder + '/' + x.file
+            }
+        });
+        let syncResponse = await syncDriveS3File(syncData, authParams);
+        console.log('syncResponse: ', syncResponse);
     }
+
+    // console.log()
+    // while( i < subFolders.length) {        
+    //     let getDriveFileIdResponse = await getDriveFileId(subFolders[i], authParams);
+    //     console.log('getDriveFileIdResponse', getDriveFileIdResponse);
+    //     i++;
+    // }
 
     let results = await getDriveRecursiveContents(drive, driveFolder, null, '', []);
     console.log('results', JSON.stringify(results));    

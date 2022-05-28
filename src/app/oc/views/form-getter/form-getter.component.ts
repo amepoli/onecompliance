@@ -1597,9 +1597,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica).toPromise();
                         console.log(anagrafica_contents);
                         let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
-                        anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
-                        console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
+                        //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
+                        let sub_folders = anagraficaFolders['sub_folders'];
+                        if(sub_folders && sub_folders.length > 0) {
+                            for(let i = 0; i < sub_folders.length; i++) {
+                                sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
+                                if(sub_folders[i]['folder'].endsWith('/')) {
+                                    sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0 , -1);
+                                }
+                            }
+                            sub_folders = sub_folders.filter(x => !x.md5.includes('null::varchar'))
+                        }
 
+                        anagraficaFolders['sub_folders'] = sub_folders;
+                        
+                        console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
+                        
                         const googleAuth = await _this.authService.loginGoogle();
                     
                         let files: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
