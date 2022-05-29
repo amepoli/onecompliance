@@ -1,0 +1,20 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "subfolders",
+  "inheritsFrom": "argomenti_sub_of_argomenti_son",
+  "origin": "entrasp.argomenti_argomenti",
+  "businessObjectName": "argomenti_argomenti",
+  "define": {
+		"id_arg_padre": "ID cartella",
+    "id_arg_figlio": "ID sotto cartella",
+    "titolo_argomento": "Sotto-cartella",
+    "cod_argomento": "Cod.Cartella"
+	},
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select *, true as delete_argomenti_son, entrasp.argomenti_descr_breve(id_argomento_son) as titolo, entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father$ and id_argomento_relazione=45069"
+    }
+  ]
+}
