@@ -2,14 +2,109 @@
   "$schema": "../views.schema.json",
   "entryKey": "subfolders",
   "inheritsFrom": "argomenti_sub_of_argomenti_son",
-  "origin": "entrasp.argomenti_argomenti",
-  "businessObjectName": "argomenti_argomenti",
   "define": {
 		"id_arg_padre": "ID cartella",
     "id_arg_figlio": "ID sotto cartella",
     "titolo_argomento": "Sotto-cartella",
     "cod_argomento": "Cod.Cartella"
 	},
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento_father",
+      "label": "id_argomento_father",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_argomento_son",
+      "label": "Argomento Figlio",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input",
+        "value": "45069"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento_relazione",
+      "label": "id_argomento_relazione",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
+      "queryFunct": "select codice from entrasp.argomenti where id_argomento=$id_argomento_son$",
+      "label": "Codice",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione_breve",
+      "label": "Descrizione breve",
+      "queryFunct": "select descrizione_breve from entrasp.argomenti where id_argomento=$id_argomento_son$",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "dettaglio",
+      "label": "Dettaglio",
+      "newLine": true,
+      "outputEvent": {
+        "eventName": "argomenti_dettaglio",
+        "eventTrigger": "press"
+      },
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "size": 2.5,
+      "sameOrigin": false
+    }
+  ],
   "predefinedQueries": [
     {
       "operation": "selectTable",

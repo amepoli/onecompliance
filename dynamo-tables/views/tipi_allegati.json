@@ -197,6 +197,28 @@
 	],
 	"search_keys": [
 		{
+			"fieldName": "flag_principali",
+			"format": {
+				"value": "0",
+				"viewType": "checkbox"
+			},
+			"label": "Solo Principali",
+			"newLine": false,
+			"queryCond": "id_argomento not in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_relazione=45069)"
+		},
+		{
+			"format": {
+				"comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"fieldName": "codice_ruolo_s",
+			"label": "Ruolo",
+			"newLine": false,
+			"queryCond": "id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)"
+		},
+		{
 			"label": "codice_azienda_s",
 			"format": {
 				"dataType": "text",
@@ -304,13 +326,13 @@
 		{
 			"entryKey": "subfolders",
 			"keys": [
-			  {
-				"parent": "id_argomento",
-				"son": "id_argomento_father"
-			  }
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento_father"
+				}
 			],
 			"label": "Sotto-cartelle"
-		  }
+		}
 	],
 	"querySuffixes": {
 		"tableViewSuffix": "order by arg.codice_azienda, arg.descrizione"
