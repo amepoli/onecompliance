@@ -60,7 +60,7 @@ exports.handler = async (event, context) => {
     };
     
 
-
+/* 
     var postData_getCards = {
         "paramIn": {
             "SessionInfo": {
@@ -109,8 +109,7 @@ exports.handler = async (event, context) => {
         postData_getCards.GetIndexes = false;
     }
     
-
-
+ */
 
     //get token
 
@@ -200,6 +199,7 @@ exports.handler = async (event, context) => {
     });
     
     console.log(processedCards); */
+
 
     
     response = await lambda.invoke({
