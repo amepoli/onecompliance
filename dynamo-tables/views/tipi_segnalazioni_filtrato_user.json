@@ -1,0 +1,116 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "tipi_segnalazioni_filtrato_user",
+    "inheritsFrom": "tipi_segnalazioni",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice, count(cmp.codice_compito) as num_compiti from entrasp.tipi_segnalazioni ts inner join entrasp.compiti cmp on ts.id_tipo_segnalazione=cmp.id_tipo_segnalazione where cmp.stato!='C' and cmp.codice_azienda='€global_codice_azienda€' and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_tipo_segnalazione",
+            "label": "# Tipo Segnalazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "width": "10%",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "width": "68%",
+            "style": [
+                {
+                  "value": "*",
+                  "font_size": "medium",
+                  "font_weight": "590"
+                }
+              ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "num_compiti",
+            "label": "N.segnalazioni",
+            "width": "22%"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "add"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "startEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "stopEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "import_export"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "share"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "delete"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "quick-add"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "save"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "multi-attachments"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": " group by ts.id_tipo_segnalazione, ts.descrizione, ts.descrizione_breve, ts.codice"
+    }
+}

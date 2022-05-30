@@ -10,7 +10,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select ts.prompt_priorita, (€global_id_anagrafiche€)::text as user_companies, cmp.id_tipo_segnalazione, true as check, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, cmp.codice_azienda, cmp.codice_azienda, foreseen_date, substring(cmp.titolo from 1 for 100) as titolo, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp INNER JOIN entrasp.tipi_segnalazioni ts ON cmp.id_tipo_segnalazione = ts.id_tipo_segnalazione WHERE cmp.stato!='C' and cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and cmp.id_tipo_segnalazione=$id_tipo_segnalazione$;"
+      "queryString": "select ts.prompt_priorita, (€global_id_anagrafiche€)::text as user_companies, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as descr_centro_gest,cmp.id_tipo_segnalazione, true as check, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, cmp.codice_compito, cmp.codice_azienda, cmp.codice_azienda, foreseen_date, substring(cmp.titolo from 1 for 100) as titolo, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp INNER JOIN entrasp.tipi_segnalazioni ts ON cmp.id_tipo_segnalazione = ts.id_tipo_segnalazione WHERE cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda) and cmp.id_tipo_segnalazione=$id_tipo_segnalazione$;"
     },
     {
       "operation": "selectForm",
@@ -55,7 +55,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "5%",
+      "width": "3%",
       "key": "check",
       "label": "",
       "style": [
@@ -69,7 +69,7 @@
         "target": "compiti_consultant_to_do_open",
         "viewType": "form",
         "action": "query",
-        "query": "update entrasp.compiti set stato='C' where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£'",
+        "query": "update entrasp.compiti set stato='C', data_chiusura=coalesce(data_chiusura,current_date) where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£'",
         "keymap": [
           {
             "source": "codice_azienda",
@@ -88,48 +88,10 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "codice_azienda",
-      "label": "Codice Azienda",
-      "width": "7%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo_segnalazione",
-      "label": "Tipo",
-      "width": "12%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato",
-      "label": "Stato",
-      "width": "5%",
-      "style": [
-        {
-          "value": "Chiuso",
-          "font_color": "green",
-          "font_weight": "500"
-        },
-        {
-          "value": "Provvisorio",
-          "font_color": "#D97F02",
-          "font_weight": "500"
-        },
-        {
-          "value": "Aperto",
-          "font_color": "red",
-          "font_weight": "500"
-        }
-      ]
+      "label": "Codice Azienda"
     },
     {
       "format": {
@@ -138,28 +100,15 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "codice_compito",
-      "width": "5%",
-      "label": "Codice Compito"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_segnalazione",
       "width": "8%",
-      "label": "Data Segnalazione"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "foreseen_date",
-      "width": "8%",
-      "label": "Data Scadenza"
+      "label": "Codice Compito",
+      "style": [
+        {
+          "value": "*",
+          "background_color": "lightblue",
+          "text_align": "center"
+        }
+      ]
     },
     {
       "format": {
@@ -168,8 +117,15 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo",
-      "width": "35%",
-      "label": "Titolo"
+      "width": "48%",
+      "label": "Titolo",
+      "style": [
+        {
+          "value": "*",
+          "font_size": "medium",
+          "font_weight": "590"
+        }
+      ]
     },
     {
       "format": {
@@ -177,8 +133,98 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "key": "descr_centro_gest",
+      "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
+      "label": "Centro Gest.",
+      "width": "15%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "tipo_segnalazione",
+      "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
+      "label": "Tipo"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_segnalazione",
+      "width": "6%",
+      "label": "Aperto il"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_chiusura",
+      "width": "6%",
+      "label": "Chiuso il"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "stato",
+      "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
+      "label": "Stato",
+      "width": "6%",
+      "style": [
+        {
+          "value": "Chiuso",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
+        },
+        {
+          "value": "Provvisorio",
+          "font_color": "MistyRose",
+          "font_weight": "500",
+          "background_color": "MediumPurple",
+          "text_align": "center"
+        },
+        {
+          "value": "Aperto",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "royalblue",
+          "text_align": "center"
+        },
+        {
+          "value": "Pianificato",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "foreseen_date",
+      "label": "Data Scadenza"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
       "key": "prompt_priorita",
-      "width": "5%",
       "label": "Priorità"
     },
     {
@@ -187,7 +233,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "5%",
+      "width": "4%",
       "key": "time_report_play",
       "label": "",
       "style": [
@@ -198,7 +244,7 @@
       ],
       "isButton": true,
       "buttonAction": {
-        "target": "compiti_consultant_to_do_open",
+        "target": "compiti",
         "viewType": "form",
         "action": "query",
         "query": "select entrasp.time_report_play(('£user_companies£')::text, '£codice_compito£', '£codice_azienda£')",
@@ -226,7 +272,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "5%",
+      "width": "4%",
       "key": "time_report_stop_active",
       "label": "",
       "style": [
@@ -237,7 +283,7 @@
       ],
       "isButton": true,
       "buttonAction": {
-        "target": "compiti_consultant_to_do_open",
+        "target": "compiti",
         "viewType": "form",
         "action": "query",
         "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
