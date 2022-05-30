@@ -670,10 +670,78 @@
             "readOnly": false
         },
         {
+			"autoGenerate": false,
+			"format": {
+				"viewType": "menu",
+				"menuOptions": [
+					{
+						"icon": "sync",
+						"label": "Sync.doc.controparte",
+						"outputEventName": "get_drive_folder_contents"
+						
+					}
+				]
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"buttonIcon": "more_vert",
+			"key": "anagrafiche_vr_actions",
+			"label": "Actions",
+			"newLine": true,
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 0.4,
+			"inputEvents": [
+				{
+					"eventName": "get_drive_folder_contents",
+					"actionType": "google_api",
+					"condition": "none",
+					"successMessage": "Done!",
+					"values": [],
+					"googleAPIParams": {
+						"actionType": "get_folder_expanded_contents",
+						"driveExpandedContentsParams": {
+							"codiceAziendaKey": "codice_azienda",
+							"idAnagraficaKey": "id_anagrafica",
+							"idProgettoKey": "id_progetto"
+						}
+					}
+				}
+			]
+		},
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "label": "id_progetto",
+            "queryFunct": "select id_progetto from entrasp.progetti where codice_azienda='€global_codice_azienda€' and id_cliente=$id_anagrafica$ limit 1",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "queryFunct": "select '€global_codice_azienda€'",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
             "format": {
                 "viewType": "invisible"
             },
-            "size": 2.3,
+            "size": 1.5,
             "isHidden": false,
             "isPrimary": false,
             "label": "invisible_1",
