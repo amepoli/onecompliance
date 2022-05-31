@@ -1090,16 +1090,6 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     
     const driveFolder = anagraficaFolders['root_folder'];
     const subFolders = anagraficaFolders['sub_folders'] || [];
-    if(subFolders && subFolders.length > 0) {
-        let syncData = subFolders.map( x => {
-            return {
-                s3FilePath: x.fileid, s3md5: x.md5, driveFilePath: x.folder + '/' + x.file
-            }
-        });
-        let syncResponse = await syncDriveS3File(syncData, authParams);
-        console.log('syncResponse: ', syncResponse);
-    }
-
     // console.log()
     // while( i < subFolders.length) {        
     //     let getDriveFileIdResponse = await getDriveFileId(subFolders[i], authParams);
@@ -1109,6 +1099,56 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
 
     let results = await getDriveRecursiveContents(drive, driveFolder, null, '', []);
     console.log('results', JSON.stringify(results));    
+    
+    if(subFolders && subFolders.length > 0) {
+        let syncData = [];
+        for await (subFolder of subFolders) {
+            if(!subFolder.md5 || !subFolder.fileid) {
+                let getDriveFileIndoResponse;
+                let driveFileInfo = null;
+                let driveFolderId = null;
+                
+                try {
+                    driveFolderId = await getDriveFileId(subFolder['folder'], authParams);
+                }
+                catch(e) {
+                    console.error(e);
+                }
+                
+                try {
+                    getDriveFileIndoResponse = await getDriveFileInfo(driveFolderId, subFolder['file']);
+                    driveFileInfo = getDriveFileIndoResponse.data;
+                    subFolder['md5'] = driveFileInfo['md5Checksum'];
+
+                    if(!subFolders.fileid) {
+                        subFolder['fileid'] = driveFileInfo['id'];
+                    }
+                    console.log('subfolder getDriveFileInfo: ', JSON.stringify(getDriveFileIndoResponse));
+                    console.log('subfolder: ', JSON.stringify(subFolder));
+                }
+                catch(e) {
+                    console.error(e);
+                }
+            }
+
+            syncData.push({
+                s3FilePath: subFolder.fileid, s3md5: subFolder.md5, driveFilePath: subFolder.folder + '/' + subFolder.file
+            });
+
+            results.push({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder});
+
+            //result.push(getDriveFileIndoResponse);
+        }
+        
+        // syncData = subFolders.map( x => {
+        //     return {
+        //         s3FilePath: x.fileid, s3md5: x.md5, driveFilePath: x.folder + '/' + x.file
+        //     }
+        // });
+        let syncResponse = await syncDriveS3File(syncData, authParams);
+        console.log('syncResponse: ', syncResponse);
+    }
+
     
     return { result: 'OK', files: results };
 
