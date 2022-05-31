@@ -1666,6 +1666,18 @@
                                     "required": [
                                         "googleAPIParams"
                                     ]
+                                },
+                                {
+                                    "properties": {
+                                        "actionType": {
+                                            "enum": [
+                                                "regulat_api"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "regulatAPIParams"
+                                    ]
                                 }
                             ],
                             "additionalProperties": false,
@@ -2161,6 +2173,60 @@
                                                 },
                                                 "idAnagraficaKey": {
                                                     "description": "M: id_anagrafica key",
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "regulatAPIParams": {
+                                    "type": "object",
+                                    "description": "?: Regulat API Action Params",
+                                    "required": [
+                                        "actionType"
+                                    ],
+                                    "anyOf": [
+                                        {
+                                            "properties": {
+                                                "actionType": {
+                                                    "enum": [
+                                                        "get_aml_scan"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "entityParams"
+                                            ]
+                                        }
+                                    ],
+                                    "properties": {
+                                        "actionType": {
+                                            "type": "string",
+                                            "description": "M: action type when main actionType is regulat_api",
+                                            "enum": [
+                                                "get_aml_scan"
+                                            ]
+                                        },
+                                        "entityParams": {
+                                            "type": "object",
+                                            "description": "?: entity parameters",
+                                            "required": [
+                                                "codice_azienda",
+                                                "id_anagrafica",
+                                                "id_somministrazione"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "codice_azienda": {
+                                                    "description": "M: Codice azienda",
+                                                    "type": "string"
+                                                },
+                                                "id_anagrafica": {
+                                                    "description": "M: Id anagrafica object of verification",
+                                                    "type": "string"
+                                                },
+                                                "id_somministrazione": {
+                                                    "description": "M: The verify to be filled",
                                                     "type": "string"
                                                 }
                                             }
