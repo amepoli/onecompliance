@@ -204,6 +204,49 @@ async function getDriveFileInfo(driveFolderId, driveFile) {
     return { result: 'KO', data: 'File not found!' };
 }
 
+async function renameDriveFile(driveFolderId, OldName, newName) {    
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    let response;
+
+    try {
+        console.log('Trying to find file with folder id: ', driveFolderId, ' and file name: ', OldName);
+        
+        // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+        response = await drive.files.list({
+            q: `'${driveFolderId}' in parents and name='${OldName}'`,
+            pageSize: 250,
+            fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum, createdTime, modifiedTime)',
+        });
+        try {
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+                
+        console.log(JSON.stringify(response));
+        if(response.data && response.data.files && response.data.files.length > 0) {
+            let file = response.data.files[0];
+
+            response = await drive.files.update({
+                fileId: file.id,
+                requestBody: {
+                    name: newName
+                }
+            });
+            try {
+                response = JSON.parse(response);    
+            }
+            catch(e) {}
+
+            return { result: 'OK', data: response };
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+
+    return { result: 'KO', data: 'File not found!' };
+}
+
 async function getS3FileInfo(s3FilePath) {
     var params = { 
         Bucket: 'BUCKET_NAME',
@@ -1154,6 +1197,63 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
 
 }
 
+async function performDriveOperations(operations, authParams) {
+    await performGoogleAuth(authParams);
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    console.log('operations', operations);
+    
+    let result = [];
+
+    if(operations && operations.length > 0) {
+        for await (let operation of operations) {
+            if(operation.todo === '1- rename') {
+                let drivePath = '';
+                let driveFile = operation.googledrivepath;
+                if(operation.googledrivepath.includes('/')) {
+                    let driveFilePathParts = operation.googledrivepath.split('/');
+                    driveFile = driveFilePathParts.pop();
+                    drivePath = driveFilePathParts.join('/');
+                }
+                console.log('driveFile: ', driveFile);
+                console.log('drivePath: ', drivePath);
+            
+
+                let getDriveFileIndoResponse;
+                let driveFileInfo = null;
+                let driveFolderId = null;
+                
+                try {
+                    driveFolderId = await getDriveFileId(drivePath, authParams);
+                }
+                catch(e) {
+                    console.error(e);
+                }
+                
+                try {
+                    let renameDriveFileResponse = await renameDriveFile(driveFolderId, driveFile, operation.newfilename);
+                    console.log('srenameDriveFile response: ', JSON.stringify(renameDriveFileResponse));
+                    result.push(renameDriveFileResponse);
+                }
+                catch(e) {
+                    console.error(e);
+                }
+
+            }
+            //result.push(getDriveFileIndoResponse);
+        }
+        
+        // syncData = subFolders.map( x => {
+        //     return {
+        //         s3FilePath: x.fileid, s3md5: x.md5, driveFilePath: x.folder + '/' + x.file
+        //     }
+        // });
+    }
+
+
+    return { result: 'OK', response: result };
+
+}
+
 exports.handler = async (event, context) => {
 
     // console.log(event);
@@ -1254,6 +1354,12 @@ exports.handler = async (event, context) => {
                 const anagraficaFolders = eventBody['anagraficaFolders'];
                 const authParams = eventBody['authToken'];
                 body = await getDriveFolderDeepContents(anagraficaFolders, authParams);
+            }
+            else if(requestType === 'performDriveOperations') {
+                let eventBody = event.body? JSON.parse(event.body): {};
+                const operations = eventBody['operations'];
+                const authParams = eventBody['authToken'];
+                body = await performDriveOperations(operations, authParams);
             }
             else {
                 return getBadUrlResponse();
