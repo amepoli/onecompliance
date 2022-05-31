@@ -1624,8 +1624,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                         console.log(contentsJson);
 
-                        let setProperFileFolderResponse = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
-                        console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
+                        let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
+                        console.log('setProperFileFolder Response: ', setProperFileFolderResponse.response.rows);
+                        let performDriveOperationsResponse = await _this.backendService.performDriveOperations(setProperFileFolderResponse.response.rows, googleAuth).toPromise();
+                        console.log('performDriveOperations Response: ', performDriveOperationsResponse);
+
                     }
                 }
             }
