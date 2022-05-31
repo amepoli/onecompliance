@@ -410,6 +410,13 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   }
 
+  performDriveOperations(operations: any, authToken: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'performDriveOperations' };
+    this.myPutPostInit.body = { operations, authToken };
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
+  }
+
   getGoogleDriveFolderNameByAnagrafica(company: string, id_anagrafica: string, username: string): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { request_type: 'getGoogleDriveFolderNameByAnagrafica', company: company, id_anagrafica: id_anagrafica, username: username };
