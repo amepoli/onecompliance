@@ -1593,6 +1593,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
                     }
                     else {
+                        let loadingToast = _this._toastService.showLoadingToast("Synching google drive", "Please wait...");
+
                         //let auth = _this.authService.loginGoogle();
                         let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
                         console.log(anagrafica_contents);
@@ -1606,7 +1608,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0 , -1);
                                 }
                             }
-                            sub_folders = sub_folders.filter(x => !x.md5.includes('null::varchar'))
+                            //sub_folders = sub_folders.filter(x => !x.md5 || !x.md5.includes('null::varchar'))
                         }
 
                         anagraficaFolders['sub_folders'] = sub_folders;
@@ -1628,7 +1630,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         console.log('setProperFileFolder Response: ', setProperFileFolderResponse.response.rows);
                         let performDriveOperationsResponse = await _this.backendService.performDriveOperations(setProperFileFolderResponse.response.rows, googleAuth).toPromise();
                         console.log('performDriveOperations Response: ', performDriveOperationsResponse);
-
+                        
+                        _this._toastService.hideLoadingToast(loadingToast);
+                        _this._toastService.showSuccessToast(event.successMessage);
                     }
                 }
             }
