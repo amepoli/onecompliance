@@ -976,6 +976,7 @@ async function syncDriveS3File(syncData, authParams) {
         
         if(driveFileInfo && driveFileInfo.modifiedTime != null && s3FileInfo && s3FileInfo.LastModified != null) {
             if(driveFileInfo.md5Checksum == s3FileInfo.ETag) {
+                syncRow['s3md5'] = driveFileInfo.md5Checksum;
                 response = { result: 'OK', message: 'Did not copy. Both files are same.' };
             }
             else {
@@ -989,6 +990,7 @@ async function syncDriveS3File(syncData, authParams) {
                     await deleteS3File(s3FilePath);
                     console.log('copyFromDriveToS3...');
                     await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, authParams);
+                    syncRow['s3md5'] = driveFileInfo.md5Checksum;
                     response = { result: 'OK', message: 'Copied from Drive to S3' };
                 }
                 else if(driveFileModifiedDateTime < s3FileModifiedDateTime) {
@@ -996,6 +998,7 @@ async function syncDriveS3File(syncData, authParams) {
                     await deleteDriveFile(driveFileInfo.id);
                     console.log('copyFromS3ToDrive...');
                     await copyFromS3ToDrive(s3FilePath, driveFilePath, authParams);
+                    syncRow['s3md5'] = s3FileInfo.ETag;
                     response = { result: 'OK', message: 'Copied from S3 to Drive' };
                 }
             }
@@ -1003,11 +1006,13 @@ async function syncDriveS3File(syncData, authParams) {
         else if(driveFileInfo && driveFileInfo.modifiedTime != null) {
             console.log('copyFromDriveToS3...');
             await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, authParams);
+            syncRow['s3md5'] = driveFileInfo.md5Checksum;
             response = { result: 'OK', message: 'Copied from Drive to S3' };
         }
         else if(s3FileInfo && s3FileInfo.LastModified != null) {        
             console.log('copyFromS3ToDrive...');
             await copyFromS3ToDrive(s3FilePath, driveFilePath, authParams);
+            syncRow['s3md5'] = s3FileInfo.ETag;
             response = { result: 'OK', message: 'Copied from S3 to Drive' };
         }
         else {
@@ -1020,7 +1025,7 @@ async function syncDriveS3File(syncData, authParams) {
 
     console.log('Sync result: ', result);
     
-    return { result: 'OK', result: result };
+    return { result: 'OK', result: result, syncData };
 }
 
 // Get getDriveRecursiveContents
@@ -1143,8 +1148,19 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     let results = await getDriveRecursiveContents(drive, driveFolder, null, '', []);
     console.log('results', JSON.stringify(results));    
     
+    let syncData = [];
+    
     if(subFolders && subFolders.length > 0) {
-        let syncData = [];
+        for await (subFolder of subFolders) {
+            syncData.push({
+                s3FilePath: subFolder.fileid, s3md5: subFolder.md5, driveFilePath: subFolder.folder + '/' + subFolder.file
+            });
+        }
+
+        let syncResponse = await syncDriveS3File(syncData, authParams);
+        console.log('syncResponse: ', syncResponse);
+        syncData = syncResponse['syncData'];
+
         for await (subFolder of subFolders) {
             if(!subFolder.md5 || !subFolder.fileid) {
                 let getDriveFileIndoResponse;
@@ -1174,24 +1190,12 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
                 }
             }
 
-            syncData.push({
-                s3FilePath: subFolder.fileid, s3md5: subFolder.md5, driveFilePath: subFolder.folder + '/' + subFolder.file
-            });
-
+            console.log('Pushing to results: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
             results.push({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder});
 
             //result.push(getDriveFileIndoResponse);
         }
-        
-        // syncData = subFolders.map( x => {
-        //     return {
-        //         s3FilePath: x.fileid, s3md5: x.md5, driveFilePath: x.folder + '/' + x.file
-        //     }
-        // });
-        let syncResponse = await syncDriveS3File(syncData, authParams);
-        console.log('syncResponse: ', syncResponse);
     }
-
     
     return { result: 'OK', files: results };
 
@@ -1231,7 +1235,7 @@ async function performDriveOperations(operations, authParams) {
                 
                 try {
                     let renameDriveFileResponse = await renameDriveFile(driveFolderId, driveFile, operation.newfilename);
-                    console.log('srenameDriveFile response: ', JSON.stringify(renameDriveFileResponse));
+                    console.log('renameDriveFile response: ', JSON.stringify(renameDriveFileResponse));
                     result.push(renameDriveFileResponse);
                 }
                 catch(e) {
