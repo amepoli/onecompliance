@@ -10,7 +10,11 @@
 		},
 		{
 			"operation": "selectTable",
+<<<<<<< HEAD
 			"queryString": "select codice_azienda, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>current_date::date, dynamouser =>'€global_username€')||' gg' as time_consumed, entrasp.consuntivazioni_time_consumed(codice_azienda, datainizio=>entrasp.first_day_month(CURRENT_DATE),datafine=>entrasp.last_day_month(CURRENT_DATE),dynamouser => '€global_username€'::text)::numeric(8,0)||' min.' as ultimo_mese from entrasp.aziende where codice_azienda in(€global_user_companies€)",
+=======
+			"queryString": "select codice_azienda, codice_azienda_erogante, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, current_date::date, codicecompito => null, dynamouser =>'€global_username€')||' gg' as time_consumed, entrasp.consuntivazioni_time_consumed(codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),dynamouser => '€global_username€'::text)::numeric(8,0)||' min.' as ultimo_mese from entrasp.aziende, (select distinct codice_azienda as codice_azienda_erogante from entrasp.employers where dynamo_user='€global_username€') as employers where codice_azienda in(€global_user_companies€) and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, current_date::date, codicecompito=>null, dynamouser =>'€global_username€') != 0",
+>>>>>>> 13d084c69de413432a6aaa4b4a7b9721bbc6cbba
 			"type": "main"
 		}
 	],
