@@ -41,10 +41,20 @@
 			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
 		},
 		{
+			"operation": "insert",
+			"type": "postProcessing",
+			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)"
+		},
+		{
 			"operation": "update",
 			"type": "preCheck",
 			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
 			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+		},
+		{
+			"operation": "update",
+			"type": "postProcessing",
+			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)"
 		}
 	],
 	"form_keys": [
