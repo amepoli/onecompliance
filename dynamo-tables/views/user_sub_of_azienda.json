@@ -11,7 +11,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select distinct $codice_azienda$ as codice_azienda, coalesce(an.nome||' '||an.cognome, avr.ragione_sociale) as nmrs, an.dynamo_user, entrasp.consuntivazioni_time_consumed_azienda($codice_azienda$, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date, dynamouser=>an.dynamo_user) as time_consumed, $codice_azienda$ as codice_azienda FROM entrasp.anagrafiche_id an inner join entrasp.consuntivazioni csn on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica where csn.codice_azienda=$codice_azienda$ and csn.id_risorsa is not null and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica);"
+      "queryString": "select distinct codice_azienda, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as nmrs, an.dynamo_user, entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date, dynamouser=>an.dynamo_user) as time_consumed FROM entrasp.anagrafiche_id an inner join entrasp.aziende az on an.codice_part=az.codice_part and az.codice_azienda=$codice_azienda$ and an.dynamo_user is not null;"
     }
   ],
   "form_keys": [
