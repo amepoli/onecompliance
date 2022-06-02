@@ -11,7 +11,7 @@
 		},
 		{
 			"operation": "selectTable",
-			"queryString": "select codice_azienda, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>current_date::date)||' gg' as time_consumed, entrasp.consuntivazioni_time_consumed(codice_azienda, datainizio=>entrasp.first_day_month(CURRENT_DATE),datafine=>entrasp.last_day_month(CURRENT_DATE))::numeric(8,0)||' min.' as ultimo_mese from entrasp.aziende where codice_azienda in(€global_user_companies€)",
+			"queryString": "select codice_azienda, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>current_date::date) as time_consumed, entrasp.consuntivazioni_time_consumed(codice_azienda, datainizio=>entrasp.first_day_month(CURRENT_DATE),datafine=>entrasp.last_day_month(CURRENT_DATE))::numeric(8,0) as ultimo_mese from entrasp.aziende where codice_azienda in(€global_user_companies€)",
 			"type": "main"
 		}
 	],
@@ -32,7 +32,7 @@
 				"font_style": "normal",
 				"font_weight": "600"
 			},
-			"newLine": false,
+			"newLine": true,
 			"readOnly": true,
 			"sameOrigin": false,
 			"size": 6
@@ -178,7 +178,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "time_consumed",
-			"label": "Totale lavorato"
+			"label": "Totale lavorato (gg)"
 		},
 		{
 			"format": {
@@ -187,7 +187,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "ultimo_mese",
-			"label": "Ultimo mese"
+			"label": "Ultimo mese (min)"
 		}
 	],
 	"querySuffixes": {
