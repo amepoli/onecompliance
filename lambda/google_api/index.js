@@ -3,6 +3,7 @@ AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const crypto = require('crypto');
+const uuid = require('uuid');
 
 //const { Readable } = require('stream');
 let stream = require('stream');
@@ -952,7 +953,10 @@ async function syncDriveS3File(syncData, authParams) {
         try {
             response = await getDriveFileInfo(driveFolderId, driveFile);
             driveFileInfo = response.data;
-            console.log('getDriveFileInfo: ', JSON.stringify(response));    
+            console.log('getDriveFileInfo: ', JSON.stringify(response));
+            if(driveFileInfo.result === 'KO') {
+                driveFileInfo = null;
+            }
         }
         catch(e) {
             console.error(e);
@@ -1016,6 +1020,13 @@ async function syncDriveS3File(syncData, authParams) {
             response = { result: 'OK', message: 'Copied from S3 to Drive' };
         }
         else {
+            if(!syncRow['fileid']) {
+                syncRow['fileid'] = uuid.v4();
+            }
+            if(!syncRow['md5']) {
+                syncRow['md5'] = null;
+            }
+                        
             response = { result: 'OK', message: 'Both files do not exist!' };
         }
         //response = await uploadS3Object(s3Path, s3File, driveFileData);
@@ -1028,7 +1039,6 @@ async function syncDriveS3File(syncData, authParams) {
     return { result: 'OK', result: result, syncData };
 }
 
-// Get getDriveRecursiveContents
 async function getDriveFolderCompletePath(drive, driveFolder) {
     let response;
     let completePath = '';
@@ -1080,11 +1090,11 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
     let response;
     try {
         let query = '';
-        if(driveFolder) {
-            query = `name='${driveFolder}' and mimeType='${folderMime}'`;
+        if(driveFileId) {
+            query = `'${driveFileId}' in parents`;
         }
         else {
-            query = `'${driveFileId}' in parents`;
+            query = `name='${driveFolder}' and mimeType='${folderMime}'`;
         }
         console.log('query: ', query);
         
@@ -1145,7 +1155,16 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     //     i++;
     // }
 
-    let results = await getDriveRecursiveContents(drive, driveFolder, null, '', []);
+    let rootFolderId = null;
+
+    try {
+        rootFolderId = await getDriveFileId(driveFolder, authParams);
+    }
+    catch(e) {
+        console.error(e);
+    }
+
+    let results = await getDriveRecursiveContents(drive, null, rootFolderId, driveFolder, []);
     console.log('results', JSON.stringify(results));    
     
     let syncData = [];
@@ -1162,37 +1181,45 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
         syncData = syncResponse['syncData'];
 
         for await (subFolder of subFolders) {
-            if(!subFolder.md5 || !subFolder.fileid) {
-                let getDriveFileIndoResponse;
-                let driveFileInfo = null;
-                let driveFolderId = null;
-                
-                try {
-                    driveFolderId = await getDriveFileId(subFolder['folder'], authParams);
-                }
-                catch(e) {
-                    console.error(e);
-                }
-                
-                try {
-                    getDriveFileIndoResponse = await getDriveFileInfo(driveFolderId, subFolder['file']);
-                    driveFileInfo = getDriveFileIndoResponse.data;
-                    subFolder['md5'] = driveFileInfo['md5Checksum'];
-
-                    if(!subFolders.fileid) {
-                        subFolder['fileid'] = driveFileInfo['id'];
+            if(subFolder.file) {
+                if(!subFolder.md5 || !subFolder.fileid) {
+                    let getDriveFileIndoResponse;
+                    let driveFileInfo = null;
+                    let driveFolderId = null;
+                    
+                    try {
+                        driveFolderId = await getDriveFileId(subFolder['folder'], authParams);
                     }
-                    console.log('subfolder getDriveFileInfo: ', JSON.stringify(getDriveFileIndoResponse));
-                    console.log('subfolder: ', JSON.stringify(subFolder));
+                    catch(e) {
+                        console.error(e);
+                    }
+                    
+                    try {
+                        getDriveFileIndoResponse = await getDriveFileInfo(driveFolderId, subFolder['file']);
+                        console.log('subfolder getDriveFileInfo: ', JSON.stringify(getDriveFileIndoResponse));
+                        driveFileInfo = getDriveFileIndoResponse.data;
+                        if(driveFileInfo && driveFileInfo['md5Checksum']) {
+                            console.log('driveFileInfo: ', JSON.stringify(driveFileInfo));
+                            subFolder['md5'] = driveFileInfo['md5Checksum'];
+        
+                            if(!subFolders.fileid) {
+                                subFolder['fileid'] = driveFileInfo['id'];
+                            }
+                        }
+                        
+                        console.log('subfolder: ', JSON.stringify(subFolder));
+                    }
+                    catch(e) {
+                        console.error(e);
+                    }
                 }
-                catch(e) {
-                    console.error(e);
-                }
+
+                console.log('Pushing to results: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
+                results.push({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder});
             }
-
-            console.log('Pushing to results: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
-            results.push({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder});
-
+            else {
+                await getDriveFileId(subFolder['folder'], authParams);
+            }
             //result.push(getDriveFileIndoResponse);
         }
     }
