@@ -1,48 +1,21 @@
 {
 	"$schema": "../views.schema.json",
 	"entryKey": "mie_ore_aziende",
+	"businessObjectName": "aziende",
 	"origin": "entrasp.aziende",
 	"predefinedQueries": [
 		{
 			"operation": "selectForm",
-			"queryString": "select codice_azienda, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date) as time_consumed, entrasp.count_sondaggi_open_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date) as sondaggi_aperti from entrasp.aziende where codice_azienda=$codice_azienda$ and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, '2022-12-31'::date) != 0",
+			"queryString": "select codice_azienda, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date) as time_consumed, entrasp.count_sondaggi_open_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date) as sondaggi_aperti from entrasp.aziende where codice_azienda=$codice_azienda$ and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date) != 0",
 			"type": "main"
 		},
 		{
 			"operation": "selectTable",
-			"queryString": "select codice_azienda, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>current_date::date, dynamouser =>'€global_username€')||' gg' as time_consumed, entrasp.consuntivazioni_time_consumed(codice_azienda, datainizio=>entrasp.first_day_month(CURRENT_DATE),datafine=>entrasp.last_day_month(CURRENT_DATE),dynamouser => '€global_username€'::text)::numeric(8,0)||' min.' as ultimo_mese from entrasp.aziende where codice_azienda in(€global_user_companies€)",
+			"queryString": "select codice_azienda, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>current_date::date)||' gg' as time_consumed, entrasp.consuntivazioni_time_consumed(codice_azienda, datainizio=>entrasp.first_day_month(CURRENT_DATE),datafine=>entrasp.last_day_month(CURRENT_DATE))::numeric(8,0)||' min.' as ultimo_mese from entrasp.aziende where codice_azienda in(€global_user_companies€)",
 			"type": "main"
 		}
 	],
 	"form_keys": [
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "dynamo_user",
-			"label": "Aggiorna Dynamo User",
-			"newLine": true,
-			"outputEvent": {
-				"eventName": "dynamo_user_update",
-				"eventTrigger": "press"
-			},
-			"inputEvents": [
-				{
-					"eventName": "dynamo_user_update",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.update_dynamo_user((€global_id_anagrafiche€)::text, (€global_user_companies€)::text, '€global_username€')",
-					"successMessage": "Update successfull!"
-				}
-			],
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1.5
-		},
 		{
 			"format": {
 				"dataType": "text",
