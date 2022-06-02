@@ -1594,45 +1594,51 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                     else {
                         let loadingToast = _this._toastService.showLoadingToast("Synching google drive", "Please wait...");
-
-                        //let auth = _this.authService.loginGoogle();
-                        let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
-                        console.log(anagrafica_contents);
-                        let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
-                        //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
-                        let sub_folders = anagraficaFolders['sub_folders'];
-                        if(sub_folders && sub_folders.length > 0) {
-                            for(let i = 0; i < sub_folders.length; i++) {
-                                sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
-                                if(sub_folders[i]['folder'].endsWith('/')) {
-                                    sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0 , -1);
+                        try
+                        {
+                            //let auth = _this.authService.loginGoogle();
+                            let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
+                            console.log(anagrafica_contents);
+                            let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
+                            //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
+                            let sub_folders = anagraficaFolders['sub_folders'];
+                            if(sub_folders && sub_folders.length > 0) {
+                                for(let i = 0; i < sub_folders.length; i++) {
+                                    sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
+                                    if(sub_folders[i]['folder'].endsWith('/')) {
+                                        sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0 , -1);
+                                    }
                                 }
+                                //sub_folders = sub_folders.filter(x => !x.md5 || !x.md5.includes('null::varchar'))
                             }
-                            //sub_folders = sub_folders.filter(x => !x.md5 || !x.md5.includes('null::varchar'))
-                        }
 
-                        anagraficaFolders['sub_folders'] = sub_folders;
+                            anagraficaFolders['sub_folders'] = sub_folders;
+                            
+                            console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
+                            
+                            const googleAuth = await _this.authService.loginGoogle();
                         
-                        console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
-                        
-                        const googleAuth = await _this.authService.loginGoogle();
-                    
-                        let files: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
-                        let contentsJson = {
-                            codice_azienda: codiceAzienda,
-                            id_progetto: idProgetto,
-                            id_anagrafica: idAnagrafica,
-                            files: files.files
-                        }
-                        console.log(contentsJson);
+                            let files: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
+                            let contentsJson = {
+                                codice_azienda: codiceAzienda,
+                                id_progetto: idProgetto,
+                                id_anagrafica: idAnagrafica,
+                                files: files.files
+                            }
+                            console.log(contentsJson);
 
-                        let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
-                        console.log('setProperFileFolder Response: ', setProperFileFolderResponse.response.rows);
-                        let performDriveOperationsResponse = await _this.backendService.performDriveOperations(setProperFileFolderResponse.response.rows, googleAuth).toPromise();
-                        console.log('performDriveOperations Response: ', performDriveOperationsResponse);
-                        
-                        _this._toastService.hideLoadingToast(loadingToast);
-                        _this._toastService.showSuccessToast(event.successMessage);
+                            let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
+                            console.log('setProperFileFolder Response: ', setProperFileFolderResponse.response.rows);
+                            let performDriveOperationsResponse = await _this.backendService.performDriveOperations(setProperFileFolderResponse.response.rows, googleAuth).toPromise();
+                            console.log('performDriveOperations Response: ', performDriveOperationsResponse);
+                            _this._toastService.hideLoadingToast(loadingToast);
+                            _this._toastService.showSuccessToast(event.successMessage);
+                        }
+                        catch(e) {
+                            console.log(e);
+                            _this._toastService.hideLoadingToast(loadingToast);
+                            _this._toastService.showErrorToast(e);
+                        }                        
                     }
                 }
             }
