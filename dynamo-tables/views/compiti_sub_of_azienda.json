@@ -1,0 +1,256 @@
+{
+  "$schema": "../views.schema.json",
+  "inheritsFrom": "compiti_sub_istanze_aperte_azienda",
+  "entryKey": "compiti_sub_of_azienda",
+  "predefinedQueries": [
+    {
+      "type": "main",
+      "operation": "selectTable",
+      "queryString": "select entrasp.consuntivazioni_time_consumed_azienda_sotto_compiti(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date, codice_compito) as time_consumed_sotto_compiti, entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datainizio=>'2022-12-31'::date, codicicompiti=>array[codice_compito]) as time_consumed, cmp.codice_compito,cmp.stato, cmp.codice_azienda, cmp.codice_azienda, foreseen_date, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp inner join entrasp.centri_gestionali cg on cmp.id_centro_gest=cg.id_centro_gest and cmp.codice_part=cg.codice_part where cmp.codice_azienda=$codice_azienda$;"
+    },
+    {
+      "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda='€global_codice_azienda€' and cmp.codice_azienda=az.codice_azienda and cmp.codice_part is null;"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "select entrasp.assegna_compito_user_centro_gest_default_insert((€global_id_anagrafiche€)::text, $titolo$, $codice_azienda$);"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "select entrasp.assegna_compito_user_centro_gest_default((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$);"
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "codice_azienda_s",
+      "format": {
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Azienda",
+      "newLine": false,
+      "queryCond": "codice_azienda='€codice_azienda_s€'"
+    },
+    {
+      "fieldName": "stato",
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "stato='€stato€'"
+    },
+    {
+      "fieldName": "note_search",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Note/Titolo",
+      "newLine": false,
+      "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
+    },
+    {
+      "fieldName": "codice_compito_s",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Codice Compito",
+      "newLine": false,
+      "queryCond": "codice_compito=$codice_compito_s$"
+    },
+    {
+      "fieldName": "titolo",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Titolo",
+      "newLine": true,
+      "queryCond": "titolo=$titolo$"
+    },
+    {
+      "fieldName": "id_tipo_segnalazione",
+      "format": {
+        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni order by descrizione;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "ID Tipo Segnal.",
+      "newLine": false,
+      "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione$"
+    },
+    {
+      "fieldName": "id_centro_gest",
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id, codice_azienda||'-'||entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.compiti order by codice_azienda;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Centro Gestionale",
+      "newLine": false,
+      "queryCond": "id_centro_gest=$id_centro_gest$"
+    },
+    {
+      "fieldName": "dynamo_user_s",
+      "format": {
+        "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.anagrafiche_id order by dynamo_user;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "User",
+      "newLine": true,
+      "queryCond": "codice_part||'-'||id_anagrafica in(select codice_part||'-'||id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€dynamo_user_s€')"
+    },
+    {
+      "fieldName": "main_s",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Principali (no sovracompiti)",
+      "newLine": false,
+      "size": 1,
+      "queryCond": "cmp.codice_compito_parent is null"
+    },
+    {
+      "fieldName": "main_s",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Includi tutti i sotto compiti",
+      "newLine": false,
+      "size": 1,
+      "queryCond": "(1=1 or entrasp.codice_compito_parent_ver2(cmp.codice_azienda, cmp.codice_compito)=$compito_parent$)"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "Codice Azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_compito_parent",
+      "label": "codice_compito_parent"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_segnalazione",
+      "label": "Tipo",
+      "width": "12%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "stato",
+      "label": "Stato",
+      "width": "5%",
+      "style": [
+        {
+          "value": "Chiuso",
+          "font_color": "green",
+          "font_weight": "500"
+        },
+        {
+          "value": "Provvisorio",
+          "font_color": "#D97F02",
+          "font_weight": "500"
+        },
+        {
+          "value": "Aperto",
+          "font_color": "red",
+          "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "width": "5%",
+      "label": "Codice Compito"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_segnalazione",
+      "width": "8%",
+      "label": "Data Segnalazione"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "foreseen_date",
+      "width": "8%",
+      "label": "Data Scadenza"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "width": "30%",
+      "label": "Titolo"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "time_consumed",
+      "width": "15%",
+      "label": "Tempo impiegato"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "time_consumed_sotto_compiti",
+      "width": "15%",
+      "label": "Tempo impiegato sotto compiti"
+    }
+  ]
+ 
+}
