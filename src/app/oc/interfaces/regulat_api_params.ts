@@ -3,6 +3,10 @@ export interface RegulatAPIParams {
     entityParams?: {
         codice_azienda: string,
         id_anagrafica: number,
-        id_somministrazione: number
+        nome: string,
+        cognome: string,
+        yob: number,
+        id_somministrazione: number,
+        tipo_soggetto: string
     }
 };

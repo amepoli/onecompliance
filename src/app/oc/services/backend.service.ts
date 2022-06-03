@@ -24,6 +24,7 @@ export class BackendService {
   private timeTrackerApiName = appData.lambdas.time_tracker.apiName;
   private archiflowApiName = appData.lambdas.archiflow.apiName;
   private googleApiName = appData.lambdas.google_api.apiName;
+  private regulatApiName = appData.lambdas.regulat_api.apiName;
 
   private myGetInit = { // OPTIONAL
     headers: {
@@ -421,6 +422,12 @@ export class BackendService {
     this.myPutPostInit.queryStringParameters = { request_type: 'setProperFileFolder' };
     this.myPutPostInit.body = input;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
+  }
+
+  getAmlScan(company: string, registry: number, name: string, surname: string, yob: number, checkId: number, entytyType: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { company: company, registry: registry, name: name, surname: surname, yob: yob, checkId: checkId, entytyType: entytyType };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatApiName, this.myGetInit));
   }
 
   loadHomePage(entryName: string, company: string): Observable<any> {

@@ -9,6 +9,7 @@ import { AuthService, BackendService, ConsoleLoggerService, DialogService, Helpe
 import { DynamicFieldDirective } from 'app/oc/directives';
 import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-field.directive';
 import { InputComponent } from 'app/oc/dynamic-forms/components/input/input.component';
+import { RegulatAPIParams } from 'app/oc/interfaces/regulat_api_params';
 
 @Component({
     selector: 'form-getter',
@@ -1639,7 +1640,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     async runRegulatEvent(event, value, keyListener) {
         let _this = this;
-        const googleAPIParams: GoogleAPIParams = event.googleAPIParams;
+        const regulatAPIParams: RegulatAPIParams = event.RegulatAPIParams;
         let formValues = _this.formArray.first.form.value;
                 
         // process the booleans (1/0 instead of true/false)
@@ -1663,226 +1664,30 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
         }
 
-        if(!googleAPIParams || !googleAPIParams.actionType) {
-            _this._toastService.showErrorToast("Missing Google API Params");
+        if(!regulatAPIParams || !regulatAPIParams.actionType) {
+            _this._toastService.showErrorToast("Missing Regulat API params");
         }
         else {
-            if(googleAPIParams.actionType == 'get_directions') {
-                if(!googleAPIParams.directionsParams) {
-                    _this._toastService.showErrorToast("Missing Google API Get Directions Params");
+            const codiceAziendaAML = formValues[regulatAPIParams.entityParams.codice_azienda];
+            const idAnagraficaAML = formValues[regulatAPIParams.entityParams.id_anagrafica];
+            const nomeAML = formValues[regulatAPIParams.entityParams.nome];
+            const cognomeAML = formValues[regulatAPIParams.entityParams.cognome];
+            const yobAML = formValues[regulatAPIParams.entityParams.yob];
+            const idSomministrazioneAML = formValues[regulatAPIParams.entityParams.id_somministrazione];
+            const tipoSoggettoAML = formValues[regulatAPIParams.entityParams.tipo_soggetto];
+            if(regulatAPIParams.actionType == 'get_aml_scan') {
+                if(!regulatAPIParams.entityParams) {
+                    _this._toastService.showErrorToast("Missing Regulat API entity params");
                 }
                 else {
-                    const origin = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.directionsParams.originKey);
-                    const destination = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.directionsParams.destinationKey);
-                }
-            }
-            else if(googleAPIParams.actionType == 'get_distance') {
-                if(!googleAPIParams.distanceParams) {
-                    _this._toastService.showErrorToast("Missing Google API Get Distance Params");
-                }
-                else {
-                    const origin = formValues[googleAPIParams.distanceParams.originKey];
-                    const destination = formValues[googleAPIParams.distanceParams.destinationKey];
-                    if(!origin || !destination) {
-                        _this._toastService.showErrorToast("Missing Google API Get Distance Params");
-                    }
-                    else {
-                        _this.backendService.getDistance(origin, destination).subscribe(
-                            response => {
-                                // console.log(response);
-                                if (response.result === 'OK') {
-                                    let distance = 0;
-                                    if(response.data.rows && response.data.rows.length && response.data.rows[0].elements && response.data.rows[0].elements.length && response.data.rows[0].elements[0].distance && response.data.rows[0].elements[0].distance.value) {
-                                        distance = (response.data.rows[0].elements[0].distance.value) / 1000;                                        
-                                    }
+                    _this._dialogService.showLoadingDialog('Scanning in progress', 'Please wait...');
 
-                                    let element = HelperService.findElement(this.filteredFormData[value.index], keyListener);
-                                    // const element = _this.filteredFormData[value.index].find(field => field.name === keyListener);
-                                    if (element != null) {
-                                        element.value = distance;
-                                    }
-                                    // Try this as well in future if value not set
-                                    // if(element.value != null) {
-                                    //     const childrenArray = _this.formArray.toArray();
-                                    //     const current_line = childrenArray.find(c => c.fields[0].index === 0);
-                
-                                    //     let dynamicEl = <InputComponent>_this.findElementInDynamicFields(current_line.dynamicFields, keyListener);
-                                    //     if(dynamicEl && dynamicEl.setValue) {
-                                    //         dynamicEl.setValue(distance);                                        
-                                    //     }
-                                    // }
+                    let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, nomeAML, cognomeAML, yobAML, idSomministrazioneAML, tipoSoggettoAML).toPromise();
+                    console.log(scan_contents);
 
-                                    
-                                    if (event.outputEventWhenComplete != null) {
-                                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
-                                    }
-                                }
-                                else {
-                                    _this._toastService.showErrorToast(response.data);
-                                }
-                            },
-                            error => {
-                                console.log(error);
-                                _this._toastService.showErrorToast(error);        
-                            }
-                        );
-                    }
-                    
-                }
-            }
-            else if(googleAPIParams.actionType == 'get_email_thread') {
-                if(!googleAPIParams.emailThreadParams) {
-                    _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");
-                }
-                else {
-                    const emailId = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.emailThreadParams.emailIdKey);
-                    const threadId = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.emailThreadParams.threadIdKey);
-                }
-            }
-            else if(googleAPIParams.actionType == 'create_drive_folder') {
-                if(!googleAPIParams.driveFolderParams) {
-                    _this._toastService.showErrorToast("Missing Google API Drive Folder Params");
-                }
-                else {
-                    const driveFolder = formValues[googleAPIParams.driveFolderParams.driveFolderKey];
-                    if(!driveFolder) {
-                        _this._toastService.showErrorToast("Missing Google API Drive Folder Params");
-                    }
-                    else {
-                        let auth = _this.authService.loginGoogle();
-                        _this.backendService.createDriveFolder(driveFolder, auth).subscribe(                        
-                            response => {
-                                // console.log(response);
-                                if (response['result'] === 'OK') {
-                                    if (event.outputEventWhenComplete != null) {
-                                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
-                                    }
-                                }
-                                else {
-                                    _this._toastService.showErrorToast(response['reason']);
-                                }
-                            },
-                            error => {
-                                console.log(error);
-                                _this._toastService.showErrorToast(error);        
-                            }
-                        );
-                    }
-                    
-                }
-            }
-            else if(googleAPIParams.actionType == 'copy_s3_to_drive') {
-                if(!googleAPIParams.s3ToDriveParams) {
-                    _this._toastService.showErrorToast("Missing Google API Path Params");
-                }
-                else {
-                    const s3Path = formValues[googleAPIParams.s3ToDriveParams.s3PathKey];
-                    const drivePath = formValues[googleAPIParams.s3ToDriveParams.drivePathKey];
-                    if(!s3Path || !drivePath) {
-                        _this._toastService.showErrorToast("Missing Google API Path Params");
-                    }
-                    else {
-                        let auth = _this.authService.loginGoogle();
-                        _this.backendService.copyFromS3ToDrive(s3Path, drivePath, auth).subscribe(                        
-                            response => {
-                                // console.log(response);
-                                if (response['result'] === 'OK') {
-                                    if (event.outputEventWhenComplete != null) {
-                                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
-                                    }
-                                }
-                                else {
-                                    _this._toastService.showErrorToast(response['reason']);
-                                }
-                            },
-                            error => {
-                                console.log(error);
-                                _this._toastService.showErrorToast(error);        
-                            }
-                        );
-                    }
-                    
-                }
-            }
-            else if(googleAPIParams.actionType == 'copy_drive_to_s3') {
-                if(!googleAPIParams.driveToS3Params) {
-                    _this._toastService.showErrorToast("Missing Google API Path Params");
-                }
-                else {
-                    const drivePath = formValues[googleAPIParams.driveToS3Params.drivePathKey];
-                    const s3Path = formValues[googleAPIParams.s3ToDriveParams.s3PathKey];
-                    if(!drivePath || !s3Path) {
-                        _this._toastService.showErrorToast("Missing Google API Path Params");
-                    }
-                    else {
-                        let auth = _this.authService.loginGoogle();
-                        _this.backendService.copyFromDriveToS3(drivePath, s3Path, auth).subscribe(                        
-                            response => {
-                                // console.log(response);
-                                if (response['result'] === 'OK') {
-                                    if (event.outputEventWhenComplete != null) {
-                                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
-                                    }
-                                }
-                                else {
-                                    _this._toastService.showErrorToast(response['reason']);
-                                }
-                            },
-                            error => {
-                                console.log(error);
-                                _this._toastService.showErrorToast(error);        
-                            }
-                        );
-                    }
-                    
-                }
-            }
-            else if(googleAPIParams.actionType == 'get_folder_expanded_contents') {
-                if(!googleAPIParams.driveExpandedContentsParams) {
-                    _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
-                }
-                else {
-                    const codiceAzienda = formValues[googleAPIParams.driveExpandedContentsParams.codiceAziendaKey];
-                    const idProgetto = formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey];
-                    const idAnagrafica = formValues[googleAPIParams.driveExpandedContentsParams.idAnagraficaKey];
-                    if(!codiceAzienda || !idProgetto || !idAnagrafica) {
-                        _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
-                    }
-                    else {
-                        //let auth = _this.authService.loginGoogle();
-                        let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
-                        console.log(anagrafica_contents);
-                        let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
-                        //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
-                        let sub_folders = anagraficaFolders['sub_folders'];
-                        if(sub_folders && sub_folders.length > 0) {
-                            for(let i = 0; i < sub_folders.length; i++) {
-                                sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
-                                if(sub_folders[i]['folder'].endsWith('/')) {
-                                    sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0 , -1);
-                                }
-                            }
-                            sub_folders = sub_folders.filter(x => !x.md5.includes('null::varchar'))
-                        }
+                    _this._dialogService.closeDialog();
 
-                        anagraficaFolders['sub_folders'] = sub_folders;
-                        
-                        console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
-                        
-                        const googleAuth = await _this.authService.loginGoogle();
-                    
-                        let files: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
-                        let contentsJson = {
-                            codice_azienda: codiceAzienda,
-                            id_progetto: idProgetto,
-                            id_anagrafica: idAnagrafica,
-                            files: files.files
-                        }
-                        console.log(contentsJson);
-
-                        let setProperFileFolderResponse = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
-                        console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
-                    }
+                    _this._toastService.showSuccessToast('Successfully Scanned!'); // show success toast
                 }
             }
             else {
