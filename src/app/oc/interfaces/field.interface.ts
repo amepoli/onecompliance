@@ -1,4 +1,4 @@
-import { GoogleAPIParams, RegulatAPIParams, MenuOption } from ".";
+import { GoogleAPIParams/* , RegulatAPIParams */, MenuOption } from ".";
 import { FormWidgetType } from "../types";
 import { EmailActionParameters } from "./email_action_parameters";
 
@@ -49,8 +49,8 @@ export interface FieldInputEvent {
       queryFunct?: string
     }
   };
-  googleAPIParams?: GoogleAPIParams;
-  RegulatAPIParams?: RegulatAPIParams
+  googleAPIParams?: GoogleAPIParams/* ;
+  RegulatAPIParams?: RegulatAPIParams */
   
 }
 
