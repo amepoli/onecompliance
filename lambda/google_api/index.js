@@ -54,6 +54,93 @@ function getServerResponse(body) {
     };
 }
 
+async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
+    
+    await performGoogleAuth(authParams);
+
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    
+    let driveFolderId = 'root';
+
+    let response;
+
+    if(drivePath.length > 0) {
+        if(drivePath.startsWith('/')) {
+            drivePath = drivePath.substring(1);
+        }
+        let drivePathFolders = drivePath.split('/');
+        for await (drivePathFolder of drivePathFolders) {
+            let folderQuery = `name = '${drivePathFolder}'`;
+            if(drivePathFolder.includes('~')) {
+                let folderIdentifierPart = '~' + drivePathFolder.split('~')[1];
+                folderQuery = `name contains '${folderIdentifierPart}'`;
+            }
+            console.log(`Searching for ${folderQuery} in ${driveFolderId}`);    
+            response = await drive.files.list({
+                q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and ${folderQuery}`,
+                pageSize: 5,
+                fields: 'nextPageToken, files(id, name, mimeType)',
+            });
+            try {
+                response = JSON.parse(response);    
+            }
+            catch(e) {}
+            console.log('response', response);
+            if(response.data && response.data.files && response.data.files.length > 0) {
+                // Folder exists
+                driveFolderId = response.data.files[0].id;
+
+                if(response.data.files.filter(x => x.name === drivePathFolder).length == 0) {
+                    response = await drive.files.update({
+                        fileId: driveFolderId,
+                        requestBody: {
+                            name: drivePathFolder
+                        }
+                    });
+                    try {
+                        response = JSON.parse(response);    
+                    }
+                    catch(e) {}
+                }
+
+            }
+            else {
+                // Create folder
+                var folderCreateMetadata = {
+                    'parents': [driveFolderId],
+                    'name': drivePathFolder,
+                    'mimeType': folderMime
+                };
+            
+                let response;
+                let pageToken = null;
+            
+                try {
+                    // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+                    response = await drive.files.create({
+                        resource: folderCreateMetadata,
+                        fields: 'id'
+                    });
+                    try {
+                        response = JSON.parse(response);    
+                    }
+                    catch(e) {}
+                    console.log('create folder result: ', JSON.stringify(response));
+                    if(response && response.data && response.data.id) {
+                        driveFolderId = response.data.id;
+                        console.log('Folder created with new id: ', driveFolderId);
+                    }
+                }
+                catch (e) {
+                    console.log(e);
+                }
+            }
+        }
+        console.log('find folder result: ', JSON.stringify(response));
+    }
+    return driveFolderId;
+}
+
 async function getDriveFileId(drivePath, authParams) {
     
     await performGoogleAuth(authParams);
@@ -1138,6 +1225,32 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
     return results;
 }
 
+async function fixAnagraficaFolderByIdentifier(anagraficaFolders, authParams) {
+    await performGoogleAuth(authParams);
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    console.log('anagraficaFolders', anagraficaFolders);
+    
+    // let completePath = await getDriveFolderCompletePath(drive, driveFolder); 
+    // console.log('completePath: ', completePath);
+    
+    const driveFolder = anagraficaFolders['root_folder'];
+    const subFolders = anagraficaFolders['sub_folders'] || [];
+
+    let foldersToCheck = [driveFolder];
+    if(subFolders && subFolders.length > 0) {
+        for await (subFolder of subFolders) {
+            foldersToCheck.push(subFolder.folder);
+        }
+    }
+    
+    for await (let folder of foldersToCheck) {
+        await fixDriveFolderPathByIdentifier(folder, authParams);
+    }
+    
+    return { result: 'OK' };
+
+}
+
 async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     await performGoogleAuth(authParams);
     const drive = google.drive({version: 'v3', auth: oAuth2Client});
@@ -1379,6 +1492,12 @@ exports.handler = async (event, context) => {
             else if (requestType === 'syncDriveS3File') {
                 const syncData = JSON.parse(queryParams['syncData']);
                 body = await syncDriveS3File(syncData, event.body? JSON.parse(event.body): {});
+            }
+            else if (requestType === 'fixAnagraficaFolderByIdentifier')  {
+                let eventBody = event.body? JSON.parse(event.body): {};
+                const anagraficaFolders = eventBody['anagraficaFolders'];
+                const authParams = eventBody['authToken'];
+                body = await fixAnagraficaFolderByIdentifier(anagraficaFolders, authParams);
             }
             else if (requestType === 'getDriveFolderDeepContents') {
                 let eventBody = event.body? JSON.parse(event.body): {};

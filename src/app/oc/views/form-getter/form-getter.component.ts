@@ -1618,21 +1618,34 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             
                             const googleAuth = await _this.authService.loginGoogle();
                         
+                            let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
+                            console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
+
                             let files: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
+                            let filteredFilesForSetProperFileFolder = [];
+                            for(let file of files.files) {
+                                if(filteredFilesForSetProperFileFolder.filter(x => x.fileid == file.fileid && x.filename == file.filename && x.folder == file.folder).length == 0) {
+                                    filteredFilesForSetProperFileFolder.push(file);
+                                }
+                            }
+
                             let contentsJson = {
                                 codice_azienda: codiceAzienda,
                                 id_progetto: idProgetto,
                                 id_anagrafica: idAnagrafica,
-                                files: files.files
+                                files: filteredFilesForSetProperFileFolder
                             }
                             console.log(contentsJson);
 
                             let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
-                            console.log('setProperFileFolder Response: ', setProperFileFolderResponse.response.rows);
-                            let performDriveOperationsResponse = await _this.backendService.performDriveOperations(setProperFileFolderResponse.response.rows, googleAuth).toPromise();
-                            console.log('performDriveOperations Response: ', performDriveOperationsResponse);
+                            console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
+                            if(setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows) {
+                                let performDriveOperationsResponse = await _this.backendService.performDriveOperations(setProperFileFolderResponse.response.rows, googleAuth).toPromise();
+                                console.log('performDriveOperations Response: ', performDriveOperationsResponse);
+                            }
+
                             _this._toastService.hideLoadingToast(loadingToast);
-                            _this._toastService.showSuccessToast(event.successMessage);
+                            _this._toastService.showSuccessToast(event.successMessage || 'Done!');
                         }
                         catch(e) {
                             console.log(e);
