@@ -5,9 +5,9 @@
 	"businessObjectName": "argomenti",
 	"define": {
 		"id_argomento_father": "3576",
-		"label_id": "ID Documento",
+		"label_id": "ID cartelle/flussi informativi",
 		"campo_id_argomento": "id_argomento_tipo_allegato",
-		"label_unifica": "Unifica id_allegato",
+		"label_unifica": "Unifica cartelle/flussi",
 		"is_hidden_unifica_all": "false",
 		"id_argomento_bigger_than": "and true",
 		"id_argomento_father_s2": "3368",
@@ -252,15 +252,15 @@
 			"queryCond": "arg.codice_azienda=$codice_azienda_s$"
 		},
 		{
-			"label": "$P{label_id}",
+			"fieldName": "id_argomento_list",
 			"format": {
-				"dataType": "number",
-				"viewType": "input"
+			  "dataType": "text",
+			  "viewType": "input"
 			},
-			"fieldName": "id_argomento_s",
+			"label": "$P{label_id}",
 			"newLine": false,
-			"queryCond": "arg.id_argomento=$id_argomento_s$"
-		},
+			"queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
+		  },
 		{
 			"fieldName": "argomento_s",
 			"format": {
