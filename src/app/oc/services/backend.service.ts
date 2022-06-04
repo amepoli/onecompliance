@@ -403,6 +403,13 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   }
 
+  fixAnagraficaFolderByIdentifier(anagraficaFolders: any, authToken: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'fixAnagraficaFolderByIdentifier' };
+    this.myPutPostInit.body = { anagraficaFolders, authToken };
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
+  }
+
   getDriveFolderDeepContents(anagraficaFolders: any, authToken: any) {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { request_type: 'getDriveFolderDeepContents' };
