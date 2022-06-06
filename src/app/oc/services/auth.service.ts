@@ -486,7 +486,7 @@ export class AuthService {
     let _this = this;
     return new Promise((resolve, reject) => {
       gapi.load('auth2', async () => {
-          const gAuth = await gapi.auth2.init({
+          const gAuth = await gapi.auth2.getAuthInstance({
               client_id: appData.GAPI_CLIENT_ID,
               fetch_basic_profile: true,
               offline_access: true,
