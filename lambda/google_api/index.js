@@ -23,6 +23,14 @@ const { file } = require('googleapis/build/src/apis/file');
 
 const folderMime = 'application/vnd.google-apps.folder';
 
+const _console = {
+    log: (...args) => {
+        console.log(args);
+    },
+    error: (...args) => {
+        console.error(args);
+    }
+}
 
 // Get Bad URL Response
 function getBadUrlResponse() {
@@ -75,7 +83,7 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
                 let folderIdentifierPart = '~' + drivePathFolder.split('~')[1];
                 folderQuery = `name contains '${folderIdentifierPart}'`;
             }
-            console.log(`Searching for ${folderQuery} in ${driveFolderId}`);    
+            _console.log(`Searching for ${folderQuery} in ${driveFolderId}`);    
             response = await drive.files.list({
                 q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and ${folderQuery}`,
                 pageSize: 5,
@@ -85,12 +93,13 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
                 response = JSON.parse(response);    
             }
             catch(e) {}
-            console.log('response', response);
+            _console.log('response', response);
             if(response.data && response.data.files && response.data.files.length > 0) {
                 // Folder exists
                 driveFolderId = response.data.files[0].id;
 
                 if(response.data.files.filter(x => x.name === drivePathFolder).length == 0) {
+                    _console.log('folder exists but has a different name: ' + response.data.files[0].name + ' and will be renamed to: ' + drivePathFolder);
                     response = await drive.files.update({
                         fileId: driveFolderId,
                         requestBody: {
@@ -101,6 +110,9 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
                         response = JSON.parse(response);    
                     }
                     catch(e) {}
+                }
+                else {
+                    _console.log('Folder already exists with name: ' + drivePathFolder);
                 }
 
             }
@@ -125,18 +137,18 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
                         response = JSON.parse(response);    
                     }
                     catch(e) {}
-                    console.log('create folder result: ', JSON.stringify(response));
+                    _console.log('create folder result: ', JSON.stringify(response));
                     if(response && response.data && response.data.id) {
                         driveFolderId = response.data.id;
-                        console.log('Folder created with new id: ', driveFolderId);
+                        _console.log('Folder created with new id: ', driveFolderId);
                     }
                 }
                 catch (e) {
-                    console.log(e);
+                    _console.log(e);
                 }
             }
         }
-        console.log('find folder result: ', JSON.stringify(response));
+        _console.log('find folder result: ', JSON.stringify(response));
     }
     return driveFolderId;
 }
@@ -157,7 +169,7 @@ async function getDriveFileId(drivePath, authParams) {
         }
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
-            console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
+            _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
             response = await drive.files.list({
                 q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
                 pageSize: 5,
@@ -167,7 +179,7 @@ async function getDriveFileId(drivePath, authParams) {
                 response = JSON.parse(response);    
             }
             catch(e) {}
-            console.log('response', response);
+            _console.log('response', response);
             if(response.data && response.data.files && response.data.files.length > 0) {
                 // Folder exists
                 driveFolderId = response.data.files[0].id;
@@ -193,18 +205,18 @@ async function getDriveFileId(drivePath, authParams) {
                         response = JSON.parse(response);    
                     }
                     catch(e) {}
-                    console.log('create folder result: ', JSON.stringify(response));
+                    _console.log('create folder result: ', JSON.stringify(response));
                     if(response && response.data && response.data.id) {
                         driveFolderId = response.data.id;
-                        console.log('Folder created with new id: ', driveFolderId);
+                        _console.log('Folder created with new id: ', driveFolderId);
                     }
                 }
                 catch (e) {
-                    console.log(e);
+                    _console.log(e);
                 }
             }
         }
-        console.log('find folder result: ', JSON.stringify(response));
+        _console.log('find folder result: ', JSON.stringify(response));
     }
     return driveFolderId;
 }
@@ -247,7 +259,7 @@ async function downloadDriveObject(driveFolderId, driveFile) {
     if(response.data && response.data.files && response.data.files.length > 0) {
         driveFileId = response.data.files[0].id;
     }
-    console.log('find file result: ', JSON.stringify(response));
+    _console.log('find file result: ', JSON.stringify(response));
 
     if(driveFileId) {
         response = await drive.files.get({
@@ -258,7 +270,7 @@ async function downloadDriveObject(driveFolderId, driveFile) {
     }
     
     const data = Buffer.from(response.data);    
-    console.log('google file data: ', data);
+    _console.log('google file data: ', data);
     return data;
 }
 
@@ -267,7 +279,7 @@ async function getDriveFileInfo(driveFolderId, driveFile) {
     let response;
 
     try {
-        console.log('Trying to find file with folder id: ', driveFolderId, ' and file name: ', driveFile);
+        _console.log('Trying to find file with folder id: ', driveFolderId, ' and file name: ', driveFile);
         
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.files.list({
@@ -280,13 +292,13 @@ async function getDriveFileInfo(driveFolderId, driveFile) {
         }
         catch(e) {}
         
-        console.log(JSON.stringify(response));
+        _console.log(JSON.stringify(response));
         if(response.data && response.data.files && response.data.files.length > 0) {
             return { result: 'OK', data: response.data.files[0] };
         }
     }
     catch (e) {
-        console.log(e);
+        _console.log(e);
     }
 
     return { result: 'KO', data: 'File not found!' };
@@ -297,7 +309,7 @@ async function renameDriveFile(driveFolderId, OldName, newName) {
     let response;
 
     try {
-        console.log('Trying to find file with folder id: ', driveFolderId, ' and file name: ', OldName);
+        _console.log('Trying to find file with folder id: ', driveFolderId, ' and file name: ', OldName);
         
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.files.list({
@@ -310,7 +322,7 @@ async function renameDriveFile(driveFolderId, OldName, newName) {
         }
         catch(e) {}
                 
-        console.log(JSON.stringify(response));
+        _console.log(JSON.stringify(response));
         if(response.data && response.data.files && response.data.files.length > 0) {
             let file = response.data.files[0];
 
@@ -329,7 +341,7 @@ async function renameDriveFile(driveFolderId, OldName, newName) {
         }
     }
     catch (e) {
-        console.log(e);
+        _console.log(e);
     }
 
     return { result: 'KO', data: 'File not found!' };
@@ -340,7 +352,7 @@ async function getS3FileInfo(s3FilePath) {
         Bucket: 'BUCKET_NAME',
         Key: s3FilePath.startsWith('/')? s3FilePath.substring(1): s3FilePath
     };
-    console.log('params', params);
+    _console.log('params', params);
     const data = await s3.headObject(params).promise();   
     return { result: 'OK', data: data };
 }
@@ -362,7 +374,7 @@ async function deleteDriveFile(driveFileId) {
         return { result: 'OK', data: response };        
     }
     catch (e) {
-        console.log(e);
+        _console.log(e);
         return {result: 'KO', data: e};
     }
 
@@ -384,7 +396,7 @@ async function performGoogleAuth(authParams) {
     authParams["refresh_token"] = authParams["access_token"];
     //authParams["code"] = "4/0AX4XfWiIpDqZDo_3UgFm6sTL5AuWRRxNd0jcxMc8p9rZOhxQuNZUijREH5HrI4yxLF7G3Q",
     authParams["client_secret"] = 'CLIENT_SECRET';
-    console.log('authParams: ', authParams);
+    _console.log('authParams: ', authParams);
 
     // authParams["grant_type"] = "authorization_code"
 
@@ -410,7 +422,7 @@ async function performGoogleAuth(authParams) {
         // Or, if multiple clients access the backend:
         //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
     });
-    console.log('ticket: ', ticket);
+    _console.log('ticket: ', ticket);
 
     oAuth2Client.setCredentials(authParams);
     // oAuth2Client.setCredentials({
@@ -423,14 +435,14 @@ async function performGoogleAuth(authParams) {
     // after acquiring an oAuth2Client...
     const tokenInfo = await oAuth2Client.getTokenInfo(authParams.access_token);
     // take a look at the scopes originally provisioned for the access token
-    console.log('tokenInfo: ', tokenInfo);
+    _console.log('tokenInfo: ', tokenInfo);
 
     try {
         let refreshResult = await oAuth2Client.refreshAccessToken();
-        console.log(refreshResult);
+        _console.log(refreshResult);
     }
     catch (e) {
-        console.log(e);
+        _console.log(e);
     }
 
 }
@@ -446,7 +458,7 @@ async function getDirections(origin, destination) {
         }
     };
     const response = await googleMapsClient.directions(params);
-    console.log(JSON.stringify(response.data));
+    _console.log(JSON.stringify(response.data));
     if (response.data.status == 'OK') {
         return { result: 'OK', data: response.data };
     }
@@ -466,7 +478,7 @@ async function getDistance(origin, destination) {
         }
     };
     const response = await googleMapsClient.distancematrix(params);
-    console.log(JSON.stringify(response.data));
+    _console.log(JSON.stringify(response.data));
     if (response.data.status == 'OK') {
         return { result: 'OK', data: response.data };
     }
@@ -489,10 +501,10 @@ async function getEmailThreads(search, authParams) {
         let response = await gmail.users.labels.list({
             userId: 'me',
         });
-        console.log(JSON.stringify(response));
+        _console.log(JSON.stringify(response));
     }
     catch (e) {
-        console.log(e);
+        _console.log(e);
     }
 
 
@@ -509,12 +521,12 @@ async function getEmailThreads(search, authParams) {
     // let response = await gmail.users.labels.list({
     //     userId: 'me',
     // });
-    // console.log(response);
+    // _console.log(response);
 
     // const response = await promisify(gmail.users.labels.list({
     //     userId: 'me',
     // }), { context: gmail.users.labels} );
-    // console.log(response);
+    // _console.log(response);
 
     // const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -534,10 +546,10 @@ async function getEmailThreads(search, authParams) {
         response = await gmail.users.labels.list({
             userId: 'me',
         });
-        console.log(response);
+        _console.log(response);
     }
     catch (e) {
-        console.log(e);
+        _console.log(e);
     }
 
 
@@ -545,15 +557,15 @@ async function getEmailThreads(search, authParams) {
     // gmail.users.labels.list({
     //     userId: 'me',
     // }, (err, res) => {
-    //     if (err) return console.log('The API returned an error: ' + err);
+    //     if (err) return _console.log('The API returned an error: ' + err);
     //     const labels = res.data.labels;
     //     if (labels.length) {
-    //         console.log('Labels:');
+    //         _console.log('Labels:');
     //         labels.forEach((label) => {
-    //             console.log(`- ${label.name}`);
+    //             _console.log(`- ${label.name}`);
     //         });
     //     } else {
-    //         console.log('No labels found.');
+    //         _console.log('No labels found.');
     //     }
     // });
     // snooze(5000);
@@ -563,10 +575,10 @@ async function getEmailThreads(search, authParams) {
 
     // // Get directions
     // const url = `https://gmail.googleapis.com/gmail/v1/users/${queryParams['email']}/threads`;
-    // console.log('url: ', url);
+    // _console.log('url: ', url);
     // // const req = await requestPromise({ url, method: 'GET' })
     // const response = await axios.get(url);
-    // console.log(response.data);
+    // _console.log(response.data);
 
     return { result: 'OK', result: response };
 }
@@ -592,10 +604,10 @@ async function getDriveContents(folder, authParams) {
             response = JSON.parse(response);    
         }
         catch(e) {}
-        console.log(JSON.stringify(response));
+        _console.log(JSON.stringify(response));
     }
     catch (e) {
-        console.log(e);
+        _console.log(e);
     }
 
 
@@ -612,12 +624,12 @@ async function getDriveContents(folder, authParams) {
     // let response = await gmail.users.labels.list({
     //     userId: 'me',
     // });
-    // console.log(response);
+    // _console.log(response);
 
     // const response = await promisify(gmail.users.labels.list({
     //     userId: 'me',
     // }), { context: gmail.users.labels} );
-    // console.log(response);
+    // _console.log(response);
 
     // const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -637,10 +649,10 @@ async function getDriveContents(folder, authParams) {
     //     response = await gmail.users.labels.list({
     //         userId: 'me',
     //     });
-    //     console.log(response);
+    //     _console.log(response);
     // }
     // catch (e) {
-    //     console.log(e);
+    //     _console.log(e);
     // }
 
 
@@ -648,15 +660,15 @@ async function getDriveContents(folder, authParams) {
     // gmail.users.labels.list({
     //     userId: 'me',
     // }, (err, res) => {
-    //     if (err) return console.log('The API returned an error: ' + err);
+    //     if (err) return _console.log('The API returned an error: ' + err);
     //     const labels = res.data.labels;
     //     if (labels.length) {
-    //         console.log('Labels:');
+    //         _console.log('Labels:');
     //         labels.forEach((label) => {
-    //             console.log(`- ${label.name}`);
+    //             _console.log(`- ${label.name}`);
     //         });
     //     } else {
-    //         console.log('No labels found.');
+    //         _console.log('No labels found.');
     //     }
     // });
     // snooze(5000);
@@ -666,10 +678,10 @@ async function getDriveContents(folder, authParams) {
 
     // // Get directions
     // const url = `https://gmail.googleapis.com/gmail/v1/users/${queryParams['email']}/threads`;
-    // console.log('url: ', url);
+    // _console.log('url: ', url);
     // // const req = await requestPromise({ url, method: 'GET' })
     // const response = await axios.get(url);
-    // console.log(response.data);
+    // _console.log(response.data);
 
     return { result: 'OK', data: response.data.files };
 }
@@ -699,10 +711,10 @@ async function createDriveFolder(folder, authParams) {
             response = JSON.parse(response);    
         }
         catch(e) {}
-        console.log(JSON.stringify(response));
+        _console.log(JSON.stringify(response));
     }
     catch (e) {
-        console.log(e);
+        _console.log(e);
     }
 
 
@@ -719,12 +731,12 @@ async function createDriveFolder(folder, authParams) {
     // let response = await gmail.users.labels.list({
     //     userId: 'me',
     // });
-    // console.log(response);
+    // _console.log(response);
 
     // const response = await promisify(gmail.users.labels.list({
     //     userId: 'me',
     // }), { context: gmail.users.labels} );
-    // console.log(response);
+    // _console.log(response);
 
     // const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -744,10 +756,10 @@ async function createDriveFolder(folder, authParams) {
     //     response = await gmail.users.labels.list({
     //         userId: 'me',
     //     });
-    //     console.log(response);
+    //     _console.log(response);
     // }
     // catch (e) {
-    //     console.log(e);
+    //     _console.log(e);
     // }
 
 
@@ -755,15 +767,15 @@ async function createDriveFolder(folder, authParams) {
     // gmail.users.labels.list({
     //     userId: 'me',
     // }, (err, res) => {
-    //     if (err) return console.log('The API returned an error: ' + err);
+    //     if (err) return _console.log('The API returned an error: ' + err);
     //     const labels = res.data.labels;
     //     if (labels.length) {
-    //         console.log('Labels:');
+    //         _console.log('Labels:');
     //         labels.forEach((label) => {
-    //             console.log(`- ${label.name}`);
+    //             _console.log(`- ${label.name}`);
     //         });
     //     } else {
-    //         console.log('No labels found.');
+    //         _console.log('No labels found.');
     //     }
     // });
     // snooze(5000);
@@ -773,10 +785,10 @@ async function createDriveFolder(folder, authParams) {
 
     // // Get directions
     // const url = `https://gmail.googleapis.com/gmail/v1/users/${queryParams['email']}/threads`;
-    // console.log('url: ', url);
+    // _console.log('url: ', url);
     // // const req = await requestPromise({ url, method: 'GET' })
     // const response = await axios.get(url);
-    // console.log(response.data);
+    // _console.log(response.data);
 
     return { result: 'OK', data: response };
 }
@@ -796,8 +808,8 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
         s3File = s3FilePathParts.pop();
         s3Path = s3FilePathParts.join('/');
     }
-    console.log('s3File: ', s3File);
-    console.log('s3Path: ', s3Path);
+    _console.log('s3File: ', s3File);
+    _console.log('s3Path: ', s3Path);
     
     
     if(driveFilePath.startsWith('/')) {
@@ -810,16 +822,16 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
         driveFile = driveFilePathParts.pop();
         drivePath = driveFilePathParts.join('/');
     }
-    console.log('driveFile: ', driveFile);
-    console.log('drivePath: ', drivePath);
+    _console.log('driveFile: ', driveFile);
+    _console.log('drivePath: ', drivePath);
     
     
     const s3FileData = await downloadS3Object(s3FilePath, s3File);
-    console.log('s3FileData: ', s3FileData);
+    _console.log('s3FileData: ', s3FileData);
     
     const s3Data = s3FileData.Body;
     const s3DataStr = s3Data.toString('hex');
-    console.log('data: ', s3DataStr);
+    _console.log('data: ', s3DataStr);
     
     // var bufferStream = new stream.PassThrough();
     // bufferStream.end(Uint8Array.from(s3Data));
@@ -834,7 +846,7 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
     // bufferStream.end(s3FileData.Body);
 
     // const stream = Readable.from(s3FileData);
-    // console.log('data: ' + JSON.stringify(bufferStream));
+    // _console.log('data: ' + JSON.stringify(bufferStream));
 
     const drive = google.drive({version: 'v3', auth: oAuth2Client});
     
@@ -845,7 +857,7 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
     if(drivePath.length > 0) {        
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
-            console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
+            _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
             response = await drive.files.list({
                 q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
                 pageSize: 5,
@@ -855,7 +867,7 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
                 response = JSON.parse(response);    
             }
             catch(e) {}
-            console.log('response', response);
+            _console.log('response', response);
             if(response.data && response.data.files && response.data.files.length > 0) {
                 // Folder exists
                 driveFolderId = response.data.files[0].id;
@@ -881,18 +893,18 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
                         response = JSON.parse(response);    
                     }
                     catch(e) {}
-                    console.log('create folder result: ', JSON.stringify(response));
+                    _console.log('create folder result: ', JSON.stringify(response));
                     if(response && response.data && response.data.id) {
                         driveFolderId = response.data.id;
-                        console.log('Folder created with new id: ', driveFolderId);
+                        _console.log('Folder created with new id: ', driveFolderId);
                     }
                 }
                 catch (e) {
-                    console.log(e);
+                    _console.log(e);
                 }
             }
         }
-        console.log('find folder result: ', JSON.stringify(response));
+        _console.log('find folder result: ', JSON.stringify(response));
     }
     
     const fileMetadata = {
@@ -915,11 +927,22 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
             response = JSON.parse(response);    
         }
         catch(e) {}
-        console.log(JSON.stringify(response));
+        _console.log(JSON.stringify(response));
     }
     catch (e) {
-        console.log(e);
+        _console.log(e);
     }
+    
+    if (global.gc) {
+        _console.log('Requesting gc to free-up unsed memory');
+        global.gc(); // Synchronous call, may take longer time and further execution get blocked till it finishes the execution
+    }
+    
+    if (bufferStream.destroy) {
+        _console.log('Destroying buffer stream');
+        bufferStream.destroy();
+    }
+    
 
     return { result: 'OK', data: response };
 }
@@ -933,7 +956,7 @@ async function copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, authParam
     const driveFileData = await downloadDriveObject(driveFolderId, driveFile);
     response = await uploadS3Object(s3FilePath, driveFileData);
 
-    // console.log('data: ' + JSON.stringify(bufferStream));
+    // _console.log('data: ' + JSON.stringify(bufferStream));
 
     
     // const drive = google.drive({version: 'v3', auth: oAuth2Client});
@@ -953,7 +976,7 @@ async function copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, authParam
     //     if(response.data && response.data.files && response.data.files.length > 0) {
     //         driveFolderId = response.data.files[0].id;
     //     }
-    //     console.log('find folder result: ', JSON.stringify(response));
+    //     _console.log('find folder result: ', JSON.stringify(response));
     // }
     
     // const fileMetadata = {
@@ -976,10 +999,10 @@ async function copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, authParam
     //         response = JSON.parse(response);    
     //     }
     //     catch(e) {}
-    //     console.log(JSON.stringify(response));
+    //     _console.log(JSON.stringify(response));
     // }
     // catch (e) {
-    //     console.log(e);
+    //     _console.log(e);
     // }
 
     return { result: 'OK', data: response };
@@ -991,14 +1014,14 @@ async function syncDriveS3File(syncData, authParams) {
     
     let result = [];
     
-    console.log('syncData', syncData);
+    _console.log('syncData: ', syncData);
     
     for await (syncRow of syncData) {
         let driveFilePath = syncRow['driveFilePath'];    
         let s3FilePath = syncRow['s3FilePath'];
         const s3md5 = syncRow['s3md5'];
         
-        console.log('driveFile: ', driveFilePath);
+        _console.log('driveFile: ', driveFilePath);
         if(driveFilePath.startsWith('/')) {
             driveFilePath = driveFilePath.substring(1);
         }
@@ -1009,8 +1032,8 @@ async function syncDriveS3File(syncData, authParams) {
             driveFile = driveFilePathParts.pop();
             drivePath = driveFilePathParts.join('/');
         }
-        console.log('driveFile: ', driveFile);
-        console.log('drivePath: ', drivePath);
+        _console.log('driveFile: ', driveFile);
+        _console.log('drivePath: ', drivePath);
 
         if(s3FilePath.startsWith('/')) {
             s3FilePath = s3FilePath.substring(1);
@@ -1022,8 +1045,8 @@ async function syncDriveS3File(syncData, authParams) {
             s3File = s3FilePathParts.pop();
             s3Path = s3FilePathParts.join('/');
         }
-        console.log('s3File: ', s3File);
-        console.log('s3Path: ', s3Path);
+        _console.log('s3File: ', s3File);
+        _console.log('s3Path: ', s3Path);
         
         let response;
         let driveFileInfo = null;
@@ -1031,38 +1054,44 @@ async function syncDriveS3File(syncData, authParams) {
         let s3FileInfo = null;
 
         try {
-            driveFolderId = await getDriveFileId(drivePath, authParams);
+            if(syncRow['driveFolderId']) {
+                _console.log('Using syncRow driveFolderId', syncRow['driveFolderId']);
+                driveFolderId = syncRow['driveFolderId'];
+            }
+            else {
+                driveFolderId = await getDriveFileId(drivePath, authParams);
+            }
         }
         catch(e) {
-            console.error(e);
+            _console.error(e);
         }
         
         try {
             response = await getDriveFileInfo(driveFolderId, driveFile);
             driveFileInfo = response.data;
-            console.log('getDriveFileInfo: ', JSON.stringify(response));
+            _console.log('getDriveFileInfo: ', JSON.stringify(response));
             if(driveFileInfo.result === 'KO') {
                 driveFileInfo = null;
             }
         }
         catch(e) {
-            console.error(e);
+            _console.error(e);
         }
         
         try{
             response = await getS3FileInfo(s3FilePath);
             s3FileInfo = response.data;
             if(s3FileInfo && s3FileInfo.ETag) {
-                console.log('getS3FileInfo: ', JSON.stringify(s3FileInfo));
+                _console.log('getS3FileInfo: ', JSON.stringify(s3FileInfo));
                 s3FileInfo.ETag = s3FileInfo.ETag.replace('\\', "");
                 s3FileInfo.ETag = s3FileInfo.ETag.replace('\\', "");
                 s3FileInfo.ETag = s3FileInfo.ETag.replace('"', "");
                 s3FileInfo.ETag = s3FileInfo.ETag.replace('"', "");
-                console.log('getS3FileInfo md5: ', s3FileInfo.ETag);
+                _console.log('getS3FileInfo md5: ', s3FileInfo.ETag);
             }
         }
         catch(e) {
-            console.error(e);
+            _console.error(e);
         }
         
         if(driveFileInfo && driveFileInfo.modifiedTime != null && s3FileInfo && s3FileInfo.LastModified != null) {
@@ -1073,21 +1102,21 @@ async function syncDriveS3File(syncData, authParams) {
             else {
                 const driveFileModifiedDateTime = new Date(driveFileInfo.modifiedTime);
                 const s3FileModifiedDateTime = new Date(s3FileInfo.LastModified);
-                console.log('driveFileModifiedDateTime', driveFileModifiedDateTime);
-                console.log('s3FileModifiedDateTime', s3FileModifiedDateTime);
+                _console.log('driveFileModifiedDateTime', driveFileModifiedDateTime);
+                _console.log('s3FileModifiedDateTime', s3FileModifiedDateTime);
                 
                 if(driveFileModifiedDateTime > s3FileModifiedDateTime) {
-                    console.log('deleteS3File...');
+                    _console.log('deleteS3File...');
                     await deleteS3File(s3FilePath);
-                    console.log('copyFromDriveToS3...');
+                    _console.log('copyFromDriveToS3...');
                     await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, authParams);
                     syncRow['s3md5'] = driveFileInfo.md5Checksum;
                     response = { result: 'OK', message: 'Copied from Drive to S3' };
                 }
                 else if(driveFileModifiedDateTime < s3FileModifiedDateTime) {
-                    console.log('deleteDriveFile...');
+                    _console.log('deleteDriveFile...');
                     await deleteDriveFile(driveFileInfo.id);
-                    console.log('copyFromS3ToDrive...');
+                    _console.log('copyFromS3ToDrive...');
                     await copyFromS3ToDrive(s3FilePath, driveFilePath, authParams);
                     syncRow['s3md5'] = s3FileInfo.ETag;
                     response = { result: 'OK', message: 'Copied from S3 to Drive' };
@@ -1095,13 +1124,13 @@ async function syncDriveS3File(syncData, authParams) {
             }
         }
         else if(driveFileInfo && driveFileInfo.modifiedTime != null) {
-            console.log('copyFromDriveToS3...');
+            _console.log('copyFromDriveToS3...');
             await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, authParams);
             syncRow['s3md5'] = driveFileInfo.md5Checksum;
             response = { result: 'OK', message: 'Copied from Drive to S3' };
         }
         else if(s3FileInfo && s3FileInfo.LastModified != null) {        
-            console.log('copyFromS3ToDrive...');
+            _console.log('copyFromS3ToDrive...');
             await copyFromS3ToDrive(s3FilePath, driveFilePath, authParams);
             syncRow['s3md5'] = s3FileInfo.ETag;
             response = { result: 'OK', message: 'Copied from S3 to Drive' };
@@ -1121,7 +1150,7 @@ async function syncDriveS3File(syncData, authParams) {
         result.push(response);
     }
 
-    console.log('Sync result: ', result);
+    _console.log('Sync result: ', result);
     
     return { result: 'OK', result: result, syncData };
 }
@@ -1145,7 +1174,7 @@ async function getDriveFolderCompletePath(drive, driveFolder) {
                 
             }
             catch(e) {
-                console.log('error', e);
+                _console.log('error', e);
             }
 
             try {
@@ -1153,20 +1182,20 @@ async function getDriveFolderCompletePath(drive, driveFolder) {
             }
             catch(e) { }
 
-            console.log('list drive files: ', JSON.stringify(response));
+            _console.log('list drive files: ', JSON.stringify(response));
 
             if(response.data && response.data.files && response.data.files.length > 0) {
                 completePath = '/' + response.data.files[0].name + '';
                 parentId = response.data.files[0].parents[0];
             }
-            console.log('parentId: ', parentId);
+            _console.log('parentId: ', parentId);
             //parentId = 'root';
             query = `driveId='${parentId}'`;
-            console.log('query: ', query);
+            _console.log('query: ', query);
         }
     }
     catch (e) {
-        console.log(e);
+        _console.log(e);
     }
     
     return completePath;
@@ -1183,7 +1212,7 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
         else {
             query = `name='${driveFolder}' and mimeType='${folderMime}'`;
         }
-        console.log('query: ', query);
+        _console.log('query: ', query);
         
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         try {
@@ -1195,7 +1224,7 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
             
         }
         catch(e) {
-            console.log('error', e);
+            _console.log('error', e);
         }
 
         try {
@@ -1204,7 +1233,7 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
         catch(e) { }
 
 
-        console.log('list drive files: ', JSON.stringify(response));
+        _console.log('list drive files: ', JSON.stringify(response));
 
         if(response.data && response.data.files && response.data.files.length > 0) {
             for await (let curFile of response.data.files) {
@@ -1219,7 +1248,7 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
 
     }
     catch (e) {
-        console.log(e);
+        _console.log(e);
     }
 
     return results;
@@ -1228,10 +1257,10 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
 async function fixAnagraficaFolderByIdentifier(anagraficaFolders, authParams) {
     await performGoogleAuth(authParams);
     const drive = google.drive({version: 'v3', auth: oAuth2Client});
-    console.log('anagraficaFolders', anagraficaFolders);
+    _console.log('anagraficaFolders', anagraficaFolders);
     
     // let completePath = await getDriveFolderCompletePath(drive, driveFolder); 
-    // console.log('completePath: ', completePath);
+    // _console.log('completePath: ', completePath);
     
     const driveFolder = anagraficaFolders['root_folder'];
     const subFolders = anagraficaFolders['sub_folders'] || [];
@@ -1239,80 +1268,112 @@ async function fixAnagraficaFolderByIdentifier(anagraficaFolders, authParams) {
     let foldersToCheck = [driveFolder];
     if(subFolders && subFolders.length > 0) {
         for await (subFolder of subFolders) {
-            foldersToCheck.push(subFolder.folder);
+            if(!foldersToCheck.includes(subFolder.folder)) {
+                foldersToCheck.push(subFolder.folder);
+            }
         }
     }
     
+    _console.log('foldersToCheck: ', JSON.stringify(foldersToCheck));
+    
+
+    let folderIds = {};
+
     for await (let folder of foldersToCheck) {
-        await fixDriveFolderPathByIdentifier(folder, authParams);
+        _console.log('Checking and fixing: ' + folder);
+        let folderId = await fixDriveFolderPathByIdentifier(folder, authParams);
+        folderIds[folder] = folderId;
     }
     
-    return { result: 'OK' };
+    _console.log('fix Result: '+ JSON.stringify({ result: 'OK', folderIds: folderIds }));
+    return { result: 'OK', folderIds: folderIds };
 
 }
 
 async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     await performGoogleAuth(authParams);
     const drive = google.drive({version: 'v3', auth: oAuth2Client});
-    console.log('anagraficaFolders', anagraficaFolders);
+    _console.log('anagraficaFolders', JSON.stringify(anagraficaFolders));
     
     // let completePath = await getDriveFolderCompletePath(drive, driveFolder); 
-    // console.log('completePath: ', completePath);
+    // _console.log('completePath: ', completePath);
     
     const driveFolder = anagraficaFolders['root_folder'];
-    const subFolders = anagraficaFolders['sub_folders'] || [];
-    // console.log()
+    let subFolders = [];
+    const folderIds = anagraficaFolders['folder_ids'] || [];
+
+    if(anagraficaFolders['sub_folders'] && anagraficaFolders['sub_folders'].length > 0) {
+        for(let subFolder of anagraficaFolders['sub_folders']) {
+            if(subFolder.file && subFolder.file.length > 0 && subFolders.filter(x => x.file === subFolder.file && x.folder === x.folder).length == 0) {
+                subFolders.push(subFolder);
+            }
+        }
+    }
+
+    _console.log('subFolders', JSON.stringify(subFolders));
+    
+    // _console.log()
     // while( i < subFolders.length) {        
     //     let getDriveFileIdResponse = await getDriveFileId(subFolders[i], authParams);
-    //     console.log('getDriveFileIdResponse', getDriveFileIdResponse);
+    //     _console.log('getDriveFileIdResponse', getDriveFileIdResponse);
     //     i++;
     // }
 
     let rootFolderId = null;
 
     try {
-        rootFolderId = await getDriveFileId(driveFolder, authParams);
+        rootFolderId = folderIds[driveFolder]; // await getDriveFileId(driveFolder, authParams);
+        _console.log('rootFolderId: ', rootFolderId);
     }
     catch(e) {
-        console.error(e);
+        _console.error(e);
     }
 
     let results = await getDriveRecursiveContents(drive, null, rootFolderId, driveFolder, []);
-    console.log('results', JSON.stringify(results));    
+    _console.log('Root getDriveRecursiveContents results: ', JSON.stringify(results));    
     
     let syncData = [];
     
     if(subFolders && subFolders.length > 0) {
         for await (subFolder of subFolders) {
-            syncData.push({
-                s3FilePath: subFolder.fileid, s3md5: subFolder.md5, driveFilePath: subFolder.folder + '/' + subFolder.file
-            });
+            _console.log('Checking if subfolder is already added: ' + (subFolder.folder + '/' + subFolder.file));
+            if(syncData.filter( x => x.driveFilePath == (subFolder.folder + '/' + subFolder.file)).length == 0) {
+                syncData.push({
+                    s3FilePath: subFolder.fileid, s3md5: subFolder.md5, driveFilePath: subFolder.folder + '/' + subFolder.file, driveFolderId: folderIds[subFolder.folder]
+                });
+            }
         }
 
-        let syncResponse = await syncDriveS3File(syncData, authParams);
-        console.log('syncResponse: ', syncResponse);
+        let syncResponse = [];
+        
+        let syncBatches = Array(Math.ceil(syncData.length/10)).map((x, i) => i * 10);
+        _console.log('syncBatches: ', syncBatches);
+
+        syncResponse = await syncDriveS3File(syncData, authParams);
+        _console.log('syncResponse: ', syncResponse);
         syncData = syncResponse['syncData'];
 
         for await (subFolder of subFolders) {
-            if(subFolder.file) {
+            if(subFolder.file && subFolder.file.length > 0) {
                 if(!subFolder.md5 || !subFolder.fileid) {
                     let getDriveFileIndoResponse;
                     let driveFileInfo = null;
                     let driveFolderId = null;
                     
                     try {
-                        driveFolderId = await getDriveFileId(subFolder['folder'], authParams);
+                        driveFolderId = folderIds[subFolder['folder']]; // await getDriveFileId(subFolder['folder'], authParams);
+                        _console.log('Using driveFolderId: ', driveFolderId, ' for: ', subFolder['folder']);
                     }
                     catch(e) {
-                        console.error(e);
+                        _console.error(e);
                     }
                     
                     try {
                         getDriveFileIndoResponse = await getDriveFileInfo(driveFolderId, subFolder['file']);
-                        console.log('subfolder getDriveFileInfo: ', JSON.stringify(getDriveFileIndoResponse));
+                        _console.log('subfolder getDriveFileInfo: ', JSON.stringify(getDriveFileIndoResponse));
                         driveFileInfo = getDriveFileIndoResponse.data;
                         if(driveFileInfo && driveFileInfo['md5Checksum']) {
-                            console.log('driveFileInfo: ', JSON.stringify(driveFileInfo));
+                            _console.log('driveFileInfo: ', JSON.stringify(driveFileInfo));
                             subFolder['md5'] = driveFileInfo['md5Checksum'];
         
                             if(!subFolders.fileid) {
@@ -1320,46 +1381,49 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
                             }
                         }
                         
-                        console.log('subfolder: ', JSON.stringify(subFolder));
+                        _console.log('subfolder: ', JSON.stringify(subFolder));
                     }
                     catch(e) {
-                        console.error(e);
+                        _console.error(e);
                     }
                 }
 
-                console.log('Pushing to results: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
+                _console.log('Pushing to results: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
                 results.push({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder});
             }
-            else {
-                await getDriveFileId(subFolder['folder'], authParams);
-            }
-            //result.push(getDriveFileIndoResponse);
+            // Not needed anymore by fixAnagraficaFolderByIdentifier takes care of creating missing folders
+            // else {
+            //     await getDriveFileId(subFolder['folder'], authParams);
+            // }
         }
     }
     
-    return { result: 'OK', files: results };
+    let finalResponse = { result: 'OK', files: results};
+
+    _console.log('getDriveFolderDeepContents result', JSON.stringify(finalResponse), 'length: ', JSON.stringify(finalResponse).length);
+    return finalResponse;
 
 }
 
 async function performDriveOperations(operations, authParams) {
     await performGoogleAuth(authParams);
     const drive = google.drive({version: 'v3', auth: oAuth2Client});
-    console.log('operations', operations);
+    _console.log('operations', operations);
     
     let result = [];
 
     if(operations && operations.length > 0) {
         for await (let operation of operations) {
             if(operation.todo === '1- rename') {
-                let drivePath = '';
-                let driveFile = operation.googledrivepath;
-                if(operation.googledrivepath.includes('/')) {
-                    let driveFilePathParts = operation.googledrivepath.split('/');
-                    driveFile = driveFilePathParts.pop();
-                    drivePath = driveFilePathParts.join('/');
-                }
-                console.log('driveFile: ', driveFile);
-                console.log('drivePath: ', drivePath);
+                let drivePath = operation.googledrivepath;
+                let driveFile = operation.oldfilename;
+                // if(operation.googledrivepath.includes('/')) {
+                //     let driveFilePathParts = operation.googledrivepath.split('/');
+                //     driveFile = driveFilePathParts.pop();
+                //     drivePath = driveFilePathParts.join('/');
+                // }
+                _console.log('driveFile: ', driveFile);
+                _console.log('drivePath: ', drivePath);
             
 
                 let getDriveFileIndoResponse;
@@ -1370,16 +1434,16 @@ async function performDriveOperations(operations, authParams) {
                     driveFolderId = await getDriveFileId(drivePath, authParams);
                 }
                 catch(e) {
-                    console.error(e);
+                    _console.error(e);
                 }
                 
                 try {
                     let renameDriveFileResponse = await renameDriveFile(driveFolderId, driveFile, operation.newfilename);
-                    console.log('renameDriveFile response: ', JSON.stringify(renameDriveFileResponse));
+                    _console.log('renameDriveFile response: ', JSON.stringify(renameDriveFileResponse));
                     result.push(renameDriveFileResponse);
                 }
                 catch(e) {
-                    console.error(e);
+                    _console.error(e);
                 }
 
             }
@@ -1400,13 +1464,13 @@ async function performDriveOperations(operations, authParams) {
 
 exports.handler = async (event, context) => {
 
-    // console.log(event);
+    // _console.log(event);
     // const method = event.httpMethod;
     // const userid = event.requestContext ? event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2] : null;
-    // console.log('userid: ', userid);
+    // _console.log('userid: ', userid);
 
     const queryParams = event.queryStringParameters ? event.queryStringParameters : event;
-    console.log('queryParams: ', queryParams);
+    _console.log('queryParams: ', queryParams);
 
     const requestType = queryParams['request_type'];
     
@@ -1415,7 +1479,7 @@ exports.handler = async (event, context) => {
         return getBadUrlResponse();
     }
     else {
-        console.log('Lets start ', requestType);
+        _console.log('Lets start ', requestType);
 
         try {
             let body = null;
@@ -1462,8 +1526,8 @@ exports.handler = async (event, context) => {
                     driveFile = driveFilePathParts.pop();
                     drivePath = driveFilePathParts.join('/');
                 }
-                console.log('driveFile: ', driveFile);
-                console.log('drivePath: ', drivePath);
+                _console.log('driveFile: ', driveFile);
+                _console.log('drivePath: ', drivePath);
             
                 if(s3FilePath.startsWith('/')) {
                     s3FilePath = s3FilePath.substring(1);
@@ -1475,8 +1539,8 @@ exports.handler = async (event, context) => {
                     s3File = s3FilePathParts.pop();
                     s3Path = s3FilePathParts.join('/');
                 }
-                console.log('s3File: ', s3File);
-                console.log('s3Path: ', s3Path);
+                _console.log('s3File: ', s3File);
+                _console.log('s3Path: ', s3Path);
                     
                 let driveFolderId = null;
                 
@@ -1484,7 +1548,7 @@ exports.handler = async (event, context) => {
                     driveFolderId = await getDriveFileId(drivePath, event.body? JSON.parse(event.body): {});
                 }
                 catch(e) {
-                    console.error(e);
+                    _console.error(e);
                 }
 
                 body = await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, event.body? JSON.parse(event.body): {});
@@ -1514,11 +1578,11 @@ exports.handler = async (event, context) => {
             else {
                 return getBadUrlResponse();
             }
-
+            _console.log('sending body: ', getServerResponse(body));
             return getServerResponse(body);
         }
         catch (e) {
-            console.log(e);
+            _console.log(e);
             return getServerErrorResponse(e);
         }
     }
