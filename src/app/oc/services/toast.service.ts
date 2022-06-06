@@ -164,7 +164,7 @@ export class ToastService {
             {
                 progressBar: true,
                 progressAnimation: 'increasing',
-                timeOut: 100000,
+                timeOut: 5 * 60 * 1000,
                 tapToDismiss: false
             }
         );

@@ -1,12 +1,12 @@
 {
   "$schema": "../views.schema.json",
   "inheritsFrom": "compiti_sub_istanze_aperte_azienda",
-  "entryKey": "compiti_sub_of_compiti_sub_istanze_aperte_azienda",
+  "entryKey": "compiti_sub_of_azienda",
   "predefinedQueries": [
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, cg.codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date, codice_compito) as time_consumed, cg.codice_azienda_erogante, cmp.codice_compito,cmp.stato, cmp.codice_azienda, cmp.codice_azienda, foreseen_date, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp inner join entrasp.centri_gestionali cg on cmp.id_centro_gest=cg.id_centro_gest and cmp.codice_part=cg.codice_part where cmp.codice_compito_parent=$codice_compito_parent$ and cmp.codice_azienda=$codice_azienda$;"
+      "queryString": "select entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date, codicicompiti=>array[codice_compito]) as time_consumed, cmp.codice_compito,cmp.stato, cmp.codice_azienda, cmp.codice_azienda, foreseen_date, substring(cmp.titolo from 1 for 100) as titolo,  entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, data_segnalazione FROM entrasp.compiti cmp where cmp.codice_azienda=$codice_azienda$ and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date, codicicompiti=>array[codice_compito])>0;"
     },
     {
       "operation": "selectForm",
@@ -153,16 +153,6 @@
       "isPrimary": true,
       "key": "codice_compito_parent",
       "label": "codice_compito_parent"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice_azienda_erogante",
-      "label": "Fornitore",
-      "width": "7%"
     },
     {
       "format": {

@@ -25,6 +25,11 @@
 			"queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, $P{array_argomenti_father_da_aggiungere}) as id_argomento;",
 			"type": "main"
 		},
+		{	
+			"operation": "update",
+			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)",
+			"type": "postProcessing"
+		},
 		{
 			"operation": "delete",
 			"queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=$P{id_argomento_father} and id_argomento_son=$id_argomento$;",
