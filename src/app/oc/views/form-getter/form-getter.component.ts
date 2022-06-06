@@ -1620,6 +1620,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         
                             let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
                             console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
+                            anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
 
                             let files: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
                             let filteredFilesForSetProperFileFolder = [];
@@ -1639,10 +1640,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                             let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
                             console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
+                            /*
                             if(setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows) {
                                 let performDriveOperationsResponse = await _this.backendService.performDriveOperations(setProperFileFolderResponse.response.rows, googleAuth).toPromise();
                                 console.log('performDriveOperations Response: ', performDriveOperationsResponse);
                             }
+                            */
 
                             _this._toastService.hideLoadingToast(loadingToast);
                             _this._toastService.showSuccessToast(event.successMessage || 'Done!');
