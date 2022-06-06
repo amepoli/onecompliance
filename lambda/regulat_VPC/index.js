@@ -13,26 +13,26 @@ const pool = new Pool({
 
 
 exports.handler = async (event) => {
-    
+
     let scans = event.scannedData;
-    
+
     if (scans == null) {
-        return { 
-            "statusCode":200, 
+        return {
+            "statusCode": 200,
             "isBase64Encoded": false,
             "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            "body": JSON.stringify({"response" : "KO", "reason": "Something wrong with provided data"})
-        }; 
+            "body": JSON.stringify({ "response": "KO", "reason": "Something wrong with provided data" })
+        };
     }
 
 
-    
+
     try {
         const client = await pool.connect();
-        
+
         let query = "";
         let response;
-        
+
         /*
         for (let i= 0; i < scans.data.anti_money_laundering.length; i++) {
             let scan = scans.data.anti_money_laundering[i];
@@ -59,20 +59,20 @@ exports.handler = async (event) => {
 
         //release the client
         await client.release();
-    } catch(e){
-        return { 
-            "statusCode":200, 
+    } catch (e) {
+        return {
+            "statusCode": 200,
             "isBase64Encoded": false,
             "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            "body": JSON.stringify({"response" : "KO", "reason": "Something wrong with accessing the DB"})
-        }; 
+            "body": JSON.stringify({ "response": "KO", "reason": "Something wrong with accessing the DB" })
+        };
     }
-    
+
 
     return {
         "statusCode": 200,
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-        "body": JSON.stringify({"response" : "OK"}),
+        "body": JSON.stringify({ "response": "OK" }),
     };
 };
