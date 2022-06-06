@@ -1640,12 +1640,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                             let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
                             console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
-                            /*
+                           
                             if(setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows) {
                                 let performDriveOperationsResponse = await _this.backendService.performDriveOperations(setProperFileFolderResponse.response.rows, googleAuth).toPromise();
                                 console.log('performDriveOperations Response: ', performDriveOperationsResponse);
                             }
-                            */
+                           
 
                             _this._toastService.hideLoadingToast(loadingToast);
                             _this._toastService.showSuccessToast(event.successMessage || 'Done!');

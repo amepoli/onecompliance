@@ -1414,7 +1414,7 @@ async function performDriveOperations(operations, authParams) {
 
     if(operations && operations.length > 0) {
         for await (let operation of operations) {
-            if(operation.todo === '1- rename') {
+            if(operation.todo === '1- rename' || operation.todo === '3- upload and rename') {
                 let drivePath = operation.googledrivepath;
                 let driveFile = operation.oldfilename;
                 // if(operation.googledrivepath.includes('/')) {
