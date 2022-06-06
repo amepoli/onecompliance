@@ -13,11 +13,10 @@ const pool = new Pool({
 
 
 exports.handler = async (event) => {
-    // TODO implement
     
-    let cards = event.processedCards;
+    let scans = event.scannedData;
     
-    if (cards == null) {
+    if (scans == null) {
         return { 
             "statusCode":200, 
             "isBase64Encoded": false,
@@ -25,8 +24,8 @@ exports.handler = async (event) => {
             "body": JSON.stringify({"response" : "KO", "reason": "Something wrong with provided data"})
         }; 
     }
-    
-    
+
+
     
     try {
         const client = await pool.connect();
@@ -34,12 +33,12 @@ exports.handler = async (event) => {
         let query = "";
         let response;
         
-
-        for (let i= 0; i < cards.length; i++) {
-            let card = cards[i];
+        /*
+        for (let i= 0; i < scans.data.anti_money_laundering.length; i++) {
+            let scan = scans.data.anti_money_laundering[i];
             
-            if (card.cardId != null) {
-                query = "SELECT * from imports.archiflow_contratti_temporary where card_id='" + card.cardId + "';";
+            if (scan != null) {
+                query = "SELECT * from imports.regulat_aml_scan where type='"${scan.type}"';";
                 response = await client.query(query);
                 if (response.rows[0] == null) {
                     query = "INSERT INTO imports.archiflow_contratti_temporary (card_id, progressivo, data_firma, societa_fondo, controparte, partita_iva, tipo_fornitore, n_sistema) VALUES ('" 
@@ -52,9 +51,10 @@ exports.handler = async (event) => {
                 response = await client.query(query);
             }
         }
+        */
 
-        // run post-process query
-        query = "select entrasp.contratti_insert_from_contratti_fornitori_temporary('FININTSGR');";
+        // run process query
+        query = `select entrasp.process_aml_scans('${scans}');`;
         response = await client.query(query);
 
         //release the client

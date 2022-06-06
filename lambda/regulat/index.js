@@ -35,6 +35,11 @@ function post(options, postData) {
 exports.handler = async (event, context) => {
 
   //Declare queryParams
+
+  const company = queryParams['company'];
+  const registry = queryParams['registry'];
+  const checkId = queryParams['checkId'];
+
   const entityType = queryParams['entityType'];
   const name = queryParams['name'];
   const surname = queryParams['surname'];
@@ -132,13 +137,12 @@ exports.handler = async (event, context) => {
 
 
   //Get Scan
-  postData_getScan.paramIn.access_token = token;
-
-  /* postData_getCards.paramIn.SessionInfo.WorkflowId = wid; */
+  postData_getScan.access_token = token;
 
   postData_getScan = JSON.stringify(postData_getScan);
 
-  response = await post(options_getScan, postData_getScan);
+  //response = await post(options_getScan, postData_getScan);
+  scannedData = await post(options_getScan, postData_getScan);
 
   if (response == null) {
     return ({
@@ -149,60 +153,9 @@ exports.handler = async (event, context) => {
     });
   }
 
-  /*  if (numRecords === 0) {
-       // return the number of records and stop here
-       numRecords = response.RetrieveCardsByParamResult.HitCount;
-       return({
-           "statusCode": 200, 
-           "isBase64Encoded": false,
-           "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-           "body": JSON.stringify({result: 'OK', numRecords: numRecords})
-         });
-   }
- 
-   let cards = response.RetrieveCardsByParamResult.Cards;
-   
-   let processedCards = [];
-   
-   cards.forEach(card => {
-     let cardId = card.CardId;
-     let indexes = card.Indexes;
-     let progressivo = card.CardProg;
-     if (indexes != null) {
-       let dataFirma = '';
-       let societaFondo = '';
-       let controparte = '';
-       let piva = '';
-       let tipoFornitore = '';
-       let numSistema = '';
-       
-       indexes.forEach(index => {
-         if (index.FieldDescription === 'Data firma' ) {
-           dataFirma = index.FieldValue;
-         } else if (index.FieldDescription === 'Società/Fondo' ) {
-           societaFondo = index.FieldValue;
-         } else if (index.FieldDescription === 'Controparte' ) {
-           controparte = index.FieldValue;
-         } else if (index.FieldDescription === 'P.IVA' ) {
-           piva = index.FieldValue;
-         } else if (index.FieldDescription === 'Tipologia fornitore' ) {
-           tipoFornitore = index.FieldValue;
-         } else if (index.FieldDescription === 'N° di sistema' ) {
-           numSistema = index.FieldValue;
-         }
-       });
-       if (tipoFornitoreFilter.indexOf(tipoFornitore) > -1) {
-         processedCards.push({"cardId": cardId, "progressivo": progressivo, "dataFirma": dataFirma, "societaFondo": societaFondo, "controparte": controparte, "piva": piva, "tipoFornitore": tipoFornitore, "numSistema": numSistema});
-       }
-     }
-   });
-   
-   console.log(processedCards); */
-
-
   response = await lambda.invoke({
     FunctionName: 'FUNCTION_NAME',
-    Payload: JSON.stringify({ processedCards }) //to change the payload
+    Payload: scannedData       //to change the payload? I need to pass also the entityType
   }).promise();
 
   console.log(response);
