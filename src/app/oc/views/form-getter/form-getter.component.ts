@@ -1587,9 +1587,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
                     const codiceAzienda = formValues[googleAPIParams.driveExpandedContentsParams.codiceAziendaKey];
-                    const idProgetto = formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey];
+                    const idProgetto = googleAPIParams.driveExpandedContentsParams.idProgettoKey? formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey]: null;
                     const idAnagrafica = formValues[googleAPIParams.driveExpandedContentsParams.idAnagraficaKey];
-                    if(!codiceAzienda || !idProgetto || !idAnagrafica) {
+                    if(!codiceAzienda || !idAnagrafica) {
                         _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
                     }
                     else {
