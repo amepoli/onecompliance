@@ -1604,9 +1604,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             let sub_folders = anagraficaFolders['sub_folders'];
                             if(sub_folders && sub_folders.length > 0) {
                                 for(let i = 0; i < sub_folders.length; i++) {
-                                    sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
                                     if(sub_folders[i]['folder'].endsWith('/')) {
                                         sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0 , -1);
+                                    }
+                                    if(!sub_folders[i]['folder'].includes('/')) {
+                                        sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
                                     }
                                 }
                                 //sub_folders = sub_folders.filter(x => !x.md5 || !x.md5.includes('null::varchar'))
@@ -1621,7 +1623,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
                             console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
                             anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
-
+                            anagraficaFolders['codice_azienda'] = codiceAzienda;
+                            
                             let files: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
                             let filteredFilesForSetProperFileFolder = [];
                             for(let file of files.files) {

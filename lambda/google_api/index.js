@@ -1241,7 +1241,7 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
                     results = await getDriveRecursiveContents(drive, null, curFile.id, path && path.length? path + '/' + curFile.name: curFile.name, results);
                 }
                 else if(!curFile.trashed) {
-                    results.push({fileid: curFile.id, filename: curFile.name, md5: curFile.md5Checksum, folder: path});
+                    results.push({fileid: curFile.id, filename: curFile.name, md5: curFile.md5Checksum, folder: path, driveFolderId: driveFileId});
                 }
             }
         }
@@ -1301,7 +1301,8 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     const driveFolder = anagraficaFolders['root_folder'];
     let subFolders = [];
     const folderIds = anagraficaFolders['folder_ids'] || [];
-
+    const codiceAzienda = anagraficaFolders['codice_azienda'] || [];
+    
     if(anagraficaFolders['sub_folders'] && anagraficaFolders['sub_folders'].length > 0) {
         for(let subFolder of anagraficaFolders['sub_folders']) {
             if(subFolder.file && subFolder.file.length > 0 && subFolders.filter(x => x.file === subFolder.file && x.folder === x.folder).length == 0) {
@@ -1328,11 +1329,29 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     catch(e) {
         _console.error(e);
     }
-
-    let results = await getDriveRecursiveContents(drive, null, rootFolderId, driveFolder, []);
-    _console.log('Root getDriveRecursiveContents results: ', JSON.stringify(results));    
     
     let syncData = [];
+    let completeFilesList = [];
+
+    let rootDriveContents = await getDriveRecursiveContents(drive, null, rootFolderId, driveFolder, []);
+    _console.log('Root getDriveRecursiveContents results: ', JSON.stringify(rootDriveContents));    
+    
+    if(rootDriveContents && rootDriveContents.length > 0) {
+        for(let rootFile of rootDriveContents) {
+            if(!rootFile['fileid'].includes('/')) {
+                rootFile['fileid'] = codiceAzienda + '/' + rootFile['fileid'];
+            }
+            _console.log('Pushing to completeFilesList root:', JSON.stringify(rootFile));
+            completeFilesList.push(rootFile);
+            
+            _console.log('Checking if a rootfoler file is already added: ' + (rootFile.folder + '/' + rootFile.filename));
+            if(syncData.filter( x => x.driveFilePath == (rootFile.folder + '/' + rootFile.filename)).length == 0) {
+                syncData.push({
+                    s3FilePath: rootFile['fileid'], s3md5: rootFile.md5, driveFilePath: (rootFile.folder + '/' + rootFile.filename), driveFolderId: rootFile.driveFolderId
+                });
+            }
+        }
+    }
     
     if(subFolders && subFolders.length > 0) {
         for await (subFolder of subFolders) {
@@ -1350,7 +1369,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
         _console.log('syncBatches: ', syncBatches);
 
         syncResponse = await syncDriveS3File(syncData, authParams);
-        _console.log('syncResponse: ', syncResponse);
+        _console.log('syncResponse: ', JSON.stringify(syncResponse));
         syncData = syncResponse['syncData'];
 
         for await (subFolder of subFolders) {
@@ -1388,8 +1407,13 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
                     }
                 }
 
-                _console.log('Pushing to results: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
-                results.push({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder});
+                if(completeFilesList.filter( x => x.filename === subFolder.file && x.folder === subFolder.folder).length == 0) {
+                    _console.log('Pushing to completeFilesList: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
+                    completeFilesList.push({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder});
+                }
+                else {
+                    _console.log('Ignoring pushing to completeFilesList: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
+                }
             }
             // Not needed anymore by fixAnagraficaFolderByIdentifier takes care of creating missing folders
             // else {
@@ -1398,7 +1422,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
         }
     }
     
-    let finalResponse = { result: 'OK', files: results};
+    let finalResponse = { result: 'OK', files: completeFilesList};
 
     _console.log('getDriveFolderDeepContents result', JSON.stringify(finalResponse), 'length: ', JSON.stringify(finalResponse).length);
     return finalResponse;
