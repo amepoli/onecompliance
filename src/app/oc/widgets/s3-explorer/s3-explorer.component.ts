@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, Output, EventEmitter } from '@angular/core';
 import { FileManagerViewType } from 'app/oc/interfaces';
-import { AuthService, BackendService } from 'app/oc/services';
+import { AuthService, BackendService, ConsoleLoggerService } from 'app/oc/services';
 
 import 'rxjs/add/operator/filter';
 import { FormViewComponent } from '../../views/form/form-view.component';
@@ -27,7 +27,7 @@ export class S3ExplorerComponent implements AfterViewInit{
 
     isLoading = false;
 
-    constructor(private _authService: AuthService, private _backendService: BackendService) {
+    constructor(private _authService: AuthService, private _backendService: BackendService, private _console: ConsoleLoggerService) {
         // get user data after login
         this.userdata = this._authService.userinfo.getValue();
         
@@ -59,7 +59,7 @@ export class S3ExplorerComponent implements AfterViewInit{
             _this.isLoading = false;
         },
         error => {
-            console.log(error);
+            _this._console.log(error);
             _this.isLoading = false;
         });
     }

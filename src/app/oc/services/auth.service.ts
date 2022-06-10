@@ -307,7 +307,6 @@ export class AuthService {
         // Found it!
         result = true;
       }
-      // console.log(localStorage.key(i), localStorage.getItem(localStorage.key(i)));
     });
     return result;
   }
@@ -400,7 +399,6 @@ export class AuthService {
     let _this = this;
     let user = await _this.amplifyService.auth().currentAuthenticatedUser();
     
-    console.log(challengeAnswer);
     let result = await _this.amplifyService.auth().verifyTotpToken(user, challengeAnswer);
     if(result.Status === 'SUCCESS') {
       _this.amplifyService.auth().setPreferredMFA(user, 'TOTP');
@@ -440,8 +438,6 @@ export class AuthService {
     _this.socialAuthService.authState.subscribe((user) => {
       _this.googleUser = user;
       _this.googleUserLoggedIn = (user != null);
-      // console.log('user: ', user);
-      // _this.refreshGoogleToken();
     });
     this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
@@ -463,7 +459,6 @@ export class AuthService {
     // sessionStorage.removeItem('googleAuth');
     let sessionAuthResponse = sessionStorage.getItem('googleAuth');
     if(sessionAuthResponse) {
-      // console.log(sessionAuthResponse);
       sessionAuthResponse = JSON.parse(sessionAuthResponse);
 
       if(sessionAuthResponse['expires_at'] > timeNow)
@@ -506,48 +501,49 @@ export class AuthService {
     let sessionGoogleAuth = _this.loadGoogleAuth();
     if(sessionGoogleAuth)
     {
+      // _this._console.log('already logged in!');
+      // _this._console.log(sessionGoogleAuth);
+      
       // await _this.initGoogleOAuth(true);
       // const oAuthUser = _this.gAuth.signIn();
                   
       //_this.loadEmailThreads(null);
       // _this.loadMessages(['INBOX'], 0, 'fanatical');
-      console.log('already logged in!');
-      console.log(sessionGoogleAuth);
-      //console.log((new Date()).getTime() - sessionGoogleAuth.expires_at);
+      //_this._console.log((new Date()).getTime() - sessionGoogleAuth.expires_at);
       //_this.loadDriveContents(null);
       //_this.createDriveFolder('OneCompliance');
       
       // _this.copyFromDriveToS3('Apparrell Assets/zee_test_file_in.txt', 'zee/zee_test_file_out.txt').subscribe(
       // // _this.copyFromS3ToDrive('zee/zee_test_file_in.txt', 'Apparrell Assets/zee_test_file_in.txt', ).subscribe(
       //   response => {
-      //     console.log("Drive data", response['data']);
+      //     _this._console.log("Drive data", response['data']);
       //   },
       //   error => {
       //     console.error("Drive data", error);
       //   }
       // )
-      return this.loadGoogleAuth();
+      return _this.loadGoogleAuth();
     }
     else {
       const gAuth = await _this.initGoogleOAuth();                
       const oAuthUser = await gAuth.signIn();
-      console.log(oAuthUser);
+      _this._console.log(oAuthUser);
       
       // var auth_code = await gAuth.grantOfflineAccess();
-      // console.log(auth_code);
+      // _this._console.log(auth_code);
 
       // const options = new gapi.auth2.SigninOptionsBuilder();
       // options.setScope('profile email https://mail.google.com/');
 
       // let googleUser = gAuth.currentUser.get();
       // const optionsResult = await googleUser.grant(options);
-      // console.log(optionsResult);
+      // _this._console.log(optionsResult);
                       
       const authResponse = gAuth.currentUser.get().getAuthResponse();
-      // console.log(authResponse);
+      // _this._console.log(authResponse);
       _this.saveGoogleAuth(authResponse);
       
-      return this.loadGoogleAuth();
+      return _this.loadGoogleAuth();
       // _this.loadDriveContents(null);
       // _this.createDriveFolder('OneCompliance');
 
@@ -558,20 +554,20 @@ export class AuthService {
       //   try {
       //       const gAuth = await _this.initGoogleOAuth();                
       //       const oAuthUser = await gAuth.signIn();
-      //       console.log(oAuthUser);
+      //       _this._console.log(oAuthUser);
             
       //       // var auth_code = await gAuth.grantOfflineAccess();
-      //       // console.log(auth_code);
+      //       // _this._console.log(auth_code);
 
       //       // const options = new gapi.auth2.SigninOptionsBuilder();
       //       // options.setScope('profile email https://mail.google.com/');
 
       //       // let googleUser = gAuth.currentUser.get();
       //       // const optionsResult = await googleUser.grant(options);
-      //       // console.log(optionsResult);
+      //       // _this._console.log(optionsResult);
                             
       //       const authResponse = gAuth.currentUser.get().getAuthResponse();
-      //       console.log(authResponse);
+      //       _this._console.log(authResponse);
       //       _this.saveGoogleAuth(authResponse);
             
       //       // _this.loadLabels();
@@ -589,9 +585,10 @@ export class AuthService {
   private pageTokens: Array<string | number | null> = [null];
 
   loadEmailThreads(search: string = null) {
-    this.backendService.getEmailThreads(search, this.loadGoogleAuth()).subscribe(
+    let _this = this;
+    _this.backendService.getEmailThreads(search, _this.loadGoogleAuth()).subscribe(
       result => {
-        console.log(result);
+        _this._console.log(result);
       },
       error => {
         console.error(error);
@@ -616,18 +613,19 @@ export class AuthService {
   }
 
   loadMessages(labelIds: string[], pageNumber: number = 0, searchText: string = ''): Promise<any> {
+    let _this = this;
     return new Promise((resolve, reject) => {
            gapi.client.gmail.users.messages.list({
               userId: 'me',
               format: 'full',
               maxResults: 50,
               labelIds: labelIds,
-              pageToken: this.pageTokens[pageNumber],
+              pageToken: _this.pageTokens[pageNumber],
               q: searchText
           }).then(res => {
               // store page tokens in array to navigate back & forth, 
               // do something with the list
-              console.log(JSON.stringify(res));
+              _this._console.log(JSON.stringify(res));
               resolve(res);
           }).catch(err => {
             // handle error
@@ -637,6 +635,8 @@ export class AuthService {
   }
 
   loadLabels() {
+    let _this = this;
+
     const accessToken = sessionStorage.getItem('googleAccessToken');
     gapi.load('client', () => {
       gapi.client.setToken({ access_token: accessToken});
@@ -657,7 +657,7 @@ export class AuthService {
               // loop through label list, 
               // get single label (using Gmail API method 'gapi.client.gmail.users.labels.get') 
               // push detailed label data to array
-              console.log(labelList);
+              _this._console.log(labelList);
               resolve(labelList);
           }).catch(err => {
               reject(err);
