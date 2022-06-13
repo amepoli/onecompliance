@@ -624,20 +624,19 @@
                 "viewType": "combobox"
             },
             "label": "Livello",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "livello=$livello_s$"
         },
         {
-            "fieldName": "tag_S",
+            "fieldName": "tag_s",
             "format": {
-              "comboQuery": "SELECT id_argomento_father AS id, id_argomento_father||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son aa.id_argomento_father in ( order by descrizione",
+              "comboQuery": "SELECT distinct id_argomento_father AS id, id_argomento_father||'-'||descrizione AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_father and aa.id_argomento_son in (select pr.id_argomento from entrasp.presidi pr where pr.id_argomento is not null) order by id_argomento_father||'-'||descrizione",
               "options": [],
-              "viewType": "combobox",
-              "dataType": "text"
+              "viewType": "combobox"
             },
             "label": "TAG",
-            "newLine": false,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($tag_s$))"
+            "newLine": true,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($tag_s$)) and id_argomento is not null"
           },
         {
             "fieldName": "flag_principali",
