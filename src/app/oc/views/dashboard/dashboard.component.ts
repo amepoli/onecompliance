@@ -49,7 +49,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     }
 
     onCustomizeCell(cell: WebDataRocks.CellBuilder, data: WebDataRocks.CellData): void {
-        //console.log("[customizeCell] WebDataRocksPivot");
+        //this._console.log("[customizeCell] WebDataRocksPivot");
         if (data.isClassicTotalRow) cell.addClass('fm-total-classic-r');
         if (data.isGrandTotalRow) cell.addClass('fm-grand-total-r');
         if (data.isGrandTotalColumn) cell.addClass('fm-grand-total-c');
@@ -314,7 +314,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
                     const item = JSON.parse(JSON.stringify(model)); // copy the object
                     if(!color) {
                         color = 'white';
-                        //console.log(color);
+                        //this._console.log(color);
                     }
                     if (color.charAt(0) !== '#') {  // remove capital leading char if not already as hex
                         color = color.charAt(0).toLowerCase() + color.substring(1);

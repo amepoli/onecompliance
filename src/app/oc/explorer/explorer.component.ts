@@ -437,7 +437,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
                 }
                 else {
                     if(results.reason === 'Not Authorized') {
-                        console.log('Not Authorized');
+                        _this._console.log('Not Authorized');
                         _this.isAuthorized = false;
                     }
                     else {
@@ -923,7 +923,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
                 }
             },
             error => {
-                console.log(error);
+                _this._console.log(error);
                 _this._toastService.showErrorToast('An error occured!', error);
             }
         );

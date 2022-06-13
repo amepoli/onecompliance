@@ -165,7 +165,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 // if (msg.type === 'print_list') {   // toolbar asking for the list of possible reports in current view
                 //     _this.backendService.getReportList(_this.tableName, _this.authService.getCurrentCompany(), _this.currentTableKeys).subscribe(
                 //         response => {
-                //             console.log(response);
+                //             _this._console.log(response);
                 //             if (response.result === 'OK') {
                 //                 // now give results back to the requester
                 //                 _this.pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list', value: response.list });
@@ -178,7 +178,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 // } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
                 //     _this.backendService.getReport(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'form'), _this.searchKeys).subscribe(
                 //         response => {
-                //             console.log(response);
+                //             _this._console.log(response);
                 //             if (response.result === 'OK') {
                 //                 const url = response.url.replace('https', 'http'); // avoid the browser complaining about certificates 
                 //                 _this.httpClient.get(url, { responseType: 'blob' }).subscribe(
@@ -490,21 +490,21 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                             s3FilePath: x.s3path, s3md5: x.s3md5, driveFilePath: x.googledrivepath
                         }
                     })
-                    console.log('syncData', syncData);
+                    _this._console.log('syncData', syncData);
                     _this.backendService.syncDriveS3File(syncData, googleAuth).subscribe(
                         syncDriveS3FileResponse => {
                             console.table(syncDriveS3FileResponse);
                             // _this.backendService.syncDriveS3File
                         },
                         error => {
-                            console.log('syncDriveS3FileResponse', error);
+                            _this._console.log('syncDriveS3FileResponse', error);
                         }
                     );
 
                     // for await( let row of getS3GoogleSyncFilesListResponse.response.rows.filter(x => (x.s3path && x.s3md5 && x.googledrivepath && x.s3md5 != '396a4266d461f67b75c9d4b3e6f2bb5f'))) {
                     //     const { file_id, s3md5, s3path, googledrivepath } = row;
-                    //     console.log(row);
-                    //     console.log('md5', s3md5);
+                    //     _this._console.log(row);
+                    //     _this._console.log('md5', s3md5);
                     //     if(s3path && s3md5 && googledrivepath) {
                     //         // let copyFromS3ToDriveResponse = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, googleAuth).toPromise();
                     //         // console.table(copyFromS3ToDriveResponse);
@@ -514,7 +514,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     //                 // _this.backendService.syncDriveS3File
                     //             },
                     //             error => {
-                    //                 console.log('syncDriveS3FileResponse', error);
+                    //                 _this._console.log('syncDriveS3FileResponse', error);
                     //             }
                     //         );
                     //     }
@@ -522,8 +522,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
                     // let row = getS3GoogleSyncFilesListResponse.response.rows.filter(x => (x.s3path && x.s3md5 && x.googledrivepath))[1];
                     // const { file_id, s3md5, s3path, googledrivepath } = row;
-                    // console.log(row);
-                    // console.log('md5', s3md5);
+                    // _this._console.log(row);
+                    // _this._console.log('md5', s3md5);
                     // if(s3path && s3md5 && googledrivepath) {
                     //     // let copyFromS3ToDriveResponse = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, googleAuth).toPromise();
                     //     // console.table(copyFromS3ToDriveResponse);
@@ -533,7 +533,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     //             // _this.backendService.syncDriveS3File
                     //         },
                     //         error => {
-                    //             console.log('syncDriveS3FileResponse', error);
+                    //             _this._console.log('syncDriveS3FileResponse', error);
                     //         }
                     //     );
                     // }
@@ -541,7 +541,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 // _this.backendService.syncDriveS3File
             },
             error => {
-                console.log(error);
+                _this._console.log(error);
             }
         );
     }
