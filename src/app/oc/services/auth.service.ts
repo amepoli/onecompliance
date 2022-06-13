@@ -460,15 +460,29 @@ export class AuthService {
     let sessionAuthResponse = sessionStorage.getItem('googleAuth');
     if(sessionAuthResponse) {
       sessionAuthResponse = JSON.parse(sessionAuthResponse);
+      
+      /*
+        var cookies = document.cookie.split(";");
+        this._console.log('cookies', cookies);
+        this.deleteAllCookies();
+      */
 
-      if(sessionAuthResponse['expires_at'] > timeNow)
-      {        
-        // Not expired, return the auth token
-        return sessionAuthResponse;
+      if(!sessionAuthResponse['scope'].includes('https://www.googleapis.com/auth/drive')) {
+        this._console.log('scopes are incomplete!');
+        sessionStorage.removeItem('googleAuth');
+        gapi.auth2.getAuthInstance().disconnect();
+        return null;
+      }
+      else if(sessionAuthResponse['expires_at'] <= timeNow)
+      {
+        this._console.log('session expired!');
+        sessionStorage.removeItem('googleAuth');
+        gapi.auth2.getAuthInstance().disconnect();
+        return null;
       }
       else {
-        // Session expired, removed the auth token
-        sessionStorage.removeItem('googleAuth');
+        // Not expired, return the auth token
+        return sessionAuthResponse;
       }
     }
 
@@ -481,7 +495,7 @@ export class AuthService {
     let _this = this;
     return new Promise((resolve, reject) => {
       gapi.load('auth2', async () => {
-          const gAuth = await gapi.auth2.getAuthInstance({
+          const gAuth = await gapi.auth2.init({
               client_id: appData.GAPI_CLIENT_ID,
               fetch_basic_profile: true,
               offline_access: true,
@@ -522,7 +536,7 @@ export class AuthService {
       //     console.error("Drive data", error);
       //   }
       // )
-      return _this.loadGoogleAuth();
+      return sessionGoogleAuth;
     }
     else {
       const gAuth = await _this.initGoogleOAuth();                
@@ -667,5 +681,15 @@ export class AuthService {
     });                
   }
 
+  deleteAllCookies() {
+    var cookies = document.cookie.split(";");
+
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+}
 
 }
