@@ -87,10 +87,10 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
         // _this.backendService.sendEmailUsingTemplate('email').subscribe(
         //     result => {
-        //         console.log(result);
+        //         _this._console.log(result);
         //     },
         //     error => {
-        //         console.log(error);
+        //         _this._console.log(error);
         //     }
         // );
 

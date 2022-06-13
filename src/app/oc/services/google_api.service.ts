@@ -28,7 +28,7 @@ export class GoogleAPIService {
     let _this = this;
     return _this._backendService.getDistance(origin, destination).subscribe(
       response => {
-        // console.log(response);
+        // _this._console.log(response);
         if (response.result === 'OK') {
           const distance = response.data.rows[0].elements[0].distance.value;
         }
@@ -38,7 +38,7 @@ export class GoogleAPIService {
 
       },
       error => {
-        console.log(error);
+        _this._console.log(error);
         _this._toastService.showErrorToast(error);        
       });
   }

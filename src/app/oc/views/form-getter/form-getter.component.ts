@@ -368,7 +368,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
                     if(results.reason === 'Not Authorized') {
-                        console.log('Not Authorized');
+                        _this._console.log('Not Authorized');
                         _this.isAuthorized = false;
                     }
                     else {
@@ -707,7 +707,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
         /*
         if (fieldValue.newLine) {
-            console.log(`Field: ${fieldValue.label} has new line.`);
+            _this._console.log(`Field: ${fieldValue.label} has new line.`);
         }
         */
         //console.table(fieldValue);
@@ -822,7 +822,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // console.table(event);
         // console.table(value);
         // console.table(_this.filteredFormData);
-        // console.log(`keyListener: ${keyListener}`);
+        // _this._console.log(`keyListener: ${keyListener}`);
         _this._console.log(event, value, keyListener);
 
         // check  if this is a formRowProperties event
@@ -1294,7 +1294,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         emailActionParameters.outputEventWhenComplete,
                         value
                     );
-                    // console.log(JSON.stringify(event));
+                    // _this._console.log(JSON.stringify(event));
                     // _this.sendEmail({ templateKey: 'test' });
                 }
                 else {
@@ -1433,7 +1433,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     else {
                         _this.backendService.getDistance(origin, destination).subscribe(
                             response => {
-                                // console.log(response);
+                                // _this._console.log(response);
                                 if (response.result === 'OK') {
                                     let distance = 0;
                                     if(response.data.rows && response.data.rows.length && response.data.rows[0].elements && response.data.rows[0].elements.length && response.data.rows[0].elements[0].distance && response.data.rows[0].elements[0].distance.value) {
@@ -1466,7 +1466,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             },
                             error => {
-                                console.log(error);
+                                _this._console.log(error);
                                 _this._toastService.showErrorToast(error);        
                             }
                         );
@@ -1496,7 +1496,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         let auth = _this.authService.loginGoogle();
                         _this.backendService.createDriveFolder(driveFolder, auth).subscribe(                        
                             response => {
-                                // console.log(response);
+                                // _this._console.log(response);
                                 if (response['result'] === 'OK') {
                                     if (event.outputEventWhenComplete != null) {
                                         _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
@@ -1507,7 +1507,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             },
                             error => {
-                                console.log(error);
+                                _this._console.log(error);
                                 _this._toastService.showErrorToast(error);        
                             }
                         );
@@ -1529,7 +1529,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         let auth = _this.authService.loginGoogle();
                         _this.backendService.copyFromS3ToDrive(s3Path, drivePath, auth).subscribe(                        
                             response => {
-                                // console.log(response);
+                                // _this._console.log(response);
                                 if (response['result'] === 'OK') {
                                     if (event.outputEventWhenComplete != null) {
                                         _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
@@ -1540,7 +1540,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             },
                             error => {
-                                console.log(error);
+                                _this._console.log(error);
                                 _this._toastService.showErrorToast(error);        
                             }
                         );
@@ -1562,7 +1562,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         let auth = _this.authService.loginGoogle();
                         _this.backendService.copyFromDriveToS3(drivePath, s3Path, auth).subscribe(                        
                             response => {
-                                // console.log(response);
+                                // _this._console.log(response);
                                 if (response['result'] === 'OK') {
                                     if (event.outputEventWhenComplete != null) {
                                         _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
@@ -1573,7 +1573,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             },
                             error => {
-                                console.log(error);
+                                _this._console.log(error);
                                 _this._toastService.showErrorToast(error);        
                             }
                         );
@@ -1598,7 +1598,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         {
                             //let auth = _this.authService.loginGoogle();
                             let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
-                            console.log(anagrafica_contents);
+                            _this._console.log(anagrafica_contents);
                             let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
                             //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
                             let sub_folders = anagraficaFolders['sub_folders'];
@@ -1616,12 +1616,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                             anagraficaFolders['sub_folders'] = sub_folders;
                             
-                            console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
+                            _this._console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
                             
                             const googleAuth = await _this.authService.loginGoogle();
                         
                             let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
-                            console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
+                            _this._console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
                             anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
                             anagraficaFolders['codice_azienda'] = codiceAzienda;
                             
@@ -1639,14 +1639,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 id_anagrafica: idAnagrafica,
                                 files: filteredFilesForSetProperFileFolder
                             }
-                            console.log(contentsJson);
+                            _this._console.log(contentsJson);
 
                             let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
-                            console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
+                            _this._console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
                            
                             if(setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows) {
                                 let performDriveOperationsResponse = await _this.backendService.performDriveOperations(setProperFileFolderResponse.response.rows, googleAuth).toPromise();
-                                console.log('performDriveOperations Response: ', performDriveOperationsResponse);
+                                _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
                             }
                            
 
@@ -1654,7 +1654,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._toastService.showSuccessToast(event.successMessage || 'Done!');
                         }
                         catch(e) {
-                            console.log(e);
+                            _this._console.log(e);
                             _this._toastService.hideLoadingToast(loadingToast);
                             _this._toastService.showErrorToast(e);
                         }                        
@@ -1691,7 +1691,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if (entry && Object.entries(entry).length) {
                         // Since we will use fullValueSet, we don't need to read all fields
                         for (const [key, value] of Object.entries(entry)) {
-                            // console.log(key, value);
+                            // _this._console.log(key, value);
                             if (value && !done) {
                                 let dataType = typeof (value);
                                 if (dataType == 'string' || dataType == 'number') {

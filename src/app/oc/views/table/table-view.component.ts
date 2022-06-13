@@ -455,7 +455,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 }
                 else {
                     if(results.reason === 'Not Authorized') {
-                        console.log('Not Authorized');
+                        _this._console.log('Not Authorized');
                         _this.isAuthorized = false;
                     }
                     else {
@@ -962,7 +962,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 }
             },
             error => {
-                console.log(error);
+                _this._console.log(error);
                 _this._toastService.showErrorToast('An error occured!', error);
             }
         );
@@ -1236,7 +1236,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.filesSource = result['data'].filter(x => x['mimeType'] !== 'application/vnd.google-apps.folder');
                     _this.files = _this.filesSource.map( x => x['name']);
                 }
-                console.log(result);
+                _this._console.log(result);
                 _this.isLoading = false;
             },
             error => {
