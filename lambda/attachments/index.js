@@ -393,9 +393,9 @@ exports.handler = async (event, context) => {
                     console.log(query);
                     response = await client.query(query);
 
-                    //HACK: exception in case of bus_object="cdms_risorse"
-                    idrisorsa = (idrisorsa == -1) ? idris : idrisorsa;
-                    query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`; //, ${requestBody.prog_revisione});`;    //Da mandare in background... pesante
+                    /* //HACK: exception in case of bus_object="cdms_risorse"
+                    idrisorsa = (idrisorsa == -1) ? idris : idrisorsa; */
+                    query = `select entrasp.after_lambda_attachments('${company}',  ${idris/*orsa*/});`; //, ${requestBody.prog_revisione});`;
                     console.log(query);
                     //??? tolgo await
                     response = await client.query(query);
@@ -454,8 +454,8 @@ exports.handler = async (event, context) => {
 
 
                             //HACK: exception in case of bus_object="cdms_risorse"
-                            idrisorsa = (idrisorsa == -1) ? idFlowInfo1 : idrisorsa;
-                            query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;    //Da mandare in background... pesante
+                            /*idrisorsa = (idrisorsa == -1) ? idFlowInfo1 : idrisorsa;*/
+                            query = `select entrasp.after_lambda_attachments('${company}',  ${idris/* orsa */});`;
                             console.log(query);
                             //??? tolgo await
                             response = await client.query(query);
@@ -488,7 +488,7 @@ exports.handler = async (event, context) => {
                     console.log('Query keys: ', query, ' response ', response, ' keys ', keys);//console.log('response of functions flow:', response);
 
                     query = `select id_risorsa from entrasp.cdms_risorse where id_argomento_tipo_allegato=${idArgAll} and codice_azienda='${company}' 
-                    and id_anagrafica=${idAnagrafica} and id_centro_gest=${idCentroGest} limit 1;`; //AA: togliere limit 1
+                    and id_anagrafica=${idAnagrafica}  limit 1;`; //AA: togliere limit 1, tolto --> and id_centro_gest=${idCentroGest}
                     response = await client.query(query);
                     console.log('response of query for idFlowInfo:', response);
 
@@ -499,7 +499,7 @@ exports.handler = async (event, context) => {
                         console.log('Prima del controllo risorsa: checksum, idrisorsa:' + checksum + ' ' + idFlowInfo);
                         query = `select count(id_risorsa) from entrasp.cdms_risorse_revisioni where checksum_sha1='${checksum}' and codice_azienda='${company}'
                     and id_risorsa in(select id_risorsa from entrasp.cdms_risorse where id_argomento_tipo_allegato=${idArgAll} 
-                    and codice_azienda='${company}' and id_anagrafica=${idAnagrafica} and id_centro_gest=${idCentroGest} limit 1);`;
+                    and codice_azienda='${company}' and id_anagrafica=${idAnagrafica}  limit 1);`; //tolto --> and id_centro_gest=${idCentroGest}
                         response = await client.query(query);
 
                         let filesCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count) : 0;
@@ -512,8 +512,8 @@ exports.handler = async (event, context) => {
                             try {
                                 console.log('Esiste flusso ed esiste revisione');
                                 query = `select prog_revisione,id_risorsa from entrasp.cdms_risorse_revisioni where id_risorsa in(select id_risorsa from entrasp.cdms_risorse
-                            where id_argomento_tipo_allegato=${idArgAll} and codice_azienda='${company}' and id_anagrafica=${idAnagrafica} and id_centro_gest=${idCentroGest} limit 1)
-                            and codice_azienda='${company}' and checksum_sha1='${checksum}';`;
+                            where id_argomento_tipo_allegato=${idArgAll} and codice_azienda='${company}' and id_anagrafica=${idAnagrafica} limit 1)
+                            and codice_azienda='${company}' and checksum_sha1='${checksum}';`;  //tolto --> and id_centro_gest=${idCentroGest}
                                 console.log(query);
                                 response = await client.query(query);
                                 const progRevisione = response['rows'][0]['prog_revisione'];
@@ -533,13 +533,13 @@ exports.handler = async (event, context) => {
                                 response = await client.query(query);
 
                                 //HACK: exception in case of bus_object="cdms_risorse"
-                                idrisorsa = (idrisorsa == -1) ? idFlowInfo2 : idrisorsa;
-                                query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;    //Da mandare in background... pesante
+                                /* idrisorsa = (idrisorsa == -1) ? idFlowInfo2 : idrisorsa; */
+                                query = `select entrasp.after_lambda_attachments('${company}',  ${idFlowInfo2/* idrisorsa */});`;
                                 console.log(query);
                                 response = await client.query(query);
                                 console.log(JSON.stringify(response));
 
-                                body = { result: 'OK' };
+                                body = { result: 'OK'};
                             }
                             catch (e) {
                                 console.log(e);
@@ -559,12 +559,12 @@ exports.handler = async (event, context) => {
                                 datarif = (requestBody.data_rif == undefined) ? date : requestBody.data_rif;
                                 //Prendo il massimo prog_revisione
                                 query = `select max(prog_revisione) as prog_revisione, id_risorsa from entrasp.cdms_risorse_revisioni where id_risorsa in(select id_risorsa from entrasp.cdms_risorse 
-                                where id_argomento_tipo_allegato=${idArgAll} AND codice_azienda='${company}' and id_anagrafica=${idAnagrafica} and id_centro_gest=${idCentroGest} limit 1) 
-                                and codice_azienda='${company}' group by id_risorsa;`;
+                                where id_argomento_tipo_allegato=${idArgAll} AND codice_azienda='${company}' and id_anagrafica=${idAnagrafica} limit 1) 
+                                and codice_azienda='${company}' group by id_risorsa;`;  //tolto --> and id_centro_gest=${idCentroGest}
                                 console.log(query);
                                 response = await client.query(query);
                                 response1 = await client.query(`select id_risorsa from entrasp.cdms_risorse where id_argomento_tipo_allegato=${idArgAll} 
-                                                                AND codice_azienda='${company}' and id_anagrafica=${idAnagrafica} and id_centro_gest=${idCentroGest} limit 1`);
+                                                                AND codice_azienda='${company}' and id_anagrafica=${idAnagrafica} limit 1`);  //tolto --> and id_centro_gest=${idCentroGest}
                                 const nextProgRevisione = (response.rows && response.rows[0]) ? response['rows'][0]['prog_revisione'] : 0;
                                 //HOW CAN I DO IT? ASK TO ZEE/NICOLA:
                                 //const idFlowInfo1 = (response.rows && response.rows[0] && response.rows[0].count) ? response['rows'][0]['id_risorsa'] : await getRisorsa(requestBody.id_argomento_tipo_allegato, company, idAnagrafica, idCentroGest);
@@ -580,6 +580,13 @@ exports.handler = async (event, context) => {
                                 response = await client.query(query);
                                 console.log(JSON.stringify(response));
 
+                                 //INSERISCO ASSOCIAZIONE RISORSA/CEGE
+                                query = `insert into entrasp.cdms_risorse_destinatari (codice_azienda, id_risorsa, codice_part, id_centro_gest)
+                                select '${company}', ${idFlowInfo1}, (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}'), ${idCentroGest} ON CONFLICT DO NOTHING;`;     
+                                console.log(query);
+                                response = await client.query(query);
+                                console.log(JSON.stringify(response));
+
                                 query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
                                 values ('${company}', ${idFlowInfo1}, coalesce(${nextProgRevisione},0) + 1, '${bus_object}','${chiave}');`;
                                 console.log(query);
@@ -588,8 +595,8 @@ exports.handler = async (event, context) => {
 
 
                                 //HACK: exception in case of bus_object="cdms_risorse"
-                                idrisorsa = (idrisorsa == -1) ? idFlowInfo1 : idrisorsa;
-                                query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;    //Da mandare in background... pesante
+                                /* idrisorsa = (idrisorsa == -1) ? idFlowInfo1 : idrisorsa; */
+                                query = `select entrasp.after_lambda_attachments('${company}',  ${idFlowInfo1/* idrisorsa */});`;
                                 console.log(query);
                                 //??? tolgo await
                                 response = await client.query(query);
@@ -610,10 +617,17 @@ exports.handler = async (event, context) => {
                         response = await client.query(query);
                         const nextId = response['rows'][0]['id_risorsa'];
                         console.log(JSON.stringify(response));
+                       
+                        query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, id_argomento_tipo_allegato, id_anagrafica, descrizione, descrizione_breve)
+                        select '${company}', ${nextId}, ${idArgAll}, ${idAnagrafica}, 
+                        entrasp.argomenti_descr( ${idArgAll}), entrasp.argomenti_descr_breve( ${idArgAll});`; // tolto --> id_centro_gest,    +    ${idCentroGest}, 
+                        console.log(query);
+                        response = await client.query(query);
+                        console.log(JSON.stringify(response));
 
-                        query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, id_argomento_tipo_allegato, id_anagrafica, id_centro_gest, descrizione, descrizione_breve)
-                    select '${company}', ${nextId}, ${idArgAll}, ${idAnagrafica}, ${idCentroGest}, 
-                    entrasp.argomenti_descr( ${idArgAll}), entrasp.argomenti_descr_breve( ${idArgAll});`;
+                        //INSERISCO ASSOCIAZIONE RISORSA/CEGE
+                        query = `insert into entrasp.cdms_risorse_destinatari (codice_azienda, id_risorsa, codice_part, id_centro_gest)
+                        select '${company}', ${nextId}, (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}'), ${idCentroGest};`;     
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));
@@ -645,8 +659,8 @@ exports.handler = async (event, context) => {
                             console.log(JSON.stringify(response));
 
                             //HACK: exception in case of bus_object="cdms_risorse"
-                            idrisorsa = (idrisorsa == -1) ? nextId : idrisorsa;
-                            query = `select entrasp.after_lambda_attachments('${company}',  ${idrisorsa});`;    //Da mandare in background...
+                            /* idrisorsa = (idrisorsa == -1) ? nextId : idrisorsa; */
+                            query = `select entrasp.after_lambda_attachments('${company}',  ${nextId/* idrisorsa */});`;    //Da mandare in background...
                             console.log(query);
                             //??? tolgo await
                             response = await client.query(query);
