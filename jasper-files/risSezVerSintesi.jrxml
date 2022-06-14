@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="risSezVerSintesi" pageWidth="537" pageHeight="800" columnWidth="537" leftMargin="0" rightMargin="0" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="sondaggi"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["DEMO-KYC"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id_sondaggio" class="java.math.BigDecimal" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new BigDecimal(830)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione,ssrs.sezione_completata, round(AVG(round(ssrs.punteggio_ottenuto,2)),2) as punteggio_medio,round(AVG(pct_risultato_ottenuto_calcolato),2) as pct_ottenuto_medio,round(AVG(ssrs.pct_risultato_ottenuto_calcolato_ponderato),2) as ponderato_medio ,entrasp.modelli_test_risultati_righe_descr(ssrs.id_risultato, ssrs.pct_da, ssrs.codice_azienda) as giudizio_automatico,  f.codice_colore 
+FROM entrasp.sondaggi_somministrati_risultati_sezioni ssrs
+INNER JOIN entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr 
+LEFT JOIN entrasp.modelli_test_risultati_righe g ON g.codice_azienda=ssrs.codice_azienda AND g.ID_RISULTATO=ssrs.id_risultato and g.pct_da=ssrs.pct_da 
+LEFT JOIN entrasp.tipi_modelli_test_risultati_righe f ON f.id_tipo_risultato=g.id_tipo_risultato and f.codice_azienda=g.codice_azienda and f.prog_riga=g.prog_riga
+WHERE ssrs.codice_azienda=$P{codice_azienda}  and ssrs.id_sondaggio=$P{id_sondaggio} and ds.flag_non_applicabile_sezione='0' 
+GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione, ssrs.id_risultato, ssrs.pct_da, f.codice_colore ]]>
+	</queryString>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi_somministrati_risultati_sezioni"/>
+	</field>
+	<field name="id_sondaggio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi_somministrati_risultati_sezioni"/>
+	</field>
+	<field name="id_modello_test" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_modello_test"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_modello_test"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi_somministrati_risultati_sezioni"/>
+	</field>
+	<field name="id_modello_test_vr" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_modello_test_vr"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_modello_test_vr"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi_somministrati_risultati_sezioni"/>
+	</field>
+	<field name="id_sezione" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_sezione"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_sezione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi_somministrati_risultati_sezioni"/>
+	</field>
+	<field name="ordinamento" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ordinamento"/>
+		<property name="com.jaspersoft.studio.field.label" value="ordinamento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="domande_sezioni"/>
+	</field>
+	<field name="descr_sezione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descr_sezione"/>
+		<property name="com.jaspersoft.studio.field.label" value="descr_sezione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="domande_sezioni"/>
+	</field>
+	<field name="sezione_completata" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sezione_completata"/>
+		<property name="com.jaspersoft.studio.field.label" value="sezione_completata"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi_somministrati_risultati_sezioni"/>
+	</field>
+	<field name="punteggio_medio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="punteggio_medio"/>
+		<property name="com.jaspersoft.studio.field.label" value="punteggio_medio"/>
+	</field>
+	<field name="pct_ottenuto_medio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pct_ottenuto_medio"/>
+		<property name="com.jaspersoft.studio.field.label" value="pct_ottenuto_medio"/>
+	</field>
+	<field name="ponderato_medio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ponderato_medio"/>
+		<property name="com.jaspersoft.studio.field.label" value="ponderato_medio"/>
+	</field>
+	<field name="giudizio_automatico" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="giudizio_automatico"/>
+		<property name="com.jaspersoft.studio.field.label" value="giudizio_automatico"/>
+	</field>
+	<field name="codice_colore" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_colore"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_colore"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tipi_modelli_test_risultati_righe"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="28">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="537" height="25" forecolor="#FFFFFF" backcolor="#25599C" uuid="9be0d96c-6d5f-4554-b6ba-4ae0411b4a70">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Risultati medi sezioni]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="180" y="0" width="80" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="9bdf825a-49f7-4004-abb6-6747fa35302b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Punt. Medio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="270" y="0" width="70" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="b8155605-ea95-4633-9c09-f54d72d4bc66">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Perc. media]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="8" y="0" width="32" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="81584a80-1ef1-4197-a679-ee966c04f053">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[N°]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="50" y="0" width="120" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="95dcfc41-0781-4a5a-8347-6267f4b65dbe">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Sezione]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="350" y="0" width="110" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="9e07fcca-34aa-4a1b-9ddb-0680e97322e1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Perc. media ponderata %]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="470" y="0" width="60" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="87840851-9d3c-4c6e-9f70-1add52ccb962">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineColor="#000000"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Giudizio]]></text>
+			</staticText>
+		</band>
+		<band height="21">
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="180" y="0" width="80" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="f961c1c3-516b-4d69-b250-eafb73f98467">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[]]></propertyExpression>
+					<propertyExpression name="net.sf.jasperreports.style.box.bottom.pen.lineColor"><![CDATA[]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{punteggio_medio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="270" y="0" width="70" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="aaa17a85-ec78-4008-bfd7-78d1d6df6100">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[]]></propertyExpression>
+					<propertyExpression name="net.sf.jasperreports.style.box.bottom.pen.lineColor"><![CDATA[]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pct_ottenuto_medio}+"%"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="8" y="0" width="32" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="0bb34a90-79a5-435e-ae1c-7687eed4a453">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[]]></propertyExpression>
+					<propertyExpression name="net.sf.jasperreports.style.box.bottom.pen.lineColor"><![CDATA[]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ordinamento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="50" y="0" width="120" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="7c814415-75f0-421b-99e1-92ce7238273c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[]]></propertyExpression>
+					<propertyExpression name="net.sf.jasperreports.style.box.bottom.pen.lineColor"><![CDATA[]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descr_sezione}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="350" y="0" width="110" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="ac5525ab-26e2-48cb-b2ae-b899ea2de013">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[]]></propertyExpression>
+					<propertyExpression name="net.sf.jasperreports.style.box.bottom.pen.lineColor"><![CDATA[]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ponderato_medio}+"%"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="470" y="0" width="60" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="25f7e9ba-b1ee-4a8f-8bc9-905b1a34deac">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{codice_colore}]]></propertyExpression>
+					<propertyExpression name="net.sf.jasperreports.style.box.bottom.pen.lineColor"><![CDATA[]]></propertyExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{giudizio_automatico}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
