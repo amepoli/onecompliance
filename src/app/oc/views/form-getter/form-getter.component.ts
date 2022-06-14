@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy, SimpleChanges, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { DynamicFormComponent } from 'app/oc/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { ComboboxComponent } from 'app/oc/dynamic-forms/components/combobox/combobox.component';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { SubformComponent } from 'app/oc/dynamic-forms/components/subform/subform.component';
 import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, GoogleAPIParams, ImportItem, MessageView, OutputEvent, WidgetsConfigurations } from 'app/oc/interfaces';
 import { FormDataType } from 'app/oc/types';
@@ -1625,9 +1625,19 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
                             anagraficaFolders['codice_azienda'] = codiceAzienda;
                             
-                            let files: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
+                            let getDriveFolderDeepContentsResponse: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
+                            _this._console.log('getDriveFolderDeepContentsResponse ',getDriveFolderDeepContentsResponse);
+
+                            let syncDataResponse = await forkJoin(getDriveFolderDeepContentsResponse.syncData.map(x => _this.backendService.syncDriveS3File([x], googleAuth))).toPromise();
+                            _this._console.log('syncDataResponse', syncDataResponse);
+
+                            anagraficaFolders['root_drive_contents'] = getDriveFolderDeepContentsResponse.rootDriveContents;
+                            let processDriveFolderDeepContentsResponse: any = await _this.backendService.processDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
+                            _this._console.log('processDriveFolderDeepContentsResponse ', processDriveFolderDeepContentsResponse);
+
+                            
                             let filteredFilesForSetProperFileFolder = [];
-                            for(let file of files.files) {
+                            for(let file of processDriveFolderDeepContentsResponse.files) {
                                 if(filteredFilesForSetProperFileFolder.filter(x => x.fileid == file.fileid && x.filename == file.filename && x.folder == file.folder).length == 0) {
                                     filteredFilesForSetProperFileFolder.push(file);
                                 }
@@ -1645,7 +1655,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
                            
                             if(setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows) {
-                                let performDriveOperationsResponse = await _this.backendService.performDriveOperations(setProperFileFolderResponse.response.rows, googleAuth).toPromise();
+                                let performDriveOperationsResponse = await forkJoin(setProperFileFolderResponse.response.rows.map(x => _this.backendService.performDriveOperations([x], googleAuth))).toPromise();
                                 _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
                             }
                            

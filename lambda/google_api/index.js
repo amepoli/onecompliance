@@ -1331,7 +1331,6 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     }
     
     let syncData = [];
-    let completeFilesList = [];
 
     let rootDriveContents = await getDriveRecursiveContents(drive, null, rootFolderId, driveFolder, []);
     _console.log('Root getDriveRecursiveContents results: ', JSON.stringify(rootDriveContents));    
@@ -1341,8 +1340,6 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
             if(!rootFile['fileid'].includes('/')) {
                 rootFile['fileid'] = codiceAzienda + '/' + rootFile['fileid'];
             }
-            _console.log('Pushing to completeFilesList root:', JSON.stringify(rootFile));
-            completeFilesList.push(rootFile);
             
             _console.log('Checking if a rootfoler file is already added: ' + (rootFile.folder + '/' + rootFile.filename));
             if(syncData.filter( x => x.driveFilePath == (rootFile.folder + '/' + rootFile.filename)).length == 0) {
@@ -1363,6 +1360,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
             }
         }
 
+        /*
         let syncResponse = [];
         
         let syncBatches = Array(Math.ceil(syncData.length/10)).map((x, i) => i * 10);
@@ -1372,6 +1370,123 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
         _console.log('syncResponse: ', JSON.stringify(syncResponse));
         syncData = syncResponse['syncData'];
 
+
+        for await (subFolder of subFolders) {
+            if(subFolder.file && subFolder.file.length > 0) {
+                if(!subFolder.md5 || !subFolder.fileid) {
+                    let getDriveFileIndoResponse;
+                    let driveFileInfo = null;
+                    let driveFolderId = null;
+                    
+                    try {
+                        driveFolderId = folderIds[subFolder['folder']]; // await getDriveFileId(subFolder['folder'], authParams);
+                        _console.log('Using driveFolderId: ', driveFolderId, ' for: ', subFolder['folder']);
+                    }
+                    catch(e) {
+                        _console.error(e);
+                    }
+                    
+                    try {
+                        getDriveFileIndoResponse = await getDriveFileInfo(driveFolderId, subFolder['file']);
+                        _console.log('subfolder getDriveFileInfo: ', JSON.stringify(getDriveFileIndoResponse));
+                        driveFileInfo = getDriveFileIndoResponse.data;
+                        if(driveFileInfo && driveFileInfo['md5Checksum']) {
+                            _console.log('driveFileInfo: ', JSON.stringify(driveFileInfo));
+                            subFolder['md5'] = driveFileInfo['md5Checksum'];
+        
+                            if(!subFolders.fileid) {
+                                subFolder['fileid'] = driveFileInfo['id'];
+                            }
+                        }
+                        
+                        _console.log('subfolder: ', JSON.stringify(subFolder));
+                    }
+                    catch(e) {
+                        _console.error(e);
+                    }
+                }
+
+                if(completeFilesList.filter( x => x.filename === subFolder.file && x.folder === subFolder.folder).length == 0) {
+                    _console.log('Pushing to completeFilesList: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
+                    completeFilesList.push({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder});
+                }
+                else {
+                    _console.log('Ignoring pushing to completeFilesList: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
+                }
+            }
+            // Not needed anymore by fixAnagraficaFolderByIdentifier takes care of creating missing folders
+            // else {
+            //     await getDriveFileId(subFolder['folder'], authParams);
+            // }
+        }
+
+        */
+    }
+    
+    let finalResponse = { result: 'OK', syncData: syncData, rootDriveContents: rootDriveContents};
+
+    _console.log('getDriveFolderDeepContents result', JSON.stringify(finalResponse), 'length: ', JSON.stringify(finalResponse).length);
+    return finalResponse;
+
+}
+
+async function processDriveFolderDeepContents(deepContentsRequest, authParams) {
+    await performGoogleAuth(authParams);
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    _console.log('anagraficaFolders', JSON.stringify(deepContentsRequest));
+    
+    // let completePath = await getDriveFolderCompletePath(drive, driveFolder); 
+    // _console.log('completePath: ', completePath);
+    
+    const driveFolder = deepContentsRequest['root_folder'];
+    const rootDriveContents = deepContentsRequest['root_drive_contents'];    
+    const folderIds = deepContentsRequest['folder_ids'] || [];
+    const codiceAzienda = deepContentsRequest['codice_azienda'] || [];
+
+    let subFolders = [];
+    
+    if(deepContentsRequest['sub_folders'] && deepContentsRequest['sub_folders'].length > 0) {
+        for(let subFolder of deepContentsRequest['sub_folders']) {
+            if(subFolder.file && subFolder.file.length > 0 && subFolders.filter(x => x.file === subFolder.file && x.folder === x.folder).length == 0) {
+                subFolders.push(subFolder);
+            }
+        }
+    }
+
+    _console.log('subFolders', JSON.stringify(subFolders));
+    
+    // _console.log()
+    // while( i < subFolders.length) {        
+    //     let getDriveFileIdResponse = await getDriveFileId(subFolders[i], authParams);
+    //     _console.log('getDriveFileIdResponse', getDriveFileIdResponse);
+    //     i++;
+    // }
+
+    let rootFolderId = null;
+
+    try {
+        rootFolderId = folderIds[driveFolder]; // await getDriveFileId(driveFolder, authParams);
+        _console.log('rootFolderId: ', rootFolderId);
+    }
+    catch(e) {
+        _console.error(e);
+    }
+    
+    let completeFilesList = [];
+
+    if(rootDriveContents && rootDriveContents.length > 0) {
+        for(let rootFile of rootDriveContents) {
+            if(!rootFile['fileid'].includes('/')) {
+                rootFile['fileid'] = codiceAzienda + '/' + rootFile['fileid'];
+            }
+            _console.log('Pushing to completeFilesList root:', JSON.stringify(rootFile));
+            completeFilesList.push(rootFile);
+            
+        }
+    }
+    
+    if(subFolders && subFolders.length > 0) {        
+                
         for await (subFolder of subFolders) {
             if(subFolder.file && subFolder.file.length > 0) {
                 if(!subFolder.md5 || !subFolder.fileid) {
@@ -1424,7 +1539,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     
     let finalResponse = { result: 'OK', files: completeFilesList};
 
-    _console.log('getDriveFolderDeepContents result', JSON.stringify(finalResponse), 'length: ', JSON.stringify(finalResponse).length);
+    _console.log('processDriveFolderDeepContents result', JSON.stringify(finalResponse), 'length: ', JSON.stringify(finalResponse).length);
     return finalResponse;
 
 }
@@ -1592,6 +1707,12 @@ exports.handler = async (event, context) => {
                 const anagraficaFolders = eventBody['anagraficaFolders'];
                 const authParams = eventBody['authToken'];
                 body = await getDriveFolderDeepContents(anagraficaFolders, authParams);
+            }
+            else if (requestType === 'processDriveFolderDeepContents') {
+                let eventBody = event.body? JSON.parse(event.body): {};
+                const deepContentsRequest = eventBody['deepContentsRequest'];
+                const authParams = eventBody['authToken'];
+                body = await processDriveFolderDeepContents(deepContentsRequest, authParams);
             }
             else if(requestType === 'performDriveOperations') {
                 let eventBody = event.body? JSON.parse(event.body): {};
