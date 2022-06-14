@@ -417,6 +417,13 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   }
 
+  processDriveFolderDeepContents(deepContentsRequest: any, authToken: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'processDriveFolderDeepContents' };
+    this.myPutPostInit.body = { deepContentsRequest, authToken };
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
+  }
+
   performDriveOperations(operations: any, authToken: any) {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { request_type: 'performDriveOperations' };
