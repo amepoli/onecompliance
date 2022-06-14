@@ -1343,6 +1343,10 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
             
             _console.log('Checking if a rootfoler file is already added: ' + (rootFile.folder + '/' + rootFile.filename));
             if(syncData.filter( x => x.driveFilePath == (rootFile.folder + '/' + rootFile.filename)).length == 0) {
+                // _console.log('adding root file to syncData: ', JSON.stringify({
+                //     s3FilePath: rootFile['fileid'], s3md5: rootFile.md5, driveFilePath: (rootFile.folder + '/' + rootFile.filename), driveFolderId: rootFile.driveFolderId
+                // }));
+                
                 syncData.push({
                     s3FilePath: rootFile['fileid'], s3md5: rootFile.md5, driveFilePath: (rootFile.folder + '/' + rootFile.filename), driveFolderId: rootFile.driveFolderId
                 });
@@ -1354,6 +1358,14 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
         for await (subFolder of subFolders) {
             _console.log('Checking if subfolder is already added: ' + (subFolder.folder + '/' + subFolder.file));
             if(syncData.filter( x => x.driveFilePath == (subFolder.folder + '/' + subFolder.file)).length == 0) {
+                if(!subFolder['fileid'].includes('/')) {
+                    subFolder['fileid'] = codiceAzienda + '/' + subFolder['fileid'];
+                }
+
+                // _console.log('adding subfolder file to syncData: ', JSON.stringify({
+                //     s3FilePath: subFolder.fileid, s3md5: subFolder.md5, driveFilePath: subFolder.folder + '/' + subFolder.file, driveFolderId: folderIds[subFolder.folder]
+                // }));
+
                 syncData.push({
                     s3FilePath: subFolder.fileid, s3md5: subFolder.md5, driveFilePath: subFolder.folder + '/' + subFolder.file, driveFolderId: folderIds[subFolder.folder]
                 });
