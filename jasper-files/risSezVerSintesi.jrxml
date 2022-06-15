@@ -38,11 +38,7 @@
 		<defaultValueExpression><![CDATA[new BigDecimal(569)]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione,ssrs.sezione_completata, round(AVG(round(ssrs.punteggio_ottenuto,2)),2) as punteggio_medio,round(AVG(pct_risultato_ottenuto_calcolato),2) as pct_ottenuto_medio,round(AVG(ssrs.pct_risultato_ottenuto_calcolato_ponderato),2) as ponderato_medio,entrasp.giudizio_da_pct(ssrs.codice_azienda,ssrs.id_risultato, round(AVG(pct_risultato_ottenuto_calcolato),2)) as giudizio_automatico,entrasp.codice_colore_da_pct(ssrs.codice_azienda,ssrs.id_risultato, round(AVG(pct_risultato_ottenuto_calcolato),2)) as codice_colore 
-FROM entrasp.sondaggi_somministrati_risultati_sezioni ssrs 
-INNER JOIN entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr 
-WHERE ssrs.codice_azienda=$P{codice_azienda} and ssrs.id_sondaggio=$P{id_sondaggio}  and ds.flag_non_applicabile_sezione='0' 
-GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione, ssrs.id_risultato]]>
+		<![CDATA[SELECT ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione,ssrs.sezione_completata, round(AVG(round(ssrs.punteggio_ottenuto,2)),2) as punteggio_medio,round(AVG(pct_risultato_ottenuto_calcolato),2) as pct_ottenuto_medio,round(AVG(ssrs.pct_risultato_ottenuto_calcolato_ponderato),2) as ponderato_medio,entrasp.giudizio_da_pct(ssrs.codice_azienda,mtvr.id_risultato, round(AVG(pct_risultato_ottenuto_calcolato),2)) as giudizio_automatico,entrasp.codice_colore_da_pct(ssrs.codice_azienda,mtvr.id_risultato, round(AVG(pct_risultato_ottenuto_calcolato),2)) as codice_colore FROM entrasp.sondaggi_somministrati_risultati_sezioni ssrs INNER JOIN entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr INNER JOIN entrasp.modelli_test_vr mtvr on ds.codice_azienda=mtvr.codice_azienda and mtvr.id_modello_test=ds.id_modello_test and mtvr.id_modello_test_vr=ds.id_modello_test_vr WHERE ssrs.codice_azienda=$P{codice_azienda} and ssrs.id_sondaggio=$P{id_sondaggio} and ds.flag_non_applicabile_sezione='0' GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione, mtvr.id_risultato order by ds.ordinamento asc]]>
 	</queryString>
 	<field name="codice_azienda" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
@@ -229,11 +225,11 @@ GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.i
 			</staticText>
 		</band>
 		<band height="21">
-			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="180" y="0" width="80" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="f961c1c3-516b-4d69-b250-eafb73f98467">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="180" y="0" width="80" height="16" isRemoveLineWhenBlank="true" forecolor="#050505" backcolor="#FFFFFF" uuid="f961c1c3-516b-4d69-b250-eafb73f98467">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[]]></propertyExpression>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{codice_colore}]]></propertyExpression>
 					<propertyExpression name="net.sf.jasperreports.style.box.bottom.pen.lineColor"><![CDATA[]]></propertyExpression>
 				</reportElement>
 				<box>
@@ -247,11 +243,11 @@ GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.i
 				</textElement>
 				<textFieldExpression><![CDATA[$F{punteggio_medio}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="270" y="0" width="70" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="aaa17a85-ec78-4008-bfd7-78d1d6df6100">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="270" y="0" width="70" height="16" isRemoveLineWhenBlank="true" forecolor="#050505" backcolor="#FFFFFF" uuid="aaa17a85-ec78-4008-bfd7-78d1d6df6100">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[]]></propertyExpression>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{codice_colore}]]></propertyExpression>
 					<propertyExpression name="net.sf.jasperreports.style.box.bottom.pen.lineColor"><![CDATA[]]></propertyExpression>
 				</reportElement>
 				<box>
@@ -265,7 +261,7 @@ GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.i
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pct_ottenuto_medio}+"%"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="8" y="0" width="32" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="0bb34a90-79a5-435e-ae1c-7687eed4a453">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[]]></propertyExpression>
@@ -282,7 +278,7 @@ GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.i
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ordinamento}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="50" y="0" width="120" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="7c814415-75f0-421b-99e1-92ce7238273c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -301,11 +297,11 @@ GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.i
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descr_sezione}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="350" y="0" width="110" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="ac5525ab-26e2-48cb-b2ae-b899ea2de013">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="350" y="0" width="110" height="16" isRemoveLineWhenBlank="true" forecolor="#050505" backcolor="#FFFFFF" uuid="ac5525ab-26e2-48cb-b2ae-b899ea2de013">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[]]></propertyExpression>
+					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{codice_colore}]]></propertyExpression>
 					<propertyExpression name="net.sf.jasperreports.style.box.bottom.pen.lineColor"><![CDATA[]]></propertyExpression>
 				</reportElement>
 				<box>
@@ -319,8 +315,8 @@ GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.i
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ponderato_medio}+"%"]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="470" y="0" width="60" height="16" forecolor="#050505" backcolor="#FFFFFF" uuid="25f7e9ba-b1ee-4a8f-8bc9-905b1a34deac">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="470" y="0" width="60" height="16" isRemoveLineWhenBlank="true" forecolor="#050505" backcolor="#FFFFFF" uuid="25f7e9ba-b1ee-4a8f-8bc9-905b1a34deac">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					<propertyExpression name="net.sf.jasperreports.style.backcolor"><![CDATA[$F{codice_colore}]]></propertyExpression>

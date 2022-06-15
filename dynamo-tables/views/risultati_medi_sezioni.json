@@ -6,7 +6,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "SELECT ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione,ssrs.sezione_completata, round(AVG(round(ssrs.punteggio_ottenuto,2)),2) as punteggio_medio,round(AVG(pct_risultato_ottenuto_calcolato),2) as pct_ottenuto_medio,round(AVG(ssrs.pct_risultato_ottenuto_calcolato_ponderato),2) as ponderato_medio,entrasp.giudizio_da_pct(ssrs.codice_azienda,ssrs.id_risultato, round(AVG(pct_risultato_ottenuto_calcolato),2)) as giudizio_automatico,entrasp.codice_colore_da_pct(ssrs.codice_azienda,ssrs.id_risultato, round(AVG(pct_risultato_ottenuto_calcolato),2)) as codice_colore FROM entrasp.sondaggi_somministrati_risultati_sezioni ssrs INNER JOIN entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr WHERE ssrs.codice_azienda=$codice_azienda$ and ssrs.id_sondaggio=$id_sondaggio$ and ds.flag_non_applicabile_sezione='0' GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione, ssrs.id_risultato"
+      "queryString": "SELECT ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione,ssrs.sezione_completata, round(AVG(round(ssrs.punteggio_ottenuto,2)),2) as punteggio_medio,round(AVG(pct_risultato_ottenuto_calcolato),2) as pct_ottenuto_medio,round(AVG(ssrs.pct_risultato_ottenuto_calcolato_ponderato),2) as ponderato_medio,entrasp.giudizio_da_pct(ssrs.codice_azienda,mtvr.id_risultato, round(AVG(pct_risultato_ottenuto_calcolato),2)) as giudizio_automatico,entrasp.codice_colore_da_pct(ssrs.codice_azienda,mtvr.id_risultato, round(AVG(pct_risultato_ottenuto_calcolato),2)) as codice_colore FROM entrasp.sondaggi_somministrati_risultati_sezioni ssrs INNER JOIN entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr INNER JOIN entrasp.modelli_test_vr mtvr on ds.codice_azienda=mtvr.codice_azienda and mtvr.id_modello_test=ds.id_modello_test and mtvr.id_modello_test_vr=ds.id_modello_test_vr WHERE ssrs.codice_azienda=$codice_azienda$ and ssrs.id_sondaggio=$id_sondaggio$ and ds.flag_non_applicabile_sezione='0' GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione, mtvr.id_risultato"
     }
   ],
   "table_keys": [
@@ -148,6 +148,34 @@
           "text_align": "center"
         },
         {
+          "value": "Basso",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
+        },
+        {
+          "value": "Favorevole",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
+        },
+        {
+          "value": "Adeguato",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
+        },
+        {
+          "value": "In prevalenza favorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "royalblue",
+          "text_align": "center"
+        },
+        {
           "value": "Irrilevante",
           "font_color": "DarkBlue",
           "font_weight": "500",
@@ -155,14 +183,14 @@
           "text_align": "center"
         },
         {
-          "value": "Adeguato",
-          "font_color": "DarkBlue",
+          "value": "Non significativo",
+          "font_color": "PaleGreen",
           "font_weight": "500",
-          "background_color": "GhostWhite",
+          "background_color": "Green",
           "text_align": "center"
         },
         {
-          "value": "Basso",
+          "value": "Poco significativo",
           "font_color": "PaleGreen",
           "font_weight": "500",
           "background_color": "Green",
@@ -176,7 +204,35 @@
           "text_align": "center"
         },
         {
+          "value": "Medio-Basso",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
+        },
+        {
+          "value": "Abbastanza significativo",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
+        },
+        {
           "value": "Medio",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
+        },
+        {
+          "value": "Parzialmente favorevole",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
+        },
+        {
+          "value": "Medio-alto",
           "font_color": "DarkRed",
           "font_weight": "500",
           "background_color": "orange",
@@ -190,6 +246,21 @@
           "text_align": "center"
         },
         {
+          "value": "Parzialmente sfavorevole",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
+        },
+        {
+          "value": "Molto significativo",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
+        },
+        {
           "value": "Alto",
           "font_color": "white",
           "font_weight": "500",
@@ -198,7 +269,31 @@
           "text_align": "center"
         },
         {
+          "value": "In prevalenza sfavorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
+        },
+        {
           "value": "Non adeguato",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
+        },
+        {
+          "value": "Sfavorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "black",
+          "font_size": "medium",
+          "text_align": "center"
+        },
+        {
+          "value": "Obbligo di Astensione",
           "font_color": "white",
           "font_weight": "500",
           "background_color": "firebrick",

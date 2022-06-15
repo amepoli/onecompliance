@@ -49,7 +49,8 @@ INNER JOIN entrasp.sondaggi_somministrati d ON d.id_sondaggio=c.id_sondaggio and
 INNER JOIN entrasp.risposte e ON e.id_somministrazione=d.id_somministrazione and d.id_sondaggio=e.id_sondaggio and e.codice_azienda=d.codice_azienda 
 WHERE d.id_sondaggio=$P{id_sondaggio} and d.codice_azienda=$P{codice_azienda}
 AND entrasp.domanda_active(e.codice_azienda, e.id_modello_test, e.id_modello_test_vr, e.id_domanda, e.id_somministrazione)=1 AND e.peso*e.punteggio/100 BETWEEN (SELECT pt_soglia FROM entrasp.modelli_test_risultati_righe_vr WHERE codice_azienda=a.codice_azienda AND id_modello_test=a.id_modello_test AND id_modello_test_vr=a.id_modello_test_vr AND pct_da = a.pct_da) AND (SELECT coalesce(MIN(pt_soglia),1000) FROM entrasp.modelli_test_risultati_righe_vr WHERE codice_azienda=a.codice_azienda AND id_modello_test=a.id_modello_test AND id_modello_test_vr=a.id_modello_test_vr AND pct_da > a.pct_da)
-group by a.codice_azienda,a.id_risultato,a.pct_da,a.pct_target,a.base,a.pt_soglia,f.descrizione, d.id_somministrazione,d.object_description,f.codice_colore]]>
+group by a.codice_azienda,a.id_risultato,a.pct_da,a.pct_target,a.base,a.pt_soglia,f.descrizione, d.id_somministrazione,d.object_description,f.codice_colore
+order by d.id_somministrazione]]>
 	</queryString>
 	<field name="codice_azienda" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
@@ -105,23 +106,14 @@ group by a.codice_azienda,a.id_risultato,a.pct_da,a.pct_target,a.base,a.pt_sogli
 		<property name="com.jaspersoft.studio.field.label" value="codice_colore"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="tipi_modelli_test_risultati_righe"/>
 	</field>
-	<group name="id_somministrazione">
+	<group name="id_somministrazione" keepTogether="true">
 		<groupExpression><![CDATA[$F{id_somministrazione}]]></groupExpression>
 		<groupHeader>
 			<band height="33">
 				<textField>
-					<reportElement x="170" y="4" width="356" height="20" uuid="d1900f0a-216b-4045-a8b0-46d3b62169f1"/>
-					<box>
-						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle"/>
-					<textFieldExpression><![CDATA[$F{object_description}]]></textFieldExpression>
-				</textField>
-				<textField>
-					<reportElement x="80" y="4" width="40" height="20" uuid="6815bc9d-a78e-4f01-8c4c-d0ceae2f366e"/>
+					<reportElement isPrintRepeatedValues="false" x="80" y="4" width="40" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="id_somministrazione" uuid="6815bc9d-a78e-4f01-8c4c-d0ceae2f366e">
+						<printWhenExpression><![CDATA[$F{id_somministrazione} != null]]></printWhenExpression>
+					</reportElement>
 					<box>
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -132,10 +124,11 @@ group by a.codice_azienda,a.id_risultato,a.pct_da,a.pct_target,a.base,a.pt_sogli
 					<textFieldExpression><![CDATA[$F{id_somministrazione}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement mode="Opaque" x="8" y="4" width="72" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="75761220-8ac1-49d4-b13f-2f933fcf5b7f">
+					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="8" y="4" width="72" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="id_somministrazione" forecolor="#FFFFFF" backcolor="#25599C" uuid="75761220-8ac1-49d4-b13f-2f933fcf5b7f">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$F{id_somministrazione} != null]]></printWhenExpression>
 					</reportElement>
 					<box>
 						<pen lineColor="#000000"/>
@@ -150,10 +143,11 @@ group by a.codice_azienda,a.id_risultato,a.pct_da,a.pct_target,a.base,a.pt_sogli
 					<text><![CDATA[Verifica]]></text>
 				</staticText>
 				<staticText>
-					<reportElement mode="Opaque" x="120" y="4" width="50" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="87765a33-f996-4b9e-8166-3410034087c6">
+					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="120" y="4" width="50" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="id_somministrazione" forecolor="#FFFFFF" backcolor="#25599C" uuid="87765a33-f996-4b9e-8166-3410034087c6">
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$F{id_somministrazione} != null]]></printWhenExpression>
 					</reportElement>
 					<box>
 						<pen lineColor="#000000"/>
@@ -167,6 +161,19 @@ group by a.codice_azienda,a.id_risultato,a.pct_da,a.pct_target,a.base,a.pt_sogli
 					</textElement>
 					<text><![CDATA[su/di]]></text>
 				</staticText>
+				<textField>
+					<reportElement isPrintRepeatedValues="false" x="170" y="4" width="356" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="id_somministrazione" uuid="d1900f0a-216b-4045-a8b0-46d3b62169f1">
+						<printWhenExpression><![CDATA[$F{id_somministrazione} != null]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$F{object_description}]]></textFieldExpression>
+				</textField>
 			</band>
 		</groupHeader>
 	</group>
