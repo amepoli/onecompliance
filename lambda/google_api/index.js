@@ -85,7 +85,7 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
             }
             _console.log(`Searching for ${folderQuery} in ${driveFolderId}`);    
             response = await drive.files.list({
-                q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and ${folderQuery}`,
+                q: `'${driveFolderId}' in parents and supportsAllDrives=true and mimeType='${folderMime}' and ${folderQuery}`,
                 pageSize: 5,
                 fields: 'nextPageToken, files(id, name, mimeType)',
             });
@@ -171,7 +171,7 @@ async function getDriveFileId(drivePath, authParams) {
         for await (drivePathFolder of drivePathFolders) {
             _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
             response = await drive.files.list({
-                q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
+                q: `'${driveFolderId}' in parents and supportsAllDrives=true and mimeType='${folderMime}' and name='${drivePathFolder}'`,
                 pageSize: 5,
                 fields: 'nextPageToken, files(id, name, mimeType)',
             });
@@ -859,7 +859,7 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
         for await (drivePathFolder of drivePathFolders) {
             _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
             response = await drive.files.list({
-                q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
+                q: `'${driveFolderId}' in parents and supportsAllDrives=true and mimeType='${folderMime}' and name='${drivePathFolder}'`,
                 pageSize: 5,
                 fields: 'nextPageToken, files(id, name, mimeType)',
             });
@@ -1159,7 +1159,7 @@ async function getDriveFolderCompletePath(drive, driveFolder) {
     let response;
     let completePath = '';
     try {
-        let query = `name='${driveFolder}' and mimeType='${folderMime}'`;
+        let query = `name='${driveFolder}' and supportsAllDrives=true and mimeType='${folderMime}'`;
         
         let parentId = null;
         let parentName = null;
@@ -1210,7 +1210,7 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
             query = `'${driveFileId}' in parents`;
         }
         else {
-            query = `name='${driveFolder}' and mimeType='${folderMime}'`;
+            query = `name='${driveFolder}' and supportsAllDrives=true and mimeType='${folderMime}'`;
         }
         _console.log('query: ', query);
         
