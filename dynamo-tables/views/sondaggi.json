@@ -994,6 +994,77 @@
         {
             "autoGenerate": false,
             "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ris_percentuale_worst",
+            "label": "% Ver.Peggiore",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true,
+            "size": 1,
+            "inputEvents": [
+                {
+                    "eventName": "onSaveSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select punteggio_percentuale as ris_percentuale_worst from entrasp.punteggio_sondaggio_somministrazione_worst($codice_azienda$, $id_sondaggio$));"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio_worst",
+            "label": "Giudizio Ver.Peggiore",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true,
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select false as label"
+                }
+            ],
+            "inputEvents": [
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select punteggio_percentuale from entrasp.punteggio_sondaggio_somministrazione_worst($codice_azienda$, $id_sondaggio$))) as giudizio_worst_background_color;"
+                },
+                {
+                    "eventName": "onSaveSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)) as giudizio_worst_background_color;"
+                },
+                {
+                    "eventName": "onSaveSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select giudizio_worst from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
+                }
+            ],
+            "size": 1.5
+        },
+      
+        {
+            "autoGenerate": false,
+            "format": {
                 "dataType": "number",
                 "viewType": "input"
             },
@@ -1439,6 +1510,21 @@
                 }
             ],
             "label": "Risultati medi sezioni"
+        },
+        {
+            "entryKey": "risposte_worst_sub_of_sondaggi",
+            "type": "table",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
+            ],
+            "label": "Verifica peggiore"
         }
     ],
     "table_keys": [
