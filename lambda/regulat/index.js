@@ -153,9 +153,12 @@ exports.handler = async (event, context) => {
     });
   }
 
+  //To implement, add into response json these parameters i need in regulat_VPC
+  scannedData = scannedData.add(company,registry,checkId);
+
   response = await lambda.invoke({
     FunctionName: 'FUNCTION_NAME',
-    Payload: scannedData       //to change the payload? I need to pass also the entityType
+    Payload: scannedData       //to change the payload?
   }).promise();
 
   console.log(response);
