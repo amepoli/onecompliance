@@ -1305,10 +1305,6 @@ async function getDriveFolderCompletePath(drive, driveFolder) {
 async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, results) {
     let response;
     try {
-        if(driveFileId === 'root' && driveFolder != null) {
-            driveFileId = await getDriveFileId(path);
-        }
-
         let query = '';
         if(driveFileId) {
             query = `'${driveFileId}' in parents`;
@@ -1436,7 +1432,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     
     let syncData = [];
 
-    let rootDriveContents = await getDriveRecursiveContents(drive, codiceAzienda, 'root', driveFolder, []);
+    let rootDriveContents = await getDriveRecursiveContents(drive, null, rootFolderId, driveFolder, []);
     _console.log('Root getDriveRecursiveContents results: ', JSON.stringify(rootDriveContents));    
     
     if(rootDriveContents && rootDriveContents.length > 0) {
