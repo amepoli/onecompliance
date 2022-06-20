@@ -539,8 +539,18 @@ export class AuthService {
       return sessionGoogleAuth;
     }
     else {
-      const gAuth = await _this.initGoogleOAuth();                
-      const oAuthUser = await gAuth.signIn();
+      // _this._console.log('returning null');
+      // return null;
+
+      const gAuth = await _this.initGoogleOAuth();
+      if(gAuth.isSignedIn.get()) {
+        _this._console.log('user was already signed in!');
+      }
+      else {
+        _this._console.log('signing in user...');
+      }
+
+      const oAuthUser = !gAuth.isSignedIn.get()? await gAuth.signIn(): gAuth.currentUser.get();
       _this._console.log(oAuthUser);
       
       // var auth_code = await gAuth.grantOfflineAccess();
@@ -554,7 +564,6 @@ export class AuthService {
       // _this._console.log(optionsResult);
                       
       const authResponse = gAuth.currentUser.get().getAuthResponse();
-      // _this._console.log(authResponse);
       _this.saveGoogleAuth(authResponse);
       
       return _this.loadGoogleAuth();
