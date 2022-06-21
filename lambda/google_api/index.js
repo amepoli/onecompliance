@@ -62,6 +62,85 @@ function getServerResponse(body) {
     };
 }
 
+async function getLocalSharedFolderId(drivePath) {
+    
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    
+    let response;
+
+    if(drivePath.length > 0) {
+        if(drivePath.startsWith('/')) {
+            drivePath = drivePath.substring(1);
+        }
+        let drivePathFolders = drivePath.split('/');
+        let folderName = drivePathFolders[0];
+
+        _console.log(`Searching for ${folderName} in Shared drive`);
+        
+        try {
+            response = await drive.files.list({
+                q: `sharedWithMe=true and mimeType='${folderMime}' and name='${folderName}'`,
+                pageSize: 5,
+                fields: 'nextPageToken, files(id, name, mimeType)',
+            });
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+        _console.log('response', JSON.stringify(response));
+        if(response.data && response.data.files && response.data.files.length > 0) {
+            // Folder exists
+            return response.data.files[0].id;
+        }
+        
+        _console.log(`Searching for ${folderName} in Local drive`);
+        try {
+            response = await drive.files.list({
+                q: `'root' in parents and mimeType='${folderMime}' and name='${folderName}'`,
+                pageSize: 5,
+                fields: 'nextPageToken, files(id, name, mimeType)',
+            });
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+        _console.log('response', response);
+
+
+        if(response.data && response.data.files && response.data.files.length > 0) {
+            // Folder exists
+            return response.data.files[0].id;
+        }
+        else {
+            // Create folder
+            var folderCreateMetadata = {
+                'parents': ['root'],
+                'name': folderName,
+                'mimeType': folderMime
+            };
+        
+            try {
+                // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+                response = await drive.files.create({
+                    resource: folderCreateMetadata,
+                    fields: 'id'
+                });
+                try {
+                    response = JSON.parse(response);    
+                }
+                catch(e) {}
+                _console.log('create folder result: ', JSON.stringify(response));
+                if(response && response.data && response.data.id) {
+                    return response.data.id;
+                }
+            }
+            catch (e) {
+                _console.log(e);
+            }
+        }
+    }
+    return null;
+}
+
+
 async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
     
     await performGoogleAuth(authParams);
@@ -78,75 +157,86 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
         }
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
-            let folderQuery = `name = '${drivePathFolder}'`;
-            if(drivePathFolder.includes('~')) {
-                let folderIdentifierPart = '~' + drivePathFolder.split('~')[1];
-                folderQuery = `name contains '${folderIdentifierPart}'`;
-            }
-            _console.log(`Searching for ${folderQuery} in ${driveFolderId}`);    
-            response = await drive.files.list({
-                q: `'${driveFolderId}' in parents and supportsAllDrives=true and mimeType='${folderMime}' and ${folderQuery}`,
-                pageSize: 5,
-                fields: 'nextPageToken, files(id, name, mimeType)',
-            });
-            try {
-                response = JSON.parse(response);    
-            }
-            catch(e) {}
-            _console.log('response', response);
-            if(response.data && response.data.files && response.data.files.length > 0) {
-                // Folder exists
-                driveFolderId = response.data.files[0].id;
-
-                if(response.data.files.filter(x => x.name === drivePathFolder).length == 0) {
-                    _console.log('folder exists but has a different name: ' + response.data.files[0].name + ' and will be renamed to: ' + drivePathFolder);
-                    response = await drive.files.update({
-                        fileId: driveFolderId,
-                        requestBody: {
-                            name: drivePathFolder
-                        }
-                    });
-                    try {
-                        response = JSON.parse(response);    
-                    }
-                    catch(e) {}
-                }
-                else {
-                    _console.log('Folder already exists with name: ' + drivePathFolder);
-                }
-
+            if(driveFolderId === 'root') {
+                driveFolderId = await getLocalSharedFolderId(drivePathFolder);
             }
             else {
-                // Create folder
-                var folderCreateMetadata = {
-                    'parents': [driveFolderId],
-                    'name': drivePathFolder,
-                    'mimeType': folderMime
-                };
-            
-                let response;
-                let pageToken = null;
-            
-                try {
-                    // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
-                    response = await drive.files.create({
-                        resource: folderCreateMetadata,
-                        fields: 'id'
-                    });
-                    try {
-                        response = JSON.parse(response);    
-                    }
-                    catch(e) {}
-                    _console.log('create folder result: ', JSON.stringify(response));
-                    if(response && response.data && response.data.id) {
-                        driveFolderId = response.data.id;
-                        _console.log('Folder created with new id: ', driveFolderId);
-                    }
+                let folderQuery = `name = '${drivePathFolder}'`;
+                if(drivePathFolder.includes('~')) {
+                    let folderIdentifierPart = '~' + drivePathFolder.split('~')[1];
+                    folderQuery = `name contains '${folderIdentifierPart}'`;
                 }
-                catch (e) {
-                    _console.log(e);
+                _console.log(`Searching for ${folderQuery} in ${driveFolderId}`);
+                
+                let parentQuery = `'${driveFolderId}' in parents`;
+                let finalQuery = `${parentQuery} and mimeType='${folderMime}' and ${folderQuery}`;
+                _console.log('finalQuery: ', finalQuery);
+                
+                response = await drive.files.list({
+                    q: finalQuery,
+                    pageSize: 5,
+                    fields: 'nextPageToken, files(id, name, mimeType, parents)',
+                });
+                try {
+                    response = JSON.parse(response);    
+                }
+                catch(e) {}
+                _console.log('response', JSON.stringify(response));
+                if(response.data && response.data.files && response.data.files.length > 0) {
+                    // Folder exists
+                    driveFolderId = response.data.files[0].id;
+
+                    if(response.data.files.filter(x => x.name === drivePathFolder).length == 0) {
+                        _console.log('folder exists but has a different name: ' + response.data.files[0].name + ' and will be renamed to: ' + drivePathFolder);
+                        response = await drive.files.update({
+                            fileId: driveFolderId,
+                            requestBody: {
+                                name: drivePathFolder
+                            }
+                        });
+                        try {
+                            response = JSON.parse(response);    
+                        }
+                        catch(e) {}
+                    }
+                    else {
+                        _console.log('Folder already exists with name: ' + drivePathFolder);
+                    }
+
+                }
+                else {
+                    // Create folder
+                    var folderCreateMetadata = {
+                        'parents': [driveFolderId],
+                        'name': drivePathFolder,
+                        'mimeType': folderMime
+                    };
+                
+                    let response;
+                    let pageToken = null;
+                
+                    try {
+                        // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+                        response = await drive.files.create({
+                            resource: folderCreateMetadata,
+                            fields: 'id'
+                        });
+                        try {
+                            response = JSON.parse(response);    
+                        }
+                        catch(e) {}
+                        _console.log('create folder result: ', JSON.stringify(response));
+                        if(response && response.data && response.data.id) {
+                            driveFolderId = response.data.id;
+                            _console.log('Folder created with new id: ', driveFolderId);
+                        }
+                    }
+                    catch (e) {
+                        _console.log(e);
+                    }
                 }
             }
+            
         }
         _console.log('find folder result: ', JSON.stringify(response));
     }
@@ -169,50 +259,55 @@ async function getDriveFileId(drivePath, authParams) {
         }
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
-            _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
-            response = await drive.files.list({
-                q: `'${driveFolderId}' in parents and supportsAllDrives=true and mimeType='${folderMime}' and name='${drivePathFolder}'`,
-                pageSize: 5,
-                fields: 'nextPageToken, files(id, name, mimeType)',
-            });
-            try {
-                response = JSON.parse(response);    
-            }
-            catch(e) {}
-            _console.log('response', response);
-            if(response.data && response.data.files && response.data.files.length > 0) {
-                // Folder exists
-                driveFolderId = response.data.files[0].id;
+            if(driveFolderId === 'root') {
+                driveFolderId = await getLocalSharedFolderId(drivePathFolder);
             }
             else {
-                // Create folder
-                var folderCreateMetadata = {
-                    'parents': [driveFolderId],
-                    'name': drivePathFolder,
-                    'mimeType': folderMime
-                };
-            
-                let response;
-                let pageToken = null;
-            
+                _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
+                response = await drive.files.list({
+                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
+                    pageSize: 5,
+                    fields: 'nextPageToken, files(id, name, mimeType)',
+                });
                 try {
-                    // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
-                    response = await drive.files.create({
-                        resource: folderCreateMetadata,
-                        fields: 'id'
-                    });
-                    try {
-                        response = JSON.parse(response);    
-                    }
-                    catch(e) {}
-                    _console.log('create folder result: ', JSON.stringify(response));
-                    if(response && response.data && response.data.id) {
-                        driveFolderId = response.data.id;
-                        _console.log('Folder created with new id: ', driveFolderId);
-                    }
+                    response = JSON.parse(response);    
                 }
-                catch (e) {
-                    _console.log(e);
+                catch(e) {}
+                _console.log('response', response);
+                if(response.data && response.data.files && response.data.files.length > 0) {
+                    // Folder exists
+                    driveFolderId = response.data.files[0].id;
+                }
+                else {
+                    // Create folder
+                    var folderCreateMetadata = {
+                        'parents': [driveFolderId],
+                        'name': drivePathFolder,
+                        'mimeType': folderMime
+                    };
+                
+                    let response;
+                    let pageToken = null;
+                
+                    try {
+                        // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+                        response = await drive.files.create({
+                            resource: folderCreateMetadata,
+                            fields: 'id'
+                        });
+                        try {
+                            response = JSON.parse(response);    
+                        }
+                        catch(e) {}
+                        _console.log('create folder result: ', JSON.stringify(response));
+                        if(response && response.data && response.data.id) {
+                            driveFolderId = response.data.id;
+                            _console.log('Folder created with new id: ', driveFolderId);
+                        }
+                    }
+                    catch (e) {
+                        _console.log(e);
+                    }
                 }
             }
         }
@@ -857,50 +952,55 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
     if(drivePath.length > 0) {        
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
-            _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
-            response = await drive.files.list({
-                q: `'${driveFolderId}' in parents and supportsAllDrives=true and mimeType='${folderMime}' and name='${drivePathFolder}'`,
-                pageSize: 5,
-                fields: 'nextPageToken, files(id, name, mimeType)',
-            });
-            try {
-                response = JSON.parse(response);    
-            }
-            catch(e) {}
-            _console.log('response', response);
-            if(response.data && response.data.files && response.data.files.length > 0) {
-                // Folder exists
-                driveFolderId = response.data.files[0].id;
+            if(driveFolderId === 'root') {
+                driveFolderId = await getLocalSharedFolderId(drivePathFolder);
             }
             else {
-                // Create folder
-                var folderCreateMetadata = {
-                    'parents': [driveFolderId],
-                    'name': drivePathFolder,
-                    'mimeType': folderMime
-                };
-            
-                let response;
-                let pageToken = null;
-            
+                _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
+                response = await drive.files.list({
+                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
+                    pageSize: 5,
+                    fields: 'nextPageToken, files(id, name, mimeType)',
+                });
                 try {
-                    // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
-                    response = await drive.files.create({
-                        resource: folderCreateMetadata,
-                        fields: 'id'
-                    });
-                    try {
-                        response = JSON.parse(response);    
-                    }
-                    catch(e) {}
-                    _console.log('create folder result: ', JSON.stringify(response));
-                    if(response && response.data && response.data.id) {
-                        driveFolderId = response.data.id;
-                        _console.log('Folder created with new id: ', driveFolderId);
-                    }
+                    response = JSON.parse(response);    
                 }
-                catch (e) {
-                    _console.log(e);
+                catch(e) {}
+                _console.log('response', response);
+                if(response.data && response.data.files && response.data.files.length > 0) {
+                    // Folder exists
+                    driveFolderId = response.data.files[0].id;
+                }
+                else {
+                    // Create folder
+                    var folderCreateMetadata = {
+                        'parents': [driveFolderId],
+                        'name': drivePathFolder,
+                        'mimeType': folderMime
+                    };
+                
+                    let response;
+                    let pageToken = null;
+                
+                    try {
+                        // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+                        response = await drive.files.create({
+                            resource: folderCreateMetadata,
+                            fields: 'id'
+                        });
+                        try {
+                            response = JSON.parse(response);    
+                        }
+                        catch(e) {}
+                        _console.log('create folder result: ', JSON.stringify(response));
+                        if(response && response.data && response.data.id) {
+                            driveFolderId = response.data.id;
+                            _console.log('Folder created with new id: ', driveFolderId);
+                        }
+                    }
+                    catch (e) {
+                        _console.log(e);
+                    }
                 }
             }
         }
@@ -1159,7 +1259,7 @@ async function getDriveFolderCompletePath(drive, driveFolder) {
     let response;
     let completePath = '';
     try {
-        let query = `name='${driveFolder}' and supportsAllDrives=true and mimeType='${folderMime}'`;
+        let query = `name='${driveFolder}' and supportsAllDrives=true and includeTeamDriveItems=true and supportsTeamDrives=true and mimeType='${folderMime}'`;
         
         let parentId = null;
         let parentName = null;
@@ -1210,7 +1310,7 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
             query = `'${driveFileId}' in parents`;
         }
         else {
-            query = `name='${driveFolder}' and supportsAllDrives=true and mimeType='${folderMime}'`;
+            query = `name='${driveFolder}' and mimeType='${folderMime}'`;
         }
         _console.log('query: ', query);
         
@@ -1561,6 +1661,101 @@ async function performDriveOperations(operations, authParams) {
     const drive = google.drive({version: 'v3', auth: oAuth2Client});
     _console.log('operations', operations);
     
+    let result = [];
+
+    if(operations && operations.length > 0) {
+        for await (let operation of operations) {
+            if(operation.todo === '1- rename' || operation.todo === '3- upload and rename') {
+                let drivePath = operation.googledrivepath;
+                let driveFile = operation.oldfilename;
+                // if(operation.googledrivepath.includes('/')) {
+                //     let driveFilePathParts = operation.googledrivepath.split('/');
+                //     driveFile = driveFilePathParts.pop();
+                //     drivePath = driveFilePathParts.join('/');
+                // }
+                _console.log('driveFile: ', driveFile);
+                _console.log('drivePath: ', drivePath);
+            
+
+                let getDriveFileIndoResponse;
+                let driveFileInfo = null;
+                let driveFolderId = null;
+                
+                try {
+                    driveFolderId = await getDriveFileId(drivePath, authParams);
+                }
+                catch(e) {
+                    _console.error(e);
+                }
+                
+                try {
+                    let renameDriveFileResponse = await renameDriveFile(driveFolderId, driveFile, operation.newfilename);
+                    _console.log('renameDriveFile response: ', JSON.stringify(renameDriveFileResponse));
+                    result.push(renameDriveFileResponse);
+                }
+                catch(e) {
+                    _console.error(e);
+                }
+
+            }
+            //result.push(getDriveFileIndoResponse);
+        }
+        
+        // syncData = subFolders.map( x => {
+        //     return {
+        //         s3FilePath: x.fileid, s3md5: x.md5, driveFilePath: x.folder + '/' + x.file
+        //     }
+        // });
+    }
+
+
+    return { result: 'OK', response: result };
+
+}
+
+async function listDrives(authParams) {
+    await performGoogleAuth(authParams);
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    
+    try {
+        _console.log('Trying to find file with folder id: ', driveFolderId, ' and file name: ', OldName);
+        
+        // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
+        response = await drive.teamdrives.list({
+            q: `'${driveFolderId}' in parents and name='${OldName}'`,
+            pageSize: 250,
+            fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum, createdTime, modifiedTime)',
+        });
+        try {
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+                
+        _console.log(JSON.stringify(response));
+        if(response.data && response.data.files && response.data.files.length > 0) {
+            let file = response.data.files[0];
+
+            response = await drive.files.update({
+                fileId: file.id,
+                requestBody: {
+                    name: newName
+                }
+            });
+            try {
+                response = JSON.parse(response);    
+            }
+            catch(e) {}
+
+            return { result: 'OK', data: response };
+        }
+    }
+    catch (e) {
+        _console.log(e);
+    }
+
+    return { result: 'KO', data: 'File not found!' };
+
+
     let result = [];
 
     if(operations && operations.length > 0) {
