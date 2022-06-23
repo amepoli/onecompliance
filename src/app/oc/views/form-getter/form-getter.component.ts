@@ -1596,7 +1596,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         let loadingToast = _this._toastService.showLoadingToast("Synching google drive", "Please wait...");
                         try
                         {
-                            //let auth = _this.authService.loginGoogle();
+                            const googleAuth = await _this.authService.loginGoogle();
                             let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
                             _this._console.log(anagrafica_contents);
                             let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
@@ -1618,8 +1618,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             
                             _this._console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
                             
-                            const googleAuth = await _this.authService.loginGoogle();
-                        
                             let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
                             _this._console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
                             anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
@@ -1638,6 +1636,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             
                             let filteredFilesForSetProperFileFolder = [];
                             for(let file of processDriveFolderDeepContentsResponse.files) {
+                                if(file.fileid.includes('/')) {
+                                    file.fileid = file.fileid.split('/')[1];
+                                }
                                 if(filteredFilesForSetProperFileFolder.filter(x => x.fileid == file.fileid && x.filename == file.filename && x.folder == file.folder).length == 0) {
                                     filteredFilesForSetProperFileFolder.push(file);
                                 }
