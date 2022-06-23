@@ -376,7 +376,7 @@
             },
             "newLine": false,
             "textareaHeight": "S",
-            "size": 7
+            "size": 5
         },
         {
             "isHidden": false,
@@ -389,6 +389,25 @@
                 "dataType": "number"
             },
             "newLine": false,
+            "size": 0.75
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": "$Q{is_hidden_risultato}",
+            "isPrimary": false,
+            "buttonIcon": "report_problem",
+            "key": "create_segnalazione",
+            "label": "Segnalazione",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "compito_create_from_domanda",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
             "size": 1
         },
         {
@@ -405,26 +424,36 @@
                 "widgetType": "multi-attachments"
             },
             "newLine": false,
-            "size": 3
+            "size": 0.5
         },
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "button"
+                "comboQuery": "select distinct codice_compito as id, titolo as name from entrasp.compiti_rif_bo_keys where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;",
+                "options": [],
+                "viewType": "combobox"
             },
-            "isHidden": "$Q{is_hidden_risultato}",
+            "isHidden": false,
             "isPrimary": false,
-            "buttonIcon": "report_problem",
-            "key": "create_segnalazione",
-            "label": "Segnalazione",
-            "newLine": true,
+            "key": "codice_compito",
             "outputEvent": {
-                "eventName": "compito_create",
-                "eventTrigger": "press"
+                "eventName": "associa_segnalazione",
+                "eventTrigger": "select"
             },
+            "inputEvents": [
+                {
+                    "eventName": "associa_segnalazione",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.associa_segnalazione_domanda('riepilogoRisposte','£codice_compito£', $codice_azienda$, $id_sondaggio$, $id_somministrazione$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$)",
+                    "condition": "none",
+                    "outputEventWhenComplete": "triggerReload",
+                    "values": []
+                }
+            ],
+            "label": "Associa Segnalazione",
+            "newLine": true,
             "readOnly": false,
-            "sameOrigin": false,
-            "size": 1
+            "size": 2
         },
         {
             "isHidden": false,
@@ -490,7 +519,7 @@
             "isPrimary": false,
             "inputEvents": [
                 {
-                    "eventName": "compito_create",
+                    "eventName": "compito_create_from_domanda",
                     "actionType": "query",
                     "queryFunct": "select entrasp.compiti_rif_bo_insert('riepilogoRisposte', $descrizione$, $codice_azienda$, $id_sondaggio$, $id_somministrazione$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as codice_compito_created",
                     "condition": "none",
@@ -673,7 +702,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "readOnly": false,
-                        "newLine": false,
+                        "newLine": true,
                         "key": "risposta",
                         "label": "Risposta",
                         "size": 8,
@@ -689,25 +718,6 @@
                                 }
                             ]
                         }
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "button"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "buttonIcon": "report_problem",
-                        "key": "create_segnalazione",
-                        "label": "Segnalazione",
-                        "newLine": true,
-                        "outputEvent": {
-                            "eventName": "compito_create",
-                            "eventTrigger": "press"
-                        },
-                        "readOnly": false,
-                        "sameOrigin": false,
-                        "size": 1
                     },
                     {
                         "autoGenerate": false,
@@ -773,7 +783,7 @@
                         "isHidden": "$Q{is_hidden_risultato}",
                         "isPrimary": false,
                         "readOnly": true,
-                        "newLine": false,
+                        "newLine": true,
                         "key": "peso_mc",
                         "sameOrigin": false,
                         "label": "Risultato %",
@@ -799,25 +809,6 @@
                                 "queryFunct": "select codice_colore as peso_mc_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select sum(peso) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=any(entrasp.evaluate_given_field_multiple('risposta_multipla', '$risposta_multipla$')) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
                             }
                         ]
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "button"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "buttonIcon": "report_problem",
-                        "key": "create_segnalazione",
-                        "label": "Segnalazione",
-                        "newLine": true,
-                        "outputEvent": {
-                            "eventName": "compito_create",
-                            "eventTrigger": "press"
-                        },
-                        "readOnly": false,
-                        "sameOrigin": false,
-                        "size": 0.5
                     },
                     {
                         "isHidden": false,
