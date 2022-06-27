@@ -1,136 +1,286 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "sondaggi_sub_of_compiti",
-  "origin": "entrasp.compiti_rif_bo",
-  "businessObjectName": "compitiSondaggi",
-  "inputEvents": [
-    {
-      "eventName": "update_compiti_sondaggi",
-      "actionType": "reload"
-    }
-  ],
+  "inheritsFrom": "sondaggi",
   "predefinedQueries": [
     {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select * from entrasp.compiti_rif_bo where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$ and object_name='sondaggiSomministrati'"
+        "operation": "selectTable",
+        "type": "main",
+        "queryString": "select distinct case when snd2.id_sondaggio_succ is not null then true else false end as sondaggio_riprogrammato, snd2.id_sondaggio as id_sondaggio_precedente,snd.id_sondaggio,snd.id_contratto,entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica) as id_anagrafica_assegnataria,snd.id_sondaggio_parent, snd.id_modello_test,snd.id_modello_test_vr,snd.sondaggio_completato, snd.giudizio,snd.titolo, snd.codice_azienda, snd.id_centro_gest, snd.data_prevista, snd.data_comp, snd.data_esecuzione,substring(entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio), 1, 150) as sondaggio_su, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr left JOIN entrasp.sondaggi snd2 on snd.codice_azienda=snd2.codice_azienda and snd.id_sondaggio=snd2.id_sondaggio_succ inner join entrasp.modelli_test mt on mvr.codice_azienda=mt.codice_azienda and mvr.id_modello_test=mt.id_modello_test inner join entrasp.compiti_rif_bo crb on crb.codice_azienda=mt.codice_azienda and crb.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and crb.codice_compito=$codice_compito$"
+    },
+    {
+        "operation": "selectForm",
+        "type": "preProcessing",
+        "queryString": "select entrasp.aggiorna_sondaggi_pre_loading($codice_azienda$, $id_sondaggio$);"
+    },
+    {
+        "operation": "selectForm",
+        "type": "main",
+        "queryString": "select snd.*,entrasp.contratto_descr_id( $codice_azienda$, snd.id_contratto) as descr_contratto, mvr.id_risultato, mvr.flag_no_domande, entrasp. id_sondaggio_rif(snd.codice_azienda, snd.id_sondaggio)  as id_sondaggio_rif, entrasp.mdt_codtitolo(snd.codice_azienda, snd.id_modello_test) as descr_modello_test, (select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_fase_orig, (select id_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_progetto, entrasp.sondaggi_flags_sezioni_appsingola(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_activate, entrasp.descrizione_risultato_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as criterio_analisi from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+    },
+    {
+        "operation": "selectForm",
+        "type": "postProcessing",
+        "queryString": "select  id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1"
+    },
+    {
+        "operation": "update",
+        "type": "postProcessing",
+        "queryString": "update entrasp.progetti_fasi set stato=$stato$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+    },
+    {
+        "operation": "stopEvent",
+        "type": "main",
+        "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
+    },
+    {
+        "operation": "startEvent",
+        "type": "main",
+        "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'sondaggi', $id_sondaggio$, '$codice_azienda$'::varchar) as play_time_report"
+    },
+    {
+        "operation": "delete",
+        "type": "main",
+        "queryString": "select entrasp.sondaggio_delete($codice_azienda$::varchar, $id_sondaggio$)"
     }
-  ],
-    "table_keys": [
-    {
+],
+"search_keys": [
+  {
+      "fieldName": "id_modello_test_list",
       "format": {
-        "dataType": "number"
+          "dataType": "text",
+          "viewType": "input"
       },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "6%",
-      "queryFunct": "select true",
-      "key": "delete_compiti_rif_bo",
-      "label": "",
-      "style": [
-        {
-          "button_icon": "delete",
-          "value": "delete_icon"
-        }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "compiti_sub_of_somministrazioni",
-        "viewType": "form",
-        "query": "delete from entrasp.compiti_rif_bo where codice_azienda='£codice_azienda£' AND codice_compito='£codice_compito£' AND object_name='£object_name£' AND object_key='£object_key£'",
-        "action": "query",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "object_key",
-            "destination": "object_key"
-          },
-          {
-            "source": "object_name",
-            "destination": "object_name"
-          },
-          {
-            "source": "codice_compito",
-            "destination": "codice_compito"
-          }
-        ],
-        "onSuccessAction": "reload"
-      }
-    },
-    {
+      "label": "Lista id modelli verifica",
+      "newLine": false,
+      "size": 2.5,
+      "queryCond": "snd.id_modello_test::varchar=any(string_to_array(replace($id_modello_test_list$, ' ', ''), ','))"
+  },
+  {
+      "fieldName": "id_tipo_modello_test",
       "format": {
-        "dataType": "text"
+          "comboQuery": "SELECT id_tipo_modello_test AS id,descrizione  AS name  FROM entrasp.tipi_modello_test;",
+          "options": [],
+          "viewType": "combobox"
       },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_compito",
-      "width": "5%",
-      "label": "Codice Compito"
-    },
-    {
+      "label": "Tipo modello verifica",
+      "newLine": false,
+      "size": 3.5,
+      "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test$"
+  },
+  {
+      "fieldName": "id_sondaggio",
       "format": {
-        "dataType": "text"
+          "dataType": "number",
+          "viewType": "input"
       },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda"
-    },
-    {
+      "label": "ID Sondaggio",
+      "newLine": false,
+      "size": 1.5,
+      "queryCond": "snd.id_sondaggio=$id_sondaggio$"
+  },
+  {
+      "fieldName": "data_comp",
       "format": {
-        "dataType": "text"
+          "dataType": "date",
+          "viewType": "input"
       },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "object_name",
-      "label": "object_name"
-    },
-    {
+      "label": "Data Competenza",
+      "newLine": true,
+      "size": 2.5,
+      "queryCond": "snd.data_comp='€data_comp€'"
+  },
+  {
+      "fieldName": "data_esec_prevista_min",
       "format": {
-        "dataType": "text"
+          "dataType": "date",
+          "viewType": "input"
       },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "object_key",
-      "label": "object_key"
-    },
-    {
+      "label": "Esecuzione Prevista dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista>='€data_esec_prevista_min€'"
+  },
+  {
+      "fieldName": "data_esec_prevista_max",
       "format": {
-        "dataType": "number"
+          "dataType": "date",
+          "viewType": "input"
       },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-      "label": "id_sondaggio"
-    },
-    {
+      "label": "Esecuzione Prevista entro il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista<='€data_esec_prevista_max€'"
+  },
+  {
+      "fieldName": "data_esec_min",
       "format": {
-        "dataType": "number"
+          "dataType": "date",
+          "viewType": "input"
       },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "6%",
-      "key": "navigate_to_sondaggio",
-      "label": "Sondaggio",
-      "isButton": true,
-      "buttonAction": {
-        "target": "sondaggi",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_sondaggio",
-            "destination": "id_sondaggio"
-          }
-        ]
-      }
-    }
-  ] 
+      "label": "Data Esecuzione dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_esecuzione>='€data_esec_min€'"
+  },
+  {
+      "fieldName": "data_esec_max",
+      "format": {
+          "dataType": "date",
+          "viewType": "input"
+      },
+      "label": "Data Esecuzione entro il",
+      "newLine": true,
+      "queryCond": "snd.data_esecuzione<='€data_esec_max€'"
+  },
+  {
+      "fieldName": "id_centro_gest",
+      "format": {
+          "comboQuery": "SELECT id_centro_gest AS id, descrizione AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+          "options": [],
+          "viewType": "combobox"
+      },
+      "label": "Centro Gestionale",
+      "newLine": false,
+      "queryCond": "snd.id_centro_gest=$id_centro_gest$"
+  },
+  {
+      "fieldName": "id_progetto_s",
+      "format": {
+          "comboQuery": "SELECT id_progetto AS id, id_progetto||'-'||titolo AS name  FROM entrasp.progetti WHERE codice_azienda='€global_codice_azienda€';",
+          "options": [],
+          "viewType": "combobox"
+      },
+      "label": "Id Progetto",
+      "newLine": false,
+      "queryCond": "snd.id_sondaggio in(select id_sondaggio from entrasp.progetti_fasi pf where pf.id_progetto=$id_progetto_s$ and pf.codice_azienda='€global_codice_azienda€' and pf.id_sondaggio is not null)"
+  },
+  {
+      "fieldName": "stato",
+      "format": {
+          "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+          "options": [],
+          "viewType": "combobox"
+      },
+      "label": "Stato",
+      "newLine": false,
+      "queryCond": "snd.stato='€stato€'"
+  },
+  {
+      "fieldName": "completo",
+      "format": {
+          "comboQuery": "SELECT distinct sondaggio_completato AS id, sondaggio_completato AS name  FROM entrasp.sondaggi WHERE codice_azienda=$codice_azienda$;",
+          "options": [],
+          "viewType": "combobox"
+      },
+      "label": "Completezza",
+      "newLine": false,
+      "queryCond": "snd.sondaggio_completato='€completo€'"
+  },
+  {
+      "fieldName": "object_description",
+      "format": {
+          "dataType": "text",
+          "viewType": "input"
+      },
+      "label": "Campione Oggetto del Sondaggio",
+      "newLine": false,
+      "queryCond": "snd.id_sondaggio in(select id_sondaggio from entrasp.sondaggi_somministrati ss where UPPER(ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+  },
+  {
+      "fieldName": "no_progect_associated",
+      "format": {
+          "value": "0",
+          "viewType": "checkbox"
+      },
+      "label": "Non associati a progetto",
+      "newLine": false,
+      "size": 1,
+      "queryCond": "id_sondaggio not in(select id_sondaggio from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio is not null)"
+  },
+  {
+      "fieldName": "no_somministrazione",
+      "format": {
+          "value": "0",
+          "viewType": "checkbox"
+      },
+      "label": "Senza somministrazione",
+      "newLine": true,
+      "size": 1,
+      "queryCond": "id_sondaggio not in(select id_sondaggio from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$)"
+  },
+  {
+      "fieldName": "parola_search",
+      "format": {
+          "dataType": "text",
+          "viewType": "input"
+      },
+      "label": "Parola chiave",
+      "newLine": true,
+      "queryCond": "(upper(mt.titolo) like '%'||upper('€parola_search€')||'%' or upper(snd.descrizione) like '%'||upper('€parola_search€')||'%' or upper(snd.titolo) like '%'||upper('€parola_search€')||'%')"
+  },
+  {
+      "fieldName": "flag_ultimo_modello_test",
+      "format": {
+          "value": "0",
+          "viewType": "checkbox"
+      },
+      "label": "Ultimo Modello Verifica",
+      "newLine": false,
+      "size": 1.5,
+      "queryCond": "entrasp.is_max_modello_test(snd.codice_azienda, snd.id_sondaggio)"
+  },
+  {
+      "fieldName": "flag_ultimo_modello_test_rett",
+      "format": {
+          "value": "0",
+          "viewType": "checkbox"
+      },
+      "label": "Ultimo Modello Verifica Rett.",
+      "newLine": false,
+      "size": 1.5,
+      "queryCond": "entrasp.is_max_modello_test_rett(snd.codice_azienda, snd.id_sondaggio)"
+  },
+  {
+      "fieldName": "flag_sondaggio_riprogrammato",
+      "format": {
+          "value": "0",
+          "viewType": "checkbox"
+      },
+      "label": "Sondaggio riprogrammato",
+      "newLine": false,
+      "size": 1.5,
+      "queryCond": "entrasp.sondaggio_riprogrammato(snd.codice_azienda, snd.id_sondaggio)"
+  },
+  {
+      "fieldName": "flag_sondaggi_scaduti",
+      "format": {
+          "value": "0",
+          "viewType": "checkbox"
+      },
+      "label": "Sondaggi scaduti",
+      "newLine": false,
+      "size": 1.5,
+      "queryCond": "snd.data_prevista<CURRENT_DATE"
+  },
+  {
+      "fieldName": "flag_no_data_esec",
+      "format": {
+          "value": "0",
+          "viewType": "checkbox"
+      },
+      "label": "Senza data esecuz.",
+      "newLine": false,
+      "size": 1.5,
+      "queryCond": "snd.data_esecuzione is null"
+  },
+  {
+      "fieldName": "flag_sondaggi_aperti",
+      "format": {
+          "value": "0",
+          "viewType": "toggle"
+      },
+      "label": "Sondaggi aperti",
+      "newLine": false,
+      "size": 1.5,
+      "queryCond": "snd.stato not in ('C', 'N')"
+  }
+]
 }
