@@ -7,7 +7,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select true as delete_compiti_rif_bo, true as navigate_to_compito, cmp.codice_compito, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente) as cliente_desc, cmp.data_segnalazione, cmp.data_chiusura, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, cbo.object_key, cbo.object_name from entrasp.compiti cmp inner join entrasp.compiti_rif_bo cbo on cmp.codice_compito=cbo.codice_compito and cmp.codice_azienda=cbo.codice_azienda where cmp.codice_azienda=$codice_azienda$ and cbo.id_sondaggio=$id_sondaggio$"
+      "queryString": "select true as delete_compiti_rif_bo, entrasp.argomenti_descr_breve_no_num(id_argomento_priorita) as priorita, true as navigate_to_compito, cmp.codice_compito, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente) as cliente_desc, cmp.data_segnalazione, cmp.data_chiusura, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, cbo.object_key, cbo.object_name from entrasp.compiti cmp inner join entrasp.compiti_rif_bo cbo on cmp.codice_compito=cbo.codice_compito and cmp.codice_azienda=cbo.codice_azienda where cmp.codice_azienda=$codice_azienda$ and cbo.id_sondaggio=$id_sondaggio$"
     }
   ],
   "form_keys": [
@@ -37,6 +37,17 @@
       "readOnly": true,
       "key": "id_sondaggio",
       "label": "id_sondaggio"
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "readOnly": true,
+      "key": "id_argomento_priorita",
+      "label": "id_argomento_priorita"
     },
     {
       "format": {
@@ -80,7 +91,7 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "width": "6%",
       "queryFunct": "select true",
@@ -147,7 +158,23 @@
       "isPrimary": true,
       "key": "codice_compito",
       "width": "5%",
-      "label": "Codice Compito"
+      "label": "Codice Compito",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "compiti",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          }
+        ]
+      }
     },
     {
       "format": {
@@ -157,18 +184,18 @@
       "isPrimary": false,
       "key": "descr_centro_gest",
       "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
-      "label": "Centro Gest",
+      "label": "Uff. Responsabile",
       "width": "8%"
     },
     {
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "descr_centro_gest_monitor",
       "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor)",
-      "label": "Centro Gest",
+      "label": "Uff. Monitor.",
       "width": "8%"
     },
     {
@@ -196,6 +223,56 @@
           "value": "Aperto",
           "font_color": "red",
           "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento_priorita",
+      "label": "Priorità",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "priorita",
+      "label": "Priorità",
+      "width": "6%",
+      "style": [
+        {
+          "value": "Non significativa",
+          "font_color": "DarkBlue",
+          "font_weight": "500",
+          "background_color": "GhostWhite",
+          "text_align": "center"
+        },
+        {
+          "value": "Bassa",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
+        },
+        {
+          "value": "Media",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
+        },
+        {
+          "value": "Alta",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         }
       ]
     },
@@ -345,32 +422,6 @@
     },
     {
       "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "6%",
-      "key": "navigate_to_compito",
-      "label": "Compito",
-      "isButton": true,
-      "buttonAction": {
-        "target": "compiti",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "codice_compito",
-            "destination": "codice_compito"
-          }
-        ]
-      }
-    },
-    {
-      "format": {
         "dataType": "text"
       },
       "isHidden": true,
@@ -389,5 +440,8 @@
       "label": "object_key",
       "width": "8%"
     }
-  ]
+  ],
+      "restrictions": {
+        "preventNavigationToForm": true
+    }
 }

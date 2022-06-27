@@ -52,7 +52,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select codice_compito, codice, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,codice_compito,codice_azienda), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as descr_stato, (€global_id_anagrafiche€)::text as user_companies from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione!=700"
+      "queryString": "select codice_compito,entrasp.argomenti_descr_breve_no_num(id_argomento_priorita) as priorita, codice, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,codice_compito,codice_azienda), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as descr_stato, (€global_id_anagrafiche€)::text as user_companies from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione!=700"
     },
     {
       "operation": "update",
@@ -1087,6 +1087,56 @@
           "value": "Aperto",
           "font_color": "red",
           "font_weight": "500"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento_priorita",
+      "label": "Priorità",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "priorita",
+      "label": "Priorità",
+      "width": "6%",
+      "style": [
+        {
+          "value": "Non significativa",
+          "font_color": "DarkBlue",
+          "font_weight": "500",
+          "background_color": "GhostWhite",
+          "text_align": "center"
+        },
+        {
+          "value": "Bassa",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
+        },
+        {
+          "value": "Media",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
+        },
+        {
+          "value": "Alta",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         }
       ]
     },
