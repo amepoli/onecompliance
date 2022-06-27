@@ -403,7 +403,7 @@
             "label": "Crea Segnalazione",
             "newLine": false,
             "outputEvent": {
-                "eventName": "compito_create_from_domanda",
+                "eventName": "risposte_update_insert_on_create_whistleblowing",
                 "eventTrigger": "press"
             },
             "readOnly": false,
@@ -421,10 +421,18 @@
             "isPrimary": false,
             "key": "codice_compito",
             "outputEvent": {
-                "eventName": "associa_segnalazione",
+                "eventName": "risposta_update_insert_on_associate_whistleblowing",
                 "eventTrigger": "select"
             },
             "inputEvents": [
+                {
+                    "eventName": "risposta_update_insert_on_associate_whistleblowing",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>£id_risposta£::numeric, risposta_=>£risposta£::text, iddomanda=>£id_domanda£::numeric, idrispostaprev=>£id_risposta_prev_radio£::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>£punteggio£::numeric, peso_=>coalesce(£peso_oa£, £peso_rb£, £peso_mc£)::numeric, note_=>entrasp.note_domanda(£id_tipo_domanda£, '£note_rb£','£note_mc£'), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
+                    "condition": "none",
+                    "outputEventWhenComplete": "associa_segnalazione",
+                    "values": []
+                },
                 {
                     "eventName": "associa_segnalazione",
                     "actionType": "query",
@@ -518,6 +526,14 @@
             "isHidden": true,
             "isPrimary": false,
             "inputEvents": [
+                {
+                    "eventName": "risposte_update_insert_on_create_whistleblowing",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>£id_risposta£::numeric, risposta_=>£risposta£::text, iddomanda=>£id_domanda£::numeric, idrispostaprev=>£id_risposta_prev_radio£::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>£punteggio£::numeric, peso_=>coalesce(£peso_oa£, £peso_rb£, £peso_mc£)::numeric, note_=>entrasp.note_domanda(£id_tipo_domanda£, '£note_rb£','£note_mc£'), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
+                    "condition": "none",
+                    "outputEventWhenComplete": "compito_create_from_domanda",
+                    "values": []
+                },
                 {
                     "eventName": "compito_create_from_domanda",
                     "actionType": "query",
