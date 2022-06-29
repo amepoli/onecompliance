@@ -798,7 +798,7 @@
       ],
       "newLine": false,
       "readOnly": false,
-      "size": 1.1
+      "size": 1.2
     },
     {
       "autoGenerate": false,
@@ -844,6 +844,11 @@
             "icon": "content_copy",
             "label": "Copia da altra verifica",
             "outputEventName": "copia_da_somministrazione_show"
+          },
+          {
+            "icon": "sync",
+            "label": "Ricalcola punteggi",
+            "outputEventName": "ricalcola_punteggi"
           }
         ]
       },
@@ -881,6 +886,15 @@
               "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"
             }
           }
+        },
+        {
+          "eventName": "ricalcola_punteggi",
+          "actionType": "query",
+          "condition": "none",
+          "successMessage": "Punteggi ricalcolati correttamente",
+          "values": [],
+          "queryFunct": "SELECT entrasp.ricalcola_punteggi_sondaggi_aperti($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$)",
+          "outputEventWhenComplete": "sondaggi_somministrati_reload"
         }
       ],
       "isHidden": false,
@@ -1505,7 +1519,7 @@
       "newLine": false,
       "queryCond": "(entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric IN(SELECT id_cliente FROM entrasp.contratti WHERE stato!='C' and id_cliente is not null and codice_azienda='€global_codice_azienda€' UNION SELECT anx.id_anagrafica FROM entrasp.anagrafiche_id anx inner join entrasp.ruoli_anagrafiche ra on anx.id_anagrafica=ra.id_anagrafica and anx.codice_part=ra.codice_part where ra.codice_ruolo='CLI' and anx.codice_part='€global_codice_part€' and anx.id_anagrafica not in(select cntx.id_cliente from entrasp.contratti cntx where cntx.codice_azienda='€global_codice_azienda€' and cntx.id_cliente is not null)))"
     },
-     {
+    {
       "fieldName": "flag_somministrazioni_mie",
       "format": {
         "value": "0",
@@ -1867,163 +1881,163 @@
       "width": "7%",
       "style": [
         {
-            "value": "*",
-            "text_align": "center"
+          "value": "*",
+          "text_align": "center"
         },
         {
-            "value": "Basso",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Basso",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Favorevole",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Favorevole",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Adeguato",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Adeguato",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "In prevalenza favorevole",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "royalblue",
-            "text_align": "center"
+          "value": "In prevalenza favorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "royalblue",
+          "text_align": "center"
         },
         {
-            "value": "Irrilevante",
-            "font_color": "DarkBlue",
-            "font_weight": "500",
-            "background_color": "GhostWhite",
-            "text_align": "center"
+          "value": "Irrilevante",
+          "font_color": "DarkBlue",
+          "font_weight": "500",
+          "background_color": "GhostWhite",
+          "text_align": "center"
         },
         {
-            "value": "Non significativo",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Non significativo",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Poco significativo",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Poco significativo",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Prevalentemente adeguato",
-            "font_color": "black",
-            "font_weight": "500",
-            "background_color": "#ffff59",
-            "text_align": "center"
+          "value": "Prevalentemente adeguato",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#ffff59",
+          "text_align": "center"
         },
         {
-            "value": "Medio-Basso",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Medio-Basso",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Abbastanza significativo",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Abbastanza significativo",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Medio",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Medio",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Parzialmente favorevole",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Parzialmente favorevole",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Medio-alto",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Medio-alto",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Parzialmente adeguato",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Parzialmente adeguato",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Parzialmente sfavorevole",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Parzialmente sfavorevole",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Molto significativo",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Molto significativo",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Alto",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Alto",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "In prevalenza sfavorevole",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "In prevalenza sfavorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Non adeguato",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Non adeguato",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Sfavorevole",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Sfavorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Obbligo di Astensione",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Obbligo di Astensione",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         }
-    ]
+      ]
     },
     {
       "format": {

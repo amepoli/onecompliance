@@ -21,6 +21,10 @@
           }
         ]
       }
+    },
+    {
+      "eventName": "reload",
+      "actionType": "reload"
     }
   ],
   "dashboardTables": [
@@ -74,6 +78,12 @@
       "operation": "stopEvent",
       "type": "main",
       "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+    }
+  ],
+  "outputEvents": [
+    {
+      "eventName": "codice_colore_change_compiti",
+      "eventTrigger": "onReload"
     }
   ],
   "form_keys": [
@@ -232,8 +242,8 @@
         "dataType": "text"
       },
       "outputEvent": {
-        "eventName": "codice_colore_change_compiti",
-        "eventTrigger": "load"
+        "eventName": "check_permission",
+        "eventTrigger": "select"
       },
       "inputEvents": [
         {
@@ -242,7 +252,8 @@
           "values": [],
           "actionType": "query_style",
           "styleAttribute": "background_color",
-          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$",
+          "outputEventWhenComplete": "codice_colore_change_compiti2"
         },
         {
           "eventName": "codice_colore_change_compiti2",
@@ -251,11 +262,18 @@
           "actionType": "query_style",
           "styleAttribute": "font_color",
           "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+        },
+        {
+          "eventName": "check_permission",
+          "values": [],
+          "condition": "none",
+          "actionType": "query",
+          "queryFunct": "UPDATE entrasp.compiti set stato='£stato£' where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$"
         }
       ],
       "label": "Stato",
       "key": "stato",
-      "readOnly": true,
+      "readOnly": false,
       "isHidden": false,
       "isPrimary": false,
       "newLine": false,
@@ -344,10 +362,10 @@
           "values": [],
           "actionType": "query_style",
           "styleAttribute": "background_color",
-          "queryFunct": "select case when id_argomento_priorita=2484 then 'GhostWhite' when id_argomento_priorita=6615 then 'Green' when id_argomento_priorita=6616 then 'yellow' when id_argomento_priorita=45115 then 'fireBrick' end as id_argomento_priorita_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+          "queryFunct": "select case when id_argomento_priorita=2484 then 'White' when id_argomento_priorita=6615 then 'Green' when id_argomento_priorita=6616 then 'yellow' when id_argomento_priorita=45115 then 'fireBrick' end as id_argomento_priorita_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
         },
         {
-          "eventName": "codice_colore_priorita",
+          "eventName": "codice_colore_testo_priorita",
           "condition": "none",
           "values": [],
           "actionType": "query_style",
