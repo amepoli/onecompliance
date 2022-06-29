@@ -16,6 +16,7 @@ const oAuth2Client = new OAuth2Client(
     'CLIENT_ID',
     'CLIENT_SECRET'
 );
+
 // var promisify = require('promisify');
 // const { promisify } = require('bluebird');
 const { google } = require('googleapis');
@@ -61,6 +62,203 @@ function getServerResponse(body) {
         "body": JSON.stringify(body)
     };
 }
+
+async function getUsername(userid) {
+
+    var userParams = {
+        TableName: 'users',
+        Key: {
+            userid: userid
+        }
+    };
+
+    var data = await dynamo.get(userParams).promise();
+    data = data.Item;
+    if (data != null) {
+        return data.username;
+    }
+    return null;
+}
+
+async function createExtAuthentication(item) {
+    try {
+        const DynamoParams = {
+            TableName: 'EXTAUTH_NAME',
+            Item: item
+        };
+    
+        let createExtAuthenticationResult = await dynamo.put(DynamoParams).promise();
+        _console.log('createExtAuthentication Result: ', JSON.stringify(createExtAuthenticationResult));
+        return item;
+    }
+    catch (e) {
+        _console.log('createExtAuthentication error: ', JSON.stringify(e));
+    }
+    return null;
+}
+
+async function updateExtAuthentication(username, item) {
+    try {
+        const DynamoParams = {
+            TableName: 'EXTAUTH_NAME',
+            Key: {
+                username: username
+            },
+            Item: item
+        };
+    
+        let updateExtAuthenticationResult = await dynamo.update(DynamoParams).promise();
+        _console.log('updateExtAuthentication Result: ', JSON.stringify(updateExtAuthenticationResult));
+        return item;
+    }
+    catch (e) {
+        _console.log('updateExtAuthentication error: ', JSON.stringify(e));
+    }
+    return null;
+}
+
+async function getExtAuthentication(username) {
+    try {
+        const DynamoParams = {
+            TableName: 'EXTAUTH_NAME',
+            Key: {
+                username: username
+            }
+        };
+    
+        let extAuthentication = await dynamo.get(DynamoParams).promise();
+        if(extAuthentication && extAuthentication.Item) {
+            return extAuthentication.Item;
+        }
+        else {
+            const item = {
+                username : username,
+                token_gdrive: '',
+                token_gmail: ''
+            };
+    
+            extAuthentication = await createExtAuthentication(item);
+            return item;
+        }
+    }
+    catch (e) {
+        _console.log('extAuthentication error: ', JSON.stringify(e));
+    }
+    return null;
+}
+
+async function prepareAuthToken(authCode) {
+    const OAuth2 = google.auth.OAuth2;
+    const oAuth2Client = new OAuth2(
+        "CLIENT_ID",
+        "CLIENT_SECRET",
+        "https://localhost:4200"
+    );
+    
+    try {
+        let refreshResult = await oAuth2Client.getToken(authCode);
+        _console.log('Refresh result: ', JSON.stringify(refreshResult));
+        if(refreshResult && refreshResult.tokens) {
+            _console.log('Returning refresh token');
+            return refreshResult.tokens;
+        }
+    }
+    catch (e) {
+        _console.log('Error getting refresh Access token', e);
+    }
+
+    _console.log('Returning Code as it is');
+    return authCode;
+}
+
+async function refreshAuthToken(authParams) {
+    const OAuth2 = google.auth.OAuth2;
+    const oAuth2Client = new OAuth2(
+        "CLIENT_ID",
+        "CLIENT_SECRET",
+        "https://localhost:4200"
+    );
+    oAuth2Client.setCredentials({
+        refresh_token: authParams["refresh_token"]
+    });
+    
+    try {
+        const refreshResult = await oAuth2Client.refreshAccessToken();
+        _console.log('Refresh token result: ', refreshResult);
+        if(refreshResult && refreshResult.credentials) {
+            return refreshResult.credentials;
+        }
+    }
+    catch(e) {
+        _console.log('Error getting refresh Access token', e);
+    }
+    return authParams;
+    
+    /*
+    authParams["refresh_token"] = authParams["refresh_token"];
+    authParams["client_secret"] = 'CLIENT_SECRET';
+    
+    // Acquire an auth client, and bind it to all future calls
+    google.options({ auth: oAuth2Client });
+
+    oAuth2Client.setCredentials(authParams);
+    
+    try {
+        let refreshResult = await oAuth2Client.refreshAccessToken();
+        
+        if(refreshResult && refreshResult.credentials) {
+            return refreshResult.credentials;
+        }
+    }
+    catch (e) {
+        _console.log('Error getting refresh Access token', e);
+    }
+
+    return authParams;*/
+
+}
+
+async function saveAuthToken(userid, tokenType, authCode) {
+    
+    let authParams = await prepareAuthToken(authCode);
+
+    let username = await getUsername(userid);
+    _console.log('User: ', username);
+    
+    let extAuthentication = await getExtAuthentication(username);
+    extAuthentication[tokenType] = authParams;
+    _console.log('extAuthentication: ', JSON.stringify(extAuthentication));
+
+    await createExtAuthentication(extAuthentication) 
+
+    _console.log('Auth Params: ', JSON.stringify(authParams));
+
+    return { result: 'OK', user: username, authParams: authParams, authentications: extAuthentication, tokenType: tokenType };
+}
+
+async function loadAuthToken(userid, tokenType) {
+    
+    let authParams = null;
+
+    let username = await getUsername(userid);
+    _console.log('User: ', username);
+    
+    let extAuthentication = await getExtAuthentication(username);
+    _console.log('extAuthentication: ', JSON.stringify(extAuthentication));
+    
+    if(extAuthentication[tokenType] &&  Object.keys(extAuthentication[tokenType]).length) {
+        authParams = await refreshAuthToken(extAuthentication[tokenType]);
+        _console.log('Auth Params: ', JSON.stringify(authParams));
+    }
+    
+    if(authParams) {
+        return { result: 'OK', user: username, authParams: authParams, tokenType: tokenType };
+    }
+    else {
+        return { result: 'KO', authParams: authParams, reason: 'Token not found!', tokenType: tokenType };
+    }
+}
+
 
 async function getLocalSharedFolderId(drivePath) {
     
@@ -488,7 +686,7 @@ async function deleteS3File(s3FilePath) {
 
 // Perform Google Auth
 async function performGoogleAuth(authParams) {
-    authParams["refresh_token"] = authParams["access_token"];
+    authParams["refresh_token"] = authParams["refresh_token"];
     //authParams["code"] = "4/0AX4XfWiIpDqZDo_3UgFm6sTL5AuWRRxNd0jcxMc8p9rZOhxQuNZUijREH5HrI4yxLF7G3Q",
     authParams["client_secret"] = 'CLIENT_SECRET';
     _console.log('authParams: ', authParams);
@@ -511,34 +709,37 @@ async function performGoogleAuth(authParams) {
     google.options({ auth: oAuth2Client });
 
 
-    const ticket = await oAuth2Client.verifyIdToken({
-        idToken: authParams.id_token,
-        audience: 'CLIENT_ID',  // Specify the CLIENT_ID of the app that accesses the backend
-        // Or, if multiple clients access the backend:
-        //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
-    });
-    _console.log('ticket: ', ticket);
+    // const ticket = await oAuth2Client.verifyIdToken({
+    //     idToken: authParams.id_token,
+    //     audience: 'CLIENT_ID',  // Specify the CLIENT_ID of the app that accesses the backend
+    //     // Or, if multiple clients access the backend:
+    //     //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+    // });
+    // _console.log('ticket: ', ticket);
 
     oAuth2Client.setCredentials(authParams);
     // oAuth2Client.setCredentials({
     //     access_token: token.response.access_token,
     //     refresh_token: '4/0AX4XfWgrxymEqB8qeeD6m8LTuoAqpYf6K7J-kHH7XPNH9l8uYjBqpSz2EGrHzsOkg1ouoA',
-    //     client_secret: 'F56L14ZUTbykHAdTTSiAPBUb',
+    //     client_secret: 'CLIENT_SECRET',
     //     expiry_date: true
     // });
 
     // after acquiring an oAuth2Client...
-    const tokenInfo = await oAuth2Client.getTokenInfo(authParams.access_token);
+    // const tokenInfo = await oAuth2Client.getTokenInfo(authParams['access_token']);
     // take a look at the scopes originally provisioned for the access token
-    _console.log('tokenInfo: ', tokenInfo);
+    // _console.log('tokenInfo: ', tokenInfo);
 
-    try {
-        let refreshResult = await oAuth2Client.refreshAccessToken();
-        _console.log(refreshResult);
-    }
-    catch (e) {
-        _console.log(e);
-    }
+    // try {
+    //     let refreshResult = await oAuth2Client.refreshAccessToken();
+    //     if(refreshResult && refreshResult.credentials) {
+    //         _console.log('Refresh token worked!');
+    //         _console.log(refreshResult.credentials);
+    //     }
+    // }
+    // catch (e) {
+    //     _console.log('Error getting refresh Access token', e);
+    // }
 
 }
 
@@ -1404,7 +1605,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     const codiceAzienda = anagraficaFolders['codice_azienda'] || [];
     
     if(anagraficaFolders['sub_folders'] && anagraficaFolders['sub_folders'].length > 0) {
-        for(let subFolder of anagraficaFolders['sub_folders']) {
+        for(let subFolder of anagraficaFolders['sub_folders'].filter(x => x['fileid'])) {
             if(subFolder.file && subFolder.file.length > 0 && subFolders.filter(x => x.file === subFolder.file && x.folder === x.folder).length == 0) {
                 subFolders.push(subFolder);
             }
@@ -1558,7 +1759,7 @@ async function processDriveFolderDeepContents(deepContentsRequest, authParams) {
     let subFolders = [];
     
     if(deepContentsRequest['sub_folders'] && deepContentsRequest['sub_folders'].length > 0) {
-        for(let subFolder of deepContentsRequest['sub_folders']) {
+        for(let subFolder of deepContentsRequest['sub_folders'].filter(x => x['fileid'])) {
             if(subFolder.file && subFolder.file.length > 0 && subFolders.filter(x => x.file === subFolder.file && x.folder === x.folder).length == 0) {
                 subFolders.push(subFolder);
             }
@@ -1847,6 +2048,18 @@ exports.handler = async (event, context) => {
             else if (requestType === 'getDriveContents') {
                 const folder = queryParams['folder'];
                 body = await getDriveContents(folder, event.body? JSON.parse(event.body): {});
+            }
+            else if (requestType === 'saveAuthToken') {
+                const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+                const token_type = queryParams['token_type'];
+                let eventBody = event.body? JSON.parse(event.body): {};
+                const authCode = eventBody['authCode'];
+                body = await saveAuthToken(userid, token_type, authCode)
+            }
+            else if (requestType === 'loadAuthToken') {
+                const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+                const token_type = queryParams['token_type'];
+                body = await loadAuthToken(userid, token_type);
             }
             else if (requestType === 'createDriveFolder') {
                 const folder = queryParams['folder'];

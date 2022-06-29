@@ -1493,7 +1493,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._toastService.showErrorToast("Missing Google API Drive Folder Params");
                     }
                     else {
-                        let auth = _this.authService.loginGoogle();
+                        let auth = _this.authService.loadGoogleAuth('gdrive');
                         _this.backendService.createDriveFolder(driveFolder, auth).subscribe(                        
                             response => {
                                 // _this._console.log(response);
@@ -1526,7 +1526,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
                     else {
-                        let auth = _this.authService.loginGoogle();
+                        let auth = _this.authService.loadGoogleAuth('gdrive');
                         _this.backendService.copyFromS3ToDrive(s3Path, drivePath, auth).subscribe(                        
                             response => {
                                 // _this._console.log(response);
@@ -1559,7 +1559,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
                     else {
-                        let auth = _this.authService.loginGoogle();
+                        let auth = _this.authService.loadGoogleAuth('gdrive');
                         _this.backendService.copyFromDriveToS3(drivePath, s3Path, auth).subscribe(                        
                             response => {
                                 // _this._console.log(response);
@@ -1596,7 +1596,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         let loadingToast = _this._toastService.showLoadingToast("Synching google drive", "Please wait...");
                         try
                         {
-                            const googleAuth = await _this.authService.loginGoogle();
+                            const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
+                            
+                            
                             let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
                             _this._console.log(anagrafica_contents);
                             let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
@@ -1659,7 +1661,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 let performDriveOperationsResponse = await forkJoin(setProperFileFolderResponse.response.rows.map(x => _this.backendService.performDriveOperations([x], googleAuth))).toPromise();
                                 _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
                             }
-                           
+                            
 
                             _this._toastService.hideLoadingToast(loadingToast);
                             _this._toastService.showSuccessToast(event.successMessage || 'Done!');

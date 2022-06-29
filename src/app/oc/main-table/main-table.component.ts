@@ -482,7 +482,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             async getS3GoogleSyncFilesListResponse => {
                 console.table(getS3GoogleSyncFilesListResponse);
                 if(getS3GoogleSyncFilesListResponse.result === 'OK' && getS3GoogleSyncFilesListResponse.response && getS3GoogleSyncFilesListResponse.response.rows && getS3GoogleSyncFilesListResponse.response.rows.length > 0) {
-                    const googleAuth = await _this.authService.loginGoogle();
+                    const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
                     console.table(getS3GoogleSyncFilesListResponse.response.rows);
                     
                     const syncData = getS3GoogleSyncFilesListResponse.response.rows.filter(x => (x.s3path && x.s3md5 && x.googledrivepath && x.s3md5 != '396a4266d461f67b75c9d4b3e6f2bb5f')).map(x => {
