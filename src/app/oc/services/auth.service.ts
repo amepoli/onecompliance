@@ -15,6 +15,7 @@ import { BaseLoginProvider, GoogleLoginProvider, SocialAuthService, SocialUser }
 
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 declare var gapi: any;
+declare var auth2: any;
 
 import { environment } from 'environments/environment';
 
@@ -45,9 +46,14 @@ export class AuthService {
   private sync: any;
 
   // Google 
-  googleUser: SocialUser;
-  googleUserLoggedIn: boolean;
+  // googleUser: SocialUser;
+  // googleUserLoggedIn: boolean;
 
+  googleScopes = {
+    "gdrive": "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.file",
+    "gmail": "https://mail.google.com"
+  };
+  
   constructor(
     private amplifyService: AmplifyService,
     private socialAuthService: SocialAuthService,
@@ -143,6 +149,7 @@ export class AuthService {
     // reset the left menu
     this.navigationService.setCurrentNavigation('main');
     this.navigationService.unregister('usermenu');
+    this.signOutGoogle();
   }
 
   public signUp(): void {
@@ -231,9 +238,9 @@ export class AuthService {
           _this.sync = ud.userdata.sync || null;
           
           // If sync mode is google then signin
-          if(_this.sync === 'google') {
-            _this.loginGoogle();
-          }
+          // if(_this.sync === 'google') {
+          //   _this.loginGoogle('gdrive');
+          // }
 
           _this._console.log(ud.userdata);
 
@@ -433,65 +440,53 @@ export class AuthService {
         _this._setError(err);
       });
   }
-  signInWithGoogle(): void {
+
+  async loadGoogleAuth(purpose: string){
     let _this = this;
-    _this.socialAuthService.authState.subscribe((user) => {
-      _this.googleUser = user;
-      _this.googleUserLoggedIn = (user != null);
-    });
-    this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID);
-  }
 
-  signOutGoogle(): void {
-    this.socialAuthService.signOut();
-  }
-
-  refreshGoogleToken(): void {
-    this.socialAuthService.refreshAuthToken(GoogleLoginProvider.PROVIDER_ID);
-  }
-
-  saveGoogleAuth(googleAuth) {
-    sessionStorage.setItem('googleAuth', JSON.stringify(googleAuth));            
-  }
-
-  loadGoogleAuth() {
-    const timeNow = (new Date()).getTime();
-    // sessionStorage.removeItem('googleAuth');
-    let sessionAuthResponse = sessionStorage.getItem('googleAuth');
-    if(sessionAuthResponse) {
-      sessionAuthResponse = JSON.parse(sessionAuthResponse);
-      
-      /*
-        var cookies = document.cookie.split(";");
-        this._console.log('cookies', cookies);
-        this.deleteAllCookies();
-      */
-
-      if(!sessionAuthResponse['scope'].includes('https://www.googleapis.com/auth/drive')) {
-        this._console.log('scopes are incomplete!');
-        sessionStorage.removeItem('googleAuth');
-        gapi.auth2.getAuthInstance().disconnect();
-        return null;
+    let loadAuthTokenResponse: any = await _this.backendService.loadAuthToken(`token_${purpose}`).toPromise();
+    _this._console.log('loadAuthToken Response: ', loadAuthTokenResponse);
+    if(loadAuthTokenResponse.result === 'KO') {
+      // Sign in the user if they are currently signed in.
+      _this._console.log('Is signed in: ', auth2.isSignedIn.get());
+      if (auth2.isSignedIn.get() == false) {
+        auth2.signIn();
       }
-      else if(sessionAuthResponse['expires_at'] <= timeNow)
-      {
-        this._console.log('session expired!');
-        sessionStorage.removeItem('googleAuth');
-        gapi.auth2.getAuthInstance().disconnect();
-        return null;
-      }
-      else {
-        // Not expired, return the auth token
-        return sessionAuthResponse;
-      }
+
+      let resp = await _this.getGooglePermissions(purpose);
+      return resp;
     }
-
-    return null;
+    else {
+      return loadAuthTokenResponse.authParams;
+    }
   }
   
-  gAuth: any = null;
 
-  initGoogleOAuth(hidden = false): Promise<any> {
+  /**
+   * The Sign-In client object.
+   */
+    //gAuth: any = null;
+
+  /**
+   * Initializes the Sign-In client.
+   */
+  initGoogleOAuth(){
+    // let _this = this;
+    // gapi.load('auth2', function(){
+    //   /**
+    //    * Retrieve the singleton for the GoogleAuth library and set up the
+    //    * client.
+    //    */
+    //   _this.gAuth = gapi.auth2.init({
+    //       client_id: appData.GAPI_CLIENT_ID
+    //   });
+
+      
+
+    //   // Attach the click handler to the sign-in button
+    //   // auth2.attachClickHandler('signin-button', {}, onSuccess, onFailure);
+    // });
+    /*
     let _this = this;
     return new Promise((resolve, reject) => {
       gapi.load('auth2', async () => {
@@ -507,100 +502,46 @@ export class AuthService {
           resolve(gAuth);
       }, reject);
     });
+    */
+  }
+  
+  onLoginGoogle(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   }
 
-  async loginGoogle(): Promise<string> {
+  signOutGoogle() {
+    try {
+      auth2.getAuthInstance().signOut().then(function () {
+        console.log('User signed out.');
+      });
+    }
+    catch(e){}
+  }
+
+  async getGooglePermissions(purpose) {
     let _this = this;
+    let googleUser = auth2.currentUser.get();
     
-    let sessionGoogleAuth = _this.loadGoogleAuth();
-    if(sessionGoogleAuth)
-    {
-      // _this._console.log('already logged in!');
-      // _this._console.log(sessionGoogleAuth);
-      
-      // await _this.initGoogleOAuth(true);
-      // const oAuthUser = _this.gAuth.signIn();
-                  
-      //_this.loadEmailThreads(null);
-      // _this.loadMessages(['INBOX'], 0, 'fanatical');
-      //_this._console.log((new Date()).getTime() - sessionGoogleAuth.expires_at);
-      //_this.loadDriveContents(null);
-      //_this.createDriveFolder('OneCompliance');
-      
-      // _this.copyFromDriveToS3('Apparrell Assets/zee_test_file_in.txt', 'zee/zee_test_file_out.txt').subscribe(
-      // // _this.copyFromS3ToDrive('zee/zee_test_file_in.txt', 'Apparrell Assets/zee_test_file_in.txt', ).subscribe(
-      //   response => {
-      //     _this._console.log("Drive data", response['data']);
-      //   },
-      //   error => {
-      //     console.error("Drive data", error);
-      //   }
-      // )
-      return sessionGoogleAuth;
+    if(googleUser.hasGrantedScopes(_this.googleScopes[purpose])) {
+      return null;
     }
     else {
-      // _this._console.log('returning null');
-      // return null;
-
-      const gAuth = await _this.initGoogleOAuth();
-      if(gAuth.isSignedIn.get()) {
-        _this._console.log('user was already signed in!');
-      }
-      else {
-        _this._console.log('signing in user...');
-      }
-
-      const oAuthUser = !gAuth.isSignedIn.get()? await gAuth.signIn(): gAuth.currentUser.get();
-      _this._console.log(oAuthUser);
+      const options = new gapi.auth2.SigninOptionsBuilder();
+      //options.setFetchBasicProfile(true);
+      options.setPrompt('select_account');
+      options.setScope(_this.googleScopes[purpose]);
       
-      // var auth_code = await gAuth.grantOfflineAccess();
-      // _this._console.log(auth_code);
+      await googleUser.grant(options);
+      options.setPrompt('consent');
 
-      // const options = new gapi.auth2.SigninOptionsBuilder();
-      // options.setScope('profile email https://mail.google.com/');
-
-      // let googleUser = gAuth.currentUser.get();
-      // const optionsResult = await googleUser.grant(options);
-      // _this._console.log(optionsResult);
-                      
-      const authResponse = gAuth.currentUser.get().getAuthResponse();
-      _this.saveGoogleAuth(authResponse);
+      let offlineAccessCode: any = await googleUser.grantOfflineAccess(options);
+      let saveAuthTokenResponse: any = await _this.backendService.saveAuthToken(`token_${purpose}`, offlineAccessCode.code).toPromise();
       
-      return _this.loadGoogleAuth();
-      // _this.loadDriveContents(null);
-      // _this.createDriveFolder('OneCompliance');
-
-      // _this.loadLabels();
-      // _this.loadMessages(['INBOX'], 0, 'fanatical');
-
-      // return new Promise(async (resolve, reject) => {
-      //   try {
-      //       const gAuth = await _this.initGoogleOAuth();                
-      //       const oAuthUser = await gAuth.signIn();
-      //       _this._console.log(oAuthUser);
-            
-      //       // var auth_code = await gAuth.grantOfflineAccess();
-      //       // _this._console.log(auth_code);
-
-      //       // const options = new gapi.auth2.SigninOptionsBuilder();
-      //       // options.setScope('profile email https://mail.google.com/');
-
-      //       // let googleUser = gAuth.currentUser.get();
-      //       // const optionsResult = await googleUser.grant(options);
-      //       // _this._console.log(optionsResult);
-                            
-      //       const authResponse = gAuth.currentUser.get().getAuthResponse();
-      //       _this._console.log(authResponse);
-      //       _this.saveGoogleAuth(authResponse);
-            
-      //       // _this.loadLabels();
-      //       _this.loadMessages(['INBOX'], 0, 'fanatical');
-
-      //       resolve(authResponse);
-      //   } catch (e) {
-      //       reject(e);
-      //   }
-      // });
+      return saveAuthTokenResponse.authParams;
     }
   }
 
@@ -609,7 +550,7 @@ export class AuthService {
 
   loadEmailThreads(search: string = null) {
     let _this = this;
-    _this.backendService.getEmailThreads(search, _this.loadGoogleAuth()).subscribe(
+    _this.backendService.getEmailThreads(search, _this.loadGoogleAuth('gmail')).subscribe(
       result => {
         _this._console.log(result);
       },
@@ -620,19 +561,19 @@ export class AuthService {
   }
 
   loadDriveContents(folder: string = null) {
-    return this.backendService.getDriveContents(folder, this.loadGoogleAuth());
+    return this.backendService.getDriveContents(folder, this.loadGoogleAuth('gdrive'));
   }
 
   createDriveFolder(folder: string) {
-    return this.backendService.createDriveFolder(folder, this.loadGoogleAuth());
+    return this.backendService.createDriveFolder(folder, this.loadGoogleAuth('gdrive'));
   }
 
   copyFromS3ToDrive(s3FilePath: string, driveFilePath: string) {
-    return this.backendService.copyFromS3ToDrive(s3FilePath, driveFilePath, this.loadGoogleAuth());
+    return this.backendService.copyFromS3ToDrive(s3FilePath, driveFilePath, this.loadGoogleAuth('gdrive'));
   }
 
   copyFromDriveToS3(driveFilePath: string, s3FilePath: string) {
-    return this.backendService.copyFromDriveToS3(driveFilePath, s3FilePath, this.loadGoogleAuth());
+    return this.backendService.copyFromDriveToS3(driveFilePath, s3FilePath, this.loadGoogleAuth('gdrive'));
   }
 
   loadMessages(labelIds: string[], pageNumber: number = 0, searchText: string = ''): Promise<any> {
@@ -699,6 +640,6 @@ export class AuthService {
         var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
         document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
-}
+  }
 
 }

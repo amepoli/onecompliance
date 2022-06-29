@@ -346,6 +346,20 @@ export class BackendService {
     return from(this.amplifyService.api().get(this.apiName, '/' + this.archiflowApiName, this.myGetInit));
   }
 
+
+  saveAuthToken(token_type: string, authCode: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'saveAuthToken', token_type: token_type };
+    this.myPutPostInit.body = { authCode: authCode };
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
+  }
+
+  loadAuthToken(token_type: string) {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { request_type: 'loadAuthToken', token_type: token_type };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
+  }
+
   getDistance(origin: string, destination: string): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { request_type: 'GetDistance', origin: origin, destination: destination };

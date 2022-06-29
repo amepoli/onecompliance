@@ -313,7 +313,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                             if(googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
                                 let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
                                 let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
-                                const copyFromS3ToDriveResponse: any = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, _this.authService.loadGoogleAuth()).toPromise();
+                                const copyFromS3ToDriveResponse: any = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, _this.authService.loadGoogleAuth('gdrive')).toPromise();
                                 _this._console.log(googledrivepath, s3path);
                                 _this._console.log(copyFromS3ToDriveResponse);
                             }
