@@ -1620,10 +1620,36 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             
                             _this._console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
                             
-                            let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
-                            _this._console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
-                            anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
+                            const driveFolder = anagraficaFolders['root_folder'];
+                            const subFolders = anagraficaFolders['sub_folders'] || [];
+
+                            let foldersToCheck = [driveFolder];
+                            if(subFolders && subFolders.length > 0) {
+                                for await (let subFolder of subFolders) {
+                                    if(!foldersToCheck.includes(subFolder.folder)) {
+                                        foldersToCheck.push(subFolder.folder);
+                                    }
+                                }
+                            }
+                            
+                            _this._console.log('foldersToCheck: ', JSON.stringify(foldersToCheck));
+                            
+                            let fixDriveFolderPathByIdentifierResponse = await forkJoin(foldersToCheck.map(x => _this.backendService.fixDriveFolderPathByIdentifier(x, googleAuth))).toPromise();
+                            _this._console.log('fixDriveFolderPathByIdentifier Response: ', fixDriveFolderPathByIdentifierResponse);
+                            
+                            anagraficaFolders['folder_ids'] = {};
+                            fixDriveFolderPathByIdentifierResponse.forEach(x => {
+                                anagraficaFolders['folder_ids'][x['folder']] = x['folderId']
+                            });
+
                             anagraficaFolders['codice_azienda'] = codiceAzienda;
+                            
+                            // _this._console.log(anagraficaFolders);
+                            // let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
+                            // _this._console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
+                            // anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
+                            // anagraficaFolders['codice_azienda'] = codiceAzienda;
+                            
                             
                             let getDriveFolderDeepContentsResponse: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
                             _this._console.log('getDriveFolderDeepContentsResponse ',getDriveFolderDeepContentsResponse);

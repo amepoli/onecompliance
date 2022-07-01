@@ -424,6 +424,13 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   }
 
+  fixDriveFolderPathByIdentifier(anagraficaFolder: any, authToken: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'fixDriveFolderPathByIdentifier' };
+    this.myPutPostInit.body = { anagraficaFolder, authToken };
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
+  }
+
   getDriveFolderDeepContents(anagraficaFolders: any, authToken: any) {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { request_type: 'getDriveFolderDeepContents' };
