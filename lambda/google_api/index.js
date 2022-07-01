@@ -438,7 +438,7 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
         }
         _console.log('find folder result: ', JSON.stringify(response));
     }
-    return driveFolderId;
+    return {folder: drivePath, folderId: driveFolderId};
 }
 
 async function getDriveFileId(drivePath, authParams) {
@@ -1127,7 +1127,7 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
     
     const s3Data = s3FileData.Body;
     const s3DataStr = s3Data.toString('hex');
-    _console.log('data: ', s3DataStr);
+    // _console.log('data: ', s3DataStr);
     
     // var bufferStream = new stream.PassThrough();
     // bufferStream.end(Uint8Array.from(s3Data));
@@ -1582,8 +1582,8 @@ async function fixAnagraficaFolderByIdentifier(anagraficaFolders, authParams) {
 
     for await (let folder of foldersToCheck) {
         _console.log('Checking and fixing: ' + folder);
-        let folderId = await fixDriveFolderPathByIdentifier(folder, authParams);
-        folderIds[folder] = folderId;
+        let driveFolderFix = await fixDriveFolderPathByIdentifier(folder, authParams);
+        folderIds[folder] = driveFolderFix.folderId;
     }
     
     _console.log('fix Result: '+ JSON.stringify({ result: 'OK', folderIds: folderIds }));
@@ -2121,6 +2121,12 @@ exports.handler = async (event, context) => {
                 const anagraficaFolders = eventBody['anagraficaFolders'];
                 const authParams = eventBody['authToken'];
                 body = await fixAnagraficaFolderByIdentifier(anagraficaFolders, authParams);
+            }
+            else if (requestType === 'fixDriveFolderPathByIdentifier') {
+                let eventBody = event.body? JSON.parse(event.body): {};
+                const anagraficaFolder = eventBody['anagraficaFolder'];
+                const authParams = eventBody['authToken'];
+                body = await fixDriveFolderPathByIdentifier(anagraficaFolder, authParams);
             }
             else if (requestType === 'getDriveFolderDeepContents') {
                 let eventBody = event.body? JSON.parse(event.body): {};
