@@ -478,6 +478,11 @@
                         "icon": "delete",
                         "label": "Cancella risposte del sondaggio",
                         "outputEventName": "answers_delete"
+                    },
+                    {
+                      "icon": "sync",
+                      "label": "Ricalcola punteggi",
+                      "outputEventName": "ricalcola_punteggi"
                     }
                 ]
             },
@@ -524,6 +529,15 @@
                             "queryFunct": "delete from entrasp.risposte where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
                         }
                     }
+                },
+                {
+                  "eventName": "ricalcola_punteggi",
+                  "actionType": "query",
+                  "condition": "none",
+                  "successMessage": "Punteggi ricalcolati correttamente",
+                  "values": [],
+                  "queryFunct": "SELECT entrasp.ricalcola_punteggi_sondaggi_aperti($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$)",
+                  "outputEventWhenComplete": "survey_reload"
                 }
             ],
             "isHidden": false,
@@ -534,10 +548,7 @@
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
-            "size": 0.4,
-            "style": {
-                "font_color": "blue"
-            }
+            "size": 0.4
         },
         {
             "autoGenerate": false,
@@ -1083,7 +1094,6 @@
             "format": {
                 "viewType": "subform",
                 "subform_keys": [
-                    
                     {
                         "autoGenerate": false,
                         "format": {

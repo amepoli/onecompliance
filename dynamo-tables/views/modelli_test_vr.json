@@ -550,6 +550,11 @@
                         "outputEventName": "navigate_to_criterio_analisi"
                     },
                     {
+                        "icon": "sync",
+                        "label": "Ricalcola punteggi",
+                        "outputEventName": "ricalcola_punteggi"
+                    },
+                    {
                         "icon": "class",
                         "label": "Crea e associa argomento",
                         "outputEventName": "create_associate_argomento"
@@ -637,6 +642,14 @@
                     "successMessage": "Risposte taggate correttamente",
                     "values": [],
                     "queryFunct": "select entrasp.argomenti_create_and_update_risposte_previste(codice_azienda, id_risposta_prev, id_domanda, id_modello_test, id_modello_test_vr, risposta, risposta, 725) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr in (select id_modello_test_vr from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$) AND id_domanda in (select id_domanda from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$) and id_argomento is null;"
+                },
+                {
+                    "eventName": "ricalcola_punteggi",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Punteggi ricalcolati correttamente",
+                    "values": [],
+                    "queryFunct": "SELECT entrasp.ricalcola_punteggi_sondaggi_aperti($codice_azienda$, $id_modello_test$, $id_modello_test_vr$)"
                 }
             ],
             "isHidden": false,

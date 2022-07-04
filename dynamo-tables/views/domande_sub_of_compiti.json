@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select true as delete_domanda, d.codice_azienda, d.id_domanda, d.ordinamento, d.id_argomento, d.id_sezione, d.id_modello_test, d.id_modello_test_vr, d.descrizione, d.flag_non_applicabile_domanda, d.note, entrasp.risposte_previste_mostra1(d.codice_azienda, d.id_modello_test, d.id_modello_test_vr, d.id_domanda) as modelli_test_risposte_possibili from entrasp.domande d inner join entrasp.compiti_rif_bo crb on d.codice_azienda=crb.codice_azienda and d.id_domanda=crb.id_domanda and d.id_modello_test=crb.id_modello_test and d.id_modello_test_vr=crb.id_modello_test_vr where d.codice_azienda=$codice_azienda$ and crb.codice_compito=$codice_compito$",
+      "queryString": "select true as delete_domanda, crb.codice_compito, true as disassocia_segnalazione, d.codice_azienda, d.id_domanda, d.ordinamento, d.id_argomento, d.id_sezione, d.id_modello_test, d.id_modello_test_vr, d.descrizione, d.flag_non_applicabile_domanda, d.note, entrasp.risposte_previste_mostra1(d.codice_azienda, d.id_modello_test, d.id_modello_test_vr, d.id_domanda) as modelli_test_risposte_possibili,rp.risposta,r.note as note_risposta, (select ordinamento from entrasp.domande_sezioni where codice_azienda=$codice_azienda$ and id_sezione=d.id_sezione and id_modello_test=d.id_modello_test and id_modello_test_vr=d.id_modello_test_vr) as ordinamento_sezione from entrasp.domande d inner join entrasp.compiti_rif_bo crb on d.codice_azienda=crb.codice_azienda and d.id_domanda=crb.id_domanda and d.id_modello_test=crb.id_modello_test and d.id_modello_test_vr=crb.id_modello_test_vr inner join entrasp.risposte r on r.id_domanda=d.id_domanda and r.codice_azienda=d.codice_azienda and r.id_modello_test=d.id_modello_test and r.id_modello_test_vr=d.id_modello_test_vr and r.id_sondaggio=crb.id_sondaggio and r.id_somministrazione=crb.id_somministrazione inner join entrasp.risposte_previste rp on r.codice_azienda=rp.codice_azienda and r.id_modello_test=rp.id_modello_test and r.id_modello_test_vr=rp.id_modello_test_vr and r.id_risposta_prev=rp.id_risposta_prev where d.codice_azienda=$codice_azienda$ and crb.codice_compito=$codice_compito$",
       "type": "main"
     },
     {
@@ -30,6 +30,49 @@
     }
   ],
   "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "3%",
+      "key": "disassocia_segnalazione",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "close",
+          "value": "close"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "sondaggi_sub_of_compiti",
+        "viewType": "form",
+        "action": "query",
+        "query": "delete from entrasp.compiti_rif_bo where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£' and id_domanda=£id_domanda£ and object_name='riepilogoRisposte'",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_compito",
+            "destination": "codice_compito"
+          },
+          {
+            "source": "id_domanda",
+            "destination": "id_domanda"
+          }
+        ],
+        "confirmAction": true,
+        "confirmMessage": {
+          "title": "Dissocia domanda",
+          "text": "Dissociare la domanda selezionata dalla segnalazione?"
+        },
+        "onSuccessAction": "reload"
+      }
+    },
     {
       "format": {
         "dataType": "text"
@@ -102,7 +145,7 @@
         "dataType": "number"
       },
       "isHidden": false,
-      "width": "10%",
+      "width": "7%",
       "isPrimary": true,
       "key": "id_domanda",
       "label": "ID domanda"
@@ -161,7 +204,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "descrizione",
-      "label": "Domanda"
+      "label": "Domanda",
+      "width": "50%"
     },
     {
       "format": {
@@ -179,7 +223,7 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "note",
       "width": "20%",
@@ -189,7 +233,7 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "queryFunct": "entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda)",
       "key": "risposte_prev",
@@ -204,12 +248,75 @@
       "isPrimary": false,
       "key": "codice_compito",
       "label": ""
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "ordinamento_sezione",
+      "label": "Sezione",
+      "width": "5%",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "domande_sezioni_sub_of_somministrazioni",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_sondaggio",
+            "destination": "id_sondaggio"
+          },
+          {
+            "source": "id_somministrazione",
+            "destination": "id_somministrazione"
+          },
+          {
+            "source": "id_sezione",
+            "destination": "id_sezione"
+          }
+        ]
+      }
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "risposta",
+      "label": "Risposta"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note_risposta",
+      "label": "Note risposta"
     }
   ],
   "hideActions": [
     {
       "formActionType": "multi-attachments",
       "viewType": "form"
+    },
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "quick-add",
+      "viewType": "table"
     }
-  ]
+  ],
+  "restrictions": {
+    "preventNavigationToForm": true
+  }
 }
