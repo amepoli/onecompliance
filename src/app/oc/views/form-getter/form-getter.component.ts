@@ -1634,17 +1634,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             
                             _this._console.log('foldersToCheck: ', JSON.stringify(foldersToCheck));
                             
-                            let fixDriveFolderPathByIdentifierResponse = await forkJoin(foldersToCheck.map(x => _this.backendService.fixDriveFolderPathByIdentifier(x, googleAuth))).toPromise();
-                            _this._console.log('fixDriveFolderPathByIdentifier Response: ', fixDriveFolderPathByIdentifierResponse);
-                            
                             anagraficaFolders['folder_ids'] = {};
-                            fixDriveFolderPathByIdentifierResponse.forEach(x => {
-                                anagraficaFolders['folder_ids'][x['folder']] = x['folderId']
-                            });
+                            for await (let folderToCheck of foldersToCheck) {
+                                let fixDriveFolderPathByIdentifierResponse = await _this.backendService.fixDriveFolderPathByIdentifier(folderToCheck, googleAuth).toPromise();
+                                anagraficaFolders['folder_ids'][fixDriveFolderPathByIdentifierResponse['folder']] = fixDriveFolderPathByIdentifierResponse['folderId'];
+
+                            }
+
+                            // let fixDriveFolderPathByIdentifierResponse = await forkJoin(foldersToCheck.map(x => _this.backendService.fixDriveFolderPathByIdentifier(x, googleAuth))).toPromise();
+                            // _this._console.log('fixDriveFolderPathByIdentifier Response: ', fixDriveFolderPathByIdentifierResponse);
+                            
+                            // anagraficaFolders['folder_ids'] = {};
+                            // fixDriveFolderPathByIdentifierResponse.forEach(x => {
+                            //     anagraficaFolders['folder_ids'][x['folder']] = x['folderId']
+                            // });
 
                             anagraficaFolders['codice_azienda'] = codiceAzienda;
                             
-                            // _this._console.log(anagraficaFolders);
+                            _this._console.log(anagraficaFolders);
                             // let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
                             // _this._console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
                             // anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
