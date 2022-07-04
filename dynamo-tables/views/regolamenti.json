@@ -40,5 +40,38 @@
 			],
 			"label": "Argomenti padre"
 		}
+	],
+	"table_multiselection_actions": [
+		{
+			"viewType": "menu",
+			"key": "menutest",
+			"label": "Options",
+			"icon": "more_vert",
+			"menuOptions": [
+				{
+					"key": "merge_argomenti",
+					"icon": "merge_type",
+					"label": "Unifica argomenti",
+					"query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+				},
+				{
+					"key": "delete",
+					"icon": "delete",
+					"label": "Delete",
+					"query": "select entrasp.cancella_risorse(array[$selected_rows_data$])",
+					"confirmAction": true,
+					"reloadOnSuccess": true,
+					"confirmActionMessage": "Eliminare la cartella e i relativi file?"
+				},
+				{
+					"key": "create_folder",
+					"icon": "create_new_folder",
+					"label": "Crea cartella",
+					"query": "SELECT entrasp.cdms_risorsa_da_tipo_allegato('€global_codice_azienda€', id_argomento) FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+				}
+			]
+		}
+		
 	]
+
 }
