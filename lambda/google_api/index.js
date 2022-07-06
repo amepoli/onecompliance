@@ -438,7 +438,7 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
         }
         _console.log('find folder result: ', JSON.stringify(response));
     }
-    return {folder: drivePath, folderId: driveFolderId};
+    return {folder: '/' + drivePath, folderId: driveFolderId};
 }
 
 async function getDriveFileId(drivePath, authParams) {
