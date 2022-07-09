@@ -223,16 +223,16 @@
 			"queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€stringa_s€')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€stringa_s€')||'%')"
 		},
 		{
-			"label": "$P{label_id}",
+			"fieldName": "id_argomento_list",
 			"format": {
-				"dataType": "number",
-				"viewType": "input"
+			  "dataType": "text",
+			  "viewType": "input"
 			},
-			"fieldName": "id_argomento_s",
+			"label": "Lista id argomenti",
 			"newLine": false,
-			"queryCond": "arg.id_argomento=$id_argomento_s$"
-		},
-		{
+			"queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
+		  },
+			  {
 			"fieldName": "argomento_s",
 			"format": {
 				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father} order by descrizione",
