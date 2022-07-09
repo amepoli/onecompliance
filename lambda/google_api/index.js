@@ -248,6 +248,7 @@ async function loadAuthToken(userid, tokenType) {
     
     if(extAuthentication[tokenType] &&  Object.keys(extAuthentication[tokenType]).length) {
         authParams = await refreshAuthToken(extAuthentication[tokenType]);
+        saveAuthToken(userid, tokenType, authParams);
         _console.log('Auth Params: ', JSON.stringify(authParams));
     }
     
@@ -1868,6 +1869,9 @@ async function performDriveOperations(operations, authParams) {
         for await (let operation of operations) {
             if(operation.todo === '1- rename' || operation.todo === '3- upload and rename') {
                 let drivePath = operation.googledrivepath;
+                if(drivePath.endsWith('/')) {
+                    drivePath = drivePath.slice(0, -1);
+                }
                 let driveFile = operation.oldfilename;
                 // if(operation.googledrivepath.includes('/')) {
                 //     let driveFilePathParts = operation.googledrivepath.split('/');

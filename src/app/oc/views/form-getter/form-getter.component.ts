@@ -1668,7 +1668,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             let processDriveFolderDeepContentsResponse: any = await _this.backendService.processDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
                             _this._console.log('processDriveFolderDeepContentsResponse ', processDriveFolderDeepContentsResponse);
 
-                            
+                                      
                             let filteredFilesForSetProperFileFolder = [];
                             for(let file of processDriveFolderDeepContentsResponse.files) {
                                 if(file.fileid.includes('/')) {
@@ -1689,12 +1689,19 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                             let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
                             _this._console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
-                           
-                            if(setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows) {
-                                let performDriveOperationsResponse = await forkJoin(setProperFileFolderResponse.response.rows.map(x => _this.backendService.performDriveOperations([x], googleAuth))).toPromise();
-                                _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
+                            
+                            
+                            
+                            let performDriveOperationsResponse = [];
+                            if(setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows && setProperFileFolderResponse.response.rows.length > 0) {
+                                for await (let operation of setProperFileFolderResponse.response.rows) {
+                                    let performDriveOperationResponse = await _this.backendService.performDriveOperations([operation], googleAuth).toPromise();
+                                    performDriveOperationsResponse.push(performDriveOperationResponse);                                    
+                                }
+                                // let performDriveOperationsResponse = await forkJoin(setProperFileFolderResponse.response.rows.map(x => _this.backendService.performDriveOperations([x], googleAuth))).toPromise();
                             }
                             
+                             _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
 
                             _this._toastService.hideLoadingToast(loadingToast);
                             _this._toastService.showSuccessToast(event.successMessage || 'Done!');
