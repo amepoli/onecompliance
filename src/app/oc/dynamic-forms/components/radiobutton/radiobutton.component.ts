@@ -8,7 +8,7 @@ import { ConsoleLoggerService, PubSubService } from "app/oc/services";
   template: `
 <div [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" [formGroup]="group">
 <label class="radio-label-padding">{{field.label}}:</label>
-<mat-radio-group [formControlName]="field.name" [ngStyle]="{'display': 'flex', 'flex-direction': 'column'}" [(ngModel)]="chosenItem">
+<mat-radio-group [formControlName]="field.name" [ngStyle]="{'display': 'flex', 'flex-direction': 'column', 'align-items': 'flex-start'}" [(ngModel)]="chosenItem">
 <mat-radio-button color="primary" *ngFor="let item of field.options" [value]="item" [disabled]="field.readonly || readOnlyPage" (change)="onCheck($event)" >{{item.name}}</mat-radio-button>
 </mat-radio-group>
 </div>
