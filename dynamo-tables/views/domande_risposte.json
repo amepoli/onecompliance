@@ -376,7 +376,7 @@
             },
             "newLine": false,
             "textareaHeight": "S",
-            "size": 5
+            "size": 5.55
         },
         {
             "isHidden": false,
@@ -396,7 +396,7 @@
             "format": {
                 "viewType": "button"
             },
-            "isHidden": "$Q{is_hidden_risultato}",
+            "isHidden": true,
             "isPrimary": false,
             "buttonIcon": "report_problem",
             "key": "create_segnalazione",
@@ -407,8 +407,7 @@
                 "eventTrigger": "press"
             },
             "readOnly": false,
-            "sameOrigin": false,
-            "size": 1.25
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -448,6 +447,78 @@
             "size": 2
         },
         {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "menu",
+              "menuOptions": [
+                {
+                    "icon": "report_problem",
+                    "label": "Crea Segnalazione",
+                    "outputEventName": "risposte_update_insert_on_create_whistleblowing"
+                },
+                {
+                  "icon": "close",
+                  "label": "Dissocia Segnalazione",
+                  "outputEventName": "dissocia_segnalazione"
+                },
+                {
+                  "icon": "delete",
+                  "label": "Cancella risposta",
+                  "outputEventName": "delete_risposta"
+                }
+              ]
+            },
+            "inputEvents": [
+              {
+                "eventName": "delete_risposta",
+                "actionType": "show_message",
+                "condition": "none",
+                "values": [],
+                "message": {
+                  "messageText": "Cancellare definitivamente la risposta?",
+                  "actionOnNo": {
+                    "actionType": "query",
+                    "queryFunct": "select 1"
+                  },
+                  "actionOnYes": {
+                    "actionType": "query",
+                    "queryFunct": "SELECT entrasp.delete_risposta( $codice_azienda$,$id_domanda$,$id_modello_test$,$id_modello_test_vr$,$id_sondaggio$,$id_somministrazione$, $id_sezione$)"
+                  }
+                },
+                "successMessage": "Risposta cancellata correttamente",
+                "outputEventWhenComplete": "triggerReload"
+              },
+              {
+                "eventName": "dissocia_segnalazione",
+                "actionType": "show_message",
+                "condition": "none",
+                "values": [],
+                "message": {
+                  "messageText": "Dissociare la segnalazione dalla domanda?",
+                  "actionOnNo": {
+                    "actionType": "query",
+                    "queryFunct": "select 1"
+                  },
+                  "actionOnYes": {
+                    "actionType": "query",
+                    "queryFunct": "delete from entrasp.compiti_rif_bo where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£' and id_domanda=£id_domanda£ and object_name='riepilogoRisposte'"
+                  }
+                },
+                "successMessage": "Segnalazione dissociata correttamente",
+                "outputEventWhenComplete": "triggerReload"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "domande_actions",
+            "label": "",
+            "newLine": false,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.6
+          },
+          {
             "autoGenerate": false,
             "isHidden": false,
             "readOnly": true,
