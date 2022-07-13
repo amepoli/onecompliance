@@ -40,6 +40,9 @@ exports.handler = async (event, context) => {
   const registry = queryParams['registry'];
   const checkId = queryParams['checkId'];
 
+  //See if it is ok
+  const connectedRegistries = queryParams['connectedRegistries'];
+
   const entityType = queryParams['entityType'];
   const name = queryParams['name'];
   const surname = queryParams['surname'];
@@ -83,7 +86,6 @@ exports.handler = async (event, context) => {
   };
 
   */
-
 
   //Configure Post for scan, it depends on the entityType (see the technical notes doc)
   if (entityType == 'P') {
@@ -153,12 +155,91 @@ exports.handler = async (event, context) => {
     });
   }
 
+
+  
+  
+  // TODO
+
+  //Repeat,
+  for (let i = 0; i < connectedRegistries.length; i++) {
+    //Configure Post for scan, it depends on the entityType (see the technical notes doc)
+    if (entityType == 'P') {
+      var postData_getScan = {
+        "access_token": "",
+        "refresh_token": "",
+        "firstname": "",
+        "lastname": "",
+        "yob": "",
+        "responseType": "json"
+      };
+      postData_getScan.firstname = name;
+      postData_getScan.lastname = surname;
+      postData_getScan.yob = yob;
+
+    } else if (entityType == 'E') {
+      var postData_getScan = {
+        "access_token": "",
+        "refresh_token": "",
+        "company": "",
+        "responseType": "json"
+      };
+      postData_getScan.company = name;
+
+    };
+
+    var options_getScan = {
+      "method": "POST",
+      "hostname": "https://app.regulat.io",
+      "path": "/api/auth/token",
+      "headers": {
+        "Content-Type": "application/json",
+      }
+    };
+
+
+    //Get token
+    let response = await post(options_login, postData_login);
+    //let response = await post(options_test, postData_test);
+
+    if (response == null || response.access_token == null) {
+      return ({
+        "statusCode": 200,
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "body": JSON.stringify({ result: 'KO', reason: 'Something wrong with getting access token' })
+      });
+    }
+
+    let token = response.access_token;
+
+
+    //Get Scan
+    postData_getScan.access_token = token;
+
+    postData_getScan = JSON.stringify(postData_getScan);
+
+    //response = await post(options_getScan, postData_getScan);
+    scannedData = await post(options_getScan, postData_getScan);
+
+    if (response == null) {
+      return ({
+        "statusCode": 200,
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "body": JSON.stringify({ result: 'KO', reason: 'Something wrong with getting scan' })
+      });
+    }
+  }
+
   //To implement, add into response json these parameters i need in regulat_VPC
-  scannedData = scannedData.add(company,registry,checkId);
+  scannedData = scannedData.add(company, registry, checkId);
 
   response = await lambda.invoke({
     FunctionName: 'FUNCTION_NAME',
-    Payload: scannedData       //to change the payload?
+    Payload: scannedData      //to change the payload?
+
+    // How can i pass a requestType? --> 'getAmlScan' 
+
   }).promise();
 
   console.log(response);

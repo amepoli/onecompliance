@@ -1680,9 +1680,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._toastService.showErrorToast("Missing Regulat API entity params");
                 }
                 else {
+
                     _this._dialogService.showLoadingDialog('Scanning in progress', 'Please wait...');
 
-                    let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, nomeAML, cognomeAML, yobAML, idSomministrazioneAML, tipoSoggettoAML).toPromise();
+                    let connected_registries =  await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
+
+                    console.log(connected_registries);
+
+                    let connectedRegistries = connected_registries.response; //array which contains the result of a query in 2 different columns: 
+
+                    /* for(let i = 0; i < anagraficaFolders.length; i++) {
+                        let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, connected_registries[i], nomeAML, cognomeAML, yobAML, idSomministrazioneAML, tipoSoggettoAML).toPromise();
+                        console.log(scan_contents);
+                    } */
+
+                    let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, connectedRegistries, nomeAML, cognomeAML, yobAML, idSomministrazioneAML, tipoSoggettoAML).toPromise();
                     console.log(scan_contents);
 
                     _this._dialogService.closeDialog();

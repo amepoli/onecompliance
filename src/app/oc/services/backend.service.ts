@@ -25,6 +25,7 @@ export class BackendService {
   private archiflowApiName = appData.lambdas.archiflow.apiName;
   private googleApiName = appData.lambdas.google_api.apiName;
   private regulatApiName = appData.lambdas.regulat.apiName;
+  private regulatVPCApiName = appData.lambdas.regulat_VPC.apiName;
 
   private myGetInit = { // OPTIONAL
     headers: {
@@ -424,9 +425,15 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }
 
-  getAmlScan(company: string, registry: number, name: string, surname: string, yob: number, checkId: number, entytyType: string): Observable<any> {
+  getConnectedRegistries(company: string, registry: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { company: company, registry: registry, name: name, surname: surname, yob: yob, checkId: checkId, entytyType: entytyType };
+    this.myGetInit.queryStringParameters = { request_type: 'getConnectedRegistries', company: company, registry: registry };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatVPCApiName, this.myGetInit));
+  }
+
+  getAmlScan(company: string, registry: number, connected_registries: number [], name: string, surname: string, yob: number, checkId: number, entytyType: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { company: company, registry: registry, connected_registries: connected_registries, name: name, surname: surname, yob: yob, checkId: checkId, entytyType: entytyType };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatApiName, this.myGetInit));
   }
 
