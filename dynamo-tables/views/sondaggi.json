@@ -1178,6 +1178,47 @@
                         "readOnly": false,
                         "sameOrigin": true,
                         "size": 2
+                    },
+                    {
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "n_sondaggi_connessi",
+                        "label": "N.sondaggi Connessi",
+                        "style": {
+                            "background_color": "white"
+                        },
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "to_sondaggi_connessi",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": true,
+                        "queryFunct": "select 1"
+                    },
+                    {
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "aggiornamenti",
+                        "label": "Aggiornamenti",
+                        "style": {
+                            "background_color": "white"
+                        },
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "to_aggiornamenti_connessi",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": true,
+                        "queryFunct": "select 1",
+                        "sameOrigin": false
                     }
                 ]
             },
@@ -1582,20 +1623,6 @@
             "type": "table"
         },
         {
-            "entryKey": "consuntivazioni_sub_of_sondaggi",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_sondaggio",
-                    "son": "id_sondaggio"
-                }
-            ],
-            "label": "Aggiornamenti e Time Report"
-        },
-        {
             "entryKey": "sondaggi_sub_of_sondaggi",
             "keys": [
                 {
@@ -1608,20 +1635,6 @@
                 }
             ],
             "label": "Sondaggi Riprogrammati"
-        },
-        {
-            "entryKey": "sondaggi_son",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_sondaggio",
-                    "son": "id_sondaggio_parent"
-                }
-            ],
-            "label": "Sondaggi Connessi"
         },
         {
             "entryKey": "compiti_sub_of_sondaggi",
@@ -2370,6 +2383,42 @@
             },
             "actionType": "navigate",
             "eventName": "to_progetto_from_sondaggi_somministrati"
+        },
+        {
+            "actionTarget": {
+                "name": "sondaggi_son",
+                "type": "table",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio_parent"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_sondaggi_connessi"
+        },
+        {
+            "actionTarget": {
+                "name": "consuntivazioni_sub_of_sondaggi",
+                "type": "table",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_aggiornamenti_connessi"
         }
     ],
     "exportQueries": {
