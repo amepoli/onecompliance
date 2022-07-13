@@ -24,7 +24,7 @@ export class BackendService {
   private timeTrackerApiName = appData.lambdas.time_tracker.apiName;
   private archiflowApiName = appData.lambdas.archiflow.apiName;
   private googleApiName = appData.lambdas.google_api.apiName;
-  private regulatApiName = appData.lambdas.regulat_api.apiName;
+  private regulatApiName = appData.lambdas.regulat.apiName;
 
   private myGetInit = { // OPTIONAL
     headers: {
