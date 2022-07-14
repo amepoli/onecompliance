@@ -43,10 +43,10 @@ exports.handler = async (event, context) => {
   //See if it is ok
   const connectedRegistries = queryParams['connectedRegistries'];
 
-  const entityType = queryParams['entityType'];
+/*   const entityType = queryParams['entityType'];
   const name = queryParams['name'];
   const surname = queryParams['surname'];
-  const yob = queryParams['yob'];
+  const yob = queryParams['yob']; */
 
 
   //Configure Post for authenticate, username and password of test
@@ -88,7 +88,7 @@ exports.handler = async (event, context) => {
   */
 
   
-  //Configure Post for scan, it depends on the entityType (see the technical notes doc)
+  /* //Configure Post for scan, it depends on the entityType (see the technical notes doc)
   if (entityType == 'P') {
     var postData_getScan = {
       "access_token": "",
@@ -120,7 +120,7 @@ exports.handler = async (event, context) => {
       "Content-Type": "application/json",
     }
   };
-
+ */
   
   //Get token
   let response = await post(options_login, postData_login);
@@ -151,10 +151,10 @@ exports.handler = async (event, context) => {
   }
 
 
-  //Repeat for all the connectedRegistries, if exists,
+  //Repeat for all the connectedRegistries and for the main registry
   for (let i = 0; i < connectedRegistries.length; i++) {
     //Configure Post for scan, it depends on the entityType (see the technical notes doc)
-    if (entityType == 'P') {
+    if (connectedRegistries.entityType == 'P') {
       var postData_getScan = {
         "access_token": "",
         "refresh_token": "",
@@ -167,7 +167,7 @@ exports.handler = async (event, context) => {
       postData_getScan.lastname = connectedRegistries.surname[i] ? connectedRegistries.surname[i] : '';
       postData_getScan.yob = connectedRegistries.yob[i] ? connectedRegistries.yob[i] : '';
 
-    } else if (entityType == 'E') {
+    } else if (connectedRegistries.entityType == 'E') {
       var postData_getScan = { 
         "access_token": "",
         "refresh_token": "",
@@ -192,8 +192,8 @@ exports.handler = async (event, context) => {
     }
   }
 
-  //To implement, add into response json these parameters i need in regulat_VPC
-  scannedData = scannedData.add(company, registry, checkId);
+  /* //To implement, add into response json these parameters i need in regulat_VPC
+  scannedData = scannedData.add(company, registry, checkId); */
 
   //Call regulat_VPC
   response = await lambda.invoke({

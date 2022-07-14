@@ -1755,11 +1755,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         else {
             const codiceAziendaAML = formValues[regulatAPIParams.entityParams.codice_azienda];
             const idAnagraficaAML = formValues[regulatAPIParams.entityParams.id_anagrafica];
-            const nomeAML = formValues[regulatAPIParams.entityParams.nome];
-            const cognomeAML = formValues[regulatAPIParams.entityParams.cognome];
-            const yobAML = formValues[regulatAPIParams.entityParams.yob];
             const idSomministrazioneAML = formValues[regulatAPIParams.entityParams.id_somministrazione];
-            const tipoSoggettoAML = formValues[regulatAPIParams.entityParams.tipo_soggetto];
             if(regulatAPIParams.actionType == 'get_aml_scan') {
                 if(!regulatAPIParams.entityParams) {
                     _this._toastService.showErrorToast("Missing Regulat API entity params");
@@ -1779,7 +1775,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         console.log(scan_contents);
                     } */
 
-                    let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, connectedRegistries, nomeAML, cognomeAML, yobAML, idSomministrazioneAML, tipoSoggettoAML).toPromise();
+                    let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, connectedRegistries, idSomministrazioneAML).toPromise();
                     console.log(scan_contents);
 
                     _this._dialogService.closeDialog();

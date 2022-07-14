@@ -473,9 +473,9 @@ export class BackendService {
     return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatVPCApiName, this.myGetInit));
   }
 
-  getAmlScan(company: string, registry: number, connected_registries: string [], name: string, surname: string, yob: number, checkId: number, entytyType: string): Observable<any> {
+  getAmlScan(company: string, registry: number, connected_registries: string [], checkId: number): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { company: company, registry: registry, connected_registries: connected_registries, name: name, surname: surname, yob: yob, checkId: checkId, entytyType: entytyType };
+    this.myGetInit.queryStringParameters = { company: company, registry: registry, connected_registries: connected_registries, checkId: checkId };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatApiName, this.myGetInit));
   }
 
