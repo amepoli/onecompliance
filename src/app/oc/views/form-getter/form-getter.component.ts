@@ -1684,10 +1684,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._dialogService.showLoadingDialog('Scanning in progress', 'Please wait...');
 
                     let connected_registries =  await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
-
                     console.log(connected_registries);
 
-                    let connectedRegistries = connected_registries.response; //array which contains the result of a query in 2 different columns: 
+                    let connectedRegistries = connected_registries.response; // array which contains the result of a query in 6 different columns: 
+                                                                             // | connected_registry | entyty_type | company_name | name | surname | yob |
 
                     /* for(let i = 0; i < anagraficaFolders.length; i++) {
                         let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, connected_registries[i], nomeAML, cognomeAML, yobAML, idSomministrazioneAML, tipoSoggettoAML).toPromise();
