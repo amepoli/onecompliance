@@ -42,13 +42,22 @@ exports.handler = async (event) => {
                 let query = "";
                 let response;
 
-                query = `SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob 
+                query = `SELECT an.id_anagrafica AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob
+                FROM entrasp.anagrafiche_id an
+                INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
+                WHERE an.codice_part = (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}')
+                AND an.id_anagrafica=${registry} 
+                AND avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, avr.id_anagrafica)
+                AND tipo_soggetto IS NOT NULL
+                UNION
+                SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob 
                 FROM entrasp.connessioni_anagrafiche ca 
                 INNER JOIN entrasp.anagrafiche_id an ON ca.codice_part=an.codice_part AND ca.id_anagrafica_conn=an.id_anagrafica 
                 INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
                 WHERE ca.codice_part = (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}') 
                 AND ca.id_anagrafica=${registry} 
-                AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica);`;
+                AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica)
+                AND tipo_soggetto IS NOT NULL;`;
                 //connectedRegistries = await client.query(query);
 
                 console.log('running query: ', query);
