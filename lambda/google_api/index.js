@@ -152,7 +152,7 @@ async function prepareAuthToken(authCode) {
     const oAuth2Client = new OAuth2(
         "CLIENT_ID",
         "CLIENT_SECRET",
-        "https://localhost:4200"
+        "https://GOOGLE_REDIRECT_URI"
     );
     
     try {
@@ -278,9 +278,9 @@ async function getLocalSharedFolderId(drivePath) {
         
         try {
             response = await drive.files.list({
-                q: `sharedWithMe=true and mimeType='${folderMime}' and name='${folderName}'`,
+                q: `sharedWithMe=true and mimeType='${folderMime}' and name='${folderName}' and trashed=false`,
                 pageSize: 5,
-                fields: 'nextPageToken, files(id, name, mimeType)',
+                fields: 'nextPageToken, files(id, name, driveId)',
             });
             response = JSON.parse(response);    
         }
@@ -288,15 +288,15 @@ async function getLocalSharedFolderId(drivePath) {
         _console.log('response', JSON.stringify(response));
         if(response.data && response.data.files && response.data.files.length > 0) {
             // Folder exists
-            return response.data.files[0].id;
+            return {id: response.data.files[0].id, isShared: true, driveId: response.data.files[0].driveId};
         }
         
         _console.log(`Searching for ${folderName} in Local drive`);
         try {
             response = await drive.files.list({
-                q: `'root' in parents and mimeType='${folderMime}' and name='${folderName}'`,
+                q: `'root' in parents and mimeType='${folderMime}' and name='${folderName}' and trashed=false`,
                 pageSize: 5,
-                fields: 'nextPageToken, files(id, name, mimeType)',
+                fields: 'nextPageToken, files(id, name)',
             });
             response = JSON.parse(response);    
         }
@@ -306,7 +306,7 @@ async function getLocalSharedFolderId(drivePath) {
 
         if(response.data && response.data.files && response.data.files.length > 0) {
             // Folder exists
-            return response.data.files[0].id;
+            return {id: response.data.files[0].id, isShared: false, driveId: null};
         }
         else {
             // Create folder
@@ -328,7 +328,7 @@ async function getLocalSharedFolderId(drivePath) {
                 catch(e) {}
                 _console.log('create folder result: ', JSON.stringify(response));
                 if(response && response.data && response.data.id) {
-                    return response.data.id;
+                    return {id: response.data.id, isShared: false, driveId: null};
                 }
             }
             catch (e) {
@@ -336,9 +336,42 @@ async function getLocalSharedFolderId(drivePath) {
             }
         }
     }
-    return null;
+    return {id: null, isShared: false, driveId: null};
 }
 
+async function getFoldersList(codiceAziena, authParams) {
+    await performGoogleAuth(authParams);
+
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    let driveFolderId = 'root';
+    let response;
+
+    let localSharedFolderResponse = await getLocalSharedFolderId(codiceAziena);
+    _console.log('localSharedFolder response', localSharedFolderResponse);
+    if(!localSharedFolderResponse.isShared) {
+        try {
+            response = await drive.files.list({
+                q: `mimeType='${folderMime}' and trashed=false`,
+                pageSize: 250,
+                fields: 'nextPageToken, files(id, name)',
+            });
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+    }
+    else {
+        try {
+            response = await drive.files.list({
+                q: `driveId='${localSharedFolderResponse.driveId}' and mimeType='${folderMime}' and trashed=false`,
+                pageSize: 250,
+                fields: 'nextPageToken, files(id, name)',
+            });
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+    }
+    _console.log('getFoldersList response', response);
+}
 
 async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
     
@@ -357,7 +390,8 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
             if(driveFolderId === 'root') {
-                driveFolderId = await getLocalSharedFolderId(drivePathFolder);
+                let localSharedFolderResponse = await getLocalSharedFolderId(drivePathFolder);
+                driveFolderId = localSharedFolderResponse.id;
             }
             else {
                 let folderQuery = `name = '${drivePathFolder}'`;
@@ -368,7 +402,7 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
                 _console.log(`Searching for ${folderQuery} in ${driveFolderId}`);
                 
                 let parentQuery = `'${driveFolderId}' in parents`;
-                let finalQuery = `${parentQuery} and mimeType='${folderMime}' and ${folderQuery}`;
+                let finalQuery = `${parentQuery} and mimeType='${folderMime}' and ${folderQuery} and trashed=false`;
                 _console.log('finalQuery: ', finalQuery);
                 
                 response = await drive.files.list({
@@ -459,12 +493,13 @@ async function getDriveFileId(drivePath, authParams) {
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
             if(driveFolderId === 'root') {
-                driveFolderId = await getLocalSharedFolderId(drivePathFolder);
+                let localSharedFolderResponse = await getLocalSharedFolderId(drivePathFolder);
+                driveFolderId = localSharedFolderResponse.id;
             }
             else {
                 _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
                 response = await drive.files.list({
-                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
+                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}' and trashed=false`,
                     pageSize: 5,
                     fields: 'nextPageToken, files(id, name, mimeType)',
                 });
@@ -542,7 +577,7 @@ async function downloadDriveObject(driveFolderId, driveFile) {
     let response = null;
 
     response = await drive.files.list({
-        q: `'${driveFolderId}' in parents and name='${driveFile}'`,
+        q: `'${driveFolderId}' in parents and name='${driveFile}' and trashed=false`,
         pageSize: 250,
         fields: 'nextPageToken, files(id, name, mimeType)',
     });
@@ -577,7 +612,7 @@ async function getDriveFileInfo(driveFolderId, driveFile) {
         
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.files.list({
-            q: `'${driveFolderId}' in parents and name='${driveFile}'`,
+            q: `'${driveFolderId}' in parents and name='${driveFile}' and trashed=false`,
             pageSize: 250,
             fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum, createdTime, modifiedTime)',
         });
@@ -607,7 +642,7 @@ async function renameDriveFile(driveFolderId, OldName, newName) {
         
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.files.list({
-            q: `'${driveFolderId}' in parents and name='${OldName}'`,
+            q: `'${driveFolderId}' in parents and name='${OldName}' and trashed=false`,
             pageSize: 250,
             fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum, createdTime, modifiedTime)',
         });
@@ -893,7 +928,7 @@ async function getDriveContents(folder, authParams) {
     try {
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.files.list({
-            q: `'${folder?folder : "root"}' in parents`,
+            q: `'${folder?folder : "root"}' in parents and trashed=false`,
             pageSize: 250,
             fields: 'nextPageToken, files(id, name, mimeType)',
           });
@@ -1155,12 +1190,13 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
             if(driveFolderId === 'root') {
-                driveFolderId = await getLocalSharedFolderId(drivePathFolder);
+                let localSharedFolderResponse = await getLocalSharedFolderId(drivePathFolder);
+                driveFolderId = localSharedFolderResponse.id;
             }
             else {
                 _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
                 response = await drive.files.list({
-                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
+                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}' and trashed=false`,
                     pageSize: 5,
                     fields: 'nextPageToken, files(id, name, mimeType)',
                 });
@@ -1461,7 +1497,7 @@ async function getDriveFolderCompletePath(drive, driveFolder) {
     let response;
     let completePath = '';
     try {
-        let query = `name='${driveFolder}' and supportsAllDrives=true and includeTeamDriveItems=true and supportsTeamDrives=true and mimeType='${folderMime}'`;
+        let query = `name='${driveFolder}' and includeItemsFromAllDrives=true and mimeType='${folderMime}' and trashed=false`;
         
         let parentId = null;
         let parentName = null;
@@ -1509,10 +1545,10 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
     try {
         let query = '';
         if(driveFileId) {
-            query = `'${driveFileId}' in parents`;
+            query = `'${driveFileId}' in parents and trashed=false`;
         }
         else {
-            query = `name='${driveFolder}' and mimeType='${folderMime}'`;
+            query = `name='${driveFolder}' and mimeType='${folderMime}' and trashed=false`;
         }
         _console.log('query: ', query);
         
@@ -1605,6 +1641,8 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     const folderIds = anagraficaFolders['folder_ids'] || [];
     const codiceAzienda = anagraficaFolders['codice_azienda'] || [];
     
+    await getFoldersList(codiceAzienda, authParams);
+
     if(anagraficaFolders['sub_folders'] && anagraficaFolders['sub_folders'].length > 0) {
         for(let subFolder of anagraficaFolders['sub_folders'].filter(x => x['fileid'])) {
             if(subFolder.file && subFolder.file.length > 0 && subFolders.filter(x => x.file === subFolder.file && x.folder === x.folder).length == 0) {
@@ -1927,7 +1965,7 @@ async function listDrives(authParams) {
         
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.teamdrives.list({
-            q: `'${driveFolderId}' in parents and name='${OldName}'`,
+            q: `'${driveFolderId}' in parents and name='${OldName}' and trashed=false`,
             pageSize: 250,
             fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum, createdTime, modifiedTime)',
         });
