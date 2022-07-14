@@ -58,11 +58,11 @@ exports.handler = async (event) => {
 
                 let connectedRegistries = null;
                 if(response && response.rows) {
-                    connectedRegistries = response.rows;
+                    connectedRegistries = response.rows; //Is it correct?
                 }
                 body = { result: 'OK', response: connectedRegistries };
 
-                //release the client
+                //release the client --> ???
                 await client.release();
 
             } catch (e) {
