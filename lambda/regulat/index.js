@@ -109,7 +109,6 @@ exports.handler = async (event, context) => {
       "responseType": "json"
     };
     postData_getScan.company = name;
-
   };
 
   var options_getScan = {
@@ -121,11 +120,10 @@ exports.handler = async (event, context) => {
     }
   };
 
-
+  
   //Get token
   let response = await post(options_login, postData_login);
   //let response = await post(options_test, postData_test);
-
   if (response == null || response.access_token == null) {
     return ({
       "statusCode": 200,
@@ -134,18 +132,14 @@ exports.handler = async (event, context) => {
       "body": JSON.stringify({ result: 'KO', reason: 'Something wrong with getting access token' })
     });
   }
-
   let token = response.access_token;
 
 
   //Get Scan
   postData_getScan.access_token = token;
-
   postData_getScan = JSON.stringify(postData_getScan);
-
   //response = await post(options_getScan, postData_getScan);
   scannedData = await post(options_getScan, postData_getScan);
-
   if (response == null) {
     return ({
       "statusCode": 200,
@@ -156,11 +150,7 @@ exports.handler = async (event, context) => {
   }
 
 
-  
-  
-  // TODO
-
-  //Repeat,
+  //Repeat for all the connectedRegistries, if exists,
   for (let i = 0; i < connectedRegistries.length; i++) {
     //Configure Post for scan, it depends on the entityType (see the technical notes doc)
     if (entityType == 'P') {
@@ -172,55 +162,25 @@ exports.handler = async (event, context) => {
         "yob": "",
         "responseType": "json"
       };
-      postData_getScan.firstname = name;
-      postData_getScan.lastname = surname;
-      postData_getScan.yob = yob;
+      postData_getScan.firstname = connectedRegistries.name[i] ? connectedRegistries.name[i] : '';
+      postData_getScan.lastname = connectedRegistries.surname[i] ? connectedRegistries.surname[i] : '';
+      postData_getScan.yob = connectedRegistries.yob[i] ? connectedRegistries.yob[i] : '';
 
     } else if (entityType == 'E') {
-      var postData_getScan = {
+      var postData_getScan = { 
         "access_token": "",
         "refresh_token": "",
         "company": "",
         "responseType": "json"
       };
-      postData_getScan.company = name;
-
+      postData_getScan.company = connectedRegistries.company_name[i] ? connectedRegistries.company_name[i] : '';
     };
-
-    var options_getScan = {
-      "method": "POST",
-      "hostname": "https://app.regulat.io",
-      "path": "/api/auth/token",
-      "headers": {
-        "Content-Type": "application/json",
-      }
-    };
-
-
-    //Get token
-    let response = await post(options_login, postData_login);
-    //let response = await post(options_test, postData_test);
-
-    if (response == null || response.access_token == null) {
-      return ({
-        "statusCode": 200,
-        "isBase64Encoded": false,
-        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-        "body": JSON.stringify({ result: 'KO', reason: 'Something wrong with getting access token' })
-      });
-    }
-
-    let token = response.access_token;
-
 
     //Get Scan
     postData_getScan.access_token = token;
-
     postData_getScan = JSON.stringify(postData_getScan);
-
     //response = await post(options_getScan, postData_getScan);
-    scannedData = await post(options_getScan, postData_getScan);
-
+    scannedData = scannedData + await post(options_getScan, postData_getScan); //How can i do it? scannedData has to be json
     if (response == null) {
       return ({
         "statusCode": 200,
@@ -234,12 +194,10 @@ exports.handler = async (event, context) => {
   //To implement, add into response json these parameters i need in regulat_VPC
   scannedData = scannedData.add(company, registry, checkId);
 
+  //Call regulat_VPC
   response = await lambda.invoke({
     FunctionName: 'FUNCTION_NAME',
-    Payload: scannedData      //to change the payload?
-
-    // How can i pass a requestType? --> 'getAmlScan' 
-
+    Payload: scannedData      //to change the payload?,  how can i pass a requestType? --> 'getAmlScan' 
   }).promise();
 
   console.log(response);

@@ -42,7 +42,7 @@ exports.handler = async (event) => {
                 let query = "";
                 let response;
 
-                query = `select id_anagrafica_conn as connected_registry, tipo_soggetto as connected_entity_type, avr.denominazione FROM entrasp.connessioni_anagrafiche ca INNER JOIN entrasp.anagrafiche_id an ON ca.codice_part=an.codice_part AND ca.id_anagrafica_conn=an.id_anagrafica INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica WHERE ca.codice_part = (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}') and ca.id_anagrafica=${registry} and avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica);`;
+                query = `SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob FROM entrasp.connessioni_anagrafiche ca INNER JOIN entrasp.anagrafiche_id an ON ca.codice_part=an.codice_part AND ca.id_anagrafica_conn=an.id_anagrafica INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica WHERE ca.codice_part = (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}') and ca.id_anagrafica=${registry} and avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica);`;
                 //connectedRegistries = await client.query(query);
 
                 console.log('running query: ', query);
@@ -94,7 +94,7 @@ exports.handler = async (event) => {
                 let response;
 
                 // run process query
-                query = `select entrasp.process_aml_scans('${scans}');`;
+                query = `select entrasp.process_aml_scans($$${scans}$$);`; //can i? It's like " SELECT $$ anna's home $$  -->  | anna's home | "
                 response = await client.query(query);
 
                 //release the client
