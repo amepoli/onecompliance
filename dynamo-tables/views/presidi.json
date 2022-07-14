@@ -87,7 +87,7 @@
             "label": "Presidio Superiore",
             "newLine": false,
             "size": 6,
-            "readOnly": true
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -97,11 +97,13 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_presidio_parent",
+            "key": "id_presidio_parent2",
             "label": "Id Pres.Sup.",
+            "queryFunct": "select id_presidio_parent",
+            "sameOrigin": false,
             "newLine": false,
             "outputEvent": {
-                "eventName": "to_modello_test_from_sondaggi",
+                "eventName": "to_presidio",
                 "eventTrigger": "press"
             },
             "size": 1.5,
@@ -178,7 +180,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT codice::character AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE';",
+                "comboQuery": "SELECT codice::character AS id, ordinamento||'-'||transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE' and ordinamento<=5 order by ordinamento;",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text",
@@ -286,10 +288,24 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "guida_attuativa",
+            "label": "Guida attuativa",
+            "textareaHeight": "M",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "note",
             "label": "Note",
             "textareaHeight": "M",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false
         }
     ],
@@ -365,6 +381,16 @@
             ],
             "label": "Verifiche sul presidio",
             "type": "table"
+        },
+        {
+            "entryKey": "tag_sub_of_presidi",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "TAG"
         }
 
     ],
@@ -598,9 +624,20 @@
                 "viewType": "combobox"
             },
             "label": "Livello",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "livello=$livello_s$"
         },
+        {
+            "fieldName": "tag_s",
+            "format": {
+              "comboQuery": "SELECT distinct id_argomento_father AS id, id_argomento_father||'-'||descrizione AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_father and aa.id_argomento_son in (select pr.id_argomento from entrasp.presidi pr where pr.id_argomento is not null) order by id_argomento_father||'-'||descrizione",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "label": "TAG",
+            "newLine": true,
+            "queryCond": "(array[id_argomento]<@any(select entrasp.sotto_argomenti($tag_s$)) and id_argomento is not null)"
+          },
         {
             "fieldName": "flag_principali",
             "format": {
@@ -700,6 +737,16 @@
             "label": "Già Verificati",
             "newLine": false,
             "queryCond": "id_presidio in(select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
+        },
+        {
+            "fieldName": "withot_id_arg",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza argomento",
+            "newLine": false,
+            "queryCond": "id_argomento is null"
         }
     ],
     "inputEvents": [
@@ -735,6 +782,10 @@
           {
             "label": "Presidi, rischi e procedure associate",
             "queryString": "select prs.codice_azienda, 'Presidio' as prs, prs.id_presidio, prs.descrizione_breve, prs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gest_pres, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Cento_gest_Monit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv1, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, prc.descrizione, prc.stato_attuazione from entrasp.presidi prs left join entrasp.rischi_presidi rp on prs.id_presidio=rp.id_presidio and prs.codice_azienda=rp.codice_azienda left join entrasp.rischi rs on rp.codice_rischio=rs.codice_rischio and rp.codice_azienda=rs.codice_azienda left join entrasp.fonti_rischio fr on rs.codice_rischio=fr.codice_rischio and rs.codice_azienda=fr.codice_azienda left join entrasp.procedure_aziendali prc  on fr.codice_azienda=prc.codice_azienda and fr.id_procedura=prc.id_procedura where prs.codice_azienda=$codice_azienda$"
+          },
+          {
+            "label": "Presidi ISO27001",
+            "queryString": "select id_presidio,id_presidio_parent, codice, entrasp.tipo_presidio_descr(id_tipo_presidio,codice_azienda)as tipo_presidio,descrizione_breve, descrizione, guida_attuativa, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) as stato_attuazione, note  from entrasp.presidi where codice_azienda= $codice_azienda$ and livello =3"
           }
         ]
       },

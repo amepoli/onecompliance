@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy, SimpleChanges, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { DynamicFormComponent } from 'app/oc/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { ComboboxComponent } from 'app/oc/dynamic-forms/components/combobox/combobox.component';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { SubformComponent } from 'app/oc/dynamic-forms/components/subform/subform.component';
 import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, GoogleAPIParams, ImportItem, MessageView, OutputEvent, WidgetsConfigurations } from 'app/oc/interfaces';
 import { FormDataType } from 'app/oc/types';
@@ -369,7 +369,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
                     if(results.reason === 'Not Authorized') {
-                        console.log('Not Authorized');
+                        _this._console.log('Not Authorized');
                         _this.isAuthorized = false;
                     }
                     else {
@@ -708,7 +708,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
         /*
         if (fieldValue.newLine) {
-            console.log(`Field: ${fieldValue.label} has new line.`);
+            _this._console.log(`Field: ${fieldValue.label} has new line.`);
         }
         */
         //console.table(fieldValue);
@@ -823,7 +823,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // console.table(event);
         // console.table(value);
         // console.table(_this.filteredFormData);
-        // console.log(`keyListener: ${keyListener}`);
+        // _this._console.log(`keyListener: ${keyListener}`);
         _this._console.log(event, value, keyListener);
 
         // check  if this is a formRowProperties event
@@ -1295,7 +1295,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         emailActionParameters.outputEventWhenComplete,
                         value
                     );
-                    // console.log(JSON.stringify(event));
+                    // _this._console.log(JSON.stringify(event));
                     // _this.sendEmail({ templateKey: 'test' });
                 }
                 else {
@@ -1436,7 +1436,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     else {
                         _this.backendService.getDistance(origin, destination).subscribe(
                             response => {
-                                // console.log(response);
+                                // _this._console.log(response);
                                 if (response.result === 'OK') {
                                     let distance = 0;
                                     if(response.data.rows && response.data.rows.length && response.data.rows[0].elements && response.data.rows[0].elements.length && response.data.rows[0].elements[0].distance && response.data.rows[0].elements[0].distance.value) {
@@ -1469,7 +1469,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             },
                             error => {
-                                console.log(error);
+                                _this._console.log(error);
                                 _this._toastService.showErrorToast(error);        
                             }
                         );
@@ -1496,10 +1496,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._toastService.showErrorToast("Missing Google API Drive Folder Params");
                     }
                     else {
-                        let auth = _this.authService.loginGoogle();
+                        let auth = _this.authService.loadGoogleAuth('gdrive');
                         _this.backendService.createDriveFolder(driveFolder, auth).subscribe(                        
                             response => {
-                                // console.log(response);
+                                // _this._console.log(response);
                                 if (response['result'] === 'OK') {
                                     if (event.outputEventWhenComplete != null) {
                                         _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
@@ -1510,7 +1510,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             },
                             error => {
-                                console.log(error);
+                                _this._console.log(error);
                                 _this._toastService.showErrorToast(error);        
                             }
                         );
@@ -1529,10 +1529,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
                     else {
-                        let auth = _this.authService.loginGoogle();
+                        let auth = _this.authService.loadGoogleAuth('gdrive');
                         _this.backendService.copyFromS3ToDrive(s3Path, drivePath, auth).subscribe(                        
                             response => {
-                                // console.log(response);
+                                // _this._console.log(response);
                                 if (response['result'] === 'OK') {
                                     if (event.outputEventWhenComplete != null) {
                                         _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
@@ -1543,7 +1543,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             },
                             error => {
-                                console.log(error);
+                                _this._console.log(error);
                                 _this._toastService.showErrorToast(error);        
                             }
                         );
@@ -1562,10 +1562,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
                     else {
-                        let auth = _this.authService.loginGoogle();
+                        let auth = _this.authService.loadGoogleAuth('gdrive');
                         _this.backendService.copyFromDriveToS3(drivePath, s3Path, auth).subscribe(                        
                             response => {
-                                // console.log(response);
+                                // _this._console.log(response);
                                 if (response['result'] === 'OK') {
                                     if (event.outputEventWhenComplete != null) {
                                         _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
@@ -1576,7 +1576,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             },
                             error => {
-                                console.log(error);
+                                _this._console.log(error);
                                 _this._toastService.showErrorToast(error);        
                             }
                         );
@@ -1590,45 +1590,130 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
                     const codiceAzienda = formValues[googleAPIParams.driveExpandedContentsParams.codiceAziendaKey];
-                    const idProgetto = formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey];
+                    const idProgetto = googleAPIParams.driveExpandedContentsParams.idProgettoKey? formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey]: null;
                     const idAnagrafica = formValues[googleAPIParams.driveExpandedContentsParams.idAnagraficaKey];
-                    if(!codiceAzienda || !idProgetto || !idAnagrafica) {
+                    if(!codiceAzienda || !idAnagrafica) {
                         _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
                     }
                     else {
-                        //let auth = _this.authService.loginGoogle();
-                        let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
-                        console.log(anagrafica_contents);
-                        let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
-                        //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
-                        let sub_folders = anagraficaFolders['sub_folders'];
-                        if(sub_folders && sub_folders.length > 0) {
-                            for(let i = 0; i < sub_folders.length; i++) {
-                                sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
-                                if(sub_folders[i]['folder'].endsWith('/')) {
-                                    sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0 , -1);
+                        let loadingToast = _this._toastService.showLoadingToast("Synching google drive", "Please wait...");
+                        try
+                        {
+                            const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
+                            
+                            
+                            let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
+                            _this._console.log(anagrafica_contents);
+                            let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
+                            //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
+                            let sub_folders = anagraficaFolders['sub_folders'];
+                            if(sub_folders && sub_folders.length > 0) {
+                                for(let i = 0; i < sub_folders.length; i++) {
+                                    if(sub_folders[i]['folder'].endsWith('/')) {
+                                        sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0 , -1);
+                                    }
+                                    if(!sub_folders[i]['folder'].includes('/')) {
+                                        sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
+                                    }
+                                }
+                                //sub_folders = sub_folders.filter(x => !x.md5 || !x.md5.includes('null::varchar'))
+                            }
+
+                            anagraficaFolders['sub_folders'] = sub_folders;
+                            
+                            _this._console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
+                            
+                            const driveFolder = anagraficaFolders['root_folder'];
+                            const subFolders = anagraficaFolders['sub_folders'] || [];
+
+                            let foldersToCheck = [driveFolder];
+                            if(subFolders && subFolders.length > 0) {
+                                for await (let subFolder of subFolders) {
+                                    if(!foldersToCheck.includes(subFolder.folder)) {
+                                        foldersToCheck.push(subFolder.folder);
+                                    }
                                 }
                             }
-                            sub_folders = sub_folders.filter(x => !x.md5.includes('null::varchar'))
-                        }
+                            
+                            _this._console.log('foldersToCheck: ', JSON.stringify(foldersToCheck));
+                            
+                            anagraficaFolders['folder_ids'] = {};
+                            for await (let folderToCheck of foldersToCheck) {
+                                let fixDriveFolderPathByIdentifierResponse = await _this.backendService.fixDriveFolderPathByIdentifier(folderToCheck, googleAuth).toPromise();
+                                anagraficaFolders['folder_ids'][fixDriveFolderPathByIdentifierResponse['folder']] = fixDriveFolderPathByIdentifierResponse['folderId'];
 
-                        anagraficaFolders['sub_folders'] = sub_folders;
-                        
-                        console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
-                        
-                        const googleAuth = await _this.authService.loginGoogle();
-                    
-                        let files: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
-                        let contentsJson = {
-                            codice_azienda: codiceAzienda,
-                            id_progetto: idProgetto,
-                            id_anagrafica: idAnagrafica,
-                            files: files.files
-                        }
-                        console.log(contentsJson);
+                            }
 
-                        let setProperFileFolderResponse = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
-                        console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
+                            // let fixDriveFolderPathByIdentifierResponse = await forkJoin(foldersToCheck.map(x => _this.backendService.fixDriveFolderPathByIdentifier(x, googleAuth))).toPromise();
+                            // _this._console.log('fixDriveFolderPathByIdentifier Response: ', fixDriveFolderPathByIdentifierResponse);
+                            
+                            // anagraficaFolders['folder_ids'] = {};
+                            // fixDriveFolderPathByIdentifierResponse.forEach(x => {
+                            //     anagraficaFolders['folder_ids'][x['folder']] = x['folderId']
+                            // });
+
+                            anagraficaFolders['codice_azienda'] = codiceAzienda;
+                            
+                            _this._console.log(anagraficaFolders);
+                            // let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
+                            // _this._console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
+                            // anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
+                            // anagraficaFolders['codice_azienda'] = codiceAzienda;
+                            
+                            
+                            let getDriveFolderDeepContentsResponse: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
+                            _this._console.log('getDriveFolderDeepContentsResponse ',getDriveFolderDeepContentsResponse);
+
+                            let syncDataResponse = await forkJoin(getDriveFolderDeepContentsResponse.syncData.map(x => _this.backendService.syncDriveS3File([x], googleAuth))).toPromise();
+                            _this._console.log('syncDataResponse', syncDataResponse);
+
+                            anagraficaFolders['root_drive_contents'] = getDriveFolderDeepContentsResponse.rootDriveContents;
+                            let processDriveFolderDeepContentsResponse: any = await _this.backendService.processDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
+                            _this._console.log('processDriveFolderDeepContentsResponse ', processDriveFolderDeepContentsResponse);
+
+                                      
+                            let filteredFilesForSetProperFileFolder = [];
+                            for(let file of processDriveFolderDeepContentsResponse.files) {
+                                if(file.fileid.includes('/')) {
+                                    file.fileid = file.fileid.split('/')[1];
+                                }
+                                if(filteredFilesForSetProperFileFolder.filter(x => x.fileid == file.fileid && x.filename == file.filename && x.folder == file.folder).length == 0) {
+                                    filteredFilesForSetProperFileFolder.push(file);
+                                }
+                            }
+
+                            let contentsJson = {
+                                codice_azienda: codiceAzienda,
+                                id_progetto: idProgetto,
+                                id_anagrafica: idAnagrafica,
+                                files: filteredFilesForSetProperFileFolder
+                            }
+                            _this._console.log(contentsJson);
+
+                            let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
+                            _this._console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
+                            
+                            
+                            
+                            let performDriveOperationsResponse = [];
+                            if(setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows && setProperFileFolderResponse.response.rows.length > 0) {
+                                for await (let operation of setProperFileFolderResponse.response.rows) {
+                                    let performDriveOperationResponse = await _this.backendService.performDriveOperations([operation], googleAuth).toPromise();
+                                    performDriveOperationsResponse.push(performDriveOperationResponse);                                    
+                                }
+                                // let performDriveOperationsResponse = await forkJoin(setProperFileFolderResponse.response.rows.map(x => _this.backendService.performDriveOperations([x], googleAuth))).toPromise();
+                            }
+                            
+                             _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
+
+                            _this._toastService.hideLoadingToast(loadingToast);
+                            _this._toastService.showSuccessToast(event.successMessage || 'Done!');
+                        }
+                        catch(e) {
+                            _this._console.log(e);
+                            _this._toastService.hideLoadingToast(loadingToast);
+                            _this._toastService.showErrorToast(e);
+                        }                        
                     }
                 }
             }
@@ -1732,7 +1817,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if (entry && Object.entries(entry).length) {
                         // Since we will use fullValueSet, we don't need to read all fields
                         for (const [key, value] of Object.entries(entry)) {
-                            // console.log(key, value);
+                            // _this._console.log(key, value);
                             if (value && !done) {
                                 let dataType = typeof (value);
                                 if (dataType == 'string' || dataType == 'number') {

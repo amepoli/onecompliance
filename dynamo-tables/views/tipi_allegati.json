@@ -5,9 +5,9 @@
 	"businessObjectName": "argomenti",
 	"define": {
 		"id_argomento_father": "3576",
-		"label_id": "ID Documento",
+		"label_id": "ID cartelle/flussi informativi",
 		"campo_id_argomento": "id_argomento_tipo_allegato",
-		"label_unifica": "Unifica id_allegato",
+		"label_unifica": "Unifica cartelle/flussi",
 		"is_hidden_unifica_all": "false",
 		"id_argomento_bigger_than": "and true",
 		"id_argomento_father_s2": "3368",
@@ -41,10 +41,20 @@
 			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
 		},
 		{
+			"operation": "insert",
+			"type": "postProcessing",
+			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)"
+		},
+		{
 			"operation": "update",
 			"type": "preCheck",
 			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
 			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+		},
+		{
+			"operation": "update",
+			"type": "postProcessing",
+			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)"
 		}
 	],
 	"form_keys": [
@@ -242,15 +252,15 @@
 			"queryCond": "arg.codice_azienda=$codice_azienda_s$"
 		},
 		{
-			"label": "$P{label_id}",
+			"fieldName": "id_argomento_list",
 			"format": {
-				"dataType": "number",
-				"viewType": "input"
+			  "dataType": "text",
+			  "viewType": "input"
 			},
-			"fieldName": "id_argomento_s",
+			"label": "$P{label_id}",
 			"newLine": false,
-			"queryCond": "arg.id_argomento=$id_argomento_s$"
-		},
+			"queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
+		  },
 		{
 			"fieldName": "argomento_s",
 			"format": {
@@ -258,7 +268,7 @@
 				"options": [],
 				"viewType": "combobox"
 			},
-			"label": "Argomento",
+			"label": "Argomento padre",
 			"newLine": true,
 			"queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
 		}
@@ -363,5 +373,37 @@
 			"viewType": "form",
 			"formActionType": "multi-attachments"
 		}
+	],
+	"table_multiselection_actions": [
+		{
+			"viewType": "menu",
+			"key": "menutest",
+			"label": "Options",
+			"icon": "more_vert",
+			"menuOptions": [
+				{
+					"key": "merge_argomenti",
+					"icon": "merge_type",
+					"label": "Unifica argomenti",
+					"query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+				},
+				{
+					"key": "delete",
+					"icon": "delete",
+					"label": "Delete",
+					"query": "select entrasp.cancella_risorse(array[$selected_rows_data$])",
+					"confirmAction": true,
+					"reloadOnSuccess": true,
+					"confirmActionMessage": "Eliminare la cartella e i relativi file?"
+				},
+				{
+					"key": "create_folder",
+					"icon": "create_new_folder",
+					"label": "Crea cartella",
+					"query": "SELECT entrasp.cdms_risorsa_da_tipo_allegato('€global_codice_azienda€', id_argomento) FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+				}
+			]
+		}
+		
 	]
 }

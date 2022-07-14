@@ -8,8 +8,13 @@ import { ConsoleLoggerService, PubSubService } from "app/oc/services";
   template: `
 <div [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" [formGroup]="group">
 <label class="radio-label-padding">{{field.label}}:</label>
-<mat-radio-group [formControlName]="field.name" [ngStyle]="{'display': 'flex', 'flex-direction': 'column'}" [(ngModel)]="chosenItem">
-<mat-radio-button color="primary" *ngFor="let item of field.options" [value]="item" [disabled]="field.readonly || readOnlyPage" (change)="onCheck($event)" >{{item.name}}</mat-radio-button>
+<mat-radio-group [formControlName]="field.name" [ngStyle]="{'display': 'flex', 'flex-direction': 'column', 'align-items': 'flex-start'}" [(ngModel)]="chosenItem">
+  <mat-radio-button #button color="primary" *ngFor="let item of field.options" [value]="item" [disabled]="field.readonly || readOnlyPage" 
+  (change)="onCheck($event)" 
+  >
+  <!-- INSIDE THE MAT-RADIO-BUTTON (click)="checkStates($event, button)" --> 
+    {{item.name}}
+  </mat-radio-button>
 </mat-radio-group>
 </div>
 `,
@@ -28,7 +33,7 @@ export class RadiobuttonComponent implements OnInit {
   chosenItem: any;
 
   constructor(private pubSubService: PubSubService,
-            private _console: ConsoleLoggerService) { }
+    private _console: ConsoleLoggerService) { }
   ngOnInit() {
     const _this = this;
     _this._console.log(_this.field);
@@ -48,4 +53,23 @@ export class RadiobuttonComponent implements OnInit {
       setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: event.value.id, type: 'radiobutton' }); }, 50);
     }
   }
+
+  /*
+  checkStates(event: any, el): void {
+    const _this = this;
+
+    _this._console.log(event);
+    _this._console.log(el);
+
+    event.preventDefault();
+    if (_this.chosenItem && _this.chosenItem === el.value) {
+      el.checked = false;
+      _this.chosenItem = null;
+    } else {
+      _this.chosenItem = el.value
+      el.checked = true;
+      _this.onCheck(event);
+    }
+  }
+  */
 }

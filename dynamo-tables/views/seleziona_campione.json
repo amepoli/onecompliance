@@ -150,25 +150,17 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_anagrafica",
-            "label": "Incaricato risposta",
-            "newLine": false,
-            "size": 2,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "comboQuery": "select objectkey as id, objectdescription as name from entrasp.survey_population($codice_azienda$, $id_sondaggio$, '|') order by objectdescription;",
                 "options": [],
                 "viewType": "combobox",
-                "dataType": "text"
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Necessario selezionare l'oggetto della verifica",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
@@ -181,6 +173,21 @@
             "newLine": false,
             "readOnly": false,
             "size": 4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "Incaricato risposta",
+            "newLine": true,
+            "size": 2,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -332,20 +339,179 @@
                 "dataType": "text"
             },
             "isHidden": false,
-            "width": "20%",
+            "width": "15%",
             "isPrimary": false,
             "key": "giudizio",
-            "label": "Giudizio"
+            "label": "Giudizio",
+            "style": [
+                {
+                  "value": "*",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Basso",
+                  "font_color": "PaleGreen",
+                  "font_weight": "500",
+                  "background_color": "Green",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Favorevole",
+                  "font_color": "PaleGreen",
+                  "font_weight": "500",
+                  "background_color": "Green",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Adeguato",
+                  "font_color": "PaleGreen",
+                  "font_weight": "500",
+                  "background_color": "Green",
+                  "text_align": "center"
+                },
+                {
+                  "value": "In prevalenza favorevole",
+                  "font_color": "white",
+                  "font_weight": "500",
+                  "background_color": "royalblue",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Irrilevante",
+                  "font_color": "DarkBlue",
+                  "font_weight": "500",
+                  "background_color": "GhostWhite",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Non significativo",
+                  "font_color": "PaleGreen",
+                  "font_weight": "500",
+                  "background_color": "Green",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Poco significativo",
+                  "font_color": "PaleGreen",
+                  "font_weight": "500",
+                  "background_color": "Green",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Prevalentemente adeguato",
+                  "font_color": "black",
+                  "font_weight": "500",
+                  "background_color": "#ffff59",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Medio-Basso",
+                  "font_color": "DarkRed",
+                  "font_weight": "500",
+                  "background_color": "orange",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Abbastanza significativo",
+                  "font_color": "DarkRed",
+                  "font_weight": "500",
+                  "background_color": "orange",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Medio",
+                  "font_color": "DarkRed",
+                  "font_weight": "500",
+                  "background_color": "orange",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Parzialmente favorevole",
+                  "font_color": "DarkRed",
+                  "font_weight": "500",
+                  "background_color": "orange",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Medio-alto",
+                  "font_color": "DarkRed",
+                  "font_weight": "500",
+                  "background_color": "orange",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Parzialmente adeguato",
+                  "font_color": "DarkRed",
+                  "font_weight": "500",
+                  "background_color": "orange",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Parzialmente sfavorevole",
+                  "font_color": "DarkRed",
+                  "font_weight": "500",
+                  "background_color": "orange",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Molto significativo",
+                  "font_color": "white",
+                  "font_weight": "500",
+                  "background_color": "firebrick",
+                  "font_size": "medium",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Alto",
+                  "font_color": "white",
+                  "font_weight": "500",
+                  "background_color": "firebrick",
+                  "font_size": "medium",
+                  "text_align": "center"
+                },
+                {
+                  "value": "In prevalenza sfavorevole",
+                  "font_color": "white",
+                  "font_weight": "500",
+                  "background_color": "firebrick",
+                  "font_size": "medium",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Non adeguato",
+                  "font_color": "white",
+                  "font_weight": "500",
+                  "background_color": "firebrick",
+                  "font_size": "medium",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Sfavorevole",
+                  "font_color": "white",
+                  "font_weight": "500",
+                  "background_color": "black",
+                  "font_size": "medium",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Obbligo di Astensione",
+                  "font_color": "white",
+                  "font_weight": "500",
+                  "background_color": "firebrick",
+                  "font_size": "medium",
+                  "text_align": "center"
+                }
+              ]
         },
         {
             "format": {
                 "dataType": "text"
             },
             "isHidden": false,
-            "width": "20%",
+            "width": "38%",
             "isPrimary": false,
             "key": "incaricato_risposta",
-            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica)",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica)",
             "label": "Incaricato a rispondere"
         },
         {
@@ -353,15 +519,17 @@
                 "dataType": "text"
             },
             "isHidden": false,
-            "width": "20%",
+            "width": "10%",
             "isPrimary": false,
             "key": "somministrazione_completata",
             "label": "Completo sì/no",
             "style": [
                 {
                     "value": "Completo",
-                    "font_color": "green",
-                    "font_weight": "500"
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
                 },
                 {
                     "value": "Incompleto",
@@ -376,7 +544,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "11%",
+            "width": "8%",
             "key": "visible_button_somministrazione",
             "label": "Risposte",
             "sameOrigin": false,

@@ -33,7 +33,7 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   subscription: Subscription;
 
   @ViewChild('textAreaEl') textAreaEl: ElementRef;
-  @HostBinding('style.height') textAreaComponentHeight = '256px';
+  @HostBinding('style.height') textAreaComponentHeight = '211px';
   
   htmlContent: string = "";
 
@@ -108,7 +108,7 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
       this.textAreaComponentHeight = (height + 78) + "px";
     }
     else {
-      this.textAreaComponentHeight = "256px";
+      this.textAreaComponentHeight = "211px";
     }
   }
 

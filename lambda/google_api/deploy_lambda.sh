@@ -21,6 +21,8 @@ LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.google_api.lambdaName"`
 DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
 DYN_PROFILESNAME=`cat ../../${1}.json | jq -r ".dynamoTables.profiles.tableName"`
 DYN_VIEWSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.views.tableName"`
+DYN_EXTAUTHNAME=`cat ../../${1}.json | jq -r ".dynamoTables.external_authentications.tableName"`
+GOOGLE_REDIRECT_URI=`cat ../../${1}.json | jq -r ".dynamoTables.external_authentications.redirectUri"`
 
 DBNAME=`cat ../../${1}.json | jq -r ".postgres.dbName"`
 HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
@@ -45,11 +47,13 @@ sed -i -e "s/PASSWORD/${PASSWORD}/g" index.js
 sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
 sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
 sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
+sed -i -e "s/EXTAUTH_NAME/${DYN_EXTAUTHNAME}/g" index.js
 
 sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js
 sed -i -e "s/REGION/${REGION}/g" index.js
 sed -i -e "s/SCHEMA/${SCHEMA}/g" index.js
 sed -i -e "s/GOOGLE_API_KEY/${GOOGLE_API_KEY}/g" index.js
+sed -i -e "s/GOOGLE_REDIRECT_URI/${GOOGLE_REDIRECT_URI}/g" index.js
 sed -i -e "s/CLIENT_ID/${CLIENT_ID}/g" index.js
 sed -i -e "s/CLIENT_SECRET/${CLIENT_SECRET}/g" index.js
 

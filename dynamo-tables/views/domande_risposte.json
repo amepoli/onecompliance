@@ -376,7 +376,7 @@
             },
             "newLine": false,
             "textareaHeight": "S",
-            "size": 7
+            "size": 5.55
         },
         {
             "isHidden": false,
@@ -389,9 +389,136 @@
                 "dataType": "number"
             },
             "newLine": false,
-            "size": 1
+            "size": 0.75
         },
         {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "buttonIcon": "report_problem",
+            "key": "create_segnalazione",
+            "label": "Crea Segnalazione",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "risposte_update_insert_on_create_whistleblowing",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select distinct c.codice_compito as id, c.titolo as name from entrasp.compiti_rif_bo crb inner join entrasp.compiti c on c.codice_compito=crb.codice_compito and c.codice_azienda=crb.codice_azienda where crb.codice_azienda=$codice_azienda$ and crb.id_sondaggio=$id_sondaggio$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_compito",
+            "outputEvent": {
+                "eventName": "risposta_update_insert_on_associate_whistleblowing",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "risposta_update_insert_on_associate_whistleblowing",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>£id_risposta£::numeric, risposta_=>£risposta£::text, iddomanda=>£id_domanda£::numeric, idrispostaprev=>£id_risposta_prev_radio£::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>£punteggio£::numeric, peso_=>coalesce(£peso_oa£, £peso_rb£, £peso_mc£)::numeric, note_=>entrasp.note_domanda(£id_tipo_domanda£, '£note_rb£','£note_mc£'), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
+                    "condition": "none",
+                    "outputEventWhenComplete": "associa_segnalazione",
+                    "values": []
+                },
+                {
+                    "eventName": "associa_segnalazione",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.associa_segnalazione_domanda('riepilogoRisposte','£codice_compito£', $codice_azienda$, $id_sondaggio$, $id_somministrazione$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$)",
+                    "condition": "none",
+                    "outputEventWhenComplete": "triggerReload",
+                    "values": []
+                }
+            ],
+            "label": "Associa Segnalazione",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "menu",
+              "menuOptions": [
+                {
+                    "icon": "report_problem",
+                    "label": "Crea Segnalazione",
+                    "outputEventName": "risposte_update_insert_on_create_whistleblowing"
+                },
+                {
+                  "icon": "close",
+                  "label": "Dissocia Segnalazione",
+                  "outputEventName": "dissocia_segnalazione"
+                },
+                {
+                  "icon": "delete",
+                  "label": "Cancella risposta",
+                  "outputEventName": "delete_risposta"
+                }
+              ]
+            },
+            "inputEvents": [
+              {
+                "eventName": "delete_risposta",
+                "actionType": "show_message",
+                "condition": "none",
+                "values": [],
+                "message": {
+                  "messageText": "Cancellare definitivamente la risposta?",
+                  "actionOnNo": {
+                    "actionType": "query",
+                    "queryFunct": "select 1"
+                  },
+                  "actionOnYes": {
+                    "actionType": "query",
+                    "queryFunct": "SELECT entrasp.delete_risposta( $codice_azienda$,$id_domanda$,$id_modello_test$,$id_modello_test_vr$,$id_sondaggio$,$id_somministrazione$, $id_sezione$)"
+                  }
+                },
+                "successMessage": "Risposta cancellata correttamente",
+                "outputEventWhenComplete": "triggerReload"
+              },
+              {
+                "eventName": "dissocia_segnalazione",
+                "actionType": "show_message",
+                "condition": "none",
+                "values": [],
+                "message": {
+                  "messageText": "Dissociare la segnalazione dalla domanda?",
+                  "actionOnNo": {
+                    "actionType": "query",
+                    "queryFunct": "select 1"
+                  },
+                  "actionOnYes": {
+                    "actionType": "query",
+                    "queryFunct": "delete from entrasp.compiti_rif_bo where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£' and id_domanda=£id_domanda£ and object_name='riepilogoRisposte'"
+                  }
+                },
+                "successMessage": "Segnalazione dissociata correttamente",
+                "outputEventWhenComplete": "triggerReload"
+              }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "domande_actions",
+            "label": "",
+            "newLine": false,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.6
+          },
+          {
             "autoGenerate": false,
             "isHidden": false,
             "readOnly": true,
@@ -404,27 +531,8 @@
                 "viewType": "widget",
                 "widgetType": "multi-attachments"
             },
-            "newLine": false,
-            "size": 3
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": "$Q{is_hidden_risultato}",
-            "isPrimary": false,
-            "buttonIcon": "report_problem",
-            "key": "create_segnalazione",
-            "label": "Segnalazione",
             "newLine": true,
-            "outputEvent": {
-                "eventName": "compito_create",
-                "eventTrigger": "press"
-            },
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1
+            "size": 0.75
         },
         {
             "isHidden": false,
@@ -490,7 +598,15 @@
             "isPrimary": false,
             "inputEvents": [
                 {
-                    "eventName": "compito_create",
+                    "eventName": "risposte_update_insert_on_create_whistleblowing",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>£id_risposta£::numeric, risposta_=>£risposta£::text, iddomanda=>£id_domanda£::numeric, idrispostaprev=>£id_risposta_prev_radio£::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>£punteggio£::numeric, peso_=>coalesce(£peso_oa£, £peso_rb£, £peso_mc£)::numeric, note_=>entrasp.note_domanda(£id_tipo_domanda£, '£note_rb£','£note_mc£'), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
+                    "condition": "none",
+                    "outputEventWhenComplete": "compito_create_from_domanda",
+                    "values": []
+                },
+                {
+                    "eventName": "compito_create_from_domanda",
                     "actionType": "query",
                     "queryFunct": "select entrasp.compiti_rif_bo_insert('riepilogoRisposte', $descrizione$, $codice_azienda$, $id_sondaggio$, $id_somministrazione$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as codice_compito_created",
                     "condition": "none",
@@ -536,7 +652,7 @@
                         "format": {
                             "viewType": "radiobutton",
                             "options": [],
-                            "comboQuery": "select id_risposta_prev as id, risposta as name from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£;"
+                            "comboQuery": "select id_risposta_prev as id, risposta as name from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ order by ordinamento;"
                         },
                         "outputEvent": {
                             "eventName": "toggle_question",
@@ -673,7 +789,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "readOnly": false,
-                        "newLine": false,
+                        "newLine": true,
                         "key": "risposta",
                         "label": "Risposta",
                         "size": 8,
@@ -689,25 +805,6 @@
                                 }
                             ]
                         }
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "button"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "buttonIcon": "report_problem",
-                        "key": "create_segnalazione",
-                        "label": "Segnalazione",
-                        "newLine": true,
-                        "outputEvent": {
-                            "eventName": "compito_create",
-                            "eventTrigger": "press"
-                        },
-                        "readOnly": false,
-                        "sameOrigin": false,
-                        "size": 1
                     },
                     {
                         "autoGenerate": false,
@@ -773,7 +870,7 @@
                         "isHidden": "$Q{is_hidden_risultato}",
                         "isPrimary": false,
                         "readOnly": true,
-                        "newLine": false,
+                        "newLine": true,
                         "key": "peso_mc",
                         "sameOrigin": false,
                         "label": "Risultato %",
@@ -799,25 +896,6 @@
                                 "queryFunct": "select codice_colore as peso_mc_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select sum(peso) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=any(entrasp.evaluate_given_field_multiple('risposta_multipla', '$risposta_multipla$')) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
                             }
                         ]
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "button"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "buttonIcon": "report_problem",
-                        "key": "create_segnalazione",
-                        "label": "Segnalazione",
-                        "newLine": true,
-                        "outputEvent": {
-                            "eventName": "compito_create",
-                            "eventTrigger": "press"
-                        },
-                        "readOnly": false,
-                        "sameOrigin": false,
-                        "size": 0.5
                     },
                     {
                         "isHidden": false,

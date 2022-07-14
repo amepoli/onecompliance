@@ -14,8 +14,9 @@
     "is_hidden_codice_azienda": "true",
     "is_hidden_id_anagrafica": "false",
     "id_argomento_father": "3576",
-    "label_revisioni": "File del flusso informativo"
-  },
+    "label_revisioni": "File del flusso informativo",
+    "id_anagrafica_if_clientela": "true"
+    },
   "table_multiselection_actions": [
     {
       "viewType": "menu",
@@ -47,7 +48,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select entrasp.stato_information_flow(crs.codice_azienda, crs.id_risorsa) as stato, case when crs.id_argomento_stato not in(4035, 5327) then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1))",
+      "queryString": "select entrasp.stato_information_flow(crs.codice_azienda, crs.id_risorsa) as stato, case when (select count(prog_revisione) from entrasp.cdms_risorse_revisioni rev where rev.codice_azienda=crs.codice_azienda and rev.id_risorsa=crs.id_risorsa)=0 then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1)) and $P{id_anagrafica_if_clientela}",
       "type": "main"
     },
     {
@@ -302,7 +303,7 @@
       "isPrimary": true,
       "width": "5%",
       "key": "id_risorsa",
-      "label": "ID Cartella"
+      "label": "# Cartella"
     },
     {
       "format": {
@@ -429,7 +430,7 @@
           "son": "id_risorsa_sopra"
         }
       ],
-      "isHidden": false,
+      "isHidden": true,
       "label": "Flussi Informativi Associabili"
     },
     {
@@ -454,7 +455,7 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "label": "ID Documento",
+      "label": "ID Cartella/Flusso informativo",
       "newLine": false,
       "queryCond": "crs.id_risorsa=$id_risorsa_s$"
     },
@@ -552,6 +553,17 @@
       "label": "Data scad. a",
       "newLine": true,
       "queryCond": "crs.data_scadenza<=$data_scad_a_s$"
+    },
+    {
+      "fieldName": "id_argomento_categoria_s",
+      "format": {
+        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg order by descrizione asc;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Categoria documento",
+      "newLine": false,
+      "queryCond": "array[crs.id_argomento_tipo_allegato]<@any(select entrasp.sotto_argomenti($id_argomento_categoria_s$))"
     },
     {
       "fieldName": "parola_search_s",

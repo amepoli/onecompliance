@@ -167,7 +167,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "risultatopercsezione",
-      "label": "Punteggio % sezione",
+      "label": "Punteggio %",
       "sameOrigin": false,
       "newLine": false,
       "readOnly": true,
@@ -179,7 +179,7 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "pct_risultato_ottenuto_calcolato_ponderato",
       "label": "Punteggio % pesato sezione",
@@ -198,9 +198,52 @@
       "isPrimary": false,
       "key": "object_description",
       "label": "Verifica su/di",
-      "newLine": true,
+      "newLine": false,
       "readOnly": true,
-      "size": 3
+      "size": 3.4
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "menu",
+        "menuOptions": [
+          {
+            "icon": "speaker_notes_off",
+            "label": "Rispondi non applicabile",
+            "outputEventName": "risp_non_applicabile"
+          }
+        ]
+      },
+      "inputEvents": [
+        {
+          "eventName": "risp_non_applicabile",
+          "actionType": "show_message",
+          "condition": "none",
+          "successMessage": "Inserite risposte non applicabili",
+          "values": [],
+          "message": {
+            "messageText": "Rispondere 'Non Applicicabile' a tutte le domande che lo prevedono?",
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select 1"
+            },
+            "actionOnYes": {
+              "actionType": "query",
+              "queryFunct": "SELECT entrasp.verifica_non_applicabile($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$, $id_sezione$)"
+            }
+          },
+          "outputEventWhenComplete": "sezioni_reload"
+        }
+      ],
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "more_vert",
+      "key": "sezioni_actions",
+      "label": "",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.6
     },
     {
       "autoGenerate": false,
@@ -425,28 +468,29 @@
       "actionTarget": {
         "name": "domande_sezioni_detail",
         "keymap": [
-              {
-                  "source": "codice_azienda",
-                  "destination": "codice_azienda"
-              },
-              {
-                  "source": "id_modello_test",
-                  "destination": "id_modello_test"
-              },
-              {
-                  "source": "id_modello_test_vr",
-                  "destination": "id_modello_test_vr"
-              },
-              {
-                "source": "id_sezione",
-                "destination": "id_sezione"
-              }
-      
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_modello_test",
+            "destination": "id_modello_test"
+          },
+          {
+            "source": "id_modello_test_vr",
+            "destination": "id_modello_test_vr"
+          },
+          {
+            "source": "id_sezione",
+            "destination": "id_sezione"
+          }
         ],
         "type": "form"
-         
-
-    }
+      }
+    },
+    {
+      "eventName": "sezioni_reload",
+      "actionType": "reload"
     }
   ]
 }
