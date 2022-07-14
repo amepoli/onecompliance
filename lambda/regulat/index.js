@@ -49,10 +49,10 @@ exports.handler = async (event, context) => {
   const yob = queryParams['yob'];
 
 
-  //Configure Post for authenticate
+  //Configure Post for authenticate, username and password of test
   var postData_login = JSON.stringify({
     "username": "f7ee43b4-99ae-42d3-bf70-63507cc15055_test",
-    "password": "QXPTmDfw8ABMTfN6******************************M"
+    "password": "QXPTmDfw8ABMTfN6kfE8114lyDk7rfJdJnoLMVHZbMElttnexbaETBSZs9YWkaQ3JVDkEDrmHFXVQM"
   });
 
   var options_login = {
@@ -87,6 +87,7 @@ exports.handler = async (event, context) => {
 
   */
 
+  
   //Configure Post for scan, it depends on the entityType (see the technical notes doc)
   if (entityType == 'P') {
     var postData_getScan = {
