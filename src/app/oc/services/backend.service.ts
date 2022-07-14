@@ -434,7 +434,7 @@ export class BackendService {
   }
 
   getDriveFolderDeepContents(anagraficaFolders: any, authToken: any) {
-    this.amplifyService.auth();
+    this.amplifyService.auth();g
     this.myPutPostInit.queryStringParameters = { request_type: 'getDriveFolderDeepContents' };
     this.myPutPostInit.body = { anagraficaFolders, authToken };
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
