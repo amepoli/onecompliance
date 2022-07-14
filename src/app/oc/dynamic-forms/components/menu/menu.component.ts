@@ -20,10 +20,10 @@ import { PubSubService } from 'app/oc/services';
             </span>{{item.label}}
           </button>
       </ng-container>
-      <button mat-menu-item (click)="kycTech()"> <!-- *ngIf="showKycTechButton" (click)="kycTech()"-->
+      <!-- <button mat-menu-item *ngIf="showKycTechButton" (click)="kycTech()">  
         <mat-icon>update</mat-icon>
         Check in Global Watchlist
-    </button>
+    </button> -->
     </mat-menu>
   </div>
   `,
