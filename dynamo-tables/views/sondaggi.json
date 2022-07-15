@@ -30,7 +30,7 @@
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select snd.*,entrasp.contratto_descr_id( $codice_azienda$, snd.id_contratto) as descr_contratto, mvr.id_risultato, mvr.flag_no_domande, entrasp. id_sondaggio_rif(snd.codice_azienda, snd.id_sondaggio)  as id_sondaggio_rif, entrasp.mdt_codtitolo(snd.codice_azienda, snd.id_modello_test) as descr_modello_test, (select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_fase_orig, (select id_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_progetto, entrasp.sondaggi_flags_sezioni_appsingola(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_activate, entrasp.descrizione_risultato_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as criterio_analisi from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+            "queryString": "select snd.*,(SELECT SUM(sw.punteggio_risposta) FROM entrasp.sondaggio_somministrazione_worst($codice_azienda$, $id_sondaggio$) sw) as somma_punti_ottenuti_ver_peg,(SELECT SUM(sw.punteggio) FROM entrasp.sondaggio_somministrazione_worst($codice_azienda$, $id_sondaggio$) sw) as somma_punti_ver_peg,(select count(*) from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_parent=$id_sondaggio$) as n_sondaggi_connessi,(select count(*) from entrasp.consuntivazioni WHERE codice_azienda=$codice_azienda$ and id_sondaggio= $id_sondaggio$) as aggiornamenti,entrasp.contratto_descr_id( $codice_azienda$, snd.id_contratto) as descr_contratto, mvr.id_risultato, mvr.flag_no_domande, entrasp. id_sondaggio_rif(snd.codice_azienda, snd.id_sondaggio)  as id_sondaggio_rif, entrasp.mdt_codtitolo(snd.codice_azienda, snd.id_modello_test) as descr_modello_test, (select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_fase_orig, (select id_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_progetto, entrasp.sondaggi_flags_sezioni_appsingola(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_activate, entrasp.descrizione_risultato_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as criterio_analisi from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         },
         {
             "operation": "selectForm",
@@ -1097,6 +1097,28 @@
                     {
                         "autoGenerate": false,
                         "format": {
+                            "dataType": "text",
+                            "viewType": "label"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "label",
+                        "label": "",
+                        "style": {
+                            "background_color": "LightSlateGrey",
+                            "font_color": "white",
+                            "font_size": "1px",
+                            "font_style": "normal",
+                            "font_weight": "10"
+                        },
+                        "newLine": true,
+                        "readOnly": true,
+                        "sameOrigin": false,
+                        "size": 10
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
                             "dataType": "number",
                             "viewType": "input"
                         },
@@ -1144,10 +1166,61 @@
                         "key": "descr_modello_test",
                         "label": "Titolo Modello Verifica",
                         "newLine": false,
-                        "size": 2.3,
+                        "size": 3.4,
                         "sameOrigin": false,
                         "readOnly": true
                     },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "somma_punti_ottenuti_ver_peg",
+                        "label": "Punteggio ottenuto Ver. Peggiore",
+                        "newLine": false,
+                        "readOnly": true,
+                        "sameOrigin": true,
+                        "size": 1.8,
+                        "style": {
+                            "background_color": "white"
+                        }
+                    }, 
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "somma_punti_ver_peg",
+                        "label": "Totale punteggi Ver. Peggiore",
+                        "newLine": true,
+                        "readOnly": true,
+                        "sameOrigin": true,
+                        "size": 1.8,
+                        "style": {
+                            "background_color": "white"
+                        }
+                    }, 
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "id_sondaggio_succ",
+                        "label": "Sond. successivo",
+                        "newLine": false,
+                        "readOnly": true,
+                        "sameOrigin": true,
+                        "size": 1.5
+                    },   
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1161,24 +1234,9 @@
                         "key": "id_sondaggio_parent",
                         "label": "Sondaggio Parent",
                         "newLine": false,
-                        "size": 2,
-                        "readOnly": false
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "number",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "id_sondaggio_succ",
-                        "label": "Id Sondaggio Succ",
-                        "newLine": true,
-                        "readOnly": false,
-                        "sameOrigin": true,
-                        "size": 2
-                    },
+                        "size": 1.5,
+                        "readOnly": true
+                    },                
                     {
                         "format": {
                             "dataType": "number",
@@ -1197,7 +1255,7 @@
                             "eventTrigger": "press"
                         },
                         "readOnly": true,
-                        "queryFunct": "select 1"
+                        "queryFunct": "select count(*) from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_parent=$id_sondaggio$"
                     },
                     {
                         "format": {
@@ -1217,7 +1275,7 @@
                             "eventTrigger": "press"
                         },
                         "readOnly": true,
-                        "queryFunct": "select 1",
+                        "queryFunct": "select count(*) from entrasp.consuntivazioni WHERE codice_azienda=$codice_azienda$ and id_sondaggio= $id_sondaggio$",
                         "sameOrigin": false
                     }
                 ]
