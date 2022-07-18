@@ -400,16 +400,61 @@
                             "dataType": "text",
                             "viewType": "combobox",
                             "options": [],
-                            "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_DOCUMENTO_IDENT';"
+                            "comboQuery": "SELECT a.id_argomento AS id, a.descrizione AS name FROM entrasp.argomenti a inner join entrasp.argomenti_argomenti aa on a.id_argomento=aa.id_argomento_son WHERE id_argomento_father=3534;"
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "codice_tipo_documento",
+                        "key": "id_argomento_tipo_documento",
                         "label": "Tipo Documento",
-                        "queryFunct": "SELECT codice_tipo_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
+                        "queryFunct": "SELECT id_argomento_tipo_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
                         "newLine": false,
                         "readOnly": false,
                         "size": 2
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "numero_documento",
+                        "label": "Numero Documento",
+                        "newLine": false,
+                        "queryFunct": "SELECT numero_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "readOnly": false,
+                        "size": 1.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "rilasciato_da",
+                        "label": "Rilasciato Da",
+                        "newLine": false,
+                        "queryFunct": "SELECT rilasciato_da from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "readOnly": false,
+                        "size": 2.2
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "date",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "data_rilascio_documento",
+                        "label": "In Data",
+                        "queryFunct": "SELECT data_rilascio_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 1.3
                     },
                     {
                         "autoGenerate": false,
@@ -424,7 +469,7 @@
                         "queryFunct": "SELECT data_scadenza_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 2
+                        "size": 1.3
                     },
                     {
                         "autoGenerate": false,
@@ -573,7 +618,7 @@
             "label": "Località",
             "newLine": false,
             "readOnly": false,
-            "size": 3
+            "size": 2.8
         },
         {
             "autoGenerate": false,
@@ -595,7 +640,7 @@
             "label": "Provincia",
             "newLine": false,
             "readOnly": false,
-            "size": 0.7
+            "size": 0.8
         },
         {
             "autoGenerate": false,
@@ -643,7 +688,7 @@
             "key": "prog_vr",
             "label": "Versione",
             "newLine": false,
-            "size": 0.7,
+            "size": 0.8,
             "readOnly": true
         },
         {
@@ -869,7 +914,7 @@
         },              
         {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(idcentrogestdefault=> $id_centro_gest_default$, codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, codicetipodoc=>$codice_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date);",
+            "queryString": "SELECT entrasp.anagrafica_id_update(idcentrogestdefault=> $id_centro_gest_default$, codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idargomentotipodocumento=>$id_argomento_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date);",
             "type": "main"
         },
         {
