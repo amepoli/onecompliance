@@ -15,7 +15,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select * from imports.aml_scans where codice_azienda='€global_codice_azienda€'"
+      "queryString": "select *,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_anagrafica) as descr_anagrafica,entrasp.describe_aml_scan_data(scan_data) as descr_scan_data from imports.aml_scans where codice_azienda='€global_codice_azienda€'"
     }
   ],
   "table_keys": [
@@ -37,14 +37,15 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "id_scan",
-      "label": "#"
+      "label": "#",
+      "width": "13%"
     },
     {
       "format": {
         "dataType": "number",
         "value": ""
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "id_anagrafica",
       "label": "# Anagrafica"
@@ -57,7 +58,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "id_somministrazione",
-      "label": "# somministrazione"
+      "label": "# Somministrazione",
+      "width": "10%"
     },
     {
       "format": {
@@ -66,8 +68,20 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "scan_data",
-      "label": "Risultato"
+      "key": "descr_anagrafica",
+      "label": "Oggetto di Verifica",
+      "width": "20%"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "value": ""
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descr_scan_data",
+      "label": "Risultato",
+      "width": "47%"
     },
     {
       "format": {
@@ -77,10 +91,25 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "date_of_scan",
-      "label": "Data"
+      "label": "Data",
+      "width": "10%"
     }
   ],
   "restrictions": {
     "preventNavigationToForm": true
-  }
+  },
+  "hideActions": [
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "quick-add",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "import_export",
+      "viewType": "table"
+    }
+  ]
 }
