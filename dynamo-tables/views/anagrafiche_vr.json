@@ -216,15 +216,6 @@
                 "eventName": "combo_tipo_soggetto",
                 "eventTrigger": "select"
             },
-            "inputEvents": [
-                {
-                    "actionType": "query",
-                    "eventName": "combo_tipo_soggetto",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "update entrasp.anagrafiche_id set tipo_soggetto='£tipo_soggetto£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ returning 1"
-                }
-            ],
             "queryFunct": "SELECT tipo_soggetto from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
             "readOnly": false,
             "size": 2
@@ -303,7 +294,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "data_upd",
-            "label": "Data Aggiunta",
+            "label": "Inserimento",
             "newLine": true,
             "readOnly": true,
             "size": 1
@@ -768,12 +759,6 @@
             "newLine": false,
             "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','CLI',$id_anagrafica$)",
             "readOnly": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when £id_anagrafica£ is null or $P{is_hidden_ruolo2} then true else false end as label"
-                }
-            ],
             "sameOrigin": false,
             "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false
@@ -789,12 +774,6 @@
             "newLine": false,
             "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','FOR',$id_anagrafica$)",
             "readOnly": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when (€id_anagrafica€ is null or €id_anagrafica€::varchar ='') or $P{is_hidden_ruolo2} then true else false end as label"
-                }
-            ],
             "sameOrigin": false,
             "isPrimary": false,
             "isHidden": "$Q{is_hidden_ruolo}"
@@ -811,12 +790,6 @@
             "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','RSRSA',$id_anagrafica$)",
             "readOnly": false,
             "sameOrigin": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when ($id_anagrafica$ is null or $id_anagrafica$::varchar ='') or $P{is_hidden_ruolo2} then true else false end as label"
-                }
-            ],
             "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false
         },
@@ -831,12 +804,6 @@
             "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','FONDO',$id_anagrafica$)",
             "readOnly": false,
             "sameOrigin": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when ($id_anagrafica$ is null or $id_anagrafica$::varchar ='') or $P{is_hidden_ruolo2} then true else false end as label"
-                }
-            ],
             "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false
         }
@@ -877,13 +844,13 @@
         {
             "operation": "update",
             "type": "preCheck",
-            "queryString": "select codice from entrasp.anagrafiche_id where codice_part=$codice_part$ and codice=$codice$",
+            "queryString": "select codice from entrasp.anagrafiche_id where codice_part=$codice_part$ and codice=$codice$ and id_anagrafica != $id_anagrafica$",
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice!"
         },
         {
             "operation": "update",
             "type": "preCheck",
-            "queryString": "select codice_fiscale from entrasp.anagrafiche_vr where codice_part=$codice_part$ and codice_fiscale=$codice_fiscale$",
+            "queryString": "select codice_fiscale from entrasp.anagrafiche_vr where codice_part=$codice_part$ and codice_fiscale=$codice_fiscale$ and id_anagrafica != $id_anagrafica$",
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
         },              
         {
@@ -1208,6 +1175,22 @@
         {
             "viewType": "form",
             "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "stopEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "startEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "share"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "import_export"
         }
     ],
     "importQueries": {
