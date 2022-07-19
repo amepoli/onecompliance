@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DomandeRisposteVerPeggiore" pageWidth="507" pageHeight="800" columnWidth="507" leftMargin="0" rightMargin="0" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DomandeRisposteVerPeggiore" pageWidth="507" pageHeight="800" whenNoDataType="NoPages" columnWidth="507" leftMargin="0" rightMargin="0" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
 	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
@@ -30,14 +30,10 @@
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
-	<parameter name="codice_azienda" class="java.lang.String">
-		<defaultValueExpression><![CDATA["UNIFACTOR"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="id_sondaggio" class="java.math.BigDecimal">
-		<defaultValueExpression><![CDATA[new BigDecimal(454)]]></defaultValueExpression>
-	</parameter>
+	<parameter name="codice_azienda" class="java.lang.String"/>
+	<parameter name="id_sondaggio" class="java.math.BigDecimal"/>
 	<queryString>
-		<![CDATA[select * from entrasp.sondaggio_somministrazione_worst($P{codice_azienda},$P{id_sondaggio})]]>
+		<![CDATA[select *,(SELECT string_agg(DISTINCT r.risposta ,' / ')FROM entrasp.risposte risp INNER JOIN entrasp.risposte_previste r ON r.codice_azienda=risp.codice_azienda AND r.id_modello_test=risp.id_modello_test AND r.id_modello_test_vr=risp.id_modello_test_vr AND r.id_risposta_prev=risp.id_risposta_prev WHERE risp.codice_azienda=sw.codice_azienda AND risp.id_sondaggio=sw.id_sondaggio AND round((risp.peso)*(risp.punteggio)/100,2) = sw.punteggio_risposta) AS risposte_possibili from entrasp.sondaggio_somministrazione_worst($P{codice_azienda}, $P{id_sondaggio}) sw]]>
 	</queryString>
 	<field name="codice_azienda" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
