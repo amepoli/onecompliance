@@ -1725,7 +1725,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     async runRegulatEvent(event, value, keyListener) {
         let _this = this;
-        const regulatAPIParams: RegulatAPIParams = event.RegulatAPIParams;
+        const regulatAPIParams: RegulatAPIParams = event.regulatAPIParams;
         let formValues = _this.formArray.first.form.value;
                 
         // process the booleans (1/0 instead of true/false)

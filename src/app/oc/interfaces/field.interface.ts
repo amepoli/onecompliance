@@ -1,4 +1,4 @@
-import { GoogleAPIParams/* , RegulatAPIParams */, MenuOption } from ".";
+import { GoogleAPIParams , RegulatAPIParams, MenuOption } from ".";
 import { FormWidgetType } from "../types";
 import { EmailActionParameters } from "./email_action_parameters";
 
