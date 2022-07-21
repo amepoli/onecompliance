@@ -41,7 +41,9 @@ exports.handler = async (event) => {
 
                 let query = "";
                 let response;
-
+                
+                console.log('create the query');
+                
                 query = `SELECT an.id_anagrafica AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob
                 FROM entrasp.anagrafiche_id an
                 INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
@@ -75,6 +77,7 @@ exports.handler = async (event) => {
                 await client.release();
 
             } catch (e) {
+                console.error(e.message, e.stack);
                 return {
                     "statusCode": 200,
                     "isBase64Encoded": false,

@@ -10,6 +10,7 @@ import { DynamicFieldDirective } from 'app/oc/directives';
 import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-field.directive';
 import { InputComponent } from 'app/oc/dynamic-forms/components/input/input.component';
 import { RegulatAPIParams } from 'app/oc/interfaces/regulat_api_params';
+import { exit } from 'process';
 
 @Component({
     selector: 'form-getter',
@@ -1756,7 +1757,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             const codiceAziendaAML = formValues[regulatAPIParams.entityParams.codice_azienda];
             const idAnagraficaAML = formValues[regulatAPIParams.entityParams.id_anagrafica];
             const idSomministrazioneAML = formValues[regulatAPIParams.entityParams.id_somministrazione];
-            if(regulatAPIParams.actionType == 'get_aml_scan') {
+            if(regulatAPIParams.actionType === 'get_aml_scan') {
                 if(!regulatAPIParams.entityParams) {
                     _this._toastService.showErrorToast("Missing Regulat API entity params");
                 }
@@ -1766,6 +1767,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     let connected_registries =  await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
                     console.log(connected_registries);
+
+                    if (connected_registries.response === 'KO') {
+                        console.log('KO');
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showErrorToast(connected_registries.reason);
+                    }
+                    else{
 
                     let connectedRegistries = connected_registries.response; // array which contains the result of a query in 6 different columns: 
                                                                              // | connected_registry | entyty_type | company_name | name | surname | yob |
@@ -1781,6 +1789,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._dialogService.closeDialog();
 
                     _this._toastService.showSuccessToast('Successfully Scanned!'); // show success toast
+                    }
                 }
             }
             else {
