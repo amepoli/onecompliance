@@ -6,7 +6,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select *,(SELECT string_agg(DISTINCT r.risposta ,' / ')FROM entrasp.risposte risp INNER JOIN entrasp.risposte_previste r ON r.codice_azienda=risp.codice_azienda AND r.id_modello_test=risp.id_modello_test AND r.id_modello_test_vr=risp.id_modello_test_vr AND r.id_risposta_prev=risp.id_risposta_prev WHERE risp.codice_azienda=sw.codice_azienda AND risp.id_sondaggio=sw.id_sondaggio AND round((risp.peso)*(risp.punteggio)/100,2) = sw.punteggio_risposta) AS risposte_possibili from entrasp.sondaggio_somministrazione_worst($codice_azienda$, $id_sondaggio$) sw",
+      "queryString": "select *,(SELECT case when sw.flag_non_applicabile = true then 'Non Applicabile' else string_agg(DISTINCT r.risposta ,' / ') end FROM entrasp.risposte risp INNER JOIN entrasp.risposte_previste r ON r.codice_azienda=risp.codice_azienda AND r.id_modello_test=risp.id_modello_test AND r.id_modello_test_vr=risp.id_modello_test_vr AND r.id_risposta_prev=risp.id_risposta_prev WHERE risp.codice_azienda=sw.codice_azienda AND risp.id_sondaggio=sw.id_sondaggio AND round((risp.peso)*(risp.punteggio)/100,2) = sw.punteggio_risposta) AS risposte_possibili  from entrasp.sondaggio_somministrazione_worst($codice_azienda$, $id_sondaggio$) sw",
       "type": "main"
     }
   ],
