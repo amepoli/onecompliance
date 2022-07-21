@@ -73,11 +73,12 @@ exports.handler = async (event) => {
                 }
                 body = { result: 'OK', response: connectedRegistries };
 
-                //release the client --> ???
                 await client.release();
 
             } catch (e) {
                 console.error(e.message, e.stack);
+                console.log(e);
+                await client.release();
                 return {
                     "statusCode": 200,
                     "isBase64Encoded": false,
@@ -134,7 +135,8 @@ exports.handler = async (event) => {
             };
         }
         else {
-            return getBadUrlResponse();
+            console.log('Invalid request type');
+            // return getBadUrlResponse();
         }
     }
     
