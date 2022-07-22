@@ -1714,7 +1714,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
             _console.log('Checking if subfolder is already added: ' + (subFolder.folder + '/' + subFolder.file));
             if(syncData.filter( x => x.driveFilePath == (subFolder.folder + '/' + subFolder.file)).length == 0) {
                 if(!subFolder['fileid'].includes('/')) {
-                    subFolder['fileid'] = codiceAzienda + '/' + subFolder['fileid'];
+                    subFolder['fileid'] = (subFolder['s3Folder'] || codiceAzienda) + '/' + subFolder['fileid'];
                 }
 
                 // _console.log('adding subfolder file to syncData: ', JSON.stringify({
@@ -1722,7 +1722,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
                 // }));
 
                 syncData.push({
-                    s3FilePath: subFolder.fileid, s3md5: subFolder.md5, driveFilePath: subFolder.folder + '/' + subFolder.file, driveFolderId: folderIds[subFolder.folder], driveFileId: subFolder.driveFileId
+                    s3Folder: subFolder['s3Folder'], s3FilePath: subFolder.fileid, s3md5: subFolder.md5, driveFilePath: subFolder.folder + '/' + subFolder.file, driveFolderId: folderIds[subFolder.folder], driveFileId: subFolder.driveFileId
                 });
             }
         }
@@ -1877,7 +1877,7 @@ async function processDriveFolderDeepContents(deepContentsRequest, authParams) {
                             _console.log('driveFileInfo: ', JSON.stringify(driveFileInfo));
                             subFolder['md5'] = driveFileInfo['md5Checksum'];
                             subFolder['driveFileId'] = driveFileInfo['id'];
-        
+                            subFolder['file'] = driveFileInfo['name'];
                             if(!subFolders.fileid) {
                                 subFolder['fileid'] = driveFileInfo['id'];
                             }
