@@ -7,7 +7,7 @@
             "operation": "selectTable",
             "type": "main",
             "queryString": "select *, entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) as prog_vr, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) as incaricato from entrasp.gruppi_lavoro_membri where id_gruppo_lavoro in(select cg.id_gruppo_lavoro from entrasp.centri_gestionali cg inner join entrasp.cpl_trattamenti_centri_gestionali tdcg on cg.codice_part=tdcg.codice_part and cg.id_centro_gest=tdcg.id_centro_gest inner join entrasp.cpl_trattamenti_dati td on tdcg.id_trattamento_dati=td.id_trattamento_dati and tdcg.codice_azienda=td.codice_azienda where td.codice_azienda='€global_codice_azienda€') and codice_part='€global_codice_part€'"
-    }
+        }
     ],
     "form_keys": [
         {
@@ -34,7 +34,8 @@
             "key": "prog_vr",
             "label": "prog_vr",
             "newLine": true,
-            "readOnly": true
+            "readOnly": true,
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -107,7 +108,8 @@
             "isPrimary": true,
             "key": "prog_vr",
             "label": "prog_vr",
-            "queryFunct": "entrasp.anagrafiche_vr_max(codice_part, id_anagrafica)"
+            "queryFunct": "entrasp.anagrafiche_vr_max(codice_part, id_anagrafica)",
+            "sameOrigin": false
         },
         {
             "format": {
@@ -124,20 +126,20 @@
                 "viewType": "form",
                 "action": "navigate",
                 "keymap": [
-                  {
-                    "source": "codice_part",
-                    "destination": "codice_part"
-                  },
-                  {
-                    "source": "id_anagrafica",
-                    "destination": "id_anagrafica"
-                  },
-                  {
-                    "source": "prog_vr",
-                    "destination": "prog_vr"
-                  }
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "id_anagrafica",
+                        "destination": "id_anagrafica"
+                    },
+                    {
+                        "source": "prog_vr",
+                        "destination": "prog_vr"
+                    }
                 ]
-              }
+            }
         },
         {
             "format": {
@@ -151,7 +153,24 @@
             "label": "Incaricato"
         }
     ],
+    "subTables": [
+        {
+            "entryKey": "trattamenti_dati_sub_of_incaricato",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                },
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_anagrafica"
+                }
+            ],
+            "label": "Trattamenti dati associati"
+        }
+    ],
     "restrictions": {
-        "preventNavigationToForm": true
+        "preventNavigationToForm": false
     }
 }

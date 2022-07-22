@@ -1,0 +1,12 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "trattamenti_dati_sub_of_incaricato",
+  "inheritsFrom": "cpl_trattamenti_dati",
+  "predefinedQueries": [
+    {
+      "queryString": "SELECT t.id_trattamento_dati,t.codice,t.titolo, t.descrizione,t.boolean_conto_terzi,t.codice_azienda,entrasp.argomenti_descr_breve(id_argomento_tipo_trattamento_dato)as id_argomento_tipo_trattamento_dato,t.flag_trattamento_conto_terzi,t.codice_part,entrasp.centri_gestionali_descr($codice_azienda$,id_centro_gest) as centro_gest FROM entrasp.cpl_trattamenti_dati t INNER JOIN entrasp.cpl_trattamenti_centri_gestionali c ON t.id_trattamento_dati=c.id_trattamento_dati AND t.codice_azienda=c.codice_azienda INNER JOIN entrasp.gruppi_lavoro_membri g ON c.id_centro_gest=g.id_gruppo_lavoro AND c.codice_part=g.codice_part where t.codice_part=$codice_part$ AND g.id_anagrafica=$id_anagrafica$",
+      "operation": "selectTable",
+      "type": "main"
+    }
+  ]
+}
