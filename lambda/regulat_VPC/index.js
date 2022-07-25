@@ -100,7 +100,7 @@ exports.handler = async (event) => {
         }
         else if (requestType === 'getAmlScan') {
 
-            let scans = queryParams.data;
+            let scans = JSON.stringify(queryParams);
             console.log(scans);
             if (scans == null) {
                 return {
@@ -112,14 +112,18 @@ exports.handler = async (event) => {
             }
 
             try {
+
                 client = await pool.connect();
 
                 let query = "";
                 let response;
 
                 // run process query
-                query = `select true; --entrasp.process_aml_scans($$ ${scans}$ $);`; //can i? It's like " SELECT $$ anna's home $$  -->  | anna's home | "
+                query = `select entrasp.process_aml_scans($$ ${scans} $$);`;    //can i? It's like " SELECT $$ anna's home $$  -->  | anna's home | "
+                
+                console.log(query);
                 response = await client.query(query);
+                console.log(response);
 
                 //release the client
                 await client.release();
