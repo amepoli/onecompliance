@@ -1,5 +1,6 @@
 const https = require('https');
 const AWS = require('aws-sdk');
+const axios = require('axios');
 AWS.config.update({ region: 'eu-central-1' });
 const lambda = new AWS.Lambda({
   region: 'eu-central-1'
@@ -143,33 +144,21 @@ exports.handler = async (event, context) => {
     "registry": "309",
     "checkId": "1025" 
 }`;
-
   console.log(JSON.parse(test)[0].data);
   console.log(JSON.parse(test)[1].data);
   console.log(JSON.parse(test)[0].checkId);
-  console.log(JSON.parse(test)[1].checkId); */
-
-  
-  
-  /*   let response = await lambda.invoke({
+  console.log(JSON.parse(test)[1].checkId); 
+   let response = await lambda.invoke({
       FunctionName: 'FUNCTION_NAME',
       Payload: test      //to change the payload?,  how can i pass a requestType? --> 'getAmlScan' 
     }).promise();
-   */
-
-
-
-  //only to test
-  /* return ({
+   return ({
     "statusCode": 200,
     "isBase64Encoded": false,
     "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
     "body": JSON.stringify({ result: 'OK' })
   });
- */
-
-
-  /*   const entityType = queryParams['entityType'];
+   const entityType = queryParams['entityType'];
     const name = queryParams['name'];
     const surname = queryParams['surname'];
     const yob = queryParams['yob']; */
@@ -190,54 +179,22 @@ exports.handler = async (event, context) => {
     }
   };
 
-  /* MAYBE SOMETHING LIKE THIS?
-
+  /*********************************** MAYBE SOMETHING LIKE THIS? ************************************
   var clientId = "MyApp";
   var clientSecret = "MySecret";
-
-  // var authorizationBasic = $.base64.btoa(clientId + ':' + clientSecret);
   var authorizationBasic = window.btoa(clientId + ':' + clientSecret);
-
   var request = new XMLHttpRequest();
   request.open('POST', oAuth.AuthorizationServer, true);
   request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
   request.setRequestHeader('Authorization', 'Basic ' + authorizationBasic);
   request.setRequestHeader('Accept', 'application/json');
   request.send("username=John&password=Smith&grant_type=password");
-
   request.onreadystatechange = function () {
       if (request.readyState === 4) {
         alert(request.responseText);
       }
-  };
+  };  *************************************************************************************************/
 
-  */
-
-
-  /* //Configure Post for scan, it depends on the entityType (see the technical notes doc)
-  if (entityType == 'P') {
-    var postData_getScan = {
-      "access_token": "",
-      "refresh_token": "",
-      "firstname": "",
-      "lastname": "",
-      "yob": "",
-      "responseType": "json"
-    };
-    postData_getScan.firstname = name;
-    postData_getScan.lastname = surname;
-    postData_getScan.yob = yob;
-
-  } else if (entityType == 'E') {
-    var postData_getScan = {
-      "access_token": "",
-      "refresh_token": "",
-      "company": "",
-      "responseType": "json"
-    };
-    postData_getScan.company = name;
-  };
-*/
   var options_getScan = {
     "method": "POST",
     "hostname": "https://app.regulat.io/api/kyc/v1/company",
@@ -247,8 +204,6 @@ exports.handler = async (event, context) => {
     }
   };
  
-
-
   /* 
   //Get token
   let response = await post(options_login, postData_login);
@@ -261,11 +216,26 @@ exports.handler = async (event, context) => {
       "body": JSON.stringify({ result: 'KO', reason: 'Something wrong with getting access token' })
     });
   } */
+  var username = 'f7ee43b4-99ae-42d3-bf70-63507cc15055_test';
+  var password = 'QXPTmDfw8ABMTfN6kfE8114lyDk7rfJdJnoLMVHZbMElttnexbaETBSZs9YWkaQ3JVDkEDrmHFXVQM';
 
-  let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3JlZ3VsYXQuaW8iLCJhdWQiOlsicmVndWxhdGlvLmFwaSJdLCJpYXQiOjE2NTg3NDQyNzksIm5iZiI6MTY1ODc0NDI3OSwic3ViIjoiZjdlZTQzYjQtOTlhZS00MmQzLWJmNzAtNjM1MDdjYzE1MDU1X3Rlc3QiLCJ1c2VyX21ldGFkYXRhIjp7ImxhbmciOiJlbiJ9LCJhcHBfbWV0YWRhdGEiOnsiY2xpZW50X2lkIjoiZjdlZTQzYjQtOTlhZS00MmQzLWJmNzAtNjM1MDdjYzE1MDU1X3Rlc3QiLCJPcmdhbml6YXRpb25JZCI6IjM4MTBlZTI4LWQ0YzAtNDBjNS1hOGQxLTIwMjhlYTIxODQ1MiIsInNjb3BlIjpbIktZQzpBcGlBY2Nlc3MiXX19.MBTPi3VV77_643zNRQdHWpH7rFXAQR3tI3r_I8-qvCk";//response.access_token;
+    const tokenParams = `${username}:${password}`;
+    const encodedToken = Buffer.from(tokenParams).toString('base64');
 
-  //Get Scans
-  //Repeat for all the connectedRegistries and for the main registry
+  let token = await axios.post('https://app.regulat.io/api/auth/token', 
+  {grant_type: 'client_credentials'}, {
+    headers: { 'Authorization': 'Basic ' + encodedToken, 
+    'Content-Type': 'multipart/form-data'}}
+    /* auth: {
+      username: 'f7ee43b4-99ae-42d3-bf70-63507cc15055_test',
+      password: 'QXPTmDfw8ABMTfN6kfE8114lyDk7rfJdJnoLMVHZbMElttnexbaETBSZs9YWkaQ3JVDkEDrmHFXVQM'
+    } */
+  );
+
+  console.log('token:', token);
+  //let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3JlZ3VsYXQuaW8iLCJhdWQiOlsicmVndWxhdGlvLmFwaSJdLCJpYXQiOjE2NTg3NDQyNzksIm5iZiI6MTY1ODc0NDI3OSwic3ViIjoiZjdlZTQzYjQtOTlhZS00MmQzLWJmNzAtNjM1MDdjYzE1MDU1X3Rlc3QiLCJ1c2VyX21ldGFkYXRhIjp7ImxhbmciOiJlbiJ9LCJhcHBfbWV0YWRhdGEiOnsiY2xpZW50X2lkIjoiZjdlZTQzYjQtOTlhZS00MmQzLWJmNzAtNjM1MDdjYzE1MDU1X3Rlc3QiLCJPcmdhbml6YXRpb25JZCI6IjM4MTBlZTI4LWQ0YzAtNDBjNS1hOGQxLTIwMjhlYTIxODQ1MiIsInNjb3BlIjpbIktZQzpBcGlBY2Nlc3MiXX19.MBTPi3VV77_643zNRQdHWpH7rFXAQR3tI3r_I8-qvCk";//response.access_token;
+
+  //Get Scans for all the connectedRegistries and for the main registry
   for (let i = 0; i < connectedRegistries.length; i++) {
     
     console.log(i);
@@ -325,8 +295,6 @@ exports.handler = async (event, context) => {
     FunctionName: 'FUNCTION_NAME',
     Payload: scannedData      //to change the payload?,  how can i pass a requestType? --> 'getAmlScan' 
   }).promise();
-
-  console.log(response);
 
   return ({
     "statusCode": 200,

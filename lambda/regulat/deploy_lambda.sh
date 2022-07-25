@@ -46,7 +46,7 @@ rm index.js-e
 
 rm ./nodejs.zip
 
-zip -r nodejs.zip index.js package.json
+zip -r nodejs.zip node_modules index.js package.json
 
 #restore the original file
 
