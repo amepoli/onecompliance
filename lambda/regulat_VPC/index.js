@@ -25,9 +25,13 @@ exports.handler = async (event) => {
 
     const queryParams = event.queryStringParameters ? event.queryStringParameters : event;
     console.log('queryParams: ', queryParams);
-    
+
     const company = queryParams['company'];
     const requestType = queryParams['request_type']; //? queryParams['request_type'] : event.request_type;  // Because i need to call it also from regulat lambda
+    const registry = queryParams['registry'];
+
+    let client;
+    let body;
 
     if (!requestType) {
         return getBadUrlResponse();
@@ -37,13 +41,11 @@ exports.handler = async (event) => {
 
         if (requestType === 'getConnectedRegistries') {
             try {
-                const client = await pool.connect();
+                client = await pool.connect();
 
                 let query = "";
                 let response;
-                
-                console.log('create the query');
-                
+
                 query = `SELECT an.id_anagrafica AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob
                 FROM entrasp.anagrafiche_id an
                 INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
@@ -63,14 +65,17 @@ exports.handler = async (event) => {
                 //connectedRegistries = await client.query(query);
 
                 console.log('running query: ', query);
-                
+
                 response = await client.query(query);
+
                 console.log('response', response.rows);
 
                 let connectedRegistries = null;
-                if(response && response.rows) {
-                    connectedRegistries = response.rows; //Is it correct?
+
+                if (response && response.rows) {
+                    connectedRegistries = response.rows;
                 }
+
                 body = { result: 'OK', response: connectedRegistries };
 
                 await client.release();
@@ -95,8 +100,8 @@ exports.handler = async (event) => {
         }
         else if (requestType === 'getAmlScan') {
 
-            let scans = event.scannedData;
-
+            let scans = queryParams.data;
+            console.log(scans);
             if (scans == null) {
                 return {
                     "statusCode": 200,
@@ -107,13 +112,13 @@ exports.handler = async (event) => {
             }
 
             try {
-                const client = await pool.connect();
+                client = await pool.connect();
 
                 let query = "";
                 let response;
 
                 // run process query
-                query = `select entrasp.process_aml_scans($$${scans}$$);`; //can i? It's like " SELECT $$ anna's home $$  -->  | anna's home | "
+                query = `select true; --entrasp.process_aml_scans($$ ${scans}$ $);`; //can i? It's like " SELECT $$ anna's home $$  -->  | anna's home | "
                 response = await client.query(query);
 
                 //release the client
@@ -138,6 +143,12 @@ exports.handler = async (event) => {
             console.log('Invalid request type');
             // return getBadUrlResponse();
         }
+        return {
+            "statusCode": 200,
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "body": JSON.stringify(body)
+        };
     }
-    
+
 };

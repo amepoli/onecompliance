@@ -1766,7 +1766,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._dialogService.showLoadingDialog('Scanning in progress', 'Please wait...');
 
                     let connected_registries =  await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
-                    console.log(connected_registries);
+                    console.log(connected_registries.response);
 
                     if (connected_registries.response === 'KO') {
                         console.log('KO');
@@ -1775,8 +1775,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                     else{
 
-                    let connectedRegistries = connected_registries.response; // array which contains the result of a query in 6 different columns: 
-                                                                             // | connected_registry | entyty_type | company_name | name | surname | yob |
+                    let connectedRegistries = connected_registries.response; // json which contains the result of a query in 6 different columns: ; // json which contains the result of a query in 6 different columns: 
+                                                                                 // | connected_registry | entyty_type | company_name | name | surname | yob |
 
                     /* for(let i = 0; i < anagraficaFolders.length; i++) {
                         let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, connected_registries[i], nomeAML, cognomeAML, yobAML, idSomministrazioneAML, tipoSoggettoAML).toPromise();
@@ -1793,7 +1793,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             else {
-                _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");                    
+                _this._toastService.showErrorToast("Missing Regulat Api Params");                    
             }
         }
     }
