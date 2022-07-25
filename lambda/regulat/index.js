@@ -110,9 +110,6 @@ exports.handler = async (event, context) => {
 
   }
 
-  //To implement, add into response json these parameters i need in regulat_VPC
-  //scannedData = scannedData.add(company, registry, checkId, requestType="getAmlScan");
-
   return ({
     "statusCode": 200,
     "isBase64Encoded": false,
