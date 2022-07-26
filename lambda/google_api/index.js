@@ -152,7 +152,7 @@ async function prepareAuthToken(authCode) {
     const oAuth2Client = new OAuth2(
         "CLIENT_ID",
         "CLIENT_SECRET",
-        "https://localhost:4200"
+        "https://GOOGLE_REDIRECT_URI"
     );
     
     try {
@@ -278,9 +278,9 @@ async function getLocalSharedFolderId(drivePath) {
         
         try {
             response = await drive.files.list({
-                q: `sharedWithMe=true and mimeType='${folderMime}' and name='${folderName}'`,
+                q: `sharedWithMe=true and mimeType='${folderMime}' and name='${folderName}' and trashed=false`,
                 pageSize: 5,
-                fields: 'nextPageToken, files(id, name, mimeType)',
+                fields: 'nextPageToken, files(id, name)',
             });
             response = JSON.parse(response);    
         }
@@ -288,15 +288,15 @@ async function getLocalSharedFolderId(drivePath) {
         _console.log('response', JSON.stringify(response));
         if(response.data && response.data.files && response.data.files.length > 0) {
             // Folder exists
-            return response.data.files[0].id;
+            return {id: response.data.files[0].id, isShared: true, driveId: response.data.files[0].driveId};
         }
         
         _console.log(`Searching for ${folderName} in Local drive`);
         try {
             response = await drive.files.list({
-                q: `'root' in parents and mimeType='${folderMime}' and name='${folderName}'`,
+                q: `'root' in parents and mimeType='${folderMime}' and name='${folderName}' and trashed=false`,
                 pageSize: 5,
-                fields: 'nextPageToken, files(id, name, mimeType)',
+                fields: 'nextPageToken, files(id, name)',
             });
             response = JSON.parse(response);    
         }
@@ -306,7 +306,7 @@ async function getLocalSharedFolderId(drivePath) {
 
         if(response.data && response.data.files && response.data.files.length > 0) {
             // Folder exists
-            return response.data.files[0].id;
+            return {id: response.data.files[0].id, isShared: false, driveId: null};
         }
         else {
             // Create folder
@@ -328,7 +328,7 @@ async function getLocalSharedFolderId(drivePath) {
                 catch(e) {}
                 _console.log('create folder result: ', JSON.stringify(response));
                 if(response && response.data && response.data.id) {
-                    return response.data.id;
+                    return {id: response.data.id, isShared: false, driveId: null};
                 }
             }
             catch (e) {
@@ -336,9 +336,42 @@ async function getLocalSharedFolderId(drivePath) {
             }
         }
     }
-    return null;
+    return {id: null, isShared: false, driveId: null};
 }
 
+async function getFoldersList(codiceAziena, authParams) {
+    await performGoogleAuth(authParams);
+
+    const drive = google.drive({version: 'v3', auth: oAuth2Client});
+    let driveFolderId = 'root';
+    let response;
+
+    let localSharedFolderResponse = await getLocalSharedFolderId(codiceAziena);
+    _console.log('localSharedFolder response', localSharedFolderResponse);
+    if(!localSharedFolderResponse.isShared) {
+        try {
+            response = await drive.files.list({
+                q: `mimeType='${folderMime}' and trashed=false`,
+                pageSize: 250,
+                fields: 'nextPageToken, files(id, name)',
+            });
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+    }
+    else {
+        try {
+            response = await drive.files.list({
+                q: `driveId='${localSharedFolderResponse.driveId}' and mimeType='${folderMime}' and trashed=false`,
+                pageSize: 250,
+                fields: 'nextPageToken, files(id, name)',
+            });
+            response = JSON.parse(response);    
+        }
+        catch(e) {}
+    }
+    _console.log('getFoldersList response', response);
+}
 
 async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
     
@@ -357,7 +390,8 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
             if(driveFolderId === 'root') {
-                driveFolderId = await getLocalSharedFolderId(drivePathFolder);
+                let localSharedFolderResponse = await getLocalSharedFolderId(drivePathFolder);
+                driveFolderId = localSharedFolderResponse.id;
             }
             else {
                 let folderQuery = `name = '${drivePathFolder}'`;
@@ -368,7 +402,7 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
                 _console.log(`Searching for ${folderQuery} in ${driveFolderId}`);
                 
                 let parentQuery = `'${driveFolderId}' in parents`;
-                let finalQuery = `${parentQuery} and mimeType='${folderMime}' and ${folderQuery}`;
+                let finalQuery = `${parentQuery} and mimeType='${folderMime}' and ${folderQuery} and trashed=false`;
                 _console.log('finalQuery: ', finalQuery);
                 
                 response = await drive.files.list({
@@ -442,7 +476,7 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
     return {folder: '/' + drivePath, folderId: driveFolderId};
 }
 
-async function getDriveFileId(drivePath, authParams) {
+async function getDriveFolderId(drivePath, authParams) {
     
     await performGoogleAuth(authParams);
 
@@ -459,12 +493,13 @@ async function getDriveFileId(drivePath, authParams) {
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
             if(driveFolderId === 'root') {
-                driveFolderId = await getLocalSharedFolderId(drivePathFolder);
+                let localSharedFolderResponse = await getLocalSharedFolderId(drivePathFolder);
+                driveFolderId = localSharedFolderResponse.id;
             }
             else {
                 _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
                 response = await drive.files.list({
-                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
+                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}' and trashed=false`,
                     pageSize: 5,
                     fields: 'nextPageToken, files(id, name, mimeType)',
                 });
@@ -536,13 +571,21 @@ async function uploadS3Object(s3FilePath, data) {
     return result;
 }
 
-async function downloadDriveObject(driveFolderId, driveFile) {
+async function downloadDriveObject(driveFolderId, driveFile, driveFileId) {
     const drive = google.drive({version: 'v3', auth: oAuth2Client});
     
     let response = null;
 
+    let query;
+    if(driveFileId) {
+        query = `driveId='${driveFileId}' and trashed=false`;
+    }
+    else {
+        query = `'${driveFolderId}' in parents and name='${driveFile}' and trashed=false`;
+    }
+
     response = await drive.files.list({
-        q: `'${driveFolderId}' in parents and name='${driveFile}'`,
+        q: query,
         pageSize: 250,
         fields: 'nextPageToken, files(id, name, mimeType)',
     });
@@ -568,16 +611,22 @@ async function downloadDriveObject(driveFolderId, driveFile) {
     return data;
 }
 
-async function getDriveFileInfo(driveFolderId, driveFile) {    
+async function getDriveFileInfo(driveFolderId, driveFile, driveFileId) {    
     const drive = google.drive({version: 'v3', auth: oAuth2Client});
     let response;
 
     try {
         _console.log('Trying to find file with folder id: ', driveFolderId, ' and file name: ', driveFile);
-        
+        let query;
+        if(driveFileId) {
+            query = `driveId='${driveFileId}' and trashed=false`;
+        }
+        else {
+            query = `'${driveFolderId}' in parents and name='${driveFile}' and trashed=false`;
+        }
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.files.list({
-            q: `'${driveFolderId}' in parents and name='${driveFile}'`,
+            q: query,
             pageSize: 250,
             fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum, createdTime, modifiedTime)',
         });
@@ -607,7 +656,7 @@ async function renameDriveFile(driveFolderId, OldName, newName) {
         
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.files.list({
-            q: `'${driveFolderId}' in parents and name='${OldName}'`,
+            q: `'${driveFolderId}' in parents and name='${OldName}' and trashed=false`,
             pageSize: 250,
             fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum, createdTime, modifiedTime)',
         });
@@ -893,7 +942,7 @@ async function getDriveContents(folder, authParams) {
     try {
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.files.list({
-            q: `'${folder?folder : "root"}' in parents`,
+            q: `'${folder?folder : "root"}' in parents and trashed=false`,
             pageSize: 250,
             fields: 'nextPageToken, files(id, name, mimeType)',
           });
@@ -1155,12 +1204,13 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
         let drivePathFolders = drivePath.split('/');
         for await (drivePathFolder of drivePathFolders) {
             if(driveFolderId === 'root') {
-                driveFolderId = await getLocalSharedFolderId(drivePathFolder);
+                let localSharedFolderResponse = await getLocalSharedFolderId(drivePathFolder);
+                driveFolderId = localSharedFolderResponse.id;
             }
             else {
                 _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);    
                 response = await drive.files.list({
-                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}'`,
+                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}' and trashed=false`,
                     pageSize: 5,
                     fields: 'nextPageToken, files(id, name, mimeType)',
                 });
@@ -1249,13 +1299,13 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
     return { result: 'OK', data: response };
 }
 
-async function copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, authParams) {
+async function copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, driveFileId, authParams) {
 
     await performGoogleAuth(authParams);
 
     let response;
     
-    const driveFileData = await downloadDriveObject(driveFolderId, driveFile);
+    const driveFileData = await downloadDriveObject(driveFolderId, driveFile, driveFileId);
     response = await uploadS3Object(s3FilePath, driveFileData);
 
     // _console.log('data: ' + JSON.stringify(bufferStream));
@@ -1320,6 +1370,7 @@ async function syncDriveS3File(syncData, authParams) {
     
     for await (syncRow of syncData) {
         let driveFilePath = syncRow['driveFilePath'];    
+        let driveFileId = syncRow['driveFileId'];    
         let s3FilePath = syncRow['s3FilePath'];
         const s3md5 = syncRow['s3md5'];
         
@@ -1361,7 +1412,7 @@ async function syncDriveS3File(syncData, authParams) {
                 driveFolderId = syncRow['driveFolderId'];
             }
             else {
-                driveFolderId = await getDriveFileId(drivePath, authParams);
+                driveFolderId = await getDriveFolderId(drivePath, authParams);
             }
         }
         catch(e) {
@@ -1369,7 +1420,7 @@ async function syncDriveS3File(syncData, authParams) {
         }
         
         try {
-            response = await getDriveFileInfo(driveFolderId, driveFile);
+            response = await getDriveFileInfo(driveFolderId, driveFile, driveFileId);
             driveFileInfo = response.data;
             _console.log('getDriveFileInfo: ', JSON.stringify(response));
             if(driveFileInfo.result === 'KO') {
@@ -1411,7 +1462,7 @@ async function syncDriveS3File(syncData, authParams) {
                     _console.log('deleteS3File...');
                     await deleteS3File(s3FilePath);
                     _console.log('copyFromDriveToS3...');
-                    await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, authParams);
+                    await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, driveFileId, authParams);
                     syncRow['s3md5'] = driveFileInfo.md5Checksum;
                     response = { result: 'OK', message: 'Copied from Drive to S3' };
                 }
@@ -1427,7 +1478,7 @@ async function syncDriveS3File(syncData, authParams) {
         }
         else if(driveFileInfo && driveFileInfo.modifiedTime != null) {
             _console.log('copyFromDriveToS3...');
-            await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, authParams);
+            await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, driveFileId, authParams);
             syncRow['s3md5'] = driveFileInfo.md5Checksum;
             response = { result: 'OK', message: 'Copied from Drive to S3' };
         }
@@ -1461,7 +1512,7 @@ async function getDriveFolderCompletePath(drive, driveFolder) {
     let response;
     let completePath = '';
     try {
-        let query = `name='${driveFolder}' and supportsAllDrives=true and includeTeamDriveItems=true and supportsTeamDrives=true and mimeType='${folderMime}'`;
+        let query = `name='${driveFolder}' and includeItemsFromAllDrives=true and mimeType='${folderMime}' and trashed=false`;
         
         let parentId = null;
         let parentName = null;
@@ -1509,10 +1560,10 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
     try {
         let query = '';
         if(driveFileId) {
-            query = `'${driveFileId}' in parents`;
+            query = `'${driveFileId}' in parents and trashed=false`;
         }
         else {
-            query = `name='${driveFolder}' and mimeType='${folderMime}'`;
+            query = `name='${driveFolder}' and mimeType='${folderMime}' and trashed=false`;
         }
         _console.log('query: ', query);
         
@@ -1543,7 +1594,7 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
                     results = await getDriveRecursiveContents(drive, null, curFile.id, path && path.length? path + '/' + curFile.name: curFile.name, results);
                 }
                 else if(!curFile.trashed) {
-                    results.push({fileid: curFile.id, filename: curFile.name, md5: curFile.md5Checksum, folder: path, driveFolderId: driveFileId});
+                    results.push({fileid: curFile.id, filename: curFile.name, md5: curFile.md5Checksum, folder: path, driveFolderId: driveFileId, driveFileId: curFile.id});
                 }
             }
         }
@@ -1605,6 +1656,8 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     const folderIds = anagraficaFolders['folder_ids'] || [];
     const codiceAzienda = anagraficaFolders['codice_azienda'] || [];
     
+    await getFoldersList(codiceAzienda, authParams);
+
     if(anagraficaFolders['sub_folders'] && anagraficaFolders['sub_folders'].length > 0) {
         for(let subFolder of anagraficaFolders['sub_folders'].filter(x => x['fileid'])) {
             if(subFolder.file && subFolder.file.length > 0 && subFolders.filter(x => x.file === subFolder.file && x.folder === x.folder).length == 0) {
@@ -1617,15 +1670,15 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
     
     // _console.log()
     // while( i < subFolders.length) {        
-    //     let getDriveFileIdResponse = await getDriveFileId(subFolders[i], authParams);
-    //     _console.log('getDriveFileIdResponse', getDriveFileIdResponse);
+    //     let getDriveFolderIdResponse = await getDriveFolderId(subFolders[i], authParams);
+    //     _console.log('getDriveFolderIdResponse', getDriveFolderIdResponse);
     //     i++;
     // }
 
     let rootFolderId = null;
 
     try {
-        rootFolderId = folderIds[driveFolder]; // await getDriveFileId(driveFolder, authParams);
+        rootFolderId = folderIds[driveFolder]; // await getDriveFolderId(driveFolder, authParams);
         _console.log('rootFolderId: ', rootFolderId);
     }
     catch(e) {
@@ -1650,7 +1703,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
                 // }));
                 
                 syncData.push({
-                    s3FilePath: rootFile['fileid'], s3md5: rootFile.md5, driveFilePath: (rootFile.folder + '/' + rootFile.filename), driveFolderId: rootFile.driveFolderId
+                    s3FilePath: rootFile['fileid'], s3md5: rootFile.md5, driveFilePath: (rootFile.folder + '/' + rootFile.filename), driveFolderId: rootFile.driveFolderId, driveFileId: rootFile.driveFileId
                 });
             }
         }
@@ -1661,7 +1714,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
             _console.log('Checking if subfolder is already added: ' + (subFolder.folder + '/' + subFolder.file));
             if(syncData.filter( x => x.driveFilePath == (subFolder.folder + '/' + subFolder.file)).length == 0) {
                 if(!subFolder['fileid'].includes('/')) {
-                    subFolder['fileid'] = codiceAzienda + '/' + subFolder['fileid'];
+                    subFolder['fileid'] = (subFolder['s3Folder'] || codiceAzienda) + '/' + subFolder['fileid'];
                 }
 
                 // _console.log('adding subfolder file to syncData: ', JSON.stringify({
@@ -1669,7 +1722,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
                 // }));
 
                 syncData.push({
-                    s3FilePath: subFolder.fileid, s3md5: subFolder.md5, driveFilePath: subFolder.folder + '/' + subFolder.file, driveFolderId: folderIds[subFolder.folder]
+                    s3Folder: subFolder['s3Folder'], s3FilePath: subFolder.fileid, s3md5: subFolder.md5, driveFilePath: subFolder.folder + '/' + subFolder.file, driveFolderId: folderIds[subFolder.folder], driveFileId: subFolder.driveFileId
                 });
             }
         }
@@ -1693,7 +1746,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
                     let driveFolderId = null;
                     
                     try {
-                        driveFolderId = folderIds[subFolder['folder']]; // await getDriveFileId(subFolder['folder'], authParams);
+                        driveFolderId = folderIds[subFolder['folder']]; // await getDriveFolderId(subFolder['folder'], authParams);
                         _console.log('Using driveFolderId: ', driveFolderId, ' for: ', subFolder['folder']);
                     }
                     catch(e) {
@@ -1730,7 +1783,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
             }
             // Not needed anymore by fixAnagraficaFolderByIdentifier takes care of creating missing folders
             // else {
-            //     await getDriveFileId(subFolder['folder'], authParams);
+            //     await getDriveFolderId(subFolder['folder'], authParams);
             // }
         }
 
@@ -1771,15 +1824,15 @@ async function processDriveFolderDeepContents(deepContentsRequest, authParams) {
     
     // _console.log()
     // while( i < subFolders.length) {        
-    //     let getDriveFileIdResponse = await getDriveFileId(subFolders[i], authParams);
-    //     _console.log('getDriveFileIdResponse', getDriveFileIdResponse);
+    //     let getDriveFolderIdResponse = await getDriveFolderId(subFolders[i], authParams);
+    //     _console.log('getDriveFolderIdResponse', getDriveFolderIdResponse);
     //     i++;
     // }
 
     let rootFolderId = null;
 
     try {
-        rootFolderId = folderIds[driveFolder]; // await getDriveFileId(driveFolder, authParams);
+        rootFolderId = folderIds[driveFolder]; // await getDriveFolderId(driveFolder, authParams);
         _console.log('rootFolderId: ', rootFolderId);
     }
     catch(e) {
@@ -1809,7 +1862,7 @@ async function processDriveFolderDeepContents(deepContentsRequest, authParams) {
                     let driveFolderId = null;
                     
                     try {
-                        driveFolderId = folderIds[subFolder['folder']]; // await getDriveFileId(subFolder['folder'], authParams);
+                        driveFolderId = folderIds[subFolder['folder']]; // await getDriveFolderId(subFolder['folder'], authParams);
                         _console.log('Using driveFolderId: ', driveFolderId, ' for: ', subFolder['folder']);
                     }
                     catch(e) {
@@ -1817,13 +1870,14 @@ async function processDriveFolderDeepContents(deepContentsRequest, authParams) {
                     }
                     
                     try {
-                        getDriveFileIndoResponse = await getDriveFileInfo(driveFolderId, subFolder['file']);
+                        getDriveFileIndoResponse = await getDriveFileInfo(driveFolderId, subFolder['file'], subFolder['driveFileId']);
                         _console.log('subfolder getDriveFileInfo: ', JSON.stringify(getDriveFileIndoResponse));
                         driveFileInfo = getDriveFileIndoResponse.data;
                         if(driveFileInfo && driveFileInfo['md5Checksum']) {
                             _console.log('driveFileInfo: ', JSON.stringify(driveFileInfo));
                             subFolder['md5'] = driveFileInfo['md5Checksum'];
-        
+                            subFolder['driveFileId'] = driveFileInfo['id'];
+                            subFolder['file'] = driveFileInfo['name'];
                             if(!subFolders.fileid) {
                                 subFolder['fileid'] = driveFileInfo['id'];
                             }
@@ -1838,7 +1892,7 @@ async function processDriveFolderDeepContents(deepContentsRequest, authParams) {
 
                 if(completeFilesList.filter( x => x.filename === subFolder.file && x.folder === subFolder.folder).length == 0) {
                     _console.log('Pushing to completeFilesList: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
-                    completeFilesList.push({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder});
+                    completeFilesList.push({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder, driveFileId: subFolder['driveFileId']});
                 }
                 else {
                     _console.log('Ignoring pushing to completeFilesList: ' + JSON.stringify({fileid: subFolder.fileid, filename: subFolder.file, md5: subFolder.md5, folder: subFolder.folder}));
@@ -1846,7 +1900,7 @@ async function processDriveFolderDeepContents(deepContentsRequest, authParams) {
             }
             // Not needed anymore by fixAnagraficaFolderByIdentifier takes care of creating missing folders
             // else {
-            //     await getDriveFileId(subFolder['folder'], authParams);
+            //     await getDriveFolderId(subFolder['folder'], authParams);
             // }
         }
     }
@@ -1887,7 +1941,7 @@ async function performDriveOperations(operations, authParams) {
                 let driveFolderId = null;
                 
                 try {
-                    driveFolderId = await getDriveFileId(drivePath, authParams);
+                    driveFolderId = await getDriveFolderId(drivePath, authParams);
                 }
                 catch(e) {
                     _console.error(e);
@@ -1927,7 +1981,7 @@ async function listDrives(authParams) {
         
         // response = oAuth2Client.request({ url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages' })
         response = await drive.teamdrives.list({
-            q: `'${driveFolderId}' in parents and name='${OldName}'`,
+            q: `'${driveFolderId}' in parents and name='${OldName}' and trashed=false`,
             pageSize: 250,
             fields: 'nextPageToken, files(id, name, mimeType, trashed, md5Checksum, createdTime, modifiedTime)',
         });
@@ -1982,7 +2036,7 @@ async function listDrives(authParams) {
                 let driveFolderId = null;
                 
                 try {
-                    driveFolderId = await getDriveFileId(drivePath, authParams);
+                    driveFolderId = await getDriveFolderId(drivePath, authParams);
                 }
                 catch(e) {
                     _console.error(e);
@@ -2077,7 +2131,7 @@ exports.handler = async (event, context) => {
             else if (requestType === 'copyFromDriveToS3') {
                 let driveFilePath = queryParams['driveFilePath'];    
                 let s3FilePath = queryParams['s3FilePath'];
-                    
+                let driveFileId = queryParams['driveFileId'];
                 if(driveFilePath.startsWith('/')) {
                     driveFilePath = driveFilePath.substring(1);
                 }
@@ -2108,13 +2162,13 @@ exports.handler = async (event, context) => {
                 let driveFolderId = null;
                 
                 try {
-                    driveFolderId = await getDriveFileId(drivePath, event.body? JSON.parse(event.body): {});
+                    driveFolderId = await getDriveFolderId(drivePath, event.body? JSON.parse(event.body): {});
                 }
                 catch(e) {
                     _console.error(e);
                 }
 
-                body = await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, event.body? JSON.parse(event.body): {});
+                body = await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, driveFileId, event.body? JSON.parse(event.body): {});
             }
             else if (requestType === 'syncDriveS3File') {
                 const syncData = JSON.parse(queryParams['syncData']);

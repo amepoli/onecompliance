@@ -216,18 +216,9 @@
                 "eventName": "combo_tipo_soggetto",
                 "eventTrigger": "select"
             },
-            "inputEvents": [
-                {
-                    "actionType": "query",
-                    "eventName": "combo_tipo_soggetto",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "update entrasp.anagrafiche_id set tipo_soggetto='£tipo_soggetto£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ returning 1"
-                }
-            ],
             "queryFunct": "SELECT tipo_soggetto from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
             "readOnly": false,
-            "size": 2
+            "size": 1.8
         },
         {
             "autoGenerate": true,
@@ -300,13 +291,27 @@
                 "value": "£CURRENT_DATE£",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "data_upd",
-            "label": "Data Aggiunta",
+            "label": "DT_Update",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "value": "£CURRENT_DATE£",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_ins",
+            "label": "Inserimento",
             "newLine": true,
             "readOnly": true,
-            "size": 1
+            "size": 1.2
         },
         {
             "format": {
@@ -395,16 +400,61 @@
                             "dataType": "text",
                             "viewType": "combobox",
                             "options": [],
-                            "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_DOCUMENTO_IDENT';"
+                            "comboQuery": "SELECT a.id_argomento AS id, a.descrizione AS name FROM entrasp.argomenti a inner join entrasp.argomenti_argomenti aa on a.id_argomento=aa.id_argomento_son WHERE id_argomento_father=3534;"
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "codice_tipo_documento",
+                        "key": "id_argomento_tipo_documento",
                         "label": "Tipo Documento",
-                        "queryFunct": "SELECT codice_tipo_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
+                        "queryFunct": "SELECT id_argomento_tipo_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
                         "newLine": false,
                         "readOnly": false,
                         "size": 2
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "numero_documento",
+                        "label": "Numero Documento",
+                        "newLine": false,
+                        "queryFunct": "SELECT numero_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "readOnly": false,
+                        "size": 1.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "rilasciato_da",
+                        "label": "Rilasciato Da",
+                        "newLine": false,
+                        "queryFunct": "SELECT rilasciato_da from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "readOnly": false,
+                        "size": 2.2
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "date",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "data_rilascio_documento",
+                        "label": "In Data",
+                        "queryFunct": "SELECT data_rilascio_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 1.3
                     },
                     {
                         "autoGenerate": false,
@@ -419,7 +469,7 @@
                         "queryFunct": "SELECT data_scadenza_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 2
+                        "size": 1.3
                     },
                     {
                         "autoGenerate": false,
@@ -568,7 +618,7 @@
             "label": "Località",
             "newLine": false,
             "readOnly": false,
-            "size": 3
+            "size": 2.8
         },
         {
             "autoGenerate": false,
@@ -590,7 +640,7 @@
             "label": "Provincia",
             "newLine": false,
             "readOnly": false,
-            "size": 0.7
+            "size": 0.8
         },
         {
             "autoGenerate": false,
@@ -638,7 +688,7 @@
             "key": "prog_vr",
             "label": "Versione",
             "newLine": false,
-            "size": 0.7,
+            "size": 0.8,
             "readOnly": true
         },
         {
@@ -768,12 +818,6 @@
             "newLine": false,
             "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','CLI',$id_anagrafica$)",
             "readOnly": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when £id_anagrafica£ is null or $P{is_hidden_ruolo2} then true else false end as label"
-                }
-            ],
             "sameOrigin": false,
             "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false
@@ -789,12 +833,6 @@
             "newLine": false,
             "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','FOR',$id_anagrafica$)",
             "readOnly": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when (€id_anagrafica€ is null or €id_anagrafica€::varchar ='') or $P{is_hidden_ruolo2} then true else false end as label"
-                }
-            ],
             "sameOrigin": false,
             "isPrimary": false,
             "isHidden": "$Q{is_hidden_ruolo}"
@@ -811,12 +849,6 @@
             "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','RSRSA',$id_anagrafica$)",
             "readOnly": false,
             "sameOrigin": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when ($id_anagrafica$ is null or $id_anagrafica$::varchar ='') or $P{is_hidden_ruolo2} then true else false end as label"
-                }
-            ],
             "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false
         },
@@ -831,12 +863,6 @@
             "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','FONDO',$id_anagrafica$)",
             "readOnly": false,
             "sameOrigin": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when ($id_anagrafica$ is null or $id_anagrafica$::varchar ='') or $P{is_hidden_ruolo2} then true else false end as label"
-                }
-            ],
             "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false
         }
@@ -869,8 +895,26 @@
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice!"
         },
         {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select codice_fiscale from entrasp.anagrafiche_vr where codice_part=$codice_part$ and codice_fiscale=$codice_fiscale$",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
+        },
+        {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(idcentrogestdefault=> $id_centro_gest_default$, codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, codicetipodoc=>$codice_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date);",
+            "type": "preCheck",
+            "queryString": "select codice from entrasp.anagrafiche_id where codice_part=$codice_part$ and codice=$codice$ and id_anagrafica != $id_anagrafica$",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice!"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select codice_fiscale from entrasp.anagrafiche_vr where codice_part=$codice_part$ and codice_fiscale=$codice_fiscale$ and id_anagrafica != $id_anagrafica$",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
+        },              
+        {
+            "operation": "update",
+            "queryString": "SELECT entrasp.anagrafica_id_update(idcentrogestdefault=> $id_centro_gest_default$, codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idargomentotipodocumento=>$id_argomento_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date);",
             "type": "main"
         },
         {
@@ -1190,6 +1234,22 @@
         {
             "viewType": "form",
             "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "stopEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "startEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "share"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "import_export"
         }
     ],
     "importQueries": {

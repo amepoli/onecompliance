@@ -1,0 +1,130 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "trattamenti_dati_sub_of_incaricato",
+  "origin": "entrasp.cpl_trattamenti_dati",
+  "predefinedQueries": [
+    {
+      "queryString": "SELECT g.id_anagrafica,t.codice_part,t.id_trattamento_dati,t.codice,t.titolo,t.descrizione,t.id_argomento_tipo_trattamento_dato,t.codice_azienda,t.flag_trattamento_conto_terzi,entrasp.argomenti_descr_breve(t.id_argomento_tipo_trattamento_dato) as id_argomento_tipo_trattamento_dato,entrasp.centri_gestionali_descr('MOBISEC',t.id_centro_gest) as centro_gest FROM entrasp.cpl_trattamenti_dati t INNER JOIN entrasp.cpl_trattamenti_centri_gestionali c ON t.id_trattamento_dati=c.id_trattamento_dati AND t.codice_azienda=c.codice_azienda INNER JOIN entrasp.gruppi_lavoro_membri g ON c.id_centro_gest=g.id_gruppo_lavoro AND c.codice_part=g.codice_part where t.codice_part=$codice_azienda$ AND g.id_anagrafica=$id_anagrafica$",
+      "operation": "selectTable",
+      "type": "main"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_anagrafica",
+      "label": ""
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_part",
+      "label": ""
+    },{
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_trattamento_dati",
+      "width": "4%",
+      "label": "#"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
+      "width": "5%",
+      "label": "Codice"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "width": "30%",
+      "label": "Titolo",
+      "style": [
+        {
+          "value": "*",
+          "font_size": "medium",
+          "font_weight": "599"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "width": "44%",
+      "label": "Descrizione"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento_tipo_trattamento_dato",
+      "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_trattamento_dato)",
+      "width": "8%",
+      "label": "# Arg."
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "12%",
+      "key": "centro_gest",
+      "label": "Centro Gestionale",
+      "queryFunct": "entrasp.centri_gestionali_descr($codice_azienda$,id_centro_gest)"
+    },
+    {
+      "format": {
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isCheckbox": true,
+      "isPrimary": false,
+      "key": "boolean_conto_terzi",
+      "queryFunct": "flag_trattamento_conto_terzi::boolean",
+      "width": "5%",
+      "label": "Conto terzi"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "flag_trattamento_conto_terzi",
+      "label": "flag_trattamento_conto_terzi"
+    }
+  ]
+}

@@ -30,7 +30,7 @@
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select snd.*,(SELECT SUM(sw.punteggio_risposta) FROM entrasp.sondaggio_somministrazione_worst($codice_azienda$, $id_sondaggio$) sw) as somma_punti_ottenuti_ver_peg,(SELECT SUM(sw.punteggio) FROM entrasp.sondaggio_somministrazione_worst($codice_azienda$, $id_sondaggio$) sw) as somma_punti_ver_peg,(select count(*) from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_parent=$id_sondaggio$) as n_sondaggi_connessi,(select count(*) from entrasp.consuntivazioni WHERE codice_azienda=$codice_azienda$ and id_sondaggio= $id_sondaggio$) as aggiornamenti,entrasp.contratto_descr_id( $codice_azienda$, snd.id_contratto) as descr_contratto, mvr.id_risultato, mvr.flag_no_domande, entrasp. id_sondaggio_rif(snd.codice_azienda, snd.id_sondaggio)  as id_sondaggio_rif, entrasp.mdt_codtitolo(snd.codice_azienda, snd.id_modello_test) as descr_modello_test, (select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_fase_orig, (select id_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_progetto, entrasp.sondaggi_flags_sezioni_appsingola(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_activate, entrasp.descrizione_risultato_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as criterio_analisi from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+            "queryString": "select snd.codice_azienda,snd.id_sondaggio,snd.titolo,snd.stato,snd.data_esecuzione,snd.descrizione,snd.id_modello_test,snd.id_modello_test_vr,snd.data_prevista,snd.data_comp,snd.id_contratto,snd.id_anagrafica_assegnataria,snd.id_centro_gest,snd.sondaggio_completato,snd.ris_percentuale,snd.giudizio,snd.ris_percentuale_worst,snd.giudizio_worst,snd.id_sondaggio_succ,snd.id_sondaggio_parent,snd.id_serie,snd.pct_da,(SELECT SUM(sw.punteggio_risposta) FROM entrasp.sondaggio_somministrazione_worst($codice_azienda$, $id_sondaggio$) sw) as somma_punti_ottenuti_ver_peg,(SELECT SUM(sw.punteggio) FROM entrasp.sondaggio_somministrazione_worst($codice_azienda$, $id_sondaggio$) sw WHERE sw.flag_non_applicabile = false) as somma_punti_ver_peg,(select count(*) from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio_parent=$id_sondaggio$) as n_sondaggi_connessi,(select count(*) from entrasp.consuntivazioni WHERE codice_azienda=$codice_azienda$ and id_sondaggio= $id_sondaggio$) as aggiornamenti,entrasp.contratto_descr_id( $codice_azienda$, snd.id_contratto) as descr_contratto, mvr.id_risultato, mvr.flag_no_domande, entrasp. id_sondaggio_rif(snd.codice_azienda, snd.id_sondaggio)  as id_sondaggio_rif, entrasp.mdt_codtitolo(snd.codice_azienda, snd.id_modello_test) as descr_modello_test, (select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_fase_orig , (select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_fase, (select id_progetto from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_progetto, entrasp.sondaggi_flags_sezioni_appsingola(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_activate, entrasp.descrizione_risultato_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as criterio_analisi from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         },
         {
             "operation": "selectForm",
@@ -480,9 +480,9 @@
                         "outputEventName": "answers_delete"
                     },
                     {
-                      "icon": "sync",
-                      "label": "Ricalcola punteggi",
-                      "outputEventName": "ricalcola_punteggi"
+                        "icon": "sync",
+                        "label": "Ricalcola punteggi",
+                        "outputEventName": "ricalcola_punteggi"
                     }
                 ]
             },
@@ -531,13 +531,13 @@
                     }
                 },
                 {
-                  "eventName": "ricalcola_punteggi",
-                  "actionType": "query",
-                  "condition": "none",
-                  "successMessage": "Punteggi ricalcolati correttamente",
-                  "values": [],
-                  "queryFunct": "SELECT entrasp.ricalcola_punteggi_sondaggi_aperti($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$)",
-                  "outputEventWhenComplete": "survey_reload"
+                    "eventName": "ricalcola_punteggi",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Punteggi ricalcolati correttamente",
+                    "values": [],
+                    "queryFunct": "SELECT entrasp.ricalcola_punteggi_sondaggi_aperti($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$)",
+                    "outputEventWhenComplete": "survey_reload"
                 }
             ],
             "isHidden": false,
@@ -850,13 +850,6 @@
                     "values": [],
                     "actionType": "query",
                     "queryFunct": "SELECT sondaggio_completato FROM entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
-                },
-                {
-                    "eventName": "onLoadSondaggio",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query",
-                    "queryFunct": "SELECT sondaggio_completato FROM entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
                 }
             ],
             "size": 2
@@ -910,7 +903,7 @@
             "isPrimary": false,
             "key": "giudizio",
             "label": "Giudizio Complessivo",
-            "sameOrigin": false,
+            "sameOrigin": true,
             "newLine": false,
             "readOnly": true,
             "attributeFuncts": [
@@ -926,7 +919,7 @@
                     "values": [],
                     "actionType": "query_style",
                     "styleAttribute": "background_color",
-                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
+                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, $ris_percentuale$) as giudizio_background_color;"
                 },
                 {
                     "eventName": "onSaveSondaggio",
@@ -934,7 +927,7 @@
                     "values": [],
                     "actionType": "query_style",
                     "styleAttribute": "background_color",
-                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
+                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, $ris_percentuale$) as giudizio_background_color;"
                 },
                 {
                     "eventName": "onSaveSondaggio",
@@ -996,7 +989,7 @@
                     "values": [],
                     "actionType": "query_style",
                     "styleAttribute": "background_color",
-                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select punteggio_percentuale from entrasp.punteggio_sondaggio_somministrazione_worst($codice_azienda$, $id_sondaggio$))) as giudizio_worst_background_color;"
+                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, $ris_percentuale_worst$) as giudizio_worst_background_color;"
                 },
                 {
                     "eventName": "onSaveSondaggio",
@@ -1091,6 +1084,21 @@
             "sameOrigin": false
         },
         {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_fase",
+            "label": "",
+            "sameOrigin": false,
+            "newLine": false,
+            "size": 1,
+            "readOnly": true
+        },
+        {
             "format": {
                 "viewType": "subform",
                 "subform_keys": [
@@ -1137,7 +1145,7 @@
                             "text_decoration": "underline"
                         },
                         "newLine": false,
-                        "size": 1,
+                        "size": 0.8,
                         "readOnly": true
                     },
                     {
@@ -1166,7 +1174,7 @@
                         "key": "descr_modello_test",
                         "label": "Titolo Modello Verifica",
                         "newLine": false,
-                        "size": 3.4,
+                        "size": 3.0,
                         "sameOrigin": false,
                         "readOnly": true
                     },
@@ -1178,16 +1186,16 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "somma_punti_ottenuti_ver_peg",
-                        "label": "Punteggio ottenuto Ver. Peggiore",
+                        "key": "titolo_cartella",
+                        "label": "Cartella",
                         "newLine": false,
                         "readOnly": true,
                         "sameOrigin": true,
-                        "size": 1.8,
+                        "size": 2.8,
                         "style": {
                             "background_color": "white"
                         }
-                    }, 
+                    },
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1201,11 +1209,11 @@
                         "newLine": true,
                         "readOnly": true,
                         "sameOrigin": true,
-                        "size": 1.8,
+                        "size": 0.8,
                         "style": {
                             "background_color": "white"
                         }
-                    }, 
+                    },
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1220,7 +1228,7 @@
                         "readOnly": true,
                         "sameOrigin": true,
                         "size": 1.5
-                    },   
+                    },
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1236,7 +1244,7 @@
                         "newLine": false,
                         "size": 1.5,
                         "readOnly": true
-                    },                
+                    },
                     {
                         "format": {
                             "dataType": "number",
@@ -2387,7 +2395,7 @@
                         "destination": "id_sondaggio"
                     },
                     {
-                        "source": "id_fase_orig",
+                        "source": "id_fase",
                         "destination": "id_fase"
                     }
                 ]
