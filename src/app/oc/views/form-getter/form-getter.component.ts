@@ -1789,6 +1789,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._dialogService.closeDialog();
 
                     _this._toastService.showSuccessToast('Successfully Scanned!'); // show success toast
+                    this.refreshView();
                     }
                 }
             }
