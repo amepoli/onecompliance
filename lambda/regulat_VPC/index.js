@@ -23,13 +23,13 @@ function getBadUrlResponse() {
 
 exports.handler = async (event) => {
 
+    //Declare queryParams
     const queryParams = event.queryStringParameters ? event.queryStringParameters : event;
-    console.log('queryParams: ', queryParams);
+    //console.log('queryParams: ', queryParams);
 
     const company = queryParams['company'];
-    const requestType = queryParams['request_type']; //? queryParams['request_type'] : event.request_type;  // Because i need to call it also from regulat lambda
+    const requestType = queryParams['request_type'];
     const registry = queryParams['registry'];
-
     let client;
     let body;
 
@@ -37,15 +37,28 @@ exports.handler = async (event) => {
         return getBadUrlResponse();
     }
     else {
+
         console.log('Lets start ', requestType);
 
         if (requestType === 'getConnectedRegistries') {
+
+            /*First step of OneScan, the one who retrieve data from DB to prepare the requests to regulat.io*/
+
             try {
+
+                //Create new pool to connect the DB
                 client = await pool.connect();
 
                 let query = "";
                 let response;
 
+                /***
+                IMPROVEMENT 1: Here we can think to get null if the input data isn't compliant with the 
+                tool (like missing/wrong argument of question[tag] in survey template or company not enabled), and handle this case return info.
+                IMPROVEMENT 2: Shrink the query, delete the UNION  
+                ***/
+
+                //Prepare the query to get the connected registries, because i need to launch the tool on these too 
                 query = `SELECT an.id_anagrafica AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob
                 FROM entrasp.anagrafiche_id an
                 INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
@@ -62,27 +75,25 @@ exports.handler = async (event) => {
                 AND ca.id_anagrafica=${registry} 
                 AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica)
                 AND tipo_soggetto IS NOT NULL;`;
-                //connectedRegistries = await client.query(query);
 
                 console.log('running query: ', query);
-
                 response = await client.query(query);
-
-                console.log('response', response.rows);
 
                 let connectedRegistries = null;
 
                 if (response && response.rows) {
                     connectedRegistries = response.rows;
+                    body = { result: 'OK', response: connectedRegistries };
+                }
+                else {
+                    body = { result: 'KO', reason: 'Something wrong with getting registries from DB' };
                 }
 
-                body = { result: 'OK', response: connectedRegistries };
-
+                //Release the client
                 await client.release();
 
             } catch (e) {
                 console.error(e.message, e.stack);
-                console.log(e);
                 await client.release();
                 return {
                     "statusCode": 200,
@@ -91,17 +102,13 @@ exports.handler = async (event) => {
                     "body": JSON.stringify({ "response": "KO", "reason": "Something wrong with accessing the DB" })
                 };
             }
-            /* return {
-                "statusCode": 200,
-                "isBase64Encoded": false,
-                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-                "body": JSON.stringify({ "response": "OK" }),
-            }; */
         }
         else if (requestType === 'getAmlScan') {
 
+            /*Last step of OneScan, the one who process data retrieved from regulat.io*/
+
             let scans = JSON.stringify(queryParams);
-            console.log(scans);
+
             if (scans == null) {
                 return {
                     "statusCode": 200,
@@ -113,17 +120,17 @@ exports.handler = async (event) => {
 
             try {
 
+                //Create new pool to connect the DB
                 client = await pool.connect();
 
                 let query = "";
                 let response;
 
-                // run process query
-                query = `select entrasp.process_aml_scans($$ ${scans} $$);`;    //can i? It's like " SELECT $$ anna's home $$  -->  | anna's home | "
-                
-                console.log(query);
+                //See the function in the db which answer the question of survey
+                query = `select entrasp.process_aml_scans($$ ${scans} $$);`;
+
+                console.log('running query: ', query);
                 response = await client.query(query);
-                console.log(response);
 
                 //release the client
                 await client.release();
@@ -136,16 +143,12 @@ exports.handler = async (event) => {
                     "body": JSON.stringify({ "response": "KO", "reason": "Something wrong with accessing the DB" })
                 };
             }
-            return {
-                "statusCode": 200,
-                "isBase64Encoded": false,
-                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-                "body": JSON.stringify({ "response": "OK" }),
-            };
+
+            body = { result: "OK" };
         }
         else {
-            console.log('Invalid request type');
-            // return getBadUrlResponse();
+            console.log('Invalid request type --> ', requestType);
+            return getBadUrlResponse();
         }
         return {
             "statusCode": 200,
@@ -154,5 +157,4 @@ exports.handler = async (event) => {
             "body": JSON.stringify(body)
         };
     }
-
 };
