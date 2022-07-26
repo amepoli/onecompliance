@@ -11,68 +11,148 @@ const pool = new Pool({
     connectionTimeoutMillis: 1000
 });
 
-
-exports.handler = async (event) => {
-    // TODO implement
-    
-    let cards = event.processedCards;
-    
-    if (cards == null) {
-        return { 
-            "statusCode":200, 
-            "isBase64Encoded": false,
-            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            "body": JSON.stringify({"response" : "KO", "reason": "Something wrong with provided data"})
-        }; 
-    }
-    
-    
-    
-    try {
-        const client = await pool.connect();
-        
-        let query = "";
-        let response;
-        
-
-        for (let i= 0; i < cards.length; i++) {
-            let card = cards[i];
-            
-            if (card.cardId != null) {
-                query = "SELECT * from imports.archiflow_contratti_temporary where card_id='" + card.cardId + "';";
-                response = await client.query(query);
-                if (response.rows[0] == null) {
-                    query = "INSERT INTO imports.archiflow_contratti_temporary (card_id, progressivo, data_firma, societa_fondo, controparte, partita_iva, tipo_fornitore, n_sistema) VALUES ('" 
-                        + card.cardId + "', '" + card.progressivo + "', '" + card.dataFirma + "', '" + card.societaFondo.replace(/'/g, "''") + "', '" + card.controparte.replace(/'/g, "''") + "', '" + card.piva + "', '" + card.tipoFornitore.replace(/'/g, "''") + "', '" + card.numSistema  + "');" ;
-                } else {
-                    query = "UPDATE imports.archiflow_contratti_temporary SET card_id='" + card.cardId + "', progressivo='" + card.progressivo + "', data_firma='" + 
-                        card.dataFirma + "', societa_fondo='" + card.societaFondo.replace(/'/g, "''") + "', controparte='" + card.controparte.replace(/'/g, "''") + 
-                        "', partita_iva='" + card.piva + "', tipo_fornitore='" + card.tipoFornitore.replace(/'/g, "''") + "', n_sistema='" + card.numSistema  + "';";
-                }
-                response = await client.query(query);
-            }
-        }
-
-        // run post-process query
-        query = "select entrasp.contratti_insert_from_contratti_fornitori_temporary('FININTSGR');";
-        response = await client.query(query);
-
-        //release the client
-        await client.release();
-    } catch(e){
-        return { 
-            "statusCode":200, 
-            "isBase64Encoded": false,
-            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            "body": JSON.stringify({"response" : "KO", "reason": "Something wrong with accessing the DB"})
-        }; 
-    }
-    
-
+// Get Bad URL Response
+function getBadUrlResponse() {
     return {
-        "statusCode": 200,
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-        "body": JSON.stringify({"response" : "OK"}),
+        "statusCode": 500,
+        "error": "Bad URL"
     };
+}
+
+exports.handler = async (event) => {
+
+    const queryParams = event.queryStringParameters ? event.queryStringParameters : event;
+    console.log('queryParams: ', queryParams);
+
+    const company = queryParams['company'];
+    const requestType = queryParams['request_type']; //? queryParams['request_type'] : event.request_type;  // Because i need to call it also from regulat lambda
+    const registry = queryParams['registry'];
+
+    let client;
+    let body;
+
+    if (!requestType) {
+        return getBadUrlResponse();
+    }
+    else {
+        console.log('Lets start ', requestType);
+
+        if (requestType === 'getConnectedRegistries') {
+            try {
+                client = await pool.connect();
+
+                let query = "";
+                let response;
+
+                query = `SELECT an.id_anagrafica AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob
+                FROM entrasp.anagrafiche_id an
+                INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
+                WHERE an.codice_part = (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}')
+                AND an.id_anagrafica=${registry} 
+                AND avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, avr.id_anagrafica)
+                AND tipo_soggetto IS NOT NULL
+                UNION
+                SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob 
+                FROM entrasp.connessioni_anagrafiche ca 
+                INNER JOIN entrasp.anagrafiche_id an ON ca.codice_part=an.codice_part AND ca.id_anagrafica_conn=an.id_anagrafica 
+                INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
+                WHERE ca.codice_part = (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}') 
+                AND ca.id_anagrafica=${registry} 
+                AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica)
+                AND tipo_soggetto IS NOT NULL;`;
+                //connectedRegistries = await client.query(query);
+
+                console.log('running query: ', query);
+
+                response = await client.query(query);
+
+                console.log('response', response.rows);
+
+                let connectedRegistries = null;
+
+                if (response && response.rows) {
+                    connectedRegistries = response.rows;
+                }
+
+                body = { result: 'OK', response: connectedRegistries };
+
+                await client.release();
+
+            } catch (e) {
+                console.error(e.message, e.stack);
+                console.log(e);
+                await client.release();
+                return {
+                    "statusCode": 200,
+                    "isBase64Encoded": false,
+                    "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                    "body": JSON.stringify({ "response": "KO", "reason": "Something wrong with accessing the DB" })
+                };
+            }
+            /* return {
+                "statusCode": 200,
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "body": JSON.stringify({ "response": "OK" }),
+            }; */
+        }
+        else if (requestType === 'getAmlScan') {
+
+            let scans = JSON.stringify(queryParams);
+            console.log(scans);
+            if (scans == null) {
+                return {
+                    "statusCode": 200,
+                    "isBase64Encoded": false,
+                    "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                    "body": JSON.stringify({ "response": "KO", "reason": "Something wrong with provided data" })
+                };
+            }
+
+            try {
+
+                client = await pool.connect();
+
+                let query = "";
+                let response;
+
+                // run process query
+                query = `select entrasp.process_aml_scans($$ ${scans} $$);`;    //can i? It's like " SELECT $$ anna's home $$  -->  | anna's home | "
+                
+                console.log(query);
+                response = await client.query(query);
+                console.log(response);
+
+                //release the client
+                await client.release();
+
+            } catch (e) {
+                return {
+                    "statusCode": 200,
+                    "isBase64Encoded": false,
+                    "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                    "body": JSON.stringify({ "response": "KO", "reason": "Something wrong with accessing the DB" })
+                };
+            }
+            return {
+                "statusCode": 200,
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "body": JSON.stringify({ "response": "OK" }),
+            };
+        }
+        else {
+            console.log('Invalid request type');
+            // return getBadUrlResponse();
+        }
+        return {
+            "statusCode": 200,
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            "body": JSON.stringify(body)
+        };
+    }
+
 };

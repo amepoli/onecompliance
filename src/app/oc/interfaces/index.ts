@@ -33,6 +33,7 @@ export * from './email_action_parameters';
 export * from './email_body_key_parameters';
 export * from './search_toggle';
 export * from './google_api_params';
+export * from './regulat_api_params';
 export * from './menu_option.interface';
 export * from './selection_action.interface';
 export * from './selection_action_params.interface';
