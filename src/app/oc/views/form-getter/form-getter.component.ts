@@ -1763,8 +1763,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
 
-                    _this._dialogService.showLoadingDialog('Scanning in progress', 'Please wait...');
+                    _this._dialogService.showLoadingDialog('Running OneScan', 'Please wait...');
 
+                    //First step, get connected registries
                     let connected_registries =  await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
                     console.log(connected_registries.response);
 
@@ -1775,20 +1776,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                     else{
 
-                    let connectedRegistries = connected_registries.response; // json which contains the result of a query in 6 different columns: ; // json which contains the result of a query in 6 different columns: 
-                                                                                 // | connected_registry | entyty_type | company_name | name | surname | yob |
+                    let connectedRegistries = connected_registries.response; 
 
-                    /* for(let i = 0; i < anagraficaFolders.length; i++) {
-                        let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, connected_registries[i], nomeAML, cognomeAML, yobAML, idSomministrazioneAML, tipoSoggettoAML).toPromise();
-                        console.log(scan_contents);
-                    } */
-
+                    //Second step, query regulat.io
                     let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, connectedRegistries, idSomministrazioneAML).toPromise();
                     console.log(scan_contents);
 
                     _this._dialogService.closeDialog();
-
-                    _this._toastService.showSuccessToast('Successfully Scanned!'); // show success toast
+                    _this._toastService.showSuccessToast('OneScan: Completed!'); // show success toast
+                    this.refreshView(); // refresh the view
                     }
                 }
             }
