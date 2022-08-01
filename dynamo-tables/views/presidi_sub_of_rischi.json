@@ -7,7 +7,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select rp.*,true as delete_presidi_rischi, true as visible_button_presidio, entrasp.presidi_descr(pr.id_presidio, pr.codice_azienda)as descr_presidio, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio, pr.codice  from entrasp.rischi_presidi rp inner join entrasp.presidi pr on rp.codice_azienda=pr.codice_azienda and rp.id_presidio=pr.id_presidio where rp.codice_azienda=$codice_azienda$ and rp.codice_rischio=$codice_rischio$"
+            "queryString": "select rp.*,true as delete_presidi_rischi, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione ,true as visible_button_presidio, entrasp.presidi_descr(pr.id_presidio, pr.codice_azienda)as descr_presidio, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio, pr.codice  from entrasp.rischi_presidi rp inner join entrasp.presidi pr on rp.codice_azienda=pr.codice_azienda and rp.id_presidio=pr.id_presidio where rp.codice_azienda=$codice_azienda$ and rp.codice_rischio=$codice_rischio$"
         },
         {
             "operation": "update",
@@ -284,6 +284,39 @@
                 ],
                 "onSuccessAction": "reload"
             }
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "10%",
+            "isPrimary": false,
+            "key": "stato_attuazione",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione)",
+            "label": "Stato",
+            "style": [
+                {
+                    "value": "Attivo",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "In Implementazione",
+                    "font_color": "orange",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Auspicabile",
+                    "font_color": "red",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Non Applicabile",
+                    "font_color": "grey",
+                    "font_weight": "500"
+                }
+            ]
         },
         {
             "format": {
