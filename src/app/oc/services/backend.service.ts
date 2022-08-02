@@ -47,11 +47,11 @@ export class BackendService {
 
   constructor(private amplifyService: AmplifyService) {
     axios.interceptors.request.use((config) => {
-        config.timeout = 120000;
-        return config;
-      }, (error) => {
-        return Promise.reject(error);
-      });
+      config.timeout = 120000;
+      return config;
+    }, (error) => {
+      return Promise.reject(error);
+    });
   }
 
   private replacer(key, value) {
@@ -96,7 +96,7 @@ export class BackendService {
     return from(this.amplifyService.api().del(this.apiName, '/' + this.tablesApiName, this.myGetInit));
   }
 
-  performFormAction(formActionType: FormActionType,  entryName: string, company: string, keys: any): Observable<any> {
+  performFormAction(formActionType: FormActionType, entryName: string, company: string, keys: any): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, isFormAction: 1, formActionType: formActionType, company: company, keys: JSON.stringify(keys) };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
@@ -111,23 +111,23 @@ export class BackendService {
 
   runCustomQuery(entryName: string, company: string, keys: any, buttonKey: string): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify({}), custom_query: 1, custom_query_key: buttonKey};
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify({}), custom_query: 1, custom_query_key: buttonKey };
     this.myPutPostInit.body = keys;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.tablesApiName, this.myPutPostInit));
   }
-  
+
   runTableMultiSelectionActionQuery(entryName: string, company: string, selection_params: any): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, table_multi_selection_action_query: 1};
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, table_multi_selection_action_query: 1 };
     this.myPutPostInit.body = selection_params;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.tablesApiName, this.myPutPostInit));
   }
-  
+
   runCompanyChangeQuery(company: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { company_change_query: 1, company: company};
+    this.myGetInit.queryStringParameters = { company_change_query: 1, company: company };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
-  }  
+  }
 
   getAttachList(entryName: string, company: string, keys: any): Observable<any> {
     this.amplifyService.auth();
@@ -155,14 +155,14 @@ export class BackendService {
 
   checkFile(entryName: string, company: string, keys: any, checksum: string, md5Checksum: string, filename: string, data: any): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), filename: filename, checksum: checksum, md5_checksum: md5Checksum};
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), filename: filename, checksum: checksum, md5_checksum: md5Checksum };
     this.myPutPostInit.body = data;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }
 
-  deleteFile(entryName: string, company: string, id_risorsa: string, filename: string,prog_revisione: string, keys: any): Observable<any> {
+  deleteFile(entryName: string, company: string, id_risorsa: string, filename: string, prog_revisione: string, keys: any): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, id_risorsa: id_risorsa, filename: filename,prog_revisione: prog_revisione, keys: JSON.stringify(keys) };
+    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, id_risorsa: id_risorsa, filename: filename, prog_revisione: prog_revisione, keys: JSON.stringify(keys) };
     return from(this.amplifyService.api().del(this.apiName, '/' + this.attachApiName, this.myGetInit));
   }
 
@@ -180,7 +180,7 @@ export class BackendService {
 
   getContents(entryName: string, company: string, keys: any, contentsPrefix: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), request_type: 'getContents', contents_prefix: contentsPrefix  };
+    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), request_type: 'getContents', contents_prefix: contentsPrefix };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.attachApiName, this.myGetInit));
   }
 
@@ -242,7 +242,7 @@ export class BackendService {
     // Test data:
     // this.myPutPostInit.queryStringParameters = { request_type: 'importFile', company: 'DEMO', queryString: '', filename: 's3test.csv', table: 'entrasp.s3_import', columns: null };
 
-    this.myPutPostInit.queryStringParameters = { entry_name: entryName, request_type: 'importAdvancedFile', company: company, keys: JSON.stringify(keys), filename: fileName, is_form: is_form ? 1 : 0, advanced_query_label: advanced_query_label  };
+    this.myPutPostInit.queryStringParameters = { entry_name: entryName, request_type: 'importAdvancedFile', company: company, keys: JSON.stringify(keys), filename: fileName, is_form: is_form ? 1 : 0, advanced_query_label: advanced_query_label };
     return from(this.amplifyService.api().post(this.apiName, '/' + this.importApiName, this.myPutPostInit));
   }
 
@@ -298,7 +298,7 @@ export class BackendService {
 
   sendEmail(subject: string, header: string, query: string, footer: string, company: string, conditionQuery: string, onSuccessQuery: string, sender: string, to: string, cc: string, ccn: string): Observable<any> {
     this.amplifyService.auth();
-    this.myPutPostInit.queryStringParameters = {company: company};
+    this.myPutPostInit.queryStringParameters = { company: company };
     this.myPutPostInit.body = JSON.parse(JSON.stringify({
       sender: sender,
       subject: subject,
@@ -310,23 +310,23 @@ export class BackendService {
       company: company,
       conditionQuery: conditionQuery,
       onSuccessQuery: onSuccessQuery,
-      to: {list:to},
-      cc: {list:cc},
-      ccn: {list:ccn}
+      to: { list: to },
+      cc: { list: cc },
+      ccn: { list: ccn }
     }));
     return from(this.amplifyService.api().post(this.apiName, '/' + this.emailApiName, this.myPutPostInit));
   }
 
-  
+
   isTrDayComplete(username: string, date_time: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {request_type: 'isTrDayComplete', user_name: username, date_time: date_time };
+    this.myGetInit.queryStringParameters = { request_type: 'isTrDayComplete', user_name: username, date_time: date_time };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.timeTrackerApiName, this.myGetInit));
   }
 
   checkTimerStatus(company: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {request_type: 'checkStatus', company: company };
+    this.myGetInit.queryStringParameters = { request_type: 'checkStatus', company: company };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.timeTrackerApiName, this.myGetInit));
   }
 
@@ -344,7 +344,7 @@ export class BackendService {
 
   updateArchiflow(numRecords: number): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = {numRecords: numRecords};
+    this.myGetInit.queryStringParameters = { numRecords: numRecords };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.archiflowApiName, this.myGetInit));
   }
 
@@ -373,21 +373,41 @@ export class BackendService {
     this.myPutPostInit.queryStringParameters = { request_type: 'GetEmailThreads', search: search };
     this.myPutPostInit.body = authToken;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
-  
+
     // this.myGetInit.queryStringParameters = { request_type: 'GetEmailThreads' };
     // return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
-  
+
+  }
+
+  loadChangesToken(authToken: any) {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { request_type: 'loadChangesToken' };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
+  }
+
+  createChangesToken(authToken: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'createChangesToken' };
+    this.myPutPostInit.body = authToken;
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
+  }
+
+  getChanges(authToken: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'getChanges' };
+    this.myPutPostInit.body = { authToken };
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
   }
 
   getDriveContents(folder: string, authToken: any) {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { request_type: 'getDriveContents', folder: folder };
-    this.myPutPostInit.body = authToken;
+    this.myPutPostInit.body = { authToken };
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
-  
+
     // this.myGetInit.queryStringParameters = { request_type: 'GetEmailThreads' };
     // return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
-  
+
   }
 
   createDriveFolder(folder: string, authToken: any) {
@@ -402,7 +422,7 @@ export class BackendService {
     this.myPutPostInit.queryStringParameters = { request_type: 'copyFromS3ToDrive', s3FilePath: s3FilePath, driveFilePath: driveFilePath };
     this.myPutPostInit.body = authToken;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
-  
+
   }
 
   copyFromDriveToS3(driveFilePath: string, s3FilePath: string, authToken: any) {
@@ -481,17 +501,17 @@ export class BackendService {
 
   loadHomePage(entryName: string, company: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, homepage: 1};
+    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, homepage: 1 };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
   }
 
   loadHomePageTab(entryName: string, company: string, search_keys: any): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, homepagetab: 1};
+    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, homepagetab: 1 };
     if (search_keys != null) {
       this.myGetInit.queryStringParameters['search_keys'] = JSON.stringify(search_keys);
     }
     return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
   }
-  
+
 }
