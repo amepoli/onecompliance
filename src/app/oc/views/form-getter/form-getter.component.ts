@@ -9,6 +9,8 @@ import { AuthService, BackendService, ConsoleLoggerService, DialogService, Helpe
 import { DynamicFieldDirective } from 'app/oc/directives';
 import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-field.directive';
 import { InputComponent } from 'app/oc/dynamic-forms/components/input/input.component';
+import { RegulatAPIParams } from 'app/oc/interfaces/regulat_api_params';
+import { exit } from 'process';
 
 @Component({
     selector: 'form-getter',
@@ -1378,6 +1380,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         
         } else if (event.actionType === 'google_api') {
             _this.runGoogleEvent(event, value, keyListener);
+        } else if (event.actionType === 'regulat_api') {
+            _this.runRegulatEvent(event, value, keyListener);
         }
     }
 
@@ -1716,6 +1720,76 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
             else {
                 _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");                    
+            }
+        }
+    }
+
+    async runRegulatEvent(event, value, keyListener) {
+        let _this = this;
+        const regulatAPIParams: RegulatAPIParams = event.regulatAPIParams;
+        let formValues = _this.formArray.first.form.value;
+                
+        // process the booleans (1/0 instead of true/false)
+        for (const value in formValues) {
+            if (formValues.hasOwnProperty(value)) {
+                const element = formValues[value];
+                if (element == null) {
+                    continue; // skip null entries
+                }
+                // decode combos
+                if (element['id'] != null) {
+                    formValues[value] = element['id'];
+                }
+                // encode boolean
+                else if (element === true) {
+                    formValues[value] = '1';
+                }
+                else if (element === false) {
+                    formValues[value] = '0';
+                }
+            }
+        }
+
+        if(!regulatAPIParams || !regulatAPIParams.actionType) {
+            _this._toastService.showErrorToast("Missing Regulat API params");
+        }
+        else {
+            const codiceAziendaAML = formValues[regulatAPIParams.entityParams.codice_azienda];
+            const idAnagraficaAML = formValues[regulatAPIParams.entityParams.id_anagrafica];
+            const idSomministrazioneAML = formValues[regulatAPIParams.entityParams.id_somministrazione];
+            if(regulatAPIParams.actionType === 'get_aml_scan') {
+                if(!regulatAPIParams.entityParams) {
+                    _this._toastService.showErrorToast("Missing Regulat API entity params");
+                }
+                else {
+
+                    _this._dialogService.showLoadingDialog('Running OneScan', 'Please wait...');
+
+                    //First step, get connected registries
+                    let connected_registries =  await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
+                    console.log(connected_registries.response);
+
+                    if (connected_registries.response === 'KO') {
+                        console.log('KO');
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showErrorToast(connected_registries.reason);
+                    }
+                    else{
+
+                    let connectedRegistries = connected_registries.response; 
+
+                    //Second step, query regulat.io
+                    let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, connectedRegistries, idSomministrazioneAML).toPromise();
+                    console.log(scan_contents);
+
+                    _this._dialogService.closeDialog();
+                    _this._toastService.showSuccessToast('OneScan: Completed!'); // show success toast
+                    this.refreshView(); // refresh the view
+                    }
+                }
+            }
+            else {
+                _this._toastService.showErrorToast("Missing Regulat Api Params");                    
             }
         }
     }

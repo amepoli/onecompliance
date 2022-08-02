@@ -24,6 +24,8 @@ export class BackendService {
   private timeTrackerApiName = appData.lambdas.time_tracker.apiName;
   private archiflowApiName = appData.lambdas.archiflow.apiName;
   private googleApiName = appData.lambdas.google_api.apiName;
+  private regulatApiName = appData.lambdas.regulat.apiName;
+  private regulatVPCApiName = appData.lambdas.regulat_VPC.apiName;
 
   private myGetInit = { // OPTIONAL
     headers: {
@@ -463,6 +465,18 @@ export class BackendService {
     this.myPutPostInit.queryStringParameters = { request_type: 'setProperFileFolder' };
     this.myPutPostInit.body = input;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
+  }
+
+  getConnectedRegistries(company: string, registry: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { request_type: 'getConnectedRegistries', company: company, registry: registry };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatVPCApiName, this.myGetInit));
+  }
+
+  getAmlScan(company: string, registry: number, connected_registries: any, checkId: number): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { company: company, registry: registry, connected_registries: JSON.stringify(connected_registries), checkId: checkId };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatApiName, this.myGetInit));
   }
 
   loadHomePage(entryName: string, company: string): Observable<any> {

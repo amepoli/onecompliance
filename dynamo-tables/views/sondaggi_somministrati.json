@@ -707,6 +707,11 @@
             "icon": "speaker_notes_off",
             "label": "Rispondi non applicabile",
             "outputEventName": "risp_non_applicabile"
+          },
+          {
+              "icon": "check",
+              "label": "Check in Global Watchlist",
+              "outputEventName": "get_aml_scan"
           }
         ]
       },
@@ -769,6 +774,22 @@
             "actionOnYes": {
               "actionType": "query",
               "queryFunct": "SELECT entrasp.verifica_non_applicabile($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$)"
+            }
+          },
+          "outputEventWhenComplete": "sondaggi_somministrati_reload"
+        },
+        {
+          "eventName": "get_aml_scan",
+          "actionType": "regulat_api",
+          "condition": "none",
+          "successMessage": "Done!",
+          "values": [],
+          "regulatAPIParams": {
+            "actionType": "get_aml_scan",
+            "entityParams": {
+              "codice_azienda": "codice_azienda",
+              "id_anagrafica": "id_anagrafica",
+              "id_somministrazione": "id_somministrazione"
             }
           },
           "outputEventWhenComplete": "sondaggi_somministrati_reload"
@@ -1266,6 +1287,21 @@
       "queryFunct": "entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio)",
       "newLine": true,
       "readOnly": true
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_anagrafica",
+      "label": "IdAnagrafica",
+      "newLine": false,
+      "readOnly": true,
+      "queryFunct": "select case when object_name = 'anagraficheId' then split_part(object_key, '|', 2) else null end",
+      "size": 0.8
     }
   ],
   "search_keys": [

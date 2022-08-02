@@ -1,4 +1,4 @@
-import { GoogleAPIParams, MenuOption } from ".";
+import { GoogleAPIParams , RegulatAPIParams, MenuOption } from ".";
 import { FormWidgetType } from "../types";
 import { EmailActionParameters } from "./email_action_parameters";
 
@@ -20,7 +20,7 @@ export interface Key {
 }
 
 export interface FieldInputEvent {
-  actionType: 'hide' | 'show' | 'readOnly' | 'query' | 'query_style' | 'show_message' | 'toggle' | 'update' | 'update_style' | 'update_time_tracker' | 'google_api';
+  actionType: 'hide' | 'show' | 'readOnly' | 'query' | 'query_style' | 'show_message' | 'toggle' | 'update' | 'update_style' | 'update_time_tracker' | 'google_api' | 'regulat_api';
   eventName: string;
   values: any[];
   condition: 'equalTo' | 'notEqualTo' | 'greatorThan' | 'lessThan' | 'none';
@@ -49,7 +49,8 @@ export interface FieldInputEvent {
       queryFunct?: string
     }
   };
-  googleAPIParams?: GoogleAPIParams
+  googleAPIParams?: GoogleAPIParams/* ;
+  RegulatAPIParams?: RegulatAPIParams */
   
 }
 
