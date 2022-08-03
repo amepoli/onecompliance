@@ -449,10 +449,11 @@ export class AuthService {
     if(loadAuthTokenResponse.result === 'KO') {
       // Sign in the user if they are currently signed in.
       _this._console.log('Is signed in: ', auth2.isSignedIn.get());
-      if (auth2.isSignedIn.get() == false) {
-        auth2.signIn();
-      }
 
+      await _this.signOutGoogle();
+      await auth2.signIn();
+
+      console.log('getting auth code');
       let resp = await _this.getGooglePermissions(purpose);
       return resp;
     }
@@ -513,11 +514,13 @@ export class AuthService {
     console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   }
 
-  signOutGoogle() {
+  async signOutGoogle() {
     try {
-      auth2.getAuthInstance().signOut().then(function () {
-        console.log('User signed out.');
-      });
+      if (auth2.isSignedIn.get()) {
+        // gapi.auth.setToken(null);
+        await auth2.signOut();
+        await auth2.disconnect();
+      }
     }
     catch(e){}
   }
@@ -525,7 +528,7 @@ export class AuthService {
   async getGooglePermissions(purpose) {
     let _this = this;
     let googleUser = auth2.currentUser.get();
-    
+    console.log(googleUser);
     if(googleUser.hasGrantedScopes(_this.googleScopes[purpose])) {
       return null;
     }
