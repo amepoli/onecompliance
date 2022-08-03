@@ -249,7 +249,7 @@ async function loadAuthToken(userid, tokenType) {
 
     if (extAuthentication[tokenType] && Object.keys(extAuthentication[tokenType]).length) {
         authParams = await refreshAuthToken(extAuthentication[tokenType]);
-        
+
         extAuthentication[tokenType] = authParams;
         await createExtAuthentication(extAuthentication)
 
@@ -295,10 +295,10 @@ async function getChanges(userid, authParams) {
     const existingtoken = await loadChangesToken(userid);
     let token = existingtoken.token;
     _console.log('token', token);
-    
-    if (!token ) {
+
+    if (!token) {
         _console.log('Token not found! Getting changes token...');
-    
+
         let createChangesTokenResponse = await createChangesToken(userid, authParams);
         if (createChangesTokenResponse.token) {
             token = createChangesTokenResponse.token;
@@ -316,19 +316,33 @@ async function getChanges(userid, authParams) {
         _console.log('getting changes list');
         let pageToken = token;
         let fileIds = [];
-        //do {
-            const res = await drive.changes.list({
-                pageToken: token,
-                fields: '*',
-            });
-            res.data.changes.forEach((change) => {
-                fileIds.push(change.fileId);
+        let filePaths = [];
 
-                _console.log('change found for file: ', change.fileId);
-            });
-            if (res.data.newStartPageToken) {
-                pageToken = res.data.newStartPageToken;
+        //do {
+        const res = await drive.changes.list({
+            pageToken: token,
+            fields: '*',
+        });
+        for (const change of res.data.changes) {
+            _console.log('change found for file: ', change.fileId);
+            const path = await getDriveFileCompletePath(change.fileId);
+            if(path) {
+                fileIds.push(change.fileId);
+                filePaths.push(path);
             }
+        }
+
+        // res.data.changes.forEach(async (change) => {
+        //     fileIds.push(change.fileId);
+
+        //     const path = await getDriveFileCompletePath(change.fileId);
+        //     filePaths.push(path);
+
+        //     _console.log('change found for file: ', change.fileId);
+        // });
+        if (res.data.newStartPageToken) {
+            pageToken = res.data.newStartPageToken;
+        }
         // } while (pageToken);
 
         // Save new token
@@ -338,7 +352,7 @@ async function getChanges(userid, authParams) {
         await createExtAuthentication(extAuthentication);
 
         // Return fileIds
-        return { result: 'OK', fileIds };
+        return { result: 'OK', fileIds, filePaths };
     } catch (err) {
         return { result: 'KO', message: err };
     }
@@ -728,6 +742,52 @@ async function getDriveFileInfo(driveFolderId, driveFile, driveFileId) {
     }
 
     return { result: 'KO', data: 'File not found!' };
+}
+
+async function getDriveFileCompletePath(driveFileId) {
+    const drive = google.drive({ version: 'v3', auth: oAuth2Client });
+
+    try {
+        let response;
+        let completePath = '';
+
+        do {
+            _console.log("Getting info for: ", driveFileId);
+            response = await drive.files.get({
+                fileId: driveFileId,
+                fields: "id, name, mimeType, md5Checksum, createdTime, modifiedTime, parents"
+            });
+            _console.log(response);
+
+            try {
+                response = JSON.parse(response);
+            }
+            catch (e) {
+            }
+
+            _console.log(JSON.stringify(response));
+            _console.log('data: ', response.data);
+            if (response.data) {
+                if(!completePath && response.data.mimeType == folderMime) {
+                    return null;
+                }
+                if(response.data.name != "My Drive") {
+                    completePath = `/${response.data.name}${completePath}`
+                }
+                driveFileId = response.data.parents ? response.data.parents[0] : null;
+            }
+            else {
+                driveFileId = null;
+            }
+        } while (driveFileId && driveFileId != "root")
+
+        return completePath;
+    }
+    catch (e) {
+        _console.log(e);
+    }
+
+    return null;
 }
 
 async function renameDriveFile(driveFolderId, OldName, newName) {
