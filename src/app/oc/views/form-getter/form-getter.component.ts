@@ -5,7 +5,7 @@ import { forkJoin, Subscription } from 'rxjs';
 import { SubformComponent } from 'app/oc/dynamic-forms/components/subform/subform.component';
 import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, GoogleAPIParams, ImportItem, MessageView, OutputEvent, WidgetsConfigurations } from 'app/oc/interfaces';
 import { FormDataType } from 'app/oc/types';
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/oc/services';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, GoogleAPIService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/oc/services';
 import { DynamicFieldDirective } from 'app/oc/directives';
 import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-field.directive';
 import { InputComponent } from 'app/oc/dynamic-forms/components/input/input.component';
@@ -100,7 +100,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
         private _console: ConsoleLoggerService,
-        private _timeTrackerService: TimeTrackerService
+        private _timeTrackerService: TimeTrackerService,
+        private _googleAPIService: GoogleAPIService
     ) {
         const _this = this;
 
@@ -1602,110 +1603,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         {
                             const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
                             
-                            
-                            let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
-                            _this._console.log(anagrafica_contents);
-                            let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
-                            //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
-                            let sub_folders = anagraficaFolders['sub_folders'];
-                            if(sub_folders && sub_folders.length > 0) {
-                                for(let i = 0; i < sub_folders.length; i++) {
-                                    if(sub_folders[i]['folder'].endsWith('/')) {
-                                        sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0 , -1);
-                                    }
-                                    if(!sub_folders[i]['folder'].includes('/')) {
-                                        sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
-                                    }
-                                }
-                                //sub_folders = sub_folders.filter(x => !x.md5 || !x.md5.includes('null::varchar'))
-                            }
+                            // let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
+                            // console.log(getChangesResult);
+                            // if(getChangesResult && getChangesResult.length) {
+                            //     let syncDataResponse = await forkJoin(getChangesResult.map(x => _this._googleAPIService.syncGoogleDrive(googleAuth, x.codice_azienda, x.anagrafica_id, null))).toPromise();
+                            // }
 
-                            anagraficaFolders['sub_folders'] = sub_folders;
-                            
-                            _this._console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
-                            
-                            const driveFolder = anagraficaFolders['root_folder'];
-                            const subFolders = anagraficaFolders['sub_folders'] || [];
-
-                            let foldersToCheck = [driveFolder];
-                            if(subFolders && subFolders.length > 0) {
-                                for await (let subFolder of subFolders) {
-                                    if(!foldersToCheck.includes(subFolder.folder)) {
-                                        foldersToCheck.push(subFolder.folder);
-                                    }
-                                }
-                            }
-                            
-                            _this._console.log('foldersToCheck: ', JSON.stringify(foldersToCheck));
-                            
-                            anagraficaFolders['folder_ids'] = {};
-                            for await (let folderToCheck of foldersToCheck) {
-                                let fixDriveFolderPathByIdentifierResponse = await _this.backendService.fixDriveFolderPathByIdentifier(folderToCheck, googleAuth).toPromise();
-                                anagraficaFolders['folder_ids'][fixDriveFolderPathByIdentifierResponse['folder']] = fixDriveFolderPathByIdentifierResponse['folderId'];
-
-                            }
-
-                            // let fixDriveFolderPathByIdentifierResponse = await forkJoin(foldersToCheck.map(x => _this.backendService.fixDriveFolderPathByIdentifier(x, googleAuth))).toPromise();
-                            // _this._console.log('fixDriveFolderPathByIdentifier Response: ', fixDriveFolderPathByIdentifierResponse);
-                            
-                            // anagraficaFolders['folder_ids'] = {};
-                            // fixDriveFolderPathByIdentifierResponse.forEach(x => {
-                            //     anagraficaFolders['folder_ids'][x['folder']] = x['folderId']
-                            // });
-
-                            anagraficaFolders['codice_azienda'] = codiceAzienda;
-                            
-                            _this._console.log(anagraficaFolders);
-                            // let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
-                            // _this._console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
-                            // anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
-                            // anagraficaFolders['codice_azienda'] = codiceAzienda;
-                            
-                            
-                            let getDriveFolderDeepContentsResponse: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
-                            _this._console.log('getDriveFolderDeepContentsResponse ',getDriveFolderDeepContentsResponse);
-
-                            let syncDataResponse = await forkJoin(getDriveFolderDeepContentsResponse.syncData.map(x => _this.backendService.syncDriveS3File([x], googleAuth))).toPromise();
-                            _this._console.log('syncDataResponse', syncDataResponse);
-
-                            anagraficaFolders['root_drive_contents'] = getDriveFolderDeepContentsResponse.rootDriveContents;
-                            let processDriveFolderDeepContentsResponse: any = await _this.backendService.processDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
-                            _this._console.log('processDriveFolderDeepContentsResponse ', processDriveFolderDeepContentsResponse);
-
-                                      
-                            let filteredFilesForSetProperFileFolder = [];
-                            for(let file of processDriveFolderDeepContentsResponse.files) {
-                                if(file.fileid.includes('/')) {
-                                    file.fileid = file.fileid.split('/')[1];
-                                }
-                                if(filteredFilesForSetProperFileFolder.filter(x => x.fileid == file.fileid && x.filename == file.filename && x.folder == file.folder).length == 0) {
-                                    filteredFilesForSetProperFileFolder.push(file);
-                                }
-                            }
-
-                            let contentsJson = {
-                                codice_azienda: codiceAzienda,
-                                id_progetto: idProgetto,
-                                id_anagrafica: idAnagrafica,
-                                files: filteredFilesForSetProperFileFolder
-                            }
-                            _this._console.log(contentsJson);
-
-                            let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
-                            _this._console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
-                            
-                            
-                            
-                            let performDriveOperationsResponse = [];
-                            if(setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows && setProperFileFolderResponse.response.rows.length > 0) {
-                                for await (let operation of setProperFileFolderResponse.response.rows) {
-                                    let performDriveOperationResponse = await _this.backendService.performDriveOperations([operation], googleAuth).toPromise();
-                                    performDriveOperationsResponse.push(performDriveOperationResponse);                                    
-                                }
-                                // let performDriveOperationsResponse = await forkJoin(setProperFileFolderResponse.response.rows.map(x => _this.backendService.performDriveOperations([x], googleAuth))).toPromise();
-                            }
-                            
-                             _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
+                            _this._googleAPIService.syncGoogleDrive(googleAuth, codiceAzienda, idAnagrafica, idProgetto);
 
                             _this._toastService.hideLoadingToast(loadingToast);
                             _this._toastService.showSuccessToast(event.successMessage || 'Done!');
@@ -1714,7 +1618,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._console.log(e);
                             _this._toastService.hideLoadingToast(loadingToast);
                             _this._toastService.showErrorToast(e);
-                        }                        
+                        }
                     }
                 }
             }
