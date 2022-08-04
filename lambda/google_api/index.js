@@ -327,8 +327,12 @@ async function getChanges(userid, authParams) {
             _console.log('change found for file: ', change.fileId);
             const path = await getDriveFileCompletePath(change.fileId);
             if(path) {
-                fileIds.push(change.fileId);
-                filePaths.push(path);
+                let newPath = path.startsWith('/') ? path.substring(1) : path;
+                let newPathPaths = newPath.split('/');
+                if(newPathPaths.length > 2 && newPathPaths[1].includes('~')) {
+                    fileIds.push(change.fileId);
+                    filePaths.push(path);
+                }
             }
         }
 
