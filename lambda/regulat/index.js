@@ -14,6 +14,7 @@ exports.handler = async (event, context) => {
 
   const company = queryParams['company'];
   const checkId = queryParams['checkId'];
+  const dynamoUser = queryParams['dynamoUser'];
   const connectedRegistries = JSON.parse(queryParams['connected_registries']);
   let hostName;
   let scannedData = '';
@@ -89,6 +90,7 @@ exports.handler = async (event, context) => {
     scannedData.data["registry"] = connectedRegistries[i].connected_registry;
     scannedData.data["company"] = company;
     scannedData.data["checkId"] = checkId;
+    scannedData.data["dynamoUser"] = dynamoUser;
     scannedData.data["request_type"] = 'processScan';
 
     //4.Call regulat_VPC to process the data

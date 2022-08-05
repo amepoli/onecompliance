@@ -512,9 +512,9 @@ export class BackendService {
     return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatVPCApiName, this.myGetInit));
   }
 
-  getAmlScan(company: string, connected_registries: any, checkId: string): Observable<any> {
+  getAmlScan(company: string, connected_registries: any, checkId: string, dynamoUser: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { company: company, connected_registries: JSON.stringify(connected_registries), checkId: checkId };
+    this.myGetInit.queryStringParameters = { company: company, connected_registries: JSON.stringify(connected_registries), checkId: checkId, dynamoUser: dynamoUser };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatApiName, this.myGetInit));
   }
 

@@ -19,7 +19,7 @@
     {
       "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "SELECT mdt.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.id_anagrafica_assegnataria, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+      "queryString": "SELECT mdt.flag_sezioni, '€global_username€' as username, mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.id_anagrafica_assegnataria, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
     },
     {
       "operation": "delete",
@@ -316,12 +316,25 @@
             "autoGenerate": false,
             "format": {
               "viewType": "input",
-              "dataType": "number"
+              "dataType": "text"
             },
             "isHidden": true,
             "isPrimary": false,
             "key": "codice_part",
             "label": "codice_part",
+            "readOnly": false,
+            "sameOrigin": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "input",
+              "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "username",
+            "label": "",
             "readOnly": false,
             "sameOrigin": false
           },
@@ -737,7 +750,8 @@
             "entityParams": {
               "codice_azienda": "codice_azienda",
               "id_anagrafica": "id_anagrafica",
-              "id_somministrazione": "id_somministrazione"
+              "id_somministrazione": "id_somministrazione",
+              "dynamo_user": "username"
             }
           },
           "outputEventWhenComplete": "sondaggi_somministrati_reload"

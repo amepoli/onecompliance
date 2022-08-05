@@ -3,10 +3,12 @@ export interface RegulatAPIParams {
     entityParams?: {
         codice_azienda: string,
         id_anagrafica: number,
-        id_somministrazione: number
+        id_somministrazione: number,
+        dynamo_user: string
     },
     surveyParams?: {
         codice_azienda: string,
-        id_sondaggio: number
+        id_sondaggio: number,
+        dynamo_user: string
     }
 };
