@@ -483,6 +483,11 @@
                         "icon": "sync",
                         "label": "Ricalcola punteggi",
                         "outputEventName": "ricalcola_punteggi"
+                    },
+                    {
+                        "icon": "check",
+                        "label": "Check in Global Watchlist",
+                        "outputEventName": "get_aml_scans"
                     }
                 ]
             },
@@ -538,7 +543,22 @@
                     "values": [],
                     "queryFunct": "SELECT entrasp.ricalcola_punteggi_sondaggi_aperti($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$)",
                     "outputEventWhenComplete": "survey_reload"
-                }
+                },
+                {
+                    "eventName": "get_aml_scans",
+                    "actionType": "regulat_api",
+                    "condition": "none",
+                    "successMessage": "Done!",
+                    "values": [],
+                    "regulatAPIParams": {
+                      "actionType": "get_aml_scans",
+                      "surveyParams": {
+                        "codice_azienda": "codice_azienda",
+                        "id_sondaggio": "id_sondaggio"
+                      }
+                    },
+                    "outputEventWhenComplete": "survey_reload"
+                  }
             ],
             "isHidden": false,
             "isPrimary": false,
