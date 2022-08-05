@@ -181,10 +181,19 @@ exports.handler = async (event) => {
                 let response;
 
                 //Prepare the query to get the connected checks, because i need to launch the tool on these too 
-                query = `SELECT ss.id_somministrazione 
+                query = `SELECT ss.id_somministrazione
                 FROM entrasp.sondaggi snd 
                 INNER JOIN entrasp.sondaggi_somministrati ss ON snd.codice_azienda=ss.codice_azienda AND snd.id_sondaggio=ss.id_sondaggio 
-                WHERE snd.codice_azienda='${company}' AND snd.id_sondaggio=${survey};`;
+                WHERE snd.codice_azienda='${company}'
+                AND snd.id_sondaggio=${survey} 
+                AND ss.id_somministrazione NOT IN (
+                    SELECT id_somministrazione 
+                    FROM entrasp.risposte rp
+                    INNER JOIN entrasp.domande dmd ON rp.codice_azienda=dmd.codice_azienda AND rp.id_domanda=dmd.id_domanda AND rp.id_modello_test=dmd.id_modello_test AND rp.id_modello_test_vr=dmd.id_modello_test_vr
+                    WHERE rp.codice_azienda=ss.codice_azienda
+                    AND rp.id_sondaggio=ss.id_sondaggio
+                    AND dmd.id_argomento=45414 
+                );`;
 
                 console.log('running query: ', query);
                 response = await client.query(query);
