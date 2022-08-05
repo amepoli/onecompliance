@@ -5,7 +5,7 @@ import { forkJoin, Subscription } from 'rxjs';
 import { SubformComponent } from 'app/oc/dynamic-forms/components/subform/subform.component';
 import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, GoogleAPIParams, ImportItem, MessageView, OutputEvent, WidgetsConfigurations } from 'app/oc/interfaces';
 import { FormDataType } from 'app/oc/types';
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/oc/services';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, GoogleAPIService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/oc/services';
 import { DynamicFieldDirective } from 'app/oc/directives';
 import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-field.directive';
 import { InputComponent } from 'app/oc/dynamic-forms/components/input/input.component';
@@ -100,7 +100,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
         private _console: ConsoleLoggerService,
-        private _timeTrackerService: TimeTrackerService
+        private _timeTrackerService: TimeTrackerService,
+        private _googleAPIService: GoogleAPIService
     ) {
         const _this = this;
 
@@ -1600,7 +1601,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         let loadingToast = _this._toastService.showLoadingToast("Synching google drive", "Please wait...");
                         try {
                             const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
-
+                            
+                            // let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
+                            // console.log(getChangesResult);
+                            // if(getChangesResult && getChangesResult.length) {
+                            //     let syncDataResponse = await forkJoin(getChangesResult.map(x => _this._googleAPIService.syncGoogleDrive(googleAuth, x.codice_azienda, x.anagrafica_id, null))).toPromise();
+                            // }
 
                             let anagrafica_contents = await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername()).toPromise();
                             _this._console.log(anagrafica_contents);
