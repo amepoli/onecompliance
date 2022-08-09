@@ -1,0 +1,250 @@
+{
+	"$schema": "../views.schema.json",
+	"origin": "entrasp.argomenti_eventi",
+	"entryKey": "scadenze",
+	"businessObjectName": "argomenti_eventi",
+	"predefinedQueries": [],
+	"form_keys": [
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "codice_azienda",
+			"key": "codice_azienda",
+			"readOnly": false,
+			"isHidden": true,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": true,
+			"format": {
+				"comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione_breve AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father IN (SELECT entrasp.descendants_of_argomento(45417,2)) AND id_argomento_son != 45417 AND (SELECT count(*) FROM entrasp.argomenti_argomenti WHERE id_argomento_father=aa.id_argomento_son) = 0 --AND arg.id_argomento NOT IN (SELECT id_argomento FROM entrasp.argomenti_eventi);",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "number"
+			},
+			"label": "#",
+			"key": "id_argomento",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Descrizione",
+			"key": "descrizione",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true,
+			"sameOrigin": false,
+			"queryFunct": "SELECT descrizione FROM entrasp.argomenti WHERE id_argomento=£id_argomento£"
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "number",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "interval_multiplier",
+			"label": "Numero intervalli",
+			"newLine": false,
+			"readOnly": false,
+			"size": 1.7
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='time_interval';",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "interval_value",
+			"label": "Unità misura intervalli (days, weeks, months)",
+			"newLine": false,
+			"readOnly": false,
+			"size": 1.7
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Codice colore",
+			"key": "codice_colore",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		}
+	],
+	"search_keys": [
+		{
+			"fieldName": "flag_principali",
+			"format": {
+				"value": "0",
+				"viewType": "checkbox"
+			},
+			"label": "Solo Principali",
+			"newLine": false,
+			"queryCond": "id_argomento not in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_relazione=45069)"
+		},
+		{
+			"format": {
+				"comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"fieldName": "codice_ruolo_s",
+			"label": "Ruolo",
+			"newLine": false,
+			"queryCond": "id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)"
+		},
+		{
+			"label": "codice_azienda_s",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"fieldName": "codice_azienda",
+			"newLine": true,
+			"queryCond": "arg.codice_azienda=$codice_azienda_s$"
+		},
+		{
+			"fieldName": "id_argomento_list",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "$P{label_id}",
+			"newLine": false,
+			"queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_colore",
+			"label": "Codice Colore",
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"key": "id_argomento",
+			"label": "ID",
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "codice_azienda",
+			"label": "",
+			"width": ""
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "descrizione",
+			"label": "Evento",
+			"queryFunct": "SELECT descrizione FROM entrasp.argomenti WHERE id_argomento=argomenti_eventi.id_argomento",
+			"width": "20%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "interval_value",
+			"label": "Unità misura intervalli (days, weeks, months)",
+			"width": "30%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "interval_multiplier",
+			"label": "Numero intervalli",
+			"width": "15%"
+		}
+	],
+	"querySuffixes": {
+		"tableViewSuffix": "order by id_argomento desc"
+	},
+	"hideActions": [
+		{
+			"tableActionType": "quick-add",
+			"viewType": "table"
+		},
+		{
+			"formActionType": "attachments",
+			"viewType": "form"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "multi-attachments"
+		}
+	],
+	"table_multiselection_actions": [
+		{
+			"viewType": "menu",
+			"key": "menutest",
+			"label": "Options",
+			"icon": "more_vert",
+			"menuOptions": [
+				{
+					"key": "merge_argomenti",
+					"icon": "merge_type",
+					"label": "Unifica argomenti",
+					"query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+				},
+				{
+					"key": "delete",
+					"icon": "delete",
+					"label": "Delete",
+					"query": "select entrasp.cancella_risorse(array[$selected_rows_data$])",
+					"confirmAction": true,
+					"reloadOnSuccess": true,
+					"confirmActionMessage": "Eliminare la cartella e i relativi file?"
+				},
+				{
+					"key": "create_folder",
+					"icon": "create_new_folder",
+					"label": "Crea cartella",
+					"query": "SELECT entrasp.cdms_risorsa_da_tipo_allegato('€global_codice_azienda€', id_argomento) FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+				}
+			]
+		}
+	]
+}

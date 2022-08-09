@@ -1,6 +1,6 @@
 {
 	"$schema": "../views.schema.json",
-	"origin": "entrasp.argomenti_eventi",
+	"origin": "entrasp.argomenti",
 	"entryKey": "tipi_eventi",
 	"businessObjectName": "argomenti",
 	"define": {
@@ -17,11 +17,6 @@
 			"type": "main",
 			"operation": "selectTable",
 			"queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
-		},
-		{
-			"type": "main",
-			"operation": "selectForm",
-			"queryString": "select arg.*,ae.* from entrasp.argomenti arg inner join entrasp.argomenti_eventi ae on arg.id_argomento=ae.id_argomento where ae.id_argomento=$id_argomento$"
 		},
 		{
 			"operation": "insert",
@@ -86,6 +81,27 @@
 			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": true,
+			"newLine": false,
+			"size": 1
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text",
+				"validations": [
+					{
+						"message": "Codice necessario",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
+			},
+			"label": "Codice",
+			"key": "codice",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
 			"newLine": false
 		},
 		{
@@ -113,36 +129,6 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "number",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "interval_multiplier",
-			"label": "Numero intervalli",
-			"newLine": false,
-			"readOnly": false,
-			"size": 1.7
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='time_interval';",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "interval_value",
-			"label": "Unità misura intervalli (days, weeks, months)",
-			"newLine": true,
-			"readOnly": false,
-			"size": 1.7
 		},
 		{
 			"autoGenerate": false,
@@ -217,6 +203,18 @@
 			"readOnly": false,
 			"sameOrigin": false,
 			"size": 2
+		}
+	],
+	"subTables": [
+		{
+			"entryKey": "eventi_sub_of_eventi",
+			"keys": [
+			  {
+				"parent": "id_argomento",
+				"son": "id_argomento_father"
+			  }
+			],
+			"label": "Sotto-eventi"
 		}
 	],
 	"search_keys": [
