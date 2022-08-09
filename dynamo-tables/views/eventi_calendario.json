@@ -1,0 +1,221 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "eventi_calendario",
+    "origin": "entrasp.eventi",
+    "businessObjectName": "eventi",
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuEventi",
+            "label": "Azioni",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "update_evento",
+                    "icon": "swap_vert",
+                    "label": "Evento",
+                    "confirmAction": true,
+                    "confirmActionMessage": "",
+                    "query": "select true",
+                    "reloadOnSuccess": true
+                }
+            ]
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": true,
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_evento",
+            "label": "# Evento",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "",
+            "newLine": false,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "newLine": false,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "datetime",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_inizio_validita",
+            "label": "Inizio",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "datetime",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fine_validita",
+            "label": "Fine",
+            "newLine": true,
+            "readOnly": false,
+            "size": 2
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_son in (select entrasp.descendants_of_argomento(45417,2)) and id_argomento_son != 45417;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_evento",
+            "label": "Tipo evento",
+            "newLine": false,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "newLine": false,
+            "readOnly": false
+          }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": ""
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_evento",
+            "label": "# Evento",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice"
+        },
+        {
+            "format": {
+                "dataType": "datetime"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_inizio_validita",
+            "label": "Inizio",
+            "width": "15%"
+        },
+        {
+            "format": {
+                "dataType": "datetime"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fine_validita",
+            "label": "Fine",
+            "width": "15%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descriizone",
+            "width": "50%"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "documentation",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "multi-attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "import_export",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "startEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "stopEvent",
+            "viewType": "form"
+        }
+    ]
+}
