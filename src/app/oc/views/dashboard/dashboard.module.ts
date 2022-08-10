@@ -5,15 +5,12 @@ import { WebDataRocksPivot } from '../../../webdatarocks/webdatarocks.angular4';
 
 
 @NgModule({
-  declarations: [DashboardComponent, WebDataRocksPivot],
-  imports: [
-    CommonModule
-  ],
-  exports: [
-      DashboardComponent
-  ],
-  entryComponents: [
-      DashboardComponent
-  ]
+    declarations: [DashboardComponent, WebDataRocksPivot],
+    imports: [
+        CommonModule
+    ],
+    exports: [
+        DashboardComponent
+    ]
 })
 export class DashboardModule { }

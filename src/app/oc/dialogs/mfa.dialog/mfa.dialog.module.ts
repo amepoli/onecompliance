@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
 
 @NgModule({
     providers: [
-        {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'}}
+        { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } }
     ],
     declarations: [
         MFADialogComponent
@@ -29,21 +29,16 @@ import { CommonModule } from '@angular/common';
         MatButtonModule,
         MatIconModule,
         MatMenuModule,
-        MatProgressSpinnerModule,        
+        MatProgressSpinnerModule,
         MatToolbarModule,
         MatFormFieldModule,
         MatInputModule,
-         
         FuseSharedModule,
         FuseSearchBarModule,
         FuseShortcutsModule,
-        
         QRCodeModule
     ],
     exports: [
-        MFADialogComponent
-    ],
-    entryComponents: [
         MFADialogComponent
     ]
 })

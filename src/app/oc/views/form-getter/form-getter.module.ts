@@ -18,32 +18,29 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatIconModule,
-    MatButtonModule,
-    DynamicFormsModule,
-    MatFormFieldModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatInputModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatDialogModule,
-    MatProgressBarModule
-  ],
-  exports: [
-    FormGetterComponent
-  ],
-  declarations: [FormGetterComponent],
-  entryComponents: [
-      FormGetterComponent
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatTabsModule,
+        MatIconModule,
+        MatButtonModule,
+        DynamicFormsModule,
+        MatFormFieldModule,
+        MatOptionModule,
+        MatSelectModule,
+        MatInputModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatDialogModule,
+        MatProgressBarModule
+    ],
+    exports: [
+        FormGetterComponent
+    ],
+    declarations: [FormGetterComponent]
 })
 
 export class FormGetterModule { }

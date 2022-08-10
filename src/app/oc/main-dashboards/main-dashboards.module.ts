@@ -13,18 +13,15 @@ const routes = [
 ];
 
 @NgModule({
-  declarations: [MainDashboardsComponent],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-    MatCardModule,
-    DashboardModule
-  ],
-  exports: [
-      MainDashboardsComponent
-  ],
-  entryComponents: [
-      MainDashboardsComponent
-  ]
+    declarations: [MainDashboardsComponent],
+    imports: [
+        CommonModule,
+        RouterModule.forChild(routes),
+        MatCardModule,
+        DashboardModule
+    ],
+    exports: [
+        MainDashboardsComponent
+    ]
 })
 export class MainDashboardsModule { }
