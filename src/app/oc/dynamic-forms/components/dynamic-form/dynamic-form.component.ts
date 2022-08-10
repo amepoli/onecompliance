@@ -10,8 +10,8 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import {
-  FormGroup,
-  FormBuilder
+  UntypedFormGroup,
+  UntypedFormBuilder
 } from '@angular/forms';
 import { ValidationsService } from 'app/oc/services';
 import { FieldConfig } from 'app/oc/interfaces';
@@ -36,12 +36,12 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   @ViewChildren(DynamicFieldDirective) dynamicFields: QueryList<DynamicFieldDirective>;
 
-  form: FormGroup;
+  form: UntypedFormGroup;
 
   get value() {
     return this.form.value;
   }
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: UntypedFormBuilder) { }
 
   ngOnInit() {
     //this.form = this.createControl();

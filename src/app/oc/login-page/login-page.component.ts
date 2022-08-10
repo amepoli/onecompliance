@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
@@ -16,8 +16,8 @@ import { TimezoneService } from '../services/timezone.service';
     animations: fuseAnimations
 })
 export class LoginPageComponent implements OnInit {
-    loginForm: FormGroup;
-    confirmSignInForm: FormGroup;
+    loginForm: UntypedFormGroup;
+    confirmSignInForm: UntypedFormGroup;
 
     user: any;
 
@@ -44,7 +44,7 @@ export class LoginPageComponent implements OnInit {
     constructor(
         private authService: AuthService,
         private _fuseConfigService: FuseConfigService,
-        private _formBuilder: FormBuilder,
+        private _formBuilder: UntypedFormBuilder,
         private router: Router,
         private _dialogService: DialogService,
         private _route: ActivatedRoute,

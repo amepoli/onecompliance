@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
 import { FileUploadComponent } from 'app/oc/file-uploader/file-upload/file-upload.component';
@@ -37,7 +37,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     isSaving: boolean;
     progress: number;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     listFiles: any[];
 
@@ -63,7 +63,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         isVisible: false
     };
 
-    constructor(private _formBuilder: FormBuilder,
+    constructor(private _formBuilder: UntypedFormBuilder,
         public dialogRef: MatDialogRef<AttachDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private fileService: FileManagerService,

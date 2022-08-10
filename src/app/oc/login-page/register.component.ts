@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
     animations: fuseAnimations
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-    registerForm: FormGroup;
+    registerForm: UntypedFormGroup;
 
     registering = false;
     registerButtonText = 'CREATE AN ACCOUNT';
@@ -28,7 +28,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
     constructor(
         private _fuseConfigService: FuseConfigService,
-        private _formBuilder: FormBuilder,
+        private _formBuilder: UntypedFormBuilder,
         private router: Router,
         private authService: AuthService,
         private _dialogService: DialogService,

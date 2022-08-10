@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
 
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services';
 
 @Component({
@@ -14,7 +14,7 @@ import { AuthService } from '../services';
 })
 export class MailConfirmComponent implements OnInit
 {
-    insertCodeForm: FormGroup;
+    insertCodeForm: UntypedFormGroup;
 
     email = 'user@example.com';
     username: string;
@@ -28,7 +28,7 @@ export class MailConfirmComponent implements OnInit
     constructor(
         private _fuseConfigService: FuseConfigService,
         private _authService: AuthService,
-        private _formBuilder: FormBuilder
+        private _formBuilder: UntypedFormBuilder
     )
     {
         // Configure the layout

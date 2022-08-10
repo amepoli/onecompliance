@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { MultiFileUploadComponent } from 'app/oc/file-uploader/multi-file-upload/multi-file-upload.component';
 import { HttpClient } from '@angular/common/http';
@@ -35,7 +35,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
     isSaving: boolean;
     progress: number;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     listFiles: any[];
 
@@ -64,7 +64,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
     savingFiles: boolean = false;
     filesSaved: number = 0;
 
-    constructor(private _formBuilder: FormBuilder,
+    constructor(private _formBuilder: UntypedFormBuilder,
         public dialogRef: MatDialogRef<MultiAttachmentsDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private fileService: FileManagerService,

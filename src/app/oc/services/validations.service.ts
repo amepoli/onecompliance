@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { UntypedFormGroup, Validators } from '@angular/forms';
 
 @Injectable({
     providedIn: 'root'
@@ -95,7 +95,7 @@ export class ValidationsService {
      * Validate all form fields
      * @param formGroup
      */
-    public static validateAllFormFields(formGroup: FormGroup) {
+    public static validateAllFormFields(formGroup: UntypedFormGroup) {
         Object.keys(formGroup.controls).forEach(field => {
             const control = formGroup.get(field);
             control.markAsTouched({ onlySelf: true });
