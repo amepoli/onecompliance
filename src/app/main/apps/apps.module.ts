@@ -21,20 +21,8 @@ const routes = [
         loadChildren: () => import('./mail-ngrx/mail.module').then(m => m.MailNgrxModule)
     },
     {
-        path        : 'chat',
-        loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule)
-    },
-    {
-        path        : 'calendar',
-        loadChildren: () => import('./calendar/calendar.module').then(m => m.CalendarModule)
-    },
-    {
         path        : 'e-commerce',
         loadChildren: () => import('./e-commerce/e-commerce.module').then(m => m.EcommerceModule)
-    },
-    {
-        path        : 'academy',
-        loadChildren: () => import('./academy/academy.module').then(m => m.AcademyModule)
     },
     {
         path        : 'todo',
