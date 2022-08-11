@@ -1,0 +1,27 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "attachments_sub_of_attachments_tbd",
+  "inheritsFrom": "attachments_sub_of_attachments",
+  "predefinedQueries": [
+    {
+      "type": "main",
+      "operation": "selectTable",
+      "queryString": "select *, $prog_revisione_sup$ as prog_revisione_sup, entrasp.argomenti_descr_stato(rev_id_argomento_stato) as descr_stato, entrasp.argomenti_descr_stato(rev_id_argomento_stato_approvazione) as descr_stato_approv, entrasp.odg_data(codice_azienda, id_odg, id_riunione) as data_riunione, entrasp.riunioni_descr(id_riunione, codice_azienda) as riunione_descr, entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione) as titolo_odg, $rev_id_argomento_stato_sup$ as rev_id_argomento_stato_sup, case when ($rev_id_argomento_stato_sup$=4035 and prog_revisione!=$prog_revisione_sup$) then true else false end as associa_documento from entrasp.views_attachments_fast_no_bo af where af.rev_id_argomento_stato=4035 and af.prog_revisione!=$prog_revisione_sup$ and codice_azienda=$codice_azienda$ and (id_risorsa=$id_risorsa$ or id_risorsa= (select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))"
+    },
+    {
+      "type": "main",
+      "operation": "update",
+      "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$rev_descrizione$, id_argomento_stato=$rev_id_argomento_stato$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+    },
+    {
+      "type": "postProcessing",
+      "operation": "update",
+      "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name= 'n/a', content_type= 'n/a' where id_argomento_stato!=4035 and client_file_name='tbd' and content_type='tbd' and codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+    },
+    {
+      "type": "main",
+      "operation": "delete",
+      "queryString": "delete from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+    }
+  ]
+}
