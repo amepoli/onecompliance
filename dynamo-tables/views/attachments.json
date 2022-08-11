@@ -4,18 +4,20 @@
   "origin": "entrasp.cdms_risorse_revisioni",
   "businessObjectName": "cdms_risorse_revisioni",
   "define": {
-    "isHiddenDownload": "false"
+    "isHiddenDownload": "false",
+    "jsonFileDelFlussoInformativo": "attachments_sub_of_attachments",
+    "labelTabFileDelFlussoInfo": "File del flusso informativo"
   },
   "predefinedQueries": [
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "SELECT a.codice_azienda,b.codice_part,a.id_risorsa,a.prog_revisione,a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$ and a.id_argomento_stato=4035 order by data_rif desc"
+      "queryString": "SELECT a.codice_azienda,b.codice_part,a.id_risorsa,a.prog_revisione,a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(a.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$ and a.id_argomento_stato=4035"
     },
     {
       "type": "main",
       "operation": "selectForm",
-      "queryString": "SELECT a.codice_azienda,b.codice_part,a.id_risorsa,a.prog_revisione,a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$ and a.id_risorsa=$id_risorsa$ AND A.prog_revisione=$prog_revisione$"
+      "queryString": "SELECT a.codice_azienda,b.codice_part,a.id_argomento_stato as rev_id_argomento_stato, a.id_risorsa,a.prog_revisione,a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$ and a.id_risorsa=$id_risorsa$ AND A.prog_revisione=$prog_revisione$"
     },
     {
       "type": "main",
@@ -414,7 +416,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "client_file_name",
-      "width": "25%",
+      "width": "20%",
       "label": "Nome"
     },
     {
@@ -442,11 +444,11 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "key": "descr_stato",
       "width": "5%",
-      "label": "Stato car.",
+      "label": "Stato",
       "style": [
         {
           "value": "Non Richiesto",
@@ -730,7 +732,7 @@
       "size": 2,
       "label": "Stato",
       "newLine": true,
-      "queryCond": "crs.id_argomento_stato=$id_argomento_stato_s$"
+      "queryCond": "a.id_argomento_stato=$id_argomento_stato_s$"
     },
     {
       "fieldName": "data_da_s",
@@ -805,7 +807,7 @@
       "label": "Oggetti collegati"
     },
     {
-      "entryKey": "attachments_sub_of_attachements",
+      "entryKey": "$P{jsonFileDelFlussoInformativo}",
       "keys": [
         {
           "parent": "codice_azienda",
@@ -814,9 +816,17 @@
         {
           "parent": "id_risorsa",
           "son": "id_risorsa"
+        },
+        {
+          "parent": "rev_id_argomento_stato",
+          "son": "rev_id_argomento_stato_sup"
+        },
+        {
+          "parent": "prog_revisione",
+          "son": "prog_revisione_sup"
         }
       ],
-      "label": "File del flusso informativo"
+      "label": "$P{labelTabFileDelFlussoInfo}"
     },
     {
       "entryKey": "attachments_linkable",
