@@ -86,7 +86,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "anagrafica",
-      "label": "Attribuito a",
+      "label": "Cliente/Fornitore/Dipendente",
       "size": 1.75,
       "newLine": false,
       "readOnly": true
@@ -427,7 +427,7 @@
       "isPrimary": false,
       "key": "anagrafica",
       "width": "23%",
-      "label": "Attribuito a",
+      "label": "Cliente/Fornitore/Dipendente",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)"
     },
     {
@@ -656,7 +656,7 @@
       },
       "label": "ID Documento",
       "newLine": false,
-      "queryCond": "id_risorsa=$id_risorsa_s$"
+      "queryCond": "a.id_risorsa=$id_risorsa_s$"
     },
     {
       "fieldName": "id_sondaggio_s",
@@ -734,6 +734,16 @@
       "newLine": true,
       "queryCond": "a.id_argomento_stato=$id_argomento_stato_s$"
     },
+		{
+			"fieldName": "file_con_allegati_da_associare",
+			"format": {
+				"viewType": "checkbox",
+				"value": "0"
+			},
+			"label": "Con allegati da associare",
+			"newLine": false,
+			"queryCond": "a.id_risorsa in(select id_risorsa from entrasp.cdms_risorse_revisioni group by codice_azienda, id_risorsa, id_argomento_stato having count(prog_revisione)>0 and codice_azienda=$codice_azienda$ and id_argomento_stato=4035)"
+		},
     {
       "fieldName": "data_da_s",
       "format": {
@@ -852,7 +862,7 @@
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "limit 100"
+    "tableViewSuffix": " order by data_rif desc limit 100"
   },
   "inputEvents": [
   {

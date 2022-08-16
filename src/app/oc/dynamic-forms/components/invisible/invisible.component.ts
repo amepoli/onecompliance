@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit, ViewEncapsulation } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { UntypedFormGroup } from "@angular/forms";
 import { FieldConfig } from 'app/oc/interfaces';
 @Component({
   selector: "app-invisible",
@@ -18,7 +18,7 @@ import { FieldConfig } from 'app/oc/interfaces';
 })
 export class InvisibleComponent implements OnInit {
   field: FieldConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
 
   constructor() { }

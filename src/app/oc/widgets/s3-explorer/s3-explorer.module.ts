@@ -17,31 +17,28 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { S3ExplorerComponent } from './s3-explorer.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatInputModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatBadgeModule,
-    MatDialogModule,
-  ],
-  exports: [
-    S3ExplorerComponent,
-  ],
-  declarations: [S3ExplorerComponent],
-  entryComponents: [
-    S3ExplorerComponent
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatTabsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatOptionModule,
+        MatSelectModule,
+        MatInputModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatBadgeModule,
+        MatDialogModule,
+    ],
+    exports: [
+        S3ExplorerComponent,
+    ],
+    declarations: [S3ExplorerComponent]
 })
 
 export class S3ExplorerModule { }

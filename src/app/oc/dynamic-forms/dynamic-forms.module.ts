@@ -37,75 +37,58 @@ import { AngularEditorModule } from '@kolkov/angular-editor';
 import { S3ExplorerModule } from '../widgets/s3-explorer/s3-explorer.module';
 
 @NgModule({
-  declarations: [
-    InputComponent,
-    ButtonComponent,
-    SelectComponent,
-    DateComponent,
-    RadiobuttonComponent,
-    CheckboxGroupComponent,
-    CheckboxComponent,
-    MenuComponent,
-    DynamicFieldDirective,
-    SubFormDynamicFieldDirective,
-    DynamicFormComponent,
-    ComboboxComponent,
-    TextAreaComponent,
-    InvisibleComponent,
-    WidgetComponent,
-    LabelComponent,
-    SubformComponent
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    MaterialModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatMenuModule,
-    NgxMatSelectSearchModule,
-    OneCompliancePipesModule,
-    AngularEditorModule,
-
-    // Widgets
-    AttachmentsModule,
-    MultiAttachmentsModule,
-    ShareModule,
-    S3ExplorerModule
-  ],
-  exports: [
-    InputComponent,
-    ButtonComponent,
-    SelectComponent,
-    DateComponent,
-    RadiobuttonComponent,
-    CheckboxGroupComponent,
-    CheckboxComponent,
-    DynamicFieldDirective,
-    DynamicFormComponent,
-    ComboboxComponent,
-    TextAreaComponent,
-    InvisibleComponent,
-    WidgetComponent,
-    LabelComponent,
-    SubformComponent
-  ],
-  entryComponents: [
-    InputComponent,
-    ButtonComponent,
-    SelectComponent,
-    DateComponent,
-    RadiobuttonComponent,
-    CheckboxGroupComponent,
-    CheckboxComponent,
-    MenuComponent,
-    ComboboxComponent,
-    TextAreaComponent,
-    InvisibleComponent,
-    WidgetComponent,
-    LabelComponent,
-    SubformComponent
-  ],
-  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'it' }]
+    declarations: [
+        InputComponent,
+        ButtonComponent,
+        SelectComponent,
+        DateComponent,
+        RadiobuttonComponent,
+        CheckboxGroupComponent,
+        CheckboxComponent,
+        MenuComponent,
+        DynamicFieldDirective,
+        SubFormDynamicFieldDirective,
+        DynamicFormComponent,
+        ComboboxComponent,
+        TextAreaComponent,
+        InvisibleComponent,
+        WidgetComponent,
+        LabelComponent,
+        SubformComponent
+    ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        MaterialModule,
+        ReactiveFormsModule,
+        FormsModule,
+        MatMenuModule,
+        NgxMatSelectSearchModule,
+        OneCompliancePipesModule,
+        AngularEditorModule,
+        // Widgets
+        AttachmentsModule,
+        MultiAttachmentsModule,
+        ShareModule,
+        S3ExplorerModule
+    ],
+    exports: [
+        InputComponent,
+        ButtonComponent,
+        SelectComponent,
+        DateComponent,
+        RadiobuttonComponent,
+        CheckboxGroupComponent,
+        CheckboxComponent,
+        DynamicFieldDirective,
+        DynamicFormComponent,
+        ComboboxComponent,
+        TextAreaComponent,
+        InvisibleComponent,
+        WidgetComponent,
+        LabelComponent,
+        SubformComponent
+    ],
+    providers: [{ provide: MAT_DATE_LOCALE, useValue: 'it' }]
 })
 export class DynamicFormsModule { }

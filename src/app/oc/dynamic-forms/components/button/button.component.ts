@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { FieldConfig } from 'app/oc/interfaces';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
@@ -38,7 +38,7 @@ import { AuthService, BackendService, DialogService, PubSubService } from 'app/o
 
 export class ButtonComponent implements OnInit, OnDestroy {
     field: FieldConfig;
-    group: FormGroup;
+    group: UntypedFormGroup;
     readOnlyPage: boolean;  // not used for button
 
     subscriptions: Subscription[] = [];

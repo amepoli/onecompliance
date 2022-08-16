@@ -17,31 +17,28 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ShareComponent } from './share.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatInputModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatBadgeModule,
-    MatDialogModule,
-  ],
-  exports: [
-    ShareComponent,
-  ],
-  declarations: [ShareComponent],
-  entryComponents: [
-    ShareComponent
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatTabsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatOptionModule,
+        MatSelectModule,
+        MatInputModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatBadgeModule,
+        MatDialogModule,
+    ],
+    exports: [
+        ShareComponent,
+    ],
+    declarations: [ShareComponent]
 })
 
 export class ShareModule { }

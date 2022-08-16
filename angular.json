@@ -20,7 +20,6 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "aot": true,
                         "outputPath": "dist",
                         "index": "src/index.html",
                         "main": "src/main.ts",
@@ -35,7 +34,7 @@
                             "src/styles.scss",
                             "src/theme-oc-light.scss"
                         ],
-                        "scripts": ["../node_modules/crypto-js/crypto-js.js"],
+                        "scripts": [],
                         "allowedCommonJsDependencies": [
                             "@angularclass/hmr",
                             "@aws-crypto",
@@ -45,7 +44,6 @@
                             "app/oc/dialogs/attach.dialog/attach.dialog.component",
                             "axios",
                             "buffer",
-                            "crypto-js",
                             "fast-xml-parser",
                             "isomorphic-unfetch",
                             "js-cookie",
@@ -54,7 +52,13 @@
                             "uuid",
                             "webdatarocks",
                             "zen-observable"
-                        ]
+                        ],
+                        "vendorChunk": true,
+                        "extractLicenses": false,
+                        "buildOptimizer": false,
+                        "sourceMap": true,
+                        "optimization": false,
+                        "namedChunks": true
                     },
                     "configurations": {
                         "production": {
@@ -74,7 +78,6 @@
                             "outputHashing": "all",
                             "sourceMap": false,
                             "namedChunks": false,
-                            "aot": true,
                             "extractLicenses": true,
                             "vendorChunk": false,
                             "buildOptimizer": true
@@ -85,8 +88,7 @@
                                     "type": "anyComponentStyle",
                                     "maximumWarning": "6kb"
                                 }
-                            ],
-                            "sourceMap": true
+                            ]
                         },
                         "hmr": {
               "budgets": [
@@ -102,7 +104,8 @@
                                 }
                             ]
                         }
-                    }
+                    },
+                    "defaultConfiguration": ""
                 },
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
@@ -141,24 +144,10 @@
                         "styles": [
                             "styles.scss"
                         ],
-                        "scripts": ["../node_modules/crypto-js/crypto-js.js"],
+                        "scripts": [],
                         "assets": [
                             "src/favicon.ico",
                             "src/assets"
-                        ]
-                    }
-                },
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": [
-                            "src/tsconfig.app.json",
-                            "src/tsconfig.spec.json"
-                        ],
-                        "exclude": [
-                            "**/node_modules/**",
-                            "**/src/app/fake-db/**/*",
-                            "**/src/assets/angular-material-examples/**/*"
                         ]
                     }
                 }
@@ -174,20 +163,8 @@
                         "protractorConfig": "e2e/protractor.conf.js",
                         "devServerTarget": "fuse:serve"
                     }
-                },
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": "e2e/tsconfig.e2e.json",
-                        "exclude": [
-                            "**/node_modules/**",
-                            "**/src/app/fake-db/**/*",
-                            "**/src/assets/angular-material-examples/**/*"
-                        ]
-                    }
                 }
             }
         }
-    },
-    "defaultProject": "fuse"
+    }
 }

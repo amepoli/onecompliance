@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { HttpClient } from '@angular/common/http';
 import { FileUploadComponent } from 'app/oc/file-uploader/file-upload/file-upload.component';
-// import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
-// and https://stackoverflow.com/a/54645398 and then 'npm run build'
-import * as CryptoJS from 'crypto-js';
+// import * as CryptoJS from 'crypto-js';
+import * as sha1 from 'js-sha1';
+import * as md5 from 'blueimp-md5';
 
 import { FormGetterComponent } from 'app/oc/views/form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
@@ -37,7 +37,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     isSaving: boolean;
     progress: number;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     listFiles: any[];
 
@@ -63,7 +63,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         isVisible: false
     };
 
-    constructor(private _formBuilder: FormBuilder,
+    constructor(private _formBuilder: UntypedFormBuilder,
         public dialogRef: MatDialogRef<AttachDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private fileService: FileManagerService,
@@ -262,8 +262,10 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                     _this._console.log('File uploaded with filename: ', responseURL.filename);
                     // retrieve file content
                     const content = await _this.file?.arrayBuffer();
-                    const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
-                    const md5hash = CryptoJS.MD5(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+                    const hash = sha1(content);
+                    const md5hash = md5(content);
+                    // const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+                    // const md5hash = CryptoJS.MD5(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
                     _this._console.log(hash);
                     // check that the file has been correctly uploaded and pass file params to the backend
                     var mime = require('mime-types');
@@ -366,8 +368,10 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         const reader = new FileReader();
         reader.onload = function (e) {
             const content = reader.result;
-            const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
-            const md5hash = CryptoJS.MD5(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+            const hash = sha1(content);
+            const md5hash = md5(content);
+            // const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+            // const md5hash = CryptoJS.MD5(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
             _this._console.log(hash);
             _this._console.log(md5hash);
 

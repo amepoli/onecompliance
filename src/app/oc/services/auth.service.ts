@@ -11,7 +11,6 @@ import { ToastService } from 'app/oc/services/toast.service';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { ConsoleLoggerService } from './console_logger.service';
 import { UserInfo } from '../interfaces';
-import { BaseLoginProvider, GoogleLoginProvider, SocialAuthService, SocialUser } from 'angularx-social-login';
 
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 declare var gapi: any;
@@ -56,7 +55,6 @@ export class AuthService {
   
   constructor(
     private amplifyService: AmplifyService,
-    private socialAuthService: SocialAuthService,
     private backendService: BackendService,
     private navigationService: FuseNavigationService,
     private _toastService: ToastService,

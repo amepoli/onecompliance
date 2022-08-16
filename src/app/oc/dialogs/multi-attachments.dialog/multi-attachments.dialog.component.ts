@@ -1,20 +1,18 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { MultiFileUploadComponent } from 'app/oc/file-uploader/multi-file-upload/multi-file-upload.component';
 import { HttpClient } from '@angular/common/http';
-// import { createHash } from 'crypto';    // pls. read https://stackoverflow.com/questions/54162297/module-not-found-error-cant-resolve-crypto
-// and https://stackoverflow.com/a/54645398 and then 'npm run build'
-import * as CryptoJS from 'crypto-js';
+// import * as CryptoJS from 'crypto-js';
+import * as sha1 from 'js-sha1';
+import * as md5 from 'blueimp-md5';
 
 import { FormGetterComponent } from 'app/oc/views/form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
 import { FormGetterParams } from 'app/oc/interfaces';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { AuthService, BackendService, ConsoleLoggerService, EncryptionService, ToastService } from 'app/oc/services';
-
-
 
 @Component({
     selector: 'app-multi-attachments.dialog',
@@ -37,7 +35,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
     isSaving: boolean;
     progress: number;
 
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     listFiles: any[];
 
@@ -66,7 +64,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
     savingFiles: boolean = false;
     filesSaved: number = 0;
 
-    constructor(private _formBuilder: FormBuilder,
+    constructor(private _formBuilder: UntypedFormBuilder,
         public dialogRef: MatDialogRef<MultiAttachmentsDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private fileService: FileManagerService,
@@ -273,8 +271,10 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                 _this._console.log('File uploaded with filename: ', responseURL.filename);
                 // retrieve file content
                 const content = await _this.files[i]?.arrayBuffer();
-                const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
-                const md5hash = CryptoJS.MD5(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+                const hash = sha1(content);
+                const md5hash = md5(content);
+                // const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
+                // const md5hash = CryptoJS.MD5(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
                 _this._console.log(hash);
                 // check that the file has been correctly uploaded and pass file params to the backend
                 var mime = require('mime-types');

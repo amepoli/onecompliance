@@ -1,5 +1,5 @@
 import { Component, OnInit, OnChanges, ViewChildren, QueryList } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { ValidationsService } from 'app/oc/services';
 import { FieldConfig } from 'app/oc/interfaces';
 import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-field.directive';
@@ -30,7 +30,7 @@ import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-
 export class SubformComponent implements OnInit {
 
   field: FieldConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
   
   @ViewChildren(SubFormDynamicFieldDirective) dynamicFields: QueryList<SubFormDynamicFieldDirective>;
@@ -47,7 +47,7 @@ export class SubformComponent implements OnInit {
       if (field.type === 'button') {
         return;
       }
-      _this.group.addControl(field.name, new FormControl(field.value, ValidationsService.bindValidations(field.validations || [])));
+      _this.group.addControl(field.name, new UntypedFormControl(field.value, ValidationsService.bindValidations(field.validations || [])));
     });
 
     _this.loadStyles();
