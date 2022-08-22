@@ -17,29 +17,26 @@ import { FormGetterModule } from 'app/oc/views/form-getter/form-getter.module';
 
 
 @NgModule({
-  imports: [
-    FormsModule,
-    CommonModule,
-    ReactiveFormsModule,
-    MatProgressSpinnerModule,
-    MatDialogModule,
-    MatIconModule,
-    MatButtonModule,
-    MatCardModule,
-    TableViewModule,
-    FormGetterModule,
-    FormViewModule,
-    FormViewToolbarModule,
-    BottomTabsModule,
-    BottomTabsModule,
-  ],
-  exports: [
-    ImportDialogComponent
-  ],
-  declarations: [ImportDialogComponent],
-  entryComponents: [
-    ImportDialogComponent
-  ]
+    imports: [
+        FormsModule,
+        CommonModule,
+        ReactiveFormsModule,
+        MatProgressSpinnerModule,
+        MatDialogModule,
+        MatIconModule,
+        MatButtonModule,
+        MatCardModule,
+        TableViewModule,
+        FormGetterModule,
+        FormViewModule,
+        FormViewToolbarModule,
+        BottomTabsModule,
+        BottomTabsModule,
+    ],
+    exports: [
+        ImportDialogComponent
+    ],
+    declarations: [ImportDialogComponent]
 })
 
 export class ImportDialogModule { }

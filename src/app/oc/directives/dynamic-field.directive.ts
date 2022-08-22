@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewContainerRef
 } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { UntypedFormGroup } from "@angular/forms";
 import { FieldConfig } from 'app/oc/interfaces';
 import { InputComponent } from "../dynamic-forms/components/input/input.component";
 import { ButtonComponent } from "../dynamic-forms/components/button/button.component";
@@ -44,7 +44,7 @@ const componentMapper = {
 })
 export class DynamicFieldDirective implements OnInit {
   @Input() field: FieldConfig;
-  @Input() group: FormGroup;
+  @Input() group: UntypedFormGroup;
   @Input() readOnlyPage: boolean;
   componentRef: any;
   constructor(

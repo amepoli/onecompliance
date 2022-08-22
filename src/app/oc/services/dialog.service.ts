@@ -67,7 +67,7 @@ export class DialogService {
             allowOutsideClick: false,
             timer: 30000,
             // icon: 
-            onOpen: () => {
+            didOpen: () => {
                 Swal.showLoading();
             }
         });

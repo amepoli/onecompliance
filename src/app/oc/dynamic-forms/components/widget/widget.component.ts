@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { FieldConfig } from 'app/oc/interfaces';
 import { ConsoleLoggerService, DialogService, HelperService, PubSubService, ValidationsService } from 'app/oc/services';
 import { TimezoneService } from 'app/oc/services/timezone.service';
@@ -23,7 +23,7 @@ import { Subscription } from 'rxjs';
 })
 export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   field: FieldConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   readOnlyPage: boolean = false; // field.readonly overridden by page
   isRequired = false; // field is required or not
 

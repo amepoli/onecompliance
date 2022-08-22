@@ -48,7 +48,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select entrasp.stato_information_flow(crs.codice_azienda, crs.id_risorsa) as stato, case when (select count(prog_revisione) from entrasp.cdms_risorse_revisioni rev where rev.codice_azienda=crs.codice_azienda and rev.id_risorsa=crs.id_risorsa)=0 then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1)) and $P{id_anagrafica_if_clientela}",
+      "queryString": "select entrasp.stato_information_flow(crs.codice_azienda, crs.id_risorsa) as stato, case when (select count(prog_revisione) from entrasp.cdms_risorse_revisioni rev where rev.codice_azienda=crs.codice_azienda and rev.id_risorsa=crs.id_risorsa)=0 then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1)) and $P{id_anagrafica_if_clientela}",
       "type": "main"
     },
     {
@@ -126,21 +126,6 @@
           "queryFunct": "select entrasp.aggiorna_tipo_allegato_domanda($codice_azienda$, $id_risorsa$, £id_argomento_tipo_allegato£)"
         }
       ],
-      "newLine": false,
-      "size": 3.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-      "label": "Centro Gestionale",
       "newLine": false,
       "size": 3.5,
       "readOnly": false
@@ -330,17 +315,6 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "centro_gest",
-      "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
-      "width": "14%",
-      "label": "Centro gestionale"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
       "isHidden": "$Q{is_hidden_id_anagrafica}",
       "isPrimary": false,
       "key": "anagrafica_descr",
@@ -470,18 +444,7 @@
       "newLine": false,
       "queryCond": "crs.id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
     },
-    {
-      "fieldName": "id_centro_gest_s",
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, id_centro_gest||'-'||descrizione AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€' order by descrizione;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Centro Gestionale Responsabile",
-      "newLine": false,
-      "queryCond": "crs.id_centro_gest=$id_centro_gest_s$"
-    },
-    {
+   {
       "fieldName": "id_anagrafica_s",
       "format": {
         "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) asc;",
@@ -613,7 +576,7 @@
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "order by tipo_allegato, centro_gest desc limit 100"
+    "tableViewSuffix": "order by tipo_allegato desc limit 100"
   },
   "exportQueries": {
     "tableQueries": [

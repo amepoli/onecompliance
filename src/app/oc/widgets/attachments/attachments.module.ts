@@ -18,32 +18,29 @@ import { AttachmentsComponent } from './attachments.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatInputModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatProgressBarModule,
-    MatBadgeModule,
-    MatDialogModule
-  ],
-  exports: [
-    AttachmentsComponent,
-  ],
-  declarations: [AttachmentsComponent],
-  entryComponents: [
-    AttachmentsComponent
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatTabsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatOptionModule,
+        MatSelectModule,
+        MatInputModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatProgressBarModule,
+        MatBadgeModule,
+        MatDialogModule
+    ],
+    exports: [
+        AttachmentsComponent,
+    ],
+    declarations: [AttachmentsComponent]
 })
 
 export class AttachmentsModule { }

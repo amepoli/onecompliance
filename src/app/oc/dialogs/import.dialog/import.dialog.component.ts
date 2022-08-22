@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { ConsoleLoggerService } from 'app/oc/services/console_logger.service';
 import { DialogService } from 'app/oc/services/dialog.service';
 
@@ -21,7 +21,7 @@ export class ImportDialogComponent {
     // Store table name, just to pass back to import service
     tableName: string = null;
 
-    constructor(private _formBuilder: FormBuilder,
+    constructor(private _formBuilder: UntypedFormBuilder,
         public dialogRef: MatDialogRef<ImportDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private _dialogService: DialogService,

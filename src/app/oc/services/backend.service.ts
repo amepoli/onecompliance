@@ -487,15 +487,34 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }
 
+  anagraficheToBeUpdated(input: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'anagraficheToBeUpdated' };
+    this.myPutPostInit.body = input;
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
+  }
+
   getConnectedRegistries(company: string, registry: string): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { request_type: 'getConnectedRegistries', company: company, registry: registry };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatVPCApiName, this.myGetInit));
   }
 
-  getAmlScan(company: string, registry: number, connected_registries: any, checkId: number): Observable<any> {
+  getConnectedRegistriesFromCheck(company: string, check: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { company: company, registry: registry, connected_registries: JSON.stringify(connected_registries), checkId: checkId };
+    this.myGetInit.queryStringParameters = { request_type: 'getConnectedRegistriesFromCheck', company: company, check: check };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatVPCApiName, this.myGetInit));
+  }
+
+  getConnectedChecks(company: string, survey: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { request_type: 'getConnectedChecks', company: company, survey: survey };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatVPCApiName, this.myGetInit));
+  }
+
+  getAmlScan(company: string, connected_registries: any, checkId: string, dynamoUser: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { company: company, connected_registries: JSON.stringify(connected_registries), checkId: checkId, dynamoUser: dynamoUser };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatApiName, this.myGetInit));
   }
 

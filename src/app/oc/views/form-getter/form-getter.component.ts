@@ -5,7 +5,7 @@ import { forkJoin, Subscription } from 'rxjs';
 import { SubformComponent } from 'app/oc/dynamic-forms/components/subform/subform.component';
 import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, GoogleAPIParams, ImportItem, MessageView, OutputEvent, WidgetsConfigurations } from 'app/oc/interfaces';
 import { FormDataType } from 'app/oc/types';
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/oc/services';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, GoogleAPIService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/oc/services';
 import { DynamicFieldDirective } from 'app/oc/directives';
 import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-field.directive';
 import { InputComponent } from 'app/oc/dynamic-forms/components/input/input.component';
@@ -21,7 +21,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     // Is form-getter inside a tab
     @Input() isTabMode: boolean = false;
-  
+
     // Is form-getter part of form-view
     @Input() isFormView: boolean = false;
 
@@ -50,7 +50,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     importList: ImportItem[] = [];
     exportList: ExportItem[] = [];
 
-    
+
     numRows = 1;
 
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
@@ -100,7 +100,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
         private _console: ConsoleLoggerService,
-        private _timeTrackerService: TimeTrackerService
+        private _timeTrackerService: TimeTrackerService,
+        private _googleAPIService: GoogleAPIService
     ) {
         const _this = this;
 
@@ -152,7 +153,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     else {
                         _this.runOnReloadEvents();
                     }
-                }                
+                }
             }
         );
         _this.generalSubscriptions.push(subscription);
@@ -178,8 +179,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         });
     }
 
-    public resetPagination(){
-        if (this.filteredFormData && this.filteredFormData.length){
+    public resetPagination() {
+        if (this.filteredFormData && this.filteredFormData.length) {
             this.pagination = {
                 curPage: 1,
                 curRecords: [],
@@ -187,7 +188,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             };
             this.updatePagination(0);
         }
-        else{
+        else {
             this.pagination = {
                 curPage: 1,
                 curRecords: [],
@@ -196,21 +197,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
     }
 
-    public updatePagination(pageInc: number = 0){
+    public updatePagination(pageInc: number = 0) {
         let curPage = (this.pagination.curPage + pageInc > 0 && this.pagination.curPage + pageInc <= this.pagination.totalPages) ? this.pagination.curPage + pageInc : this.pagination.curPage;
 
         let start = (curPage - 1) * this.recordsPerPage;
-        let end = Math.min( this.filteredFormData.length, start + this.recordsPerPage);
+        let end = Math.min(this.filteredFormData.length, start + this.recordsPerPage);
 
         let curRecords = [];
-        for (let i = start; i < end; i++){
+        for (let i = start; i < end; i++) {
             curRecords = [...curRecords, i];
         }
-        
+
         //let curRecords = Array(Math.min(this.recordsPerPage,  + ).map((v, i) => ((this.pagination.curPage -1) * this.pagination.recordsPerPage) + i);
         this.pagination.curPage = curPage;
         this.pagination.curRecords = curRecords;
-    
+
     }
 
     public runOnAddNewEvents() {
@@ -250,7 +251,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this;
         _this.isLoading = true;
         _this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
-    
+
         const subscription = _this.backendService.getView(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.formParams.keys).subscribe(
             results => {
                 _this._console.log(results);
@@ -263,9 +264,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     // Load Hide actions if available
                     _this.hideActions = _this._navigationService.getFormHideActions(params.hideActions);
-                    
+
                     // Profile hide actions
-                    if(params.profileHideActions) {
+                    if (params.profileHideActions) {
                         _this.hideActions = _this.hideActions.concat(params.profileHideActions);
                     }
 
@@ -286,7 +287,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
 
                     if (_this.isFormView && !_this.isTabMode) {
-                        
+
                         // Load Import Queries list if available
                         if (params.importQueries && params.importQueries.formQueries) {
                             _this._console.log('importQueries', params.importQueries);
@@ -307,7 +308,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                         // Load Hide actions if available
                         _this._navigationService.updateToolbarHideActions(_this.hideActions);
-                        
+
                         // Load Messages if available
                         if (params.messages) {
                             _this._console.log(params.messages);
@@ -320,7 +321,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
 
                     // signal toolbar about a dashboard 
-                    _this._navigationService.onDashboardTableLoad.emit({origin: _this.formParams.entryName, dashboardTables: params.dashboardTables});
+                    _this._navigationService.onDashboardTableLoad.emit({ origin: _this.formParams.entryName, dashboardTables: params.dashboardTables });
 
                     // Get View properties if exist
                     _this.formRowProperties = params.formRowProperties;
@@ -363,13 +364,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
 
                     // load the form 
-                    _this.loadTableData();4
+                    _this.loadTableData(); 4
 
                     // Load widgets configurations
                     _this.loadWidgetsConfiguration(params.widgetsConfiguration);
                 }
                 else {
-                    if(results.reason === 'Not Authorized') {
+                    if (results.reason === 'Not Authorized') {
                         _this._console.log('Not Authorized');
                         _this.isAuthorized = false;
                     }
@@ -392,24 +393,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         } else {
             _this._dialogService.showLoadingDialog('Sending Email', 'Sending email. Please wait...');
             const subscription = _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.sender, data.to, data.cc, data.ccn)
-            .subscribe(
-                result => {
-                    _this._dialogService.closeDialog();
-                    if (result.Success) {
-                        _this._toastService.showSuccessToast('Email sent successfully!');
-                        if (outputEventWhenComplete) {
-                            _this.pubSubService.publishEvent(outputEventWhenComplete, value);
+                .subscribe(
+                    result => {
+                        _this._dialogService.closeDialog();
+                        if (result.Success) {
+                            _this._toastService.showSuccessToast('Email sent successfully!');
+                            if (outputEventWhenComplete) {
+                                _this.pubSubService.publishEvent(outputEventWhenComplete, value);
+                            }
                         }
-                    }
-                    else {
-                        _this._toastService.showErrorToast(result.Error);
-                    }
+                        else {
+                            _this._toastService.showErrorToast(result.Error);
+                        }
 
-                }, error => {
-                    _this._dialogService.closeDialog();
-                    _this._toastService.showErrorToast(error);
-                }
-            );
+                    }, error => {
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showErrorToast(error);
+                    }
+                );
             _this.generalSubscriptions.push(subscription);
         }
     }
@@ -433,7 +434,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 // subscribe combobox lazy loading events
                 const lazy_subscription = _this.pubSubService.subscribe(_this.formParams.entryName + '_' + key.key + '_combo_lazy_loading',
                     value => {
-                        _this.eventCallback({actionType: 'combo_lazy_loading'}, value, value.data); 
+                        _this.eventCallback({ actionType: 'combo_lazy_loading' }, value, value.data);
                     });
                 _this.formSubscriptions.push(lazy_subscription);
             }
@@ -455,8 +456,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                     else if (element.id != null) {
                         outputKeys[key] = element.id;
-                    } 
-                    else if (element.value != null){
+                    }
+                    else if (element.value != null) {
                         outputKeys[key] = element.value;
                     }
                 }
@@ -484,7 +485,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.readonlyRows = results.properties.readOnly.map(p => p.label);
                     }
                     else {
-                        _this.readonlyRows = [];                    
+                        _this.readonlyRows = [];
                     }
                     // signal parent to show/hide "save" icon
                     _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly });
@@ -524,7 +525,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 // Stop loading
                 _this.isLoading = false;
             });
-        
+
         _this.generalSubscriptions.push(subscription);
     }
 
@@ -567,12 +568,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.process_form(filteredFormData);
 
                     _this._console.log('filteredFormData[0]', filteredFormData[0]);
-                    
-                    if (_this.filteredFormData && _this.filteredFormData.length){
+
+                    if (_this.filteredFormData && _this.filteredFormData.length) {
                         _this.filteredFormData.unshift(filteredFormData[0]);
                         _this.quickAddData.unshift(true);
                     }
-                    else{
+                    else {
                         _this.filteredFormData = filteredFormData;
                         _this.quickAddData = [true];
                     }
@@ -854,9 +855,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 matchingValues = false;
                                 for (let k = 0; k < senderValue.length; k++) { // at least one array value matches
                                     const element = senderValue[k];
-                                     if (element == receiverValue) {
-                                         matchingValues = true;
-                                     }
+                                    if (element == receiverValue) {
+                                        matchingValues = true;
+                                    }
                                 }
                             } else if (senderValue == null || senderValue != receiverValue) {
                                 matchingValues = false;
@@ -895,17 +896,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             msgData = msgData.map(m => m === true || m === 'true' || m === 't' ? '1' : m === false || m === 'false' || m === 'f' ? '0' : m);
             // handle jolly chars 
             eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
-        
+
             if (event.condition === 'equalTo') {
                 // tricky way to compare two arrays
                 conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
             }
-            else if (event.condition === 'notEqualTo' ) {
+            else if (event.condition === 'notEqualTo') {
                 // tricky way to compare two arrays
                 conditionMet = JSON.stringify(eventValues) !== JSON.stringify(msgData);
             }
         }
-        
+
         if (event.actionType === 'show' || event.actionType === 'hide' || event.actionType === 'toggle') {
             // get the listener element if not full table
             let listener: FieldConfig = null;
@@ -957,7 +958,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (event.outputEventWhenComplete != null) {
                 _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
             }
-        } else if(event.actionType === 'update_time_tracker') {
+        } else if (event.actionType === 'update_time_tracker') {
             _this._timeTrackerService.checkStatus();
         } else if (event.actionType === 'navigate' && conditionMet) {
             const formLine = _this.filteredFormData[value.index];
@@ -977,7 +978,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if (element.source != null && element.destination != null) {
 
                         // If we came from show_message event, the keys must be in value.data
-                        if (typeof(value.data) === 'object' && value.data['keys'] && value.data['keys'][element.source]){
+                        if (typeof (value.data) === 'object' && value.data['keys'] && value.data['keys'][element.source]) {
                             filteredKeys[element.destination] = value.data['keys'][element.source] != null ? value.data['keys'][element.source] : null;
                         }
                         // Check if event contains values in case of manually generated event
@@ -996,7 +997,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 filteredKeys = _this.getCurrentKeys(primaryKeys, navigationKeys);
             }
 
-            
+
             // destroy current subscriptions before moving to a new view
             _this.formSubscriptions.forEach(subscription => {
                 subscription.unsubscribe();
@@ -1045,7 +1046,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
                 }
-                if(value.showEventProcessing === true) {
+                if (value.showEventProcessing === true) {
                     _this._dialogService.showLoadingDialog("Processing", "Please wait...");
                 }
                 const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
@@ -1081,10 +1082,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                         if (el != null && result[0][k] != null) {
                                             // If combobox, set the value using the options available
                                             // so cannot add directly
-                                            if (combobox){
+                                            if (combobox) {
                                                 combobox.setValue(result[0][k]);
                                             }
-                                            else{
+                                            else {
                                                 // It's not a combobox so set value directly
                                                 el.value = result[0][k];
                                             }
@@ -1094,7 +1095,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             } else if (event.actionType === 'combo_lazy_loading') {
                                 // Issue #178
                                 let comboboxEl = _this.findElementInDynamicFields(current_line.dynamicFields, keyListener);
-                                if(comboboxEl) {
+                                if (comboboxEl) {
                                     let combobox: ComboboxComponent = null;
                                     combobox = <ComboboxComponent>comboboxEl.componentRef.instance;
                                     const comboValue = combobox.field.value != null ? combobox.field.value.id : null;
@@ -1146,7 +1147,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         else {
                             // Close processing dialog
                             _this._dialogService.closeDialog();
-                            
+
                             // Show error snackbar
                             _this._console.log(`keyListener: ${keyListener}`);
                             //console.table(result);
@@ -1205,11 +1206,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
                     }
                 }
-                else if(action === 'update_time_tracker') {
+                else if (action === 'update_time_tracker') {
                     _this._timeTrackerService.checkStatus();
                 }
                 else if (actionType === 'email') {
-                    
+
                     let formValues = _this.formArray.first.form.value;
                     let emailActionParameters: EmailActionParameters = event.message.actionOnYes.emailActionParameters;
 
@@ -1235,57 +1236,57 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
 
                     let subject = 'OneCompliance';
-                    if(emailActionParameters.subjectKeys && emailActionParameters.subjectKeys.length) {
+                    if (emailActionParameters.subjectKeys && emailActionParameters.subjectKeys.length) {
                         subject = emailActionParameters.subjectKeys.map(key => formValues[key]).join(' ');
                     }
-                    if(emailActionParameters.subject && emailActionParameters.subject.length) {
+                    if (emailActionParameters.subject && emailActionParameters.subject.length) {
                         subject = emailActionParameters.subject;
                     }
 
                     let sender = null;
-                    if(emailActionParameters.senderKey && emailActionParameters.senderKey.length) {
+                    if (emailActionParameters.senderKey && emailActionParameters.senderKey.length) {
                         sender = formValues[emailActionParameters.senderKey];
                     }
-                    if(emailActionParameters.sender && emailActionParameters.sender.length) {
+                    if (emailActionParameters.sender && emailActionParameters.sender.length) {
                         sender = emailActionParameters.sender;
                     }
-                    
+
                     let recipients = null;
-                    if(emailActionParameters.recipientKeys && emailActionParameters.recipientKeys.length) {
+                    if (emailActionParameters.recipientKeys && emailActionParameters.recipientKeys.length) {
                         recipients = emailActionParameters.recipientKeys.map(key => formValues[key]).join(',');
                     }
-                    if(emailActionParameters.recipientList && emailActionParameters.recipientList.length) {
+                    if (emailActionParameters.recipientList && emailActionParameters.recipientList.length) {
                         recipients = emailActionParameters.recipientList.join(',');
                     }
                     let cc = null;
-                    if(emailActionParameters.ccKeys && emailActionParameters.ccKeys.length) {
+                    if (emailActionParameters.ccKeys && emailActionParameters.ccKeys.length) {
                         cc = emailActionParameters.ccKeys.map(key => formValues[key]).join(',');
                     }
-                    if(emailActionParameters.ccList && emailActionParameters.ccList.length) {
+                    if (emailActionParameters.ccList && emailActionParameters.ccList.length) {
                         cc = emailActionParameters.ccList.join(',');
                     }
                     let ccn = null;
-                    if(emailActionParameters.ccnKeys && emailActionParameters.ccnKeys.length) {
+                    if (emailActionParameters.ccnKeys && emailActionParameters.ccnKeys.length) {
                         ccn = emailActionParameters.ccnKeys.map(key => formValues[key]).join(',');
                     }
-                    if(emailActionParameters.ccnList && emailActionParameters.ccnList.length) {
+                    if (emailActionParameters.ccnList && emailActionParameters.ccnList.length) {
                         ccn = emailActionParameters.ccnList.join(',');
                     }
                     let body = null;
-                    if(emailActionParameters.bodyKeys && emailActionParameters.bodyKeys.length) {
+                    if (emailActionParameters.bodyKeys && emailActionParameters.bodyKeys.length) {
                         body = emailActionParameters.bodyKeys.filter(key => formValues[key.key] && formValues[key.key].length).map(key => `${key.label}${formValues[key.key]}`).join('\n');
                     }
-                    if(emailActionParameters.body && emailActionParameters.body.length) {
+                    if (emailActionParameters.body && emailActionParameters.body.length) {
                         body = emailActionParameters.body;
                     }
-                    
+
                     _this.sendEmail(
                         {
                             subject: subject,
                             header: body,
                             query: null,
                             footer: null,
-                            company:_this.authService.getCurrentCompany(_this.currentKeys),
+                            company: _this.authService.getCurrentCompany(_this.currentKeys),
                             conditionQuery: null,
                             onSuccessQuery: null,
                             sender: sender,
@@ -1344,21 +1345,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             result => {
                                 if (result.result === 'OK') {
                                     _this._console.table(result);
-                                    if (result.data ){
-                                        if (Array.isArray(result.data)){
+                                    if (result.data) {
+                                        if (Array.isArray(result.data)) {
                                             // I am hoping that the result contains keys for the next event
                                             value.data = {};
                                             value.data['keys'] = result.data[0];
                                         }
-                                        else{
+                                        else {
                                             value.data = result.data;
                                         }
                                     }
-                                    
-                                    if (event.successMessage){
+
+                                    if (event.successMessage) {
                                         _this._toastService.showSuccessToast(event.successMessage);
                                     }
-                                    else{
+                                    else {
                                         _this._toastService.showSuccessToast('Success!');
                                     }
                                     if (event.outputEventWhenComplete != null) {
@@ -1377,7 +1378,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             });
 
 
-        
+
         } else if (event.actionType === 'google_api') {
             _this.runGoogleEvent(event, value, keyListener);
         } else if (event.actionType === 'regulat_api') {
@@ -1389,7 +1390,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         let _this = this;
         const googleAPIParams: GoogleAPIParams = event.googleAPIParams;
         let formValues = _this.formArray.first.form.value;
-                
+
         // process the booleans (1/0 instead of true/false)
         for (const value in formValues) {
             if (formValues.hasOwnProperty(value)) {
@@ -1411,12 +1412,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
         }
 
-        if(!googleAPIParams || !googleAPIParams.actionType) {
+        if (!googleAPIParams || !googleAPIParams.actionType) {
             _this._toastService.showErrorToast("Missing Google API Params");
         }
         else {
-            if(googleAPIParams.actionType == 'get_directions') {
-                if(!googleAPIParams.directionsParams) {
+            if (googleAPIParams.actionType == 'get_directions') {
+                if (!googleAPIParams.directionsParams) {
                     _this._toastService.showErrorToast("Missing Google API Get Directions Params");
                 }
                 else {
@@ -1424,14 +1425,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     const destination = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.directionsParams.destinationKey);
                 }
             }
-            else if(googleAPIParams.actionType == 'get_distance') {
-                if(!googleAPIParams.distanceParams) {
+            else if (googleAPIParams.actionType == 'get_distance') {
+                if (!googleAPIParams.distanceParams) {
                     _this._toastService.showErrorToast("Missing Google API Get Distance Params");
                 }
                 else {
                     const origin = formValues[googleAPIParams.distanceParams.originKey];
                     const destination = formValues[googleAPIParams.distanceParams.destinationKey];
-                    if(!origin || !destination) {
+                    if (!origin || !destination) {
                         _this._toastService.showErrorToast("Missing Google API Get Distance Params");
                     }
                     else {
@@ -1440,8 +1441,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 // _this._console.log(response);
                                 if (response.result === 'OK') {
                                     let distance = 0;
-                                    if(response.data.rows && response.data.rows.length && response.data.rows[0].elements && response.data.rows[0].elements.length && response.data.rows[0].elements[0].distance && response.data.rows[0].elements[0].distance.value) {
-                                        distance = (response.data.rows[0].elements[0].distance.value) / 1000;                                        
+                                    if (response.data.rows && response.data.rows.length && response.data.rows[0].elements && response.data.rows[0].elements.length && response.data.rows[0].elements[0].distance && response.data.rows[0].elements[0].distance.value) {
+                                        distance = (response.data.rows[0].elements[0].distance.value) / 1000;
                                     }
 
                                     let element = HelperService.findElement(this.filteredFormData[value.index], keyListener);
@@ -1453,14 +1454,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     // if(element.value != null) {
                                     //     const childrenArray = _this.formArray.toArray();
                                     //     const current_line = childrenArray.find(c => c.fields[0].index === 0);
-                
+
                                     //     let dynamicEl = <InputComponent>_this.findElementInDynamicFields(current_line.dynamicFields, keyListener);
                                     //     if(dynamicEl && dynamicEl.setValue) {
                                     //         dynamicEl.setValue(distance);                                        
                                     //     }
                                     // }
 
-                                    
+
                                     if (event.outputEventWhenComplete != null) {
                                         _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
                                     }
@@ -1471,15 +1472,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             },
                             error => {
                                 _this._console.log(error);
-                                _this._toastService.showErrorToast(error);        
+                                _this._toastService.showErrorToast(error);
                             }
                         );
                     }
-                    
+
                 }
             }
-            else if(googleAPIParams.actionType == 'get_email_thread') {
-                if(!googleAPIParams.emailThreadParams) {
+            else if (googleAPIParams.actionType == 'get_email_thread') {
+                if (!googleAPIParams.emailThreadParams) {
                     _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");
                 }
                 else {
@@ -1487,18 +1488,18 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     const threadId = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.emailThreadParams.threadIdKey);
                 }
             }
-            else if(googleAPIParams.actionType == 'create_drive_folder') {
-                if(!googleAPIParams.driveFolderParams) {
+            else if (googleAPIParams.actionType == 'create_drive_folder') {
+                if (!googleAPIParams.driveFolderParams) {
                     _this._toastService.showErrorToast("Missing Google API Drive Folder Params");
                 }
                 else {
                     const driveFolder = formValues[googleAPIParams.driveFolderParams.driveFolderKey];
-                    if(!driveFolder) {
+                    if (!driveFolder) {
                         _this._toastService.showErrorToast("Missing Google API Drive Folder Params");
                     }
                     else {
                         let auth = _this.authService.loadGoogleAuth('gdrive');
-                        _this.backendService.createDriveFolder(driveFolder, auth).subscribe(                        
+                        _this.backendService.createDriveFolder(driveFolder, auth).subscribe(
                             response => {
                                 // _this._console.log(response);
                                 if (response['result'] === 'OK') {
@@ -1512,26 +1513,26 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             },
                             error => {
                                 _this._console.log(error);
-                                _this._toastService.showErrorToast(error);        
+                                _this._toastService.showErrorToast(error);
                             }
                         );
                     }
-                    
+
                 }
             }
-            else if(googleAPIParams.actionType == 'copy_s3_to_drive') {
-                if(!googleAPIParams.s3ToDriveParams) {
+            else if (googleAPIParams.actionType == 'copy_s3_to_drive') {
+                if (!googleAPIParams.s3ToDriveParams) {
                     _this._toastService.showErrorToast("Missing Google API Path Params");
                 }
                 else {
                     const s3Path = formValues[googleAPIParams.s3ToDriveParams.s3PathKey];
                     const drivePath = formValues[googleAPIParams.s3ToDriveParams.drivePathKey];
-                    if(!s3Path || !drivePath) {
+                    if (!s3Path || !drivePath) {
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
                     else {
                         let auth = _this.authService.loadGoogleAuth('gdrive');
-                        _this.backendService.copyFromS3ToDrive(s3Path, drivePath, auth).subscribe(                        
+                        _this.backendService.copyFromS3ToDrive(s3Path, drivePath, auth).subscribe(
                             response => {
                                 // _this._console.log(response);
                                 if (response['result'] === 'OK') {
@@ -1545,26 +1546,26 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             },
                             error => {
                                 _this._console.log(error);
-                                _this._toastService.showErrorToast(error);        
+                                _this._toastService.showErrorToast(error);
                             }
                         );
                     }
-                    
+
                 }
             }
-            else if(googleAPIParams.actionType == 'copy_drive_to_s3') {
-                if(!googleAPIParams.driveToS3Params) {
+            else if (googleAPIParams.actionType == 'copy_drive_to_s3') {
+                if (!googleAPIParams.driveToS3Params) {
                     _this._toastService.showErrorToast("Missing Google API Path Params");
                 }
                 else {
                     const drivePath = formValues[googleAPIParams.driveToS3Params.drivePathKey];
                     const s3Path = formValues[googleAPIParams.s3ToDriveParams.s3PathKey];
-                    if(!drivePath || !s3Path) {
+                    if (!drivePath || !s3Path) {
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
                     else {
                         let auth = _this.authService.loadGoogleAuth('gdrive');
-                        _this.backendService.copyFromDriveToS3(drivePath, s3Path, auth).subscribe(                        
+                        _this.backendService.copyFromDriveToS3(drivePath, s3Path, auth).subscribe(
                             response => {
                                 // _this._console.log(response);
                                 if (response['result'] === 'OK') {
@@ -1578,42 +1579,46 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             },
                             error => {
                                 _this._console.log(error);
-                                _this._toastService.showErrorToast(error);        
+                                _this._toastService.showErrorToast(error);
                             }
                         );
                     }
-                    
+
                 }
             }
-            else if(googleAPIParams.actionType == 'get_folder_expanded_contents') {
-                if(!googleAPIParams.driveExpandedContentsParams) {
+            else if (googleAPIParams.actionType == 'get_folder_expanded_contents') {
+                if (!googleAPIParams.driveExpandedContentsParams) {
                     _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
                 }
                 else {
                     const codiceAzienda = formValues[googleAPIParams.driveExpandedContentsParams.codiceAziendaKey];
-                    const idProgetto = googleAPIParams.driveExpandedContentsParams.idProgettoKey? formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey]: null;
+                    const idProgetto = googleAPIParams.driveExpandedContentsParams.idProgettoKey ? formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey] : null;
                     const idAnagrafica = formValues[googleAPIParams.driveExpandedContentsParams.idAnagraficaKey];
-                    if(!codiceAzienda || !idAnagrafica) {
+                    if (!codiceAzienda || !idAnagrafica) {
                         _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
                     }
                     else {
                         let loadingToast = _this._toastService.showLoadingToast("Synching google drive", "Please wait...");
-                        try
-                        {
+                        try {
                             const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
                             
-                            
-                            let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
+                            // let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
+                            // console.log(getChangesResult);
+                            // if(getChangesResult && getChangesResult.length) {
+                            //     let syncDataResponse = await forkJoin(getChangesResult.map(x => _this._googleAPIService.syncGoogleDrive(googleAuth, x.codice_azienda, x.anagrafica_id, null))).toPromise();
+                            // }
+
+                            let anagrafica_contents = await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername()).toPromise();
                             _this._console.log(anagrafica_contents);
                             let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
                             //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
                             let sub_folders = anagraficaFolders['sub_folders'];
-                            if(sub_folders && sub_folders.length > 0) {
-                                for(let i = 0; i < sub_folders.length; i++) {
-                                    if(sub_folders[i]['folder'].endsWith('/')) {
-                                        sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0 , -1);
+                            if (sub_folders && sub_folders.length > 0) {
+                                for (let i = 0; i < sub_folders.length; i++) {
+                                    if (sub_folders[i]['folder'].endsWith('/')) {
+                                        sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0, -1);
                                     }
-                                    if(!sub_folders[i]['folder'].includes('/')) {
+                                    if (!sub_folders[i]['folder'].includes('/')) {
                                         sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
                                     }
                                 }
@@ -1621,23 +1626,23 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             }
 
                             anagraficaFolders['sub_folders'] = sub_folders;
-                            
+
                             _this._console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
-                            
+
                             const driveFolder = anagraficaFolders['root_folder'];
                             const subFolders = anagraficaFolders['sub_folders'] || [];
 
                             let foldersToCheck = [driveFolder];
-                            if(subFolders && subFolders.length > 0) {
+                            if (subFolders && subFolders.length > 0) {
                                 for await (let subFolder of subFolders) {
-                                    if(!foldersToCheck.includes(subFolder.folder)) {
+                                    if (!foldersToCheck.includes(subFolder.folder)) {
                                         foldersToCheck.push(subFolder.folder);
                                     }
                                 }
                             }
-                            
+
                             _this._console.log('foldersToCheck: ', JSON.stringify(foldersToCheck));
-                            
+
                             anagraficaFolders['folder_ids'] = {};
                             for await (let folderToCheck of foldersToCheck) {
                                 let fixDriveFolderPathByIdentifierResponse = await _this.backendService.fixDriveFolderPathByIdentifier(folderToCheck, googleAuth).toPromise();
@@ -1647,23 +1652,23 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                             // let fixDriveFolderPathByIdentifierResponse = await forkJoin(foldersToCheck.map(x => _this.backendService.fixDriveFolderPathByIdentifier(x, googleAuth))).toPromise();
                             // _this._console.log('fixDriveFolderPathByIdentifier Response: ', fixDriveFolderPathByIdentifierResponse);
-                            
+
                             // anagraficaFolders['folder_ids'] = {};
                             // fixDriveFolderPathByIdentifierResponse.forEach(x => {
                             //     anagraficaFolders['folder_ids'][x['folder']] = x['folderId']
                             // });
 
                             anagraficaFolders['codice_azienda'] = codiceAzienda;
-                            
+
                             _this._console.log(anagraficaFolders);
                             // let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
                             // _this._console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
                             // anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
                             // anagraficaFolders['codice_azienda'] = codiceAzienda;
-                            
-                            
+
+
                             let getDriveFolderDeepContentsResponse: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
-                            _this._console.log('getDriveFolderDeepContentsResponse ',getDriveFolderDeepContentsResponse);
+                            _this._console.log('getDriveFolderDeepContentsResponse ', getDriveFolderDeepContentsResponse);
 
                             let syncDataResponse = await forkJoin(getDriveFolderDeepContentsResponse.syncData.map(x => _this.backendService.syncDriveS3File([x], googleAuth))).toPromise();
                             _this._console.log('syncDataResponse', syncDataResponse);
@@ -1672,13 +1677,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             let processDriveFolderDeepContentsResponse: any = await _this.backendService.processDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
                             _this._console.log('processDriveFolderDeepContentsResponse ', processDriveFolderDeepContentsResponse);
 
-                                      
+
                             let filteredFilesForSetProperFileFolder = [];
-                            for(let file of processDriveFolderDeepContentsResponse.files) {
-                                if(file.fileid.includes('/')) {
+                            for (let file of processDriveFolderDeepContentsResponse.files) {
+                                if (file.fileid.includes('/')) {
                                     file.fileid = file.fileid.split('/')[1];
                                 }
-                                if(filteredFilesForSetProperFileFolder.filter(x => x.fileid == file.fileid && x.filename == file.filename && x.folder == file.folder).length == 0) {
+                                if (filteredFilesForSetProperFileFolder.filter(x => x.fileid == file.fileid && x.filename == file.filename && x.folder == file.folder).length == 0) {
                                     filteredFilesForSetProperFileFolder.push(file);
                                 }
                             }
@@ -1693,33 +1698,33 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                             let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
                             _this._console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
-                            
-                            
-                            
+
+
+
                             let performDriveOperationsResponse = [];
-                            if(setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows && setProperFileFolderResponse.response.rows.length > 0) {
+                            if (setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows && setProperFileFolderResponse.response.rows.length > 0) {
                                 for await (let operation of setProperFileFolderResponse.response.rows) {
                                     let performDriveOperationResponse = await _this.backendService.performDriveOperations([operation], googleAuth).toPromise();
-                                    performDriveOperationsResponse.push(performDriveOperationResponse);                                    
+                                    performDriveOperationsResponse.push(performDriveOperationResponse);
                                 }
                                 // let performDriveOperationsResponse = await forkJoin(setProperFileFolderResponse.response.rows.map(x => _this.backendService.performDriveOperations([x], googleAuth))).toPromise();
                             }
-                            
-                             _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
+
+                            _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
 
                             _this._toastService.hideLoadingToast(loadingToast);
                             _this._toastService.showSuccessToast(event.successMessage || 'Done!');
                         }
-                        catch(e) {
+                        catch (e) {
                             _this._console.log(e);
                             _this._toastService.hideLoadingToast(loadingToast);
                             _this._toastService.showErrorToast(e);
-                        }                        
+                        }
                     }
                 }
             }
             else {
-                _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");                    
+                _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");
             }
         }
     }
@@ -1728,7 +1733,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         let _this = this;
         const regulatAPIParams: RegulatAPIParams = event.regulatAPIParams;
         let formValues = _this.formArray.first.form.value;
-                
+
         // process the booleans (1/0 instead of true/false)
         for (const value in formValues) {
             if (formValues.hasOwnProperty(value)) {
@@ -1750,23 +1755,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
         }
 
-        if(!regulatAPIParams || !regulatAPIParams.actionType) {
+        if (!regulatAPIParams || !regulatAPIParams.actionType) {
             _this._toastService.showErrorToast("Missing Regulat API params");
         }
         else {
-            const codiceAziendaAML = formValues[regulatAPIParams.entityParams.codice_azienda];
-            const idAnagraficaAML = formValues[regulatAPIParams.entityParams.id_anagrafica];
-            const idSomministrazioneAML = formValues[regulatAPIParams.entityParams.id_somministrazione];
-            if(regulatAPIParams.actionType === 'get_aml_scan') {
-                if(!regulatAPIParams.entityParams) {
+            if (regulatAPIParams.actionType === 'get_aml_scan') {
+                if (!regulatAPIParams.entityParams) {
                     _this._toastService.showErrorToast("Missing Regulat API entity params");
                 }
                 else {
-
                     _this._dialogService.showLoadingDialog('Running OneScan', 'Please wait...');
 
+                    const codiceAziendaAML = formValues[regulatAPIParams.entityParams.codice_azienda];
+                    const idAnagraficaAML = formValues[regulatAPIParams.entityParams.id_anagrafica];
+                    const idSomministrazioneAML = formValues[regulatAPIParams.entityParams.id_somministrazione];
+                    const dynamoUserAML = formValues[regulatAPIParams.entityParams.dynamo_user];
+
                     //First step, get connected registries
-                    let connected_registries =  await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
+                    let connected_registries = await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
                     console.log(connected_registries.response);
 
                     if (connected_registries.response === 'KO') {
@@ -1774,22 +1780,76 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._dialogService.closeDialog();
                         _this._toastService.showErrorToast(connected_registries.reason);
                     }
-                    else{
+                    else {
 
-                    let connectedRegistries = connected_registries.response; 
+                        let connectedRegistries = connected_registries.response;
 
-                    //Second step, query regulat.io
-                    let scan_contents =  await _this.backendService.getAmlScan(codiceAziendaAML, idAnagraficaAML, connectedRegistries, idSomministrazioneAML).toPromise();
-                    console.log(scan_contents);
+                        //Second step, query regulat.io
+                        let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, idSomministrazioneAML, dynamoUserAML).toPromise();
+                        console.log(scan_contents);
 
-                    _this._dialogService.closeDialog();
-                    _this._toastService.showSuccessToast('OneScan: Completed!'); // show success toast
-                    this.refreshView(); // refresh the view
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showSuccessToast('OneScan: Completed!'); // show success toast
+                        this.refreshView(); // refresh the view
+                    }
+                }
+            }
+            else if (regulatAPIParams.actionType === 'get_aml_scans') {
+                if (!regulatAPIParams.surveyParams) {
+                    _this._toastService.showErrorToast("Missing Regulat API survey params");
+                }
+                else {
+                    _this._dialogService.showLoadingDialog('Running OneScan', 'Please wait...');
+
+                    const codiceAziendaAML = formValues[regulatAPIParams.surveyParams.codice_azienda];
+                    const idSondaggioAML = formValues[regulatAPIParams.surveyParams.id_sondaggio];
+                    const dynamoUserAML = formValues[regulatAPIParams.surveyParams.dynamo_user];
+
+                    //First step, get connected registries
+                    let connected_checks = await _this.backendService.getConnectedChecks(codiceAziendaAML, idSondaggioAML).toPromise();
+                    console.log(connected_checks.response);
+
+                    if (connected_checks.response === 'KO') {
+                        console.log('KO');
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showErrorToast(connected_checks.reason);
+                    }
+                    else {
+
+                        let connectedChecks = connected_checks.response;
+
+                        for (let i = 0; i < connectedChecks.length; i++) {
+
+                            console.log(connectedChecks[i].id_somministrazione);
+
+                            //First step, get connected registries
+                            let connected_registries = await _this.backendService.getConnectedRegistriesFromCheck(codiceAziendaAML, connectedChecks[i].id_somministrazione).toPromise();
+                            console.log(connected_registries.response);
+
+                            if (connected_registries.response === 'KO') {
+                                console.log('KO');
+                                _this._dialogService.closeDialog();
+                                _this._toastService.showErrorToast(connected_registries.reason);
+                                return;
+                            }
+                            else {
+
+                                let connectedRegistries = connected_registries.response;
+
+                                //Second step, query regulat.io
+                                let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, connectedChecks[i].id_somministrazione, dynamoUserAML).toPromise();
+                                console.log(scan_contents);
+
+                            }
+                        }
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showSuccessToast('OneScan: Completed!'); // show success toast
+                        this.refreshView(); // refresh the view
                     }
                 }
             }
             else {
-                _this._toastService.showErrorToast("Missing Regulat Api Params");                    
+                _this._toastService.showErrorToast("Missing Regulat Api Params");
             }
         }
     }
@@ -1867,15 +1927,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     }
 
-    findElementInDynamicFields(dynamicFields: QueryList<DynamicFieldDirective> | QueryList<SubFormDynamicFieldDirective> , name: string) {
+    findElementInDynamicFields(dynamicFields: QueryList<DynamicFieldDirective> | QueryList<SubFormDynamicFieldDirective>, name: string) {
         let element = null;
-        
+
         dynamicFields.forEach(dynamicField => {
             if (dynamicField.field.name === name) {
                 element = dynamicField;
             }
-            if ( dynamicField.componentRef.instance instanceof SubformComponent && !element) {
-                
+            if (dynamicField.componentRef.instance instanceof SubformComponent && !element) {
+
                 let findResult = this.findElementInDynamicFields((<SubformComponent>dynamicField.componentRef.instance).dynamicFields, name);
                 if (findResult) {
                     element = findResult;
@@ -1899,7 +1959,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
 
     importAdvanced(item: ImportItem) {
-        this._importExportService.importAdvancedCSV(this.formParams.entryName, this.formParams.keys, item.label, true);    
+        this._importExportService.importAdvancedCSV(this.formParams.entryName, this.formParams.keys, item.label, true);
     }
 
     downloadTemplateFile(): void {
@@ -1927,7 +1987,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
 
     loadWidgetsConfiguration(widgetsConfiguration: WidgetsConfigurations) {
-        if(widgetsConfiguration) {
+        if (widgetsConfiguration) {
             this.widgetsConfiguration = widgetsConfiguration;
         }
         else {
@@ -1940,7 +2000,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
 
     attachmentsOnSave(result) {
-        if(result && this.widgetsConfiguration.attachments.onSaveAction == 'reload') {
+        if (result && this.widgetsConfiguration.attachments.onSaveAction == 'reload') {
             this.refreshView();
         }
     }

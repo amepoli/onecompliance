@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostBinding, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { UntypedFormGroup } from "@angular/forms";
 import { ConsoleLoggerService, DialogService, HelperService, PubSubService, TimezoneService } from "app/oc/services";
 import { FieldConfig } from 'app/oc/interfaces';
 import { Subscription } from 'rxjs';
@@ -18,7 +18,7 @@ import { AngularEditorConfig } from "@kolkov/angular-editor";
 })
 export class TextAreaComponent implements OnInit, AfterViewInit {
   field: FieldConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
   maxHeight: number = 256; // Maximum height of textarea element
 

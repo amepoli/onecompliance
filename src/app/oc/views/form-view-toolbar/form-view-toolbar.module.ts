@@ -23,53 +23,49 @@ import { MultiAttachmentsModule } from 'app/oc/widgets/multi-attachments/multi-a
 import { ShareModule } from 'app/oc/widgets/share/share.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatIconModule,
-    MatButtonModule,
-    DynamicFormsModule,
-    MatFormFieldModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatInputModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatBadgeModule,
-    FileManagerModule,
-    MatDialogModule,
-    FormGetterModule,
-
-    AttachmentsModule,
-    MultiAttachmentsModule,
-    ShareModule
-  ],
-  exports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatIconModule,
-    MatButtonModule,
-    DynamicFormsModule,
-    MatFormFieldModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatInputModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    FormViewToolbarComponent
-  ],
-  declarations: [FormViewToolbarComponent],
-  entryComponents: [
-    FormViewToolbarComponent
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatTabsModule,
+        MatIconModule,
+        MatButtonModule,
+        DynamicFormsModule,
+        MatFormFieldModule,
+        MatOptionModule,
+        MatSelectModule,
+        MatInputModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatBadgeModule,
+        FileManagerModule,
+        MatDialogModule,
+        FormGetterModule,
+        AttachmentsModule,
+        MultiAttachmentsModule,
+        ShareModule
+    ],
+    exports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatTabsModule,
+        MatIconModule,
+        MatButtonModule,
+        DynamicFormsModule,
+        MatFormFieldModule,
+        MatOptionModule,
+        MatSelectModule,
+        MatInputModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        FormViewToolbarComponent
+    ],
+    declarations: [FormViewToolbarComponent]
 })
 
 export class FormViewToolbarModule { }

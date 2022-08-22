@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { UntypedFormGroup } from "@angular/forms";
 import { FieldConfig, MenuOption } from 'app/oc/interfaces';
 import { PubSubService } from 'app/oc/services';
 
@@ -41,7 +41,7 @@ import { PubSubService } from 'app/oc/services';
 })
 export class MenuComponent implements OnInit {
   field: FieldConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
 
   selection = [];

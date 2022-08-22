@@ -10,19 +10,18 @@ import { MatInputModule } from '@angular/material/input';
 import { FormViewModule } from '../form/form-view.module';
 
 @NgModule({
-  declarations: [FormTableViewComponent],
-  imports: [
-    CommonModule,
-    FormGetterModule,
-    DynamicFormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    MatFormFieldModule
-  ],
-  exports: [
-    FormTableViewComponent
-  ],
-  entryComponents: [FormTableViewComponent]
+    declarations: [FormTableViewComponent],
+    imports: [
+        CommonModule,
+        FormGetterModule,
+        DynamicFormsModule,
+        MatButtonModule,
+        MatIconModule,
+        MatInputModule,
+        MatFormFieldModule
+    ],
+    exports: [
+        FormTableViewComponent
+    ]
 })
 export class FormTableViewModule { }

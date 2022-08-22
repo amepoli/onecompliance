@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { FieldConfig, Item } from 'app/oc/interfaces';
 import { ConsoleLoggerService, PubSubService, ValidationsService } from 'app/oc/services';
 import { ReplaySubject, Subject, Subscription } from 'rxjs';
@@ -45,7 +45,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   field: FieldConfig;
-  group: FormGroup;
+  group: UntypedFormGroup;
   readOnlyPage: boolean; // field.readonly overridden by page
   isRequired = false; // field is required or not
   subscription: Subscription;
@@ -55,7 +55,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   isLazyLoaded = false; // Options set by calling setOptions() function
 
   /** control for the MatSelect filter keyword */
-  public itemFilterCtrl: FormControl = new FormControl();
+  public itemFilterCtrl: UntypedFormControl = new UntypedFormControl();
 
   /** list of items filtered by search keyword */
   public filteredItems: ReplaySubject<Item[]> = new ReplaySubject<Item[]>(1);

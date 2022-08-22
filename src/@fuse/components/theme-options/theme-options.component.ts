@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -17,7 +17,7 @@ import { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';
 export class FuseThemeOptionsComponent implements OnInit, OnDestroy
 {
     fuseConfig: any;
-    form: FormGroup;
+    form: UntypedFormGroup;
 
     @HostBinding('class.bar-closed')
     barClosed: boolean;
@@ -35,7 +35,7 @@ export class FuseThemeOptionsComponent implements OnInit, OnDestroy
      * @param {Renderer2} _renderer
      */
     constructor(
-        private _formBuilder: FormBuilder,
+        private _formBuilder: UntypedFormBuilder,
         private _fuseConfigService: FuseConfigService,
         private _fuseNavigationService: FuseNavigationService,
         private _fuseSidebarService: FuseSidebarService,
@@ -62,31 +62,31 @@ export class FuseThemeOptionsComponent implements OnInit, OnDestroy
         // noinspection TypeScriptValidateTypes
         this.form = this._formBuilder.group({
             layout          : this._formBuilder.group({
-                style    : new FormControl(),
-                width    : new FormControl(),
+                style    : new UntypedFormControl(),
+                width    : new UntypedFormControl(),
                 navbar   : this._formBuilder.group({
-                    background: new FormControl(),
-                    folded    : new FormControl(),
-                    hidden    : new FormControl(),
-                    position  : new FormControl(),
-                    variant   : new FormControl()
+                    background: new UntypedFormControl(),
+                    folded    : new UntypedFormControl(),
+                    hidden    : new UntypedFormControl(),
+                    position  : new UntypedFormControl(),
+                    variant   : new UntypedFormControl()
                 }),
                 toolbar  : this._formBuilder.group({
-                    background: new FormControl(),
-                    hidden    : new FormControl(),
-                    position  : new FormControl()
+                    background: new UntypedFormControl(),
+                    hidden    : new UntypedFormControl(),
+                    position  : new UntypedFormControl()
                 }),
                 footer   : this._formBuilder.group({
-                    background: new FormControl(),
-                    hidden    : new FormControl(),
-                    position  : new FormControl()
+                    background: new UntypedFormControl(),
+                    hidden    : new UntypedFormControl(),
+                    position  : new UntypedFormControl()
                 }),
                 sidepanel: this._formBuilder.group({
-                    hidden: new FormControl(),
-                    position  : new FormControl()
+                    hidden: new UntypedFormControl(),
+                    position  : new UntypedFormControl()
                 })
             }),
-            customScrollbars: new FormControl()
+            customScrollbars: new UntypedFormControl()
         });
 
         // Subscribe to the config changes

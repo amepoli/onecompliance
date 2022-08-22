@@ -18,33 +18,29 @@ import { MFAComponent } from './mfa.component';
 import { MFADialogModule } from 'app/oc/dialogs/mfa.dialog/mfa.dialog.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatMenuModule,
-    MatToolbarModule,
-    MatTabsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatOptionModule,
-    MatSelectModule,
-    MatInputModule,
-    MatCardModule,
-    MatProgressSpinnerModule,
-    MatBadgeModule,
-    MatDialogModule,
-
-    MFADialogModule
-  ],
-  exports: [
-    MFAComponent,
-  ],
-  declarations: [MFAComponent],
-  entryComponents: [
-    MFAComponent
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatMenuModule,
+        MatToolbarModule,
+        MatTabsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatOptionModule,
+        MatSelectModule,
+        MatInputModule,
+        MatCardModule,
+        MatProgressSpinnerModule,
+        MatBadgeModule,
+        MatDialogModule,
+        MFADialogModule
+    ],
+    exports: [
+        MFAComponent,
+    ],
+    declarations: [MFAComponent]
 })
 
 export class MFAModule { }

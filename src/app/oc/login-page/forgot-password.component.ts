@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
@@ -13,9 +13,9 @@ import { AuthService } from '../services';
 })
 export class ForgotPasswordComponent implements OnInit
 {
-    forgotPasswordForm: FormGroup;
+    forgotPasswordForm: UntypedFormGroup;
 
-    verificationForm: FormGroup;
+    verificationForm: UntypedFormGroup;
 
     emailSent = false;
 
@@ -31,7 +31,7 @@ export class ForgotPasswordComponent implements OnInit
      */
     constructor(
         private _fuseConfigService: FuseConfigService,
-        private _formBuilder: FormBuilder,
+        private _formBuilder: UntypedFormBuilder,
         private authService: AuthService
     )
     {

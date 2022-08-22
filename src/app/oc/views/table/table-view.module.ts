@@ -19,46 +19,43 @@ import { OneCompliancePipesModule } from 'app/oc/pipes/pipes.module';
 import { TableMultiselectToolbarModule } from '../table-multiselect-toolbar/table-multiselect-toolbar.module';
 
 @NgModule({
-  declarations: [TableViewComponent],
-  imports: [
-    CommonModule,
-    AmplifyAngularModule,
-    MatTableModule,
-    MatFormFieldModule,
-    MatPaginatorModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    MatSlideToggleModule,
-    MatSortModule,
-    MatIconModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    DynamicFormsModule,
-    FormViewModule,
-    TableMultiselectToolbarModule,
-    OneCompliancePipesModule
-  ],
-  exports: [
-    CommonModule,
-    AmplifyAngularModule,
-    MatTableModule,
-    MatFormFieldModule,
-    MatPaginatorModule,
-    MatInputModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    MatSlideToggleModule,
-    MatSortModule,
-    MatIconModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    DynamicFormsModule,
-    TableViewComponent
-  ],
-  entryComponents: [
-      TableViewComponent
-  ]
+    declarations: [TableViewComponent],
+    imports: [
+        CommonModule,
+        AmplifyAngularModule,
+        MatTableModule,
+        MatFormFieldModule,
+        MatPaginatorModule,
+        MatInputModule,
+        MatProgressSpinnerModule,
+        MatCardModule,
+        MatSlideToggleModule,
+        MatSortModule,
+        MatIconModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        DynamicFormsModule,
+        FormViewModule,
+        TableMultiselectToolbarModule,
+        OneCompliancePipesModule
+    ],
+    exports: [
+        CommonModule,
+        AmplifyAngularModule,
+        MatTableModule,
+        MatFormFieldModule,
+        MatPaginatorModule,
+        MatInputModule,
+        MatProgressSpinnerModule,
+        MatCardModule,
+        MatSlideToggleModule,
+        MatSortModule,
+        MatIconModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        DynamicFormsModule,
+        TableViewComponent
+    ]
 })
 
 export class TableViewModule { }

@@ -13,8 +13,8 @@ exports.handler = async (event, context) => {
   //console.log('queryParams: ', queryParams);
 
   const company = queryParams['company'];
-  const registry = queryParams['registry'];
   const checkId = queryParams['checkId'];
+  const dynamoUser = queryParams['dynamoUser'];
   const connectedRegistries = JSON.parse(queryParams['connected_registries']);
   let hostName;
   let scannedData = '';
@@ -87,10 +87,11 @@ exports.handler = async (event, context) => {
     }
 
     //3.Append to the ScannedData the other data i need
-    scannedData.data["registry"] = registry;
+    scannedData.data["registry"] = connectedRegistries[i].connected_registry;
     scannedData.data["company"] = company;
     scannedData.data["checkId"] = checkId;
-    scannedData.data["request_type"] = 'getAmlScan';
+    scannedData.data["dynamoUser"] = dynamoUser;
+    scannedData.data["request_type"] = 'processScan';
 
     //4.Call regulat_VPC to process the data
     response = await lambda.invoke({

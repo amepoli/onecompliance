@@ -29,7 +29,7 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select snd.*, cr.*, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,snd.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, snd.ris_percentuale as percentuale, replace(entrasp.modelli_test_risultati_righe_codice_colore(snd.codice_azienda, mtv.id_risultato, snd.ris_percentuale),'grey','#C0C0C0') as colore_giudizio_trans,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio),'grey','#C0C0C0') as colore_giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_1),'grey','#C0C0C0') as colore_giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_2),'grey','#C0C0C0') as colore_giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_follow_up),'grey','#C0C0C0') as colore_giudizio_follow_up from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mtv on snd.codice_azienda=mtv.codice_azienda and snd.id_modello_test=mtv.id_modello_test and snd.id_modello_test_vr=mtv.id_modello_test_vr inner join entrasp.modelli_test mt on mtv.codice_azienda = mt.codice_azienda  and mtv.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio where snd.codice_azienda='UNIFACTOR' and snd.id_sondaggio=1022 and cr.id_somministrazione is null"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select snd.*, cr.*, mt.titolo as mt_titolo, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr, entrasp.anagrafiche_vr_dati_identificativi_nom1(snd.codice_part, snd.id_anagrafica_assegnataria) as assegnato_a ,snd.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', snd.stato) as stato_transcodificato, snd.ris_percentuale as percentuale, replace(entrasp.modelli_test_risultati_righe_codice_colore(snd.codice_azienda, mtv.id_risultato, snd.ris_percentuale),'grey','#C0C0C0') as colore_giudizio_trans,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio),'grey','#C0C0C0') as colore_giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_1),'grey','#C0C0C0') as colore_giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_livello_2),'grey','#C0C0C0') as colore_giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up,replace(entrasp.cpl_giudizi_verifiche_colore(snd.codice_azienda, cr.id_giudizio_follow_up),'grey','#C0C0C0') as colore_giudizio_follow_up from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mtv on snd.codice_azienda=mtv.codice_azienda and snd.id_modello_test=mtv.id_modello_test and snd.id_modello_test_vr=mtv.id_modello_test_vr inner join entrasp.modelli_test mt on mtv.codice_azienda = mt.codice_azienda  and mtv.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on snd.codice_azienda = cr.codice_azienda  and snd.id_sondaggio =cr.id_sondaggio where cr.id_somministrazione is null"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["INVESTIRE"]]></defaultValueExpression>
@@ -55,7 +55,7 @@
 		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
 	</field>
-	<field name="data_rilevazione_da" class="java.sql.Date">
+	<field name="data_rilevazione_da" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.name" value="data_rilevazione_da"/>
 		<property name="com.jaspersoft.studio.field.label" value="data_rilevazione_da"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
@@ -138,6 +138,11 @@
 	<field name="data_riferimento_a" class="java.sql.Date">
 		<property name="com.jaspersoft.studio.field.name" value="data_riferimento_a"/>
 		<property name="com.jaspersoft.studio.field.label" value="data_riferimento_a"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="id_somministrazione" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_somministrazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_somministrazione"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
 	</field>
 	<field name="titolo" class="java.lang.String">
@@ -240,6 +245,76 @@
 		<property name="com.jaspersoft.studio.field.label" value="giudizio_manuale"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
 	</field>
+	<field name="email_to" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="email_to"/>
+		<property name="com.jaspersoft.studio.field.label" value="email_to"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="email_text" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="email_text"/>
+		<property name="com.jaspersoft.studio.field.label" value="email_text"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="email_subject" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="email_subject"/>
+		<property name="com.jaspersoft.studio.field.label" value="email_subject"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="email_cc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="email_cc"/>
+		<property name="com.jaspersoft.studio.field.label" value="email_cc"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="email_ccn" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="email_ccn"/>
+		<property name="com.jaspersoft.studio.field.label" value="email_ccn"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="id_centro_gest_verificato" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_centro_gest_verificato"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_centro_gest_verificato"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="id_contratto" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_contratto"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_contratto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="data_inserimento" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="data_inserimento"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_inserimento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="ris_percentuale_worst" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ris_percentuale_worst"/>
+		<property name="com.jaspersoft.studio.field.label" value="ris_percentuale_worst"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="giudizio_worst" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="giudizio_worst"/>
+		<property name="com.jaspersoft.studio.field.label" value="giudizio_worst"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="pct_da_worst" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="pct_da_worst"/>
+		<property name="com.jaspersoft.studio.field.label" value="pct_da_worst"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="titolo_cartella" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="titolo_cartella"/>
+		<property name="com.jaspersoft.studio.field.label" value="titolo_cartella"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="flag_mono_somministrazione" class="java.lang.Boolean">
+		<property name="com.jaspersoft.studio.field.name" value="flag_mono_somministrazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="flag_mono_somministrazione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	</field>
+	<field name="COLUMN_55" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
+	</field>
 	<field name="id_risultato" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="id_risultato"/>
 		<property name="com.jaspersoft.studio.field.label" value="id_risultato"/>
@@ -263,6 +338,16 @@
 	<field name="decisioni_assunte" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="decisioni_assunte"/>
 		<property name="com.jaspersoft.studio.field.label" value="decisioni_assunte"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
+	</field>
+	<field name="COLUMN_61" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
+	</field>
+	<field name="COLUMN_62" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_somministrazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_somministrazione"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
 	</field>
 	<field name="follow_up" class="java.lang.String">
@@ -293,6 +378,10 @@
 	<field name="cg_descr" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="cg_descr"/>
 		<property name="com.jaspersoft.studio.field.label" value="cg_descr"/>
+	</field>
+	<field name="assegnato_a" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="assegnato_a"/>
+		<property name="com.jaspersoft.studio.field.label" value="assegnato_a"/>
 	</field>
 	<field name="giudizio_trans" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="giudizio_trans"/>
@@ -470,7 +559,7 @@
 				<text><![CDATA[Data Esecuzione]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="213" y="5" width="110" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="352727b4-b574-430c-8bc3-019bb44ebfa3">
+				<reportElement mode="Opaque" x="120" y="5" width="110" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="352727b4-b574-430c-8bc3-019bb44ebfa3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -520,7 +609,7 @@
 				<textFieldExpression><![CDATA[$F{data_esecuzione}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="213" y="26" width="110" height="20" forecolor="#030200" uuid="92afa546-1bd0-41ab-bf08-065356b10127">
+				<reportElement x="120" y="26" width="110" height="20" forecolor="#030200" uuid="92afa546-1bd0-41ab-bf08-065356b10127">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -1195,6 +1284,39 @@
 			<break>
 				<reportElement positionType="Float" x="0" y="642" width="99" height="1" uuid="2694575f-39d1-4e23-8626-0703ea659fec"/>
 			</break>
+			<staticText>
+				<reportElement mode="Opaque" x="240" y="5" width="120" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="24c794a3-2f5a-4203-a4c7-460de47a1a92">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Assegnato a]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="240" y="26" width="120" height="20" forecolor="#030200" uuid="1bfa629a-cb57-4bfe-b50b-30debc714221">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{assegnato_a}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>

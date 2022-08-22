@@ -6,7 +6,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select *, entrasp.argomenti_descr_stato(rev_id_argomento_stato) as descr_stato, entrasp.argomenti_descr_stato(rev_id_argomento_stato_approvazione) as descr_stato_approv, entrasp.odg_data(codice_azienda, id_odg, id_riunione) as data_riunione, entrasp.riunioni_descr(id_riunione, codice_azienda) as riunione_descr, entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione) as titolo_odg from entrasp.views_attachments_fast_no_bo af where codice_azienda=$codice_azienda$ and (id_risorsa=$id_risorsa$ or id_risorsa= (select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))"
+      "queryString": "select *, $prog_revisione_sup$ as prog_revisione_sup, entrasp.argomenti_descr_stato(rev_id_argomento_stato) as descr_stato, entrasp.argomenti_descr_stato(rev_id_argomento_stato_approvazione) as descr_stato_approv, entrasp.odg_data(codice_azienda, id_odg, id_riunione) as data_riunione, entrasp.riunioni_descr(id_riunione, codice_azienda) as riunione_descr, entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione) as titolo_odg, $rev_id_argomento_stato_sup$ as rev_id_argomento_stato_sup, case when ($rev_id_argomento_stato_sup$!=4035 and rev_id_argomento_stato=4035 and prog_revisione!=$prog_revisione_sup$) then true else false end as associa_documento from entrasp.views_attachments_fast_no_bo af where codice_azienda=$codice_azienda$ and (id_risorsa=$id_risorsa$ or id_risorsa= (select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))"
     },
     {
       "type": "main",
@@ -24,6 +24,9 @@
       "queryString": "delete from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
     }
   ],
+  "define": {
+    "isHiddenDownload": "false"
+  },
   "table_keys": [
     {
       "format": {
@@ -100,19 +103,9 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo_odg",
-      "width": "27.5%",
+      "width": "20%",
       "queryFunct": "entrasp.odg_titolo_esteso(codice_azienda, id_odg, id_riunione)",
       "label": "Ordine del giorno e riunione"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "8%",
-      "key": "revisore",
-      "label": "Utente"
     },
     {
       "format": {
@@ -237,16 +230,6 @@
       },
       "isHidden": true,
       "isPrimary": false,
-      "key": "id_progetto",
-      "width": "0%",
-      "label": "Progetto"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
       "key": "id_anagrafica",
       "label": "id_anagrafica"
     },
@@ -267,6 +250,79 @@
       "isPrimary": false,
       "key": "id_riunione",
       "label": "id_riunione"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "prog_revisione_sup",
+      "label": "prog_revisione_sup"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "rev_id_argomento_stato_sup",
+      "label": "rev_id_argomento_stato_sup"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "8%",
+      "key": "associa_documento",
+      "label": "Associa doc.",
+      "isButton": true,
+      "buttonAction": {
+        "target": "attachments",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.unifica_risorse_revisioni(£id_risorsa£, £prog_revisione_sup£, £id_risorsa£, £prog_revisione£, '£codice_azienda£')",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_risorsa",
+            "destination": "id_risorsa"
+          },
+          {
+            "source": "prog_revisione",
+            "destination": "prog_revisione"
+          },
+          {
+            "source": "prog_revisione_sup",
+            "destination": "prog_revisione_sup"
+          }
+        ],
+        "confirmAction": true,
+        "confirmMessage": {
+          "title": "Associa documenti",
+          "text": "Si vuole associare il documento selezionato al file in oggetto?"
+        },
+        "onSuccessAction": "navigate",
+        "onSuccessActionKeymap": [
+          {
+              "source": "codice_azienda",
+              "destination": "codice_azienda"
+          },
+          {
+              "source": "id_risorsa",
+              "destination": "id_risorsa"
+          },
+          {
+              "source": "prog_revisione",
+              "destination": "prog_revisione"
+          }
+      ]
+      }
     }
   ]
 }
