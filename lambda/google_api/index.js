@@ -21,6 +21,7 @@ const oAuth2Client = new OAuth2Client(
 // const { promisify } = require('bluebird');
 const { google } = require('googleapis');
 const { file } = require('googleapis/build/src/apis/file');
+const { forkJoin } = require('rxjs');
 
 const folderMime = 'application/vnd.google-apps.folder';
 
@@ -979,6 +980,43 @@ async function getDistance(origin, destination) {
         return { result: 'KO', reason: response.data };
     }
 }
+
+async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
+
+    await performGoogleAuth(authParams);
+
+    const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
+    try {
+        let query = `subject:${codiceAzienda} OR subject:${codiceAzienda}>`;
+        _console.log(`getting emails with query: ${query}`);
+        let emails = await gmail.users.messages.list({
+            userId: 'me',
+            q: query
+          });
+        
+        console.log('email messages: ', emails.data.messages);
+        if(emails && emails.data && emails.data.messages && emails.data.messages.length > 0) {
+            let emailsResponse = await forkJoin(emails.data.messages.map(x => gmail.users.messages.get({userId: "me", id: x.id }))).toPromise();
+            if(emailsResponse && emailsResponse.length) {
+                let emailsResult = emailsResponse.map(x => {
+                    let to = x.data.payload.headers.filter( x => x.name === "To")[0].value;
+                    let from = x.data.payload.headers.filter( x => x.name === "From")[0].value;
+                    let subject = x.data.payload.headers.filter( x => x.name === "Subject")[0].value;
+                    let body = x.data.payload.body;
+                    return { subject, to, from, body};
+                });
+
+                // Return emails
+                return { result: 'OK', emails: emailsResult };
+            }
+        }
+        return { result: 'OK', emails: [] };
+    } catch (err) {
+        return { result: 'KO', message: err };
+    }
+}
+
+
 
 // Get Email Threads
 async function getEmailThreads(search, authParams) {
@@ -2245,6 +2283,13 @@ exports.handler = async (event, context) => {
                 const origin = queryParams['origin'];
                 const destination = queryParams['destination'];
                 body = await getDistance(origin, destination);
+            }
+            else if(requestType === "getEmailsByCodiceAzienda") {
+                const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+                let eventBody = event.body ? JSON.parse(event.body) : {};
+                const authParams = eventBody['authToken'];
+                const codiceAzienda = eventBody['codiceAzienda'];
+                body = await getEmailsByCodiceAzienda(userid, authParams, codiceAzienda)
             }
             else if (requestType === 'GetEmailThreads') {
                 const search = queryParams['search'];

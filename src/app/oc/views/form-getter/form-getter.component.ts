@@ -1586,6 +1586,30 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                 }
             }
+            else if (googleAPIParams.actionType == 'get_emails_by_codice_azienda') {
+                if (!googleAPIParams.emailsByCodiceAziendaParams) {
+                    _this._toastService.showErrorToast("Missing Email By Codice Azienda Params");
+                }
+                else {
+                    const codiceAzienda = formValues[googleAPIParams.emailsByCodiceAziendaParams.codiceAziendaKey];
+                    let loadingToast = _this._toastService.showLoadingToast("Loading emails", "Please wait...");
+                    try {
+                        const googleAuth = await _this.authService.loadGoogleAuth('gmail');
+                        
+                        let getEmailsByCodiceAziendaResult = await _this._googleAPIService.getEmailsByCodiceAzienda(googleAuth, codiceAzienda);
+                        console.log(getEmailsByCodiceAziendaResult);
+                        
+                        _this._toastService.hideLoadingToast(loadingToast);
+                        _this._toastService.showSuccessToast(event.successMessage || 'Done!');
+                    }
+                    catch (e) {
+                        _this._console.log(e);
+                        _this._toastService.hideLoadingToast(loadingToast);
+                        _this._toastService.showErrorToast(e);
+                    }
+                    
+                }
+            }
             else if (googleAPIParams.actionType == 'get_folder_expanded_contents') {
                 if (!googleAPIParams.driveExpandedContentsParams) {
                     _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
@@ -1602,6 +1626,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         try {
                             const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
                             
+                            await _this._googleAPIService.syncGoogleDrive(googleAuth, codiceAzienda, idAnagrafica, idProgetto);
+
+                            /*
                             // let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
                             // console.log(getChangesResult);
                             // if(getChangesResult && getChangesResult.length) {
@@ -1711,6 +1738,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             }
 
                             _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
+                            
+                            */
 
                             _this._toastService.hideLoadingToast(loadingToast);
                             _this._toastService.showSuccessToast(event.successMessage || 'Done!');

@@ -50,7 +50,7 @@ export class AuthService {
 
   googleScopes = {
     "gdrive": "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.file",
-    "gmail": "https://mail.google.com"
+    "gmail": "https://www.googleapis.com/auth/gmail.readonly"//"https://mail.google.com"
   };
   
   constructor(
@@ -445,11 +445,13 @@ export class AuthService {
     let loadAuthTokenResponse: any = await _this.backendService.loadAuthToken(`token_${purpose}`).toPromise();
     _this._console.log('loadAuthToken Response: ', loadAuthTokenResponse);
     if(loadAuthTokenResponse.result === 'KO') {
-      // Sign in the user if they are currently signed in.
-      _this._console.log('Is signed in: ', auth2.isSignedIn.get());
-
-      await _this.signOutGoogle();
-      await auth2.signIn();
+      if(!auth2.isSignedIn.get()) {
+        // Sign in the user if they are currently signed in.
+        // _this._console.log('Is signed in: ', auth2.isSignedIn.get());
+  
+        // await _this.signOutGoogle();
+        await auth2.signIn();
+      }
 
       console.log('getting auth code');
       let resp = await _this.getGooglePermissions(purpose);

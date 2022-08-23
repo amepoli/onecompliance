@@ -46,6 +46,15 @@ export class GoogleAPIService {
       });
   }
 
+  public async getEmailsByCodiceAzienda(googleAuth, codiceAzienda) {
+    let _this = this;
+    let aaa: string;
+    
+    let getEmailsByCodiceAziendaResponse: any = await _this.backendService.getEmailsByCodiceAzienda(googleAuth, codiceAzienda).toPromise();
+    _this._console.log('getEmailsByCodiceAzienda Response: ', getEmailsByCodiceAziendaResponse);
+    return getEmailsByCodiceAziendaResponse;
+  }
+
   public async getChanges(googleAuth) {
     let _this = this;
     const changes = await _this.backendService.getChanges(googleAuth).toPromise();
