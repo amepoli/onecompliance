@@ -379,6 +379,14 @@ export class BackendService {
 
   }
 
+  getEmailsByCodiceAzienda(authToken, codiceAzienda) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'getEmailsByCodiceAzienda' };
+    this.myPutPostInit.body = { codiceAzienda, authToken };
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
+  
+  }
+
   loadChangesToken(authToken: any) {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { request_type: 'loadChangesToken' };
@@ -490,6 +498,13 @@ export class BackendService {
   anagraficheToBeUpdated(input: any) {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { request_type: 'anagraficheToBeUpdated' };
+    this.myPutPostInit.body = input;
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
+  }
+
+  associateEmails(input: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'associateEmails' };
     this.myPutPostInit.body = input;
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }
