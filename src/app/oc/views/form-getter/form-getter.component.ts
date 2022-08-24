@@ -1587,27 +1587,28 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             else if (googleAPIParams.actionType == 'get_emails_by_codice_azienda') {
-                if (!googleAPIParams.emailsByCodiceAziendaParams) {
-                    _this._toastService.showErrorToast("Missing Email By Codice Azienda Params");
-                }
-                else {
-                    const codiceAzienda = formValues[googleAPIParams.emailsByCodiceAziendaParams.codiceAziendaKey];
-                    let loadingToast = _this._toastService.showLoadingToast("Loading emails", "Please wait...");
-                    try {
-                        const googleAuth = await _this.authService.loadGoogleAuth('gmail');
-                        
-                        let getEmailsByCodiceAziendaResult = await _this._googleAPIService.getEmailsByCodiceAzienda(googleAuth, codiceAzienda);
-                        console.log(getEmailsByCodiceAziendaResult);
-                        
-                        _this._toastService.hideLoadingToast(loadingToast);
+                let loadingToast = _this._toastService.showLoadingToast("Loading emails", "Please wait...");
+                try {
+                    const googleAuth = await _this.authService.loadGoogleAuth('gmail');
+                    // get user data after login
+                    const codiceAziendaList = _this.authService.userinfo.getValue().companies;
+
+                    let getEmailsByCodiceAziendaResult = await _this._googleAPIService.getEmailsByCodiceAzienda(googleAuth, codiceAziendaList);
+                    _this._console.log(getEmailsByCodiceAziendaResult);
+                    
+                    _this._toastService.hideLoadingToast(loadingToast);
+                    
+                    if(getEmailsByCodiceAziendaResult.result === 'OK') {
                         _this._toastService.showSuccessToast(event.successMessage || 'Done!');
                     }
-                    catch (e) {
-                        _this._console.log(e);
-                        _this._toastService.hideLoadingToast(loadingToast);
-                        _this._toastService.showErrorToast(e);
+                    else {
+                        _this._toastService.showErrorToast(event.message || 'Error occured!');
                     }
-                    
+                }
+                catch (e) {
+                    _this._console.log(e);
+                    _this._toastService.hideLoadingToast(loadingToast);
+                    _this._toastService.showErrorToast(e);
                 }
             }
             else if (googleAPIParams.actionType == 'get_folder_expanded_contents') {
@@ -1630,7 +1631,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                             /*
                             // let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
-                            // console.log(getChangesResult);
+                            // _this._console.log(getChangesResult);
                             // if(getChangesResult && getChangesResult.length) {
                             //     let syncDataResponse = await forkJoin(getChangesResult.map(x => _this._googleAPIService.syncGoogleDrive(googleAuth, x.codice_azienda, x.anagrafica_id, null))).toPromise();
                             // }
@@ -1802,10 +1803,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     //First step, get connected registries
                     let connected_registries = await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
-                    console.log(connected_registries.response);
+                    _this._console.log(connected_registries.response);
 
                     if (connected_registries.response === 'KO') {
-                        console.log('KO');
+                        _this._console.log('KO');
                         _this._dialogService.closeDialog();
                         _this._toastService.showErrorToast(connected_registries.reason);
                     }
@@ -1815,7 +1816,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                         //Second step, query regulat.io
                         let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, idSomministrazioneAML, dynamoUserAML).toPromise();
-                        console.log(scan_contents);
+                        _this._console.log(scan_contents);
 
                         _this._dialogService.closeDialog();
                         _this._toastService.showSuccessToast('OneScan: Completed!'); // show success toast
@@ -1836,10 +1837,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     //First step, get connected registries
                     let connected_checks = await _this.backendService.getConnectedChecks(codiceAziendaAML, idSondaggioAML).toPromise();
-                    console.log(connected_checks.response);
+                    _this._console.log(connected_checks.response);
 
                     if (connected_checks.response === 'KO') {
-                        console.log('KO');
+                        _this._console.log('KO');
                         _this._dialogService.closeDialog();
                         _this._toastService.showErrorToast(connected_checks.reason);
                     }
@@ -1849,14 +1850,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                         for (let i = 0; i < connectedChecks.length; i++) {
 
-                            console.log(connectedChecks[i].id_somministrazione);
+                            _this._console.log(connectedChecks[i].id_somministrazione);
 
                             //First step, get connected registries
                             let connected_registries = await _this.backendService.getConnectedRegistriesFromCheck(codiceAziendaAML, connectedChecks[i].id_somministrazione).toPromise();
-                            console.log(connected_registries.response);
+                            _this._console.log(connected_registries.response);
 
                             if (connected_registries.response === 'KO') {
-                                console.log('KO');
+                                _this._console.log('KO');
                                 _this._dialogService.closeDialog();
                                 _this._toastService.showErrorToast(connected_registries.reason);
                                 return;
@@ -1867,7 +1868,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                                 //Second step, query regulat.io
                                 let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, connectedChecks[i].id_somministrazione, dynamoUserAML).toPromise();
-                                console.log(scan_contents);
+                                _this._console.log(scan_contents);
 
                             }
                         }

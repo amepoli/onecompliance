@@ -12,9 +12,6 @@ export interface GoogleAPIParams {
         emailIdKey: string,
         threadIdKey: string
     },
-    emailsByCodiceAziendaParams? : {
-        codiceAziendaKey: string;
-    },
     driveFolderParams? : {
         driveFolderKey: string
     },

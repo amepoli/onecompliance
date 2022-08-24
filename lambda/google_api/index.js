@@ -982,28 +982,61 @@ async function getDistance(origin, destination) {
 }
 
 async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
-
+    _console.log('codiceAzienda', codiceAzienda);
+    
     await performGoogleAuth(authParams);
 
     const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
     try {
-        let query = `subject:${codiceAzienda} OR subject:${codiceAzienda}>`;
+        let subjectsToSearch = [];
+        let subjectsToMatch = [];
+        
+        codiceAzienda.forEach(x => {
+            subjectsToSearch.push(`subject:${x}>`);
+            subjectsToSearch.push(`subject:${x}+`);
+            subjectsToSearch.push(`subject:${x}&`);
+            subjectsToSearch.push(`subject:(${x} >)`);
+            subjectsToSearch.push(`subject:(${x} +)`);
+            subjectsToSearch.push(`subject:(${x} &)`);
+            subjectsToMatch.push(`${x}>`.toLowerCase());
+            subjectsToMatch.push(`${x}+`.toLowerCase());
+            subjectsToMatch.push(`${x}&`.toLowerCase());
+            subjectsToMatch.push(`${x} >`.toLowerCase());
+            subjectsToMatch.push(`${x} +`.toLowerCase());
+            subjectsToMatch.push(`${x} &`.toLowerCase());
+        });
+        let query = subjectsToSearch.join(' OR '); // `subject:${codiceAzienda} OR subject:${codiceAzienda}>`;
         _console.log(`getting emails with query: ${query}`);
         let emails = await gmail.users.messages.list({
             userId: 'me',
             q: query
           });
         
-        console.log('email messages: ', emails.data.messages);
+        _console.log('email messages: ', emails.data.messages);
         if(emails && emails.data && emails.data.messages && emails.data.messages.length > 0) {
             let emailsResponse = await forkJoin(emails.data.messages.map(x => gmail.users.messages.get({userId: "me", id: x.id }))).toPromise();
             if(emailsResponse && emailsResponse.length) {
-                let emailsResult = emailsResponse.map(x => {
-                    let to = x.data.payload.headers.filter( x => x.name === "To")[0].value;
-                    let from = x.data.payload.headers.filter( x => x.name === "From")[0].value;
+                let emailsResult = [];
+                emailsResponse.forEach(x => {
                     let subject = x.data.payload.headers.filter( x => x.name === "Subject")[0].value;
-                    let body = x.data.payload.body;
-                    return { subject, to, from, body};
+                    let subjectLower = subject.toLowerCase();
+                    let matches = false;
+                    for(let i = 0; i < subjectsToMatch.length; i++) {
+                        if(matches) {
+                            console.log('already matched!');
+                        }
+                        if(subjectLower.includes(subjectsToMatch[i])) {
+                            matches = true;
+                            break;
+                        }
+                    }
+                    
+                    if(matches) {
+                        let to = x.data.payload.headers.filter( x => x.name === "To")[0].value;
+                        let from = x.data.payload.headers.filter( x => x.name === "From")[0].value;
+                        //let body = x.data.payload.body;
+                        emailsResult.push({ subject, to, from});
+                    }
                 });
 
                 // Return emails

@@ -502,6 +502,13 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }
 
+  associateEmails(input: any) {
+    this.amplifyService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'associateEmails' };
+    this.myPutPostInit.body = input;
+    return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
+  }
+
   getConnectedRegistries(company: string, registry: string): Observable<any> {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { request_type: 'getConnectedRegistries', company: company, registry: registry };
