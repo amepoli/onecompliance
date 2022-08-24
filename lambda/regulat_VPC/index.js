@@ -44,7 +44,7 @@ exports.handler = async (event) => {
 
         if (requestType === 'getConnectedRegistries') {
 
-            /*First step of OneScan, the one who retrieve data from DB to prepare the requests to regulat.io*/
+            /*First step of OneKYC, the one who retrieve data from DB to prepare the requests to regulat.io*/
 
             try {
 
@@ -107,7 +107,7 @@ exports.handler = async (event) => {
         }
         else if (requestType === 'getConnectedRegistriesFromCheck') {
 
-            /*First step of OneScan, the one who retrieve data from DB to prepare the requests to regulat.io*/
+            /*First step of OneKYC, the one who retrieve data from DB to prepare the requests to regulat.io*/
 
             try {
 
@@ -170,7 +170,7 @@ exports.handler = async (event) => {
         }
         else if (requestType === 'getConnectedChecks') {
 
-            /*First step of OneScan, the one who retrieve data from DB to prepare the requests to regulat.io*/
+            /*First step of OneKYC, the one who retrieve data from DB to prepare the requests to regulat.io*/
 
             try {
 
@@ -224,7 +224,7 @@ exports.handler = async (event) => {
         }
         else if (requestType === 'processScan') {
 
-            /*Last step of OneScan, the one who process data retrieved from regulat.io*/
+            /*Last step of OneKYC, the one who process data retrieved from regulat.io*/
 
             let scans = JSON.stringify(queryParams);
 

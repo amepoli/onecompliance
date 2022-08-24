@@ -1764,7 +1764,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._toastService.showErrorToast("Missing Regulat API entity params");
                 }
                 else {
-                    _this._dialogService.showLoadingDialog('Running OneScan', 'Please wait...');
+                    _this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
 
                     const codiceAziendaAML = formValues[regulatAPIParams.entityParams.codice_azienda];
                     const idAnagraficaAML = formValues[regulatAPIParams.entityParams.id_anagrafica];
@@ -1789,7 +1789,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         console.log(scan_contents);
 
                         _this._dialogService.closeDialog();
-                        _this._toastService.showSuccessToast('OneScan: Completed!'); // show success toast
+                        _this._toastService.showSuccessToast('OneKYC: Completed!'); // show success toast
                         this.refreshView(); // refresh the view
                     }
                 }
@@ -1799,7 +1799,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._toastService.showErrorToast("Missing Regulat API survey params");
                 }
                 else {
-                    _this._dialogService.showLoadingDialog('Running OneScan', 'Please wait...');
+                    _this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
 
                     const codiceAziendaAML = formValues[regulatAPIParams.surveyParams.codice_azienda];
                     const idSondaggioAML = formValues[regulatAPIParams.surveyParams.id_sondaggio];
@@ -1843,7 +1843,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             }
                         }
                         _this._dialogService.closeDialog();
-                        _this._toastService.showSuccessToast('OneScan: Completed!'); // show success toast
+                        _this._toastService.showSuccessToast('OneKYC: Completed!'); // show success toast
                         this.refreshView(); // refresh the view
                     }
                 }
