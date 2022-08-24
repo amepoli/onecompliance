@@ -322,7 +322,7 @@
 			"isPrimary": true,
 			"width": "5%",
 			"key": "id_contratto",
-			"label": "ID"
+			"label": "#"
 		},
 		{
 			"format": {
@@ -341,7 +341,15 @@
 			"width": "11%",
 			"isPrimary": false,
 			"key": "numero_contratto",
-			"label": "N. Contratto"
+			"label": "N. Contratto",
+			"style": [
+				{
+					"value": "*",
+					"background_color": "lightblue",
+					"text_align": "center",
+					"font_weight": "590"
+				}
+			]
 		},
 		{
 			"format": {
@@ -362,7 +370,14 @@
 			"key": "cliente",
 			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
 			"label": "Cliente",
-			"width": "25%"
+			"width": "29%",
+			"style": [
+				{
+					"value": "*",
+					"font_size": "medium",
+					"font_weight": "590"
+				}
+			]
 		},
 		{
 			"format": {
@@ -370,7 +385,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"width": "15%",
+			"width": "13%",
 			"key": "id_argomento_contratto",
 			"queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_contratto)",
 			"label": "Tipo Contratto"
@@ -426,18 +441,24 @@
 			"style": [
 				{
 					"value": "Cessato",
-					"font_color": "green",
-					"font_weight": "500"
-				},
-				{
-					"value": "Attivo",
-					"font_color": "#FF0000",
-					"font_weight": "500"
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
 				},
 				{
 					"value": "In Scadenza",
-					"font_color": "#FFE118",
-					"font_weight": "500"
+					"font_color": "MistyRose",
+					"font_weight": "500",
+					"background_color": "MediumPurple",
+					"text_align": "center"
+				},
+				{
+					"value": "Attivo",
+					"font_color": "white",
+					"font_weight": "500",
+					"background_color": "royalblue",
+					"text_align": "center"
 				}
 			],
 			"sameOrigin": false
@@ -447,30 +468,45 @@
 				"dataType": "text"
 			},
 			"label": "Giudizio Appropriatezza",
-			"width": "10%",
+			"width": "8%",
 			"key": "giudizio",
 			"queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto))",
 			"isHidden": false,
 			"style": [
 				{
 					"value": "Appropriato",
-					"font_color": "green",
-					"font_weight": "500"
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
 				},
 				{
 					"value": "Adeguato",
-					"font_color": "green",
-					"font_weight": "500"
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
 				},
 				{
 					"value": "Non Appropriato",
-					"font_color": "red",
-					"font_weight": "500"
+					"font_color": "DarkRed",
+					"font_weight": "500",
+					"background_color": "orange",
+					"text_align": "center"
 				},
 				{
 					"value": "Non Adeguato",
-					"font_color": "red",
-					"font_weight": "500"
+					"font_color": "DarkRed",
+					"font_weight": "500",
+					"background_color": "orange",
+					"text_align": "center"
+				},
+				{
+					"value": "Non Giudicabile",
+					"font_color": "grey",
+					"font_weight": "500",
+					"background_color": "gainsboro",
+					"text_align": "center"
 				}
 			],
 			"isPrimary": false
@@ -588,6 +624,16 @@
 			"label": "Senza Profilazioni Aml",
 			"newLine": false,
 			"queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda AND snd.id_modello_test=mt.id_modello_test WHERE mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)"
+		},
+		{
+			"fieldName": "no_progetto",
+			"format": {
+				"viewType": "checkbox",
+				"value": "0"
+			},
+			"label": "Aperti senza progetto associato",
+			"newLine": false,
+			"queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_contratto is not null) and cnt.stato='A'"
 		}
 	],
 	"hideActions": [
