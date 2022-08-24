@@ -46,13 +46,30 @@ export class GoogleAPIService {
       });
   }
 
+  public async getEmailsByCodiceAzienda(googleAuth, codiceAzienda) {
+    let _this = this;
+    
+    let getEmailsByCodiceAziendaResponse: any = await _this.backendService.getEmailsByCodiceAzienda(googleAuth, codiceAzienda).toPromise();
+    _this._console.log('getEmailsByCodiceAzienda Response: ', getEmailsByCodiceAziendaResponse);
+    
+    if(getEmailsByCodiceAziendaResponse.result === 'OK') {
+      let associateEmailsResponse: any = await _this.backendService.associateEmails(getEmailsByCodiceAziendaResponse.emails).toPromise();
+      _this._console.log('associateEmails Response: ', associateEmailsResponse);
+      return associateEmailsResponse;
+    }
+    else {
+      return getEmailsByCodiceAziendaResponse;
+    }
+  }
+
   public async getChanges(googleAuth) {
     let _this = this;
     const changes = await _this.backendService.getChanges(googleAuth).toPromise();
-    console.log(changes);
+    _this._console.log(changes);
 
     let anagraficheToBeUpdatedResponse: any = await _this.backendService.anagraficheToBeUpdated(changes).toPromise();
     _this._console.log('anagraficheToBeUpdated Response: ', anagraficheToBeUpdatedResponse);
+    
     return anagraficheToBeUpdatedResponse.response.rows;
   }
 
