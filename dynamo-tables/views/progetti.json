@@ -568,7 +568,20 @@
             "label": "Contratto",
             "newLine": false,
             "readOnly": false,
-            "size": 2
+            "size": 2,
+			"outputEvent": {
+				"eventTrigger": "select",
+				"eventName": "change_id_contratto"
+			},
+			"inputEvents": [
+				{
+					"eventName": "change_id_contratto",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.aggiorna_contratto_progetto($codice_azienda$, $id_progetto$,£id_contratto£)"
+				}
+			]
         },
 		{
 			"autoGenerate": false,
@@ -798,6 +811,17 @@
 			"newLine": false,
 			"queryCond": "id_centro_gest=$id_centro_gest$"
 		},
+		{
+			"fieldName": "id_contratto",
+			"format": {
+				"comboQuery": "SELECT cnt.id_contratto AS id, cnt.numero_contratto||'-'||entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) AS name  FROM entrasp.contratti cnt inner join entrasp.anagrafiche_id an on cnt.codice_part=an.codice_part and cnt.id_cliente=an.id_anagrafica WHERE codice_azienda=$codice_azienda$",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Contratto",
+			"newLine": false,
+			"queryCond": "id_contratto=$id_contratto$"
+        },
 		{
 			"fieldName": "id_cliente",
 			"format": {
