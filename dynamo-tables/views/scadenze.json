@@ -226,23 +226,23 @@
 				{
 					"key": "merge_argomenti",
 					"icon": "merge_type",
-					"label": "Unifica argomenti",
-					"query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+					"label": "Unifica scadenze",
+					"query": "SELECT entrasp.unifica_argomenti($selected_rows_data$)"
 				},
 				{
 					"key": "delete",
 					"icon": "delete",
 					"label": "Delete",
-					"query": "select entrasp.cancella_risorse(array[$selected_rows_data$])",
+					"query": "select true",
 					"confirmAction": true,
 					"reloadOnSuccess": true,
-					"confirmActionMessage": "Eliminare la cartella e i relativi file?"
+					"confirmActionMessage": "Eliminare le scadenze ?"
 				},
 				{
-					"key": "create_folder",
-					"icon": "create_new_folder",
-					"label": "Crea cartella",
-					"query": "SELECT entrasp.cdms_risorsa_da_tipo_allegato('€global_codice_azienda€', id_argomento) FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+					"key": "create_event",
+					"icon": "create_event",
+					"label": "Crea evento associato",
+					"query": "INSERT INTO entrasp.eventi(codice_azienda, id_evento, data_inizio_validita, data_fine_validita, descrizione, codice, id_argomento_tipo_evento) SELECT '€global_codice_azienda€', (select coalesce(max(id_evento),0) from entrasp.eventi WHERE codice_azienda='€global_codice_azienda€')+ row_number() over (order by id_argomento), CURRENT_DATE, CURRENT_DATE, arg.descrizione, arg.codice, arg.id_argomento FROM entrasp.argomenti arg WHERE arg.id_argomento IN ($selected_rows_data$);"
 				}
 			]
 		}
