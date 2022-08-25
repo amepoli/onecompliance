@@ -61,7 +61,7 @@ exports.handler = async (event) => {
                 ***/
 
                 //Prepare the query to get the connected registries, because i need to launch the tool on these too 
-                query = `SELECT an.id_anagrafica AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob
+                query = `SELECT an.id_anagrafica AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob, '' as role, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as registry_name
                 FROM entrasp.anagrafiche_id an
                 INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
                 WHERE an.codice_part = (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}')
@@ -69,14 +69,16 @@ exports.handler = async (event) => {
                 AND avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, avr.id_anagrafica)
                 AND tipo_soggetto IS NOT NULL
                 UNION
-                SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob 
+                SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob, r.descrizione as role, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as registry_name
                 FROM entrasp.connessioni_anagrafiche ca 
                 INNER JOIN entrasp.anagrafiche_id an ON ca.codice_part=an.codice_part AND ca.id_anagrafica_conn=an.id_anagrafica 
                 INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
+                LEFT JOIN entrasp.ruoli r ON ca.codice_ruolo=r.codice_ruolo
                 WHERE ca.codice_part = (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}') 
                 AND ca.id_anagrafica=${registry} 
                 AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica)
-                AND tipo_soggetto IS NOT NULL;`;
+                AND tipo_soggetto IS NOT NULL
+                AND ca.codice_ruolo IN ('TIEF','ESE');`;
 
                 console.log('running query: ', query);
                 response = await client.query(query);
@@ -124,7 +126,7 @@ exports.handler = async (event) => {
                 ***/
 
                 //Prepare the query to get the connected registries, because i need to launch the tool on these too 
-                query = `SELECT an.id_anagrafica AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob
+                query = `SELECT an.id_anagrafica AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob, '' as role, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as registry_name
                 FROM entrasp.anagrafiche_id an
                 INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
                 WHERE an.codice_part = (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}')
@@ -132,14 +134,16 @@ exports.handler = async (event) => {
                 AND avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, avr.id_anagrafica)
                 AND tipo_soggetto IS NOT NULL
                 UNION
-                SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob 
+                SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob, r.descrizione as role, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as registry_name
                 FROM entrasp.connessioni_anagrafiche ca 
                 INNER JOIN entrasp.anagrafiche_id an ON ca.codice_part=an.codice_part AND ca.id_anagrafica_conn=an.id_anagrafica 
                 INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
+                LEFT JOIN entrasp.ruoli r ON ca.codice_ruolo=r.codice_ruolo
                 WHERE ca.codice_part = (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}') 
                 AND ca.id_anagrafica=(SELECT split_part(object_key, '|', 2)::numeric FROM entrasp.sondaggi_somministrati WHERE codice_azienda='${company}' AND id_somministrazione=${check} AND object_name='anagraficheId')
                 AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica)
-                AND tipo_soggetto IS NOT NULL;`;
+                AND tipo_soggetto IS NOT NULL
+                AND ca.codice_ruolo IN ('TIEF','ESE');`;
 
                 console.log('running query: ', query);
                 response = await client.query(query);

@@ -88,6 +88,8 @@ exports.handler = async (event, context) => {
 
     //3.Append to the ScannedData the other data i need
     scannedData.data["registry"] = connectedRegistries[i].connected_registry;
+    scannedData.data["role"] = connectedRegistries[i].role;
+    scannedData.data["registry_name"] = connectedRegistries[i].registry_name;
     scannedData.data["company"] = company;
     scannedData.data["checkId"] = checkId;
     scannedData.data["dynamoUser"] = dynamoUser;
