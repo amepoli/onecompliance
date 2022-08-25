@@ -33,5 +33,143 @@
       "operation": "delete",
       "queryString": "delete from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
     }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "id_risorsa_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Documento",
+      "newLine": false,
+      "queryCond": "a.id_risorsa=$id_risorsa_s$"
+    },
+    {
+      "fieldName": "id_sondaggio_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Sondaggio",
+      "newLine": false,
+      "queryCond": "snd.id_sondaggio=$id_sondaggio_s$"
+    },
+    {
+      "fieldName": "id_somministrazione_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "id Verifica",
+      "newLine": false,
+      "queryCond": "snd.id_somministrazione=$id_somministrazione_s$"
+    },
+    {
+      "fieldName": "id_argomento_tipo_allegato_s",
+      "format": {
+        "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Tipo Documento",
+      "newLine": true,
+      "queryCond": "id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
+    },
+    {
+      "fieldName": "id_anagrafica_s",
+      "format": {
+        "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Cliente",
+      "newLine": false,
+      "queryCond": "id_anagrafica=$id_anagrafica_s$"
+    },
+    {
+      "fieldName": "id_anagrafica_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Anagrafica",
+      "newLine": false,
+      "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
+    },
+    {
+      "fieldName": "revisore_s",
+      "format": {
+        "comboQuery": "select distinct revisore as id, revisore as name from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Utente",
+      "newLine": false,
+      "queryCond": "revisore=$revisore_s$"
+    },
+    {
+      "format": {
+        "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "fieldName": "id_argomento_stato_s",
+      "size": 2,
+      "label": "Stato",
+      "newLine": true,
+      "queryCond": "a.id_argomento_stato=$id_argomento_stato_s$"
+    },
+		{
+			"fieldName": "file_con_allegati_da_associare",
+			"format": {
+				"viewType": "checkbox",
+				"value": "0"
+			},
+			"label": "Con allegati da associare",
+			"newLine": false,
+			"queryCond": "a.id_risorsa in(select id_risorsa from entrasp.cdms_risorse_revisioni group by codice_azienda, id_risorsa, id_argomento_stato having count(prog_revisione)>0 and codice_azienda=$codice_azienda$ and id_argomento_stato=4035)"
+		},
+    {
+      "fieldName": "data_da_s",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data da",
+      "newLine": false,
+      "queryCond": "data_creazione>=$data_da_s$"
+    },
+    {
+      "fieldName": "data_a_s",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data a",
+      "newLine": false,
+      "queryCond": "data_creazione<=$data_a_s$"
+    },
+    {
+      "fieldName": "parola_search_s",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Parola chiave",
+      "newLine": false,
+      "queryCond": "(upper(client_file_name) like '%'||upper('€parola_search_s€')||'%')"
+    },
+    {
+      "fieldName": "non_allegato_toggle",
+      "format": {
+        "value": "1",
+        "viewType": "toggle"
+      },
+      "label": "Da allegare",
+      "newLine": false,
+      "queryCond": "a.id_argomento_stato in(4034)"
+    }
   ]
 }
