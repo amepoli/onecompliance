@@ -673,6 +673,11 @@
             "icon": "speaker_notes_off",
             "label": "Rispondi non applicabile",
             "outputEventName": "risp_non_applicabile"
+          },
+          {
+              "icon": "rocket_launch",
+              "label": "OneKYC",
+              "outputEventName": "get_aml_scan_prof"
           }
         ]
       },
@@ -735,6 +740,23 @@
             "actionOnYes": {
               "actionType": "query",
               "queryFunct": "SELECT entrasp.verifica_non_applicabile($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$)"
+            }
+          },
+          "outputEventWhenComplete": "sondaggi_somministrati_reload"
+        },
+        {
+          "eventName": "get_aml_scan_prof",
+          "actionType": "regulat_api",
+          "condition": "none",
+          "successMessage": "Done!",
+          "values": [],
+          "regulatAPIParams": {
+            "actionType": "get_aml_scan",
+            "entityParams": {
+              "codice_azienda": "codice_azienda",
+              "id_anagrafica": "id_anagrafica",
+              "id_somministrazione": "id_somministrazione",
+              "dynamo_user": "username"
             }
           },
           "outputEventWhenComplete": "sondaggi_somministrati_reload"
@@ -1663,6 +1685,13 @@
             "font_weight": "500",
             "background_color": "#ffff59",
             "text_align": "center"
+        },
+        {
+          "value": "Falsi Positivi",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#ffff59",
+          "text_align": "center"
         },
         {
             "value": "Abbastanza significativo",
