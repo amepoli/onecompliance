@@ -30,6 +30,11 @@
       "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name= 'n/a', content_type= 'n/a' where id_argomento_stato!=4035 and client_file_name='tbd' and content_type='tbd' and codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
     },
     {
+      "type": "preProcessing",
+      "operation": "selectTable",
+      "queryString": "select entrasp.unifica_risorse(cd1.id_risorsa,cd2.id_risorsa,cd1.codice_azienda,true) from entrasp.cdms_risorse cd1 inner join entrasp.cdms_risorse cd2 on cd1.id_anagrafica=cd2.id_anagrafica and cd1.codice_azienda= cd2.codice_azienda and cd1.id_argomento_tipo_allegato= cd2.id_argomento_tipo_allegato where cd1.id_risorsa != cd2.id_risorsa and cd1.id_risorsa < cd2.id_risorsa group by cd1.codice_azienda, cd1.id_risorsa,cd2.id_risorsa;"
+    },
+    {
       "type": "main",
       "operation": "delete",
       "queryString": "delete from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
