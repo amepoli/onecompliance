@@ -11,17 +11,17 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "SELECT a.codice_azienda,b.codice_part,a.id_risorsa,a.prog_revisione, a.data_scadenza, a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(a.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$ and a.id_argomento_stato != 4035"
+      "queryString": "SELECT a.codice_azienda,b.codice_part,a.id_risorsa,a.prog_revisione,a.data_rif_a, a.data_scadenza, a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(a.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$ and a.id_argomento_stato != 4035"
     },
     {
       "type": "main",
       "operation": "selectForm",
-      "queryString": "SELECT a.codice_azienda,a.id_argomento_stato as rev_id_argomento_stato, a.data_scadenza, (select descrizione from entrasp.argomenti arg where arg.id_argomento=id_argomento_tipo_allegato)as name, b.codice_part,a.id_risorsa,a.prog_revisione,a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$ and a.id_risorsa=$id_risorsa$ AND A.prog_revisione=$prog_revisione$"
+      "queryString": "SELECT a.codice_azienda,a.id_argomento_stato as rev_id_argomento_stato, a.data_rif_a, a.data_scadenza, (select descrizione from entrasp.argomenti arg where arg.id_argomento=id_argomento_tipo_allegato)as name, b.codice_part,a.id_risorsa,a.prog_revisione,a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$ and a.id_risorsa=$id_risorsa$ AND A.prog_revisione=$prog_revisione$"
     },
     {
       "type": "main",
       "operation": "update",
-      "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, data_scadenza=$data_scadenza$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$rev_descrizione$, id_argomento_stato=$rev_id_argomento_stato$, commento_revisione=$commento_revisione$, client_file_name=$client_file_name$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+      "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, data_rif_a=$data_rif_a$, data_scadenza=$data_scadenza$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$rev_descrizione$, id_argomento_stato=$rev_id_argomento_stato$, commento_revisione=$commento_revisione$, client_file_name=$client_file_name$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
     },
     {
       "type": "postProcessing",
@@ -220,6 +220,20 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "key": "data_rif_a",
+      "label": "Data Rif. a",
+      "newLine": false,
+      "size": 1.5,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
       "key": "data_scadenza",
       "label": "Scadenza",
       "newLine": false,
@@ -253,7 +267,7 @@
       "key": "id_riunione",
       "label": "Riunione",
       "newLine": false,
-      "size": 3.2,
+      "size": 2.5,
       "readOnly": false
     },
     {
@@ -269,7 +283,7 @@
       "key": "id_odg",
       "label": "Ordine del giorno",
       "newLine": false,
-      "size": 3.2,
+      "size": 2.6,
       "readOnly": false
     },
     {
@@ -399,7 +413,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "anagrafica",
-      "width": "25%",
+      "width": "15%",
       "label": "relativo a",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)"
     },
@@ -493,7 +507,17 @@
       "isPrimary": false,
       "key": "data_rif",
       "width": "10%",
-      "label": "Riferimento"
+      "label": "Riferimento da"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_rif_a",
+      "width": "10%",
+      "label": "Riferimento a"
     },
     {
       "format": {
