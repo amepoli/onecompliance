@@ -41,14 +41,14 @@ export class CheckboxGroupComponent implements OnInit {
       _this.field.value = [];
     }
     _this.field.options.forEach(option => {
-      const selected = (_this.field.value.indexOf(option.id)) > -1 ? 1 : 0;
+      const selected = (_this.field.value.indexOf(option.id)) > -1 ? true : false;
       _this.selection.push(selected);
     });
 
     // _this.field.options.map(x => {
     //   return { id: x.id, checked: false }
     // });
-
+    console.log(_this.selection);
     // trigger an event the first time
     setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'checkboxgroup' }); }, 50);
   }
