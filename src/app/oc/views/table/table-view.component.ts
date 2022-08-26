@@ -239,9 +239,14 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     
     }
 
+    public resetSelection() {
+        this.selection.clear();
+    }
+
     public loadData() {
         const _this = this;
         _this.resetView();
+        _this.resetSelection();
         _this.isLoading = true;
         _this.subscriptions.push(_this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.tableData.keys).subscribe(
             result => {
