@@ -61,7 +61,11 @@
       "label": "Cartella",
       "newLine": false,
       "size": 0.7,
-      "readOnly": true
+      "readOnly": true,
+      "outputEvent": {
+        "eventName": "to_risorsa",
+        "eventTrigger": "press"
+      }
     },
     {
       "autoGenerate": false,
@@ -119,7 +123,7 @@
       "queryFunct": "entrasp.centri_gestionali_descr((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_centro_gest)",
       "size": 1.5,
       "readOnly": true
-    },      
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -167,14 +171,14 @@
     {
       "autoGenerate": false,
       "format": {
-          "viewType": "menu",
-          "menuOptions": [
-              {
-                  "icon": "link",
-                  "label": "Associa ad altro flusso",
-                  "outputEventName": "auto_change_information_flow"
-              }
-          ]
+        "viewType": "menu",
+        "menuOptions": [
+          {
+            "icon": "link",
+            "label": "Associa ad altro flusso",
+            "outputEventName": "auto_change_information_flow"
+          }
+        ]
       },
       "inputEvents": [
         {
@@ -195,22 +199,22 @@
       "readOnly": false,
       "sameOrigin": false,
       "size": 0.4
-  },
-  {
-    "autoGenerate": false,
-    "format": {
-      "dataType": "text",
-      "viewType": "input"
     },
-    "isHidden": false,
-    "isPrimary": false,
-    "key": "revisore",
-    "label": "Utente",
-    "size": 1.4,
-    "newLine": false,
-    "readOnly": true
-  },
-      {
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "revisore",
+      "label": "Utente",
+      "size": 1.4,
+      "newLine": false,
+      "readOnly": true
+    },
+    {
       "autoGenerate": false,
       "format": {
         "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
@@ -330,7 +334,7 @@
       "style": {
         "background_color": "#25599C",
         "font_color": "white"
-    }
+      }
     }
   ],
   "table_multiselection_actions": [
@@ -742,16 +746,16 @@
       "newLine": true,
       "queryCond": "a.id_argomento_stato=$id_argomento_stato_s$"
     },
-		{
-			"fieldName": "file_con_allegati_da_associare",
-			"format": {
-				"viewType": "checkbox",
-				"value": "0"
-			},
-			"label": "Con allegati da associare",
-			"newLine": false,
-			"queryCond": "a.id_risorsa in(select id_risorsa from entrasp.cdms_risorse_revisioni group by codice_azienda, id_risorsa, id_argomento_stato having count(prog_revisione)>0 and codice_azienda=$codice_azienda$ and id_argomento_stato=4035)"
-		},
+    {
+      "fieldName": "file_con_allegati_da_associare",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Con allegati da associare",
+      "newLine": false,
+      "queryCond": "a.id_risorsa in(select id_risorsa from entrasp.cdms_risorse_revisioni group by codice_azienda, id_risorsa, id_argomento_stato having count(prog_revisione)>0 and codice_azienda=$codice_azienda$ and id_argomento_stato=4035)"
+    },
     {
       "fieldName": "data_da_s",
       "format": {
@@ -873,13 +877,31 @@
     "tableViewSuffix": " order by data_rif desc limit 100"
   },
   "inputEvents": [
-  {
-    "eventName": "navigate_to_clientela",
-    "actionType": "navigate",
-    "actionTarget": {
-      "name": "clientela",
-      "type": "table"
-    }
-  }  
-  ] 
+    {
+      "eventName": "navigate_to_clientela",
+      "actionType": "navigate",
+      "actionTarget": {
+        "name": "clientela",
+        "type": "table"
+      }
+    },
+    {
+      "actionTarget": {
+          "name": "information_flows",
+          "type": "form",
+          "keymap": [
+              {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+              },
+              {
+                  "source": "id_risorsa",
+                  "destination": "id_risorsa"
+              }
+          ]
+      },
+      "actionType": "navigate",
+      "eventName": "to_risorsa"
+  }
+  ]
 }
