@@ -110,8 +110,35 @@
       "isPrimary": false,
       "key": "data_riferimento_a",
       "label": "al",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_scadenza",
+      "label": "Scadenza sondaggio",
+      "newLine": true,
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "set_dt_scad_on_files",
+        "eventTrigger": "change"
+      },
+      "inputEvents": [
+        {
+          "eventName": "set_dt_scad_on_files",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "UPDATE entrasp.cdms_risorse_revisioni c SET data_scadenza=$data_scadenza$::date from entrasp.cdms_risorse a, entrasp.cdms_risorse_oggetti b where a.codice_azienda=$codice_azienda$ and b.id_sondaggio=$id_sondaggio$ and a.id_risorsa=b.id_risorsa and a.codice_azienda=b.codice_azienda and c.id_risorsa=b.id_risorsa and c.codice_azienda=b.codice_azienda and b.prog_revisione=c.prog_revisione",
+          "successMessage": "Done!"
+        }
+      ]
     },
     {
       "autoGenerate": false,
