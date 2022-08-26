@@ -13,11 +13,6 @@
             "queryString": "SELECT true as create_somministrazione, mt.codice_azienda, mt.id_modello_test, mt.id_tipo_modello_test,entrasp.tipo_modello_test_descr(id_tipo_modello_test) as descr_tipo, mt.id_argomento, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$;"
         },
         {
-            "operation": "selectForm",
-            "type": "preProcessing",
-            "queryString": "select true"
-        },
-        {
             "type": "main",
             "operation": "delete",
             "queryString": "select entrasp.modello_test_delete($codice_azienda$, $id_modello_test$);"
@@ -74,7 +69,7 @@
         {
             "type": "main",
             "operation": "update",
-            "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar), id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>coalesce($flag_sezioni$::bpchar,0::bpchar), giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$,codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::boolean, stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean );"
+            "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar), id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>coalesce($flag_sezioni$::bpchar,0::bpchar), giorni_anticipo_pres_doc=>coalesce($giorni_anticipo_pres_doc$,15),codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::boolean, stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean );"
         },
         {
             "operation": "insert",
@@ -447,21 +442,6 @@
             "label": "Data Inserimento",
             "newLine": false,
             "size": 0,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "queryFunct": "SELECT giorni_anticipo_pres_doc from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "giorni_anticipo_pres_doc",
-            "label": "Giorni anticipo documentaz",
-            "size": 1,
-            "newLine": false,
             "readOnly": false
         },
         {
@@ -909,6 +889,21 @@
         {
             "autoGenerate": false,
             "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "queryFunct": "SELECT giorni_anticipo_pres_doc from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giorni_anticipo_pres_doc",
+            "label": "Giorni anticipo documentazione(gg)",
+            "size": 2.5,
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "viewType": "button"
             },
             "isHidden": false,
@@ -917,7 +912,7 @@
             "label": "Oggetti collegati",
             "buttonIcon": "expand_more",
             "newLine": false,
-            "size": 1,
+            "size": 0.9,
             "outputEvent": {
                 "eventName": "activate_oggetti_collegati",
                 "eventTrigger": "press"
