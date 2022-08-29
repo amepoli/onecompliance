@@ -34,6 +34,43 @@
       "queryString": "delete from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
     }
   ],
+  "table_multiselection_actions": [
+    {
+      "viewType": "menu",
+      "key": "menutest",
+      "label": "Actions",
+      "icon": "more_vert",
+      "menuOptions": [
+        {
+          "key": "delete",
+          "icon": "delete",
+          "label": "Delete",
+          "query": "select entrasp.cancella_risorse_revisioni(array[$selected_rows_data$])",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Eliminare documenti selezionati?"
+        },
+        {
+          "key": "unifica",
+          "icon": "merge_type",
+          "label": "Unifica documenti",
+          "query": "select entrasp.unifica_risorse_revisioni_array(array[$selected_rows_data$])",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Unificare i documenti selezionati?"
+        },
+        {
+          "key": "separa",
+          "icon": "call_split",
+          "label": "Crea flusso informativo",
+          "query": "select entrasp.separa_risorse_revisioni_array(array[$selected_rows_data$])",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Assegnare le risorse selzionate a separati flussi informativi?"
+        }
+      ]
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -429,7 +466,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "anagrafica",
-      "width": "15%",
+      "width": "23%",
       "label": "relativo a",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)"
     },
@@ -542,14 +579,14 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "data_scadenza",
-      "width": "9%",
+      "width": "10%",
       "label": "Scadenza"
     },
     {
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "titolo_odg",
       "width": "9%",
