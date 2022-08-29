@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select * from entrasp.cdms_risorse_oggetti where codice_azienda=$codice_azienda$ and prog_revisione=$prog_revisione$ and (id_risorsa=$id_risorsa$ or id_risorsa=(select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))",
+      "queryString": "select *, '€global_codice_part€' as codice_part from entrasp.cdms_risorse_oggetti where codice_azienda=$codice_azienda$ and prog_revisione=$prog_revisione$ and (id_risorsa=$id_risorsa$ or id_risorsa=(select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))",
       "type": "main"
     }
   ],
@@ -204,6 +204,15 @@
     },
     {
       "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_part",
+      "label": "codice_part"
+    },
+    {
+      "format": {
         "dataType": "number"
       },
       "isHidden": false,
@@ -249,7 +258,23 @@
       "isPrimary": false,
       "key": "id_sondaggio",
       "width": "8%",
-      "label": "Sondaggio"
+      "label": "Sondaggio",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "sondaggi",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_sondaggio",
+            "destination": "id_sondaggio"
+          }
+        ]
+      }
     },
     {
       "format": {
@@ -259,7 +284,27 @@
       "isPrimary": false,
       "key": "id_somministrazione",
       "width": "8%",
-      "label": "Verifica"
+      "label": "Verifica",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "sondaggi_somministrati",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_sondaggio",
+            "destination": "id_sondaggio"
+          },
+          {
+            "source": "id_somministrazione",
+            "destination": "id_somministrazione"
+          }
+        ]
+      }
     },
     {
       "format": {
@@ -269,7 +314,23 @@
       "isPrimary": false,
       "key": "id_anagrafica",
       "width": "8%",
-      "label": "id_anagrafica"
+      "label": "Anagrafica",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "anagrafiche_vr",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_part",
+            "destination": "codice_part"
+          },
+          {
+            "source": "id_anagrafica",
+            "destination": "id_anagrafica"
+          }
+        ]
+      }
     },
     {
       "format": {
@@ -279,7 +340,23 @@
       "isPrimary": false,
       "key": "id_progetto",
       "width": "8%",
-      "label": "id_progetto"
+      "label": "Progetto",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "progetti",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_progetto",
+            "destination": "id_progetto"
+          }
+        ]
+      }
     }
   ],
   "search_keys": [
