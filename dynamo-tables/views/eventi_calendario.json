@@ -11,12 +11,21 @@
             "icon": "more_vert",
             "menuOptions": [
                 {
-                    "key": "update_evento",
-                    "icon": "swap_vert",
-                    "label": "Evento",
+                    "key": "delete_eventi",
+                    "icon": "delete",
+                    "label": "Elimina",
                     "confirmAction": true,
-                    "confirmActionMessage": "",
-                    "query": "select true",
+                    "confirmActionMessage": "Eliminare definitivamente gli eventi selezionati?",
+                    "query": "delete from entrasp.eventi where codice_azienda||'-'||id_evento in ($selected_rows_data$)",
+                    "reloadOnSuccess": true
+                },
+                {
+                    "key": "close_eventi",
+                    "icon": "check",
+                    "label": "Contrassegna come eseguiti",
+                    "confirmAction": true,
+                    "confirmActionMessage": "Contrassegnare come eseguiti gli eventi selezionati?",
+                    "query": "select entrasp.chiudi_evento(codice_azienda,id_evento) from entrasp.eventi where codice_azienda||'-'||id_evento in ($selected_rows_data$);",
                     "reloadOnSuccess": true
                 }
             ]
@@ -26,8 +35,8 @@
         {
             "autoGenerate": true,
             "format": {
-              "dataType": "number",
-              "viewType": "input"
+                "dataType": "number",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": true,
@@ -36,12 +45,12 @@
             "newLine": false,
             "readOnly": true,
             "size": 1
-          },
-          {
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "dataType": "text",
-              "viewType": "input"
+                "dataType": "text",
+                "viewType": "input"
             },
             "isHidden": true,
             "isPrimary": true,
@@ -49,25 +58,76 @@
             "label": "",
             "newLine": false,
             "readOnly": false
-          },
-          {
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "dataType": "text",
-              "viewType": "input"
+                "dataType": "text",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "codice",
             "label": "Codice",
             "newLine": false,
-            "readOnly": false
-          },
-          {
+            "readOnly": false,
+            "size": 2
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "dataType": "datetime",
-              "viewType": "input"
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_son in (select entrasp.descendants_of_argomento(45417,2)) and id_argomento_son != 45417;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "validator": "Validators.required",
+                        "name": "required",
+                        "message": "Specificare il tipo evento"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_evento",
+            "label": "Tipo evento",
+            "newLine": false,
+            "readOnly": false,
+            "size": 4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_rif",
+            "label": "Data di Riferimento",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "datetime",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -76,12 +136,12 @@
             "newLine": false,
             "readOnly": false,
             "size": 2
-          },
-          {
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "dataType": "datetime",
-              "viewType": "input"
+                "dataType": "datetime",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -90,37 +150,45 @@
             "newLine": true,
             "readOnly": false,
             "size": 2
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_son in (select entrasp.descendants_of_argomento(45417,2)) and id_argomento_son != 45417;",
-                "options": [],
-                "viewType": "combobox",
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_argomento_tipo_evento",
-            "label": "Tipo evento",
-            "newLine": false,
-            "readOnly": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "text",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descrizione",
-            "label": "Descrizione",
-            "newLine": false,
-            "readOnly": false
-          }
+        }
     ],
     "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "key": "check",
+            "queryFunct": "true",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "check",
+                    "value": "check"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "eventi_calendario",
+                "viewType": "table",
+                "action": "query",
+                "query": "select entrasp.chiudi_evento('£codice_azienda£',£id_evento£)",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_evento",
+                        "destination": "id_evento"
+                    }
+                ],
+                "confirmAction": false,
+                "onSuccessAction": "reload"
+            }
+        },
         {
             "format": {
                 "dataType": "text"
@@ -138,7 +206,7 @@
             "isPrimary": true,
             "key": "id_evento",
             "label": "# Evento",
-            "width": "10%"
+            "width": "6%"
         },
         {
             "format": {
@@ -147,7 +215,49 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "codice",
-            "label": "Codice"
+            "label": "Codice",
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_rif",
+            "label": "Data Riferimento",
+            "width": "7%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_scadenza",
+            "label": "Data Scadenza",
+            "width": "7%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizone",
+            "width": "28%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_tipo_evento",
+            "label": "Tipo evento",
+            "width": "21%",
+            "queryFunct": "entrasp.argomenti_descr(id_argomento_tipo_evento)"
         },
         {
             "format": {
@@ -157,7 +267,7 @@
             "isPrimary": false,
             "key": "data_inizio_validita",
             "label": "Inizio",
-            "width": "15%"
+            "width": "8%"
         },
         {
             "format": {
@@ -167,17 +277,7 @@
             "isPrimary": false,
             "key": "data_fine_validita",
             "label": "Fine",
-            "width": "15%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descrizione",
-            "label": "Descriizone",
-            "width": "50%"
+            "width": "8%"
         }
     ],
     "hideActions": [

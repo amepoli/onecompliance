@@ -3,7 +3,6 @@
 	"origin": "entrasp.argomenti_eventi",
 	"entryKey": "scadenze",
 	"businessObjectName": "argomenti_eventi",
-	"predefinedQueries": [],
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -60,7 +59,17 @@
 			"label": "Numero intervalli",
 			"newLine": false,
 			"readOnly": false,
-			"size": 1.7
+			"size": 1.75,
+			"inputEvents": [
+				{
+				  "actionType": "hide",
+				  "eventName": "show_dt_evento",
+				  "condition": "equalTo",
+				  "values": [
+					"1"
+				  ]
+				}
+			  ]
 		},
 		{
 			"autoGenerate": false,
@@ -76,7 +85,59 @@
 			"label": "Unità misura intervalli (days, weeks, months)",
 			"newLine": false,
 			"readOnly": false,
-			"size": 1.7
+			"size": 1.75,
+			"inputEvents": [
+				{
+				  "actionType": "hide",
+				  "eventName": "show_dt_evento",
+				  "condition": "equalTo",
+				  "values": [
+					"1"
+				  ]
+				}
+			  ]
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "checkbox",
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "flag_scadenza_fissa",
+			"label": "Scadenza Fissa (es. Natale)",
+			"newLine": false,
+			"readOnly": false,
+			"size": 1.75,
+			"outputEvent": {
+				"eventName": "show_dt_evento",
+				"eventTrigger": "change"
+			}
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_evento",
+			"label": "Data evento (L' anno è indifferente)",
+			"newLine": false,
+			"readOnly": false,
+			"size": 2.35,
+			"inputEvents": [
+				{
+				  "actionType": "show",
+				  "eventName": "show_dt_evento",
+				  "condition": "equalTo",
+				  "values": [
+					"1"
+				  ]
+				}
+			  ]
 		},
 		{
 			"autoGenerate": false,
@@ -89,7 +150,8 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false
+			"newLine": false,
+			"size": 2.40
 		}
 	],
 	"search_keys": [
@@ -139,16 +201,6 @@
 	"table_keys": [
 		{
 			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_colore",
-			"label": "Codice Colore",
-			"width": "10%"
-		},
-		{
-			"format": {
 				"dataType": "number"
 			},
 			"isHidden": false,
@@ -185,8 +237,8 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "interval_value",
-			"label": "Unità misura intervalli (days, weeks, months)",
-			"width": "30%"
+			"label": "Unità misura intervalli",
+			"width": "10%"
 		},
 		{
 			"format": {
@@ -196,7 +248,38 @@
 			"isPrimary": false,
 			"key": "interval_multiplier",
 			"label": "Numero intervalli",
-			"width": "15%"
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "boolean"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"isCheckbox": true,
+			"key": "flag_scadenza_fissa",
+			"label": "Scadenza Fissa",
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_evento",
+			"label": "Data evento",
+			"width": "10%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_colore",
+			"label": "Codice Colore",
+			"width": "10%"
 		}
 	],
 	"querySuffixes": {
@@ -224,10 +307,10 @@
 			"icon": "more_vert",
 			"menuOptions": [
 				{
-					"key": "merge_argomenti",
-					"icon": "merge_type",
-					"label": "Unifica scadenze",
-					"query": "SELECT entrasp.unifica_argomenti($selected_rows_data$)"
+					"key": "create_event",
+					"icon": "create_event",
+					"label": "Crea evento associato",
+					"query": "SELECT entrasp.crea_evento ('€global_codice_azienda€', arg.id_argomento) FROM entrasp.argomenti arg WHERE arg.id_argomento IN ($selected_rows_data$);"
 				},
 				{
 					"key": "delete",
@@ -239,10 +322,10 @@
 					"confirmActionMessage": "Eliminare le scadenze ?"
 				},
 				{
-					"key": "create_event",
-					"icon": "create_event",
-					"label": "Crea evento associato",
-					"query": "INSERT INTO entrasp.eventi(codice_azienda, id_evento, data_inizio_validita, data_fine_validita, descrizione, codice, id_argomento_tipo_evento) SELECT '€global_codice_azienda€', (select coalesce(max(id_evento),0) from entrasp.eventi WHERE codice_azienda='€global_codice_azienda€')+ row_number() over (order by id_argomento), CURRENT_DATE, CURRENT_DATE, arg.descrizione, arg.codice, arg.id_argomento FROM entrasp.argomenti arg WHERE arg.id_argomento IN ($selected_rows_data$);"
+					"key": "merge_argomenti",
+					"icon": "merge_type",
+					"label": "Unifica scadenze",
+					"query": "SELECT entrasp.unifica_argomenti($selected_rows_data$)"
 				}
 			]
 		}
