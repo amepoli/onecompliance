@@ -49,6 +49,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
                     tab.inputEvents.forEach(event => {
                         if (event.actionType === 'show' || event.actionType === 'hide') {
                             _this.subscriptions.push(_this.pubSubService.subscribe(event.eventName, msg => {
+                                setTimeout(() => {
                                 // TODO: handle the other conditions
                                 if (event.condition === 'equalTo') {
                                     // normalize if boolean conditions
@@ -66,7 +67,8 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
                                         _this.firstLoad = false;
                                     }
                                 }
-                                _this.setFiltered();  // reset filteredTabs
+                                _this.setFiltered(); // reset filteredTabs
+                            }, 100);
                             }));
                         }
                     });
@@ -113,9 +115,11 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
 
     tabChanged(tabChangeEvent: MatTabChangeEvent): void {
         if (this.filteredTabs && this.filteredTabs.length && tabChangeEvent.index > -1) {  // at least one tab visible
-            this.activeIndex = tabChangeEvent.index >= 0 ? tabChangeEvent.index : 0;  // might get a -1
-            this.tableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true, showFullScreenButton: true };
-            this.formTableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true };
+            if(this.tabsGroup.selectedIndex === tabChangeEvent.index) {
+                this.activeIndex = tabChangeEvent.index >= 0 ? tabChangeEvent.index : 0;  // might get a -1
+                this.tableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true, showFullScreenButton: true };
+                this.formTableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true };
+            }
         }
     }
 
