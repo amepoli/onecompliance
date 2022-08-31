@@ -53,7 +53,7 @@ export class GoogleAPIService {
     _this._console.log('getEmailsByCodiceAzienda Response: ', getEmailsByCodiceAziendaResponse);
     
     if(getEmailsByCodiceAziendaResponse.result === 'OK') {
-      let associateEmailsResponse: any = await _this.backendService.associateEmails(getEmailsByCodiceAziendaResponse.emails).toPromise();
+      let associateEmailsResponse: any = await _this.backendService.associateEmails(getEmailsByCodiceAziendaResponse.emails, codiceAzienda).toPromise();
       _this._console.log('associateEmails Response: ', associateEmailsResponse);
       return associateEmailsResponse;
     }
