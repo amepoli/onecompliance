@@ -20,7 +20,7 @@
 		{
 			"autoGenerate": true,
 			"format": {
-				"comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione_breve AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father IN (SELECT entrasp.descendants_of_argomento(45417,2)) AND id_argomento_son != 45417 AND (SELECT count(*) FROM entrasp.argomenti_argomenti WHERE id_argomento_father=aa.id_argomento_son) = 0 --AND arg.id_argomento NOT IN (SELECT id_argomento FROM entrasp.argomenti_eventi);",
+				"comboQuery": "SELECT DISTINCT arg.id_argomento AS id, arg.descrizione_breve AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father IN (SELECT entrasp.descendants_of_argomento(45417,2)) AND id_argomento_son != 45417 --AND (SELECT count(*) FROM entrasp.argomenti_argomenti WHERE id_argomento_father=aa.id_argomento_son) = 0;",
 				"options": [],
 				"viewType": "combobox",
 				"dataType": "number"
@@ -228,7 +228,17 @@
 			"key": "descrizione",
 			"label": "Evento",
 			"queryFunct": "SELECT descrizione FROM entrasp.argomenti WHERE id_argomento=argomenti_eventi.id_argomento",
-			"width": "20%"
+			"width": "25%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "interval_multiplier",
+			"label": "Numero intervalli",
+			"width": "10%"
 		},
 		{
 			"format": {
@@ -242,13 +252,15 @@
 		},
 		{
 			"format": {
-				"dataType": "text"
+				"dataType": "boolean"
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "interval_multiplier",
-			"label": "Numero intervalli",
-			"width": "10%"
+			"isCheckbox": true,
+			"key": "flag_evento_parent",
+			"label": "Evento origine",
+			"width": "10%",
+			"queryFunct": "SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=argomenti_eventi.id_argomento"
 		},
 		{
 			"format": {

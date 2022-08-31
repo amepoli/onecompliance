@@ -3,13 +3,7 @@
     "entryKey": "eventi_calendario",
     "origin": "entrasp.eventi",
     "businessObjectName": "eventi",
-    "predefinedQueries": [
-        {
-            "operation": "insert",
-            "queryString": "SELECT entrasp.crea_evento($codice_azienda$, $id_argomento_tipo_evento$, $data_rif$, $codice$, $descrizione$, $data_inizio_validita$, $data_fine_validita$) as return",
-            "type": "main"
-        }
-    ],
+    "predefinedQueries": [],
     "table_multiselection_actions": [
         {
             "viewType": "menu",
@@ -90,9 +84,24 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "newLine": true,
-            "readOnly": false
+            "newLine": false,
+            "readOnly": false,
+            "size": 4
         },
+        {
+            "autoGenerate": false,
+			"format": {
+				"dataType": "text",
+                "viewType": "checkbox"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+            "readOnly": true,
+			"key": "flag_evento_completato",
+			"label": "Evento eseguito",
+			"queryFunct": "SELECT CASE WHEN stato !='C' THEN FALSE ELSE TRUE END FROM entrasp.sondaggi WHERE id_sondaggio=eventi.id_sondaggio AND codice_azienda=eventi.codice_azienda",
+            "newLine": true
+		},
         {
             "autoGenerate": false,
             "format": {
@@ -253,7 +262,7 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizone",
-            "width": "28%"
+            "width": "23%"
         },
         {
             "format": {
@@ -286,6 +295,18 @@
             "label": "Fine",
             "width": "8%"
         },
+        {
+			"format": {
+				"dataType": "boolean"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"isCheckbox": true,
+			"key": "flag_evento_completato",
+			"label": "Evento eseguito",
+			"width": "5%",
+			"queryFunct": "SELECT CASE WHEN stato !='C' THEN FALSE ELSE TRUE END FROM entrasp.sondaggi WHERE id_sondaggio=eventi.id_sondaggio AND codice_azienda=eventi.codice_azienda"
+		},
         {
             "format": {
                 "dataType": "number"

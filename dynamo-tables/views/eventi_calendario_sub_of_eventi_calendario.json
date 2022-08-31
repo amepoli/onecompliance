@@ -9,6 +9,34 @@
             "type": "postProcessing"    
         }
     ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuEventi",
+            "label": "Azioni",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "delete_eventi",
+                    "icon": "delete",
+                    "label": "Elimina",
+                    "confirmAction": true,
+                    "confirmActionMessage": "Eliminare definitivamente gli eventi selezionati e i relativi sondaggi?",
+                    "query": "select entrasp.cancella_evento(codice_azienda,id_evento) from entrasp.eventi where codice_azienda||'-'||id_evento in ($selected_rows_data$)",
+                    "reloadOnSuccess": true
+                },
+                {
+                    "key": "close_eventi",
+                    "icon": "check",
+                    "label": "Contrassegna come eseguiti",
+                    "confirmAction": true,
+                    "confirmActionMessage": "Contrassegnare come eseguiti gli eventi selezionati?",
+                    "query": "select entrasp.chiudi_evento(codice_azienda,id_evento) from entrasp.eventi where codice_azienda||'-'||id_evento in ($selected_rows_data$);",
+                    "reloadOnSuccess": true
+                }
+            ]
+        }
+    ],
     "hideActions": [
         {
             "tableActionType": "add",
