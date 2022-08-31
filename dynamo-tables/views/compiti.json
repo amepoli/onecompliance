@@ -543,10 +543,10 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_cliente",
-            "label": "Cliente",
+            "label": "Controp.(Cliente, Fornitore, Dipendente)",
             "newLine": false,
             "readOnly": false,
-            "size": 2.75
+            "size": 3.25
           },
           {
             "autoGenerate": true,
@@ -574,7 +574,7 @@
             "label": "Data Scadenza",
             "newLine": false,
             "readOnly": false,
-            "size": 1.5
+            "size": 1.25
           },
           {
             "autoGenerate": false,
@@ -588,7 +588,7 @@
             "label": "Data Chiusura",
             "newLine": false,
             "readOnly": false,
-            "size": 1.5
+            "size": 1.25
           },
           {
             "autoGenerate": false,
@@ -849,8 +849,20 @@
         "viewType": "combobox"
       },
       "label": "Stato",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "stato='€stato€'"
+    },
+    {
+      "fieldName": "ruolo_s",
+      "format": {
+        "comboQuery": "SELECT codice_ruolo AS id, descrizione AS name  FROM entrasp.ruoli order by descrizione;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Ruolo",
+      "newLine": true,
+      "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='€ruolo_s€' and ra.codice_azienda='€global_codice_azienda€')"
     },
     {
       "fieldName": "note_search",
