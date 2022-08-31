@@ -1032,10 +1032,13 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                     }
                     
                     if(matches) {
+                        let date = x.data.payload.headers.filter( x => x.name === "Date")[0].value;
+                        let email_id = x.data.id;
+                        let thread_id = x.data.threadId;
                         let to = x.data.payload.headers.filter( x => x.name === "To")[0].value;
                         let from = x.data.payload.headers.filter( x => x.name === "From")[0].value;
                         //let body = x.data.payload.body;
-                        emailsResult.push({ subject, to, from});
+                        emailsResult.push({ date, email_id, thread_id, subject, to, from});
                     }
                 });
 

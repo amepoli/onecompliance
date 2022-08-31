@@ -502,10 +502,10 @@ export class BackendService {
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }
 
-  associateEmails(input: any) {
+  associateEmails(input: any, codiceAzienda) {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { request_type: 'associateEmails' };
-    this.myPutPostInit.body = input;
+    this.myPutPostInit.body = {input, codiceAzienda};
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }
 
