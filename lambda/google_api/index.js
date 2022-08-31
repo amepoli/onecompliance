@@ -1014,11 +1014,13 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
         
         _console.log('email messages: ', emails.data.messages);
         if(emails && emails.data && emails.data.messages && emails.data.messages.length > 0) {
-            let emailsResponse = await forkJoin(emails.data.messages.map(x => gmail.users.messages.get({userId: "me", id: x.id }))).toPromise();
-            if(emailsResponse && emailsResponse.length) {
-                let emailsResult = [];
-                emailsResponse.forEach(x => {
-                    let subject = x.data.payload.headers.filter( x => x.name === "Subject")[0].value;
+            let emailsResult = [];
+            for await (message of emails.data.messages) {
+                try{
+                    // console.log('Getting email by id: ', message.id);
+                    let emailResponse = await gmail.users.messages.get({userId: "me", id: message.id });
+                    // console.log('Email response: ', emailResponse);
+                    let subject = emailResponse.data.payload.headers.filter( x => x.name === "Subject")[0].value;
                     let subjectLower = subject.toLowerCase();
                     let matches = false;
                     for(let i = 0; i < subjectsToMatch.length; i++) {
@@ -1032,19 +1034,23 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                     }
                     
                     if(matches) {
-                        let date = x.data.payload.headers.filter( x => x.name === "Date")[0].value;
-                        let email_id = x.data.id;
-                        let thread_id = x.data.threadId;
-                        let to = x.data.payload.headers.filter( x => x.name === "To")[0].value;
-                        let from = x.data.payload.headers.filter( x => x.name === "From")[0].value;
+                        let date = emailResponse.data.payload.headers.filter( x => x.name === "Date")[0].value;
+                        let email_id = emailResponse.data.id;
+                        let thread_id = emailResponse.data.threadId;
+                        let to = emailResponse.data.payload.headers.filter( x => x.name === "To")[0].value;
+                        let from = emailResponse.data.payload.headers.filter( x => x.name === "From")[0].value;
                         //let body = x.data.payload.body;
                         emailsResult.push({ date, email_id, thread_id, subject, to, from});
                     }
-                });
 
-                // Return emails
-                return { result: 'OK', emails: emailsResult };
+                }
+                catch(e) {
+                    console.log('Exception: ', e);
+                }
             }
+
+            // Return emails
+            return { result: 'OK', emails: emailsResult };            
         }
         return { result: 'OK', emails: [] };
     } catch (err) {
