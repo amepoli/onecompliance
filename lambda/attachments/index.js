@@ -258,10 +258,12 @@ exports.handler = async (event, context) => {
             
         }
         else if (requestType === "associateEmails") {
-            let jsonBody = event.body;
+            let jsonBody = event.body ? JSON.parse(event.body) : {};
+            let input = jsonBody['input'];
+            let codiceAzienda = jsonBody['codiceAzienda'];
             client = await pool.connect();
             //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
-            let query = `select * from entrasp.associate_emails(('${jsonBody}')::json);`;
+            let query = `select * from entrasp.associate_emails(('${JSON.stringify(input)}')::json, ('${codiceAzienda.join(',')}')::text);`;
             console.log('running query: ', query);
             let response = await client.query(query);
             console.log('response', response.rows);
