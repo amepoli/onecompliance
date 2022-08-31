@@ -6,6 +6,9 @@
     "dashboardTables": [
         "dashboard_sondaggi"
     ],
+    "define": {
+        "mask_condition": "true"
+    },
     "outputEvents": [
         {
             "eventName": "onSaveSondaggio",
@@ -20,7 +23,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select case when snd2.id_sondaggio_succ is not null then true else false end as sondaggio_riprogrammato, snd2.id_sondaggio as id_sondaggio_precedente,snd.id_sondaggio,snd.id_contratto,entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica) as id_anagrafica_assegnataria,snd.id_sondaggio_parent, snd.id_modello_test,snd.id_modello_test_vr,snd.sondaggio_completato, snd.giudizio,snd.titolo, snd.codice_azienda, snd.id_centro_gest, snd.data_prevista, snd.data_comp, snd.data_esecuzione,substring(entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio), 1, 150) as sondaggio_su, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr left JOIN entrasp.sondaggi snd2 on snd.codice_azienda=snd2.codice_azienda and snd.id_sondaggio=snd2.id_sondaggio_succ inner join entrasp.modelli_test mt on mvr.codice_azienda=mt.codice_azienda and mvr.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$ and ((snd.data_prevista<=CURRENT_DATE+365 or snd.data_prevista is null) or (snd.data_esecuzione<=CURRENT_DATE+100))"
+            "queryString": "select case when snd2.id_sondaggio_succ is not null then true else false end as sondaggio_riprogrammato, snd2.id_sondaggio as id_sondaggio_precedente,snd.id_sondaggio,snd.id_contratto,entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica) as id_anagrafica_assegnataria,snd.id_sondaggio_parent, snd.id_modello_test,snd.id_modello_test_vr,snd.sondaggio_completato, snd.giudizio,snd.titolo, snd.codice_azienda, snd.id_centro_gest, snd.data_prevista, snd.data_comp, snd.data_esecuzione,substring(entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio), 1, 150) as sondaggio_su, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr left JOIN entrasp.sondaggi snd2 on snd.codice_azienda=snd2.codice_azienda and snd.id_sondaggio=snd2.id_sondaggio_succ inner join entrasp.modelli_test mt on mvr.codice_azienda=mt.codice_azienda and mvr.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$ and ((snd.data_prevista<=CURRENT_DATE+365 or snd.data_prevista is null) or (snd.data_esecuzione<=CURRENT_DATE+100)) and $P{mask_condition}"
         },
         {
             "operation": "selectForm",
@@ -2332,6 +2335,15 @@
             "isPrimary": false,
             "key": "id_sondaggio_rif",
             "label": "id_sondaggio_rif"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_evento",
+            "label": ""
         }
     ],
     "inputEvents": [
@@ -2645,6 +2657,6 @@
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by snd.id_sondaggio desc limit 500"
+        "tableViewSuffix": "order by snd.id_sondaggio desc limit 100"
     }
 }

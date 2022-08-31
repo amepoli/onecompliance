@@ -3,6 +3,13 @@
     "entryKey": "eventi_calendario",
     "origin": "entrasp.eventi",
     "businessObjectName": "eventi",
+    "predefinedQueries": [
+        {
+            "operation": "insert",
+            "queryString": "SELECT entrasp.crea_evento($codice_azienda$, $id_argomento_tipo_evento$, $data_rif$, $codice$, $descrizione$, $data_inizio_validita$, $data_fine_validita$) as return",
+            "type": "main"
+        }
+    ],
     "table_multiselection_actions": [
         {
             "viewType": "menu",
@@ -15,8 +22,8 @@
                     "icon": "delete",
                     "label": "Elimina",
                     "confirmAction": true,
-                    "confirmActionMessage": "Eliminare definitivamente gli eventi selezionati?",
-                    "query": "delete from entrasp.eventi where codice_azienda||'-'||id_evento in ($selected_rows_data$)",
+                    "confirmActionMessage": "Eliminare definitivamente gli eventi selezionati e i relativi sondaggi?",
+                    "query": "select entrasp.cancella_evento(codice_azienda,id_evento) from entrasp.eventi where codice_azienda||'-'||id_evento in ($selected_rows_data$)",
                     "reloadOnSuccess": true
                 },
                 {
@@ -161,7 +168,7 @@
             "isPrimary": false,
             "width": "4%",
             "key": "check",
-            "queryFunct": "true",
+            "queryFunct": "select case when eventi.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=eventi.codice_azienda and s.id_sondaggio=eventi.id_sondaggio) != 'C' then true else false end",
             "label": "",
             "style": [
                 {
@@ -278,6 +285,47 @@
             "key": "data_fine_validita",
             "label": "Fine",
             "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_evento_parent",
+            "label": ""
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "eventi_calendario_sub_of_eventi_calendario",
+            "label": "Eventi associati",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_evento",
+                    "son": "id_evento_parent"
+                }
+            ]
+        },
+        {
+            "entryKey": "sondaggi_sub_of_eventi_calendario",
+            "label": "Sondaggi associati",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_evento",
+                    "son": "id_evento"
+                }
+            ]
         }
     ],
     "hideActions": [
@@ -287,10 +335,6 @@
         },
         {
             "formActionType": "add",
-            "viewType": "form"
-        },
-        {
-            "formActionType": "attachments",
             "viewType": "form"
         },
         {
