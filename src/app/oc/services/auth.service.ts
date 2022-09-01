@@ -452,10 +452,19 @@ export class AuthService {
         // await _this.signOutGoogle();
         await auth2.signIn();
       }
+      let googleUser = auth2.currentUser.get();
+      const options = new gapi.auth2.SigninOptionsBuilder();
+      //options.setFetchBasicProfile(true);
+      options.setPrompt('select_account');
+      options.setScope(_this.googleScopes[purpose]);
+      
+      await googleUser.grant(options);
+      options.setPrompt('consent');
 
-      console.log('getting auth code');
-      let resp = await _this.getGooglePermissions(purpose);
-      return resp;
+      let offlineAccessCode: any = await googleUser.grantOfflineAccess(options);
+      let saveAuthTokenResponse: any = await _this.backendService.saveAuthToken(`token_${purpose}`, offlineAccessCode.code).toPromise();
+      
+      return saveAuthTokenResponse.authParams;
     }
     else {
       return loadAuthTokenResponse.authParams;
