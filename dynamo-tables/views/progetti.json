@@ -17,6 +17,11 @@
 		{
 			"operation": "selectForm",
 			"type": "preProcessing",
+			"queryString": "select entrasp.progetti_fasi_stato_update($codice_azienda$, $id_progetto$);"
+		},
+		{
+			"operation": "selectForm",
+			"type": "preProcessing",
 			"queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) from entrasp.sondaggi_somministrati ss inner join entrasp.progetti_fasi pf on ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio where ss.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$;"
 		},
 		{
@@ -25,9 +30,9 @@
 			"queryString": "select entrasp.aggiorna_sondaggi_pre_loading(codice_azienda, id_sondaggio) from entrasp.progetti_fasi WHERE codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
 		},
 		{
-			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$",
+			"operation": "selectForm",
 			"type": "preProcessing",
-			"operation": "selectForm"
+			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$"
 		},
 		{
 			"operation": "selectForm",
@@ -36,13 +41,8 @@
 		},
 		{
 			"operation": "selectForm",
-			"queryString": "update entrasp.progetti prg set codice_part=az.codice_part from entrasp.aziende az where prg.codice_azienda=az.codice_azienda and prg.codice_part is null and prg.codice_azienda=$codice_azienda$ and prg.id_progetto=$id_progetto$",
-			"type": "postProcessing"
-		},
-		{
-			"operation": "selectForm",
-			"type": "preProcessing",
-			"queryString": "select entrasp.progetti_fasi_stato_update($codice_azienda$, $id_progetto$);"
+			"type": "postProcessing",
+			"queryString": "update entrasp.progetti prg set codice_part=az.codice_part from entrasp.aziende az where prg.codice_azienda=az.codice_azienda and prg.codice_part is null and prg.codice_azienda=$codice_azienda$ and prg.id_progetto=$id_progetto$"
 		},
 		{
 			"operation": "delete",
