@@ -76,8 +76,19 @@
 				"viewType": "combobox"
 			},
 			"label": "Fondo/Strumento/Finanziario",
+			"newLine": false,
+			"queryCond": "an.id_anagrafica in(select id_cliente from entrasp.contratti where id_strumento_finanziario=$id_strumento_fin$ and id_cliente is not null)"
+		},
+        {
+			"fieldName": "id_strumento_fin",
+			"format": {
+				"comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an inner join entrasp.contratti cnt on an.id_anagrafica=cnt.id_strumento_finanziario and an.codice_part=cnt.codice_part WHERE an.codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica);",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Non con Fondo/Strumento/Finanziario",
 			"newLine": true,
-			"queryCond": "an.id_anagrafica in(select id_cliente from entrasp.contratti where id_strumento_finanziario=$id_strumento_fin$)"
+			"queryCond": "an.id_anagrafica not in(select id_cliente from entrasp.contratti where id_strumento_finanziario=$id_strumento_fin$ and id_cliente is not null)"
 		},
         {
             "fieldName": "codice_s",
