@@ -12,7 +12,7 @@ import { FormGetterComponent } from 'app/oc/views/form-getter/form-getter.compon
 import { Subscription } from 'rxjs';
 import { FormGetterParams } from 'app/oc/interfaces';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
-import { AuthService, BackendService, ConsoleLoggerService, EncryptionService, ToastService } from 'app/oc/services';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, EncryptionService, ToastService } from 'app/oc/services';
 
 
 
@@ -71,6 +71,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
         private httpClient: HttpClient,
         private authService: AuthService,
         private _toastService: ToastService,
+        private _dialogService: DialogService,
         private _console: ConsoleLoggerService,
         private _encryptionService: EncryptionService) {
 
@@ -311,7 +312,10 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     _this._console.log(copyFromS3ToDriveResponse);
                                 }
                             }
-                            _this._console.log(googleDriveFileCopyParamsResponse);
+                            _this._console.log('googleDriveFileCopyParamsResponse', googleDriveFileCopyParamsResponse);
+                        }
+                        else {
+                            _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");    
                         }
                         // Show success snackbar
                         _this.isSaving = false;
