@@ -1480,277 +1480,307 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             else if (googleAPIParams.actionType == 'get_email_thread') {
-                if (!googleAPIParams.emailThreadParams) {
-                    _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");
+                if(_this.authService.getSyncMode() === 'google') {
+                    if (!googleAPIParams.emailThreadParams) {
+                        _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");
+                    }
+                    else {
+                        const emailId = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.emailThreadParams.emailIdKey);
+                        const threadId = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.emailThreadParams.threadIdKey);
+                    }
                 }
                 else {
-                    const emailId = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.emailThreadParams.emailIdKey);
-                    const threadId = HelperService.getValueInValueSet(value.valueSet, googleAPIParams.emailThreadParams.threadIdKey);
+                    _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");
                 }
             }
             else if (googleAPIParams.actionType == 'create_drive_folder') {
-                if (!googleAPIParams.driveFolderParams) {
-                    _this._toastService.showErrorToast("Missing Google API Drive Folder Params");
-                }
-                else {
-                    const driveFolder = formValues[googleAPIParams.driveFolderParams.driveFolderKey];
-                    if (!driveFolder) {
+                if(_this.authService.getSyncMode() === 'google') {
+                    if (!googleAPIParams.driveFolderParams) {
                         _this._toastService.showErrorToast("Missing Google API Drive Folder Params");
                     }
                     else {
-                        let auth = _this.authService.loadGoogleAuth('gdrive');
-                        _this.backendService.createDriveFolder(driveFolder, auth).subscribe(
-                            response => {
-                                // _this._console.log(response);
-                                if (response['result'] === 'OK') {
-                                    if (event.outputEventWhenComplete != null) {
-                                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
+                        const driveFolder = formValues[googleAPIParams.driveFolderParams.driveFolderKey];
+                        if (!driveFolder) {
+                            _this._toastService.showErrorToast("Missing Google API Drive Folder Params");
+                        }
+                        else {
+                            let auth = _this.authService.loadGoogleAuth('gdrive');
+                            _this.backendService.createDriveFolder(driveFolder, auth).subscribe(
+                                response => {
+                                    // _this._console.log(response);
+                                    if (response['result'] === 'OK') {
+                                        if (event.outputEventWhenComplete != null) {
+                                            _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
+                                        }
                                     }
+                                    else {
+                                        _this._toastService.showErrorToast(response['reason']);
+                                    }
+                                },
+                                error => {
+                                    _this._console.log(error);
+                                    _this._toastService.showErrorToast(error);
                                 }
-                                else {
-                                    _this._toastService.showErrorToast(response['reason']);
-                                }
-                            },
-                            error => {
-                                _this._console.log(error);
-                                _this._toastService.showErrorToast(error);
-                            }
-                        );
-                    }
+                            );
+                        }
 
+                    }
+                }
+                else {
+                    _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");
                 }
             }
             else if (googleAPIParams.actionType == 'copy_s3_to_drive') {
-                if (!googleAPIParams.s3ToDriveParams) {
-                    _this._toastService.showErrorToast("Missing Google API Path Params");
-                }
-                else {
-                    const s3Path = formValues[googleAPIParams.s3ToDriveParams.s3PathKey];
-                    const drivePath = formValues[googleAPIParams.s3ToDriveParams.drivePathKey];
-                    if (!s3Path || !drivePath) {
+                if(_this.authService.getSyncMode() === 'google') {
+                    if (!googleAPIParams.s3ToDriveParams) {
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
                     else {
-                        let auth = _this.authService.loadGoogleAuth('gdrive');
-                        _this.backendService.copyFromS3ToDrive(s3Path, drivePath, auth).subscribe(
-                            response => {
-                                // _this._console.log(response);
-                                if (response['result'] === 'OK') {
-                                    if (event.outputEventWhenComplete != null) {
-                                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
+                        const s3Path = formValues[googleAPIParams.s3ToDriveParams.s3PathKey];
+                        const drivePath = formValues[googleAPIParams.s3ToDriveParams.drivePathKey];
+                        if (!s3Path || !drivePath) {
+                            _this._toastService.showErrorToast("Missing Google API Path Params");
+                        }
+                        else {
+                            let auth = _this.authService.loadGoogleAuth('gdrive');
+                            _this.backendService.copyFromS3ToDrive(s3Path, drivePath, auth).subscribe(
+                                response => {
+                                    // _this._console.log(response);
+                                    if (response['result'] === 'OK') {
+                                        if (event.outputEventWhenComplete != null) {
+                                            _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
+                                        }
                                     }
+                                    else {
+                                        _this._toastService.showErrorToast(response['reason']);
+                                    }
+                                },
+                                error => {
+                                    _this._console.log(error);
+                                    _this._toastService.showErrorToast(error);
                                 }
-                                else {
-                                    _this._toastService.showErrorToast(response['reason']);
-                                }
-                            },
-                            error => {
-                                _this._console.log(error);
-                                _this._toastService.showErrorToast(error);
-                            }
-                        );
-                    }
+                            );
+                        }
 
+                    }
+                }
+                else {
+                    _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");
                 }
             }
             else if (googleAPIParams.actionType == 'copy_drive_to_s3') {
-                if (!googleAPIParams.driveToS3Params) {
-                    _this._toastService.showErrorToast("Missing Google API Path Params");
-                }
-                else {
-                    const drivePath = formValues[googleAPIParams.driveToS3Params.drivePathKey];
-                    const s3Path = formValues[googleAPIParams.s3ToDriveParams.s3PathKey];
-                    if (!drivePath || !s3Path) {
+                if(_this.authService.getSyncMode() === 'google') {
+                    if (!googleAPIParams.driveToS3Params) {
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
                     else {
-                        let auth = _this.authService.loadGoogleAuth('gdrive');
-                        _this.backendService.copyFromDriveToS3(drivePath, s3Path, auth).subscribe(
-                            response => {
-                                // _this._console.log(response);
-                                if (response['result'] === 'OK') {
-                                    if (event.outputEventWhenComplete != null) {
-                                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
+                        const drivePath = formValues[googleAPIParams.driveToS3Params.drivePathKey];
+                        const s3Path = formValues[googleAPIParams.s3ToDriveParams.s3PathKey];
+                        if (!drivePath || !s3Path) {
+                            _this._toastService.showErrorToast("Missing Google API Path Params");
+                        }
+                        else {
+                            let auth = _this.authService.loadGoogleAuth('gdrive');
+                            _this.backendService.copyFromDriveToS3(drivePath, s3Path, auth).subscribe(
+                                response => {
+                                    // _this._console.log(response);
+                                    if (response['result'] === 'OK') {
+                                        if (event.outputEventWhenComplete != null) {
+                                            _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
+                                        }
                                     }
+                                    else {
+                                        _this._toastService.showErrorToast(response['reason']);
+                                    }
+                                },
+                                error => {
+                                    _this._console.log(error);
+                                    _this._toastService.showErrorToast(error);
                                 }
-                                else {
-                                    _this._toastService.showErrorToast(response['reason']);
-                                }
-                            },
-                            error => {
-                                _this._console.log(error);
-                                _this._toastService.showErrorToast(error);
-                            }
-                        );
-                    }
+                            );
+                        }
 
+                    }
+                }
+                else {
+                    _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");
                 }
             }
             else if (googleAPIParams.actionType == 'get_emails_by_codice_azienda') {
-                let loadingToast = _this._toastService.showLoadingToast("Loading emails", "Please wait...");
-                try {
-                    const googleAuth = await _this.authService.loadGoogleAuth('gmail');
-                    // get user data after login
-                    const codiceAziendaList = _this.authService.userinfo.getValue().companies;
+                if(_this.authService.getSyncMode() === 'google') {
+                    let loadingToast = _this._toastService.showLoadingToast("Loading emails", "Please wait...");
+                    try {
+                        const googleAuth = await _this.authService.loadGoogleAuth('gmail');
+                        // get user data after login
+                        const codiceAziendaList = _this.authService.userinfo.getValue().companies;
 
-                    let getEmailsByCodiceAziendaResult = await _this._googleAPIService.getEmailsByCodiceAzienda(googleAuth, codiceAziendaList);
-                    _this._console.log(getEmailsByCodiceAziendaResult);
-                    
-                    _this._toastService.hideLoadingToast(loadingToast);
-                    
-                    if(getEmailsByCodiceAziendaResult.result === 'OK') {
-                        _this._toastService.showSuccessToast(event.successMessage || 'Done!');
+                        let getEmailsByCodiceAziendaResult = await _this._googleAPIService.getEmailsByCodiceAzienda(googleAuth, codiceAziendaList);
+                        _this._console.log(getEmailsByCodiceAziendaResult);
+                        
+                        _this._toastService.hideLoadingToast(loadingToast);
+                        
+                        if(getEmailsByCodiceAziendaResult.result === 'OK') {
+                            _this._toastService.showSuccessToast(event.successMessage || 'Done!');
+                        }
+                        else {
+                            _this._toastService.showErrorToast(event.message || 'Error occured!');
+                        }
                     }
-                    else {
-                        _this._toastService.showErrorToast(event.message || 'Error occured!');
+                    catch (e) {
+                        _this._console.log(e);
+                        _this._toastService.hideLoadingToast(loadingToast);
+                        _this._toastService.showErrorToast(e);
                     }
                 }
-                catch (e) {
-                    _this._console.log(e);
-                    _this._toastService.hideLoadingToast(loadingToast);
-                    _this._toastService.showErrorToast(e);
+                else {
+                    _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");
                 }
             }
             else if (googleAPIParams.actionType == 'get_folder_expanded_contents') {
-                if (!googleAPIParams.driveExpandedContentsParams) {
-                    _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
-                }
-                else {
-                    const codiceAzienda = formValues[googleAPIParams.driveExpandedContentsParams.codiceAziendaKey];
-                    const idProgetto = googleAPIParams.driveExpandedContentsParams.idProgettoKey ? formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey] : null;
-                    const idAnagrafica = formValues[googleAPIParams.driveExpandedContentsParams.idAnagraficaKey];
-                    if (!codiceAzienda || !idAnagrafica) {
+                if(_this.authService.getSyncMode() === 'google') {
+                    if (!googleAPIParams.driveExpandedContentsParams) {
                         _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
                     }
                     else {
-                        let loadingToast = _this._toastService.showLoadingToast("Synching google drive", "Please wait...");
-                        try {
-                            const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
-                            
-                            await _this._googleAPIService.syncGoogleDrive(googleAuth, codiceAzienda, idAnagrafica, idProgetto);
-
-                            /*
-                            // let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
-                            // _this._console.log(getChangesResult);
-                            // if(getChangesResult && getChangesResult.length) {
-                            //     let syncDataResponse = await forkJoin(getChangesResult.map(x => _this._googleAPIService.syncGoogleDrive(googleAuth, x.codice_azienda, x.anagrafica_id, null))).toPromise();
-                            // }
-
-                            let anagrafica_contents = await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername()).toPromise();
-                            _this._console.log(anagrafica_contents);
-                            let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
-                            //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
-                            let sub_folders = anagraficaFolders['sub_folders'];
-                            if (sub_folders && sub_folders.length > 0) {
-                                for (let i = 0; i < sub_folders.length; i++) {
-                                    if (sub_folders[i]['folder'].endsWith('/')) {
-                                        sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0, -1);
-                                    }
-                                    if (!sub_folders[i]['folder'].includes('/')) {
-                                        sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
-                                    }
-                                }
-                                //sub_folders = sub_folders.filter(x => !x.md5 || !x.md5.includes('null::varchar'))
-                            }
-
-                            anagraficaFolders['sub_folders'] = sub_folders;
-
-                            _this._console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
-
-                            const driveFolder = anagraficaFolders['root_folder'];
-                            const subFolders = anagraficaFolders['sub_folders'] || [];
-
-                            let foldersToCheck = [driveFolder];
-                            if (subFolders && subFolders.length > 0) {
-                                for await (let subFolder of subFolders) {
-                                    if (!foldersToCheck.includes(subFolder.folder)) {
-                                        foldersToCheck.push(subFolder.folder);
-                                    }
-                                }
-                            }
-
-                            _this._console.log('foldersToCheck: ', JSON.stringify(foldersToCheck));
-
-                            anagraficaFolders['folder_ids'] = {};
-                            for await (let folderToCheck of foldersToCheck) {
-                                let fixDriveFolderPathByIdentifierResponse = await _this.backendService.fixDriveFolderPathByIdentifier(folderToCheck, googleAuth).toPromise();
-                                anagraficaFolders['folder_ids'][fixDriveFolderPathByIdentifierResponse['folder']] = fixDriveFolderPathByIdentifierResponse['folderId'];
-
-                            }
-
-                            // let fixDriveFolderPathByIdentifierResponse = await forkJoin(foldersToCheck.map(x => _this.backendService.fixDriveFolderPathByIdentifier(x, googleAuth))).toPromise();
-                            // _this._console.log('fixDriveFolderPathByIdentifier Response: ', fixDriveFolderPathByIdentifierResponse);
-
-                            // anagraficaFolders['folder_ids'] = {};
-                            // fixDriveFolderPathByIdentifierResponse.forEach(x => {
-                            //     anagraficaFolders['folder_ids'][x['folder']] = x['folderId']
-                            // });
-
-                            anagraficaFolders['codice_azienda'] = codiceAzienda;
-
-                            _this._console.log(anagraficaFolders);
-                            // let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
-                            // _this._console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
-                            // anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
-                            // anagraficaFolders['codice_azienda'] = codiceAzienda;
-
-
-                            let getDriveFolderDeepContentsResponse: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
-                            _this._console.log('getDriveFolderDeepContentsResponse ', getDriveFolderDeepContentsResponse);
-
-                            let syncDataResponse = await forkJoin(getDriveFolderDeepContentsResponse.syncData.map(x => _this.backendService.syncDriveS3File([x], googleAuth))).toPromise();
-                            _this._console.log('syncDataResponse', syncDataResponse);
-
-                            anagraficaFolders['root_drive_contents'] = getDriveFolderDeepContentsResponse.rootDriveContents;
-                            let processDriveFolderDeepContentsResponse: any = await _this.backendService.processDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
-                            _this._console.log('processDriveFolderDeepContentsResponse ', processDriveFolderDeepContentsResponse);
-
-
-                            let filteredFilesForSetProperFileFolder = [];
-                            for (let file of processDriveFolderDeepContentsResponse.files) {
-                                if (file.fileid.includes('/')) {
-                                    file.fileid = file.fileid.split('/')[1];
-                                }
-                                if (filteredFilesForSetProperFileFolder.filter(x => x.fileid == file.fileid && x.filename == file.filename && x.folder == file.folder).length == 0) {
-                                    filteredFilesForSetProperFileFolder.push(file);
-                                }
-                            }
-
-                            let contentsJson = {
-                                codice_azienda: codiceAzienda,
-                                id_progetto: idProgetto,
-                                id_anagrafica: idAnagrafica,
-                                files: filteredFilesForSetProperFileFolder
-                            }
-                            _this._console.log(contentsJson);
-
-                            let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
-                            _this._console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
-
-
-
-                            let performDriveOperationsResponse = [];
-                            if (setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows && setProperFileFolderResponse.response.rows.length > 0) {
-                                for await (let operation of setProperFileFolderResponse.response.rows) {
-                                    let performDriveOperationResponse = await _this.backendService.performDriveOperations([operation], googleAuth).toPromise();
-                                    performDriveOperationsResponse.push(performDriveOperationResponse);
-                                }
-                                // let performDriveOperationsResponse = await forkJoin(setProperFileFolderResponse.response.rows.map(x => _this.backendService.performDriveOperations([x], googleAuth))).toPromise();
-                            }
-
-                            _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
-                            
-                            */
-
-                            _this._toastService.hideLoadingToast(loadingToast);
-                            _this._toastService.showSuccessToast(event.successMessage || 'Done!');
+                        const codiceAzienda = formValues[googleAPIParams.driveExpandedContentsParams.codiceAziendaKey];
+                        const idProgetto = googleAPIParams.driveExpandedContentsParams.idProgettoKey ? formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey] : null;
+                        const idAnagrafica = formValues[googleAPIParams.driveExpandedContentsParams.idAnagraficaKey];
+                        if (!codiceAzienda || !idAnagrafica) {
+                            _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
                         }
-                        catch (e) {
-                            _this._console.log(e);
-                            _this._toastService.hideLoadingToast(loadingToast);
-                            _this._toastService.showErrorToast(e);
+                        else {
+                            let loadingToast = _this._toastService.showLoadingToast("Synching google drive", "Please wait...");
+                            try {
+                                const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
+                                
+                                await _this._googleAPIService.syncGoogleDrive(googleAuth, codiceAzienda, idAnagrafica, idProgetto);
+
+                                /*
+                                // let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
+                                // _this._console.log(getChangesResult);
+                                // if(getChangesResult && getChangesResult.length) {
+                                //     let syncDataResponse = await forkJoin(getChangesResult.map(x => _this._googleAPIService.syncGoogleDrive(googleAuth, x.codice_azienda, x.anagrafica_id, null))).toPromise();
+                                // }
+
+                                let anagrafica_contents = await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername()).toPromise();
+                                _this._console.log(anagrafica_contents);
+                                let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
+                                //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
+                                let sub_folders = anagraficaFolders['sub_folders'];
+                                if (sub_folders && sub_folders.length > 0) {
+                                    for (let i = 0; i < sub_folders.length; i++) {
+                                        if (sub_folders[i]['folder'].endsWith('/')) {
+                                            sub_folders[i]['folder'] = sub_folders[i]['folder'].slice(0, -1);
+                                        }
+                                        if (!sub_folders[i]['folder'].includes('/')) {
+                                            sub_folders[i]['fileid'] = sub_folders[i]['s3Folder'] + '/' + sub_folders[i]['fileid'];
+                                        }
+                                    }
+                                    //sub_folders = sub_folders.filter(x => !x.md5 || !x.md5.includes('null::varchar'))
+                                }
+
+                                anagraficaFolders['sub_folders'] = sub_folders;
+
+                                _this._console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
+
+                                const driveFolder = anagraficaFolders['root_folder'];
+                                const subFolders = anagraficaFolders['sub_folders'] || [];
+
+                                let foldersToCheck = [driveFolder];
+                                if (subFolders && subFolders.length > 0) {
+                                    for await (let subFolder of subFolders) {
+                                        if (!foldersToCheck.includes(subFolder.folder)) {
+                                            foldersToCheck.push(subFolder.folder);
+                                        }
+                                    }
+                                }
+
+                                _this._console.log('foldersToCheck: ', JSON.stringify(foldersToCheck));
+
+                                anagraficaFolders['folder_ids'] = {};
+                                for await (let folderToCheck of foldersToCheck) {
+                                    let fixDriveFolderPathByIdentifierResponse = await _this.backendService.fixDriveFolderPathByIdentifier(folderToCheck, googleAuth).toPromise();
+                                    anagraficaFolders['folder_ids'][fixDriveFolderPathByIdentifierResponse['folder']] = fixDriveFolderPathByIdentifierResponse['folderId'];
+
+                                }
+
+                                // let fixDriveFolderPathByIdentifierResponse = await forkJoin(foldersToCheck.map(x => _this.backendService.fixDriveFolderPathByIdentifier(x, googleAuth))).toPromise();
+                                // _this._console.log('fixDriveFolderPathByIdentifier Response: ', fixDriveFolderPathByIdentifierResponse);
+
+                                // anagraficaFolders['folder_ids'] = {};
+                                // fixDriveFolderPathByIdentifierResponse.forEach(x => {
+                                //     anagraficaFolders['folder_ids'][x['folder']] = x['folderId']
+                                // });
+
+                                anagraficaFolders['codice_azienda'] = codiceAzienda;
+
+                                _this._console.log(anagraficaFolders);
+                                // let fixAnagraficaFolderByIdentifierResponse = await _this.backendService.fixAnagraficaFolderByIdentifier(anagraficaFolders, googleAuth).toPromise();
+                                // _this._console.log('fixAnagraficaFolderByIdentifier Response ', fixAnagraficaFolderByIdentifierResponse);
+                                // anagraficaFolders['folder_ids'] = fixAnagraficaFolderByIdentifierResponse['folderIds'];
+                                // anagraficaFolders['codice_azienda'] = codiceAzienda;
+
+
+                                let getDriveFolderDeepContentsResponse: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
+                                _this._console.log('getDriveFolderDeepContentsResponse ', getDriveFolderDeepContentsResponse);
+
+                                let syncDataResponse = await forkJoin(getDriveFolderDeepContentsResponse.syncData.map(x => _this.backendService.syncDriveS3File([x], googleAuth))).toPromise();
+                                _this._console.log('syncDataResponse', syncDataResponse);
+
+                                anagraficaFolders['root_drive_contents'] = getDriveFolderDeepContentsResponse.rootDriveContents;
+                                let processDriveFolderDeepContentsResponse: any = await _this.backendService.processDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
+                                _this._console.log('processDriveFolderDeepContentsResponse ', processDriveFolderDeepContentsResponse);
+
+
+                                let filteredFilesForSetProperFileFolder = [];
+                                for (let file of processDriveFolderDeepContentsResponse.files) {
+                                    if (file.fileid.includes('/')) {
+                                        file.fileid = file.fileid.split('/')[1];
+                                    }
+                                    if (filteredFilesForSetProperFileFolder.filter(x => x.fileid == file.fileid && x.filename == file.filename && x.folder == file.folder).length == 0) {
+                                        filteredFilesForSetProperFileFolder.push(file);
+                                    }
+                                }
+
+                                let contentsJson = {
+                                    codice_azienda: codiceAzienda,
+                                    id_progetto: idProgetto,
+                                    id_anagrafica: idAnagrafica,
+                                    files: filteredFilesForSetProperFileFolder
+                                }
+                                _this._console.log(contentsJson);
+
+                                let setProperFileFolderResponse: any = await _this.backendService.setProperFileFolder(contentsJson).toPromise();
+                                _this._console.log('setProperFileFolder Response: ', setProperFileFolderResponse);
+
+
+
+                                let performDriveOperationsResponse = [];
+                                if (setProperFileFolderResponse.response && setProperFileFolderResponse.response.rows && setProperFileFolderResponse.response.rows.length > 0) {
+                                    for await (let operation of setProperFileFolderResponse.response.rows) {
+                                        let performDriveOperationResponse = await _this.backendService.performDriveOperations([operation], googleAuth).toPromise();
+                                        performDriveOperationsResponse.push(performDriveOperationResponse);
+                                    }
+                                    // let performDriveOperationsResponse = await forkJoin(setProperFileFolderResponse.response.rows.map(x => _this.backendService.performDriveOperations([x], googleAuth))).toPromise();
+                                }
+
+                                _this._console.log('performDriveOperations Response: ', performDriveOperationsResponse);
+                                
+                                */
+
+                                _this._toastService.hideLoadingToast(loadingToast);
+                                _this._toastService.showSuccessToast(event.successMessage || 'Done!');
+                            }
+                            catch (e) {
+                                _this._console.log(e);
+                                _this._toastService.hideLoadingToast(loadingToast);
+                                _this._toastService.showErrorToast(e);
+                            }
                         }
                     }
+                }
+                else {
+                    _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");
                 }
             }
             else {
