@@ -34,11 +34,6 @@
       "type": "preProcessing"
     },
     {
-      "operation": "selectTable",
-      "queryString": "update entrasp.sondaggi_somministrati ss set data_esecuzione=coalesce(ss.data_esecuzione, snd.data_esecuzione) from entrasp.sondaggi snd, entrasp.aziende az where ss.codice_part=az.codice_part and ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=$codice_azienda$ and (ss.codice_part is null or ss.data_esecuzione is null) and ss.stato='C';",
-      "type": "preProcessing"
-    },
-    {
       "operation": "selectForm",
       "type": "postProcessing",
       "queryString": "SELECT mdt.flag_sezioni, '€global_username€' as username, mdt.titolo as titolo_modello_test, snd.id_sondaggio_parent, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
