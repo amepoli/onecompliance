@@ -16,11 +16,21 @@
 		{
 			"type": "main",
 			"operation": "selectTable",
-			"queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
+			"queryString": "select arg.*, ae.interval_value, ae.interval_multiplier, (SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=ae.id_argomento) as flag_evento_parent, ae.flag_scadenza_fissa, ae.data_evento, ae.codice_colore,ae.flag_rigenera_dopo_esecuzione from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.argomenti_eventi ae on arg.id_argomento=ae.id_argomento where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
+		},
+		{
+			"operation": "selectForm",
+			"queryString": "SELECT a.codice_azienda, a.id_argomento, a.codice, a.descrizione_breve, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.interval_multiplier, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.codice_colore,ae.flag_rigenera_dopo_esecuzione FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
+			"type": "main"
 		},
 		{
 			"operation": "insert",
-			"queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, $P{id_argomento_father}) as id_argomento;",
+			"queryString": "select entrasp.argomenti_eventi_insert($descrizione$, $descrizione$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$) as id_argomento;",
+			"type": "main"
+		},
+		{
+			"operation": "update",
+			"queryString": "select entrasp.argomenti_eventi_update($id_argomento$, $descrizione$, $descrizione$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$) as id_argomento;",
 			"type": "main"
 		},
 		{
@@ -54,6 +64,37 @@
 			"operation": "update",
 			"type": "postProcessing",
 			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)"
+		}
+	],
+	"table_multiselection_actions": [
+		{
+			"viewType": "menu",
+			"key": "menutest",
+			"label": "Options",
+			"icon": "more_vert",
+			"menuOptions": [
+				{
+					"key": "create_event",
+					"icon": "create_event",
+					"label": "Crea evento associato",
+					"query": "SELECT entrasp.crea_evento ('€global_codice_azienda€', arg.id_argomento) FROM entrasp.argomenti arg WHERE arg.id_argomento IN ($selected_rows_data$);"
+				},
+				{
+					"key": "delete",
+					"icon": "delete",
+					"label": "Delete",
+					"query": "select true",
+					"confirmAction": true,
+					"reloadOnSuccess": true,
+					"confirmActionMessage": "Eliminare le scadenze ?"
+				},
+				{
+					"key": "merge_argomenti",
+					"icon": "merge_type",
+					"label": "Unifica scadenze",
+					"query": "SELECT entrasp.unifica_argomenti($selected_rows_data$)"
+				}
+			]
 		}
 	],
 	"form_keys": [
@@ -102,20 +143,8 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Descrizione breve",
-			"key": "descrizione_breve",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
+			"newLine": false,
+			"size": 1
 		},
 		{
 			"autoGenerate": false,
@@ -133,6 +162,126 @@
 		{
 			"autoGenerate": false,
 			"format": {
+				"dataType": "number",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "interval_multiplier",
+			"label": "Numero intervalli",
+			"newLine": false,
+			"readOnly": false,
+			"size": 2,
+			"inputEvents": [
+				{
+				  "actionType": "hide",
+				  "eventName": "show_dt_evento",
+				  "condition": "equalTo",
+				  "values": [
+					"1"
+				  ]
+				}
+			  ]
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='time_interval';",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "interval_value",
+			"label": "Unità di misura intervalli",
+			"newLine": false,
+			"readOnly": false,
+			"size": 2,
+			"inputEvents": [
+				{
+				  "actionType": "hide",
+				  "eventName": "show_dt_evento",
+				  "condition": "equalTo",
+				  "values": [
+					"1"
+				  ]
+				}
+			  ]
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "checkbox",
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "flag_scadenza_fissa",
+			"label": "Scadenza Fissa (es. Natale)",
+			"newLine": false,
+			"readOnly": false,
+			"size": 1.75,
+			"outputEvent": {
+				"eventName": "show_dt_evento",
+				"eventTrigger": "change"
+			}
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "checkbox",
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "flag_rigenera_dopo_esecuzione",
+			"label": "Rigenerare alla sua esecuzione?",
+			"newLine": false,
+			"readOnly": false,
+			"size": 1.75
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_evento",
+			"label": "Data evento (L' anno è indifferente)",
+			"newLine": false,
+			"readOnly": false,
+			"size": 2.35,
+			"inputEvents": [
+				{
+				  "actionType": "show",
+				  "eventName": "show_dt_evento",
+				  "condition": "equalTo",
+				  "values": [
+					"1"
+				  ]
+				}
+			  ]
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Codice colore",
+			"key": "codice_colore",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 2.40
+		},
+		{
+			"autoGenerate": false,
+			"format": {
 				"viewType": "combobox",
 				"options": [],
 				"comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
@@ -144,7 +293,7 @@
 			"sameOrigin": false,
 			"newLine": false,
 			"readOnly": false,
-			"size": 6
+			"size": 3
 		},
 		{
 			"autoGenerate": false,
@@ -291,7 +440,7 @@
 			"isPrimary": false,
 			"key": "codice",
 			"label": "Codice",
-			"width": "10%"
+			"width": "7%"
 		},
 		{
 			"format": {
@@ -301,17 +450,16 @@
 			"isPrimary": true,
 			"key": "id_argomento",
 			"label": "ID",
-			"width": "10%"
+			"width": "7%"
 		},
 		{
 			"format": {
 				"dataType": "text"
 			},
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": false,
 			"key": "descrizione_breve",
-			"label": "Titolo",
-			"width": "25%"
+			"label": ""
 		},
 		{
 			"format": {
@@ -320,8 +468,17 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "descrizione",
-			"label": "Descrizione",
-			"width": "30%"
+			"label": "Evento",
+			"width": "28%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "codice_azienda",
+			"label": "Azienda"
 		},
 		{
 			"format": {
@@ -329,9 +486,73 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "codice_azienda",
-			"label": "Azienda",
-			"width": "15%"
+			"key": "interval_multiplier",
+			"label": "Numero intervalli",
+			"width": "9%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "interval_value",
+			"label": "Unità misura intervalli",
+			"width": "9%"
+		},
+		{
+			"format": {
+				"dataType": "boolean"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"isCheckbox": true,
+			"key": "flag_evento_parent",
+			"label": "Evento origine",
+			"width": "7%",
+			"queryFunct": "SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=ae.id_argomento"
+		},
+		{
+			"format": {
+				"dataType": "boolean"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"isCheckbox": true,
+			"key": "flag_rigenera_dopo_esecuzione",
+			"label": "Rigenera dopo esecuzione",
+			"width": "7%"
+		},
+		{
+			"format": {
+				"dataType": "boolean"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"isCheckbox": true,
+			"key": "flag_scadenza_fissa",
+			"label": "Scadenza Fissa",
+			"width": "7%"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_evento",
+			"label": "Data evento",
+			"width": "8%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_colore",
+			"label": "Codice Colore",
+			"width": "8%"
 		}
 	],
 	"querySuffixes": {
