@@ -136,7 +136,8 @@ async function getExtAuthentication(username) {
                 username: username,
                 token_gdrive: '',
                 token_gmail: '',
-                changes_gdrive: ''
+                changes_gdrive: '',
+                changes_gmail: ''
             };
 
             extAuthentication = await createExtAuthentication(item);
@@ -266,11 +267,15 @@ async function loadAuthToken(userid, tokenType) {
     }
 }
 
-async function loadChangesToken(userid) {
+async function loadChangesToken(userid, changes_type) {
     let username = await getUsername(userid);
 
     let extAuthentication = await getExtAuthentication(username);
-    return { result: 'OK', token: extAuthentication ? extAuthentication['changes_gdrive'] : null };
+    if(extAuthentication) {
+        let changesToken = changes_type == "gdrive"? extAuthentication['changes_gdrive']: extAuthentication['changes_gmail'];
+        return { result: 'OK', token: changesToken };
+    }
+    return { result: 'OK', token: null };
 }
 
 async function createChangesToken(userid, authParams) {
@@ -293,7 +298,7 @@ async function createChangesToken(userid, authParams) {
 }
 
 async function getChanges(userid, authParams) {
-    const existingtoken = await loadChangesToken(userid);
+    const existingtoken = await loadChangesToken(userid, "gdrive");
     let token = existingtoken.token;
     _console.log('token', token);
 
@@ -1005,12 +1010,19 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
             subjectsToMatch.push(`${x} +`.toLowerCase());
             subjectsToMatch.push(`${x} &`.toLowerCase());
         });
-        let query = subjectsToSearch.join(' OR '); // `subject:${codiceAzienda} OR subject:${codiceAzienda}>`;
+
+        let query = `{${subjectsToSearch.join(' ')}}`; // `subject:${codiceAzienda} OR subject:${codiceAzienda}>`;
+        
+        const existingtoken = await loadChangesToken(userid, "gmail");
+        if(existingtoken && existingtoken.token && existingtoken.token.length > 0) {
+            query = query + ` after:${existingtoken.token}`;
+        }
+
         _console.log(`getting emails with query: ${query}`);
         let emails = await gmail.users.messages.list({
             userId: 'me',
             q: query
-          });
+        });
         
         _console.log('email messages: ', emails.data.messages);
         if(emails && emails.data && emails.data.messages && emails.data.messages.length > 0) {
@@ -1048,6 +1060,13 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                     console.log('Exception: ', e);
                 }
             }
+            
+            let username = await getUsername(userid);
+            let extAuthentication = await getExtAuthentication(username);
+            let dateNow = new Date();
+            dateNow.setDate(dateNow.getDate());
+            extAuthentication["changes_gmail"] = `${dateNow.getFullYear()}/${dateNow.getMonth()+1}/${dateNow.getDate()}`;
+            await createExtAuthentication(extAuthentication);
 
             // Return emails
             return { result: 'OK', emails: emailsResult };            
@@ -2355,7 +2374,8 @@ exports.handler = async (event, context) => {
             }
             else if (requestType === 'loadChangesToken') {
                 const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
-                body = await loadChangesToken(userid);
+                const changes_type = queryParams['changes_type'];
+                body = await loadChangesToken(userid, changes_type);
             }
             else if (requestType === 'createChangesToken') {
                 const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
