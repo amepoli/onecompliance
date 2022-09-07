@@ -1,9 +1,24 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "scadenziario",
-    "origin": "entrasp.eventi",
-    "businessObjectName": "eventi",
-    "predefinedQueries": [],
+    "origin": "entrasp.compiti",
+    "predefinedQueries": [
+        {
+          "operation": "selectTable",
+          "type": "main",
+          "queryString": "select (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, codice_azienda, codice_compito, data_segnalazione, foreseen_date, titolo, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, (SELECT CASE WHEN stato !='C' THEN FALSE ELSE TRUE END FROM entrasp.sondaggi WHERE id_sondaggio=compiti.id_sondaggio AND codice_azienda=compiti.codice_azienda) as flag_evento_completato, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato, codice_compito_parent, id_sondaggio, id_tipo_segnalazione from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701"
+        },
+        {
+          "operation": "startEvent",
+          "type": "main",
+          "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
+        },
+        {
+          "operation": "stopEvent",
+          "type": "main",
+          "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+        }
+      ],
     "table_multiselection_actions": [
         {
             "viewType": "menu",
@@ -184,7 +199,7 @@
             "isPrimary": false,
             "width": "4%",
             "key": "check",
-            "queryFunct": "select case when eventi.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=eventi.codice_azienda and s.id_sondaggio=eventi.id_sondaggio) != 'C' then true else false end",
+            "queryFunct": "select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end",
             "label": "",
             "style": [
                 {
@@ -195,15 +210,15 @@
             "isButton": true,
             "buttonAction": {
                 "action": "query",
-                "query": "select entrasp.chiudi_evento('£codice_azienda£',£id_evento£)",
+                "query": "select entrasp.chiudi_evento('£codice_azienda£','£codice_compito£')",
                 "keymap": [
                     {
                         "source": "codice_azienda",
                         "destination": "codice_azienda"
                     },
                     {
-                        "source": "id_evento",
-                        "destination": "id_evento"
+                        "source": "codice_compito",
+                        "destination": "codice_compito"
                     }
                 ],
                 "confirmAction": false,
@@ -237,19 +252,16 @@
             },
             "isHidden": false,
             "isPrimary": true,
-            "key": "id_evento",
+            "key": "codice_compito",
             "label": "# Evento",
-            "width": "6%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice",
-            "label": "Codice",
-            "width": "8%"
+            "width": "6%",
+            "style": [
+                {
+                  "value": "*",
+                  "background_color": "lightblue",
+                  "text_align": "center"
+                }
+            ]
         },
         {
             "format": {
@@ -257,7 +269,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "data_rif",
+            "key": "data_segnalazione",
             "label": "Data Riferimento",
             "width": "7%"
         },
@@ -267,7 +279,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "data_scadenza",
+            "key": "foreseen_date",
             "label": "Data Scadenza",
             "width": "7%"
         },
@@ -277,7 +289,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "descrizione",
+            "key": "titolo",
             "label": "Descrizone",
             "width": "23%"
         },
@@ -293,26 +305,6 @@
             "queryFunct": "entrasp.argomenti_descr(id_argomento_tipo_evento)"
         },
         {
-            "format": {
-                "dataType": "datetime"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_inizio_validita",
-            "label": "Inizio",
-            "width": "8%"
-        },
-        {
-            "format": {
-                "dataType": "datetime"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_fine_validita",
-            "label": "Fine",
-            "width": "8%"
-        },
-        {
 			"format": {
 				"dataType": "boolean"
 			},
@@ -322,15 +314,56 @@
 			"key": "flag_evento_completato",
 			"label": "Evento eseguito",
 			"width": "5%",
-			"queryFunct": "SELECT CASE WHEN stato !='C' THEN FALSE ELSE TRUE END FROM entrasp.sondaggi WHERE id_sondaggio=eventi.id_sondaggio AND codice_azienda=eventi.codice_azienda"
+			"queryFunct": "SELECT CASE WHEN stato !='C' THEN FALSE ELSE TRUE END FROM entrasp.sondaggi WHERE id_sondaggio=compiti.id_sondaggio AND codice_azienda=compiti.codice_azienda"
 		},
+        {
+            "format": {
+              "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
+            "label": "Stato",
+            "width": "8%",
+            "style": [
+              {
+                "value": "Chiuso",
+                "font_color": "PaleGreen",
+                "font_weight": "500",
+                "background_color": "Green",
+                "text_align": "center"
+              },
+              {
+                "value": "Provvisorio",
+                "font_color": "MistyRose",
+                "font_weight": "500",
+                "background_color": "MediumPurple",
+                "text_align": "center"
+              },
+              {
+                "value": "Aperto",
+                "font_color": "white",
+                "font_weight": "500",
+                "background_color": "royalblue",
+                "text_align": "center"
+              },
+              {
+                "value": "Pianificato",
+                "font_color": "DarkRed",
+                "font_weight": "500",
+                "background_color": "orange",
+                "text_align": "center"
+              }
+            ]
+          },
         {
             "format": {
                 "dataType": "number"
             },
             "isHidden": true,
             "isPrimary": false,
-            "key": "id_evento_parent",
+            "key": "codice_compito_parent",
             "label": ""
         },
         {
@@ -341,7 +374,25 @@
             "isPrimary": false,
             "key": "id_sondaggio",
             "label": ""
-        }
+        },
+        {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "id_somministrazione",
+        "label": ""
+      },
+      {
+        "format": {
+          "dataType": "number"
+        },
+        "isHidden": true,
+        "isPrimary": false,
+        "key": "id_tipo_segnalazione",
+        "label": ""
+      }
     ],
     "subTables": [
         {
