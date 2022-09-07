@@ -16,21 +16,21 @@
 		{
 			"type": "main",
 			"operation": "selectTable",
-			"queryString": "select arg.*, ae.interval_value, ae.interval_multiplier, (SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=ae.id_argomento) as flag_evento_parent, ae.flag_scadenza_fissa, ae.data_evento, ae.codice_colore,ae.flag_rigenera_dopo_esecuzione from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.argomenti_eventi ae on arg.id_argomento=ae.id_argomento where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
+			"queryString": "select arg.*, ae.note, ae.interval_value, ae.interval_multiplier, (SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=ae.id_argomento) as flag_evento_parent, ae.flag_scadenza_fissa, ae.data_evento, ae.codice_colore,ae.flag_rigenera_dopo_esecuzione from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.argomenti_eventi ae on arg.id_argomento=ae.id_argomento where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
 		},
 		{
 			"operation": "selectForm",
-			"queryString": "SELECT a.codice_azienda, a.id_argomento, a.codice, a.descrizione_breve, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.interval_multiplier, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.codice_colore,ae.flag_rigenera_dopo_esecuzione FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
+			"queryString": "SELECT a.codice_azienda, a.id_argomento, a.codice, a.descrizione_breve, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.interval_multiplier, ae.note, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.codice_colore,ae.flag_rigenera_dopo_esecuzione FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
 			"type": "main"
 		},
 		{
 			"operation": "insert",
-			"queryString": "select entrasp.argomenti_eventi_insert($descrizione$, $descrizione$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$) as id_argomento;",
+			"queryString": "select entrasp.argomenti_eventi_insert($descrizione$, $descrizione$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$) as id_argomento;",
 			"type": "main"
 		},
 		{
 			"operation": "update",
-			"queryString": "select entrasp.argomenti_eventi_update($id_argomento$, $descrizione$, $descrizione$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$) as id_argomento;",
+			"queryString": "select entrasp.argomenti_eventi_update($id_argomento$, $descrizione$, $descrizione$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$) as id_argomento;",
 			"type": "main"
 		},
 		{
@@ -154,6 +154,20 @@
 			},
 			"label": "Descrizione",
 			"key": "descrizione",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 4
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Riferimento normativo",
+			"key": "note",
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
@@ -553,6 +567,15 @@
 			"key": "codice_colore",
 			"label": "Codice Colore",
 			"width": "8%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "note",
+			"label": "Riferimento Normativo"
 		}
 	],
 	"querySuffixes": {
