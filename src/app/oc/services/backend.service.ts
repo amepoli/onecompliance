@@ -388,9 +388,9 @@ export class BackendService {
   
   }
 
-  loadChangesToken(authToken: any) {
+  loadChangesToken(authToken: any, changes_type: string) {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { request_type: 'loadChangesToken' };
+    this.myGetInit.queryStringParameters = { request_type: 'loadChangesToken', changes_type: changes_type };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.googleApiName, this.myGetInit));
   }
 
