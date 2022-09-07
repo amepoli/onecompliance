@@ -23,6 +23,10 @@ const readXlsxFile = require('read-excel-file/node');
 
 const helperFuncts = require('./helperFuncts');
 
+const queryKeys = ['badgeQuery', 'queryString', 'query', 'comboQuery', 
+                   'queryFunct', 'insertUpdateFunct', 'conditionQuery',
+                   'onSuccessQuery', 'querySuffixes'];
+
 var global_variables = {};
 
 function isDataTypeString(type) {
@@ -1872,6 +1876,25 @@ function hasIsInsertQuery(entry_params, keys, queryString) {
     return returnValue;
 }
 
+function removeProperty(source, properties) {
+    if (typeof source === 'object' && source != null) {
+      if (Array.isArray(source)) {
+        for (var i=0; i< source.length; i++) {
+          removeProperty(source[i], properties);
+        }
+      } else {
+        for (key in source) {
+          if (properties.indexOf(key) > -1) {
+            delete source[key];
+          } else { 
+            removeProperty(source[key], properties);
+          }
+        }
+      }
+    }
+    
+    return source;
+  }
 // main function starts here
 
 exports.handler = async (event, context) => {
@@ -2356,7 +2379,9 @@ exports.handler = async (event, context) => {
     }
 
     queryData['profileHideActions'] = getProfileHideActions(queryParams.entry_name, profileData);
-    console.log(queryData);
+    
+    queryData = removeProperty(queryData, queryKeys);
+    console.log('queryData: ',queryData);
 
     return {
         "isBase64Encoded": false,
