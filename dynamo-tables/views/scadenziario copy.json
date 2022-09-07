@@ -1,0 +1,412 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "scadenziario",
+    "origin": "entrasp.eventi",
+    "predefinedQueries": [
+      ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuEventi",
+            "label": "Azioni",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "delete_eventi",
+                    "icon": "delete",
+                    "label": "Elimina",
+                    "confirmAction": true,
+                    "confirmActionMessage": "Eliminare definitivamente gli eventi selezionati e i relativi sondaggi?",
+                    "query": "select entrasp.cancella_evento(codice_azienda,id_evento) from entrasp.eventi where codice_azienda||'-'||id_evento in ($selected_rows_data$)",
+                    "reloadOnSuccess": true
+                },
+                {
+                    "key": "close_eventi",
+                    "icon": "check",
+                    "label": "Contrassegna come eseguiti",
+                    "confirmAction": true,
+                    "confirmActionMessage": "Contrassegnare come eseguiti gli eventi selezionati?",
+                    "query": "select entrasp.chiudi_evento(codice_azienda,id_evento) from entrasp.eventi where codice_azienda||'-'||id_evento in ($selected_rows_data$);",
+                    "reloadOnSuccess": true
+                }
+            ]
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_evento",
+            "label": "# Evento",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "newLine": false,
+            "readOnly": false,
+            "size": 4
+        },
+        {
+            "autoGenerate": false,
+			"format": {
+				"dataType": "text",
+                "viewType": "checkbox"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+            "readOnly": true,
+			"key": "flag_evento_completato",
+			"label": "Evento eseguito",
+			"queryFunct": "SELECT CASE WHEN stato !='C' THEN FALSE ELSE TRUE END FROM entrasp.sondaggi WHERE id_sondaggio=eventi.id_sondaggio AND codice_azienda=eventi.codice_azienda",
+            "newLine": true
+		},
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_son in (select entrasp.descendants_of_argomento(45417,2)) and id_argomento_son != 45417;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "validator": "Validators.required",
+                        "name": "required",
+                        "message": "Specificare il tipo evento"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_evento",
+            "label": "Tipo evento",
+            "newLine": false,
+            "readOnly": false,
+            "size": 4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "name": "required",
+                        "message": "Inserire una data di riferimento",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_rif",
+            "label": "Data di Riferimento",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "datetime",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_inizio_validita",
+            "label": "Inizio",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "datetime",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fine_validita",
+            "label": "Fine",
+            "newLine": true,
+            "readOnly": false,
+            "size": 2
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "key": "check",
+            "queryFunct": "select case when eventi.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=eventi.codice_azienda and s.id_sondaggio=eventi.id_sondaggio) != 'C' then true else false end",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "check",
+                    "value": "check"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "action": "query",
+                "query": "select entrasp.chiudi_evento('£codice_azienda£',£id_evento£)",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_evento",
+                        "destination": "id_evento"
+                    }
+                ],
+                "confirmAction": false,
+                "onSuccessAction": "reload",
+                "target": "sondaggi",
+                "viewType": "form",
+                "onSuccessActionKeymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            }
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": ""
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_evento",
+            "label": "# Evento",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_rif",
+            "label": "Data Riferimento",
+            "width": "7%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_scadenza",
+            "label": "Data Scadenza",
+            "width": "7%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizone",
+            "width": "23%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_tipo_evento",
+            "label": "Tipo evento",
+            "width": "21%",
+            "queryFunct": "entrasp.argomenti_descr(id_argomento_tipo_evento)"
+        },
+        {
+            "format": {
+                "dataType": "datetime"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_inizio_validita",
+            "label": "Inizio",
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "datetime"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fine_validita",
+            "label": "Fine",
+            "width": "8%"
+        },
+        {
+			"format": {
+				"dataType": "boolean"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"isCheckbox": true,
+			"key": "flag_evento_completato",
+			"label": "Evento eseguito",
+			"width": "5%",
+			"queryFunct": "SELECT CASE WHEN stato !='C' THEN FALSE ELSE TRUE END FROM entrasp.sondaggi WHERE id_sondaggio=eventi.id_sondaggio AND codice_azienda=eventi.codice_azienda"
+		},
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_evento_parent",
+            "label": ""
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": ""
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "scadenziario_sub_of_scadenziario",
+            "label": "Eventi associati",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_evento",
+                    "son": "id_evento_parent"
+                }
+            ]
+        },
+        {
+            "entryKey": "sondaggi_sub_of_scadenziario",
+            "label": "Sondaggi associati",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_evento",
+                    "son": "id_evento"
+                }
+            ]
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "documentation",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "multi-attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "import_export",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "startEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "stopEvent",
+            "viewType": "form"
+        }
+    ]
+}
