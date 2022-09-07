@@ -304,12 +304,13 @@ export class BackendService {
       subject: subject,
       body: {
         header: header,
-        query: query,
+        /* query: query, */
         footer: footer
       },
       company: company,
-      conditionQuery: conditionQuery,
-      onSuccessQuery: onSuccessQuery,
+      /*** COMMENT TO AVOID SQL INJECTION, TO FIX, NOW IT CRASHESH ***/
+      /* conditionQuery: conditionQuery,
+      onSuccessQuery: onSuccessQuery, */
       to: { list: to },
       cc: { list: cc },
       ccn: { list: ccn }
