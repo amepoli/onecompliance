@@ -295,26 +295,30 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                         autore: _this.authService.getUsername()
                     };
                     const responseCheck: any = await _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, md5hash, responseURL.filename, fileParams).toPromise();
+                    _this._console.log('responseCheck: ', responseCheck);
                     if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
-                        _this.fileService.requestReload(_this.data.entryName);
-                        if (_this.data.onSave) {
-                            _this.data.onSave(true);
-                        }
                         _this._console.log(responseCheck);
                         if(_this.authService.getSyncMode() === 'google') {
-                            const googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), hash).toPromise();
-                            if(googleDriveFileCopyParamsResponse.result === 'OK') {
-                                if(googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
-                                    let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
-                                    let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
-                                    const copyFromS3ToDriveResponse: any = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, _this.authService.loadGoogleAuth('gdrive')).toPromise();
-                                    _this._console.log(googledrivepath, s3path);
-                                    _this._console.log(copyFromS3ToDriveResponse);
+                            try {
+                                const googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), hash).toPromise();
+                                _this._console.log('googleDriveFileCopyParamsResponse', googleDriveFileCopyParamsResponse);
+                                if(googleDriveFileCopyParamsResponse.result === 'OK') {
+                                    if(googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
+                                        let auth = await _this.authService.loadGoogleAuth('gdrive');
+                                        let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
+                                        let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
+                                        const copyFromS3ToDriveResponse: any = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, auth).toPromise();
+                                        _this._console.log(googledrivepath, s3path);
+                                        _this._console.log('copyFromS3ToDriveResponse', copyFromS3ToDriveResponse);
+                                    }
                                 }
                             }
-                            _this._console.log('googleDriveFileCopyParamsResponse', googleDriveFileCopyParamsResponse);
+                            catch(e) {
+                                _this._console.error("Google upload error: ", e);
+                            }
                         }
                         else {
+                            _this._console.error("You are not subscribed to use Google services");
                             _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");    
                         }
                         // Show success snackbar
@@ -324,6 +328,10 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                         else {
                             _this._toastService.showSuccessToast("File uploaded successfully");
+                        }
+                        _this.fileService.requestReload(_this.data.entryName);
+                        if (_this.data.onSave) {
+                            _this.data.onSave(true);
                         }
                     }
                     else {

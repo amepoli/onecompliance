@@ -303,22 +303,27 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                     autore: _this.authService.getUsername()
                 };
                 let responseCheck: any = await _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, md5hash, responseURL.filename, fileParams).toPromise();
+                _this._console.log(responseCheck);
                 if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
-                    _this.fileService.requestReload(_this.data.entryName);
-                    _this._console.log(responseCheck);
-                    
                     if(_this.authService.getSyncMode() === 'google') {
                         const googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), hash).toPromise();
-                        if(googleDriveFileCopyParamsResponse.result === 'OK') {
-                            if(googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
-                                let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
-                                let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
-                                const copyFromS3ToDriveResponse: any = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, _this.authService.loadGoogleAuth('gdrive')).toPromise();
-                                _this._console.log(googledrivepath, s3path);
-                                _this._console.log(copyFromS3ToDriveResponse);
+                        _this._console.log(googleDriveFileCopyParamsResponse);
+                        _this._console.log('Uploading to google');
+                        try {
+                            if(googleDriveFileCopyParamsResponse.result === 'OK') {
+                                if(googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
+                                    let auth = await _this.authService.loadGoogleAuth('gdrive');
+                                    let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
+                                    let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
+                                    const copyFromS3ToDriveResponse: any = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, auth).toPromise();
+                                    _this._console.log(googledrivepath, s3path);
+                                    _this._console.log(copyFromS3ToDriveResponse);
+                                }
                             }
                         }
-                        _this._console.log(googleDriveFileCopyParamsResponse);
+                        catch(e) {
+                            _this._console.error("Google upload error: ", e);
+                        }
                     }
 
                     // Show success snackbar
@@ -336,7 +341,8 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                             _this.data.onSave(true);
                         }
                         _this.isSaving = false;
-                    }
+                        _this.fileService.requestReload(_this.data.entryName);
+                    }                    
                 }
                 else {
                     // Show error snackbar
