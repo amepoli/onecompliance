@@ -389,11 +389,16 @@ async function getLocalSharedFolderId(drivePath) {
                 pageSize: 5,
                 fields: 'nextPageToken, files(id, name)',
             });
-            response = JSON.parse(response);
+            if(response) {
+                try {
+                    response = JSON.parse(response);
+                }
+                catch(e) { }
+            }
         }
         catch (e) { }
         _console.log('response', JSON.stringify(response));
-        if (response.data && response.data.files && response.data.files.length > 0) {
+        if (response && response.data && response.data.files && response.data.files.length > 0) {
             // Folder exists
             return { id: response.data.files[0].id, isShared: true, driveId: response.data.files[0].driveId };
         }
@@ -403,9 +408,14 @@ async function getLocalSharedFolderId(drivePath) {
             response = await drive.files.list({
                 q: `'root' in parents and mimeType='${folderMime}' and name='${folderName}' and trashed=false`,
                 pageSize: 5,
-                fields: 'nextPageToken, files(id, name)',
+                fields: 'nextPageToken, files(id, name, mimeType)',
             });
-            response = JSON.parse(response);
+            if(response) {
+                try {
+                    response = JSON.parse(response);
+                }
+                catch(e) { }
+            }
         }
         catch (e) { }
         _console.log('response', response);
