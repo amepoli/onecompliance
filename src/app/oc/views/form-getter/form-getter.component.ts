@@ -392,7 +392,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             _this.backendService.sendEmailUsingTemplate(data);
         } else {
             _this._dialogService.showLoadingDialog('Sending Email', 'Sending email. Please wait...');
-            const subscription = _this.backendService.sendEmail(data.subject, data.header, data.query, data.footer, data.company, data.conditionQuery, data.onSuccessQuery, data.sender, data.to, data.cc, data.ccn)
+            const subscription = _this.backendService.sendEmail(data.subject, data.header, data.footer, data.company, data.sender, data.to, data.cc, data.ccn)
                 .subscribe(
                     result => {
                         _this._dialogService.closeDialog();
@@ -1284,11 +1284,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         {
                             subject: subject,
                             header: body,
-                            query: null,
                             footer: null,
                             company: _this.authService.getCurrentCompany(_this.currentKeys),
-                            conditionQuery: null,
-                            onSuccessQuery: null,
                             sender: sender,
                             to: recipients,
                             cc: cc,

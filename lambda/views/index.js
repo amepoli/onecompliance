@@ -4,6 +4,11 @@ const dynamo = new AWS.DynamoDB.DocumentClient();
 
 const helperFuncts = require('./helperFuncts');
 
+const queryKeys = ['badgeQuery', 'queryString', 'query', 'comboQuery', 
+                   'queryFunct', 'insertUpdateFunct', 'conditionQuery',
+                   'onSuccessQuery', 'querySuffixes'];
+
+
 async function getProfile(userid, company) {
 
     var userParams = {
@@ -130,6 +135,26 @@ function replaceJSONParams(JSONString, paramsObject) {
     return JSONString;
 }
 
+function removeProperty(source, properties) {
+    if (typeof source === 'object' && source != null) {
+      if (Array.isArray(source)) {
+        for (var i=0; i< source.length; i++) {
+          removeProperty(source[i], properties);
+        }
+      } else {
+        for (key in source) {
+          if (properties.indexOf(key) > -1) {
+            delete source[key];
+          } else { 
+            removeProperty(source[key], properties);
+          }
+        }
+      }
+    }
+    
+    return source;
+  }
+
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
@@ -192,6 +217,8 @@ exports.handler = async (event, context) => {
         };
     }
 
+    data = removeProperty(data, queryKeys);
+    console.log('Data: ',data);
 
     return {
         "isBase64Encoded": false,
