@@ -133,7 +133,7 @@
             "isPrimary": false,
             "readOnly": false,
             "key": "close",
-            "queryFunct": "SELECT CASE WHEN stato !='C' THEN FALSE ELSE TRUE END FROM entrasp.sondaggi WHERE id_sondaggio=compiti.id_sondaggio AND codice_azienda=compiti.codice_azienda",
+            "queryFunct": "SELECT CASE WHEN compiti.stato !='C' THEN FALSE ELSE TRUE END",
             "label": "Scadenza adempita",
             "outputEvent": {
 				"eventName": "chiudi_riapri_evento_form",
@@ -143,21 +143,9 @@
 				{
 					"eventName": "chiudi_riapri_evento_form",
 					"actionType": "query",
-					"condition": "equalTo",
-					"values": [
-                        "1"
-                    ],
-                    "queryFunct": "select entrasp.chiudi_evento('£codice_azienda£','£codice_compito£')",
-					"outputEventWhenComplete": "reloadScadenze"
-				},
-                {
-					"eventName": "chiudi_riapri_evento_form",
-					"actionType": "query",
-					"condition": "equalTo",
-					"values": [
-                        "0"
-                    ],
-                    "queryFunct": "select true",
+					"condition": "notEqualTo",
+					"values": [],
+                    "queryFunct": "select entrasp.chiudi_riapri_evento('£codice_azienda£','£codice_compito£',£close£)",
 					"outputEventWhenComplete": "reloadScadenze"
 				}
 			]
