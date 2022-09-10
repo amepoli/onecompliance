@@ -20,7 +20,7 @@
 		},
 		{
 			"operation": "selectForm",
-			"queryString": "SELECT a.codice_azienda, a.id_argomento, a.codice, a.descrizione_breve, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.id_articolo_normativo, ae.interval_multiplier, ae.note, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.codice_colore,ae.flag_rigenera_dopo_esecuzione, (select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417))AND id_argomento_father != 45417) as id_argomento_evento_scatenante FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
+			"queryString": "SELECT a.codice_azienda, (SELECT arg.id_argomento FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa2 ON arg.id_argomento=aa2.id_argomento_son WHERE aa2.id_argomento_father = 45417 and aa2.id_argomento_son=a.id_argomento limit 1) as id_argomento_scatenante, a.id_argomento, a.codice, a.descrizione_breve, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.id_articolo_normativo, ae.interval_multiplier, ae.note, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.codice_colore,ae.flag_rigenera_dopo_esecuzione, (select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417))AND id_argomento_father != 45417) as id_argomento_evento_scatenante FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
 			"type": "main"
 		},
 		{
@@ -179,7 +179,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name  FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 45417;",
+				"comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 45417;",
 				"options": [],
 				"viewType": "combobox",
 				"dataType": "number"
@@ -190,7 +190,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"queryFunct": "select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417,1)) AND id_argomento_father != 45417",
+			"queryFunct": "SELECT arg.id_argomento as id_argomento_evento_scatenante FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 45417 and id_argomento_son=$id_argomento$",
 			"size": 3
 		},
 		{
