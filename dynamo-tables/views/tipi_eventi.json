@@ -441,8 +441,19 @@
 				"viewType": "combobox"
 			},
 			"label": "Argomento padre",
+			"newLine": false,
+			"queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$), 1)"
+		},
+		{
+			"fieldName": "tipo_int_s",
+			"format": {
+				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=113 where arg.flag_classificazione=true order by descrizione",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Tipo intermediario",
 			"newLine": true,
-			"queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
+			"queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($tipo_int_s$), 1)"
 		}
 	],
 	"table_keys": [
