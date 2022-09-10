@@ -402,7 +402,7 @@
 			},
 			"label": "Solo Principali",
 			"newLine": false,
-			"queryCond": "id_argomento not in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_relazione=45069)"
+			"queryCond": "arg.id_argomento not in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_relazione=45069)"
 		},
 		{
 			"format": {
@@ -414,7 +414,7 @@
 			"fieldName": "codice_ruolo_s",
 			"label": "Ruolo",
 			"newLine": false,
-			"queryCond": "id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)"
+			"queryCond": "arg.id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)"
 		},
 		{
 			"label": "codice_azienda_s",
@@ -434,7 +434,7 @@
 			},
 			"label": "$P{label_id}",
 			"newLine": false,
-			"queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
+			"queryCond": "arg.id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
 		},
 		{
 			"fieldName": "argomento_s",
@@ -445,18 +445,18 @@
 			},
 			"label": "Argomento padre",
 			"newLine": false,
-			"queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$), 1)"
+			"queryCond": "array[arg.id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$), 1)"
 		},
 		{
 			"fieldName": "tipo_int_s",
 			"format": {
-				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=113 where arg.flag_classificazione=true order by descrizione",
+				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=133 order by descrizione",
 				"options": [],
 				"viewType": "combobox"
 			},
 			"label": "Tipo intermediario",
 			"newLine": true,
-			"queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($tipo_int_s$), 1)"
+			"queryCond": "arg.id_argomento in (select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$tipo_int_s$)"
 		}
 	],
 	"table_keys": [
