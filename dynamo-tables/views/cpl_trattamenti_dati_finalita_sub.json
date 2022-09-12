@@ -13,8 +13,12 @@
       "operation": "update",
       "queryString": "update entrasp.cpl_trattamenti_dati_finalita fin1 set codice_articolo_normativo=fin2.codice_articolo_normativo, id_testo_normativo=fin2.id_testo_normativo from entrasp.cpl_trattamenti_dati_finalita fin2 where fin1.codice_articolo_normativo is null and fin1.id_argomento_finalita=fin2.id_argomento_finalita and fin2.codice_articolo_normativo is not null and fin2.id_testo_normativo is not null;",
       "type": "postProcessing"
+    },
+    {
+      "operation": "selectTable",
+      "queryString": "select fin.*, entrasp.argomenti_descr_breve(id_argomento_finalita) as finalita_trattamento, an.codice_articolo_normativo||'-'||an.rubrica||'-'||tn.descrizione as rif_normativo from entrasp.cpl_trattamenti_dati_finalita fin left join entrasp.articoli_normativi an on fin.id_articolo_normativo=an.id_articolo_normativo left join entrasp.testi_normativi tn on an.id_testo_normativo=tn.id_testo_normativo where codice_azienda=$codice_azienda$ and id_trattamento_dati=$id_trattamento_dati$",
+      "type": "main"
     }
-
   ],
   "form_keys": [
     {
@@ -61,64 +65,6 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select codice_articolo_normativo as id, codice_articolo_normativo as name from entrasp.articoli_normativi where id_testo_normativo=£id_testo_normativo£",
-        "dataType": "text",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice_articolo_normativo",
-      "label": "Articolo Normativo",
-      "outputEvent": {
-        "eventName": "change_cod_art_norm",
-        "eventTrigger": "blur"
-      },
-      "inputEvents": [
-        {
-          "eventName": "change_cod_art_norm",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "update entrasp.cpl_trattamenti_dati_finalita f1 set id_testo_normativo=f2.id_testo_normativo, codice_articolo_normativo=f2.codice_articolo_normativo from entrasp.cpl_trattamenti_dati_finalita f2 where f1.finalita_trattamento=f2.finalita_trattamento and f2.id_testo_normativo is not null and f2.codice_articolo_normativo is not null and f1.id_testo_normativo is null and f1.codice_articolo_normativo is null"
-        }
-      ],
-      "readOnly": false,
-      "size": 2,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "select id_testo_normativo as id, riferimenti as name from entrasp.testi_normativi",
-        "options": [],
-        "viewType": "combobox",
-        "value": "35"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_testo_normativo",
-      "label": "Testo normativo",
-      "outputEvent": {
-        "eventName": "change_testo_norm",
-        "eventTrigger": "select"
-      },
-      "inputEvents": [
-        {
-          "eventName": "change_testo_norm",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "update entrasp.cpl_trattamenti_dati_finalita f1 set id_testo_normativo=f2.id_testo_normativo, codice_articolo_normativo=f2.codice_articolo_normativo from entrasp.cpl_trattamenti_dati_finalita f2 where f1.finalita_trattamento=f2.finalita_trattamento and f2.id_testo_normativo is not null and f2.codice_articolo_normativo is not null and f1.id_testo_normativo is null and f1.codice_articolo_normativo is null"
-        }
-      ],
-      "readOnly": false,
-      "size": 5,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
         "viewType": "textarea",
         "dataType": "text"
       },
@@ -128,8 +74,24 @@
       "label": "Annotazioni",
       "readOnly": false,
       "size": 5,
-      "newLine": false
-    }
+      "newLine": true
+    },
+    {
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT an.id_articolo_normativo AS id, an.codice_articolo_normativo||'-'||an.rubrica||'-'||tn.descrizione AS name  FROM entrasp.articoli_normativi an INNER JOIN entrasp.testi_normativi tn ON an.id_testo_normativo=tn.id_testo_normativo;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "id_articolo_normativo",
+			"label": "Riferimento normativo",
+			"newLine": true,
+			"readOnly": false,
+			"size": 10
+		}
   ],
   "table_keys": [
     {
@@ -216,30 +178,10 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "codice_articolo_normativo",
-      "width": "15%",
-      "label": "Articolo Normativo"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_testo_normativo",
-      "label": "Testo Normativo"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "testo_normativo",
-      "width": "18%",
-      "queryFunct": "entrasp.testi_normativi_rif_descr2(id_testo_normativo)",
-      "label": "Testo Normativo"
-    }
+      "key": "rif_normativo",
+      "width": "40%",
+      "label": "Riferimento normativo"
+    }  
   ],
   "hideActions": [
     {
