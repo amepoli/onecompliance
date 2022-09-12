@@ -16,21 +16,21 @@
 		{
 			"type": "main",
 			"operation": "selectTable",
-			"queryString": "select arg.*, ae.note, codice_articolo_normativo as descr_articolo_normativo, ae.interval_value, ae.interval_multiplier, (SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=ae.id_argomento) as flag_evento_parent, ae.flag_scadenza_fissa, ae.data_evento, ae.codice_colore,ae.flag_rigenera_dopo_esecuzione from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.argomenti_eventi ae on arg.id_argomento=ae.id_argomento left join entrasp.articoli_normativi an on ae.id_articolo_normativo=an.id_articolo_normativo where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
+			"queryString": "select arg.*, ae.note, (select codice_articolo_normativo from entrasp.articoli_normativi where id_articolo_normativo=ae.id_articolo_normativo) as descr_articolo_normativo, ae.interval_value, ae.interval_multiplier, (SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=ae.id_argomento) as flag_evento_parent, ae.flag_scadenza_fissa, ae.data_evento, ae.codice_colore,ae.flag_rigenera_dopo_esecuzione from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.argomenti_eventi ae on arg.id_argomento=ae.id_argomento where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
 		},
 		{
 			"operation": "selectForm",
-			"queryString": "SELECT a.codice_azienda, (SELECT arg.id_argomento FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa2 ON arg.id_argomento=aa2.id_argomento_son WHERE aa2.id_argomento_father = 45417 and aa2.id_argomento_son=a.id_argomento limit 1) as id_argomento_scatenante, a.id_argomento, a.codice, a.descrizione_breve, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.id_articolo_normativo, ae.interval_multiplier, ae.note, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.codice_colore,ae.flag_rigenera_dopo_esecuzione FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
+			"queryString": "SELECT a.codice_azienda, a.id_argomento, a.codice, a.descrizione_breve, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.id_articolo_normativo, ae.interval_multiplier, ae.note, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.codice_colore,ae.flag_rigenera_dopo_esecuzione, (select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417))AND id_argomento_father != 45417) as id_argomento_evento_scatenante FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
 			"type": "main"
 		},
 		{
 			"operation": "insert",
-			"queryString": "select entrasp.argomenti_eventi_insert($descrizione$, $descrizione$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$) as id_argomento;",
+			"queryString": "select entrasp.argomenti_eventi_insert($descrizione$, $descrizione$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$) as id_argomento;",
 			"type": "main"
 		},
 		{
 			"operation": "update",
-			"queryString": "select entrasp.argomenti_eventi_update($id_argomento$, $descrizione$, $descrizione$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$) as id_argomento;",
+			"queryString": "select entrasp.argomenti_eventi_update($id_argomento$, $descrizione$, $descrizione$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$) as id_argomento;",
 			"type": "main"
 		},
 		{
@@ -179,7 +179,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 45417;",
+				"comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name  FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 45417;",
 				"options": [],
 				"viewType": "combobox",
 				"dataType": "number"
@@ -190,7 +190,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"queryFunct": "SELECT arg.id_argomento as id_argomento_evento_scatenante FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 45417 and id_argomento_son=$id_argomento$",
+			"queryFunct": "select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417)) AND id_argomento_father != 45417",
 			"size": 3
 		},
 		{
@@ -402,7 +402,7 @@
 			},
 			"label": "Solo Principali",
 			"newLine": false,
-			"queryCond": "arg.id_argomento not in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_relazione=45069)"
+			"queryCond": "id_argomento not in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_relazione=45069)"
 		},
 		{
 			"format": {
@@ -414,7 +414,7 @@
 			"fieldName": "codice_ruolo_s",
 			"label": "Ruolo",
 			"newLine": false,
-			"queryCond": "arg.id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)"
+			"queryCond": "id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)"
 		},
 		{
 			"label": "codice_azienda_s",
@@ -434,7 +434,7 @@
 			},
 			"label": "$P{label_id}",
 			"newLine": false,
-			"queryCond": "arg.id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
+			"queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
 		},
 		{
 			"fieldName": "argomento_s",
@@ -444,19 +444,8 @@
 				"viewType": "combobox"
 			},
 			"label": "Argomento padre",
-			"newLine": false,
-			"queryCond": "array[arg.id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$), 1)"
-		},
-		{
-			"fieldName": "tipo_int_s",
-			"format": {
-				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=133 order by descrizione",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Tipo intermediario",
 			"newLine": true,
-			"queryCond": "arg.id_argomento in (select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$tipo_int_s$)"
+			"queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
 		}
 	],
 	"table_keys": [
