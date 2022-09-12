@@ -10,6 +10,16 @@
             "queryString": "select (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, foreseen_date, titolo, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, entrasp.transcodifiche_transcodifica('STATO_EVENTI', stato) as stato, codice_compito_parent, id_sondaggio, id_tipo_segnalazione from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701"
         },
         {
+            "operation": "insert",
+            "queryString": "SELECT entrasp.crea_evento('€global_codice_azienda€', $id_argomento_tipo_evento$, $data_segnalazione$::date, null, $titolo$) as id_argomento;",
+            "type": "main"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $codice_compito$ is null as label;",
+            "type": "main"
+        },
+        {
             "operation": "startEvent",
             "type": "main",
             "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
@@ -106,25 +116,25 @@
             "newLine": false,
             "inputEvents": [
                 {
-                  "eventName": "codice_colore_change_compiti",
-                  "condition": "none",
-                  "values": [],
-                  "actionType": "query_style",
-                  "styleAttribute": "background_color",
-                  "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_EVENTI' and codice=$stato$",
-                  "outputEventWhenComplete": "codice_colore_change_compiti2"
+                    "eventName": "codice_colore_change_compiti",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_EVENTI' and codice=$stato$",
+                    "outputEventWhenComplete": "codice_colore_change_compiti2"
                 },
                 {
-                  "eventName": "codice_colore_change_compiti2",
-                  "condition": "none",
-                  "values": [],
-                  "actionType": "query_style",
-                  "styleAttribute": "font_color",
-                  "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_EVENTI' and codice=$stato$"
+                    "eventName": "codice_colore_change_compiti2",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_EVENTI' and codice=$stato$"
                 }
             ]
         },
-        {   
+        {
             "autoGenerate": false,
             "format": {
                 "viewType": "checkbox"
@@ -136,34 +146,42 @@
             "queryFunct": "SELECT CASE WHEN compiti.stato !='C' THEN FALSE ELSE TRUE END",
             "label": "Scadenza adempita",
             "outputEvent": {
-				"eventName": "chiudi_riapri_evento_form",
-				"eventTrigger": "press"
-			},
-			"inputEvents": [
-				{
-					"eventName": "chiudi_riapri_evento_form",
-					"actionType": "query",
-					"condition": "notEqualTo",
-					"values": [],
+                "eventName": "chiudi_riapri_evento_form",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "chiudi_riapri_evento_form",
+                    "actionType": "query",
+                    "condition": "notEqualTo",
+                    "values": [],
                     "queryFunct": "select entrasp.chiudi_riapri_evento('£codice_azienda£','£codice_compito£',£close£)",
-					"outputEventWhenComplete": "reloadScadenze"
-				}
-			]
+                    "outputEventWhenComplete": "reloadScadenze"
+                }
+            ]
         },
         {
             "autoGenerate": false,
             "format": {
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_son in (select entrasp.descendants_of_argomento(45417,2)) and id_argomento_son != 45417;",
+                "options": [],
+                "viewType": "combobox",
                 "dataType": "text",
-                "viewType": "input"
+                "validations": [
+                    {
+                        "validator": "Validators.required",
+                        "name": "required",
+                        "message": "Specificare il tipo evento"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "descr_tipo_evento",
+            "key": "id_argomento_tipo_evento",
             "label": "Tipo evento",
             "newLine": false,
-            "readOnly": true,
-            "size": 4,
-            "queryFunct": "entrasp.argomenti_descr(id_argomento_tipo_evento)"
+            "readOnly": false,
+            "size": 4
         },
         {
             "autoGenerate": false,
@@ -197,7 +215,7 @@
             "key": "foreseen_date",
             "label": "Data Scadenza",
             "newLine": false,
-            "readOnly": false,
+            "readOnly": true,
             "size": 2
         }
     ],
@@ -413,12 +431,34 @@
             ]
         }
     ],
+    "search_keys": [
+        {
+			"fieldName": "rif_per_mese",
+			"format": {
+				"viewType": "input",
+                "dataType": "number"
+			},
+			"label": "Per mese data riferimento",
+			"newLine": false,
+			"queryCond": "EXTRACT(MONTH FROM compiti.data_segnalazione) = $rif_per_mese$"
+		},
+        {
+			"fieldName": "scad_per_mese",
+			"format": {
+				"viewType": "input",
+                "dataType": "number"
+			},
+			"label": "Per mese data scadenza",
+			"newLine": false,
+			"queryCond": "EXTRACT(MONTH FROM compiti.foreseen_date) = $scad_per_mese$"
+		}
+    ],
     "outputEvents": [
         {
-          "eventName": "codice_colore_change_compiti",
-          "eventTrigger": "onReload"
+            "eventName": "codice_colore_change_compiti",
+            "eventTrigger": "onReload"
         }
-      ],
+    ],
     "inputEvents": [
         {
             "actionType": "reload",
