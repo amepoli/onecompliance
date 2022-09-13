@@ -1633,6 +1633,34 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");
                 }
             }
+            else if(googleAPIParams.actionType === "get_drive_changes") {
+                if(_this.authService.getSyncMode() === 'google') {
+                    let loadingToast = _this._toastService.showLoadingToast("Loading emails", "Please wait...");
+                    try {
+                        const googleAuth = await _this.authService.loadGoogleAuth('gmail');
+                        
+                        let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
+                        _this._console.log(getChangesResult);
+                        
+                        _this._toastService.hideLoadingToast(loadingToast);
+                        
+                        if(getChangesResult.result === 'OK') {
+                            _this._toastService.showSuccessToast(event.successMessage || 'Done!');
+                        }
+                        else {
+                            _this._toastService.showErrorToast(event.message || 'Error occured!');
+                        }
+                    }
+                    catch (e) {
+                        _this._console.log(e);
+                        _this._toastService.hideLoadingToast(loadingToast);
+                        _this._toastService.showErrorToast(e);
+                    }
+                }
+                else {
+                    _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");
+                }
+            }
             else if (googleAPIParams.actionType == 'get_folder_expanded_contents') {
                 if(_this.authService.getSyncMode() === 'google') {
                     if (!googleAPIParams.driveExpandedContentsParams) {
@@ -1640,8 +1668,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                     else {
                         const codiceAzienda = formValues[googleAPIParams.driveExpandedContentsParams.codiceAziendaKey];
-                        const idProgetto = googleAPIParams.driveExpandedContentsParams.idProgettoKey ? formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey] : null;
                         const idAnagrafica = formValues[googleAPIParams.driveExpandedContentsParams.idAnagraficaKey];
+                        const idProgetto = googleAPIParams.driveExpandedContentsParams.idProgettoKey ? formValues[googleAPIParams.driveExpandedContentsParams.idProgettoKey] : null;
+                        const idRisorsa = googleAPIParams.driveExpandedContentsParams.idRisorsaKey ? formValues[googleAPIParams.driveExpandedContentsParams.idRisorsaKey] : null;
+                        
                         if (!codiceAzienda || !idAnagrafica) {
                             _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
                         }
@@ -1650,7 +1680,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             try {
                                 const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
                                 
-                                await _this._googleAPIService.syncGoogleDrive(googleAuth, codiceAzienda, idAnagrafica, idProgetto);
+                                await _this._googleAPIService.syncGoogleDrive(googleAuth, codiceAzienda, idAnagrafica, idProgetto, idRisorsa);
 
                                 /*
                                 // let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
