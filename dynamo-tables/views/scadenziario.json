@@ -7,7 +7,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, foreseen_date, titolo, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, entrasp.transcodifiche_transcodifica('STATO_EVENTI', stato) as stato, codice_compito_parent, id_sondaggio, id_tipo_segnalazione from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701"
+            "queryString": "select (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, foreseen_date, id_argomento_tipo_evento||'-'||titolo as titolo, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, entrasp.transcodifiche_transcodifica('STATO_EVENTI', stato) as stato, codice_compito_parent, id_sondaggio, id_tipo_segnalazione from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701"
         },
         {
             "operation": "insert",
