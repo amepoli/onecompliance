@@ -73,10 +73,10 @@ export class GoogleAPIService {
     return anagraficheToBeUpdatedResponse.response.rows;
   }
 
-  public async syncGoogleDrive(googleAuth, codiceAzienda, idAnagrafica, idProgetto) {
+  public async syncGoogleDrive(googleAuth, codiceAzienda, idAnagrafica, idProgetto, idRisorsa) {
 
     let _this = this;
-    let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername() ).toPromise();
+    let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername(), idRisorsa ).toPromise();
     _this._console.log(anagrafica_contents);
     let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];
     //anagraficaFolders['root_folder'] = '0020-Amedeo Poli';
@@ -95,7 +95,7 @@ export class GoogleAPIService {
 
     anagraficaFolders['sub_folders'] = sub_folders;
     
-    _this._console.log(codiceAzienda, idProgetto, idAnagrafica, anagraficaFolders);
+    _this._console.log(codiceAzienda, idProgetto, idRisorsa, idAnagrafica, anagraficaFolders);
     
     const driveFolder = anagraficaFolders['root_folder'];
     const subFolders = anagraficaFolders['sub_folders'] || [];
