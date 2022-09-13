@@ -219,10 +219,11 @@ exports.handler = async (event, context) => {
         }
         else if (requestType === 'getGoogleDriveFolderNameByAnagrafica') {
             const id_anagrafica = queryParams['id_anagrafica'];
+            const id_risorsa = queryParams['id_risorsa'];
             const username = queryParams['username'];            
             client = await pool.connect();
             //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
-            let query = `select * from entrasp.anagrafica_folder_name_and_sub_folders('${company}', '${id_anagrafica}', '${username}');`;
+            let query = `select * from entrasp.anagrafica_folder_name_and_sub_folders('${company}', '${id_anagrafica}', '${username}', ${id_risorsa ? "'" + id_risorsa + "'":  "null"});`;
             console.log('running query: ', query);
             let response = await client.query(query);
             let folderNames = null;
