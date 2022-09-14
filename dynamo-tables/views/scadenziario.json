@@ -7,11 +7,11 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, foreseen_date, id_argomento_tipo_evento||'-'||titolo as titolo, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, entrasp.transcodifiche_transcodifica('STATO_EVENTI', stato) as stato, codice_compito_parent, id_sondaggio, id_tipo_segnalazione from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701"
+            "queryString": "select (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, foreseen_date, data_chiusura, id_argomento_tipo_evento||'-'||titolo as titolo, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, entrasp.transcodifiche_transcodifica('STATO_EVENTI', stato) as stato, codice_compito_parent, id_sondaggio, id_tipo_segnalazione from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701"
         },
         {
             "operation": "insert",
-            "queryString": "SELECT entrasp.crea_evento('€global_codice_azienda€', $id_argomento_tipo_evento$, $data_segnalazione$::date, null, $titolo$) as id_argomento;",
+            "queryString": "SELECT entrasp.crea_evento('€global_codice_azienda€', $id_argomento_tipo_evento$, $data_segnalazione$::date, null, $titolo$, null, $id_responsabile$, $id_centro_gest$) as id_argomento;",
             "type": "main"
         },
         {
@@ -163,7 +163,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_son in (select entrasp.descendants_of_argomento(45417,2)) and id_argomento_son != 45417;",
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.codice||'-'||arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_son in (select entrasp.descendants_of_argomento(45417,2)) AND id_argomento_son NOT in (SELECT id_argomento_son FROM entrasp.argomenti_argomenti WHERE id_argomento_father IN (select * FROM entrasp.descendants_of_argomento(45417,1) WHERE descendants_of_argomento != 45417) ) and id_argomento_son != 45417 and entrasp.is_son_of_or_not(arg.id_argomento,(SELECT id_argomento FROM entrasp.aziende WHERE codice_azienda='€global_codice_azienda€')) AND (SELECT CASE WHEN arg.codice_azienda IS NULL THEN TRUE WHEN arg.codice_azienda='€global_codice_azienda€' THEN TRUE ELSE FALSE END);",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text",
@@ -217,6 +217,48 @@
             "newLine": false,
             "readOnly": true,
             "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_chiusura",
+            "label": "Data Esecuzione",
+            "newLine": true,
+            "readOnly": true,
+            "size": 2
+        },
+        {
+          "autoGenerate": false,
+          "format": {
+            "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part=(select codice_part from entrasp.aziende where codice_azienda='€global_codice_azienda€') AND id_anagrafica IN(select id_anagrafica from entrasp.gruppi_lavoro_membri where codice_part=anagrafiche_id.codice_part) order by entrasp.anagrafiche_cognnome(codice_part,id_anagrafica);",
+            "options": [],
+            "viewType": "combobox"
+          },
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "id_responsabile",
+          "label": "Responsabile",
+          "newLine": false,
+          "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€' order by id_centro_gest;",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "newLine": false,
+            "readOnly": false
         }
     ],
     "table_keys": [
@@ -321,6 +363,15 @@
             "key": "foreseen_date",
             "label": "Data Scadenza",
             "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "data_chiusura",
+            "label": "Data Esecuzione"
         },
         {
             "format": {
