@@ -20,17 +20,17 @@
 		},
 		{
 			"operation": "selectForm",
-			"queryString": "SELECT a.codice_azienda, a.id_argomento, a.codice, a.descrizione_breve, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.id_articolo_normativo, ae.interval_multiplier, ae.note, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.codice_colore,ae.flag_rigenera_dopo_esecuzione, (select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417))AND id_argomento_father != 45417) as id_argomento_evento_scatenante FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
+			"queryString": "SELECT a.codice_azienda, a.id_argomento, a.codice, a.descrizione_breve, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.id_articolo_normativo, ae.interval_multiplier, ae.note, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.codice_colore,ae.flag_rigenera_dopo_esecuzione, (select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417))AND id_argomento_father != 45417) as id_argomento_evento_scatenante, ae.id_argomento_tipo_allegato FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
 			"type": "main"
 		},
 		{
 			"operation": "insert",
-			"queryString": "select entrasp.argomenti_eventi_insert($descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$) as id_argomento;",
+			"queryString": "select entrasp.argomenti_eventi_insert($descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$, $id_argomento_tipo_allegato$) as id_argomento;",
 			"type": "main"
 		},
 		{
 			"operation": "update",
-			"queryString": "select entrasp.argomenti_eventi_update($id_argomento$, $descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$) as id_argomento;",
+			"queryString": "select entrasp.argomenti_eventi_update($id_argomento$, $descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$, $id_argomento_tipo_allegato$) as id_argomento;",
 			"type": "main"
 		},
 		{
@@ -99,19 +99,6 @@
 	],
 	"form_keys": [
 		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Codice Azienda",
-			"key": "codice_azienda",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
 			"autoGenerate": true,
 			"format": {
 				"viewType": "input",
@@ -157,7 +144,7 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false,
+			"newLine": true,
 			"size": 4
 		},
 		{
@@ -172,9 +159,9 @@
 			"isPrimary": false,
 			"key": "id_articolo_normativo",
 			"label": "Riferimento normativo",
-			"newLine": true,
+			"newLine": false,
 			"readOnly": false,
-			"size": 4
+			"size": 2.6
 		},
 		{
 			"autoGenerate": false,
@@ -191,7 +178,38 @@
 			"isPrimary": false,
 			"newLine": false,
 			"queryFunct": "select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417)) AND id_argomento_father != 45417",
-			"size": 3
+			"size": 2.6
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 3576;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "number"
+			},
+			"label": "Tipo Documento Da Allegare",
+			"key": "id_argomento_tipo_allegato",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"queryFunct": "select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417)) AND id_argomento_father != 45417",
+			"size": 2.6
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Azienda",
+			"key": "codice_azienda",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true,
+			"size": 2.2
 		},
 		{
 			"autoGenerate": false,
@@ -298,8 +316,9 @@
 			"isPrimary": false,
 			"key": "data_evento",
 			"label": "Data evento (L' anno è indifferente)",
-			"newLine": false,
+			"newLine": true,
 			"readOnly": false,
+			"size": 3,
 			"inputEvents": [
 				{
 					"actionType": "show",
@@ -314,6 +333,20 @@
 		{
 			"autoGenerate": false,
 			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Note",
+			"key": "note",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 4
+		},
+		{
+			"autoGenerate": false,
+			"format": {
 				"viewType": "combobox",
 				"options": [],
 				"comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
@@ -321,7 +354,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "id_argomento_nuovo",
-			"label": "Evento con cui unire il presente",
+			"label": "Scadenza con cui unire",
 			"sameOrigin": false,
 			"newLine": false,
 			"readOnly": false,
@@ -355,20 +388,6 @@
 			"readOnly": false,
 			"sameOrigin": false,
 			"size": 1.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Note",
-			"key": "note",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 7
 		}
 	],
 	"subTables": [
@@ -598,6 +617,26 @@
 		{
 			"viewType": "form",
 			"formActionType": "multi-attachments"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "share"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "import_export"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "documentation"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "startEvent"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "stopEvent"
 		}
 	]
 }

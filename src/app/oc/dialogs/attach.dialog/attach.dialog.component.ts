@@ -292,6 +292,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                         id_domanda: _this.getValue(_this.form.value.id_domanda), //_this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
                         id_modello_test: _this.getValue(_this.form.value.id_modello_test), //_this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
                         id_modello_test_vr: _this.getValue(_this.form.value.id_modello_test_vr), //_this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
+                        codice_compito: _this.getValue(_this.form.value.codice_compito), //_this.form.value.codice_compito != null ? _this.form.value.codice_compito.id : null,
                         autore: _this.authService.getUsername()
                     };
                     const responseCheck: any = await _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, md5hash, responseURL.filename, fileParams).toPromise();
