@@ -504,11 +504,11 @@ exports.handler = async (event, context) => {
                     iddom = (keys['id_domanda'] == undefined) ? null : keys['id_domanda'];
                     idmte = (keys['id_modello_test'] == undefined) ? null : keys['id_modello_test'];
                     idmtv = (keys['id_modello_test_vr'] == undefined) ? null : keys['id_modello_test_vr'];
-                    var codcmp = '';
                     codcmp = (keys['codice_compito'] == undefined) ? null : keys['codice_compito'];
+                    console.log('codcmp: ', codcmp);
                     idata = (requestBody.id_argomento_tipo_allegato == undefined) ? null : requestBody.id_argomento_tipo_allegato;
 
-                    query = `select entrasp.id_anagrafica_flow('${company}',${idpro},${idsom},${idsnd},${idana},${codcmp}), entrasp.id_centro_gest_flow('${company}',${idpro},${idsom},${idsnd},${idceg},${codcmp}), entrasp.id_tipo_doc_flow('${company}',${iddom},${idmte},${idmtv},${idsnd},${idata},${codcmp});`;
+                    query = `select entrasp.id_anagrafica_flow('${company}',${idpro},${idsom},${idsnd},${idana},'${codcmp}'), entrasp.id_centro_gest_flow('${company}',${idpro},${idsom},${idsnd},${idceg},'${codcmp}'), entrasp.id_tipo_doc_flow('${company}',${iddom},${idmte},${idmtv},${idsnd},${idata},'${codcmp}');`;
                     response = await client.query(query);
                     const idAnagrafica = (response['rows'][0]['id_anagrafica_flow'] == undefined) ? null : response['rows'][0]['id_anagrafica_flow'];
                     const idCentroGest = (response['rows'][0]['id_centro_gest_flow'] == undefined) ? null : response['rows'][0]['id_centro_gest_flow'];
