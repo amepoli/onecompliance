@@ -94,19 +94,6 @@
         "viewType": "input"
       },
       "isHidden": true,
-      "isPrimary": false,
-      "key": "id_sezione",
-      "label": "id_sezione",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
       "isPrimary": true,
       "key": "id_modello_test",
       "label": "ID modello di test",
@@ -256,42 +243,17 @@
     {
       "autoGenerate": false,
       "format": {
-        "value": " ",
-        "viewType": "textarea"
+        "comboQuery": "SELECT id_sezione AS id, descrizione AS name  FROM entrasp.domande_sezioni WHERE codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$;",
+        "options": [],
+        "viewType": "combobox"
       },
-      "inputEvents": [
-        {
-          "actionType": "query",
-          "eventName": "combobox_risposte",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select string_agg(concat(ordinamento,') ',risposta,' (',peso,'%)'), E'\n') as mostra_risposte from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$id_template_rp$;"
-        },
-        {
-          "actionType": "query",
-          "eventName": "onLoadDomande",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.risposte_previste_mostra($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as mostra_risposte"
-        },
-        {
-          "actionType": "query",
-          "eventName": "risposte_possibili_reload",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.risposte_previste_mostra($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as mostra_risposte"
-        }
-      ],
-      "queryFunct": "entrasp.risposte_previste_mostra(codice_azienda, id_modello_test, id_modello_test_vr,id_domanda)",
       "isHidden": false,
       "isPrimary": false,
-      "key": "mostra_risposte",
-      "textareaHeight": "M",
-      "label": "Risposte Possibili",
+      "key": "id_sezione",
+      "label": "Sezione",
+      "size": 3,
       "newLine": false,
-      "size": 4,
-      "readOnly": true,
-      "sameOrigin": false
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -342,7 +304,48 @@
       "readOnly": false,
       "sameOrigin": false,
       "size": 0.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "value": " ",
+        "viewType": "textarea"
+      },
+      "inputEvents": [
+        {
+          "actionType": "query",
+          "eventName": "combobox_risposte",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select string_agg(concat(ordinamento,') ',risposta,' (',peso,'%)'), E'\n') as mostra_risposte from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$id_template_rp$;"
+        },
+        {
+          "actionType": "query",
+          "eventName": "onLoadDomande",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.risposte_previste_mostra($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as mostra_risposte"
+        },
+        {
+          "actionType": "query",
+          "eventName": "risposte_possibili_reload",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.risposte_previste_mostra($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as mostra_risposte"
+        }
+      ],
+      "queryFunct": "entrasp.risposte_previste_mostra(codice_azienda, id_modello_test, id_modello_test_vr,id_domanda)",
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "mostra_risposte",
+      "textareaHeight": "M",
+      "label": "Risposte Possibili",
+      "newLine": false,
+      "size": 10,
+      "readOnly": true,
+      "sameOrigin": false
     }
+   
   ],
   "subTables": [
     {
