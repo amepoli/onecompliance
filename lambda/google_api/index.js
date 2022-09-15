@@ -81,6 +81,15 @@ async function getUsername(userid) {
     return null;
 }
 
+function getFolderQuery(drivePathFolder) {
+    let folderQuery = `name= '${drivePathFolder}'`;
+    if (drivePathFolder.includes('~')) {
+        let folderIdentifierPart = '~' + drivePathFolder.split('~')[1];
+        folderQuery = `name contains '${folderIdentifierPart}'`;
+    }
+    return folderQuery;
+}
+
 async function createExtAuthentication(item) {
     try {
         const DynamoParams = {
@@ -385,7 +394,7 @@ async function getLocalSharedFolderId(drivePath) {
 
         try {
             response = await drive.files.list({
-                q: `sharedWithMe=true and mimeType='${folderMime}' and name='${folderName}' and trashed=false`,
+                q: `sharedWithMe=true and mimeType='${folderMime}' and ${getFolderQuery(folderName)} and trashed=false`,
                 pageSize: 5,
                 fields: 'nextPageToken, files(id, name)',
             });
@@ -406,7 +415,7 @@ async function getLocalSharedFolderId(drivePath) {
         _console.log(`Searching for ${folderName} in Local drive`);
         try {
             response = await drive.files.list({
-                q: `'root' in parents and mimeType='${folderMime}' and name='${folderName}' and trashed=false`,
+                q: `'root' in parents and mimeType='${folderMime}' and ${getFolderQuery(folderName)} and trashed=false`,
                 pageSize: 5,
                 fields: 'nextPageToken, files(id, name, mimeType)',
             });
@@ -511,15 +520,10 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
                 driveFolderId = localSharedFolderResponse.id;
             }
             else {
-                let folderQuery = `name = '${drivePathFolder}'`;
-                if (drivePathFolder.includes('~')) {
-                    let folderIdentifierPart = '~' + drivePathFolder.split('~')[1];
-                    folderQuery = `name contains '${folderIdentifierPart}'`;
-                }
                 _console.log(`Searching for ${folderQuery} in ${driveFolderId}`);
 
                 let parentQuery = `'${driveFolderId}' in parents`;
-                let finalQuery = `${parentQuery} and mimeType='${folderMime}' and ${folderQuery} and trashed=false`;
+                let finalQuery = `${parentQuery} and mimeType='${folderMime}' and ${getFolderQuery(drivePathFolder)} and trashed=false`;
                 _console.log('finalQuery: ', finalQuery);
 
                 response = await drive.files.list({
@@ -616,7 +620,7 @@ async function getDriveFolderId(drivePath, authParams) {
             else {
                 _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);
                 response = await drive.files.list({
-                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}' and trashed=false`,
+                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and ${getFolderQuery(drivePathFolder)} and trashed=false`,
                     pageSize: 5,
                     fields: 'nextPageToken, files(id, name, mimeType)',
                 });
@@ -1466,7 +1470,7 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
             else {
                 _console.log(`Searching for ${drivePathFolder} in ${driveFolderId}`);
                 response = await drive.files.list({
-                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and name='${drivePathFolder}' and trashed=false`,
+                    q: `'${driveFolderId}' in parents and mimeType='${folderMime}' and ${getFolderQuery(drivePathFolder)} and trashed=false`,
                     pageSize: 5,
                     fields: 'nextPageToken, files(id, name, mimeType)',
                 });
@@ -1768,7 +1772,7 @@ async function getDriveFolderCompletePath(drive, driveFolder) {
     let response;
     let completePath = '';
     try {
-        let query = `name='${driveFolder}' and includeItemsFromAllDrives=true and mimeType='${folderMime}' and trashed=false`;
+        let query = `${getFolderQuery(driveFolder)} and includeItemsFromAllDrives=true and mimeType='${folderMime}' and trashed=false`;
 
         let parentId = null;
         let parentName = null;
@@ -1819,7 +1823,7 @@ async function getDriveRecursiveContents(drive, driveFolder, driveFileId, path, 
             query = `'${driveFileId}' in parents and trashed=false`;
         }
         else {
-            query = `name='${driveFolder}' and mimeType='${folderMime}' and trashed=false`;
+            query = `${getFolderQuery(driveFolder)} and mimeType='${folderMime}' and trashed=false`;
         }
         _console.log('query: ', query);
 
