@@ -7,7 +7,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select  entrasp.giudizio_scadenza(foreseen_date::date, stato) as stato, (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, foreseen_date, data_chiusura, id_argomento_tipo_evento||'-'||titolo as titolo, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, codice_compito_parent, id_sondaggio, id_tipo_segnalazione, entrasp.centri_gestionali_descr('€global_codice_part€', id_centro_gest) as descr_centro_gest from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701"
+            "queryString": "select entrasp.giudizio_scadenza(foreseen_date::date, stato) as stato, (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, foreseen_date, data_chiusura, titolo, id_argomento_tipo_evento, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, codice_compito_parent, id_sondaggio, id_tipo_segnalazione, entrasp.centri_gestionali_descr('€global_codice_part€', id_centro_gest) as descr_centro_gest from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701"
         },
         {
             "operation": "insert",
@@ -109,7 +109,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "stato",
-            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_EVENTI', stato)",
+            "queryFunct": "entrasp.giudizio_scadenza(foreseen_date::date, stato)",
             "label": "Stato",
             "size": 3,
             "readOnly": true,
@@ -180,7 +180,7 @@
             "label": "Tipo evento",
             "newLine": false,
             "readOnly": false,
-            "size": 5.5
+            "size": 5
         },
         {
             "autoGenerate": false,
@@ -201,7 +201,7 @@
             "label": "Data di Riferimento",
             "newLine": false,
             "readOnly": false,
-            "size": 1.5
+            "size": 1.7
         },
         {
             "autoGenerate": false,
@@ -215,7 +215,7 @@
             "label": "Data Scadenza",
             "newLine": false,
             "readOnly": true,
-            "size": 1.5
+            "size": 1.7
         },
         {
             "autoGenerate": false,
@@ -229,7 +229,7 @@
             "label": "Data Esecuzione",
             "newLine": true,
             "readOnly": true,
-            "size": 1.5
+            "size": 1.6
         },
         {
           "autoGenerate": false,
@@ -320,16 +320,34 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": true,
             "key": "codice_compito",
             "label": "# Evento",
-            "width": "6%",
             "style": [
                 {
                     "value": "*",
                     "background_color": "lightblue",
                     "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "foreseen_date",
+            "label": "Data",
+            "width": "13%",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_size": "medium",
+                    "font_weight": "599"
                 }
             ]
         },
@@ -341,7 +359,14 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Descrizone",
-            "width": "40%"
+            "width": "51%",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "500"
+                }
+            ]
         },
         {
             "format": {
@@ -351,28 +376,27 @@
             "isPrimary": false,
             "key": "descr_centro_gest",
             "label": "Ufficio",
-            "width": "15%",
+            "width": "17%",
             "queryFunct": "entrasp.centri_gestionali_descr('€global_codice_part€', id_centro_gest)"
         },
         {
             "format": {
-                "dataType": "date"
+                "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
-            "key": "data_segnalazione",
-            "label": "Data Riferimento",
-            "width": "10%"
+            "key": "id_argomento_tipo_evento",
+            "label": "Argomento Evento",
+            "width": "7%"
         },
         {
             "format": {
                 "dataType": "date"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
-            "key": "foreseen_date",
-            "label": "Data Scadenza",
-            "width": "10%"
+            "key": "data_segnalazione",
+            "label": "Data Riferimento"
         },
         {
             "format": {
@@ -407,30 +431,30 @@
             "style": [
                 {
                     "value": "Adempita",
-                    "font_color": "Black",
+                    "font_color": "PaleGreen",
                     "font_weight": "500",
-                    "background_color": "Grey",
+                    "background_color": "Green",
                     "text_align": "center"
                 },
                 {
                     "value": "In scadenza",
-                    "font_color": "Black",
+                    "font_color": "black",
                     "font_weight": "500",
-                    "background_color": "Yellow",
+                    "background_color": "#e6e600",
                     "text_align": "center"
                 },
                 {
                     "value": "Scaduto",
-                    "font_color": "Black",
+                    "font_color": "white",
                     "font_weight": "500",
-                    "background_color": "Red",
+                    "background_color": "firebrick",
                     "text_align": "center"
                 },
                 {
                     "value": "Non scaduto",
-                    "font_color": "White",
+                    "font_color": "DarkBlue",
                     "font_weight": "500",
-                    "background_color": "Green",
+                    "background_color": "LightSkyBlue",
                     "text_align": "center"
                 }
             ]
@@ -563,7 +587,7 @@
 				"value": "1",
 				"viewType": "toggle"
 			},
-			"label": "Escludi eseguiti",
+			"label": "Escludi adempite",
 			"newLine": false,
 			"queryCond": "entrasp.giudizio_scadenza(foreseen_date::date, stato)!='Adempita'"
 		}
