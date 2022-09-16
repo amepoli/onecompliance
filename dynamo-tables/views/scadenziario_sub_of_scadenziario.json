@@ -2,7 +2,33 @@
     "$schema": "../views.schema.json",
     "entryKey": "scadenziario_sub_of_scadenziario",
     "inheritsFrom": "scadenziario",
-    "predefinedQueries": [],
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select entrasp.giudizio_scadenza(foreseen_date::date, stato) as stato, (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, foreseen_date, data_chiusura, titolo, id_argomento_tipo_evento, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, codice_compito_parent, id_sondaggio, id_tipo_segnalazione, entrasp.centri_gestionali_descr('€global_codice_part€', id_centro_gest) as descr_centro_gest from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701 and codice_compito_parent=$codice_compito_parent$"
+        },
+        {
+            "operation": "insert",
+            "queryString": "SELECT entrasp.crea_evento('€global_codice_azienda€', $id_argomento_tipo_evento$, $data_segnalazione$::date, null, $titolo$, null, $id_responsabile$, $id_centro_gest$) as id_argomento;",
+            "type": "main"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $codice_compito$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+        }
+    ],
     "table_multiselection_actions": [
         {
             "viewType": "menu",
