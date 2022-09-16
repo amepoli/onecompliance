@@ -223,21 +223,17 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_template_rp AS id, descrizione AS name from entrasp.template_risposte_previste WHERE codice_azienda=$codice_azienda$;",
-        "viewType": "combobox",
+        "comboQuery": "SELECT id_tipo_domanda AS id, tipo_domanda AS name  FROM entrasp.tipi_domande",
+        "dataType": "text",
         "options": [],
-        "value": 0
+        "viewType": "combobox"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "id_template_rp",
-      "label": "Template Risposte",
-      "newLine": false,
       "size": 2.5,
-      "outputEvent": {
-        "eventName": "combobox_risposte",
-        "eventTrigger": "select"
-      },
+      "key": "id_tipo_domanda",
+      "label": "Tipo Risposta",
+      "newLine": false,
       "readOnly": false
     },
     {
@@ -308,6 +304,26 @@
     {
       "autoGenerate": false,
       "format": {
+        "comboQuery": "SELECT id_template_rp AS id, descrizione AS name from entrasp.template_risposte_previste WHERE codice_azienda=$codice_azienda$;",
+        "viewType": "combobox",
+        "options": [],
+        "value": 0
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_template_rp",
+      "label": "Template Risposte",
+      "newLine": false,
+      "size": 3,
+      "outputEvent": {
+        "eventName": "combobox_risposte",
+        "eventTrigger": "select"
+      },
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "value": " ",
         "viewType": "textarea"
       },
@@ -341,25 +357,9 @@
       "textareaHeight": "M",
       "label": "Risposte Possibili",
       "newLine": false,
-      "size": 8,
+      "size": 7,
       "readOnly": true,
       "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_tipo_domanda AS id, tipo_domanda AS name  FROM entrasp.tipi_domande",
-        "dataType": "text",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "size": 2,
-      "key": "id_tipo_domanda",
-      "label": "Tipo Risposta",
-      "newLine": true,
-      "readOnly": false
     }
    
   ],
@@ -426,6 +426,29 @@
         }
       ],
       "label": "Risposte nelle verifiche",
+      "type": "table"
+    },
+    {
+      "entryKey": "domande_condizionate",
+      "keys": [
+        {
+          "parent": "id_domanda",
+          "son": "id_domanda_rif"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test_vr",
+          "son": "id_modello_test_vr"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        }
+      ],
+      "label": "Domande condizionate",
       "type": "table"
     },
     {
