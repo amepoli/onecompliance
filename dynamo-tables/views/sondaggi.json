@@ -517,7 +517,13 @@
                         "icon": "search",
                         "label": "OneKYC",
                         "outputEventName": "get_aml_scans"
-                    }
+                    },
+                    {
+						"icon": "sync",
+						"label": "Sync.doc.controparte",
+						"outputEventName": "get_drive_folder_contents"
+						
+					}
                 ]
             },
             "inputEvents": [
@@ -588,7 +594,22 @@
                         }
                     },
                     "outputEventWhenComplete": "survey_reload"
-                }
+                },
+                {
+					"eventName": "get_drive_folder_contents",
+					"actionType": "google_api",
+					"condition": "none",
+					"successMessage": "Done!",
+					"values": [],
+					"googleAPIParams": {
+						"actionType": "get_folder_expanded_contents",
+						"driveExpandedContentsParams": {
+							"codiceAziendaKey": "codice_azienda",
+							"idSondaggioKey": "id_sondaggio",
+                            "codicePartKey": "codice_part"                            
+						}
+					}
+				}
             ],
             "isHidden": false,
             "isPrimary": false,

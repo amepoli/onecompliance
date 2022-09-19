@@ -25,8 +25,10 @@ export interface GoogleAPIParams {
     },
     driveExpandedContentsParams? : {
         codiceAziendaKey: string;
-        idAnagraficaKey: string;
+        idAnagraficaKey?: string;
         idProgettoKey?: string;
         idRisorsaKey?: string;
+        idSondaggioKey?: string;
+        codicePartKey?: string;
     }
 };
