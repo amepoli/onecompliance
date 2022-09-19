@@ -220,10 +220,23 @@ exports.handler = async (event, context) => {
         else if (requestType === 'getGoogleDriveFolderNameByAnagrafica') {
             const id_anagrafica = queryParams['id_anagrafica'];
             const id_risorsa = queryParams['id_risorsa'];
+            const id_sondaggio = queryParams['id_sondaggio'];
+            const codice_part = queryParams['codice_part'];
+            
             const username = queryParams['username'];            
             client = await pool.connect();
             //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
-            let query = `select * from entrasp.anagrafica_folder_name_and_sub_folders('${company}', '${id_anagrafica}', '${username}', ${id_risorsa ? "'" + id_risorsa + "'":  "null"});`;
+            let query = '';
+            if(id_sondaggio) {
+                query = `select entrasp.anagrafica_folder_name_and_sub_folders(cg.codice_azienda_erogante, an.id_anagrafica, '${username}', idsondaggio=>${id_sondaggio})
+                from entrasp.sondaggi snd
+                inner join entrasp.centri_gestionali cg on snd.id_centro_gest=cg.id_centro_gest and snd.codice_part=cg.codice_part
+                inner join entrasp.anagrafiche_id an on snd.codice_azienda=an.codice_azienda_corrispondente
+                and snd.id_sondaggio=${id_sondaggio} and codice_azienda='${company}' and an.codice_part!='${codice_part}'`;
+            }
+            else {
+                query = `select * from entrasp.anagrafica_folder_name_and_sub_folders('${company}', '${id_anagrafica}', '${username}', ${id_risorsa ? "'" + id_risorsa + "'":  "null"});`;
+            }
             console.log('running query: ', query);
             let response = await client.query(query);
             let folderNames = null;
