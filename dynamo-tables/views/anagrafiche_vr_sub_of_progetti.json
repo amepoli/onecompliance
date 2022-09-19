@@ -5,7 +5,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "select snd.id_sondaggio, ss.stato, ss.id_somministrazione, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato_trans, ss.object_description, snd.data_esecuzione, snd.data_prevista, snd.titolo, entrasp.anagrafiche_id_codcognnome('€global_codice_part€'::text,replace(ss.object_key,'€global_codice_part€'||'|','')::numeric), ss.somministrazione_completata from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.progetti_fasi pf on ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio where ss.codice_azienda=$codice_azienda$ and ss.object_name='anagraficheId' and pf.id_progetto=$id_progetto$",
+            "queryString": "select snd.id_sondaggio, ss.stato, ss.id_somministrazione, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato_trans, ss.object_description, snd.data_esecuzione, snd.data_prevista, snd.titolo, entrasp.anagrafiche_id_codcognnome('€global_codice_part€'::text,split_part(ss.object_key, '|', 2)::numeric), ss.somministrazione_completata from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.progetti_fasi pf on ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio where ss.codice_azienda=$codice_azienda$ and ss.object_name='anagraficheId' and pf.id_progetto=$id_progetto$",
             "type": "main"
         }
     ],
