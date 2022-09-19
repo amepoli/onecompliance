@@ -25,7 +25,8 @@ const helperFuncts = require('./helperFuncts');
 
 const queryKeys = ['badgeQuery', 'queryString', 'query', 'comboQuery', 
                    'queryFunct', 'insertUpdateFunct', 'conditionQuery',
-                   'onSuccessQuery', 'querySuffixes'];
+                   'onSuccessQuery', 'querySuffixes', 'tabBadgeQuery',
+                   'tabToolbarElementsQueries'];
 
 var global_variables = {};
 
@@ -1377,6 +1378,7 @@ async function processCustomQuery(queryString, keys, client) {
             if (result.rows != null && result.rows.length > 0) {
                 result = result.rows[0];
             }
+            queryString = removeProperty(queryString, queryKeys);
             return {
                 "isBase64Encoded": false,
                 "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -1386,6 +1388,7 @@ async function processCustomQuery(queryString, keys, client) {
         }
         catch (e) {
             console.log('Custom Query Error: ', e);
+            queryString = removeProperty(queryString, queryKeys);
             return {
                 "isBase64Encoded": false,
                 "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -1421,6 +1424,7 @@ async function processHomepageQuery(entry_params, queryString, client) {
             }
         }        
     }
+    queryString = removeProperty(queryString, queryKeys);
     return {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -1507,6 +1511,7 @@ async function processHomepageTabQuery(entry_params, queryString, search_keys, c
             }
         }
     }
+    tilesView = removeProperty(tilesView, queryKeys);
     return {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -1518,6 +1523,7 @@ async function processHomepageTabQuery(entry_params, queryString, search_keys, c
 async function processCompanyChangeQuery(queryString, client) {
     let queryResult = await client.query(queryString);
     console.log('CompanyChangeQuery Result: ', JSON.stringify(queryResult));
+    queryResult = removeProperty(queryResult, queryKeys);
     return {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -1529,6 +1535,7 @@ async function processCompanyChangeQuery(queryString, client) {
 async function processTableMultiSelectionActionQuery(queryString, client) {
     let queryResult = await client.query(queryString);
     console.log('TableMultiSelectionActionQuery Result: ', JSON.stringify(queryResult));
+    queryResult = removeProperty(queryResult, queryKeys);
     return {
         "isBase64Encoded": false,
         "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -1563,6 +1570,7 @@ async function processFormActionQuery(formActionType, queryString, keys, client)
                 if (result.rows != null && result.rows.length > 0) {
                     result = result.rows[0];
                 }
+                queryString = removeProperty(queryString, queryKeys);
                 return {
                     "isBase64Encoded": false,
                     "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -1572,6 +1580,7 @@ async function processFormActionQuery(formActionType, queryString, keys, client)
             }
             catch (e) {
                 console.log(`${formActionType} Query Error: `, e);
+                queryString = removeProperty(queryString, queryKeys);
                 return {
                     "isBase64Encoded": false,
                     "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
