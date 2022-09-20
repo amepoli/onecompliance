@@ -233,7 +233,8 @@ exports.handler = async (event, context) => {
                 inner join entrasp.centri_gestionali cg on snd.id_centro_gest=cg.id_centro_gest and snd.codice_part=cg.codice_part
                 inner join entrasp.aziende az on cg.codice_azienda_erogante=az.codice_azienda
                 inner join entrasp.anagrafiche_id an on snd.codice_azienda=an.codice_azienda_corrispondente
-                and snd.id_sondaggio=${id_sondaggio} and snd.codice_azienda='${company}' and an.codice_part!='${codice_part}' and az.codice_part=an.codice_part`;
+                and snd.id_sondaggio=${id_sondaggio} and snd.codice_azienda='${company}' and an.codice_part!='${codice_part}' and az.codice_part=an.codice_part
+                and cg.codice_azienda_erogante is not null`;
             }
             else {
                 query = `select * from entrasp.anagrafica_folder_name_and_sub_folders('${company}', '${id_anagrafica}', '${username}', ${id_risorsa ? "'" + id_risorsa + "'":  "null"});`;
