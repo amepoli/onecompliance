@@ -139,7 +139,14 @@ export class GoogleAPIService {
       let getDriveFolderDeepContentsResponse: any = await _this.backendService.getDriveFolderDeepContents(anagraficaFolders, googleAuth).toPromise();
       _this._console.log('getDriveFolderDeepContentsResponse ',getDriveFolderDeepContentsResponse);
   
-      let syncDataResponse = await forkJoin(getDriveFolderDeepContentsResponse.syncData.map(x => _this.backendService.syncDriveS3File([x], googleAuth))).toPromise();
+      // let syncDataResponse = await forkJoin(getDriveFolderDeepContentsResponse.syncData.map(x => _this.backendService.syncDriveS3File([x], googleAuth))).toPromise();
+      let syncDataResponse = [];
+      for (const x of getDriveFolderDeepContentsResponse.syncData) {
+        let syncDriveS3FileResponse = await _this.backendService.syncDriveS3File([x], googleAuth).toPromise();
+        syncDataResponse.push(syncDriveS3FileResponse);
+        _this._console.log(syncDriveS3FileResponse);
+      };
+
       _this._console.log('syncDataResponse', syncDataResponse);
   
       anagraficaFolders['root_drive_contents'] = getDriveFolderDeepContentsResponse.rootDriveContents;
