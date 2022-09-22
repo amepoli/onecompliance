@@ -6,7 +6,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select entrasp.argomenti_codice_descr_breve(id_argomento_father) as controllo from entrasp.argomenti_argomenti where id_argomento_son in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=5328)and id_argomento_father in (select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=3511) and id_argomento_son=$id_argomento_son$",
+      "queryString": "select entrasp.argomenti_codice_descr_breve(aa.id_argomento_father) as controllo, vaf.stringa from entrasp.argomenti_argomenti aa inner join entrasp.views_attachments_fast vaf on aa.id_argomento_father=vaf.id_argomento_tipo_allegato where aa.id_argomento_son in(select aa2.id_argomento_son from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_father=5328)and aa.id_argomento_father in (select aa3.id_argomento_son from entrasp.argomenti_argomenti aa3 where aa3.id_argomento_father=3511) and aa.id_argomento_son=$id_argomento_son$ and vaf.codice_azienda='€global_codice_azienda€'",
       "type": "main"
     }
   ],
@@ -18,7 +18,30 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "controllo",
-      "label": "Controllo"
+      "label": "Regolamento"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "stringa",
+      "label": "",
+      "isButton": true,
+      "style": [
+        {
+          "button_icon": "cloud_download",
+          "value": ""
+        }
+      ],
+      "buttonAction": {
+        "target": "attachments",
+        "viewType": "form",
+        "action": "downloadAttachment",
+        "keymap": []
+      }
     },
     {
       "format": {
