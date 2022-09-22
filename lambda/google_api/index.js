@@ -520,8 +520,6 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
                 driveFolderId = localSharedFolderResponse.id;
             }
             else {
-                _console.log(`Searching for ${folderQuery} in ${driveFolderId}`);
-
                 let parentQuery = `'${driveFolderId}' in parents`;
                 let finalQuery = `${parentQuery} and mimeType='${folderMime}' and ${getFolderQuery(drivePathFolder)} and trashed=false`;
                 _console.log('finalQuery: ', finalQuery);
