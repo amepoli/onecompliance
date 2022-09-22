@@ -517,7 +517,13 @@
                         "icon": "search",
                         "label": "OneKYC",
                         "outputEventName": "get_aml_scans"
-                    }
+                    },
+                    {
+						"icon": "sync",
+						"label": "Sync.folder.sondaggio",
+						"outputEventName": "get_drive_folder_contents"
+						
+					}
                 ]
             },
             "inputEvents": [
@@ -588,7 +594,22 @@
                         }
                     },
                     "outputEventWhenComplete": "survey_reload"
-                }
+                },
+                {
+					"eventName": "get_drive_folder_contents",
+					"actionType": "google_api",
+					"condition": "none",
+					"successMessage": "Done!",
+					"values": [],
+					"googleAPIParams": {
+						"actionType": "get_folder_expanded_contents",
+						"driveExpandedContentsParams": {
+							"codiceAziendaKey": "codice_azienda",
+							"idSondaggioKey": "id_sondaggio",
+                            "codicePartKey": "codice_part"                            
+						}
+					}
+				}
             ],
             "isHidden": false,
             "isPrimary": false,
@@ -1629,7 +1650,8 @@
                 "viewType": "input"
             },
             "label": "Parola chiave",
-            "newLine": true,
+            "newLine": false,
+            "size": 4,
             "queryCond": "(upper(mt.titolo) like '%'||upper('€parola_search€')||'%' or upper(snd.descrizione) like '%'||upper('€parola_search€')||'%' or upper(snd.titolo) like '%'||upper('€parola_search€')||'%')"
         },
         {
@@ -1672,7 +1694,7 @@
                 "viewType": "checkbox"
             },
             "label": "Sondaggi scaduti",
-            "newLine": false,
+            "newLine": true,
             "size": 1.5,
             "queryCond": "snd.data_prevista<CURRENT_DATE"
         },
@@ -1708,6 +1730,28 @@
             "newLine": false,
             "size": 1.5,
             "queryCond": "snd.stato!='C'"
+        },
+        {
+            "fieldName": "doc_completa",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con doc. completa",
+            "newLine": false,
+            "size": 1.5,
+            "queryCond": "snd.id_sondaggio not in (select ro.id_sondaggio from entrasp.cdms_risorse_oggetti ro inner join entrasp.cdms_risorse_revisioni rev on ro.id_risorsa=rev.id_risorsa and ro.prog_revisione=rev.prog_revisione and ro.codice_azienda=rev.codice_azienda where id_argomento_stato!=4035 and ro.id_sondaggio is not null)"
+        },
+        {
+            "fieldName": "doc_incompleta",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con doc. incompleta",
+            "newLine": false,
+            "size": 1.5,
+            "queryCond": "snd.id_sondaggio in (select ro.id_sondaggio from entrasp.cdms_risorse_oggetti ro inner join entrasp.cdms_risorse_revisioni rev on ro.id_risorsa=rev.id_risorsa and ro.prog_revisione=rev.prog_revisione and ro.codice_azienda=rev.codice_azienda where id_argomento_stato!=4035 and ro.id_sondaggio is not null)"
         },
         {
             "fieldName": "flag_sondaggi_aperti",

@@ -427,7 +427,7 @@ async function getLocalSharedFolderId(drivePath) {
             }
         }
         catch (e) { }
-        _console.log('response', response);
+        _console.log('response', JSON.stringify(response));
 
 
         if (response.data && response.data.files && response.data.files.length > 0) {
@@ -520,8 +520,6 @@ async function fixDriveFolderPathByIdentifier(drivePath, authParams) {
                 driveFolderId = localSharedFolderResponse.id;
             }
             else {
-                _console.log(`Searching for ${folderQuery} in ${driveFolderId}`);
-
                 let parentQuery = `'${driveFolderId}' in parents`;
                 let finalQuery = `${parentQuery} and mimeType='${folderMime}' and ${getFolderQuery(drivePathFolder)} and trashed=false`;
                 _console.log('finalQuery: ', finalQuery);
@@ -628,7 +626,7 @@ async function getDriveFolderId(drivePath, authParams) {
                     response = JSON.parse(response);
                 }
                 catch (e) { }
-                _console.log('response', response);
+                _console.log('response', JSON.stringify(response));
                 if (response.data && response.data.files && response.data.files.length > 0) {
                     // Folder exists
                     driveFolderId = response.data.files[0].id;
@@ -1478,7 +1476,7 @@ async function copyFromS3ToDrive(s3FilePath, driveFilePath, authParams) {
                     response = JSON.parse(response);
                 }
                 catch (e) { }
-                _console.log('response', response);
+                _console.log('response', JSON.stringify(response));
                 if (response.data && response.data.files && response.data.files.length > 0) {
                     // Folder exists
                     driveFolderId = response.data.files[0].id;
