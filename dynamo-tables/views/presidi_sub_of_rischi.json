@@ -236,6 +236,25 @@
             "size": 1
         }
     ],
+    "table_multiselection_actions": [
+        {
+          "viewType": "menu",
+          "key": "menuanag",
+          "label": "Actions",
+          "icon": "more_vert",
+          "menuOptions": [
+            {
+              "key": "cancella",
+              "icon": "delete_association",
+              "label": "Cancella associazione",
+              "query": "delete from entrasp.rischi_presidi where codice_azienda||'-'||id_presidio||'-'||codice_rischio in($selected_rows_data$)",
+              "confirmAction": true,
+              "reloadOnSuccess": true,
+              "confirmActionMessage": "Cancellare l'associazione tra rischio e presidio?"
+            }
+          ]
+        }
+      ],
     "table_keys": [
         {
             "format": {
@@ -323,8 +342,10 @@
                 "dataType": "number"
             },
             "isHidden": true,
+            "width": "3%",
             "isPrimary": true,
             "key": "id_presidio",
+            "isButton": true,
             "label": "Presidio"
         },
         {
@@ -334,7 +355,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "tipo_presidio",
-            "width": "14%",
+            "width": "12%",
             "label": "Tipo Presidio"
         },
         {
@@ -353,10 +374,26 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "35%",
+            "width": "25%",
             "key": "descr_presidio",
             "queryFunct": "entrasp.presidi_descr(id_presidio, codice_azienda)",
-            "label": "Presidio"
+            "label": "Presidio",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "presidi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    }
+                ]
+            }
         },
         {
             "format": {
@@ -419,33 +456,6 @@
             "queryFunct": "substring(annotazioni, 1, 100)",
             "width": "8%",
             "isPrimary": false
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "7.5%",
-            "key": "visible_button_presidio",
-            "label": "Presidio",
-            "queryFunct": "select true",
-            "isButton": true,
-            "buttonAction": {
-                "target": "presidi",
-                "viewType": "form",
-                "action": "navigate",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_presidio",
-                        "destination": "id_presidio"
-                    }
-                ]
-            }
         }
     ],
     "inputEvents": [
