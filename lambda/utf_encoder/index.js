@@ -6,6 +6,10 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const separator_in = ';';
 const separator_out = '~';
 
+const modes = {
+    CSV: "CSV", encodeOnly: "encodeOnly"
+};
+
 const stuff_to_replace = [
     {
         in: separator_in,
@@ -49,21 +53,21 @@ async function getFilesList(folder = default_folders[0], bucket = default_bucket
     return null;
 }
 
-// Read input CSV file
-async function readCSVFile(file = default_file, bucket = default_bucket) {
-    console.log('Reading CSV...');
+// Read input file
+async function readFile(file = default_file, bucket = default_bucket) {
+    console.log('Reading File...');
     const s3ParamsGetList = {
         Bucket: bucket,
         Key: file
     };
 
-    const csvFile = await s3.getObject(s3ParamsGetList).promise();
-    if (csvFile && csvFile.Body) {
-        return csvFile.Body;
+    const s3File = await s3.getObject(s3ParamsGetList).promise();
+    if (s3File && s3File.Body) {
+        return s3File.Body;
 
     }
 
-    console.log('CSV File invalid!');
+    console.log('File invalid!');
     return null;
 }
 
@@ -181,8 +185,8 @@ function createCSV(dbfData) {
 
 }
 
-async function writeCSVToS3(key, data, bucket = default_bucket) {
-    console.log('Writing CSV...');
+async function writeFileToS3(key, data, bucket = default_bucket) {
+    console.log('Writing File...');
     var params = {
         Bucket: bucket,
         Key: key,
@@ -190,10 +194,6 @@ async function writeCSVToS3(key, data, bucket = default_bucket) {
     }
     console.log(params.Key);
     await s3.putObject(params).promise();
-    // , function (err, data) {
-    //     if (err) console.log(err, err.stack); // an error occurred
-    //     else console.log('writeCSV Success: ', key, data);           // successful response
-    // });
 }
 
 async function deleteFiles(files, bucket = default_bucket) {
@@ -226,12 +226,12 @@ async function processFiles(filesIn, filesOut, bucket = default_bucket) {
 
         let outFile = filesOut[i];
         console.log(`Processing file: ${srcFile}`);
-        let csvBuffer = await readCSVFile(srcFile, bucket);
+        let csvBuffer = await readFile(srcFile, bucket);
 
         if (csvBuffer) {
             let processedCSV = processCSV(csvBuffer);
             if (processedCSV) {
-                await writeCSVToS3(outFile, processedCSV, bucket);
+                await writeFileToS3(outFile, processedCSV, bucket);
                 // console.log(csvData);
             }
         }
@@ -240,23 +240,48 @@ async function processFiles(filesIn, filesOut, bucket = default_bucket) {
     }, Promise.resolve());
 }
 
-async function start(folders = default_folders, inFileNames = default_files_in, outFileNames = default_files_out, bucket = default_bucket) {
-    await folders.reduce(async (promise, folder) => {
-        // This line will wait for the last async function to finish.
-        // The first iteration uses an already resolved Promise
-        // so, it will immediately continue.
-        await promise;
-
-        let files = await getFilesList(folder);
-        if (files && files.length) {
-            let inFiles = filterFiles(files, inFileNames);
-            let outFiles = outFileNames.map(file => (folder + '/' + file).replace('//', '/'));
-            console.log("Input files: ", inFiles);
-            console.log("Output files: ", outFiles);
-            await deleteFiles(outFiles, bucket);
-            await processFiles(inFiles, outFiles, bucket);
+async function encodeText(fileIn, fileOut, bucket = default_bucket) {
+    let dataBuffer = await readFile(fileIn, bucket);
+    if (dataBuffer) {
+        let processedData = dataBuffer.toString().replace(/[^\x01-\xFF]/g, " ");
+        if (processedData) {
+            await writeFileToS3(fileOut, processedData, bucket);
+            // console.log(csvData);
         }
-    }, Promise.resolve());
+    }
+}
+
+async function start(folders = default_folders, inFileNames = default_files_in, outFileNames = default_files_out, bucket = default_bucket, mode = modes.CSV) {
+    if(mode == modes.encodeOnly) {
+        try {
+            console.log("Encoding text...");
+            let srcFile = (folders[0] + '/' + inFileNames[0]).replace('//', '/');
+            let destFile = (folders[0] + '/' + outFileNames[0]).replace('//', '/');
+            await encodeText(srcFile, destFile, bucket);
+            console.log("Encoding text complete!");
+        }
+        catch(e) {
+            console.log("Encode text error: " + e);
+        }
+    }
+    else {
+        await folders.reduce(async (promise, folder) => {
+            // This line will wait for the last async function to finish.
+            // The first iteration uses an already resolved Promise
+            // so, it will immediately continue.
+            await promise;
+    
+            let files = await getFilesList(folder);
+            if (files && files.length) {
+                let inFiles = filterFiles(files, inFileNames);
+                let outFiles = outFileNames.map(file => (folder + '/' + file).replace('//', '/'));
+                console.log("Input files: ", inFiles);
+                console.log("Output files: ", outFiles);
+                await deleteFiles(outFiles, bucket);
+                await processFiles(inFiles, outFiles, bucket);
+            }
+        }, Promise.resolve());
+    }
 }
 
 async function processQueryParams(queryParams) {
@@ -264,8 +289,8 @@ async function processQueryParams(queryParams) {
     let files_in = queryParams.file_in ? [queryParams.file_in] : default_files_in;
     let files_out = queryParams.file_out ? [queryParams.file_out] : default_files_out;
     let folders = queryParams.folder ? [queryParams.folder] : default_folders;
-    await start(folders, files_in, files_out, bucket);
-
+    let mode = queryParams.mode ? queryParams.mode : modes.CSV;
+    await start(folders, files_in, files_out, bucket, mode);
 }
 
 exports.handler = async (event, context) => {
