@@ -21,28 +21,13 @@
 			"queryString": "select arg.*, (select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento) as num_argomenti_padre from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') $P{id_argomento_bigger_than};"
 		},
 		{
-			"type": "postProcessing",
-			"operation": "selectForm",
-			"queryString": "select id_articolo_normativo from entrasp.argomenti_articoli_normativi where id_argomento=$id_argomento$ limit 1;"
-		},
-		{
 			"operation": "insert",
 			"queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, $P{array_argomenti_father_da_aggiungere}) as id_argomento;",
 			"type": "main"
 		},
-		{
-			"operation": "insert",
-			"queryString": "INSERT INTO entrasp.argomenti_articoli_normativi(id_argomento, id_articolo_normativo) VALUES ($id_argomento$, $id_articolo_normativo$);",
-			"type": "postProcessing"
-		},
 		{	
 			"operation": "update",
 			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)",
-			"type": "postProcessing"
-		},
-		{	
-			"operation": "update",
-			"queryString": "update entrasp.argomenti_articoli_normativi argan set id_articolo_normativo=$id_articolo_normativo$ from entrasp.argomenti arg where argan.id_argomento=arg.id_argomento",
 			"type": "postProcessing"
 		},
 		{
@@ -140,22 +125,6 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT an.id_articolo_normativo AS id, an.codice_articolo_normativo||'-'||an.rubrica||'-'||tn.descrizione AS name  FROM entrasp.articoli_normativi an INNER JOIN entrasp.testi_normativi tn ON an.id_testo_normativo=tn.id_testo_normativo;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"sameOrigin": false,
-			"key": "id_articolo_normativo",
-			"label": "Riferimento normativo",
-			"newLine": false,
-			"readOnly": false
 		}
 		],
 		"subTables": [
