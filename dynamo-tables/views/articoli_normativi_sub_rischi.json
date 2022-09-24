@@ -42,38 +42,13 @@
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "delete from entrasp.rischi_articoli_normativi where codice_azienda = $codice_azienda$ and id_testo_normativo=$id_testo_normativo$ and codice_articolo_normativo=$codice_articolo_normativo$ and codice_rischio = $codice_rischio$",
+          "queryFunct": "delete from entrasp.rischi_articoli_normativi where codice_azienda = $codice_azienda$ and id_articolo_normativo=$id_articolo_normativo$ and codice_rischio = $codice_rischio$",
           "outputEventWhenComplete": "update_rischi_articoli_normativi"
         }
       ],
       "readOnly": false,
       "sameOrigin": false,
       "size": 1
-    },
-    {
-      "isHidden": false,
-      "isPrimary": false,
-      "readOnly": false,
-      "key": "articolo_testo_normativo",
-      "label": "Articolo normativo",
-      "sameOrigin": false,
-      "newLine": false,
-      "size": 5,
-      "subKeys": [
-        {
-          "key": "s_id_testo_normativo",
-          "dataType": "number"
-        },
-        {
-          "key": "s_codice_articolo_normativo",
-          "dataType": "text"
-        }
-      ],
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select (id_testo_normativo, codice_articolo_normativo) as id, entrasp.articoli_normativi_cod_rub(codice_articolo_normativo, id_testo_normativo) as name from entrasp.articoli_normativi;"
-      }
     },
     {
       "autoGenerate": false,
@@ -85,7 +60,7 @@
       "isPrimary": false,
       "key": "sanz_amm_min_quota",
       "label": "Sanz.Amm.Min.Quote",
-      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(codice_articolo_normativo, id_testo_normativo)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(id_articolo_normativo)",
       "sameOrigin": false,
       "readOnly": true,
       "newLine": false,
@@ -103,7 +78,7 @@
       "key": "sanz_amm_max_quota",
       "sameOrigin": false,
       "label": "Sanz.Amm.Max.Quote",
-      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(codice_articolo_normativo, id_testo_normativo)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(id_articolo_normativo)",
       "newLine": false,
       "size": 1
     },
@@ -119,7 +94,7 @@
       "label": "Sanz.Int.Min.gg.",
       "readOnly": true,
       "sameOrigin": false,
-      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(codice_articolo_normativo, id_testo_normativo)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(id_articolo_normativo)",
       "newLine": false,
       "size": 1
     },
@@ -135,7 +110,7 @@
       "readOnly": true,
       "label": "Sanz.Int.Max.gg.",
       "sameOrigin": false,
-      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(codice_articolo_normativo, id_testo_normativo)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(id_articolo_normativo)",
       "newLine": true,
       "size": 1
     },
@@ -165,32 +140,22 @@
       "readOnly": true,
       "newLine": false
     },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_testo_normativo",
-      "label": "id_testo_normativo",
-      "readOnly": true,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_articolo_normativo",
-      "label": "codice_articolo_normativo",
-      "readOnly": true,
-      "newLine": false
-    }
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT an.id_articolo_normativo AS id, an.codice_articolo_normativo||'-'||an.rubrica||'-'||tn.descrizione AS name  FROM entrasp.articoli_normativi an INNER JOIN entrasp.testi_normativi tn ON an.id_testo_normativo=tn.id_testo_normativo;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"sameOrigin": false,
+			"key": "id_articolo_normativo",
+			"label": "Riferimento normativo",
+			"newLine": false,
+			"readOnly": false
+		}
   ],
   "table_keys": [
     {
@@ -200,7 +165,7 @@
       "label": "Articolo normativo",
       "sameOrigin": false,
       "width": "40%",
-      "queryFunct": "entrasp.articoli_normativi_cod_rub(codice_articolo_normativo, id_testo_normativo)",
+      "queryFunct": "entrasp.articoli_normativi_cod_rub(id_articolo_normativo)",
       "format": {
         "dataType": "text"
       }
@@ -213,7 +178,7 @@
       "isPrimary": false,
       "key": "sanz_amm_min_quota",
       "label": "Sanz.Amm.Min.Quote",
-      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(codice_articolo_normativo, id_testo_normativo)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(id_articolo_normativo)",
       "sameOrigin": false
     },
     {
@@ -225,7 +190,7 @@
       "key": "sanz_amm_max_quota",
       "sameOrigin": false,
       "label": "Sanz.Amm.Max.Quote",
-      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(codice_articolo_normativo, id_testo_normativo)"
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(id_articolo_normativo)"
     },
     {
       "format": {
@@ -236,7 +201,7 @@
       "key": "sanz_int_min",
       "label": "Sanz.Int.Min.gg.",
       "sameOrigin": false,
-      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(codice_articolo_normativo, id_testo_normativo)"
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(id_articolo_normativo)"
     },
     {
       "format": {
@@ -247,7 +212,7 @@
       "key": "sanz_int_max",
       "label": "Sanz.Int.Max.gg.",
       "sameOrigin": false,
-      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(codice_articolo_normativo, id_testo_normativo)"
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(id_articolo_normativo)"
     },
     {
       "format": {
@@ -271,19 +236,20 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "id_testo_normativo",
       "label": "id_testo_normativo"
     },
     {
       "format": {
-        "dataType": "text"
+        "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
-      "key": "codice_articolo_normativo",
-      "label": "codice_articolo_normativo"
+      "width": "5%",
+      "key": "id_articolo_normativo",
+      "label": "ID"
     }
   ],
   "inputEvents": [

@@ -8,16 +8,6 @@
       "operation": "selectForm",
       "queryString": "select (id_testo_normativo_rif, codice_articolo_normativo_rif) as articolo_testo_normativo_rif from entrasp.articoli_normativi_rif where id_testo_normativo=$id_testo_normativo$ and codice_articolo_normativo=$codice_articolo_normativo$",
       "type": "postProcessing"
-    },
-    {
-      "operation": "insert",
-      "queryString": "select entrasp.rischi_articoli_normativi_insert($codice_azienda$, $codice_rischio$, $articolo_testo_normativo.s_codice_articolo_normativo$, $articolo_testo_normativo.s_id_testo_normativo$)",
-      "type": "main"
-    },
-    {
-      "operation": "update",
-      "queryString": "select entrasp.rischi_articoli_normativi_update($codice_azienda$, $codice_rischio$, $articolo_testo_normativo.s_codice_articolo_normativo$, $articolo_testo_normativo.s_id_testo_normativo$)",
-      "type": "main"
     }
   ],
   "form_keys": [
@@ -42,7 +32,7 @@
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "delete from entrasp.articoli_normativi_rif where codice_azienda = $codice_azienda$ and id_testo_normativo=$id_testo_normativo$ and codice_articolo_normativo=$codice_articolo_normativo$ and id_testo_normativo_rif=$id_testo_normativo_rif$ and codice_articolo_normativo_rif=$codice_articolo_normativo_rif$",
+          "queryFunct": "delete from entrasp.articoli_normativi_rif where codice_azienda = $codice_azienda$ and  id_articolo_normativo=$id_articolo_normativo$ and id_articolo_normativo_rif=id_articolo_normativo_rif$",
           "outputEventWhenComplete": "update_articoli_normativi_rif"
         }
       ],
@@ -54,25 +44,15 @@
       "isHidden": false,
       "isPrimary": false,
       "readOnly": false,
-      "key": "articolo_testo_normativo_rif",
+      "key": "id_articolo_normativo_rif",
       "label": "Articolo normativo (foglia)",
       "sameOrigin": false,
       "newLine": false,
       "size": 5,
-      "subKeys": [
-        {
-          "key": "s_id_testo_normativo_rif",
-          "dataType": "number"
-        },
-        {
-          "key": "s_codice_articolo_normativo_rif",
-          "dataType": "text"
-        }
-      ],
       "format": {
         "viewType": "combobox",
         "options": [],
-        "comboQuery": "select (id_testo_normativo, codice_articolo_normativo) as id, entrasp.articoli_normativi_cod_rub(codice_articolo_normativo, id_testo_normativo) as name from entrasp.articoli_normativi;"
+        "comboQuery": "select id_articolo_normativo as id, entrasp.articoli_normativi_cod_rub(id_articolo_normativo) as name from entrasp.articoli_normativi;"
       }
     },
     {
@@ -85,7 +65,7 @@
       "isPrimary": false,
       "key": "sanz_amm_min_quota",
       "label": "Sanz.Amm.Min.Quote",
-      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(codice_articolo_normativo_rif, id_testo_normativo_rif)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(id_articolo_normativo_rif)",
       "sameOrigin": false,
       "readOnly": true,
       "newLine": false,
@@ -103,7 +83,7 @@
       "key": "sanz_amm_max_quota",
       "sameOrigin": false,
       "label": "Sanz.Amm.Max.Quote",
-      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(codice_articolo_normativo_rif, id_testo_normativo_rif)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(id_articolo_normativo_rif)",
       "newLine": false,
       "size": 1
     },
@@ -119,7 +99,7 @@
       "label": "Sanz.Int.Min.gg.",
       "readOnly": true,
       "sameOrigin": false,
-      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(codice_articolo_normativo_rif, id_testo_normativo_rif)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(id_articolo_normativo_rif)",
       "newLine": false,
       "size": 1
     },
@@ -135,35 +115,9 @@
       "readOnly": true,
       "label": "Sanz.Int.Max.gg.",
       "sameOrigin": false,
-      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(codice_articolo_normativo_rif, id_testo_normativo_rif)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(id_articolo_normativo_rif)",
       "newLine": true,
       "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_testo_normativo",
-      "label": "id_testo_normativo",
-      "readOnly": true,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_articolo_normativo",
-      "label": "codice_articolo_normativo",
-      "readOnly": true,
-      "newLine": false
     }
   ],
   "table_keys": [
@@ -187,7 +141,7 @@
       "key": "articolo_testo_normativo_rif",
       "label": "Articolo normativo (foglia)",
       "width": "35%",
-      "queryFunct": "entrasp.articoli_normativi_cod_rub(codice_articolo_normativo_rif, id_testo_normativo_rif)"
+      "queryFunct": "entrasp.articoli_normativi_cod_rub(id_articolo_normativo_rif)"
     },
     {
       "format": {
@@ -198,7 +152,7 @@
       "key": "sanz_amm_min_quota",
       "label": "Sanz.Amm.Min.Quote",
       "width": "7%",
-      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(codice_articolo_normativo_rif, id_testo_normativo_rif)",
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_min_quote(id_articolo_normativo_rif)",
       "sameOrigin": false
     },
     {
@@ -211,7 +165,7 @@
       "width": "7%",
       "sameOrigin": false,
       "label": "Sanz.Amm.Max.Quote",
-      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(codice_articolo_normativo_rif, id_testo_normativo_rif)"
+      "queryFunct": "entrasp.articoli_normativi_sanz_amm_max_quote(id_articolo_normativo_rif)"
     },
     {
       "format": {
@@ -223,7 +177,7 @@
       "label": "Sanz.Int.Min.gg.",
       "width": "7%",
       "sameOrigin": false,
-      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(codice_articolo_normativo_rif, id_testo_normativo_rif)"
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_min(id_articolo_normativo_rif)"
     },
     {
       "format": {
@@ -235,7 +189,7 @@
       "label": "Sanz.Int.Max.gg.",
       "width": "7%",
       "sameOrigin": false,
-      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(codice_articolo_normativo_rif, id_testo_normativo_rif)"
+      "queryFunct": "entrasp.articoli_normativi_sanz_int_max(id_articolo_normativo_rif)"
     },
     {
       "format": {
