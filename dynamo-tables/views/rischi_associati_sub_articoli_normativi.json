@@ -2,7 +2,7 @@
   "$schema": "../views.schema.json",
   "entryKey": "rischi_associati_sub_articoli_normativi",
   "origin": "entrasp.rischi_articoli_normativi",
-  "businessObjectName": "rischiArticoliNormativi",
+  "businessObjectName": "rischi_articoli_normativi",
   "form_keys": [
     {
       "autoGenerate": false,
@@ -25,22 +25,9 @@
       },
       "isHidden": true,
       "isPrimary": true,
-      "key": "id_testo_normativo",
-      "label": "Testo normativo",
-      "readOnly": true,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_articolo_normativo",
-      "label": "Articolo normativo",
-      "readOnly": true,
+      "key": "id_articolo_normativo",
+      "label": "id_articolo_normativo",
+      "readOnly": false,
       "newLine": false
     },
     {
@@ -61,6 +48,46 @@
   ],
   "search_keys": [],
   "table_keys": [
+    {
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "delete_association",
+      "sameOrigin": false,
+      "width": "5%",
+      "queryFunct": "select true",
+      "format": {
+        "dataType": "text"
+      },
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "delete_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "articoli_normativi_sub_rischi",
+        "viewType": "form",
+        "query": "delete from entrasp.rischi_articoli_normativi where codice_azienda = '£codice_azienda£' and id_articolo_normativo=£id_articolo_normativo£ and codice_rischio = '£codice_rischio£'",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_articolo_normativo",
+            "destination": "id_articolo_normativo"
+          },
+          {
+            "source": "codice_rischio",
+            "destination": "codice_rischio"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
     {
       "format": {
         "dataType": "number"
@@ -85,6 +112,7 @@
       },
       "isHidden": false,
       "isPrimary": true,
+      "width": "10%",
       "key": "codice_rischio",
       "label": "Codice Rischio"
     },
@@ -96,7 +124,7 @@
       "isPrimary": false,
       "key": "descrizione",
       "label": "Descrizione",
-      "queryFunct": "select descrizione from entrasp.rischi where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$"
+      "queryFunct": "entrasp.rischi_descrizione(codice_rischio, codice_azienda)"
     }
   ],
   "inputEvents": [
