@@ -287,6 +287,106 @@
             "format": {
               "viewType": "combobox",
               "options": [],
+              "comboQuery": "select mt.id_modello_test as id, concat (mt.id_modello_test, ' - ', mt.titolo) as name from entrasp.modelli_test mt where mt.codice_azienda=$codice_azienda$"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test_new",
+            "sameOrigin": false,
+            "label": "Nuovo modello test",
+            "outputEvent": {
+              "eventName": "modello_test_new_update",
+              "eventTrigger": "select"
+            },
+            "inputEvents": [
+              {
+                "eventName": "modello_test_new_update",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "delete from entrasp.risposte where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ returning 1; update entrasp.sondaggi snd set id_modello_test=mvr.id_modello_test, id_modello_test_vr=mvr.id_modello_test_vr from entrasp.modelli_test_vr mvr where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and mvr.codice_azienda=$codice_azienda$ and mvr.id_modello_test=£id_modello_test_new£ and mvr.id_modello_test_vr=(select max(mvr2.id_modello_test_vr) from entrasp.modelli_test_vr mvr2 where mvr2.id_modello_test=£id_modello_test_new£ and mvr2.codice_azienda=mvr.codice_azienda) returning 1;",
+                "successMessage": "Done!",
+                "outputEventWhenComplete": "modello_verifica_change_hide_k"
+              }
+            ],
+            "newLine": false,
+            "readOnly": false,
+            "size": 8
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "modello_verifica_change_hide_k",
+            "buttonIcon": "close",
+            "label": "Nascondi",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "modello_verifica_change_hide",
+              "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+          }
+        ]
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "condition": "none",
+          "eventName": "modello_verifica_change_show",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "modello_verifica_change_hide",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "associa_progetto_show",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "associa_sondaggio_show",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "copia_da_somministrazione_show",
+          "values": []
+        }
+      ],
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "modello_verifica_change_sub_form",
+      "label": "modello_verifica_change_sub_form",
+      "newLine": true,
+      "readOnly": false,
+      "style": {
+        "background_color": "#98FB98"
+      },
+      "sameOrigin": false,
+      "saveWhenHidden": true
+    },
+    {
+      "format": {
+        "viewType": "subform",
+        "subform_keys": [
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "combobox",
+              "options": [],
               "comboQuery": "select prg.id_progetto as id, concat (prg.id_progetto, ' - ', prg.titolo) as name from entrasp.progetti prg where prg.codice_azienda=$codice_azienda$ and prg.id_centro_gest = (select id_centro_gest from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1)"
             },
             "isHidden": false,
@@ -699,9 +799,14 @@
             "outputEventName": "risp_non_applicabile"
           },
           {
-              "icon": "search",
-              "label": "OneKYC",
-              "outputEventName": "get_aml_scan"
+            "icon": "search",
+            "label": "OneKYC",
+            "outputEventName": "get_aml_scan"
+          },
+          {
+            "icon": "find_replace",
+            "label": "Cambia modello verifica",
+            "outputEventName": "modello_verifica_change_show"
           }
         ]
       },
@@ -1994,178 +2099,178 @@
       "width": "7%",
       "style": [
         {
-            "value": "*",
-            "text_align": "center"
+          "value": "*",
+          "text_align": "center"
         },
         {
-            "value": "Basso",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Basso",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Favorevole",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Favorevole",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Adeguato",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Adeguato",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "In prevalenza favorevole",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "royalblue",
-            "text_align": "center"
+          "value": "In prevalenza favorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "royalblue",
+          "text_align": "center"
         },
         {
-            "value": "Irrilevante",
-            "font_color": "DarkBlue",
-            "font_weight": "500",
-            "background_color": "GhostWhite",
-            "text_align": "center"
+          "value": "Irrilevante",
+          "font_color": "DarkBlue",
+          "font_weight": "500",
+          "background_color": "GhostWhite",
+          "text_align": "center"
         },
         {
-            "value": "Non significativo",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Non significativo",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Poco significativo",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Poco significativo",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Nessun Riscontro",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Nessun Riscontro",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Prevalentemente adeguato",
-            "font_color": "black",
-            "font_weight": "500",
-            "background_color": "#e6e600",
-            "text_align": "center"
+          "value": "Prevalentemente adeguato",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#e6e600",
+          "text_align": "center"
         },
         {
-            "value": "Medio-Basso",
-            "font_color": "black",
-            "font_weight": "500",
-            "background_color": "#e6e600",
-            "text_align": "center"
+          "value": "Medio-Basso",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#e6e600",
+          "text_align": "center"
         },
         {
-            "value": "Abbastanza significativo",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Abbastanza significativo",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Medio",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Medio",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Parzialmente favorevole",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Parzialmente favorevole",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Medio-Alto",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Medio-Alto",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Parzialmente adeguato",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Parzialmente adeguato",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Parzialmente sfavorevole",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Parzialmente sfavorevole",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Molto significativo",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Molto significativo",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Rilevati Riscontri",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Rilevati Riscontri",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Alto",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Alto",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "In prevalenza sfavorevole",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "In prevalenza sfavorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Non adeguato",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Non adeguato",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Sfavorevole",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "black",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Sfavorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "black",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Obbligo di Astensione",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Obbligo di Astensione",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         }
-    ]
+      ]
     },
     {
       "format": {
@@ -2402,7 +2507,7 @@
     },
     {
       "format": {
-          "dataType": "number"
+        "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -2411,21 +2516,21 @@
       "width": "4%",
       "isInputButton": true,
       "buttonAction": {
-          "target": "sondaggi",
-          "viewType": "form",
-          "action": "navigate",
-          "keymap": [
-              {
-                  "source": "codice_azienda",
-                  "destination": "codice_azienda"
-              },
-              {
-                  "source": "id_sondaggio_precedente",
-                  "destination": "id_sondaggio"
-              }
-          ]
+        "target": "sondaggi",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_sondaggio_precedente",
+            "destination": "id_sondaggio"
+          }
+        ]
       }
-  },
+    },
     {
       "format": {
         "dataType": "number"
