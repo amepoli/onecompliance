@@ -491,7 +491,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                     })
                     _this._console.log('syncData', syncData);
-                    _this.backendService.syncDriveS3File(syncData, googleAuth).subscribe(
+                    _this.backendService.syncDriveS3File(syncData, "full", googleAuth).subscribe(
                         syncDriveS3FileResponse => {
                             console.table(syncDriveS3FileResponse);
                             // _this.backendService.syncDriveS3File

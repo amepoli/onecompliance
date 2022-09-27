@@ -1673,7 +1673,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         const idRisorsa = googleAPIParams.driveExpandedContentsParams.idRisorsaKey ? formValues[googleAPIParams.driveExpandedContentsParams.idRisorsaKey] : null;
                         const idSondaggio = googleAPIParams.driveExpandedContentsParams.idSondaggioKey ? formValues[googleAPIParams.driveExpandedContentsParams.idSondaggioKey] : null;
                         const codicePart = googleAPIParams.driveExpandedContentsParams.codicePartKey ? formValues[googleAPIParams.driveExpandedContentsParams.codicePartKey] : null;
-                        
+                        const syncMode = googleAPIParams.driveExpandedContentsParams.syncMode ? googleAPIParams.driveExpandedContentsParams.syncMode : "full";
                         if (!codiceAzienda) {
                             _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
                         }
@@ -1682,7 +1682,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             try {
                                 const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
                                 
-                                await _this._googleAPIService.syncGoogleDrive(googleAuth, codiceAzienda, idAnagrafica, idProgetto, idRisorsa, idSondaggio, codicePart);
+                                await _this._googleAPIService.syncGoogleDrive(googleAuth, syncMode, codiceAzienda, idAnagrafica, idProgetto, idRisorsa, idSondaggio, codicePart);
 
                                 /*
                                 // let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
