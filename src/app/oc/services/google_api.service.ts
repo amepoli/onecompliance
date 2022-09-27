@@ -73,7 +73,7 @@ export class GoogleAPIService {
     return anagraficheToBeUpdatedResponse.response.rows;
   }
 
-  public async syncGoogleDrive(googleAuth, codiceAzienda, idAnagrafica, idProgetto, idRisorsa, idSondaggio, codicePart) {
+  public async syncGoogleDrive(googleAuth, syncMode, codiceAzienda, idAnagrafica, idProgetto, idRisorsa, idSondaggio, codicePart) {
 
     let _this = this;
     let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername(), idRisorsa, idSondaggio, codicePart ).toPromise();
@@ -142,7 +142,7 @@ export class GoogleAPIService {
       // let syncDataResponse = await forkJoin(getDriveFolderDeepContentsResponse.syncData.map(x => _this.backendService.syncDriveS3File([x], googleAuth))).toPromise();
       let syncDataResponse = [];
       for (const x of getDriveFolderDeepContentsResponse.syncData) {
-        let syncDriveS3FileResponse = await _this.backendService.syncDriveS3File([x], googleAuth).toPromise();
+        let syncDriveS3FileResponse = await _this.backendService.syncDriveS3File([x], syncMode, googleAuth).toPromise();
         syncDataResponse.push(syncDriveS3FileResponse);
         _this._console.log(syncDriveS3FileResponse);
       };

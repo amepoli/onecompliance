@@ -8,7 +8,6 @@ const uuid = require('uuid');
 //const { Readable } = require('stream');
 let stream = require('stream');
 
-const https = require('https');
 const { Client } = require("@googlemaps/google-maps-services-js");
 const googleMapsClient = new Client({});
 const { OAuth2Client } = require('google-auth-library');
@@ -16,6 +15,12 @@ const oAuth2Client = new OAuth2Client(
     'CLIENT_ID',
     'CLIENT_SECRET'
 );
+
+const syncModes = {
+    "full": "full",
+    "driveToS3": "driveToS3",
+    "s3ToDrive": "s3ToDrive"
+}
 
 // var promisify = require('promisify');
 // const { promisify } = require('bluebird');
@@ -1618,7 +1623,7 @@ async function copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, driveFile
     return { result: 'OK', data: response };
 }
 
-async function syncDriveS3File(syncData, authParams) {
+async function syncDriveS3File(syncData, syncMode, authParams) {
 
     await performGoogleAuth(authParams);
 
@@ -1717,34 +1722,54 @@ async function syncDriveS3File(syncData, authParams) {
                 _console.log('s3FileModifiedDateTime', s3FileModifiedDateTime);
 
                 if (driveFileModifiedDateTime > s3FileModifiedDateTime) {
-                    _console.log('deleteS3File...');
-                    await deleteS3File(s3FilePath);
-                    _console.log('copyFromDriveToS3...');
-                    await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, driveFileId, authParams);
-                    syncRow['s3md5'] = driveFileInfo.md5Checksum;
-                    response = { result: 'OK', message: 'Copied from Drive to S3' };
+                    if(syncMode == syncModes.full || syncMode == syncModes.driveToS3) {
+                        _console.log('deleteS3File...');
+                        await deleteS3File(s3FilePath);
+                        _console.log('copyFromDriveToS3...');
+                        await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, driveFileId, authParams);
+                        syncRow['s3md5'] = driveFileInfo.md5Checksum;
+                        response = { result: 'OK', message: 'Copied from Drive to S3' };
+                    }
+                    else {
+                        response = { result: 'OK', message: 'Sync mode does not allow copy from Drive to S3' };
+                    }
                 }
                 else if (driveFileModifiedDateTime < s3FileModifiedDateTime) {
-                    _console.log('deleteDriveFile...');
-                    await deleteDriveFile(driveFileInfo.id);
-                    _console.log('copyFromS3ToDrive...');
-                    await copyFromS3ToDrive(s3FilePath, driveFilePath, authParams);
-                    syncRow['s3md5'] = s3FileInfo.ETag;
-                    response = { result: 'OK', message: 'Copied from S3 to Drive' };
+                    if(syncMode == syncModes.full || syncMode == syncModes.s3ToDrive) {
+                        _console.log('deleteDriveFile...');
+                        await deleteDriveFile(driveFileInfo.id);
+                        _console.log('copyFromS3ToDrive...');
+                        await copyFromS3ToDrive(s3FilePath, driveFilePath, authParams);
+                        syncRow['s3md5'] = s3FileInfo.ETag;
+                        response = { result: 'OK', message: 'Copied from S3 to Drive' };
+                    }
+                    else {
+                        response = { result: 'OK', message: 'Sync mode does not allow copy from S3 to Drive' };
+                    }
                 }
             }
         }
         else if (driveFileInfo && driveFileInfo.modifiedTime != null) {
-            _console.log('copyFromDriveToS3...');
-            await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, driveFileId, authParams);
-            syncRow['s3md5'] = driveFileInfo.md5Checksum;
-            response = { result: 'OK', message: 'Copied from Drive to S3' };
+            if(syncMode == syncModes.full || syncMode == syncModes.driveToS3) {
+                _console.log('copyFromDriveToS3...');
+                await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, driveFileId, authParams);
+                syncRow['s3md5'] = driveFileInfo.md5Checksum;
+                response = { result: 'OK', message: 'Copied from Drive to S3' };
+            }
+            else {
+                response = { result: 'OK', message: 'Sync mode does not allow copy from Drive to S3' };
+            }
         }
         else if (s3FileInfo && s3FileInfo.LastModified != null) {
-            _console.log('copyFromS3ToDrive...');
-            await copyFromS3ToDrive(s3FilePath, driveFilePath, authParams);
-            syncRow['s3md5'] = s3FileInfo.ETag;
-            response = { result: 'OK', message: 'Copied from S3 to Drive' };
+            if(syncMode == syncModes.full || syncMode == syncModes.s3ToDrive) {
+                _console.log('copyFromS3ToDrive...');
+                await copyFromS3ToDrive(s3FilePath, driveFilePath, authParams);
+                syncRow['s3md5'] = s3FileInfo.ETag;
+                response = { result: 'OK', message: 'Copied from S3 to Drive' };
+            }
+            else {
+                response = { result: 'OK', message: 'Sync mode does not allow copy from S3 to Drive' };
+            }
         }
         else {
             if (!syncRow['fileid']) {
@@ -2454,7 +2479,8 @@ exports.handler = async (event, context) => {
             }
             else if (requestType === 'syncDriveS3File') {
                 const syncData = JSON.parse(queryParams['syncData']);
-                body = await syncDriveS3File(syncData, event.body ? JSON.parse(event.body) : {});
+                const syncMode = queryParams['syncMode'];
+                body = await syncDriveS3File(syncData, syncMode, event.body ? JSON.parse(event.body) : {});
             }
             else if (requestType === 'fixAnagraficaFolderByIdentifier') {
                 let eventBody = event.body ? JSON.parse(event.body) : {};
