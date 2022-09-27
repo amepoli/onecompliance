@@ -33,7 +33,8 @@ exports.handler = async (event, context) => {
     { grant_type: 'client_credentials' }, {
     headers: {
       'Authorization': 'Basic ' + encodedToken,
-      'Content-Type': 'multipart/form-data'
+      'Content-Type': 'multipart/form-data',
+      'Access-Control-Allow-Origin': '*'
     }
   });
   //console.log('Token:', token.data.access_token);
