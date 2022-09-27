@@ -252,7 +252,7 @@ exports.handler = async (event) => {
                 let response;
 
                 //See the function in the db which answer the question of survey
-                query = `select entrasp.process_aml_scans($$ ${scans} $$);`;
+                query = `select entrasp.OneKYC_process_aml_scans($$ ${scans} $$);`;
 
                 console.log('running query: ', query);
                 response = await client.query(query);
