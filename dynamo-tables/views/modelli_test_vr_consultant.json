@@ -26,5 +26,117 @@
             "operation": "update",
             "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar), id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>coalesce($flag_sezioni$::bpchar,0::bpchar), giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$,codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::boolean, stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean );"
         }
+    ],
+    "subTables": [
+        {
+            "entryKey": "domande_sub_of_modelli_test_vr",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "flag_sezioni",
+                    "condition": "equalTo",
+                    "values": [
+                        "false"
+                    ]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                },
+                {
+                    "parent": "id_modello_test_vr",
+                    "son": "id_modello_test_vr"
+                }
+            ],
+            "label": "Domande",
+            "type": "table"
+        },
+        {
+            "entryKey": "domande_sezioni_detail",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "flag_sezioni",
+                    "condition": "equalTo",
+                    "values": [
+                        "true"
+                    ]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                },
+                {
+                    "parent": "id_modello_test_vr",
+                    "son": "id_modello_test_vr"
+                }
+            ],
+            "label": "Domande - Sezioni"
+        },
+        {
+            "entryKey": "tag_sub_of_modelli_test_vr",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "TAG"
+        },
+        {
+            "entryKey": "tag_funz_sub_of_modelli_test_vr",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "TAG Categorie"
+        },
+        {
+            "entryKey": "tag_sotto_cat_sub_of_modelli_test_vr",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "TAG Sotto Categorie"
+        },
+        {
+            "entryKey": "tag_aziende_sub_of_modelli_test_vr",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "TAG Tipi Aziende"
+        },
+        {
+            "entryKey": "tag_tipi_controlli_sub_of_modelli_test_vr",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "TAG Tipi Controllo"
+        }
+        
     ]
 }
