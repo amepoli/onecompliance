@@ -52,6 +52,11 @@
       "type": "main"
     },
     {
+      "operation": "selectForm",
+      "queryString": "update entrasp.argomenti_argomenti set id_argomento_relazione=45069 where id_argomento_father=3511 and id_argomento_relazione is null",
+      "type": "preProcessing"
+    },
+    {
       "operation": "stopEvent",
       "type": "main",
       "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
@@ -71,6 +76,16 @@
       "type": "main",
       "operation": "delete",
       "queryString": "delete from entrasp.cdms_risorse where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$"
+    },
+    {
+      "type": "postProcessing",
+      "operation": "insert",
+      "queryString": "update entrasp.cdms_risorse rs set id_anagrafica=az.id_anagrafica from entrasp.aziende az where rs.codice_azienda=az.codice_azienda and rs.id_anagrafica is null"
+    },
+    {
+      "type": "postProcessing",
+      "operation": "update",
+      "queryString": "update entrasp.cdms_risorse rs set id_anagrafica=az.id_anagrafica from entrasp.aziende az where rs.codice_azienda=az.codice_azienda and rs.id_anagrafica is null"
     }
   ],
   "form_keys": [
