@@ -9,7 +9,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select snd2.id_sondaggio as id_sondaggio_precedente, case when snd.data_prevista<now() and ss.stato!='C' then 'Si' else 'No' end as scaduto, cnt.numero_contratto, ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, ss.data_esecuzione, snd.data_prevista, split_part(ss.object_key, '|', 2)::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test, (SELECT ss.data_esecuzione + (interval ' 1 days' * giorni_rischedulazione) FROM entrasp.modelli_test_risultati_righe WHERE codice_azienda=ss.codice_azienda AND pct_da = ss.pct_da AND id_risultato=mtvr.id_risultato) as data_scadenza from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio left JOIN entrasp.sondaggi snd2 on snd.codice_azienda=snd2.codice_azienda and snd.id_sondaggio=snd2.id_sondaggio_succ inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test left join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto where ss.codice_azienda=$codice_azienda$ and ((ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and (snd.data_prevista<=CURRENT_DATE+ INTERVAL '100 days' or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and snd.data_prevista is null and ss.data_esecuzione is null))"
+      "queryString": "select case when snd.data_prevista<now() and ss.stato!='C' then 'Si' else 'No' end as scaduto, cnt.numero_contratto, ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, ss.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, ss.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test, (SELECT ss.data_esecuzione + (interval ' 1 days' * giorni_rischedulazione) FROM entrasp.modelli_test_risultati_righe WHERE codice_azienda=ss.codice_azienda AND pct_da = ss.pct_da AND id_risultato=mtvr.id_risultato) as data_scadenza from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test left join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto where ss.codice_azienda=$codice_azienda$ and ((ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and (snd.data_prevista<=CURRENT_DATE+ INTERVAL '100 days' or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and snd.data_prevista is null and ss.data_esecuzione is null))"
     },
     {
       "operation": "selectForm",
@@ -680,9 +680,9 @@
             "outputEventName": "risp_non_applicabile"
           },
           {
-              "icon": "search",
-              "label": "OneKYC",
-              "outputEventName": "get_aml_scan_prof"
+            "icon": "search",
+            "label": "OneKYC",
+            "outputEventName": "get_aml_scan_prof"
           }
         ]
       },
@@ -990,7 +990,7 @@
         "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
         "options": [],
         "viewType": "combobox"
-    },
+      },
       "isHidden": false,
       "isPrimary": false,
       "key": "id_anagrafica_assegnataria",
@@ -1589,7 +1589,7 @@
       "isPrimary": false,
       "key": "object_description",
       "label": "Oggetto di Verifica",
-      "width": "25%",
+      "width": "22%",
       "style": [
         {
           "value": "*",
@@ -1616,81 +1616,95 @@
       "isPrimary": false,
       "key": "giudizio",
       "label": "Giudizio automatico",
-      "width": "7%",
+      "width": "10%",
       "style": [
         {
-            "value": "*",
-            "text_align": "center"
+          "value": "*",
+          "text_align": "center"
         },
         {
-            "value": "Basso",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Basso",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Favorevole",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Rischio basso",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Adeguato",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Favorevole",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "In prevalenza favorevole",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "royalblue",
-            "text_align": "center"
+          "value": "Adeguato",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Irrilevante",
-            "font_color": "DarkBlue",
-            "font_weight": "500",
-            "background_color": "GhostWhite",
-            "text_align": "center"
+          "value": "In prevalenza favorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "royalblue",
+          "text_align": "center"
         },
         {
-            "value": "Non significativo",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Irrilevante",
+          "font_color": "DarkBlue",
+          "font_weight": "500",
+          "background_color": "GhostWhite",
+          "text_align": "center"
         },
         {
-            "value": "Poco significativo",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Non significativo",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Nessun Riscontro",
-            "font_color": "PaleGreen",
-            "font_weight": "500",
-            "background_color": "Green",
-            "text_align": "center"
+          "value": "Poco significativo",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Prevalentemente adeguato",
-            "font_color": "black",
-            "font_weight": "500",
-            "background_color": "#e6e600",
-            "text_align": "center"
+          "value": "Nessun Riscontro",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         },
         {
-            "value": "Medio-Basso",
-            "font_color": "black",
-            "font_weight": "500",
-            "background_color": "#e6e600",
-            "text_align": "center"
+          "value": "Prevalentemente adeguato",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#e6e600",
+          "text_align": "center"
+        },
+        {
+          "value": "Rischio medio",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#e6e600",
+          "text_align": "center"
+        },
+        {
+          "value": "Medio-Basso",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#e6e600",
+          "text_align": "center"
         },
         {
           "value": "Falsi Positivi",
@@ -1700,104 +1714,112 @@
           "text_align": "center"
         },
         {
-            "value": "Abbastanza significativo",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Abbastanza significativo",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Medio",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Medio",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Parzialmente favorevole",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Parzialmente favorevole",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Medio-Alto",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Medio-Alto",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Parzialmente adeguato",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Parzialmente adeguato",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Parzialmente sfavorevole",
-            "font_color": "DarkRed",
-            "font_weight": "500",
-            "background_color": "orange",
-            "text_align": "center"
+          "value": "Parzialmente sfavorevole",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
-            "value": "Molto significativo",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Molto significativo",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Rilevati Riscontri",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Rilevati Riscontri",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Alto",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Alto",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "In prevalenza sfavorevole",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "In prevalenza sfavorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Non adeguato",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Non adeguato",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Sfavorevole",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "black",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Sfavorevole",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "black",
+          "font_size": "medium",
+          "text_align": "center"
         },
         {
-            "value": "Obbligo di Astensione",
-            "font_color": "white",
-            "font_weight": "500",
-            "background_color": "firebrick",
-            "font_size": "medium",
-            "text_align": "center"
+          "value": "Rischio alto",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
+        },
+        {
+          "value": "Obbligo di Astensione",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
         }
-    ]
+      ]
     },
     {
       "format": {
@@ -2086,5 +2108,8 @@
         "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.peso from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$ and ri.peso!= 0"
       }
     ]
+  },
+  "querySuffixes": {
+    "tableViewSuffix": "order by ss.id_somministrazione desc limit 100"
   }
 }
