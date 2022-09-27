@@ -319,8 +319,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                             }
                         }
                         else {
-                            _this._console.error("You are not subscribed to use Google services");
-                            _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");    
+                            /* _this._console.error("You are not subscribed to use Google services");
+                            _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");     */
                         }
                         // Show success snackbar
                         _this.isSaving = false;
