@@ -78,7 +78,8 @@ exports.handler = async (event) => {
                 AND ca.id_anagrafica=${registry} 
                 AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica)
                 AND tipo_soggetto IS NOT NULL
-                AND ca.codice_ruolo IN ('TIEF','ESE');`;
+                AND ca.codice_ruolo IN ('TIEF','ESE')
+                AND ca.dt_fine IS NOT NULL;`;
 
                 console.log('running query: ', query);
                 response = await client.query(query);
@@ -143,7 +144,8 @@ exports.handler = async (event) => {
                 AND ca.id_anagrafica=(SELECT split_part(object_key, '|', 2)::numeric FROM entrasp.sondaggi_somministrati WHERE codice_azienda='${company}' AND id_somministrazione=${check} AND object_name='anagraficheId')
                 AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica)
                 AND tipo_soggetto IS NOT NULL
-                AND ca.codice_ruolo IN ('TIEF','ESE');`;
+                AND ca.codice_ruolo IN ('TIEF','ESE')
+                AND ca.dt_fine IS NOT NULL;`;
 
                 console.log('running query: ', query);
                 response = await client.query(query);
