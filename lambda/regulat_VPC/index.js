@@ -79,7 +79,7 @@ exports.handler = async (event) => {
                 AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica)
                 AND tipo_soggetto IS NOT NULL
                 AND ca.codice_ruolo IN ('TIEF','ESE')
-                AND ca.dt_fine IS NOT NULL;`;
+                AND ca.dt_fine IS NULL;`;
 
                 console.log('running query: ', query);
                 response = await client.query(query);
@@ -145,7 +145,7 @@ exports.handler = async (event) => {
                 AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica)
                 AND tipo_soggetto IS NOT NULL
                 AND ca.codice_ruolo IN ('TIEF','ESE')
-                AND ca.dt_fine IS NOT NULL;`;
+                AND ca.dt_fine IS NULL;`;
 
                 console.log('running query: ', query);
                 response = await client.query(query);
