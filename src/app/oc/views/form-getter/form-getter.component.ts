@@ -1678,7 +1678,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
                         }
                         else {
-                            let loadingToast = _this._toastService.showLoadingToast("Synching google drive", "Please wait...");
+                            let loadingToast = _this._toastService.showLoadingToast("Synching Google Drive", "Please wait...");
                             try {
                                 const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
                                 
