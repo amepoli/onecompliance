@@ -43,6 +43,7 @@ export class AuthService {
   private currentCompany: string;
   private confirmUser: any;
   private sync: any;
+  private onekyc: boolean; 
 
   // Google 
   // googleUser: SocialUser;
@@ -240,6 +241,8 @@ export class AuthService {
           //   _this.loginGoogle('gdrive');
           // }
 
+          _this.onekyc = ud.userdata.onekyc;
+
           _this._console.log(ud.userdata);
 
           //load default language for user
@@ -324,6 +327,10 @@ export class AuthService {
 
   public getSyncMode(): string {
     return this.sync;
+  }
+
+  public getOneKYCAuth(): boolean {
+    return this.onekyc;
   }
 
   /** Set last Company in local storage */

@@ -45,7 +45,7 @@ exports.handler = async (event, context) => {
                 Key: data.picture
             };
             var url = s3.getSignedUrl('getObject', s3ParamsGetList);
-            data = {username: data.username, name: data.name, lastname: data.lastname, picture: url, language: data.language, sync: data.sync || null, companies: companies };
+            data = {username: data.username, name: data.name, lastname: data.lastname, picture: url, language: data.language, sync: data.sync || null, companies: companies, onekyc: data.onekyc || false };
             body = {result: 'OK', userdata: data}; 
         } else {
             body = {result: 'KO', reason:'Cannot find the user'};

@@ -1477,7 +1477,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             else if (googleAPIParams.actionType == 'get_email_thread') {
-                if(_this.authService.getSyncMode() === 'google') {
+                if (_this.authService.getSyncMode() === 'google') {
                     if (!googleAPIParams.emailThreadParams) {
                         _this._toastService.showErrorToast("Missing Google API Get Email Thread Params");
                     }
@@ -1491,7 +1491,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             else if (googleAPIParams.actionType == 'create_drive_folder') {
-                if(_this.authService.getSyncMode() === 'google') {
+                if (_this.authService.getSyncMode() === 'google') {
                     if (!googleAPIParams.driveFolderParams) {
                         _this._toastService.showErrorToast("Missing Google API Drive Folder Params");
                     }
@@ -1528,7 +1528,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             else if (googleAPIParams.actionType == 'copy_s3_to_drive') {
-                if(_this.authService.getSyncMode() === 'google') {
+                if (_this.authService.getSyncMode() === 'google') {
                     if (!googleAPIParams.s3ToDriveParams) {
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
@@ -1566,7 +1566,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             else if (googleAPIParams.actionType == 'copy_drive_to_s3') {
-                if(_this.authService.getSyncMode() === 'google') {
+                if (_this.authService.getSyncMode() === 'google') {
                     if (!googleAPIParams.driveToS3Params) {
                         _this._toastService.showErrorToast("Missing Google API Path Params");
                     }
@@ -1604,7 +1604,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             else if (googleAPIParams.actionType == 'get_emails_by_codice_azienda') {
-                if(_this.authService.getSyncMode() === 'google') {
+                if (_this.authService.getSyncMode() === 'google') {
                     let loadingToast = _this._toastService.showLoadingToast("Loading emails", "Please wait...");
                     try {
                         const googleAuth = await _this.authService.loadGoogleAuth('gmail');
@@ -1613,10 +1613,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                         let getEmailsByCodiceAziendaResult = await _this._googleAPIService.getEmailsByCodiceAzienda(googleAuth, codiceAziendaList);
                         _this._console.log(getEmailsByCodiceAziendaResult);
-                        
+
                         _this._toastService.hideLoadingToast(loadingToast);
-                        
-                        if(getEmailsByCodiceAziendaResult.result === 'OK') {
+
+                        if (getEmailsByCodiceAziendaResult.result === 'OK') {
                             _this._toastService.showSuccessToast(event.successMessage || 'Done!');
                         }
                         else {
@@ -1633,18 +1633,18 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");
                 }
             }
-            else if(googleAPIParams.actionType === "get_drive_changes") {
-                if(_this.authService.getSyncMode() === 'google') {
+            else if (googleAPIParams.actionType === "get_drive_changes") {
+                if (_this.authService.getSyncMode() === 'google') {
                     let loadingToast = _this._toastService.showLoadingToast("Loading emails", "Please wait...");
                     try {
                         const googleAuth = await _this.authService.loadGoogleAuth('gmail');
-                        
+
                         let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
                         _this._console.log(getChangesResult);
-                        
+
                         _this._toastService.hideLoadingToast(loadingToast);
-                        
-                        if(getChangesResult.result === 'OK') {
+
+                        if (getChangesResult.result === 'OK') {
                             _this._toastService.showSuccessToast(event.successMessage || 'Done!');
                         }
                         else {
@@ -1662,7 +1662,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             }
             else if (googleAPIParams.actionType == 'get_folder_expanded_contents') {
-                if(_this.authService.getSyncMode() === 'google') {
+                if (_this.authService.getSyncMode() === 'google') {
                     if (!googleAPIParams.driveExpandedContentsParams) {
                         _this._toastService.showErrorToast("Missing Google Drive Expanded Contents Params");
                     }
@@ -1681,7 +1681,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             let loadingToast = _this._toastService.showLoadingToast("Synching Google Drive", "Please wait...");
                             try {
                                 const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
-                                
+
                                 await _this._googleAPIService.syncGoogleDrive(googleAuth, syncMode, codiceAzienda, idAnagrafica, idProgetto, idRisorsa, idSondaggio, codicePart);
 
                                 /*
@@ -1848,97 +1848,102 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             _this._toastService.showErrorToast("Missing Regulat API params");
         }
         else {
-            if (regulatAPIParams.actionType === 'get_aml_scan') {
-                if (!regulatAPIParams.entityParams) {
-                    _this._toastService.showErrorToast("Missing Regulat API entity params");
-                }
-                else {
-                    _this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
-
-                    const codiceAziendaAML = formValues[regulatAPIParams.entityParams.codice_azienda];
-                    const idAnagraficaAML = formValues[regulatAPIParams.entityParams.id_anagrafica];
-                    const idSomministrazioneAML = formValues[regulatAPIParams.entityParams.id_somministrazione];
-                    const dynamoUserAML = formValues[regulatAPIParams.entityParams.dynamo_user];
-
-                    //First step, get connected registries
-                    let connected_registries = await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
-                    _this._console.log(connected_registries.response);
-
-                    if (connected_registries.response === 'KO') {
-                        _this._console.log('KO');
-                        _this._dialogService.closeDialog();
-                        _this._toastService.showErrorToast(connected_registries.reason);
+            if (_this.authService.getOneKYCAuth()) {
+                if (regulatAPIParams.actionType === 'get_aml_scan') {
+                    if (!regulatAPIParams.entityParams) {
+                        _this._toastService.showErrorToast("Missing Regulat API entity params");
                     }
                     else {
+                        _this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
 
-                        let connectedRegistries = connected_registries.response;
+                        const codiceAziendaAML = formValues[regulatAPIParams.entityParams.codice_azienda];
+                        const idAnagraficaAML = formValues[regulatAPIParams.entityParams.id_anagrafica];
+                        const idSomministrazioneAML = formValues[regulatAPIParams.entityParams.id_somministrazione];
+                        const dynamoUserAML = formValues[regulatAPIParams.entityParams.dynamo_user];
 
-                        //Second step, query regulat.io
-                        let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, idSomministrazioneAML, dynamoUserAML).toPromise();
-                        _this._console.log(scan_contents);
+                        //First step, get connected registries
+                        let connected_registries = await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
+                        _this._console.log(connected_registries.response);
 
-                        _this._dialogService.closeDialog();
-                        _this._toastService.showSuccessToast('OneKYC: Completed!'); // show success toast
-                        this.refreshView(); // refresh the view
-                    }
-                }
-            }
-            else if (regulatAPIParams.actionType === 'get_aml_scans') {
-                if (!regulatAPIParams.surveyParams) {
-                    _this._toastService.showErrorToast("Missing Regulat API survey params");
-                }
-                else {
-                    _this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
-
-                    const codiceAziendaAML = formValues[regulatAPIParams.surveyParams.codice_azienda];
-                    const idSondaggioAML = formValues[regulatAPIParams.surveyParams.id_sondaggio];
-                    const dynamoUserAML = formValues[regulatAPIParams.surveyParams.dynamo_user];
-
-                    //First step, get connected registries
-                    let connected_checks = await _this.backendService.getConnectedChecks(codiceAziendaAML, idSondaggioAML).toPromise();
-                    _this._console.log(connected_checks.response);
-
-                    if (connected_checks.response === 'KO') {
-                        _this._console.log('KO');
-                        _this._dialogService.closeDialog();
-                        _this._toastService.showErrorToast(connected_checks.reason);
-                    }
-                    else {
-
-                        let connectedChecks = connected_checks.response;
-
-                        for (let i = 0; i < connectedChecks.length; i++) {
-
-                            _this._console.log(connectedChecks[i].id_somministrazione);
-
-                            //First step, get connected registries
-                            let connected_registries = await _this.backendService.getConnectedRegistriesFromCheck(codiceAziendaAML, connectedChecks[i].id_somministrazione).toPromise();
-                            _this._console.log(connected_registries.response);
-
-                            if (connected_registries.response === 'KO') {
-                                _this._console.log('KO');
-                                _this._dialogService.closeDialog();
-                                _this._toastService.showErrorToast(connected_registries.reason);
-                                return;
-                            }
-                            else {
-
-                                let connectedRegistries = connected_registries.response;
-
-                                //Second step, query regulat.io
-                                let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, connectedChecks[i].id_somministrazione, dynamoUserAML).toPromise();
-                                _this._console.log(scan_contents);
-
-                            }
+                        if (connected_registries.response === 'KO') {
+                            _this._console.log('KO');
+                            _this._dialogService.closeDialog();
+                            _this._toastService.showErrorToast(connected_registries.reason);
                         }
-                        _this._dialogService.closeDialog();
-                        _this._toastService.showSuccessToast('OneKYC: Completed!'); // show success toast
-                        this.refreshView(); // refresh the view
+                        else {
+
+                            let connectedRegistries = connected_registries.response;
+
+                            //Second step, query regulat.io
+                            let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, idSomministrazioneAML, dynamoUserAML).toPromise();
+                            _this._console.log(scan_contents);
+
+                            _this._dialogService.closeDialog();
+                            _this._toastService.showSuccessToast('OneKYC: Completed!'); // show success toast
+                            this.refreshView(); // refresh the view
+                        }
                     }
                 }
-            }
-            else {
-                _this._toastService.showErrorToast("Missing Regulat Api Params");
+                else if (regulatAPIParams.actionType === 'get_aml_scans') {
+                    if (!regulatAPIParams.surveyParams) {
+                        _this._toastService.showErrorToast("Missing Regulat API survey params");
+                    }
+                    else {
+                        _this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
+
+                        const codiceAziendaAML = formValues[regulatAPIParams.surveyParams.codice_azienda];
+                        const idSondaggioAML = formValues[regulatAPIParams.surveyParams.id_sondaggio];
+                        const dynamoUserAML = formValues[regulatAPIParams.surveyParams.dynamo_user];
+
+                        //First step, get connected registries
+                        let connected_checks = await _this.backendService.getConnectedChecks(codiceAziendaAML, idSondaggioAML).toPromise();
+                        _this._console.log(connected_checks.response);
+
+                        if (connected_checks.response === 'KO') {
+                            _this._console.log('KO');
+                            _this._dialogService.closeDialog();
+                            _this._toastService.showErrorToast(connected_checks.reason);
+                        }
+                        else {
+
+                            let connectedChecks = connected_checks.response;
+
+                            for (let i = 0; i < connectedChecks.length; i++) {
+
+                                _this._console.log(connectedChecks[i].id_somministrazione);
+
+                                //First step, get connected registries
+                                let connected_registries = await _this.backendService.getConnectedRegistriesFromCheck(codiceAziendaAML, connectedChecks[i].id_somministrazione).toPromise();
+                                _this._console.log(connected_registries.response);
+
+                                if (connected_registries.response === 'KO') {
+                                    _this._console.log('KO');
+                                    _this._dialogService.closeDialog();
+                                    _this._toastService.showErrorToast(connected_registries.reason);
+                                    return;
+                                }
+                                else {
+
+                                    let connectedRegistries = connected_registries.response;
+
+                                    //Second step, query regulat.io
+                                    let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, connectedChecks[i].id_somministrazione, dynamoUserAML).toPromise();
+                                    _this._console.log(scan_contents);
+
+                                }
+                            }
+                            _this._dialogService.closeDialog();
+                            _this._toastService.showSuccessToast('OneKYC: Completed!'); // show success toast
+                            this.refreshView(); // refresh the view
+                        }
+                    }
+                }
+                else {
+                    _this._toastService.showErrorToast("Missing Regulat Api Params");
+                }
+            } else {
+                _this._console.error("You are not subscribed to use OneKYC service");
+                _this._dialogService.showErrorDialog("Missing authorization", "You are not subscribed to use OneKYC service");
             }
         }
     }
