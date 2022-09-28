@@ -724,7 +724,8 @@
                         "driveExpandedContentsParams": {
                             "codiceAziendaKey": "codice_azienda",
                             "idSondaggioKey": "id_sondaggio",
-                            "codicePartKey": "codice_part"
+                            "codicePartKey": "codice_part",
+                            "syncMode": "s3ToDrive"
                         }
                     }
                 }
@@ -1855,7 +1856,7 @@
             "label": "Con doc. completa",
             "newLine": false,
             "size": 1.5,
-            "queryCond": "snd.id_sondaggio not in (select ro.id_sondaggio from entrasp.cdms_risorse_oggetti ro inner join entrasp.cdms_risorse_revisioni rev on ro.id_risorsa=rev.id_risorsa and ro.prog_revisione=rev.prog_revisione and ro.codice_azienda=rev.codice_azienda where id_argomento_stato!=4035 and ro.id_sondaggio is not null)"
+            "queryCond": "snd.id_sondaggio not in (select ro.id_sondaggio from entrasp.cdms_risorse_oggetti ro inner join entrasp.cdms_risorse_revisioni rev on ro.id_risorsa=rev.id_risorsa and ro.prog_revisione=rev.prog_revisione and ro.codice_azienda=rev.codice_azienda where id_argomento_stato!=4035 and ro.codice_azienda=$codice_azienda$ and ro.id_sondaggio is not null and nome_business_object in('sondaggi', 'sondaggiSomministrati')"
         },
         {
             "fieldName": "doc_incompleta",

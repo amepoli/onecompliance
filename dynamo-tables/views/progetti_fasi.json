@@ -41,7 +41,7 @@
 		},
 		{
 			"operation": "selectTable",
-			"queryString": "select pf.id_fase, pf.id_progetto, pf.codice_azienda, pf.id_sondaggio||'-'||pf.titolo as titolo, pf.id_fase_sup, pf.id_sondaggio, pf.codice, entrasp.grc_max_id_mdt_vr(snd.codice_azienda, snd.id_modello_test) as id_modello_test_vr, true as duplica_fase, true as time_report_play,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=pf.codice_azienda and cmp.id_fase=pf.id_fase limit 1), pf.codice_azienda),snd.id_anagrafica_assegnataria,(€global_id_anagrafiche€)::text as user_companies, true as delete_fase, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1) as id_somministrazione, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica_assegnataria) as id_anagrafica_assegnataria, pf.id_sondaggio as id_sondaggio2 from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$",
+			"queryString": "select pf.id_fase, pf.id_progetto, entrasp.snd_doc_completa(pf.codice_azienda, pf.id_sondaggio) as doc_completa,  pf.codice_azienda, pf.id_sondaggio||'-'||pf.titolo as titolo, pf.id_fase_sup, pf.id_sondaggio, pf.codice, entrasp.grc_max_id_mdt_vr(snd.codice_azienda, snd.id_modello_test) as id_modello_test_vr, true as duplica_fase, true as time_report_play,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=pf.codice_azienda and cmp.id_fase=pf.id_fase limit 1), pf.codice_azienda),snd.id_anagrafica_assegnataria,(€global_id_anagrafiche€)::text as user_companies, true as delete_fase, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1) as id_somministrazione, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica_assegnataria) as id_anagrafica_assegnataria, pf.id_sondaggio as id_sondaggio2 from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$",
 			"type": "main"
 		}
 	],
@@ -529,6 +529,16 @@
 			"label": "Data competenza A",
 			"newLine": false,
 			"queryCond": "snd.data_comp <= $dt_competenza_a$"
+		},
+		{
+			"fieldName": "flag_doc_completa",
+			"format": {
+				"value": "0",
+				"viewType": "toggle"
+			},
+			"label": "Doc.completa",
+			"newLine": false,
+			"queryCond": "entrasp.snd_doc_completa(snd.codice_azienda, snd.id_sondaggio)='Doc.completa'"
 		}
 	],
 	"table_keys": [
@@ -1012,6 +1022,33 @@
 					"font_color": "white",
 					"font_weight": "500",
 					"background_color": "firebrick",
+					"font_size": "medium",
+					"text_align": "center"
+				}
+			]
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "6%",
+			"key": "doc_completa",
+			"label": "Documentazione",
+			"style": [
+				{
+					"value": "Doc.completa",
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
+				},
+				{
+					"value": "Doc.incompl.",
+					"font_color": "white",
+					"font_weight": "500",
+					"background_color": "red",
 					"font_size": "medium",
 					"text_align": "center"
 				}
