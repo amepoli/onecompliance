@@ -30,5 +30,6 @@ export interface GoogleAPIParams {
         idRisorsaKey?: string;
         idSondaggioKey?: string;
         codicePartKey?: string;
+        syncMode?: 'none' | 'full' | 'driveToS3' | 's3ToDrive';
     }
 };
