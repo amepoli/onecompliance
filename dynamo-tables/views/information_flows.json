@@ -265,6 +265,19 @@
       "readOnly": false,
       "isPrimary": false,
       "isHidden": false,
+      "outputEvent": {
+        "eventTrigger": "select",
+        "eventName": "anagrafica_change"
+      },
+      "inputEvents": [
+        {
+          "eventName": "anagrafica_change",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.unifica_risorse(cd1.id_risorsa,cd2.id_risorsa,cd1.codice_azienda,true) from entrasp.cdms_risorse cd1 inner join entrasp.cdms_risorse cd2 on cd1.id_anagrafica=cd2.id_anagrafica and cd1.codice_azienda= cd2.codice_azienda and cd1.id_argomento_tipo_allegato= cd2.id_argomento_tipo_allegato where cd1.id_risorsa != cd2.id_risorsa and cd1.id_risorsa < cd2.id_risorsa group by cd1.codice_azienda, cd1.id_risorsa,cd2.id_risorsa;"
+        }
+      ],
       "size": 3
     },
     {
