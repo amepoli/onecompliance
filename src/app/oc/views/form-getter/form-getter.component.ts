@@ -1635,9 +1635,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
             else if (googleAPIParams.actionType === "get_drive_changes") {
                 if (_this.authService.getSyncMode() === 'google') {
-                    let loadingToast = _this._toastService.showLoadingToast("Loading emails", "Please wait...");
+                    let loadingToast = _this._toastService.showLoadingToast("Getting Google Drive changes", "Please wait...");
                     try {
-                        const googleAuth = await _this.authService.loadGoogleAuth('gmail');
+                        const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
 
                         let getChangesResult = await _this._googleAPIService.getChanges(googleAuth);
                         _this._console.log(getChangesResult);
