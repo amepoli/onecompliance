@@ -88,50 +88,6 @@ export class MenuComponent implements OnInit {
   onClick(item: MenuOption) {
     const _this = this;
     setTimeout(() => { _this.pubSubService.publishEvent(item.outputEventName, { showEventProcessing: true, origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: item.label, type: 'menu' }); }, 50);
-    
-  }
 
-  kycTech() {
-    const _this = this;
-    console.log('Check in global watchlist');
-
-    //Here i have to call the method in form-getter line 1641
-
-    
-    /* if (_this.importDataSource === 'kyctech') {
-      _this._dialogService.showLoadingDialog('Connecting to Regulat.io', 'Please wait...');
-      _this.subscriptions.push(_this.backendService.KycTech(0).subscribe( // get the number of records
-        result => {
-          _this._console.log(result);
-          _this._dialogService.closeDialog();
-          _this._dialogService.showLoadingDialog('Retrieving records from Regulat.io', 'Please wait...');
-          if (result.result === 'OK') {
-            _this.subscriptions.push(_this.backendService.KycTech(result.numRecords).subscribe(
-              innerResult => {
-                _this._console.log(innerResult);
-                if (innerResult.result === 'OK') {
-                  _this.loadData();
-                  _this._dialogService.closeDialog();
-                  _this._toastService.showSuccessToast('Successfully updated!'); // show success toast} else {
-                  _this._dialogService.closeDialog();
-                  _this._toastService.showErrorToast('An error occured!');
-                }
-              },
-              innerError => {
-                _this._dialogService.closeDialog();
-                _this._toastService.showErrorToast('An error occured!');
-              }
-            ));
-          } else {
-            _this._dialogService.closeDialog();
-            _this._toastService.showErrorToast('An error occured!');
-          }
-        },
-        error => {
-          _this._dialogService.closeDialog();
-          _this._toastService.showErrorToast('An error occured!');
-        }
-      ));
-    } */
   }
 }
