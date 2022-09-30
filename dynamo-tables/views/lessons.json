@@ -235,181 +235,158 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "button"
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "reopen_sondaggio_k",
-            "buttonIcon": "lock_open",
-            "label": "Riapri Lezione",
-            "newLine": false,
             "outputEvent": {
-                "eventName": "sondaggi_reopen",
-                "eventTrigger": "press"
+                "eventName": "sondaggio_change_stato",
+                "eventTrigger": "select"
             },
             "inputEvents": [
                 {
-                    "eventName": "sondaggi_reopen",
+                    "eventName": "sondaggio_change_stato",
+                    "condition": "equalTo",
+                    "values": [
+                        "C"
+                    ],
                     "actionType": "query",
-                    "queryFunct": "update entrasp.sondaggi set stato='A' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
+                    "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$) as id_sondaggio_succ;",
+                    "outputEventWhenComplete": "survey_reload"
+                },
+                {
+                    "eventName": "sondaggio_change_stato",
                     "condition": "none",
                     "values": [],
-                    "outputEventWhenComplete": "survey_reload"
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                },
+                {
+                    "eventName": "onSaveSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                },
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                },
+                {
+                    "eventName": "navigate_to_sondaggi",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
                 }
             ],
-            "style": {
-                "background_color": "#fada5e",
-                "font_color": "white"
-            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "newLine": false,
             "readOnly": false,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sondaggio_completato",
+            "label": "Completamento Lezione",
+            "newLine": false,
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "onSaveSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT case when sondaggio_completato='Completo' then '#ADFF2F'::varchar else '#FF6347'::varchar end as sondaggio_completato_background_color FROM entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
+                },
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT case when sondaggio_completato='Completo' then '#ADFF2F'::varchar else '#FF6347'::varchar end as sondaggio_completato_background_color FROM entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
+                },
+                {
+                    "eventName": "onSaveSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "SELECT sondaggio_completato FROM entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
+                },
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "SELECT sondaggio_completato FROM entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
+                }
+            ],
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio",
+            "label": "Giudizio Complessivo",
             "sameOrigin": false,
-            "size": 1.2,
+            "newLine": false,
+            "readOnly": true,
             "attributeFuncts": [
                 {
-                    "attributeType": "style",
-                    "styleAttribute": "background_color",
-                    "queryString": "select case when stato='C' then '#fada5e' else '#698EC2' end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
-                },
-                {
-                    "attributeType": "style",
-                    "styleAttribute": "font_color",
-                    "queryString": "select case when stato='C' then 'black' else '#5b635a' end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1;"
-                },
-                {
-                    "attributeType": "readOnly",
-                    "queryString": "select case when stato='C' then false else true end as label from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$;"
+                    "attributeType": "isHidden",
+                    "queryString": "select £flag_no_domande£ as label"
                 }
-            ]
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "duplica_sondaggio",
-            "label": "Duplica Lezione",
-            "buttonIcon": "content_copy",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "sondaggi_button_duplica",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1.2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "pianifica_serie",
-            "buttonIcon": "pending_actions",
-            "label": "Pianifica Serie",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "to_sondaggi_replan",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1.2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "buttonIcon": "expand_more",
-            "key": "ulteriori_elementi",
-            "label": "Avvio/impostazione",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "sondaggi_ulteriori_elementi",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1.2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "riepilogo_risultati",
-            "buttonIcon": "launch",
-            "label": "Riepilogo Risultati",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "check_existence_riepilogo_risultati",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1.2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "buttonIcon": "report_problem",
-            "key": "create_segnalazione",
-            "label": "Segnalazione",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "compito_create",
-                "eventTrigger": "press"
-            },
-            "readOnly": false,
-            "size": 1.2,
-            "sameOrigin": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "associa_progetto_show_k",
-            "buttonIcon": "link",
-            "label": "Associa progetto",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "associa_progetto_show",
-                "eventTrigger": "press"
-            },
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1.2
+            ],
+            "inputEvents": [
+                {
+                    "eventName": "onLoadSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
+                },
+                {
+                    "eventName": "onSaveSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
+                },
+                {
+                    "eventName": "onSaveSondaggio",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select giudizio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
+                }
+            ],
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -423,6 +400,28 @@
             "label": "Inizio lezione",
             "newLine": false,
             "readOnly": false,
+            "outputEvent": {
+                "eventName": "date_time_begin_edit",
+                "eventTrigger": "change"
+              },
+              "inputEvents": [
+                {
+                  "eventName": "date_time_begin_edit",
+                  "actionType": "query",
+                  "queryFunct": "select entrasp.sondaggio_durata($codice_azienda$, $id_sondaggio$, nullif(replace('£data_rilevazione_da£', 'null',''), '')::timestamp with time zone, nullif(replace('£data_rilevazione_a£', 'null',''), '')::timestamp with time zone);",
+                  "outputEventWhenComplete": "reload_durata",
+                  "condition": "none",
+                  "values": []
+                },
+                {
+                  "eventName": "date_time_end_edit",
+                  "actionType": "query",
+                  "queryFunct": "select entrasp.sondaggio_durata($codice_azienda$, $id_sondaggio$, nullif(replace('£data_rilevazione_da£', 'null',''), '')::timestamp with time zone, nullif(replace('£data_rilevazione_a£', 'null',''), '')::timestamp with time zone);",
+                  "outputEventWhenComplete": "reload_durata",
+                  "condition": "none",
+                  "values": []
+                }
+              ],
             "size": 1.5
         },
         {
@@ -435,10 +434,201 @@
             "isPrimary": false,
             "key": "data_rilevazione_a",
             "label": "Fine lezione",
-            "newLine": true,
+            "newLine": false,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "date_time_end_edit",
+                "eventTrigger": "change"
+              },
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "durata",
+            "label": "Durata",
+            "newLine": false,
             "readOnly": false,
             "size": 1.5
         },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "link",
+                        "label": "Associa progetto",
+                        "outputEventName": "associa_progetto_show"
+                    },
+                    {
+                        "icon": "add",
+                        "label": "Dati preliminari verifica",
+                        "outputEventName": "sondaggi_ulteriori_elementi"
+                    },
+                    {
+                        "icon": "launch",
+                        "label": "Riepilogo risultati",
+                        "outputEventName": "check_existence_riepilogo_risultati"
+                    },
+                    {
+                        "icon": "report_problem",
+                        "label": "Segnalazione",
+                        "outputEventName": "compito_create"
+                    },
+                    {
+                        "icon": "lock_open",
+                        "label": "Riapri Verifica",
+                        "outputEventName": "sondaggi_reopen"
+                    },
+                    {
+                        "icon": "content_copy",
+                        "label": "Duplica sondaggio",
+                        "outputEventName": "sondaggi_button_duplica"
+                    },
+                    {
+                        "icon": "pending_actions",
+                        "label": "Pianifica serie sondaggi",
+                        "outputEventName": "to_sondaggi_replan"
+                    },
+                    {
+                        "icon": "delete",
+                        "label": "Cancella risposte del sondaggio",
+                        "outputEventName": "answers_delete"
+                    },
+                    {
+                        "icon": "sync",
+                        "label": "Ricalcola punteggi",
+                        "outputEventName": "ricalcola_punteggi"
+                    },
+                    {
+                        "icon": "search",
+                        "label": "OneKYC",
+                        "outputEventName": "get_aml_scans"
+                    },
+                    {
+                        "icon": "sync",
+                        "label": "Sync.folder.sondaggio",
+                        "outputEventName": "get_drive_folder_contents"
+                    },
+                    {
+                        "icon": "find_replace",
+                        "label": "Cambia modello verifica",
+                        "outputEventName": "modello_verifica_change_show"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "sondaggi_reopen",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.sondaggi set stato='A' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "survey_reload"
+                },
+                {
+                    "eventName": "sondaggi_button_duplica",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "outputEventWhenComplete": "navigate_to_sondaggio",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler duplicare questo sondaggio?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"
+                        }
+                    }
+                },
+                {
+                    "eventName": "answers_delete",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler cancellare TUTTE le risposte del sondaggio e somministrazioni?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "delete from entrasp.risposte where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
+                        }
+                    }
+                },
+                {
+                    "eventName": "ricalcola_punteggi",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Punteggi ricalcolati correttamente",
+                    "values": [],
+                    "queryFunct": "SELECT entrasp.ricalcola_punteggi_sondaggi_aperti($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$)",
+                    "outputEventWhenComplete": "survey_reload"
+                },
+                {
+                    "eventName": "get_aml_scans",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
+                        "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "regulat_api",
+                            "regulatAPIParams": {
+                                "actionType": "get_aml_scans",
+                                "surveyParams": {
+                                    "codice_azienda": "codice_azienda",
+                                    "id_sondaggio": "id_sondaggio",
+                                    "dynamo_user": "username"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "eventName": "get_drive_folder_contents",
+                    "actionType": "google_api",
+                    "condition": "none",
+                    "successMessage": "Done!",
+                    "values": [],
+                    "googleAPIParams": {
+                        "actionType": "get_folder_expanded_contents",
+                        "driveExpandedContentsParams": {
+                            "codiceAziendaKey": "codice_azienda",
+                            "idSondaggioKey": "id_sondaggio",
+                            "codicePartKey": "codice_part",
+                            "syncMode": "s3ToDrive"
+                        }
+                    }
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "sondaggi_actions",
+            "label": "",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.4
+        },
+       
         {
             "autoGenerate": false,
             "format": {
@@ -548,70 +738,6 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
-                "options": [],
-                "viewType": "combobox",
-                "dataType": "text"
-            },
-            "outputEvent": {
-                "eventName": "sondaggio_change_stato",
-                "eventTrigger": "select"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "sondaggio_change_stato",
-                    "condition": "equalTo",
-                    "values": [
-                        "C"
-                    ],
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$) as id_sondaggio_succ;",
-                    "outputEventWhenComplete": "survey_reload"
-                },
-                {
-                    "eventName": "sondaggio_change_stato",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-                },
-                {
-                    "eventName": "onSaveSondaggio",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-                },
-                {
-                    "eventName": "onLoadSondaggio",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-                },
-                {
-                    "eventName": "navigate_to_sondaggi",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-                }
-            ],
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "stato",
-            "label": "Stato",
-            "newLine": false,
-            "readOnly": false,
-            "size": 1
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "dataType": "number",
                 "viewType": "input"
             },
@@ -665,7 +791,7 @@
             ],
             "newLine": false,
             "readOnly": false,
-            "size": 1
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -697,7 +823,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "data_esecuzione",
-            "label": "Data Esecuzione",
+            "label": "Data Lezione",
             "inputEvents": [
                 {
                     "eventName": "onSaveSondaggio",
@@ -716,7 +842,7 @@
                 }
             ],
             "newLine": false,
-            "size": 1.5,
+            "size": 2,
             "readOnly": false
         },
         {
@@ -887,7 +1013,7 @@
                 "dataType": "text",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "criterio_analisi",
             "label": "Criterio di Analisi",
@@ -918,53 +1044,7 @@
                 "dataType": "text",
                 "viewType": "input"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "sondaggio_completato",
-            "label": "Completamento Lezione",
-            "newLine": false,
-            "readOnly": true,
-            "inputEvents": [
-                {
-                    "eventName": "onSaveSondaggio",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "queryFunct": "SELECT case when sondaggio_completato='Completo' then '#ADFF2F'::varchar else '#FF6347'::varchar end as sondaggio_completato_background_color FROM entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
-                },
-                {
-                    "eventName": "onLoadSondaggio",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "queryFunct": "SELECT case when sondaggio_completato='Completo' then '#ADFF2F'::varchar else '#FF6347'::varchar end as sondaggio_completato_background_color FROM entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
-                },
-                {
-                    "eventName": "onSaveSondaggio",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query",
-                    "queryFunct": "SELECT sondaggio_completato FROM entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
-                },
-                {
-                    "eventName": "onLoadSondaggio",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query",
-                    "queryFunct": "SELECT sondaggio_completato FROM entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
-                }
-            ],
-            "size": 2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "ris_percentuale",
             "label": "% Complessiva",
@@ -997,53 +1077,7 @@
             "readOnly": true,
             "size": 0
         },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "giudizio",
-            "label": "Giudizio Complessivo",
-            "sameOrigin": false,
-            "newLine": false,
-            "readOnly": true,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select £flag_no_domande£ as label"
-                }
-            ],
-            "inputEvents": [
-                {
-                    "eventName": "onLoadSondaggio",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
-                },
-                {
-                    "eventName": "onSaveSondaggio",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query_style",
-                    "styleAttribute": "background_color",
-                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
-                },
-                {
-                    "eventName": "onSaveSondaggio",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query",
-                    "queryFunct": "select giudizio from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
-                }
-            ],
-            "size": 1.5
-        },
-        {
+       {
             "autoGenerate": false,
             "format": {
                 "dataType": "number",
