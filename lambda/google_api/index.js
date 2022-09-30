@@ -325,7 +325,7 @@ async function getChanges(userid, authParams) {
             return { result: 'OK', fileIds: [] };
         }
         else {
-            return { result: 'KO', message: 'Changes token does not exist!' };
+            return { result: 'KO', message: createChangesTokenResponse.message };
         }
     }
 
@@ -798,7 +798,7 @@ async function getDriveFileCompletePath(driveFileId) {
                 if(!completePath && response.data.mimeType == folderMime) {
                     return null;
                 }
-                if(response.data.name != "My Drive") {
+                if(response.data.name != "My Drive" && response.data.name != "Il mio Drive") {
                     completePath = `/${response.data.name}${completePath}`
                 }
                 driveFileId = response.data.parents ? response.data.parents[0] : null;
@@ -1943,7 +1943,7 @@ async function getDriveFolderDeepContents(anagraficaFolders, authParams) {
 
     if (anagraficaFolders['sub_folders'] && anagraficaFolders['sub_folders'].length > 0) {
         for (let subFolder of anagraficaFolders['sub_folders'].filter(x => x['fileid'])) {
-            if (subFolder.file && subFolder.file.length > 0 && subFolders.filter(x => x.file === subFolder.file && x.folder === x.folder).length == 0) {
+            if (subFolder.file && subFolder.file.length > 0 && subFolders.filter(x => x.file === subFolder.file && x.folder === subFolder.folder && x.driveFileId === subFolder.driveFileId && x.fileid === subFolder.fileid && x.md5 === subFolder.md5 && x.s3Folder === subFolder.s3Folder).length == 0) {
                 subFolders.push(subFolder);
             }
         }
