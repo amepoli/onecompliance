@@ -1748,7 +1748,11 @@
                                     "additionalProperties": false,
                                     "properties": {
                                         "messageText": {
-                                            "description": "M: message to display",
+                                            "description": "M: message text to display",
+                                            "type": "string"
+                                        },
+                                        "messageTitle": {
+                                            "description": "M: message title to display",
                                             "type": "string"
                                         },
                                         "actionOnYes": {
@@ -1782,6 +1786,18 @@
                                                     "required": [
                                                         "queryFunct"
                                                     ]
+                                                },
+                                                {
+                                                    "properties": {
+                                                        "actionType": {
+                                                            "enum": [
+                                                                "regulat_api"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "regulatAPIParams"
+                                                    ]
                                                 }
                                             ],
                                             "properties": {
@@ -1791,7 +1807,8 @@
                                                     "enum": [
                                                         "reload",
                                                         "email",
-                                                        "query"
+                                                        "query",
+                                                        "regulat_api"
                                                     ]
                                                 },
                                                 "queryFunct": {
@@ -1898,6 +1915,102 @@
                                                         "outputEventWhenComplete": {
                                                             "type": "string",
                                                             "description": "?: output event name triggered when email is sent successfully!"
+                                                        }
+                                                    }
+                                                },
+                                                "regulatAPIParams": {
+                                                    "type": "object",
+                                                    "description": "?: Regulat API Action Params",
+                                                    "required": [
+                                                        "actionType"
+                                                    ],
+                                                    "anyOf": [
+                                                        {
+                                                            "properties": {
+                                                                "actionType": {
+                                                                    "enum": [
+                                                                        "get_aml_scan"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "entityParams"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "properties": {
+                                                                "actionType": {
+                                                                    "enum": [
+                                                                        "get_aml_scans"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "surveyParams"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "properties": {
+                                                        "actionType": {
+                                                            "type": "string",
+                                                            "description": "M: action type when main actionType is regulat_api",
+                                                            "enum": [
+                                                                "get_aml_scan",
+                                                                "get_aml_scans"
+                                                            ]
+                                                        },
+                                                        "entityParams": {
+                                                            "type": "object",
+                                                            "description": "?: entity parameters",
+                                                            "required": [
+                                                                "codice_azienda",
+                                                                "id_anagrafica",
+                                                                "id_somministrazione",
+                                                                "dynamo_user"
+                                                            ],
+                                                            "additionalProperties": false,
+                                                            "properties": {
+                                                                "codice_azienda": {
+                                                                    "description": "M: Codice azienda",
+                                                                    "type": "string"
+                                                                },
+                                                                "id_anagrafica": {
+                                                                    "description": "M: Id anagrafica object of verification",
+                                                                    "type": "string"
+                                                                },
+                                                                "id_somministrazione": {
+                                                                    "description": "M: The verify to be filled",
+                                                                    "type": "string"
+                                                                },
+                                                                "dynamo_user": {
+                                                                    "description": "M: The user who run OneKYC",
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        },
+                                                        "surveyParams": {
+                                                            "type": "object",
+                                                            "description": "?: survey parameters",
+                                                            "required": [
+                                                                "codice_azienda",
+                                                                "id_sondaggio",
+                                                                "dynamo_user"
+                                                            ],
+                                                            "additionalProperties": false,
+                                                            "properties": {
+                                                                "codice_azienda": {
+                                                                    "description": "M: Codice azienda",
+                                                                    "type": "string"
+                                                                },
+                                                                "id_sondaggio": {
+                                                                    "description": "M: The survey to be filled",
+                                                                    "type": "string"
+                                                                },
+                                                                "dynamo_user": {
+                                                                    "description": "M: The user who run OneKYC",
+                                                                    "type": "string"
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }

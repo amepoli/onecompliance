@@ -1185,7 +1185,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
         } else if (event.actionType === 'show_message' && conditionMet && event.message) {
             // Show confirmation dialog
-            _this._dialogService.showConfimationDialog('Confirm', event.message.messageText, 'Yes', 'No', 'info').then((result) => {
+            _this._dialogService.showConfimationDialog(event.message.messageTitle != null ? event.message.messageTitle : 'Confirm', event.message.messageText, 'Yes', 'No', 'info').then((result) => {
                 // Initialize with No action info
                 var actionType = event.message.actionOnNo.actionType;
                 var queryFunct = event.message.actionOnNo.queryFunct;
@@ -1296,6 +1296,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     );
                     // _this._console.log(JSON.stringify(event));
                     // _this.sendEmail({ templateKey: 'test' });
+                }
+                else if (actionType === 'regulat_api') {
+                    _this.runRegulatEvent(event.message.actionOnYes, value, keyListener);
                 }
                 else {
                     // Run query
@@ -1854,7 +1857,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._toastService.showErrorToast("Missing Regulat API entity params");
                     }
                     else {
-                        _this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
+                        let loadingToast = _this._toastService.showLoadingToast("Running OneKYC", "Please wait, it may takes a few minutes");
+                        //_this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
 
                         const codiceAziendaAML = formValues[regulatAPIParams.entityParams.codice_azienda];
                         const idAnagraficaAML = formValues[regulatAPIParams.entityParams.id_anagrafica];
@@ -1867,7 +1871,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                         if (connected_registries.response === 'KO') {
                             _this._console.log('KO');
-                            _this._dialogService.closeDialog();
+                            _this._toastService.hideLoadingToast(loadingToast);
+                            //_this._dialogService.closeDialog();
                             _this._toastService.showErrorToast(connected_registries.reason);
                         }
                         else {
@@ -1878,7 +1883,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, idSomministrazioneAML, dynamoUserAML).toPromise();
                             _this._console.log(scan_contents);
 
-                            _this._dialogService.closeDialog();
+                            _this._toastService.hideLoadingToast(loadingToast);
+                            //_this._dialogService.closeDialog();
                             _this._toastService.showSuccessToast('OneKYC: Completed!'); // show success toast
                             this.refreshView(); // refresh the view
                         }
@@ -1889,7 +1895,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._toastService.showErrorToast("Missing Regulat API survey params");
                     }
                     else {
-                        _this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
+                        let loadingToast = _this._toastService.showLoadingToast("Running OneKYC", "Please wait, it may takes a few minutes");
+                        //_this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
 
                         const codiceAziendaAML = formValues[regulatAPIParams.surveyParams.codice_azienda];
                         const idSondaggioAML = formValues[regulatAPIParams.surveyParams.id_sondaggio];
@@ -1901,7 +1908,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                         if (connected_checks.response === 'KO') {
                             _this._console.log('KO');
-                            _this._dialogService.closeDialog();
+                            _this._toastService.hideLoadingToast(loadingToast);
+                            //_this._dialogService.closeDialog();
                             _this._toastService.showErrorToast(connected_checks.reason);
                         }
                         else {
@@ -1918,7 +1926,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                                 if (connected_registries.response === 'KO') {
                                     _this._console.log('KO');
-                                    _this._dialogService.closeDialog();
+                                    _this._toastService.hideLoadingToast(loadingToast);
+                                    //_this._dialogService.closeDialog();
                                     _this._toastService.showErrorToast(connected_registries.reason);
                                     return;
                                 }
@@ -1932,7 +1941,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                                 }
                             }
-                            _this._dialogService.closeDialog();
+                            _this._toastService.hideLoadingToast(loadingToast);
+                            //_this._dialogService.closeDialog();
                             _this._toastService.showSuccessToast('OneKYC: Completed!'); // show success toast
                             this.refreshView(); // refresh the view
                         }
