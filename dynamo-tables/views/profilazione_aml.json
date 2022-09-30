@@ -751,37 +751,29 @@
         },
         {
           "eventName": "get_aml_scan_prof",
-          "actionType": "regulat_api",
+          "actionType": "show_message",
           "condition": "none",
-          "successMessage": "Done!",
           "values": [],
-          "regulatAPIParams": {
-            "actionType": "get_aml_scan",
-            "entityParams": {
-              "codice_azienda": "codice_azienda",
-              "id_anagrafica": "id_anagrafica",
-              "id_somministrazione": "id_somministrazione",
-              "dynamo_user": "username"
+          "message": {
+            "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
+            "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select true"
+            },
+            "actionOnYes": {
+              "actionType": "regulat_api",
+              "regulatAPIParams": {
+                "actionType": "get_aml_scan",
+                "entityParams": {
+                  "codice_azienda": "codice_azienda",
+                  "id_anagrafica": "id_anagrafica",
+                  "id_somministrazione": "id_somministrazione",
+                  "dynamo_user": "username"
+                }
+              }
             }
-          },
-          "outputEventWhenComplete": "sondaggi_somministrati_reload"
-        },
-        {
-          "eventName": "get_aml_scan",
-          "actionType": "regulat_api",
-          "condition": "none",
-          "successMessage": "Done!",
-          "values": [],
-          "regulatAPIParams": {
-            "actionType": "get_aml_scan",
-            "entityParams": {
-              "codice_azienda": "codice_azienda",
-              "id_anagrafica": "id_anagrafica",
-              "id_somministrazione": "id_somministrazione",
-              "dynamo_user": "username"
-            }
-          },
-          "outputEventWhenComplete": "sondaggi_somministrati_reload"
+          }
         }
       ],
       "isHidden": false,

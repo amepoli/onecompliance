@@ -699,19 +699,28 @@
                 },
                 {
                     "eventName": "get_aml_scans",
-                    "actionType": "regulat_api",
+                    "actionType": "show_message",
                     "condition": "none",
-                    "successMessage": "Done!",
                     "values": [],
-                    "regulatAPIParams": {
-                        "actionType": "get_aml_scans",
-                        "surveyParams": {
-                            "codice_azienda": "codice_azienda",
-                            "id_sondaggio": "id_sondaggio",
-                            "dynamo_user": "username"
+                    "message": {
+                        "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
+                        "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "regulat_api",
+                            "regulatAPIParams": {
+                                "actionType": "get_aml_scans",
+                                "surveyParams": {
+                                    "codice_azienda": "codice_azienda",
+                                    "id_sondaggio": "id_sondaggio",
+                                    "dynamo_user": "username"
+                                }
+                            }
                         }
-                    },
-                    "outputEventWhenComplete": "survey_reload"
+                    }
                 },
                 {
                     "eventName": "get_drive_folder_contents",
