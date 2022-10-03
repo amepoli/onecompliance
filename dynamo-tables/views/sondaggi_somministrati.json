@@ -800,8 +800,13 @@
           },
           {
             "icon": "person_search",
-            "label": "OneKYC",
+            "label": "OneKYC - Deep",
             "outputEventName": "get_aml_scan"
+          },
+          {
+            "icon": "person_search",
+            "label": "OneKYC - Light",
+            "outputEventName": "get_light_aml_scan"
           },
           {
             "icon": "find_replace",
@@ -893,7 +898,35 @@
                   "codice_azienda": "codice_azienda",
                   "id_anagrafica": "id_anagrafica",
                   "id_somministrazione": "id_somministrazione",
-                  "dynamo_user": "username"
+                  "dynamo_user": "username",
+                  "is_light_scan": false
+                }
+              }
+            }
+          }
+        },
+        {
+          "eventName": "get_light_aml_scan",
+          "actionType": "show_message",
+          "condition": "none",
+          "values": [],
+          "message": {
+            "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
+            "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select true"
+            },
+            "actionOnYes": {
+              "actionType": "regulat_api",
+              "regulatAPIParams": {
+                "actionType": "get_aml_scan",
+                "entityParams": {
+                  "codice_azienda": "codice_azienda",
+                  "id_anagrafica": "id_anagrafica",
+                  "id_somministrazione": "id_somministrazione",
+                  "dynamo_user": "username",
+                  "is_light_scan": true
                 }
               }
             }
