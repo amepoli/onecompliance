@@ -1864,6 +1864,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         const idAnagraficaAML = formValues[regulatAPIParams.entityParams.id_anagrafica];
                         const idSomministrazioneAML = formValues[regulatAPIParams.entityParams.id_somministrazione];
                         const dynamoUserAML = formValues[regulatAPIParams.entityParams.dynamo_user];
+                        const isLightScan = regulatAPIParams.entityParams.is_light_scan;
 
                         //First step, get connected registries
                         let connected_registries = await _this.backendService.getConnectedRegistries(codiceAziendaAML, idAnagraficaAML).toPromise();
@@ -1880,7 +1881,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             let connectedRegistries = connected_registries.response;
 
                             //Second step, query regulat.io
-                            let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, idSomministrazioneAML, dynamoUserAML).toPromise();
+                            let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, idSomministrazioneAML, dynamoUserAML, isLightScan).toPromise();
                             _this._console.log(scan_contents);
 
                             _this._toastService.hideLoadingToast(loadingToast);
@@ -1901,6 +1902,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         const codiceAziendaAML = formValues[regulatAPIParams.surveyParams.codice_azienda];
                         const idSondaggioAML = formValues[regulatAPIParams.surveyParams.id_sondaggio];
                         const dynamoUserAML = formValues[regulatAPIParams.surveyParams.dynamo_user];
+                        const isLightScan = regulatAPIParams.surveyParams.is_light_scan;
 
                         //First step, get connected registries
                         let connected_checks = await _this.backendService.getConnectedChecks(codiceAziendaAML, idSondaggioAML).toPromise();
@@ -1936,7 +1938,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     let connectedRegistries = connected_registries.response;
 
                                     //Second step, query regulat.io
-                                    let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, connectedChecks[i].id_somministrazione, dynamoUserAML).toPromise();
+                                    let scan_contents = await _this.backendService.getAmlScan(codiceAziendaAML, connectedRegistries, connectedChecks[i].id_somministrazione, dynamoUserAML, isLightScan).toPromise();
                                     _this._console.log(scan_contents);
 
                                 }
