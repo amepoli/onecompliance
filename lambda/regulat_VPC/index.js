@@ -83,7 +83,7 @@ exports.handler = async (event) => {
                 AND ca.dt_fine IS NULL
                 AND id_anagrafica_conn NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null);`;
 
-                console.log('running query: ', query);
+                //console.log('running query: ', query);
                 response = await client.query(query);
 
                 let connectedRegistries = null;
@@ -151,7 +151,7 @@ exports.handler = async (event) => {
                 AND ca.dt_fine IS NULL
                 AND id_anagrafica_conn NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null);`;
 
-                console.log('running query: ', query);
+                //console.log('running query: ', query);
                 response = await client.query(query);
 
                 let connectedRegistries = null;
@@ -205,7 +205,7 @@ exports.handler = async (event) => {
                     AND dmd.id_argomento=45414 
                 );`;
 
-                console.log('running query: ', query);
+                //console.log('running query: ', query);
                 response = await client.query(query);
 
                 let connectedChecks = null;
@@ -255,11 +255,10 @@ exports.handler = async (event) => {
                 let query = "";
                 let response;
 
-                console.log('running query: ', query);
-
                 //See the function in the db which answer the question of survey
                 query = `select entrasp.OneKYC_process_aml_scans($$ ${scans} $$);`;
 
+                //console.log('running query: ', query);
                 response = await client.query(query);
 
                 //release the client
