@@ -21,8 +21,187 @@ function getBadUrlResponse() {
     };
 }
 
+exports.handler = async (event, context) => {
+
+    const shasum = crypto.createHash('sha1');
+
+    const queryParams = event.queryStringParameters;
+
+    console.log(queryParams);
+
+    // const queryParams = event; / test
+
+    //let keys = queryParams['keys'] ? JSON.parse(queryParams['keys']) : null;
+    //const entryName = queryParams['entry_name'];
+    const checksum = queryParams['checksum'];
+    //const md5Checksum =  (queryParams['md5_checksum'] == undefined) ? null : queryParams['md5_checksum'];
+    const request_type = queryParams['request_type'];
+    //const contentsPrefix = queryParams['contents_prefix'];
+    const company = queryParams['company'];
+    //file_id, s3path, googledivepath
+
+    //var filename = queryParams['filename'];
+    //var id_risorsa = queryParams['id_risorsa'];
+    //var prog_revisione = queryParams['prog_revisione'];
+    var requestType = '';
+
+    if (request_type) {
+        requestType = request_type;
+    }
+
+    /*
+    if (requestType !== 'getGoogleDriveFileCopyParams' && requestType !== 'getS3GoogleSyncFilesList' && requestType !== 'getGoogleDriveFolderNameByAnagrafica' && requestType !== 'setProperFileFolder' && requestType !== 'anagraficheToBeUpdated' && requestType !== 'associateEmails') {
+        if (entryName == null || keys == null || company == null) {
+            requestType = 'badRequest';
+        }
+    }
+    */
+
+    console.log('Lets start ' + requestType);
+
+    if (requestType === 'badRequest') {
+        return getBadUrlResponse();
+    }
+
+    /*
+    const s3ParamsInsert = {
+        Bucket: 'BUCKET_NAME',
+        Key: company + '/' + filename
+    };
+
+    const s3ParamsGetList = {
+        Bucket: 'BUCKET_NAME',
+        Key: company + '/' + filename
+    };
+    */
+
+    let client, body;
+    //let decnames = [];
+
+    //const date = getDateFormat();
+
+    try {
+
+        if (requestType === 'getGoogleDriveFileCopyParams') {
+            client = await pool.connect();
+
+            let query = `select * from entrasp.getGoogleDriveFileCopyParams('${company}', '${checksum}');`;
+            console.log('running query: ', query);
+            let response = await client.query(query);
+            //Always delete from entrasp.cdms_risorse_revisioni because for the selected flow_info i can have only one document with this sha1
+            /* query = `select count(*) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${id_risorsa} and prog_revisione='${prog_revisione}';`;
+            response = await client.query(query); */
+
+            /* let objectCount = (response.rows && response.rows[0] && response.rows[0].count) ? parseInt('' + response.rows[0].count) : 0;
+            console.log('response of file exists by checksum_sha1:', response);
+            console.log('row: ' + response.rows[0]);
+            console.log('count: ' + response.rows[0].count);
+            if (objectCount = 0) { */
+
+            //query = `delete from entrasp.cdms_risorse where codice_azienda='${company}' and id_risorsa=${id_risorsa};`;
+            //response = await client.query(query);
+            //}
+            body = { result: 'OK', response: response };
+        }
+        else if (requestType === 'getS3GoogleSyncFilesList') {
+            client = await pool.connect();
+            //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
+            let query = `select file_id, hash_md5 as s3Md5, '/'||codice_azienda||'/'||file_id as s3Path, entrasp.getgoogledrivepath(codice_azienda, checksum_sha1) as googleDrivePath from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
+            console.log('running query: ', query);
+            let response = await client.query(query);
+            body = { result: 'OK', response: response };
+        }
+        else if (requestType === 'getGoogleDriveFolderNameByAnagrafica') {
+            const id_anagrafica = queryParams['id_anagrafica'];
+            const id_risorsa = queryParams['id_risorsa'];
+            const id_sondaggio = queryParams['id_sondaggio'];
+            const codice_part = queryParams['codice_part'];
+            
+            const username = queryParams['username'];            
+            client = await pool.connect();
+            //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
+            let query = '';
+            if(id_sondaggio) {
+                query = `select entrasp.anagrafica_folder_name_and_sub_folders(cg.codice_azienda_erogante, an.id_anagrafica, '${username}', idsondaggio=>snd.id_sondaggio)
+                from entrasp.sondaggi snd
+                inner join entrasp.centri_gestionali cg on snd.id_centro_gest=cg.id_centro_gest and snd.codice_part=cg.codice_part
+                inner join entrasp.aziende az on cg.codice_azienda_erogante=az.codice_azienda
+                inner join entrasp.anagrafiche_id an on snd.codice_azienda=an.codice_azienda_corrispondente
+                and snd.id_sondaggio=${id_sondaggio} and snd.codice_azienda='${company}' and an.codice_part!='${codice_part}' and az.codice_part=an.codice_part
+                and cg.codice_azienda_erogante is not null;`;
+            }
+            else {
+                query = `select * from entrasp.anagrafica_folder_name_and_sub_folders('${company}', '${id_anagrafica}', '${username}', ${id_risorsa ? "'" + id_risorsa + "'":  "null"});`;
+            }
+            console.log('running query: ', query);
+            let response = await client.query(query);
+            let folderNames = null;
+            console.log('response', response.rows);
+            if(response && response.rows) {
+                folderNames = response.rows;
+            }
+            body = { result: 'OK', response: folderNames };
+        }
+        else if (requestType === 'setProperFileFolder') {
+            let jsonBody = event.body;
+            client = await pool.connect();
+            //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
+            let query = `select * from entrasp.set_proper_file_folder(('${jsonBody}')::json);`;
+            console.log('running query: ', query);
+            let response = await client.query(query);
+            let folderNames = null;
+            console.log('response', response.rows);
+            
+            body = { result: 'OK', response: response };
+        }
+        else if (requestType === "anagraficheToBeUpdated") {
+            let jsonBody = event.body;
+            client = await pool.connect();
+            //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
+            let query = `select * from entrasp.anagrafiche_to_be_updated(('${jsonBody}')::json);`;
+            console.log('running query: ', query);
+            let response = await client.query(query);
+            let folderNames = null;
+            console.log('response', response.rows);
+            
+            body = { result: 'OK', response: response };
+            
+        }
+        else if (requestType === "associateEmails") {
+            let jsonBody = event.body ? JSON.parse(event.body) : {};
+            let input = jsonBody['input'];
+            let codiceAzienda = jsonBody['codiceAzienda'];
+            client = await pool.connect();
+            //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
+            let query = `select * from entrasp.associate_emails_simple(($$ ${JSON.stringify(input)} $$)::json, ('${codiceAzienda.join(',')}')::text);`;
+            console.log('running query: ', query);
+            let response = await client.query(query);
+            console.log('response', response.rows);
+            body = { result: 'OK', response: response };
+        }
+        else {
+            console.log('else block');
+        }
 
 
+    } catch (e) {
+        console.log(e);
+        body = { result: 'KO', reason: 'Server error' };
+    }
+
+    if (requestType !== 'getFileURL') {
+        await client.release();
+    }
+
+    return {
+        "isBase64Encoded": false,
+        "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        "statusCode": 200,
+        "body": JSON.stringify(body)
+    };
+};
+
+/*
 exports.handler = async (event) => {
 
     //Declare queryParams
@@ -247,3 +426,4 @@ exports.handler = async (event) => {
     };
     return response;
 };
+*/
