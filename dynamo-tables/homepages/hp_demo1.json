@@ -1,0 +1,31 @@
+{
+  "$schema": "../homepage.schema.json",
+  "entryKey": "hp_demo1",
+  "tabs": [
+    {
+      "entry": "progetti_consultant_hp",
+      "badgeQuery": "select count(id_progetto) as conta_progetti_mio_ufficio_aperti from entrasp.progetti prg inner join entrasp.centri_gestionali cg on prg.codice_part=cg.codice_part and prg.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where an.dynamo_user='€global_username€' and prg.stato!='C'",
+      "title": "Progetti"
+    },
+    {
+      "entry": "sondaggi_consultant_hp",
+      "badgeQuery": "select count(snd.id_sondaggio) from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where dynamo_user='€global_username€' and snd.stato!='C'",
+      "title": "Sondaggi"
+    },
+    {
+      "entry": "compiti_consultant_hp",
+      "badgeQuery": "select count(codice_compito) FROM entrasp.compiti cmp WHERE (cmp.codice_azienda in(€global_user_companies€) and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) and cmp.stato!='C'",
+      "title": "Compiti"
+    },
+    {
+      "entry": "consuntivazioni_consultant_hp",
+      "badgeQuery": "select count(cns.id_cons) from entrasp.consuntivazioni cns left join entrasp.compiti cmp on cns.codice_compito=cmp.codice_compito and cns.codice_azienda=cmp.codice_azienda left join entrasp.anagrafiche_id an on cns.id_risorsa=an.id_anagrafica and cns.codice_part=an.codice_part where dynamo_user='€global_username€' and  cns.stato!='C'",
+      "title": "Aggiornamenti"
+    },
+    {
+      "entry": "documents_hp",
+      "badgeQuery": "select count(crs.id_risorsa) FROM entrasp.cdms_risorse crs where id_argomento_stato=4034 and codice_azienda in (€global_user_companies€)",
+      "title": "Documenti non allegati"
+    }
+  ]
+}
