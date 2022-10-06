@@ -629,8 +629,13 @@
                     },
                     {
                         "icon": "person_search",
-                        "label": "OneKYC",
+                        "label": "OneKYC - Deep",
                         "outputEventName": "get_aml_scans"
+                    },
+                    {
+                        "icon": "person_search",
+                        "label": "OneKYC - Light",
+                        "outputEventName": "get_light_aml_scans"
                     },
                     {
                         "icon": "sync",
@@ -716,7 +721,34 @@
                                 "surveyParams": {
                                     "codice_azienda": "codice_azienda",
                                     "id_sondaggio": "id_sondaggio",
-                                    "dynamo_user": "username"
+                                    "dynamo_user": "username",
+                                    "is_light_scan": false
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "eventName": "get_light_aml_scans",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
+                        "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "regulat_api",
+                            "regulatAPIParams": {
+                                "actionType": "get_aml_scans",
+                                "surveyParams": {
+                                    "codice_azienda": "codice_azienda",
+                                    "id_sondaggio": "id_sondaggio",
+                                    "dynamo_user": "username",
+                                    "is_light_scan": true
                                 }
                             }
                         }

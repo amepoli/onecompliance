@@ -2383,8 +2383,8 @@ exports.handler = async (event, context) => {
                 body = await getDistance(origin, destination);
             }
             else if(requestType === "getEmailsByCodiceAzienda") {
-                const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
                 let eventBody = event.body ? JSON.parse(event.body) : {};
+                const userid = eventBody['userid'] || event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
                 const authParams = eventBody['authToken'];
                 const codiceAzienda = eventBody['codiceAzienda'];
                 body = await getEmailsByCodiceAzienda(userid, authParams, codiceAzienda)
@@ -2398,9 +2398,9 @@ exports.handler = async (event, context) => {
                 body = await getDriveContents(folder, event.body ? JSON.parse(event.body) : {});
             }
             else if (requestType === 'saveAuthToken') {
-                const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
-                const token_type = queryParams['token_type'];
                 let eventBody = event.body ? JSON.parse(event.body) : {};
+                const userid = eventBody['userid'] || event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+                const token_type = queryParams['token_type'];
                 const authCode = eventBody['authCode'];
                 body = await saveAuthToken(userid, token_type, authCode)
             }
@@ -2415,14 +2415,14 @@ exports.handler = async (event, context) => {
                 body = await loadChangesToken(userid, changes_type);
             }
             else if (requestType === 'createChangesToken') {
-                const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
                 let eventBody = event.body ? JSON.parse(event.body) : {};
+                const userid = eventBody['userid'] || event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
                 const authParams = eventBody['authToken'];
                 body = await createChangesToken(userid, authParams);
             }
             else if (requestType === 'getChanges') {
-                const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
                 let eventBody = event.body ? JSON.parse(event.body) : {};
+                const userid = eventBody['userid'] || event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
                 const authParams = eventBody['authToken'];
                 body = await getChanges(userid, authParams);
             }

@@ -42,6 +42,22 @@ import * as moment from 'moment';
 //     },
 // };
 
+interface CalendarDayInfo {
+    today: boolean;
+    selected: boolean;
+    day: number;
+    numEvents: number;
+}
+
+interface SelectedDay {
+    dayOfMonth: number;
+    dayOfWeek: number;
+    week: number;
+    month: number;
+    year: number;
+    events: any[];
+}
+
 @Component({
     selector: 'calendar-view',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,7 +67,7 @@ import * as moment from 'moment';
     templateUrl: 'calendar.component.html',
 })
 export class CalendarComponent  implements OnInit{
-    daysOfWeek = [
+    daysOfWeek: string[] = [
         "Monday",
         "Tuesday",
         "Wednesday",
@@ -61,7 +77,7 @@ export class CalendarComponent  implements OnInit{
         "Sunday",
     ];
 
-    data = [];
+    data: CalendarDayInfo[][] = [];
 
     curMoment = moment();
     curMonth = 0;
@@ -69,6 +85,8 @@ export class CalendarComponent  implements OnInit{
     curYear = 0;
     curYearName = '';
     curDate = '';
+    
+    selectedDay?: SelectedDay = null;
     
     ngOnInit() {
         this.curMoment = moment();
@@ -90,23 +108,24 @@ export class CalendarComponent  implements OnInit{
     }
 
     goToNextMonth() {
+        this.clearSelection();
         this.curMoment.add(1, 'month');
         this.calculateCur();
     }
 
     goToPreviousMonth() {
+        this.clearSelection();
         this.curMoment.subtract(1, 'month');
         this.calculateCur();
     }
 
     createDaysMap() {
+        this.clearSelection();
         const today = moment();
         const isCurMonthSame: boolean = today.year() == this.curMoment.year() && today.month() == this.curMoment.month();
         const startingDayMoment = this.curMoment.set('D', 1);
-        console.log(startingDayMoment.isoWeekday());
-        console.log(today.date());
-
-        let newData = [];
+        
+        let newData: CalendarDayInfo[][] = [];
         newData.push([]);
         newData.push([]);
         newData.push([]);
@@ -130,7 +149,8 @@ export class CalendarComponent  implements OnInit{
             newData[curWeekOfMonth].push({
                 today: isCurMonthSame && today.date() == i+1,
                 day: i + 1,
-                events: null
+                numEvents: 0,
+                selected: false
             });
             curDayOfWeek++;
         }
@@ -143,10 +163,53 @@ export class CalendarComponent  implements OnInit{
         this.data = newData;
     }
 
+    loadDayEvent(dayOfWeek: number, dayOfMonth: number, week: number) {
+        if(!this.selectedDay ||
+            this.selectedDay.year != this.curYear || 
+            this.selectedDay.month != this.curMonth ||
+            this.selectedDay.dayOfMonth != dayOfMonth || 
+            this.selectedDay.dayOfWeek != dayOfWeek || 
+            this.selectedDay.dayOfMonth != dayOfMonth
+            ) {
+                
+            this.clearSelection();
+            this.selectedDay = {
+                dayOfMonth: dayOfMonth,
+                dayOfWeek: dayOfWeek,
+                week: week, //this.getWeekByDay(day),
+                month: this.curMonth,
+                year: this.curYear,
+                events: [
+                    {name: "Event 1"},
+                    {name: "Event 2"}
+                ]
+            }
+            this.data[week][dayOfWeek].selected = true;
+        }
+        else {
+            this.clearSelection();
+        }
+        
 
+        console.log(this.selectedDay);
+    }
 
+    getWeekByDay(day: number) {
+        let weekNum = -1;
+        this.data.forEach((curWeek, i) => {
+            if(curWeek.filter(x => x && x.day == day).length > 0) {
+                weekNum = i;
+            }
+        });
+        return weekNum;
+    }
 
-
+    clearSelection() {
+        if(this.selectedDay) {
+            this.data[this.selectedDay.week][this.selectedDay.dayOfWeek].selected = false;
+            this.selectedDay = null;
+        }
+    }
 
 
 
