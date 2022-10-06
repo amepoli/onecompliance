@@ -49,9 +49,14 @@
     },
     {
       "operation": "selectForm",
-      "queryString": "update entrasp.argomenti_argomenti set id_argomento_relazione=45069 where id_argomento_father=3511 and id_argomento_relazione is null",
+      "queryString": "update entrasp.argomenti_argomenti set id_argomento_relazione=45069 where id_argomento_father=3511 and id_argomento_relazione is null;",
       "type": "preProcessing"
-    }
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "update entrasp.argomenti set flag_no_delete=true where flag_no_delete=false and id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=3511);",
+      "type": "preProcessing"
+    }    
   ],
   "table_multiselection_actions": [
     {
