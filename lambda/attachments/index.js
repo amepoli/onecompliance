@@ -426,8 +426,9 @@ exports.handler = async (event, context) => {
                     //ESISTE FLUSSO, ESISTE REVISIONE, SONO SU DOCUMENTS QUINDI UPDATE REVISIONE ESISTENTE
                     idris = (keys['id_risorsa'] == undefined) ? null : keys['id_risorsa'];
                     provr = (keys['prog_revisione'] == undefined) ? null : keys['prog_revisione'];
+                    datarif = (requestBody.data_rif == undefined) ? new Date().toISOString() : requestBody.data_rif;
                     query = `update entrasp.cdms_risorse_revisioni set data_creazione='${date}',  file_id='${filename}', revisore='${requestBody.autore}',
-                    client_file_name='${replaceAll(requestBody.nickname, "'", "''")}', content_type='${requestBody.content_type}', dimensione=${requestBody.dimensione},
+                    client_file_name='d'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', content_type='${requestBody.content_type}', dimensione=${requestBody.dimensione},
                     checksum_sha1='${checksum}', id_argomento_stato=4035, descrizione=coalesce('${requestBody.descrizione}',descrizione), data_ultima_revisione=current_date, 
                     ts_ultima_modifica=coalesce('${date}',ts_ultima_modifica), id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
                     where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${provr};`;
@@ -472,7 +473,7 @@ exports.handler = async (event, context) => {
                             descrizione = (requestBody.descrizione == undefined) ? null : requestBody.descrizione;
                             idodg = (requestBody.id_odg == undefined) ? null : requestBody.id_odg;
                             idriu = (requestBody.id_riunione == undefined) ? null : requestBody.id_riunione;
-                            datarif = (requestBody.data_rif == undefined) ? date : requestBody.data_rif;
+                            datarif = (requestBody.data_rif == undefined) ? new Date().toISOString() : requestBody.data_rif;
                             //Prendo il massimo prog_revisione
                             query = `select max(prog_revisione) as prog_revisione from entrasp.cdms_risorse_revisioni where id_risorsa=${idris} and codice_azienda='${company}';`;
                             console.log(query);
@@ -481,7 +482,7 @@ exports.handler = async (event, context) => {
                             query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
                                     revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
                                     values ('${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
-                                    '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
+                                    '${requestBody.autore}', 'd'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
                                     '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}', '${md5Checksum}');`;
                             console.log(query);
                             response = await client.query(query);
@@ -599,7 +600,7 @@ exports.handler = async (event, context) => {
                                 descrizione = (requestBody.descrizione == undefined) ? null : requestBody.descrizione;
                                 idodg = (requestBody.id_odg == undefined) ? null : requestBody.id_odg;
                                 idriu = (requestBody.id_riunione == undefined) ? null : requestBody.id_riunione;
-                                datarif = (requestBody.data_rif == undefined) ? date : requestBody.data_rif;
+                                datarif = (requestBody.data_rif == undefined) ? new Date().toISOString() : requestBody.data_rif;
                                 //Prendo il massimo prog_revisione
                                 query = `select max(prog_revisione) as prog_revisione, id_risorsa from entrasp.cdms_risorse_revisioni where id_risorsa in(select id_risorsa from entrasp.cdms_risorse 
                                 where id_argomento_tipo_allegato=${idArgAll} AND codice_azienda='${company}' and id_anagrafica=${idAnagrafica} limit 1) 
@@ -617,7 +618,7 @@ exports.handler = async (event, context) => {
                                 query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
                                 revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
                                 values ('${company}', ${idFlowInfo1}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
-                                '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
+                                '${requestBody.autore}', 'd'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
                                 '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}', '${md5Checksum}');`;
                                 console.log(query);
                                 response = await client.query(query);
@@ -684,12 +685,12 @@ exports.handler = async (event, context) => {
                             descrizione = (requestBody.descrizione == undefined) ? null : requestBody.descrizione;
                             idodg = (requestBody.id_odg == undefined) ? null : requestBody.id_odg;
                             idriu = (requestBody.id_riunione == undefined) ? null : requestBody.id_riunione;
-                            datarif = (requestBody.data_rif == undefined) ? date : requestBody.data_rif;
+                            datarif = (requestBody.data_rif == undefined) ? new Date().toISOString() : requestBody.data_rif;
 
                             query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
                         revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
                         values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
-                        '${requestBody.autore}', '${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
+                        '${requestBody.autore}', 'd'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
                         '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}' , '${datarif}', '${date}', '${date}','${md5Checksum}');`;
                             console.log(query);
                             response = await client.query(query);

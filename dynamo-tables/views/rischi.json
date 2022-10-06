@@ -175,6 +175,11 @@
                 "icon": "class",
                 "label": "Crea e associa argomento",
                 "outputEventName": "create_associate_argomento"
+            },
+              {
+                "icon": "calculate",
+                "label": "Ricalcola tutti i rischi",
+                "outputEventName": "ricalcolo_rischi"
             }
           ]
       },
@@ -186,7 +191,16 @@
             "values": [],
             "outputEventWhenComplete": "rischiFormReload",
             "queryFunct": "select entrasp.argomenti_create_and_update_rischi($codice_azienda$, $codice_rischio$, $titolo$, $descrizione$ , $codice$, 4016)"
+          },
+          {
+            "eventName": "ricalcolo_rischi",
+            "actionType": "query",
+            "condition": "none",
+            "values": [],
+            "queryFunct": "select entrasp.rischi_net_value_update(rs.codice_azienda, rs.codice_rischio) from entrasp.rischi rs where codice_azienda=$codice_azienda$;",
+            "outputEventWhenComplete": "rischiFormReload"
           }
+
       ],
       "isHidden": false,
       "isPrimary": false,

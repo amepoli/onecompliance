@@ -43,7 +43,7 @@
 		{
 			"operation": "insert",
 			"type": "postProcessing",
-			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)"
+			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ','), flag_no_delete=true from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)"
 		},
 		{
 			"operation": "update",
@@ -254,13 +254,13 @@
 		{
 			"fieldName": "id_argomento_list",
 			"format": {
-			  "dataType": "text",
-			  "viewType": "input"
+				"dataType": "text",
+				"viewType": "input"
 			},
 			"label": "$P{label_id}",
 			"newLine": false,
 			"queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
-		  },
+		},
 		{
 			"fieldName": "argomento_s",
 			"format": {
@@ -404,6 +404,5 @@
 				}
 			]
 		}
-		
 	]
 }
