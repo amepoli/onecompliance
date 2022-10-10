@@ -16,7 +16,8 @@ exports.handler = async (event, context) => {
   const checkId = queryParams['checkId'];
   const dynamoUser = queryParams['dynamoUser'];
   const connectedRegistries = JSON.parse(queryParams['connected_registries']);
-  const isLightScan = queryParams['isLightScan'] ? 'LIGHTSCAN' : '';
+  console.log(queryParams['isLightScan']);
+  const isLightScan = (queryParams['isLightScan'] === 'true') ? 'LIGHTSCAN' : '';
   let hostName;
   let scannedData = '';
 
