@@ -22,8 +22,8 @@ exports.handler = async (event, context) => {
 
   /*** Get token ***/
   //1.Define credentials
-  var username = 'f7ee43b4-99ae-42d3-bf70-63507cc15055_test';                                        //'cc5b3703-185f-43fa-a492-e76e003eb842_prod';                                         //'f7ee43b4-99ae-42d3-bf70-63507cc15055_test';
-  var password = 'QXPTmDfw8ABMTfN6kfE8114lyDk7rfJdJnoLMVHZbMElttnexbaETBSZs9YWkaQ3JVDkEDrmHFXVQM';  //'rz8TZs8zpQl4Kd0lc8qda7usmqxRTjV058aJdig0LkIko5bEe5gik5wkuwG6i1Nspbddv6uwOlux5yW';   //'QXPTmDfw8ABMTfN6kfE8114lyDk7rfJdJnoLMVHZbMElttnexbaETBSZs9YWkaQ3JVDkEDrmHFXVQM';
+  var username = 'cc5b3703-185f-43fa-a492-e76e003eb842_prod';                                        //'cc5b3703-185f-43fa-a492-e76e003eb842_prod';                                         //'f7ee43b4-99ae-42d3-bf70-63507cc15055_test';
+  var password = 'rz8TZs8zpQl4Kd0lc8qda7usmqxRTjV058aJdig0LkIko5bEe5gik5wkuwG6i1Nspbddv6uwOlux5yW';  //'rz8TZs8zpQl4Kd0lc8qda7usmqxRTjV058aJdig0LkIko5bEe5gik5wkuwG6i1Nspbddv6uwOlux5yW';   //'QXPTmDfw8ABMTfN6kfE8114lyDk7rfJdJnoLMVHZbMElttnexbaETBSZs9YWkaQ3JVDkEDrmHFXVQM';
 
   //2.Generate encodedToken of username and password for Basic auth
   const tokenParams = `${username}:${password}`;
