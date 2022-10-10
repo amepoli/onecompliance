@@ -26,15 +26,49 @@
 				"dataType": "text"
 			},
 			"isHidden": false,
-			"isPrimary": false,
-			"sameOrigin": false,
+			"isPrimary": true,
 			"key": "id_articolo_normativo",
 			"label": "Riferimento normativo",
 			"newLine": false,
 			"readOnly": false
 		}
 	],
-	"table_keys": [	
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "6%",
+			"queryFunct": "select true",
+			"key": "delete_articolo_normativo",
+			"label": "",
+			"style": [
+				{
+					"button_icon": "delete",
+					"value": "delete_icon"
+				}
+			],
+			"isButton": true,
+			"buttonAction": {
+				"target": "argomenti_articoli_normativi",
+				"viewType": "form",
+				"query": "delete from entrasp.argomenti_articoli_normativi where id_argomento=£id_argomento£ and id_articolo_normativo=£id_articolo_normativo£",
+				"action": "query",
+				"keymap": [
+					{
+						"source": "id_argomento",
+						"destination": "id_argomento"
+					},
+					{
+						"source": "id_articolo_normativo",
+						"destination": "id_articolo_normativo"
+					}
+				],
+				"onSuccessAction": "reload"
+			}
+		},
 		{
 			"format": {
 				"dataType": "number"
@@ -63,6 +97,12 @@
 			"queryFunct": "entrasp.articoli_normativi_descrizione(id_articolo_normativo)",
 			"label": "Riferimento normativo",
 			"width": "70%"
+		}
+	],
+	"hideActions": [
+		{
+			"tableActionType": "add",
+			"viewType": "table"
 		}
 	]
 }
