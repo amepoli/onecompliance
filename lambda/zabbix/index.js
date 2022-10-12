@@ -31,30 +31,14 @@ exports.handler = async (event) => {
 
         /* PROCESSO IL RECORD */
 
-        if (JSON_object.indexOf("\"hosts\"") != -1) {
-
-            console.log('Hosts');
-            const query = `SELECT imports.process_object('${codice_azienda}', '${timestamp}', '${JSON_object}');`;
+        const query = `SELECT imports.process_object('${codice_azienda}', '${timestamp}', '${JSON_object}');`;
             
-            console.log(query);
+        console.log(query);
 
-            let reply = await client.query(query);
+        let reply = await client.query(query);
 
-            console.log(JSON.stringify(reply));
-
-        } else {
-
-            console.log('No hosts');
-            
-            const query = `INSERT INTO imports.imported_objects (codice_azienda, data_import, object) values ('${codice_azienda}', '${timestamp}', '${JSON_object}');`;
-
-            console.log(query);
-
-            let reply = await client.query(query);
-
-            console.log(JSON.stringify(reply));
-        }
-
+        console.log(JSON.stringify(reply));
+        
         await client.end();
 
     } catch (e) {
