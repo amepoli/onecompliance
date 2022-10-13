@@ -288,12 +288,12 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
-                "value": "£CURRENT_DATE£",
                 "viewType": "input"
             },
             "isHidden": true,
             "isPrimary": false,
             "key": "data_upd",
+            "insertUpdateFunct": "select current_date",
             "label": "DT_Update",
             "newLine": false,
             "readOnly": true
@@ -302,12 +302,12 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
-                "value": "£CURRENT_DATE£",
                 "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "data_ins",
+            "insertUpdateFunct": "select current_date",
             "label": "Inserimento",
             "newLine": false,
             "readOnly": true,
@@ -460,7 +460,6 @@
                         "isPrimary": false,
                         "key": "id_argomento_tipo_documento",
                         "label": "Tipo Documento",
-                        "queryFunct": "SELECT id_argomento_tipo_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
                         "newLine": false,
                         "readOnly": false,
                         "size": 2
@@ -476,7 +475,6 @@
                         "key": "numero_documento",
                         "label": "Numero Documento",
                         "newLine": false,
-                        "queryFunct": "SELECT numero_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "readOnly": false,
                         "size": 1.5
                     },
@@ -491,7 +489,6 @@
                         "key": "rilasciato_da",
                         "label": "Rilasciato Da",
                         "newLine": false,
-                        "queryFunct": "SELECT rilasciato_da from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "readOnly": false,
                         "size": 2.2
                     },
@@ -505,7 +502,6 @@
                         "isPrimary": false,
                         "key": "data_rilascio_documento",
                         "label": "In Data",
-                        "queryFunct": "SELECT data_rilascio_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.3
@@ -520,7 +516,6 @@
                         "isPrimary": false,
                         "key": "data_scadenza_documento",
                         "label": "Data Scadenza Documento",
-                        "queryFunct": "SELECT data_scadenza_documento from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$",
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.3
@@ -584,7 +579,7 @@
             "label": "Persone Fisiche",
             "newLine": true,
             "readOnly": false,
-            "sameOrigin": false,
+            "sameOrigin": true,
             "saveWhenHidden": true
         },
         {
@@ -913,13 +908,8 @@
         },
         {
             "operation": "insert",
-            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', idcentrogestdefault=>$id_centro_gest_default$, tiposoggetto=>$tipo_soggetto$, codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>$ragione_sociale$::varchar, abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$);",
+            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', idcentrogestdefault=>$id_centro_gest_default$, tiposoggetto=>$tipo_soggetto$, codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>$ragione_sociale$::varchar, abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$);",
             "type": "main"
-        },
-        {
-            "operation": "update",
-            "queryString": "update entrasp.anagrafiche_vr avr set codice_fiscale=$codice_fiscale$ from entrasp.anagrafiche_id an where avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica and dynamo_user='€global_userid€' and length(avr.codice_fiscale)<16 and an.tipo_soggetto='P' and length($codice_fiscale$)=16;",
-            "type": "postProcessing"
         },
         {
             "operation": "isInsert",
@@ -952,8 +942,8 @@
         },              
         {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(idcentrogestdefault=> $id_centro_gest_default$, codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idargomentotipodocumento=>$id_argomento_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date);",
-            "type": "main"
+            "queryString": "SELECT entrasp.anagrafica_id_update(idcentrogestdefault=> $id_centro_gest_default$, codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idargomentotipodocumento=>$id_argomento_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$);",
+            "type": "postProcessing"
         },
         {
             "operation": "delete",
