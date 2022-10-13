@@ -1,0 +1,45 @@
+import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
+import { AuthService, ConsoleLoggerService, DialogService, EncryptionService, ToastService } from 'app/oc/services';
+
+@Component({
+    selector: 'calendar-event.dialog',
+    templateUrl: './calendar-event.dialog.component.html',
+    styleUrls: ['./calendar-event.dialog.component.scss']
+})
+
+
+
+export class CalendarEventDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+
+    subscriptions: Subscription[] = [];
+    isLoading: boolean = false;
+    
+    constructor(
+        public dialogRef: MatDialogRef<CalendarEventDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        private _dialogService: DialogService,
+        private _authService: AuthService,
+        private _toastService: ToastService,
+        private _console: ConsoleLoggerService) {
+        
+    }
+
+    ngOnInit() {
+    }
+
+    ngAfterViewInit() {
+    }
+
+    ngOnDestroy() {
+        this.subscriptions.forEach(subscription => {
+            subscription.unsubscribe();
+        });
+    }
+
+    updateEvent() {
+
+    }
+    
+}
