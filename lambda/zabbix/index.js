@@ -22,28 +22,37 @@ exports.handler = async (event) => {
     console.log("Company is: ", codice_azienda);
 
     const timestamp = new Date().toISOString();
-    
+
     let JSON_object = JSON.stringify(event);
 
-    try {
-        
-        let client = await pool.connect();
+    //try {
 
-        /* PROCESSO IL RECORD */
+    /* PROCESSO IL RECORD */
 
-        const query = `SELECT imports.process_object('${codice_azienda}', '${timestamp}', '${JSON_object}');`;
-            
-        console.log(query);
+    await pool
+        .query(`SELECT imports.process_object('${codice_azienda}', '${timestamp}', $$${JSON_object}$$::json);`)
+        .then(res => console.log('Done')) // brianc
+        .catch(err => console.error('Error executing query', err.stack))
 
-        let reply = await client.query(query);
+    /*
+    let client = await pool.connect();
 
-        console.log(JSON.stringify(reply));
-        
-        await client.end();
+    const query = `SELECT imports.process_object('${codice_azienda}', '${timestamp}', $$${JSON_object}$$::json);`;
 
-    } catch (e) {
-        console.log(e);
-    }
+    console.log(query);
+
+    let reply = await client.query(query);
+
+    //console.log(JSON.stringify(reply));
+
+    await client.end();
+   
+
+} catch (e) {
+    console.log(e);
+    await client.end();
+}
+*/
 
     const response = {
         statusCode: 200,
