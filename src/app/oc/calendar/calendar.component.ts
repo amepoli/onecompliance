@@ -25,6 +25,8 @@ import { Subject } from 'rxjs';
 // } from 'angular-calendar';
 // import { EventColor } from 'calendar-utils';
 import * as moment from 'moment';
+import { MatDialog } from '@angular/material/dialog';
+import { CalendarEventDialogComponent } from '../dialogs/calendar-event.dialog/calendar-event.dialog.component';
 
 
 // const colors: Record<string, EventColor> = {
@@ -192,6 +194,8 @@ export class CalendarComponent  implements OnInit{
         
 
         console.log(this.selectedDay);
+
+        this.showCalendarEventDialog();
     }
 
     getWeekByDay(day: number) {
@@ -211,9 +215,35 @@ export class CalendarComponent  implements OnInit{
         }
     }
 
+    constructor(public calendarEventDialog: MatDialog
+    ) {}
 
+    showCalendarEventDialog() {
+        const _this = this;
+        const data = {
+            title: 'Demo event 1',
+            calendar: "Predefined",
+            startDate: "22 October, 2022",
+            endDate: "24 October, 2022",
+            organizer: "Zee",
+            attachment: "https://auditft.it/",
+            participants: ["Zee", "Davide", "Amedeo", "Nicola"],
+            description: "This is a demo event"
+        }
+        // Pop-up example
+        const dialogRef = _this.calendarEventDialog.open(CalendarEventDialogComponent, {
+            width: '640px',
+            height: '840px',
+            data: data
+        });
 
+        let subscriptions: any = [];
 
+        subscriptions.push(dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+            }
+        }));
+    }
 
 
 

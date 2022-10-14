@@ -718,17 +718,9 @@
         {
           "eventName": "onSaveSomministrazione",
           "actionType": "query",
-          "queryFunct": "select 1",
           "condition": "none",
           "values": [],
-          "outputEventWhenComplete": "data_esecuzione_update"
-        },
-        {
-          "eventName": "data_esecuzione_update",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "update entrasp.sondaggi snd set data_esecuzione=ss.data_esecuzione from entrasp.sondaggi_somministrati ss where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$",
+          "queryFunct": "update entrasp.sondaggi snd set data_esecuzione=ss.data_esecuzione from entrasp.sondaggi_somministrati ss where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and snd.data_esecuzione is null",
           "outputEventWhenComplete": "data_prevista_update"
         },
         {
@@ -1613,7 +1605,7 @@
       },
       "label": "Scaduto",
       "newLine": false,
-      "queryCond": "snd.data_prevista<=now() and ss.stato!='C'"
+      "queryCond": "(snd.data_prevista<=now() and ss.stato!='C')"
     },
     {
       "fieldName": "flag_sondaggio_riprogrammato",

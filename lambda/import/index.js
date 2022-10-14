@@ -28,7 +28,7 @@ const pool = new Pool({
     max: 1,
     min: 0,
     idleTimeoutMillis: 300000,
-    connectionTimeoutMillis: 1000
+    connectionTimeoutMillis: 10000
 });
 
 var global_variables = {};
@@ -138,6 +138,7 @@ function processCSV(csvData) {
     } 
     catch(e) {
         console.log('There is no need to encode this file!');
+        stringData = csvData;
     }
     
     // Remove the header
