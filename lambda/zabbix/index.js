@@ -25,16 +25,16 @@ exports.handler = async (event) => {
 
     let JSON_object = JSON.stringify(event);
 
-    //try {
-
-    /* PROCESSO IL RECORD */
-
     await pool
         .query(`SELECT imports.process_object('${codice_azienda}', '${timestamp}', $$${JSON_object}$$::json);`)
-        .then(res => console.log('Done')) // brianc
+        .then(res => console.log('Done'))
         .catch(err => console.error('Error executing query', err.stack))
 
     /*
+    try {
+
+    //PROCESSO IL RECORD
+
     let client = await pool.connect();
 
     const query = `SELECT imports.process_object('${codice_azienda}', '${timestamp}', $$${JSON_object}$$::json);`;
@@ -47,16 +47,15 @@ exports.handler = async (event) => {
 
     await client.end();
    
-
-} catch (e) {
-    console.log(e);
-    await client.end();
-}
-*/
-
+    } catch (e) {
+        console.log(e);
+        await client.end();
+    }
+    */
+    
     const response = {
         statusCode: 200,
-        body: JSON.stringify("Hello from Lambda!"),
+        body: 'OK'
     };
     return response;
 };
