@@ -13,25 +13,24 @@
             "operation": "update",
             "type": "postProcessing",
             "queryString": "update entrasp.rischi_presidi rp set pct_mitigazione_probabilita=pctmitigazioneprobabilita, pct_mitigazione_intensita_singola=pctmitigazioneintensitasingola, pct_mitigazione_probabilita_rettificata=pctmitigazioneprobabilita_rett, pct_mitigazione_intensita_singola_rettificata=pctmitigazioneintensitasingola_rett  from entrasp.rischio_presidi_value_input_id_presidio($codice_azienda$, $id_presidio$) rpv where rp.codice_azienda=rpv.azienda and rp.id_presidio=rpv.id_presidio and rp.id_presidio=$id_presidio$ and rp.codice_azienda=$codice_azienda$;"
-          },
-          {
+        },
+        {
             "operation": "insert",
             "type": "postProcessing",
             "queryString": "update entrasp.rischi_presidi rp set pct_mitigazione_probabilita=pctmitigazioneprobabilita, pct_mitigazione_intensita_singola=pctmitigazioneintensitasingola, pct_mitigazione_probabilita_rettificata=pctmitigazioneprobabilita_rett, pct_mitigazione_intensita_singola_rettificata=pctmitigazioneintensitasingola_rett  from entrasp.rischio_presidi_value_input_id_presidio($codice_azienda$, $id_presidio$) rpv where rp.codice_azienda=rpv.azienda and rp.id_presidio=rpv.id_presidio and rp.id_presidio=$id_presidio$ and rp.codice_azienda=$codice_azienda$;"
-          },
-          {
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and codice='£codice£'",
-			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
-		},
-		{
-			"operation": "update",
-			"type": "preCheck",
-			"queryString": "select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and codice='£codice£' and id_presidio!=$id_presidio$",
-			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
-		}
-     
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and codice='£codice£'",
+            "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and codice='£codice£' and id_presidio!=$id_presidio$",
+            "messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+        }
     ],
     "form_keys": [
         {
@@ -108,7 +107,7 @@
             },
             "size": 1.5,
             "readOnly": true
-        }, 
+        },
         {
             "autoGenerate": false,
             "format": {
@@ -365,7 +364,6 @@
                 }
             ],
             "label": "Domande Associate al Presidio"
-            
         },
         {
             "entryKey": "risposte_sub_of_presidi",
@@ -392,17 +390,16 @@
             ],
             "label": "TAG"
         },
-		{
-			"entryKey": "regolamenti_sub_of_presidi",
-			"keys": [
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento_son"
-				}
-			],
-			"label": "Regolamenti associati"
-		}
-
+        {
+            "entryKey": "regolamenti_sub_of_presidi",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "Regolamenti associati"
+        }
     ],
     "table_keys": [
         {
@@ -580,7 +577,7 @@
             },
             "label": "Descrizione",
             "newLine": false,
-            "queryCond": "(UPPER(descrizione) like '%'||UPPER('€descrizione_s€')||'%' OR UPPER(descrizione_breve) like '%'||UPPER('€descrizione_s€')||'%')" 
+            "queryCond": "(UPPER(descrizione) like '%'||UPPER('€descrizione_s€')||'%' OR UPPER(descrizione_breve) like '%'||UPPER('€descrizione_s€')||'%')"
         },
         {
             "fieldName": "codice",
@@ -595,10 +592,10 @@
         {
             "fieldName": "stato_attuazione",
             "format": {
-                    "comboQuery": "SELECT codice::character AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE';",
-                    "options": [],
-                    "viewType": "combobox",
-                    "dataType": "text"
+                "comboQuery": "SELECT codice::character AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
             },
             "label": "Stato attuazione",
             "newLine": true,
@@ -624,7 +621,7 @@
             "label": "Sondaggi con data competenza fino al",
             "newLine": false,
             "size": 2,
-            "queryCond":"id_presidio in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp<='€data_comp_prevista_max€')"
+            "queryCond": "id_presidio in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp<='€data_comp_prevista_max€')"
         },
         {
             "fieldName": "livello_s",
@@ -640,14 +637,14 @@
         {
             "fieldName": "tag_s",
             "format": {
-              "comboQuery": "SELECT distinct id_argomento_father AS id, id_argomento_father||'-'||descrizione AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_father and aa.id_argomento_son in (select pr.id_argomento from entrasp.presidi pr where pr.id_argomento is not null) order by id_argomento_father||'-'||descrizione",
-              "options": [],
-              "viewType": "combobox"
+                "comboQuery": "SELECT distinct id_argomento_father AS id, id_argomento_father||'-'||descrizione AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_father and aa.id_argomento_son in (select pr.id_argomento from entrasp.presidi pr where pr.id_argomento is not null) order by id_argomento_father||'-'||descrizione",
+                "options": [],
+                "viewType": "combobox"
             },
             "label": "TAG",
             "newLine": true,
             "queryCond": "(array[id_argomento]<@any(select entrasp.sotto_argomenti($tag_s$)) and id_argomento is not null)"
-          },
+        },
         {
             "fieldName": "flag_principali",
             "format": {
@@ -781,28 +778,28 @@
     ],
     "exportQueries": {
         "tableQueries": [
-          {
-            "label": "Procedure, rischi, presidi",
-            "queryString": "select prc.codice_azienda, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gest, prc.descrizione, prc.stato_attuazione, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gestMonit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv1, 'Presidio' as prs, prs.id_presidio, prs.descrizione_breve, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gestpres from entrasp.procedure_aziendali prc left join entrasp.fonti_rischio fr on prc.codice_azienda=fr.codice_azienda and prc.id_procedura=fr.id_procedura left join entrasp.rischi rs on fr.codice_rischio=rs.codice_rischio and fr.codice_azienda=rs.codice_azienda left join entrasp.rischi_presidi rp on rs.codice_rischio=rp.codice_rischio and rs.codice_azienda=rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio=prs.id_presidio and rp.codice_azienda=prs.codice_azienda where prc.codice_azienda=$codice_azienda$"
-          },
-          {
-            "label": "Rischi, presidi e procedure associate (più efficiente)",
-            "queryString": "select prc.codice_azienda, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gestMonit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv2, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, prc.descrizione, prc.stato_attuazione, 'Presidi' as Prs, prs.id_presidio, prs.descrizione_breve, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gestpres from entrasp.rischi rs left join entrasp.fonti_rischio fr on rs.codice_rischio=fr.codice_rischio and rs.codice_azienda=fr.codice_azienda left join entrasp.procedure_aziendali prc on fr.codice_azienda=prc.codice_azienda and fr.id_procedura=prc.id_procedura left join entrasp.rischi_presidi rp on rs.codice_rischio=rp.codice_rischio and rs.codice_azienda=rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio=prs.id_presidio and rp.codice_azienda=prs.codice_azienda where prc.codice_azienda=$codice_azienda$"
-          },
-          {
-            "label": "Presidi, rischi e procedure associate",
-            "queryString": "select prs.codice_azienda, 'Presidio' as prs, prs.id_presidio, prs.descrizione_breve, prs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gest_pres, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Cento_gest_Monit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv1, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, prc.descrizione, prc.stato_attuazione from entrasp.presidi prs left join entrasp.rischi_presidi rp on prs.id_presidio=rp.id_presidio and prs.codice_azienda=rp.codice_azienda left join entrasp.rischi rs on rp.codice_rischio=rs.codice_rischio and rp.codice_azienda=rs.codice_azienda left join entrasp.fonti_rischio fr on rs.codice_rischio=fr.codice_rischio and rs.codice_azienda=fr.codice_azienda left join entrasp.procedure_aziendali prc  on fr.codice_azienda=prc.codice_azienda and fr.id_procedura=prc.id_procedura where prs.codice_azienda=$codice_azienda$"
-          },
-          {
-            "label": "Presidi ISO27001",
-            "queryString": "select id_presidio,id_presidio_parent, codice, entrasp.tipo_presidio_descr(id_tipo_presidio,codice_azienda)as tipo_presidio,descrizione_breve, descrizione, guida_attuativa, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) as stato_attuazione, note  from entrasp.presidi where codice_azienda= $codice_azienda$ and livello =3"
-          }
+            {
+                "label": "Procedure, rischi, presidi",
+                "queryString": "select prc.codice_azienda, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gest, prc.descrizione, prc.stato_attuazione, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gestMonit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv1, 'Presidio' as prs, prs.id_presidio, prs.descrizione_breve, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gestpres from entrasp.procedure_aziendali prc left join entrasp.fonti_rischio fr on prc.codice_azienda=fr.codice_azienda and prc.id_procedura=fr.id_procedura left join entrasp.rischi rs on fr.codice_rischio=rs.codice_rischio and fr.codice_azienda=rs.codice_azienda left join entrasp.rischi_presidi rp on rs.codice_rischio=rp.codice_rischio and rs.codice_azienda=rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio=prs.id_presidio and rp.codice_azienda=prs.codice_azienda where prc.codice_azienda=$codice_azienda$"
+            },
+            {
+                "label": "Rischi, presidi e procedure associate (più efficiente)",
+                "queryString": "select prc.codice_azienda, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gestMonit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv2, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, prc.descrizione, prc.stato_attuazione, 'Presidi' as Prs, prs.id_presidio, prs.descrizione_breve, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gestpres from entrasp.rischi rs left join entrasp.fonti_rischio fr on rs.codice_rischio=fr.codice_rischio and rs.codice_azienda=fr.codice_azienda left join entrasp.procedure_aziendali prc on fr.codice_azienda=prc.codice_azienda and fr.id_procedura=prc.id_procedura left join entrasp.rischi_presidi rp on rs.codice_rischio=rp.codice_rischio and rs.codice_azienda=rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio=prs.id_presidio and rp.codice_azienda=prs.codice_azienda where prc.codice_azienda=$codice_azienda$"
+            },
+            {
+                "label": "Presidi, rischi e procedure associate",
+                "queryString": "select prs.codice_azienda, 'Presidio' as prs, prs.id_presidio, prs.descrizione_breve, prs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gest_pres, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Cento_gest_Monit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv1, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, prc.descrizione, prc.stato_attuazione from entrasp.presidi prs left join entrasp.rischi_presidi rp on prs.id_presidio=rp.id_presidio and prs.codice_azienda=rp.codice_azienda left join entrasp.rischi rs on rp.codice_rischio=rs.codice_rischio and rp.codice_azienda=rs.codice_azienda left join entrasp.fonti_rischio fr on rs.codice_rischio=fr.codice_rischio and rs.codice_azienda=fr.codice_azienda left join entrasp.procedure_aziendali prc  on fr.codice_azienda=prc.codice_azienda and fr.id_procedura=prc.id_procedura where prs.codice_azienda=$codice_azienda$"
+            },
+            {
+                "label": "Presidi ISO27001",
+                "queryString": "select id_presidio,id_presidio_parent, codice, entrasp.tipo_presidio_descr(id_tipo_presidio,codice_azienda)as tipo_presidio,descrizione_breve, descrizione, guida_attuativa, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) as stato_attuazione, note  from entrasp.presidi where codice_azienda= $codice_azienda$ and livello =3"
+            }
         ]
-      },
-      "hideActions": [
+    },
+    "hideActions": [
         {
-          "viewType": "form",
-          "formActionType": "attachments"
+            "viewType": "form",
+            "formActionType": "attachments"
         }
-      ]
+    ]
 }
