@@ -67,7 +67,7 @@ export class ReportService // implements Resolve<any>
             response => {
                 _this._console.log(response);
                 if (response.result === 'OK') {
-                    const url = response.url; 
+                    const url = response.url;
                     _this._httpClient.get(url, { responseType: 'blob' }).subscribe(
                         fileData => {
                             const keysString = Object.keys(keys).map(key => keys[key]).join("_");
@@ -103,7 +103,7 @@ export class ReportService // implements Resolve<any>
     getReports(entryName: string, company: string, keys: any, isForm: boolean) {
         let _this = this;
 
-        if(entryName == 'dashboard'){
+        if (entryName == 'dashboard') {
             // Reset stored data
             _this._currentData = {
                 entryName: entryName,
@@ -113,7 +113,7 @@ export class ReportService // implements Resolve<any>
             // now give results back to the requester
             _this.onReportsLoaded.next(_this._currentData);
         }
-        else{
+        else {
             _this._backendService.getReportList(entryName, company, keys, isForm).subscribe(
                 response => {
                     _this._console.log(response);
