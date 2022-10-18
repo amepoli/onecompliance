@@ -1274,7 +1274,7 @@ async function processPreMainPost(queryString, client, notFullTable, isGet) {
     // main query
     if (queryString.mainQuery != null && queryString.mainQuery !== '') {
         let query = replaceLocalKeys(queryString.mainQuery, local_keys_pre);
-        console.log('Running main query : ', query);
+        //console.log('Running main query : ', query);
         queryData = await client.query(query);
         queryData = queryData.rows;
         console.log('Main query : ', query, ' result : ', queryData);
