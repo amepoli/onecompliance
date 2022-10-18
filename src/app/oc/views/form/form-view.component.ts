@@ -81,7 +81,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         // Subscribe to Reload Request
         _this.subscriptions.push(_this._fileService.reloadNeeded.subscribe(entryName => {
             if (entryName === _this.tableData.entryName) {
-                _this.getAttachList();
+                //_this.getAttachList();
             }
         }));
 
@@ -100,7 +100,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                     _this.currentKeys = event.viewKeys;
                     _this.tabKeys = event.tabKeys;
                     _this.n_attach = 0;
-                    _this.getAttachList();
+                    //_this.getAttachList();
                     _this.getReportList();
 
                 } else if (event.eventType === 'updateData' && !_this.isQuickAdd) {  // child received the actual data, now time to populate subtables
