@@ -41,7 +41,7 @@
 		},
 		{
 			"operation": "selectTable",
-			"queryString": "select pf.id_fase, pf.id_progetto, entrasp.snd_doc_completa(pf.codice_azienda, pf.id_sondaggio) as doc_completa,  pf.codice_azienda, coalesce(pf.id_sondaggio||'-'::varchar,'')||pf.titolo as titolo, pf.id_fase_sup, pf.id_sondaggio, pf.codice, entrasp.grc_max_id_mdt_vr(snd.codice_azienda, snd.id_modello_test) as id_modello_test_vr, true as duplica_fase, true as time_report_play,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=pf.codice_azienda and cmp.id_fase=pf.id_fase limit 1), pf.codice_azienda),snd.id_anagrafica_assegnataria,(€global_id_anagrafiche€)::text as user_companies, true as delete_fase, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1) as id_somministrazione, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica_assegnataria) as id_anagrafica_assegnataria, pf.id_sondaggio as id_sondaggio2 from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$",
+			"queryString": "select pf.id_fase, pf.id_progetto, entrasp.snd_doc_completa(pf.codice_azienda, pf.id_sondaggio) as doc_completa,  pf.codice_azienda, coalesce(pf.id_sondaggio||'-'::varchar,'')||pf.titolo as titolo, pf.id_fase_sup, pf.id_sondaggio, pf.codice, entrasp.grc_max_id_mdt_vr(snd.codice_azienda, snd.id_modello_test) as id_modello_test_vr, true as duplica_fase, true as time_report_play,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=pf.codice_azienda and cmp.id_fase=pf.id_fase limit 1), pf.codice_azienda),snd.id_anagrafica_assegnataria,(€global_id_anagrafiche€)::text as user_companies, true as delete_fase, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1) as id_somministrazione, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica_assegnataria) as id_anagrafica_assegnataria, pf.id_sondaggio as id_sondaggio2, mt.id_tipo_modello_test from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr left join entrasp.modelli_test mt on mvr.id_modello_test=mt.id_modello_test and mvr.codice_azienda=mt.codice_azienda where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$",
 			"type": "main"
 		}
 	],
@@ -771,6 +771,13 @@
 			"width": "6%",
 			"isInputButton": true,
 			"buttonAction": {
+				"keyToCheck": "id_tipo_modello_test",
+				"navigationConditions": [
+					{
+						"ifValue": "52",
+						"newTarget": "lessons"
+					}
+				],
 				"target": "sondaggi_somministrati",
 				"viewType": "form",
 				"action": "navigate",
@@ -820,6 +827,15 @@
 					}
 				]
 			}
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_tipo_modello_test",
+			"label": ""
 		},
 		{
 			"format": {
