@@ -40,3 +40,4 @@ export * from './selection_action_params.interface';
 export * from './restrictions.interface';
 export * from './widgets_configuration.interface';
 export * from './file_manager_view_type.interface';
+export * from './calendar_event_details.interface';
