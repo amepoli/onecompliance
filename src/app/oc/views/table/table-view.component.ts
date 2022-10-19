@@ -889,9 +889,28 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             })
         }
 
-        if(selectedViewKey.buttonAction.action == 'navigate'){
-            let mergedParams = { entry: { name: selectedViewKey.buttonAction.target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };            
-            this.navigate(mergedParams);    
+        if (selectedViewKey.buttonAction.action == 'navigate') {
+
+            let target = selectedViewKey.buttonAction.target;
+            /*
+            if (selectedViewKey.buttonAction.keyToCheck && selectedViewKey.buttonAction.navigationConditions.length > 0) {
+                console.log('yess');
+                let currentValue = row[selectedViewKey.buttonAction.keyToCheck];
+                console.log(currentValue);
+                if (currentValue !== undefined) {
+                    selectedViewKey.buttonAction.navigationConditions.forEach(map => {
+                        console.log(map.ifValue);
+                        if (map.ifValue == currentValue) {
+                            target = map.newTarget;
+                            console.log(target);
+                        }
+                    })
+                }
+            }
+            */
+
+            let mergedParams = { entry: { name: target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };
+            this.navigate(mergedParams);
         }
         else if(selectedViewKey.buttonAction.action == 'delete'){
             this.deleteRow(selectedViewKey, keys);
