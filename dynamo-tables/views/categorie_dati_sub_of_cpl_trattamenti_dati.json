@@ -12,7 +12,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select cd.codice_azienda, id_argomento_categoria, true as delete_trattamenti_dati_categorie, cd.id_trattamento_dati, entrasp.argomenti_descr_breve(cd.id_argomento_categoria) as descr_categoria from entrasp.cpl_trattamenti_dati_categorie cd inner join entrasp.argomenti_argomenti aa on cd.id_argomento_categoria=id_argomento_son where cd.id_trattamento_dati=$id_trattamento_dati$ and cd.codice_azienda=$codice_azienda$ and aa.id_argomento_father=$P{id_argomento_categoria} and tipo='$P{categoria_dati}'"
+      "queryString": "select cd.codice_azienda, id_argomento_categoria, cd.note, true as delete_trattamenti_dati_categorie, cd.id_trattamento_dati, entrasp.argomenti_descr_breve(cd.id_argomento_categoria) as descr_categoria from entrasp.cpl_trattamenti_dati_categorie cd inner join entrasp.argomenti_argomenti aa on cd.id_argomento_categoria=id_argomento_son where cd.id_trattamento_dati=$id_trattamento_dati$ and cd.codice_azienda=$codice_azienda$ and aa.id_argomento_father=$P{id_argomento_categoria} and tipo='$P{categoria_dati}'"
     }
   ],
   "form_keys": [
@@ -62,6 +62,19 @@
       "autoGenerate": false,
       "format": {
         "viewType": "input",
+        "dataType": "text"
+      },
+      "label": "Note",
+      "key": "note",
+      "readOnly": false,
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
         "dataType": "number"
       },
       "label": "id_trattamento_dati",
@@ -78,7 +91,7 @@
         "dataType": "text"
       },
       "isHidden": true,
-      "isPrimary": false,
+      "isPrimary": true,
       "key": "codice_azienda",
       "label": "codice_azienda"
     },
@@ -134,6 +147,16 @@
     },
     {
       "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "width": "40%",
+      "label": "Note"
+    },
+    {
+      "format": {
         "dataType": "number"
       },
       "isHidden": true,
@@ -155,6 +178,10 @@
     {
       "tableActionType": "add",
       "viewType": "table"
+    },
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
     }
   ] 
 }
