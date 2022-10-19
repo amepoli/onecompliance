@@ -64,7 +64,7 @@
 			"isHidden": false,
 			"isPrimary": true,
 			"newLine": false,
-			"size": 1.25
+			"size": 1.2
 		},
 		{
 			"autoGenerate": false,
@@ -101,7 +101,7 @@
 			"label": "Tipo Contratto",
 			"newLine": false,
 			"readOnly": false,
-			"size": 2.75
+			"size": 2.6
 		},
 		
 		{
@@ -130,7 +130,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 1.5
+			"size": 1.4
 		},
 		{
 			"autoGenerate": false,
@@ -181,9 +181,41 @@
 			"isPrimary": false,
 			"key": "stato",
 			"label": "Stato",
+			"newLine": false,
+			"readOnly": false,
+			"size": 1.4
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "menu",
+				"menuOptions": [
+					{
+						"icon": "stacked_line_chart",
+						"label": "Crea progetto",
+						"outputEventName": "progetto_create"
+					}
+				]
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"buttonIcon": "more_vert",
+			"key": "contratti_actions",
+			"label": "",
 			"newLine": true,
 			"readOnly": false,
-			"size": 1.5
+			"sameOrigin": false,
+			"size": 0.6,
+			"inputEvents": [
+				{
+					"eventName": "progetto_create",
+					"condition": "none",
+					"values": [],
+					"actionType": "query",
+					"queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, $id_contratto$, $id_cliente$);",
+					"outputEventWhenComplete": "navigate_to_new_progetto"
+				}
+			]
 		},
 		{
 			"autoGenerate": false,
@@ -330,6 +362,20 @@
 					]
 				}
 			]
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "id_progetto",
+			"key": "id_progetto",
+			"readOnly": false,
+			"isHidden": true,
+			"sameOrigin": false,
+			"isPrimary": false,
+			"newLine": true
 		}
 	],
 	"table_keys": [
@@ -704,6 +750,24 @@
 		{
 			"actionType": "reload",
 			"eventName": "survey_reload"
+		},
+		{
+			"actionTarget": {
+				"name": "progetti",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_progetto",
+						"destination": "id_progetto"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "navigate_to_new_progetto"
 		}
 	]
 }
